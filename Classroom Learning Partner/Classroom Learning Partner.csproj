@@ -75,6 +75,7 @@
     <Compile Include="Model\CLPAttribute.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
+    <Compile Include="Model\CLPPageObjectBase.cs" />
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\IDataService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

@@ -1,0 +1,8 @@
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\ResolveAssemblyReference.cache
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\MainWindow.baml
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Skins\MainSkin.baml
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\MainWindow.g.cs
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\App.g.cs
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\GeneratedInternalTypeHelper.g.cs
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.cache
+c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.lref
