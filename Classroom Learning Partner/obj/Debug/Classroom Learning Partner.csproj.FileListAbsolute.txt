@@ -6,3 +6,5 @@ c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner
 c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\GeneratedInternalTypeHelper.g.cs
 c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.cache
 c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.lref
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.g.cs

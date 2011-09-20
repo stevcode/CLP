@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using Classroom_Learning_Partner.ViewModel;
+using Microsoft.Windows.Controls;
 using System;
 using System.Diagnostics;
 using System.Windows;

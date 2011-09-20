@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Model
     /// <summary>
     /// 
     /// </summary>
-    abstract class CLPPageObjectBase
+    abstract public class CLPPageObjectBase
     {
         protected CLPPageObjectBase()
         {

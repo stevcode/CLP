@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Model
     /// </summary>
     [Serializable]
     [DataContract]
-    class CLPAttribute
+    public class CLPAttribute
     {
 
         #region Constructors

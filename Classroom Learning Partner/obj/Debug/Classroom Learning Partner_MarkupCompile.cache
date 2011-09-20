@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\
 Classroom_Learning_Partner
 none
 false
 CODE_ANALYSIS;DEBUG;TRACE
-c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\App.xaml
-2-1356017796
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\App.xaml
+3-845949459
 
-13153789800
-17-196767179
-MainWindow.xaml;Skins\MainSkin.xaml;
+17-1731652463
+18-64806331
+MainWindow.xaml;Skins\MainSkin.xaml;Views\RibbonView.xaml;
 
 True
 
