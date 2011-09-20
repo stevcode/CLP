@@ -2,12 +2,14 @@
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Classroom_Learning_Partner.Model
 {
     [Serializable]
     [DataContract]
-    class CLPNotebook
+    public class CLPNotebook
     {
         #region Constructors
 
@@ -19,18 +21,17 @@ namespace Classroom_Learning_Partner.Model
             CLPPage page = new CLPPage();
             _pages.Add(page);
 
-            var creationDate = new List<string>();
-            creationDate.Add(DateTime.Now.ToString());
-            _metaData.Add("CreationDate", creationDate);
+            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
+            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", Guid.NewGuid().ToString()));
         }
 
         #endregion //Constructors
 
         #region Properties
 
-        private Dictionary<string, List<string>> _metaData = new Dictionary<string, List<string>>();
+        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
         [DataMember]
-        public Dictionary<string, List<string>> MetaData
+        public Dictionary<string, CLPAttribute> MetaData
         {
             get
             {
@@ -95,6 +96,15 @@ namespace Classroom_Learning_Partner.Model
             }
 
             return notebook;
+        }
+
+        public static void SaveNotebookToFile(string filePath, CLPNotebook notebook)
+        {
+            BinaryFormatter binFormat = new BinaryFormatter();
+            using (FileStream fStream = new FileStream(filePath, FileMode.Create))
+            {
+                binFormat.Serialize(fStream, notebook);
+            }   
         }
 
         #endregion //Public Interface
