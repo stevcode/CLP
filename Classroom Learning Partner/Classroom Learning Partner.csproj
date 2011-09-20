@@ -47,6 +47,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity">
       <SpecificVersion>False</SpecificVersion>
@@ -80,7 +81,11 @@
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\IDataService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\RibbonViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\RibbonView.xaml.cs">
+      <DependentUpon>RibbonView.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,6 +101,10 @@
     <Page Include="Skins\MainSkin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +131,53 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\AddImage.png" />
+    <Resource Include="Images\AddPage.png" />
+    <Resource Include="Images\AddPathStamp.png" />
+    <Resource Include="Images\AddPictureStamp.jpg" />
+    <Resource Include="Images\AddText.png" />
+    <Resource Include="Images\AddToDisplay.png" />
+    <Resource Include="Images\camera.png" />
+    <Resource Include="Images\Collapse.png" />
+    <Resource Include="Images\Correct.png" />
+    <Resource Include="Images\CrayonPhysics.png" />
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\EditNotebook.png" />
+    <Resource Include="Images\Eraser.png" />
+    <Resource Include="Images\Exit.png" />
+    <Resource Include="Images\Expand.png" />
+    <Resource Include="Images\GridDisplay.png" />
+    <Resource Include="Images\Happy.png" />
+    <Resource Include="Images\Incorrect.png" />
+    <Resource Include="Images\Inky.png" />
+    <Resource Include="Images\LargeIcon.png" />
+    <Resource Include="Images\Lasso.bmp" />
+    <Resource Include="Images\Marker.png" />
+    <Resource Include="Images\MultipleSidebarView.png" />
+    <Resource Include="Images\NewSubmission.png" />
+    <Resource Include="Images\NextPage.png" />
+    <Resource Include="Images\Notebook.png" />
+    <Resource Include="Images\NotebookImage.png" />
+    <Resource Include="Images\NotSelected.png" />
+    <Resource Include="Images\OpenNotebook.png" />
+    <Resource Include="Images\Pen.png" />
+    <Resource Include="Images\play.png" />
+    <Resource Include="Images\PreviousPage.png" />
+    <Resource Include="Images\Projector.png" />
+    <Resource Include="Images\Recycle.png" />
+    <Resource Include="Images\SaveNotebook.png" />
+    <Resource Include="Images\Selected.png" />
+    <Resource Include="Images\Send.png" />
+    <Resource Include="Images\SingleDisplay.png" />
+    <Resource Include="Images\SingleSidebarView.png" />
+    <Resource Include="Images\SmallIcon.png" />
+    <Resource Include="Images\StrokeEraser.jpg" />
+    <Resource Include="Images\StrokeEraser2.jpg" />
+    <Resource Include="Images\Students.png" />
+    <Resource Include="Images\Trash.png" />
+    <Resource Include="Images\Unknown.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
