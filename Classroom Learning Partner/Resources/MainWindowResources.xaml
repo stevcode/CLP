@@ -1,5 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wvm="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
+                    xmlns:wvw="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
                     >
-    
+
+    <DataTemplate DataType="{x:Type wvm:BlankWorkspaceViewModel}">
+        <wvw:BlankWorkspaceView />
+    </DataTemplate>
+
 </ResourceDictionary>

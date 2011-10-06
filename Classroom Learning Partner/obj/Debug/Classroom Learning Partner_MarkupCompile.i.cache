@@ -10,11 +10,11 @@ none
 false
 CODE_ANALYSIS;DEBUG;TRACE
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\App.xaml
-4355012943
+5-53268827
 
-151697070812
+17722939182
 191908538097
-MainWindow.xaml;Resources\MainWindowResources.xaml;Skins\MainSkin.xaml;Views\RibbonView.xaml;
+MainWindow.xaml;Resources\MainWindowResources.xaml;Skins\MainSkin.xaml;Views\RibbonView.xaml;Views\Workspaces\BlankWorkspaceView.xaml;
 
 True
 

@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -17,74 +20,64 @@ namespace Classroom_Learning_Partner.ViewModels
         public const string clpText = "Classroom Learning Partner - ";
 
         /// <summary>
-        /// The <see cref="WelcomeTitle" /> property's name.
+        /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public const string WelcomeTitlePropertyName = "WelcomeTitle";
-
-        private string _welcomeTitle = string.Empty;
-
-        /// <summary>
-        /// Gets the WelcomeTitle property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public string WelcomeTitle
+        public MainViewModel()
         {
-            get
-            {
-                return _welcomeTitle;
-            }
 
-            set
-            {
-                if (_welcomeTitle == value)
-                {
-                    return;
-                }
 
-                _welcomeTitle = value;
-                RaisePropertyChanged(WelcomeTitlePropertyName);
-            }
+
         }
+
+        #region Properties
+
+
+
+        #endregion //Properties
+
+        #region Bindings
 
         /// <summary>
         /// The <see cref="Workspace" /> property's name.
         /// </summary>
         public const string WorkspacePropertyName = "Workspace";
 
-        //private BaseWorkspaceViewModel _workspace = new BaseWorkspaceViewModel();
-
-        ///// <summary>
-        ///// Sets and gets the Workspace property.
-        ///// Changes to that property's value raise the PropertyChanged event. 
-        ///// This property's value is broadcasted by the MessengerInstance when it changes.
-        ///// </summary>
-        //public BaseWorkspaceViewModel Workspace
-        //{
-        //    get
-        //    {
-        //        return _workspace;
-        //    }
-
-        //    set
-        //    {
-        //        if (_workspace == value)
-        //        {
-        //            return;
-        //        }
-
-        //        var oldValue = _workspace;
-        //        _workspace = value;
-        //        RaisePropertyChanged(WorkspacePropertyName, oldValue, value, true);
-        //    }
-        //}
+        private ViewModelBase _workspace = new BlankWorkspaceViewModel();
 
         /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
+        /// Sets and gets the Workspace property.
+        /// Changes to that property's value raise the PropertyChanged event. 
         /// </summary>
-        public MainViewModel()
+        public ViewModelBase Workspace
         {
+            get
+            {
+                return _workspace;
+            }
 
+            set
+            {
+                if (_workspace == value)
+                {
+                    return;
+                }
+
+                _workspace = value;
+                RaisePropertyChanged(WorkspacePropertyName);
+            }
         }
+
+
+        private RibbonViewModel _ribbon = new RibbonViewModel();
+        public RibbonViewModel Ribbon
+        {
+            get
+            {
+                return _ribbon;
+            }
+        }
+
+        #endregion //Bindings
 
         ////public override void Cleanup()
         ////{

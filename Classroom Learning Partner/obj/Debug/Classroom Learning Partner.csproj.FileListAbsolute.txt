@@ -33,3 +33,5 @@ C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\GenerateResource.write.1.tlog
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.exe
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.g.cs

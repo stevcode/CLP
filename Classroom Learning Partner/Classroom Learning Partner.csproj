@@ -81,8 +81,12 @@
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
+      <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +109,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\RibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,9 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Displays\" />
-    <Folder Include="ViewModels\Workspaces\" />
     <Folder Include="Views\Displays\" />
-    <Folder Include="Views\Workspaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
