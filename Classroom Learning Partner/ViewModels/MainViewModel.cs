@@ -37,6 +37,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        public string TitleBarText
+        {
+            //get { return clpText + UserName + " (" + ConnectionStatus + ")"; }
+            get { return clpText; }
+        }
+
         /// <summary>
         /// The <see cref="Workspace" /> property's name.
         /// </summary>
