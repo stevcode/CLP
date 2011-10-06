@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
+using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner
 {
@@ -10,6 +12,11 @@ namespace Classroom_Learning_Partner
     {
         static App()
         {
+            MainWindow window = new MainWindow();
+            var viewModel = new MainViewModel();
+            window.DataContext = viewModel;
+            window.Show();
+
             DispatcherHelper.Initialize();
         }
     }

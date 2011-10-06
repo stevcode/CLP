@@ -8,3 +8,28 @@ c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner
 c:\users\steved\documents\visual studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.lref
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.baml
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Resources\MainWindowResources.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Classroom Learning Partner.exe
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Classroom Learning Partner.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Classroom Learning Partner.exe.CodeAnalysisLog.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Classroom Learning Partner.exe.lastcodeanalysissucceeded
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\GalaSoft.MvvmLight.Extras.WPF4.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\GalaSoft.MvvmLight.WPF4.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Microsoft.Practices.ServiceLocation.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\RibbonControlsLibrary.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Microsoft.Windows.Shell.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\GalaSoft.MvvmLight.WPF4.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\GalaSoft.MvvmLight.Extras.WPF4.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Microsoft.Practices.ServiceLocation.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\RibbonControlsLibrary.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\RibbonControlsLibrary.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\System.Windows.Interactivity.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Microsoft.Windows.Shell.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\bin\Debug\Microsoft.Windows.Shell.xml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.g.resources
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom_Learning_Partner.Properties.Resources.resources
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\GenerateResource.read.1.tlog
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\GenerateResource.write.1.tlog
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.exe
+C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.pdb

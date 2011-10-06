@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.Model;
 
-namespace Classroom_Learning_Partner.ViewModel
+namespace Classroom_Learning_Partner.ViewModels
 {
     /// <summary>
     /// This class contains properties that the main View can data bind to.
@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private readonly IDataService _dataService;
+        public const string clpText = "Classroom Learning Partner - ";
 
         /// <summary>
         /// The <see cref="WelcomeTitle" /> property's name.
@@ -47,22 +47,43 @@ namespace Classroom_Learning_Partner.ViewModel
         }
 
         /// <summary>
+        /// The <see cref="Workspace" /> property's name.
+        /// </summary>
+        public const string WorkspacePropertyName = "Workspace";
+
+        //private BaseWorkspaceViewModel _workspace = new BaseWorkspaceViewModel();
+
+        ///// <summary>
+        ///// Sets and gets the Workspace property.
+        ///// Changes to that property's value raise the PropertyChanged event. 
+        ///// This property's value is broadcasted by the MessengerInstance when it changes.
+        ///// </summary>
+        //public BaseWorkspaceViewModel Workspace
+        //{
+        //    get
+        //    {
+        //        return _workspace;
+        //    }
+
+        //    set
+        //    {
+        //        if (_workspace == value)
+        //        {
+        //            return;
+        //        }
+
+        //        var oldValue = _workspace;
+        //        _workspace = value;
+        //        RaisePropertyChanged(WorkspacePropertyName, oldValue, value, true);
+        //    }
+        //}
+
+        /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IDataService dataService)
+        public MainViewModel()
         {
-            _dataService = dataService;
-            _dataService.GetData(
-                (item, error) =>
-                {
-                    if (error != null)
-                    {
-                        // Report error here
-                        return;
-                    }
 
-                    WelcomeTitle = item.Title;
-                });
         }
 
         ////public override void Cleanup()

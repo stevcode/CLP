@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 
-namespace Classroom_Learning_Partner.ViewModel
+namespace Classroom_Learning_Partner.ViewModels
 {
     /// <summary>
     /// This class contains properties that a View can data bind to.

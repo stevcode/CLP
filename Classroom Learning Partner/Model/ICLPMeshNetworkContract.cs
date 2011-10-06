@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ServiceModel;
 
 namespace Classroom_Learning_Partner.Model
 {
-    public interface IDataService
+    [ServiceContract]
+    public interface ICLPMeshNetworkContract
     {
-        void GetData(Action<DataItem, Exception> callback);
     }
 }

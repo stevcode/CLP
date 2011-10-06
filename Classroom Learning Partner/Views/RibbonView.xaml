@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             DataContext="{Binding RibbonViewModel, Source={StaticResource Locator}}">
+             d:DesignHeight="300" d:DesignWidth="300">
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <!--Application Menu Button-->
 
@@ -121,7 +120,7 @@
 
             </ribbon:RibbonGroup>
 
-            <ribbon:RibbonGroup Style="{StaticResource StudentOnlyVisibility}">
+            <!--<ribbon:RibbonGroup Style="{StaticResource StudentOnlyVisibility}">
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SendPageToInstructorCommand}" 
@@ -139,7 +138,7 @@
                     Label="Webcam"
                     LargeImageSource="..\Images\Camera.png"
                     Command="{Binding Path=WebcamClickCommand}" />
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup>-->
 
             <!--
             <ribbon:RibbonGroup
@@ -151,7 +150,7 @@
             </ribbon:RibbonGroup>
             -->
 
-            <ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
+            <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
                         <DockPanel>
@@ -185,7 +184,7 @@
                 </ribbon:RibbonMenuButton>
                 <ribbon:RibbonGroup  ItemsSource="{Binding Path=Displays}" ItemTemplate="{StaticResource DisplayPreviewTemplate}" Background="White"/>
 
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup>-->
             <!--
             <ribbon:RibbonGroup Header="Modes" Style="{StaticResource TestingOnlyVisibility}">
                 <ribbon:RibbonButton Command="{Binding Path=SetInstructorModeCommand}" Label="Set Instructor" LargeImageSource="..\Images\LargeIcon.png"/>
@@ -196,7 +195,7 @@
         </ribbon:RibbonTab>
 
         <!--Editing Tab-->
-        <ribbon:RibbonTab Style="{StaticResource EditingModeOnlyVisibility}"
+        <!--<ribbon:RibbonTab Style="{StaticResource EditingModeOnlyVisibility}"
             Header="Editing">
             <ribbon:RibbonGroup
                 Header="Pen Type">
@@ -319,6 +318,6 @@
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=DeletePageCommand}" />
             </ribbon:RibbonGroup>
-        </ribbon:RibbonTab>
+        </ribbon:RibbonTab>-->
     </ribbon:Ribbon>
 </UserControl>
