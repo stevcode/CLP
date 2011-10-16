@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -18,6 +19,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public RibbonViewModel()
         {
+            CLPService = new CLPServiceAgent();
+            CLPService.AddPage(new CLPPage());
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
     }
 }
