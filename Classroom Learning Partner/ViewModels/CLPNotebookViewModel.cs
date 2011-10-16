@@ -2,6 +2,7 @@
 using Classroom_Learning_Partner.Model;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -66,12 +67,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public void InsertPage(int index, CLPPageViewModel pageViewModel)
         {
             PageViewModels.Insert(index, pageViewModel);
-            Notebook.Pages.Insert(index, pageViewModel.Page);
-
-            Notebook.Submissions.Add(pageViewModel.Page.UniqueID, new ObservableCollection<CLPPage>());
 
 
-            GenerateSubmissionViews(pageViewModel.Page);
+
+            //GenerateSubmissionViews(pageViewModel.Page);
         }
 
         public void RemovePageAt(int index)
@@ -82,10 +81,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageViewModels.Remove(viewModel);
 
                 _submissionViewModels.Remove(viewModel.Page.UniqueID);
-
-                CLPPage page = viewModel.Page;
-                Notebook.Pages.Remove(page);
-                Notebook.Submissions.Remove(page.UniqueID);
 
             }
         }

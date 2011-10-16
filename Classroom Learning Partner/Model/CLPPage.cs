@@ -54,6 +54,19 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        #region MetaData
+
+        public string UniqueID
+        {
+            get
+            {
+                return MetaData["UniqueID"].SelectedValue;
+            }
+
+        }
+
+        #endregion //MetaData
+
         #endregion
     }
 }

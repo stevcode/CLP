@@ -60,6 +60,19 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        #region MetaData
+
+        public string UniqueID
+        {
+            get
+            {
+                return MetaData["UniqueID"].SelectedValue;
+            }
+
+        }
+
+        #endregion //MetaData
+
         #endregion //Properties
 
         #region Submissions
@@ -104,8 +117,10 @@ namespace Classroom_Learning_Partner.Model
             using (FileStream fStream = new FileStream(filePath, FileMode.Create))
             {
                 binFormat.Serialize(fStream, notebook);
-            }   
+            }
         }
+
+        
 
         #endregion //Public Interface
     }

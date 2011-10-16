@@ -3,6 +3,8 @@ using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using System;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -24,14 +26,73 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public MainViewModel()
         {
-
-
+            _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+            AppMessages.SelectNotebookMessage.Register(this, OnSelectNotebookMessage);
 
         }
 
+        #region Messages
+
+        private void OnSelectNotebookMessage(string notebookName)
+        {
+            string filePath = NotebookDirectory + @"\" + notebookName + ".clp2";
+            CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
+            CLPNotebookViewModel notebookViewModel = new CLPNotebookViewModel(notebook);
+
+            int count = 0;
+            foreach (CLPNotebookViewModel notebookVM in NotebookViewModels)
+            {
+                if (notebookVM.Notebook.UniqueID == notebookViewModel.Notebook.UniqueID)
+                {
+                    CurrentNotebookViewModel = notebookVM;
+                    count++;
+                    break;
+                }
+            }
+
+            if (count == 0)
+            {
+                NotebookViewModels.Add(notebookViewModel);
+                CurrentNotebookViewModel = notebookViewModel;
+                //SetWorkspace();
+            }
+        }
+
+        #endregion //Messages
+
         #region Properties
 
+        private string _notebookDirectory;
+        public string NotebookDirectory
+        {
+            get
+            {
+                return _notebookDirectory;
+            }
+        }
 
+        private readonly ObservableCollection<CLPNotebookViewModel> _notebookViewModels = new ObservableCollection<CLPNotebookViewModel>();
+        public ObservableCollection<CLPNotebookViewModel> NotebookViewModels
+        {
+            get
+            {
+                return _notebookViewModels;
+            }
+        }
+
+        //make this send message?
+        private CLPNotebookViewModel _currentNotebookViewModel;
+        public CLPNotebookViewModel CurrentNotebookViewModel
+        {
+            get
+            {
+                return _currentNotebookViewModel;
+            }
+            set
+            {
+                _currentNotebookViewModel = value;
+            }
+        }
 
         #endregion //Properties
 

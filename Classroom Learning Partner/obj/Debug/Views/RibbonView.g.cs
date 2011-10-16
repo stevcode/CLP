@@ -9,8 +9,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using Classroom_Learning_Partner.ViewModels.Workspaces;
-using Classroom_Learning_Partner.Views.Workspaces;
 using Microsoft.Windows.Controls;
 using Microsoft.Windows.Controls.Ribbon;
 using System;
