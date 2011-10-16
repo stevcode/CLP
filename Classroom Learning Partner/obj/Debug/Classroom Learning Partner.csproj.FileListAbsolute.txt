@@ -35,3 +35,16 @@ C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.pdb
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.baml
 C:\Users\steved\Documents\Visual Studio 2010\Projects\Classroom Learning Partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.exe
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Skins\MainSkin.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\MainWindow.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\RibbonView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\BlankWorkspaceView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\App.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.cache
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Classroom Learning Partner_MarkupCompile.lref

@@ -73,6 +73,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPAttribute.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
@@ -81,8 +82,12 @@
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
+    <Compile Include="Views\NotebookSelectorView.xaml.cs">
+      <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
@@ -108,6 +113,10 @@
     <Page Include="Skins\MainSkin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NotebookSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RibbonView.xaml">
       <SubType>Designer</SubType>
