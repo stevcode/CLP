@@ -79,7 +79,9 @@
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
+    <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
+    <Compile Include="Model\ICLPServiceAgent.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
