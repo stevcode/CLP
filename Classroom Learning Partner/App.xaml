@@ -4,10 +4,13 @@
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
     
     <Application.Resources>
         <!--Global View Model Locator-->
+        <vm:ViewModelLocator x:Key="Locator"
+                         d:IsDataSource="True" />
 
     </Application.Resources>
     

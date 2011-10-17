@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,13 +29,17 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             AppMessages.SelectNotebookMessage.Register(this, OnSelectNotebookMessage);
-
+            Workspace = new NotebookChooserWorkspaceViewModel();
         }
 
         #region Messages
 
         private void OnSelectNotebookMessage(string notebookName)
         {
+            if (!Directory.Exists(NotebookDirectory))
+            {
+                Directory.CreateDirectory(NotebookDirectory);
+            }
             string filePath = NotebookDirectory + @"\" + notebookName + ".clp2";
             CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
             CLPNotebookViewModel notebookViewModel = new CLPNotebookViewModel(notebook);
@@ -54,9 +59,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 NotebookViewModels.Add(notebookViewModel);
                 CurrentNotebookViewModel = notebookViewModel;
-                //SetWorkspace();
+                
             }
+
+            
         }
+
+
 
         #endregion //Messages
 

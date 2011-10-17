@@ -11,7 +11,8 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow"
         WindowState="Maximized"
-        Title="{Binding Path=TitleBarText}">
+        Title="{Binding Path=TitleBarText}"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
     
     <Window.Resources>
         <ResourceDictionary>

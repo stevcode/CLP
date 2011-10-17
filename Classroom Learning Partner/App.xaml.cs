@@ -12,10 +12,10 @@ namespace Classroom_Learning_Partner
     {
         static App()
         {
-            MainWindow window = new MainWindow();
-            var viewModel = new MainViewModel();
-            window.DataContext = viewModel;
-            window.Show();
+            //MainWindow window = new MainWindow();
+            //var viewModel = new MainViewModel();
+            //window.DataContext = viewModel;
+            //window.Show();
 
             DispatcherHelper.Initialize();
         }

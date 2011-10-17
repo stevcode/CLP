@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Model
     {
         public void AddPage(CLPPage page)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.Model;
+using GalaSoft.MvvmLight.Ioc;
 
-namespace Classroom_Learning_Partner.ViewModels
+namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
     /// <summary>
     /// This class contains properties that a View can data bind to.
@@ -12,17 +12,14 @@ namespace Classroom_Learning_Partner.ViewModels
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class RibbonViewModel : ViewModelBase
+    public class NotebookChooserWorkspaceViewModel : ViewModelBase
     {
         /// <summary>
-        /// Initializes a new instance of the RibbonViewModel class.
+        /// Initializes a new instance of the NotebookChooserWorkspaceViewModel class.
         /// </summary>
-        public RibbonViewModel()
+        public NotebookChooserWorkspaceViewModel()
         {
-            CLPService = new CLPServiceAgent();
-            //CLPService.AddPage(new CLPPage());
+            SimpleIoc.Default.
         }
-
-        private ICLPServiceAgent CLPService { get; set; }
     }
 }
