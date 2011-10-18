@@ -62,7 +62,6 @@ namespace Classroom_Learning_Partner.Model
 
         #region MetaData
 
-        [NonSerialized]
         public string UniqueID
         {
             get
@@ -72,7 +71,6 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
-        [NonSerialized]
         public string Name
         {
             get
@@ -83,7 +81,7 @@ namespace Classroom_Learning_Partner.Model
 	            }
                 else
                 {
-                    MetaData.Add("Name",new CLPAttribute("Name", "NoName");
+                    MetaData.Add("Name",new CLPAttribute("Name", "NoName"));
                     return "NoName";
                 }
                 

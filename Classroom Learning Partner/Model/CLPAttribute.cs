@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private List<string> _attributeValues;
+        private List<string> _attributeValues = new List<string>();
         [DataMember]
         public List<string> AttributeValues
         {

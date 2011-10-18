@@ -30,6 +30,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
             _notebook = notebook;
+            foreach (CLPPage page in Notebook.Pages)
+            {
+                CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                PageViewModels.Add(pageVM);
+            }
         }
 
         #endregion //Constructors
