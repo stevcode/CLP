@@ -19,7 +19,12 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// </summary>
         public SinglePageDisplayViewModel()
         {
-            AppMessages.AddPageToDisplay.Register(this, (action) => { this.PageViewModel = action; }); 
+            AppMessages.AddPageToDisplay.Register(this, (action) => {   this.PageViewModel = action;
+                                                                        this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
+                                                                        this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                        });
+            AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
+            AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
         }
 
         /// <summary>

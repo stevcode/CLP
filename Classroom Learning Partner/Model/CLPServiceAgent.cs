@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.Model
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
 
+        void SubmitPage(CLPPageViewModel pageVM);
         void Exit();
 
     }
@@ -134,6 +135,12 @@ namespace Classroom_Learning_Partner.Model
             
             Environment.Exit(0);
             
+        }
+
+
+        public void SubmitPage(CLPPageViewModel pageVM)
+        {
+            throw new NotImplementedException();
         }
     }
 }

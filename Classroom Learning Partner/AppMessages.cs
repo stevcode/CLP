@@ -27,6 +27,18 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        public static class RequestCurrentDisplayedPage
+        {
+            public static void Send(Action<CLPPageViewModel> callback)
+            {
+                var message = new NotificationMessageAction<CLPPageViewModel>("", callback);
+                Messenger.Default.Send(message);
+            }
 
+            public static void Register(object recipient, Action<NotificationMessageAction<CLPPageViewModel>> action)
+            {
+                Messenger.Default.Register<NotificationMessageAction<CLPPageViewModel>>(recipient, action);
+            }
+        }
     }
 }

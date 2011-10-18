@@ -125,35 +125,12 @@
 
             </ribbon:RibbonGroup>
 
-            <!--<ribbon:RibbonGroup Style="{StaticResource StudentOnlyVisibility}">
+            <ribbon:RibbonGroup>
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
-                    Command="{Binding Path=SendPageToInstructorCommand}" 
-                    Label="Send To Teacher"
-                    Visibility="{Binding Path=SendButtonVisibility}">
-                </ribbon:RibbonButton>
-                <ribbon:RibbonButton
-                    LargeImageSource="..\Images\Happy.png" 
-                    Label="Thank you!"
-                    Command="{Binding Path=SendPageToInstructorCommand}" 
-                    IsEnabled="False"
-                    Visibility="{Binding Path=IsSentInfoVisibility}">
-                </ribbon:RibbonButton>
-                <ribbon:RibbonButton
-                    Label="Webcam"
-                    LargeImageSource="..\Images\Camera.png"
-                    Command="{Binding Path=WebcamClickCommand}" />
-            </ribbon:RibbonGroup>-->
-
-            <!--
-            <ribbon:RibbonGroup
-                 Header="Game">
-                <ribbon:RibbonButton
-                    Label="Play Crayon Physics"
-                    LargeImageSource="..\Images\CrayonPhysics.png"
-                    Command="{Binding Path=PlayCrayonPhysicsCommand}" />
+                    Command="{Binding Path=SubmitPageCommand}" 
+                    Label="Send To Teacher" />
             </ribbon:RibbonGroup>
-            -->
 
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>

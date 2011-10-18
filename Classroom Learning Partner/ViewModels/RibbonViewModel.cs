@@ -4,6 +4,9 @@ using GalaSoft.MvvmLight.Command;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -24,10 +27,50 @@ namespace Classroom_Learning_Partner.ViewModels
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
-            //CLPService.AddPage(new CLPPage());
+            _drawingAttributes.Height = 2;
+            _drawingAttributes.Width = 2;
+            _lastDrawingWidth = _drawingAttributes.Height;
+            _lastDrawingHeight = _drawingAttributes.Width;
+            _drawingAttributes.Color = Colors.Black;
+            _drawingAttributes.FitToCurve = true;
         }
 
+        private double _lastDrawingWidth;
+        private double _lastDrawingHeight;
+
         private ICLPServiceAgent CLPService { get; set; }
+
+        private DrawingAttributes _drawingAttributes = new DrawingAttributes();
+        public DrawingAttributes DrawingAttributes
+        {
+            get
+            {
+                return _drawingAttributes;
+            }
+        }
+
+        private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.Ink;
+
+        /// <summary>
+        /// Sets and gets the EditingMode property.
+        /// </summary>
+        public InkCanvasEditingMode EditingMode
+        {
+            get
+            {
+                return _editingMode;
+            }
+
+            set
+            {
+                if (_editingMode == value)
+                {
+                    return;
+                }
+
+                _editingMode = value;
+            }
+        }
 
         #region Commands
 
@@ -127,6 +170,27 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Notebook Commands
+
+        private RelayCommand _submitPageCommand;
+
+        /// <summary>
+        /// Gets the SubmitPageCommand.
+        /// </summary>
+        public RelayCommand SubmitPageCommand
+        {
+            get
+            {
+                return _submitPageCommand
+                    ?? (_submitPageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.RequestCurrentDisplayedPage.Send( (callbackMessage) =>
+                                                  {
+                                                      CLPService.SubmitPage(callbackMessage);
+                                                  });
+                                          }));
+            }
+        }
 
         private RelayCommand _exitCommand;
 
