@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="Classroom_Learning_Partner.Views.SideBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Name="MainGrid" Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Border Name="SideBarBorder"  Grid.Column="0" BorderThickness="0,2,2,2" BorderBrush="DarkBlue" CornerRadius="0,5,5,0" Background="White">
+
+            <Grid Name="SideBarGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" Background="LightBlue">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Height="40" Orientation="Horizontal">
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}"></ComboBox>
+                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" />
+                    </StackPanel>
+
+                    <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Path=PageViewModels}"
+                     SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
+                     IsSynchronizedWithCurrentItem="True">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <Grid Margin="5,10" Name="grid">
+                                        <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                        <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
+                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.Template>
+                            <ControlTemplate>
+                                <ScrollViewer CanContentScroll="False">
+                                    <ScrollViewer.Resources>
+                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                                    </ScrollViewer.Resources>
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListBox.Template>
+                    </ListBox>
+                </Grid>
+
+                <!--TODO Make this Rectangle into selection buttons to choose submissions-->
+                <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+
+                <DockPanel Grid.Column="2" Name="SubmissionsSideBar">
+                    <!--Temp Hiding
+                    <DockPanel DockPanel.Dock="Top">
+
+                        <!-- Sorting
+                        <Grid DockPanel.Dock="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0">Sort by:</Label>
+                            <ComboBox Grid.Column="0" Grid.Row="1"
+                  >
+                            </ComboBox>
+                            <Label Grid.Column="1" Grid.Row="0">Then sort by:</Label>
+                            <ComboBox Grid.Column="1" Grid.Row="1"
+                      />
+                        </Grid>
+                        <!-- sorting
+
+                    </DockPanel>
+
+                    <!-- List Of Submissions
+                    <ListBox
+                 ItemsSource="{Binding Path=PageViewModels}"
+                 SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
+                 IsSynchronizedWithCurrentItem="True">
+                        <ListBox.ItemTemplate>
+
+                            <DataTemplate>
+                                <Border>
+                                    <Grid Margin="5,10" Name="grid">
+                                        <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                        <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                           HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
+                           Style="{StaticResource InstructorOnlyVisibility}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.Template>
+                            <ControlTemplate>
+                                <ScrollViewer CanContentScroll="False">
+                                    <ScrollViewer.Resources>
+                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                                    </ScrollViewer.Resources>
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListBox.Template>
+                    </ListBox>
+        -->
+        </DockPanel>
+
+            </Grid>
+
+        </Border>
+
+        <Button Name="SideBarToggle" Grid.Column="1" Height="55" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Content="&lt;" PreviewMouseUp="SideBarToggle_PreviewMouseUp" />
+
+    </Grid>
+</UserControl>

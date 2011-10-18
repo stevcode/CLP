@@ -84,19 +84,34 @@
     <Compile Include="Model\ICLPServiceAgent.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
+    <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
+    <Compile Include="ViewModels\SideBarViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
+    <Compile Include="Views\Displays\SinglePageDisplayView.xaml.cs">
+      <DependentUpon>SinglePageDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SideBarView.xaml.cs">
+      <DependentUpon>SideBarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\AuthoringWorkspaceViewModel.xaml.cs">
+      <DependentUpon>AuthoringWorkspaceViewModel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
+      <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -118,6 +133,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Displays\SinglePageDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\NotebookSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -126,7 +145,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SideBarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\AuthoringWorkspaceViewModel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -202,10 +233,7 @@
     <Resource Include="Images\Trash.png" />
     <Resource Include="Images\Unknown.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Displays\" />
-    <Folder Include="Views\Displays\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

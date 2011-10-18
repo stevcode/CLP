@@ -114,3 +114,8 @@ C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\Classroom Learning Partner\obj\Debug\GenerateResource.read.1.tlog
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\Classroom Learning Partner\obj\Debug\GenerateResource.write.1.tlog
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\Classroom Learning Partner\obj\Debug\App.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\NotebookChooserWorkspaceView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\NotebookChooserWorkspaceView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Displays\SinglePageDisplayView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Displays\SinglePageDisplayView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\Workspaces\AuthoringWorkspaceViewModel.g.cs

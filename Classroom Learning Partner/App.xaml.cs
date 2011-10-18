@@ -5,6 +5,7 @@ using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner
 {
@@ -24,7 +25,7 @@ namespace Classroom_Learning_Partner
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             AppMessages.SelectNotebookMessage.Register(this, OnSelectNotebookMessage);
-            //Workspace = new NotebookChooserWorkspaceViewModel();
+            MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 
 
             DispatcherHelper.Initialize();
@@ -65,8 +66,8 @@ namespace Classroom_Learning_Partner
 
         #region Properties
 
-        private MainViewModel _mainWindowViewModel;
-        public MainViewModel MainWindowViewModel
+        private static MainViewModel _mainWindowViewModel;
+        public static MainViewModel MainWindowViewModel
         {
             get
             {
@@ -74,8 +75,8 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private string _notebookDirectory;
-        public string NotebookDirectory
+        private static string _notebookDirectory;
+        public static string NotebookDirectory
         {
             get
             {
@@ -83,8 +84,8 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private readonly ObservableCollection<CLPNotebookViewModel> _notebookViewModels = new ObservableCollection<CLPNotebookViewModel>();
-        public ObservableCollection<CLPNotebookViewModel> NotebookViewModels
+        private static ObservableCollection<CLPNotebookViewModel> _notebookViewModels = new ObservableCollection<CLPNotebookViewModel>();
+        public static ObservableCollection<CLPNotebookViewModel> NotebookViewModels
         {
             get
             {
@@ -93,8 +94,8 @@ namespace Classroom_Learning_Partner
         }
 
         //make this send message?
-        private CLPNotebookViewModel _currentNotebookViewModel;
-        public CLPNotebookViewModel CurrentNotebookViewModel
+        private static CLPNotebookViewModel _currentNotebookViewModel;
+        public static CLPNotebookViewModel CurrentNotebookViewModel
         {
             get
             {

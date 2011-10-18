@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using System.IO;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -19,7 +21,21 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public NotebookChooserWorkspaceViewModel()
         {
-            //SimpleIoc.Default.
+            foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp2"))
+            {
+                string notebookName = Path.GetFileNameWithoutExtension(fullFile);
+                NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
+                NotebookSelectorViewModels.Add(notebookSelector);
+            }
+        }
+
+        private ObservableCollection<NotebookSelectorViewModel> _notebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
+        public ObservableCollection<NotebookSelectorViewModel> NotebookSelectorViewModels
+        {
+            get
+            {
+                return _notebookSelectorViewModels;
+            }
         }
     }
 }

@@ -1,11 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using System;
-using System.Collections.ObjectModel;
-using System.IO;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
