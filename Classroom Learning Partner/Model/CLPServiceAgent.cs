@@ -83,7 +83,10 @@ namespace Classroom_Learning_Partner.Model
                 App.CurrentNotebookViewModel = newNotebookViewModel;
                 App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
             }
-            //else error checking, file already exists, try different name      
+            //else error checking, file already exists, try different name
+      
+
+
         }
 
         public void SaveNotebook(CLPNotebookViewModel notebookVM)

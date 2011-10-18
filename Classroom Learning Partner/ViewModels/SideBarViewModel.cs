@@ -91,9 +91,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var oldValue = _selectedPage;
                 _selectedPage = value;
-                RaisePropertyChanged(SelectedPagePropertyName, oldValue, value, true);
+                RaisePropertyChanged(SelectedPagePropertyName);
+                AppMessages.AddPageToDisplay.Send(_selectedPage);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -18,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// </summary>
         public SinglePageDisplayViewModel()
         {
+            AppMessages.AddPageToDisplay.Register(this, (action) => { this.PageViewModel = action; }); 
         }
 
         /// <summary>
