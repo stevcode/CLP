@@ -3,6 +3,7 @@ using Classroom_Learning_Partner.Model;
 using GalaSoft.MvvmLight.Command;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -86,7 +87,68 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _saveAllNotebooksCommand;
+
+        /// <summary>
+        /// Gets the SaveAllNotebooksCommand.
+        /// </summary>
+        public RelayCommand SaveAllNotebooksCommand
+        {
+            get
+            {
+                return _saveAllNotebooksCommand
+                    ?? (_saveAllNotebooksCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              foreach (CLPNotebookViewModel notebookVM in App.NotebookViewModels)
+                                              {
+                                                  CLPService.SaveNotebook(notebookVM);
+                                              }
+                                          }));
+            }
+        }
+
+        private RelayCommand _convertToXPSCommand;
+
+        /// <summary>
+        /// Gets the ConvertToXPSCommand.
+        /// </summary>
+        public RelayCommand ConvertToXPSCommand
+        {
+            get
+            {
+                return _convertToXPSCommand
+                    ?? (_convertToXPSCommand = new RelayCommand(
+                                          () =>
+                                          {
+
+                                          }));
+            }
+        }
+
         #endregion //Notebook Commands
+
+        private RelayCommand _exitCommand;
+
+        /// <summary>
+        /// Gets the ExitCommand.
+        /// </summary>
+        public RelayCommand ExitCommand
+        {
+            get
+            {
+                return _exitCommand
+                    ?? (_exitCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              if (MessageBox.Show("Are you sure you want to exit?",
+                                "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                              {
+                                                  CLPService.Exit();
+                                              }
+                                          }));
+            }
+        }
 
         #endregion //Commands
     }

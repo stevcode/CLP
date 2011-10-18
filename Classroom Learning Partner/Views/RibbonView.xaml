@@ -27,11 +27,16 @@
                                                   Command="{Binding Path=SaveNotebookCommand}"
                                                   KeyTip="S"
                                                   ImageSource="..\Images\SaveNotebook.png" />
+                <ribbon:RibbonApplicationMenuItem Header="Save All Notebooks"
+                                                  Command="{Binding Path=SaveAllNotebooksCommand}"
+                                                  KeyTip="A"
+                                                  ImageSource="..\Images\LargeIcon.png" />
                 <ribbon:RibbonApplicationMenuItem Header="Convert to XPS"
                                                   Command="{Binding Path=ConvertToXPSCommand}"
                                                   KeyTip="C"
                                                   ImageSource="..\Images\LargeIcon.png" />
                 <ribbon:RibbonSeparator />
+                <!--Bind header for toggle text: disconnect/reconnect to network-->
                 <ribbon:RibbonApplicationMenuItem Header="Reconnect to Network"
                                                   Command="{Binding Path=NetworkReconnectCommand}"
                                                   ImageSource="..\Images\LargeIcon.png" />

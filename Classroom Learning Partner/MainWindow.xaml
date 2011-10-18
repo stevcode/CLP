@@ -11,6 +11,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow"
         WindowState="Maximized"
+        Closing="RibbonWindow_Closing"
         Title="{Binding Path=TitleBarText}">
     
     <Window.Resources>

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -16,6 +17,9 @@ namespace Classroom_Learning_Partner.Model
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
+        void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
+
+        void Exit();
 
     }
 
@@ -84,6 +88,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void SaveNotebook(CLPNotebookViewModel notebookVM)
         {
+            //make async?
             //compare VM with model?
             //compare model w/ database
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.Name + @".clp2";
@@ -109,6 +114,23 @@ namespace Classroom_Learning_Partner.Model
             //grab list of available notebooks from database
 
             //compare?
+        }
+
+
+        public void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Exit()
+        {
+            //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
+            //sync with database
+            //run network disconnect
+            
+            Environment.Exit(0);
+            
         }
     }
 }
