@@ -69,7 +69,7 @@
                     <!--Temp Hiding
                     <DockPanel DockPanel.Dock="Top">
 
-                        <!-- Sorting
+                        // Sorting
                         <Grid DockPanel.Dock="Left">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"/>
@@ -87,11 +87,11 @@
                             <ComboBox Grid.Column="1" Grid.Row="1"
                       />
                         </Grid>
-                        <!-- sorting
+                        // sorting
 
                     </DockPanel>
 
-                    <!-- List Of Submissions
+                    // List Of Submissions
                     <ListBox
                  ItemsSource="{Binding Path=PageViewModels}"
                  SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
@@ -102,7 +102,7 @@
                                 <Border>
                                     <Grid Margin="5,10" Name="grid">
                                         <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                        <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                                        //<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                            HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
                            Style="{StaticResource InstructorOnlyVisibility}"/>
                                     </Grid>

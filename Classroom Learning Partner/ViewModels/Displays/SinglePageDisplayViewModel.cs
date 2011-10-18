@@ -19,5 +19,35 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public SinglePageDisplayViewModel()
         {
         }
+
+        /// <summary>
+        /// The <see cref="PageViewModel" /> property's name.
+        /// </summary>
+        public const string PageViewModelPropertyName = "PageViewModel";
+
+        private CLPPageViewModel _pageViewModel = new CLPPageViewModel();
+
+        /// <summary>
+        /// Sets and gets the PageViewModel property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public CLPPageViewModel PageViewModel
+        {
+            get
+            {
+                return _pageViewModel;
+            }
+
+            set
+            {
+                if (_pageViewModel == value)
+                {
+                    return;
+                }
+
+                _pageViewModel = value;
+                RaisePropertyChanged(PageViewModelPropertyName);
+            }
+        }
     }
 }

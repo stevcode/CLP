@@ -62,6 +62,7 @@ namespace Classroom_Learning_Partner.Model
 
         #region MetaData
 
+        [NonSerialized]
         public string UniqueID
         {
             get
@@ -69,6 +70,35 @@ namespace Classroom_Learning_Partner.Model
                 return MetaData["UniqueID"].SelectedValue;
             }
 
+        }
+
+        [NonSerialized]
+        public string Name
+        {
+            get
+            {
+                if (MetaData.ContainsKey("Name"))
+	            {
+		             return MetaData["Name"].SelectedValue;
+	            }
+                else
+                {
+                    MetaData.Add("Name",new CLPAttribute("Name", "NoName");
+                    return "NoName";
+                }
+                
+            }
+            set
+            {
+                if (MetaData.ContainsKey("Name"))
+	            {
+                    MetaData["Name"] = new CLPAttribute("Name", value);
+	            }
+                else
+	            {
+                    MetaData.Add("Name",new CLPAttribute("Name", value));
+	            }
+            }
         }
 
         #endregion //MetaData

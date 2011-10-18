@@ -92,6 +92,15 @@
     <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
+    <Compile Include="Views\CLPPagePreviewView.xaml.cs">
+      <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CLPPageView.xaml.cs">
+      <DependentUpon>CLPPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\SinglePageDisplayPreviewView.xaml.cs">
+      <DependentUpon>SinglePageDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Displays\SinglePageDisplayView.xaml.cs">
       <DependentUpon>SinglePageDisplayView.xaml</DependentUpon>
     </Compile>
@@ -104,8 +113,8 @@
     <Compile Include="Views\SideBarView.xaml.cs">
       <DependentUpon>SideBarView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Workspaces\AuthoringWorkspaceViewModel.xaml.cs">
-      <DependentUpon>AuthoringWorkspaceViewModel.xaml</DependentUpon>
+    <Compile Include="Views\Workspaces\AuthoringWorkspaceView.xaml.cs">
+      <DependentUpon>AuthoringWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
@@ -125,6 +134,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\CLPPageResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\MainWindowResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,6 +145,18 @@
     <Page Include="Skins\MainSkin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CLPPagePreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CLPPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\SinglePageDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\SinglePageDisplayView.xaml">
       <SubType>Designer</SubType>
@@ -149,7 +174,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Workspaces\AuthoringWorkspaceViewModel.xaml">
+    <Page Include="Views\Workspaces\AuthoringWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

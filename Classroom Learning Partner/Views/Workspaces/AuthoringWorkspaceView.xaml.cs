@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
     /// <summary>
-    /// Interaction logic for AuthoringWorkspaceViewModel.xaml
+    /// Interaction logic for AuthoringWorkspaceView.xaml
     /// </summary>
-    public partial class AuthoringWorkspaceViewModel : UserControl
+    public partial class AuthoringWorkspaceView : UserControl
     {
-        public AuthoringWorkspaceViewModel()
+        public AuthoringWorkspaceView()
         {
             InitializeComponent();
         }

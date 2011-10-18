@@ -26,11 +26,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         private string _notebookName = "";
-
-        /// <summary>
-        /// Sets and gets the NotebookName property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
         public string NotebookName
         {
             get

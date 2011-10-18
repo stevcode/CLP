@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
+            _notebook = notebook;
         }
 
         #endregion //Constructors

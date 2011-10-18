@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public AuthoringWorkspaceViewModel()
         {
+            
         }
 
         //TODO make left/right/top/bottom orientations...switch to single Workspace view with canvas?

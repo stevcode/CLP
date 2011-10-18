@@ -12,10 +12,10 @@
          <Members>
           <Member Name="#LoadImageFromByteSource()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
            <Messages>
-            <Message TypeName="Dispose objects before losing scope" Category="Microsoft.Reliability" CheckId="CA2000" Status="Active" Created="2011-10-18 04:45:39Z" FixCategory="DependsOnFix">
+            <Message TypeName="Dispose objects before losing scope" Category="Microsoft.Reliability" CheckId="CA2000" Status="Active" Created="2011-10-18 09:48:07Z" FixCategory="DependsOnFix">
              <Issue Name="ExceptionEdge" Certainty="75" Level="Warning" Path="C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\Model\CLPPageObjects" File="CLPImage.cs" Line="59">In method 'CLPImage.LoadImageFromByteSource()', object 'memoryStream' is not disposed along all exception paths. Call System.IDisposable.Dispose on object 'memoryStream' before all references to it are out of scope.</Issue>
             </Message>
-            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2011-10-18 04:45:39Z" FixCategory="DependsOnFix">
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2011-10-18 09:48:07Z" FixCategory="DependsOnFix">
              <Issue Certainty="75" Level="Warning" Path="C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\Model\CLPPageObjects" File="CLPImage.cs" Line="69">Object 'memoryStream' can be disposed more than once in method 'CLPImage.LoadImageFromByteSource()'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 69</Issue>
             </Message>
            </Messages>

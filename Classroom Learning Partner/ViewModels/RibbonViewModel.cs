@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.Model;
+using GalaSoft.MvvmLight.Command;
+using System.IO;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -24,5 +27,31 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private ICLPServiceAgent CLPService { get; set; }
+
+        private RelayCommand _newNotebookCommand;
+
+        /// <summary>
+        /// Gets the NewNotebookCommand.
+        /// </summary>
+        public RelayCommand NewNotebookCommand
+        {
+            get
+            {
+                return _newNotebookCommand
+                    ?? (_newNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              string filePath = App.NotebookDirectory + @"\" + "blah1" + @".clp2";
+                                              if (!File.Exists(filePath))
+                                              {
+                                                  CLPNotebookViewModel newNotebookViewModel = new CLPNotebookViewModel();
+                                                  newNotebookViewModel.Notebook.Name = "blah1";
+                                                  App.NotebookViewModels.Add(newNotebookViewModel);
+                                                  App.CurrentNotebookViewModel = newNotebookViewModel;
+                                                  App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                                              }
+                                          }));
+            }
+        }
     }
 }
