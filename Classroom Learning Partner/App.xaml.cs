@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-
             base.OnStartup(e);
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -24,45 +23,12 @@ namespace Classroom_Learning_Partner
             window.Show();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-            AppMessages.SelectNotebookMessage.Register(this, OnSelectNotebookMessage);
+            
             MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 
 
             DispatcherHelper.Initialize();
         }
-
-        #region Messages
-
-        private void OnSelectNotebookMessage(string notebookName)
-        {
-            if (!Directory.Exists(NotebookDirectory))
-            {
-                Directory.CreateDirectory(NotebookDirectory);
-            }
-            string filePath = NotebookDirectory + @"\" + notebookName + ".clp2";
-            CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
-            CLPNotebookViewModel notebookViewModel = new CLPNotebookViewModel(notebook);
-
-            int count = 0;
-            foreach (CLPNotebookViewModel notebookVM in NotebookViewModels)
-            {
-                if (notebookVM.Notebook.UniqueID == notebookViewModel.Notebook.UniqueID)
-                {
-                    CurrentNotebookViewModel = notebookVM;
-                    count++;
-                    break;
-                }
-            }
-
-            if (count == 0)
-            {
-                NotebookViewModels.Add(notebookViewModel);
-                CurrentNotebookViewModel = notebookViewModel;
-
-            }
-        }
-
-        #endregion //Messages
 
         #region Properties
 

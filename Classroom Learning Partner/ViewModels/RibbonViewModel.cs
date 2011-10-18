@@ -68,6 +68,24 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _saveNotebookCommand;
+
+        /// <summary>
+        /// Gets the SaveNotebookCommand.
+        /// </summary>
+        public RelayCommand SaveNotebookCommand
+        {
+            get
+            {
+                return _saveNotebookCommand
+                    ?? (_saveNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPService.SaveNotebook(App.CurrentNotebookViewModel);
+                                          }));
+            }
+        }
+
         #endregion //Notebook Commands
 
         #endregion //Commands

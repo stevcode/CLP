@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -20,8 +21,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public NotebookSelectorViewModel(string notebookName)
         {
+            CLPService = new CLPServiceAgent();
             _notebookName = notebookName;
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
 
         #region Bindings
 
@@ -49,7 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_selectNotebook = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.SelectNotebookMessage.Send(NotebookName);
+                                              CLPService.OpenNotebook(NotebookName);
                                           }));
             }
         }

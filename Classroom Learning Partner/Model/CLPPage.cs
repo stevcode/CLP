@@ -34,15 +34,15 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private ObservableCollection<CLPPageObjectBase> _pageObjects = new ObservableCollection<CLPPageObjectBase>();
-        [DataMember]
-        public ObservableCollection<CLPPageObjectBase> PageObjects
-        {
-            get
-            {
-                return _pageObjects;
-            }
-        }
+        //private ObservableCollection<CLPPageObjectBase> _pageObjects = new ObservableCollection<CLPPageObjectBase>();
+        //[DataMember]
+        //public ObservableCollection<CLPPageObjectBase> PageObjects
+        //{
+        //    get
+        //    {
+        //        return _pageObjects;
+        //    }
+        //}
 
         private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
         [DataMember]
