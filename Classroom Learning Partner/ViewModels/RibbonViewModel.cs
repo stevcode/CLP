@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPService = new CLPServiceAgent();
             //CLPService.AddPage(new CLPPage());
+            //Hello World- Pommelo!
         }
 
         private ICLPServiceAgent CLPService { get; set; }
