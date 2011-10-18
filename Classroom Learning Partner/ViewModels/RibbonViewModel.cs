@@ -28,6 +28,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private ICLPServiceAgent CLPService { get; set; }
 
+        #region Commands
+
+        #region Notebook Commands
+
         private RelayCommand _newNotebookCommand;
 
         /// <summary>
@@ -41,17 +45,31 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_newNotebookCommand = new RelayCommand(
                                           () =>
                                           {
-                                              string filePath = App.NotebookDirectory + @"\" + "blah1" + @".clp2";
-                                              if (!File.Exists(filePath))
-                                              {
-                                                  CLPNotebookViewModel newNotebookViewModel = new CLPNotebookViewModel();
-                                                  newNotebookViewModel.Notebook.Name = "blah1";
-                                                  App.NotebookViewModels.Add(newNotebookViewModel);
-                                                  App.CurrentNotebookViewModel = newNotebookViewModel;
-                                                  App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
-                                              }
+                                              CLPService.OpenNewNotebook();
                                           }));
             }
         }
+
+        private RelayCommand _openNotebookCommand;
+
+        /// <summary>
+        /// Gets the OpenNotebookCommand.
+        /// </summary>
+        public RelayCommand OpenNotebookCommand
+        {
+            get
+            {
+                return _openNotebookCommand
+                    ?? (_openNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                                          }));
+            }
+        }
+
+        #endregion //Notebook Commands
+
+        #endregion //Commands
     }
 }
