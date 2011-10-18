@@ -19,7 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public NotebookChooserWorkspaceViewModel()
         {
-            SimpleIoc.Default.
+            //SimpleIoc.Default.
         }
     }
 }

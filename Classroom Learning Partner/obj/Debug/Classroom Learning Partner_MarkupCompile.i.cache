@@ -4,15 +4,15 @@
 winexe
 C#
 .cs
-C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\Classroom Learning Partner\obj\Debug\
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\
 Classroom_Learning_Partner
 none
 false
 CODE_ANALYSIS;DEBUG;TRACE
-C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\Classroom Learning Partner\App.xaml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\App.xaml
 6-683506210
 
-26175299552
+25673610585
 191908538097
 MainWindow.xaml;Resources\MainWindowResources.xaml;Skins\MainSkin.xaml;Views\NotebookSelectorView.xaml;Views\RibbonView.xaml;Views\Workspaces\BlankWorkspaceView.xaml;
 
