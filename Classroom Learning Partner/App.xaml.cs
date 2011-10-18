@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using MongoDB.Driver;
 
 namespace Classroom_Learning_Partner
 {
@@ -28,6 +29,12 @@ namespace Classroom_Learning_Partner
 
 
             DispatcherHelper.Initialize();
+        }
+
+        protected void ConnectToDB()
+        {
+            string ConnectionString = "mongodb://localhost";
+            _databaseServer = MongoServer.Create(ConnectionString);
         }
 
         #region Properties
@@ -72,6 +79,17 @@ namespace Classroom_Learning_Partner
                 _currentNotebookViewModel = value;
             }
         }
+
+        private static MongoServer _databaseServer;
+        public static MongoServer DatabaseServer
+        {
+            get
+            {
+                return _databaseServer;
+            }
+        }
+
+
 
         #endregion //Properties
     }

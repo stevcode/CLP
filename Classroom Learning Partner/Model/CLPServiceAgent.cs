@@ -6,6 +6,8 @@ using System.IO;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Classroom_Learning_Partner.Model
 {
