@@ -171,6 +171,47 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Notebook Commands
 
+        #region Page Commands
+
+        private RelayCommand _addNewPageCommand;
+
+        /// <summary>
+        /// Gets the AddPageCommand.
+        /// </summary>
+        public RelayCommand AddNewPageCommand
+        {
+            get
+            {
+                return _addNewPageCommand
+                    ?? (_addNewPageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPService.AddPage(new CLPPage());
+                                          }));
+            }
+        }
+
+        private RelayCommand _deletePageCommand;
+
+        /// <summary>
+        /// Gets the DeletePageCommand.
+        /// </summary>
+        public RelayCommand DeletePageCommand
+        {
+            get
+            {
+                return _deletePageCommand
+                    ?? (_deletePageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              //change this to send uniqueID
+                                              CLPService.RemovePage("blah");
+                                          }));
+            }
+        }
+
+        #endregion //Page Commands
+
         private RelayCommand _submitPageCommand;
 
         /// <summary>

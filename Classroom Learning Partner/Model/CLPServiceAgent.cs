@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPServiceAgent
     {
         void AddPage(CLPPage page);
+        void RemovePage(string UniqueID);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
@@ -22,15 +23,37 @@ namespace Classroom_Learning_Partner.Model
         void SubmitPage(CLPPageViewModel pageVM);
         void Exit();
 
+        void SendLaserPosition(Point pt);
+
+
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
     {
         public void AddPage(CLPPage page)
         {
-            throw new NotImplementedException();
+            //re-write constructor to take in location for abstraction
+            int currentPageIndex = -1;
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+            });
+
+            CLPPageViewModel viewModel = new CLPPageViewModel(page);
+            App.CurrentNotebookViewModel.InsertPage(currentPageIndex, viewModel);
         }
 
+        public void RemovePage(string UniqueID)
+        {
+            //re-write and overload to accept UniqueID or location: RemovePageAt(loc)
+            int currentPageIndex = -1;
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+            });
+
+            App.CurrentNotebookViewModel.RemovePageAt(currentPageIndex);
+        }
 
         public void OpenNotebook(string notebookName)
         {
@@ -139,6 +162,15 @@ namespace Classroom_Learning_Partner.Model
 
 
         public void SubmitPage(CLPPageViewModel pageVM)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
+        public void SendLaserPosition(Point pt)
         {
             throw new NotImplementedException();
         }

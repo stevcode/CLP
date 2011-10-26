@@ -177,9 +177,9 @@
         </ribbon:RibbonTab>
 
         <!--Editing Tab-->
-        <!--<ribbon:RibbonTab Style="{StaticResource EditingModeOnlyVisibility}"
+        <ribbon:RibbonTab
             Header="Editing">
-            <ribbon:RibbonGroup
+           <!-- <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
                     Label="Pen"
@@ -197,7 +197,7 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup> 
 
             <ribbon:RibbonGroup
                 Header="Pen Color">
@@ -288,18 +288,18 @@
                     Label="Underline"
                     LargeImageSource="..\Images\AddText.png"
                     IsChecked="{Binding Path=IsUnderlined, Mode=TwoWay}" />
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup> -->
             <ribbon:RibbonGroup
                 Header="Page">
                 <ribbon:RibbonButton
                     Label="Add Page Here"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=AddPageCommand}" />
+                    Command="{Binding Path=AddNewPageCommand}" />
                 <ribbon:RibbonButton
                     Label="Delete This Page"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=DeletePageCommand}" />
             </ribbon:RibbonGroup>
-        </ribbon:RibbonTab>-->
+        </ribbon:RibbonTab>
     </ribbon:Ribbon>
 </UserControl>
