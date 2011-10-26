@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPAttribute.cs" />
+    <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjectBase.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
+    <Compile Include="Model\PeerNode.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
@@ -258,7 +260,9 @@
     <Resource Include="Images\Trash.png" />
     <Resource Include="Images\Unknown.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

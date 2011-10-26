@@ -41,6 +41,7 @@ namespace Classroom_Learning_Partner.Model
 
             CLPPageViewModel viewModel = new CLPPageViewModel(page);
             App.CurrentNotebookViewModel.InsertPage(currentPageIndex, viewModel);
+            App.CurrentNotebookViewModel.Notebook.Pages.Insert(currentPageIndex, page);
         }
 
         public void RemovePage(string UniqueID)
@@ -53,6 +54,7 @@ namespace Classroom_Learning_Partner.Model
             });
 
             App.CurrentNotebookViewModel.RemovePageAt(currentPageIndex);
+            App.CurrentNotebookViewModel.Notebook.Pages.RemoveAt(currentPageIndex);
         }
 
         public void OpenNotebook(string notebookName)

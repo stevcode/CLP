@@ -6,8 +6,16 @@ using System.ServiceModel;
 
 namespace Classroom_Learning_Partner.Model
 {
-    [ServiceContract]
+    [ServiceContract(CallbackContract = typeof(ICLPMeshNetworkContract))]
     public interface ICLPMeshNetworkContract
     {
+        [OperationContract(IsOneWay = true)]
+        void InitializeMesh();
+
+        [OperationContract(IsOneWay = true)]
+        void Connect(string userName);
+
+        [OperationContract(IsOneWay = true)]
+        void Disconnect(string userName);
     }
 }

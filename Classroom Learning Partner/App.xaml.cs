@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using System.Threading;
 
 namespace Classroom_Learning_Partner
 {
@@ -14,6 +15,14 @@ namespace Classroom_Learning_Partner
     /// </summary>
     public partial class App : Application
     {
+        public enum UserMode
+        {
+            Server,
+            Instructor,
+            Projector,
+            Student
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -28,6 +37,21 @@ namespace Classroom_Learning_Partner
 
 
             DispatcherHelper.Initialize();
+
+            JoinMeshNetwork();
+        }
+
+        public void JoinMeshNetwork()
+        {
+            _peer = new PeerNode();
+            _peerThread = new Thread(_peer.Run) { IsBackground = true };
+            PeerThread.Start();
+        }
+
+        public void LeaveMeshNetwork()
+        {
+            Peer.Stop();
+            PeerThread.Join();
         }
 
         #region Properties
@@ -70,6 +94,24 @@ namespace Classroom_Learning_Partner
             set
             {
                 _currentNotebookViewModel = value;
+            }
+        }
+
+        private static PeerNode _peer;
+        public static PeerNode Peer
+        {
+            get
+            {
+                return _peer;
+            }
+        }
+
+        private static Thread _peerThread;
+        public static Thread PeerThread
+        {
+            get
+            {
+                return _peerThread;
             }
         }
 
