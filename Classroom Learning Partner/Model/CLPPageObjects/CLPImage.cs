@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -54,6 +55,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            LoadImageFromByteSource();
+        }
+
         private void LoadImageFromByteSource()
         {
             MemoryStream memoryStream = new MemoryStream(ByteSource, 0, ByteSource.Length, false, false);
@@ -83,6 +90,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Properties
 
+        //Non-Serialized
         [NonSerialized]
         private ImageSource _sourceImage;
         public ImageSource SourceImage

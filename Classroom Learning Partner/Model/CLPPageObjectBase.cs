@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -19,7 +18,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        [DataMember]
         public Dictionary<string, CLPAttribute> MetaData
         {
             get
@@ -29,7 +27,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private ObservableCollection<string> _pageObjectStrokes = new ObservableCollection<string>();
-        [DataMember]
         public ObservableCollection<string> PageObjectStrokes
         {
             get
@@ -43,7 +40,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private Point _position;
-        [DataMember]
         public Point Position
         {
             get
@@ -57,7 +53,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private double _height;
-        [DataMember]
         public double Height
         {
             get
@@ -71,7 +66,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private double _width;
-        [DataMember]
         public double Width
         {
             get
@@ -86,7 +80,6 @@ namespace Classroom_Learning_Partner.Model
 
         //can this be controlled by position in list?
         private int _zIndex;
-        [DataMember]
         public int ZIndex
         {
             get

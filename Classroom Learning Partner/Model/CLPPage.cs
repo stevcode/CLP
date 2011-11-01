@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.Model
@@ -9,7 +8,6 @@ namespace Classroom_Learning_Partner.Model
     /// 
     /// </summary>
     [Serializable]
-    [DataContract]
     public class CLPPage
     {
         #region Constructors
@@ -25,7 +23,6 @@ namespace Classroom_Learning_Partner.Model
         #region Properties
 
         private ObservableCollection<string> _strokes = new ObservableCollection<string>();
-        [DataMember]
         public ObservableCollection<string> Strokes
         {
             get
@@ -35,7 +32,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private ObservableCollection<CLPPageObjectBase> _pageObjects = new ObservableCollection<CLPPageObjectBase>();
-        [DataMember]
         public ObservableCollection<CLPPageObjectBase> PageObjects
         {
             get
@@ -45,7 +41,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        [DataMember]
         public Dictionary<string, CLPAttribute> MetaData
         {
             get

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.Model
@@ -8,7 +7,6 @@ namespace Classroom_Learning_Partner.Model
     /// 
     /// </summary>
     [Serializable]
-    [DataContract]
     public class CLPAttribute
     {
 
@@ -35,7 +33,6 @@ namespace Classroom_Learning_Partner.Model
         #region Properties
 
         private string _attributeName;
-        [DataMember]
         public string AttributeName
         {
             get
@@ -45,7 +42,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private List<string> _attributeValues = new List<string>();
-        [DataMember]
         public List<string> AttributeValues
         {
             get
@@ -54,10 +50,8 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        [DataMember]
         public string SelectedValue { get; set; }
 
-        [DataMember]
         public bool IsSortable { get; set; }
 
         #endregion //Properties

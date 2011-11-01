@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Classroom_Learning_Partner.Model
 {
     [Serializable]
-    [DataContract]
     public class CLPNotebook
     {
         #region Constructors
@@ -30,7 +28,6 @@ namespace Classroom_Learning_Partner.Model
         #region Properties
 
         private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        [DataMember]
         public Dictionary<string, CLPAttribute> MetaData
         {
             get
@@ -40,7 +37,6 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private ObservableCollection<CLPPage> _pages = new ObservableCollection<CLPPage>();
-        [DataMember]
         public ObservableCollection<CLPPage> Pages
         {
             get
@@ -51,7 +47,6 @@ namespace Classroom_Learning_Partner.Model
 
         // Dictionary<UniqueID of Page, List of associated submissions for Page>
         private Dictionary<string, ObservableCollection<CLPPage>> _submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
-        [DataMember]
         public Dictionary<string, ObservableCollection<CLPPage>> Submissions
         {
             get
@@ -125,14 +120,15 @@ namespace Classroom_Learning_Partner.Model
 
         public static CLPNotebook LoadNotebookFromFile(string filePath)
         {
-            BinaryFormatter binFormat = new BinaryFormatter();
             CLPNotebook notebook = new CLPNotebook();
 
             if (File.Exists(filePath))
             {
-                using (FileStream fStream = new FileStream(filePath, FileMode.Open))
+                BinaryFormatter binFormat = new BinaryFormatter();
+
+                using (var file = File.OpenRead(filePath))
                 {
-                    notebook = (CLPNotebook)binFormat.Deserialize(fStream);
+                    notebook = (CLPNotebook)binFormat.Deserialize(file);
                 }
             }
 
@@ -142,9 +138,10 @@ namespace Classroom_Learning_Partner.Model
         public static void SaveNotebookToFile(string filePath, CLPNotebook notebook)
         {
             BinaryFormatter binFormat = new BinaryFormatter();
-            using (FileStream fStream = new FileStream(filePath, FileMode.Create))
+
+            using (var file = File.Create(filePath))
             {
-                binFormat.Serialize(fStream, notebook);
+                binFormat.Serialize(file, notebook);
             }
         }
 
