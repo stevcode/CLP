@@ -6,6 +6,8 @@ using System.IO;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -26,6 +28,8 @@ namespace Classroom_Learning_Partner.Model
         void SendLaserPosition(Point pt);
 
 
+
+        void AddPageObjectToPage(CLPPageObjectBase pageObject);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -175,6 +179,25 @@ namespace Classroom_Learning_Partner.Model
         public void SendLaserPosition(Point pt)
         {
             throw new NotImplementedException();
+        }
+
+
+        public void AddPageObjectToPage(CLPPageObjectBase pageObject)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                callbackMessage.Page.PageObjects.Add(pageObject);
+                CLPPageObjectBaseViewModel pageObjectViewModel;
+                if (pageObject is CLPImage)
+                {
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                }
+                else
+                {
+                    pageObjectViewModel = null;
+                }
+                callbackMessage.PageObjectViewModels.Add(pageObjectViewModel);
+            });
         }
     }
 }

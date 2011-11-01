@@ -26,6 +26,9 @@ namespace Classroom_Learning_Partner
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            CurrentUserMode = UserMode.Instructor;
+
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
@@ -41,6 +44,8 @@ namespace Classroom_Learning_Partner
             JoinMeshNetwork();
         }
 
+        #region Methods
+
         public void JoinMeshNetwork()
         {
             _peer = new PeerNode();
@@ -53,6 +58,8 @@ namespace Classroom_Learning_Partner
             Peer.Stop();
             PeerThread.Join();
         }
+
+        #endregion //Methods
 
         #region Properties
 
@@ -94,6 +101,19 @@ namespace Classroom_Learning_Partner
             set
             {
                 _currentNotebookViewModel = value;
+            }
+        }
+
+        private static UserMode _currentUserMode;
+        public static UserMode CurrentUserMode
+        {
+            get
+            {
+                return _currentUserMode;
+            }
+            set
+            {
+                _currentUserMode = value;
             }
         }
 

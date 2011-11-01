@@ -5,6 +5,8 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -30,13 +32,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page)
         {
-
+            Page = page;
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
                 _strokes.Add(stroke);
             }
-
+            foreach (var pageObject in page.PageObjects)
+            {
+                if (pageObject is CLPImage)
+                {
+                    CLPPageObjectBaseViewModel pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    PageObjectViewModels.Add(pageObjectViewModel);
+                }
+            }
         }
 
         #endregion //Constructors
@@ -66,6 +75,15 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return _strokes;
+            }
+        }
+
+        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
+        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectViewModels
+        {
+            get
+            {
+                return _pageObjectViewModels;
             }
         }
 

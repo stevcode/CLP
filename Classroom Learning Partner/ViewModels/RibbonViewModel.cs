@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -211,6 +213,42 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Page Commands
+
+        #region Insert Commands
+
+        private RelayCommand _insertImageCommand;
+
+        /// <summary>
+        /// Gets the InsertImageCommand.
+        /// </summary>
+        public RelayCommand InsertImageCommand
+        {
+            get
+            {
+                return _insertImageCommand
+                    ?? (_insertImageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              // Configure open file dialog box
+                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+                                              // Show open file dialog box
+                                              Nullable<bool> result = dlg.ShowDialog();
+
+                                              // Process open file dialog box results
+                                              if (result == true)
+                                              {
+                                                  // Open document
+                                                  string filename = dlg.FileName;
+                                                  CLPImage image = new CLPImage(filename);
+                                                  CLPService.AddPageObjectToPage(image);
+                                              }
+                                          }));
+            }
+        }
+
+        #endregion //Insert Commands
 
         private RelayCommand _submitPageCommand;
 

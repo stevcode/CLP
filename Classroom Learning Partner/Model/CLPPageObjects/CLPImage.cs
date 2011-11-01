@@ -28,29 +28,29 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (_sourceImage != null)
             {
-                if (_sourceImage.Height > 900)
+                if (_sourceImage.Height > 1000)
                 {
-                    base.Height = 900;
+                    base.Height = 1000;
                     double ratio = _sourceImage.Width / _sourceImage.Height;
-                    base.Width = 900 * ratio;
+                    base.Width = 1000 * ratio;
                 }
                 else
                 {
                     base.Height = _sourceImage.Height;
                 }
 
-                if (_sourceImage.Width > 900)
+                if (_sourceImage.Width > 800)
                 {
-                    base.Width = 900;
+                    base.Width = 800;
                     double ratio = _sourceImage.Height / _sourceImage.Width;
-                    base.Height = 900 * ratio;
+                    base.Height = 800 * ratio;
                 }
                 else
                 {
                     base.Width = _sourceImage.Width;
                 }
 
-                base.Position = new System.Windows.Point(20, 100);
+                base.Position = new System.Windows.Point(10, 10);
             }
         }
 

@@ -9,6 +9,7 @@ namespace Classroom_Learning_Partner.Model
     /// <summary>
     /// 
     /// </summary>
+    [Serializable]
     abstract public class CLPPageObjectBase
     {
         protected CLPPageObjectBase()
@@ -83,6 +84,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        //can this be controlled by position in list?
         private int _zIndex;
         [DataMember]
         public int ZIndex

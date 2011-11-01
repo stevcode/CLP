@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="150" d:DesignWidth="1280">
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <!--Application Menu Button-->
 
@@ -240,14 +240,14 @@
                     <ribbon:RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
 
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup>-->
             <ribbon:RibbonGroup
                 Header="Insert">
                 <ribbon:RibbonButton
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"
                     Command="{Binding Path=InsertImageCommand}" />
-                <ribbon:RibbonButton
+                <!--<ribbon:RibbonButton
                     Label="Insert Picture Stamp"
                     LargeImageSource="..\Images\AddPictureStamp.jpg"
                     Command="{Binding Path=InsertPictureStampCommand}" />
@@ -258,10 +258,10 @@
                 <ribbon:RibbonButton
                     Label="Insert Recognition Grid"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=InsertRecognitionGridCommand}" />
+                    Command="{Binding Path=InsertRecognitionGridCommand}" />-->
 
             </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup
+            <!--<ribbon:RibbonGroup
                 Header="Text">
                 <ribbon:RibbonButton
                     Label="Insert Text Box"
