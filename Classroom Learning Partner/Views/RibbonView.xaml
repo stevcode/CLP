@@ -247,11 +247,11 @@
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"
                     Command="{Binding Path=InsertImageCommand}" />
-                <!--<ribbon:RibbonButton
-                    Label="Insert Picture Stamp"
-                    LargeImageSource="..\Images\AddPictureStamp.jpg"
-                    Command="{Binding Path=InsertPictureStampCommand}" />
                 <ribbon:RibbonButton
+                    Label="Insert Image Stamp"
+                    LargeImageSource="..\Images\AddPictureStamp.jpg"
+                    Command="{Binding Path=InsertImageStampCommand}" />
+                <!--<ribbon:RibbonButton
                     Label="Insert Blank Stamp"
                     LargeImageSource="..\Images\AddPathStamp.png"
                     Command="{Binding Path=InsertBlankStampCommand}" />

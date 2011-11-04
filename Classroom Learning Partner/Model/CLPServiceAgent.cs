@@ -192,11 +192,15 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
                 }
+                else if (pageObject is CLPImageStamp)
+                {
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
                 else
                 {
                     pageObjectViewModel = null;
                 }
-                callbackMessage.PageObjectViewModels.Add(pageObjectViewModel);
+                callbackMessage.PageObjectContainerViewModels.Add(pageObjectViewModel);
             });
         }
     }

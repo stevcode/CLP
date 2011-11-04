@@ -131,3 +131,9 @@ C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\SideBarView.baml
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjects\CLPImageView.baml
 C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjects\CLPImageView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\bin\Debug\AdornedControl.dll
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\bin\Debug\AdornedControl.pdb
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjectContainerView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjects\CLPImageStampView.baml
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjectContainerView.g.cs
+C:\Users\steved\Documents\Visual Studio 2010\Projects\classroom-learning-partner\classroom-learning-partner\Classroom Learning Partner\obj\Debug\Views\PageObjects\CLPImageStampView.g.cs

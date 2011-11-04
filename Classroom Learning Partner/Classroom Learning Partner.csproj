@@ -80,6 +80,7 @@
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
@@ -110,6 +112,12 @@
     </Compile>
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjectContainerView.xaml.cs">
+      <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPImageStampView.xaml.cs">
+      <DependentUpon>CLPImageStampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
@@ -170,6 +178,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NotebookSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjectContainerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPImageStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,7 +288,12 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AdornedControl\AdornedControl.csproj">
+      <Project>{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}</Project>
+      <Name>AdornedControl</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

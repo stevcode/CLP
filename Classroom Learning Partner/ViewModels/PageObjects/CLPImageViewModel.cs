@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public CLPImageViewModel(CLPImage image)
         {
             _sourceImage = image.SourceImage;
+            this.Position = image.Position;
         }
 
         #region Binding

@@ -248,6 +248,38 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _insertImageStampCommand;
+
+        /// <summary>
+        /// Gets the InsertImageStampCommand.
+        /// </summary>
+        public RelayCommand InsertImageStampCommand
+        {
+            get
+            {
+                return _insertImageStampCommand
+                    ?? (_insertImageStampCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              // Configure open file dialog box
+                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+                                              // Show open file dialog box
+                                              Nullable<bool> result = dlg.ShowDialog();
+
+                                              // Process open file dialog box results
+                                              if (result == true)
+                                              {
+                                                  // Open document
+                                                  string filename = dlg.FileName;
+                                                  CLPImageStamp image = new CLPImageStamp(filename);
+                                                  CLPService.AddPageObjectToPage(image);
+                                              }
+                                          }));
+            }
+        }
+
         #endregion //Insert Commands
 
         private RelayCommand _submitPageCommand;

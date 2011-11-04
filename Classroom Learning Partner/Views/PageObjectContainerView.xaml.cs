@@ -12,26 +12,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for PageObjectContainerView.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class PageObjectContainerView : UserControl
     {
-        public CLPImageView()
+        public PageObjectContainerView()
         {
             InitializeComponent();
-        }
-
-        private void closeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-
         }
     }
 }

@@ -15,23 +15,13 @@ using System.Windows.Shapes;
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for CLPImageStampView.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class CLPImageStampView : UserControl
     {
-        public CLPImageView()
+        public CLPImageStampView()
         {
             InitializeComponent();
-        }
-
-        private void closeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-
         }
     }
 }

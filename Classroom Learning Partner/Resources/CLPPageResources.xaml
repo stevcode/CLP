@@ -18,4 +18,8 @@
         <vwpo:CLPImageView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vmpo:CLPImageStampViewModel}">
+        <vwpo:CLPImageStampView />
+    </DataTemplate>
+
 </ResourceDictionary>

@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (pageObject is CLPImage)
                 {
                     CLPPageObjectBaseViewModel pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
-                    PageObjectViewModels.Add(pageObjectViewModel);
+                    PageObjectContainerViewModels.Add(pageObjectViewModel);
                 }
             }
 
@@ -117,12 +117,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
-        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectViewModels
+        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectContainerViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
+        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectContainerViewModels
         {
             get
             {
-                return _pageObjectViewModels;
+                return _pageObjectContainerViewModels;
             }
         }
 
