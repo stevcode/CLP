@@ -7,6 +7,7 @@ using Classroom_Learning_Partner.Model;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using MongoDB.Driver;
+using System.Threading;
 
 namespace Classroom_Learning_Partner
 {
@@ -15,9 +16,20 @@ namespace Classroom_Learning_Partner
     /// </summary>
     public partial class App : Application
     {
+        public enum UserMode
+        {
+            Server,
+            Instructor,
+            Projector,
+            Student
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            CurrentUserMode = UserMode.Instructor;
+
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
@@ -29,6 +41,8 @@ namespace Classroom_Learning_Partner
 
 
             DispatcherHelper.Initialize();
+
+            JoinMeshNetwork();
         }
 
         protected void ConnectToDB()
@@ -36,6 +50,23 @@ namespace Classroom_Learning_Partner
             string ConnectionString = "mongodb://localhost";
             _databaseServer = MongoServer.Create(ConnectionString);
         }
+
+        #region Methods
+
+        public void JoinMeshNetwork()
+        {
+            _peer = new PeerNode();
+            _peerThread = new Thread(_peer.Run) { IsBackground = true };
+            PeerThread.Start();
+        }
+
+        public void LeaveMeshNetwork()
+        {
+            Peer.Stop();
+            PeerThread.Join();
+        }
+
+        #endregion //Methods
 
         #region Properties
 
@@ -77,6 +108,37 @@ namespace Classroom_Learning_Partner
             set
             {
                 _currentNotebookViewModel = value;
+            }
+        }
+
+        private static UserMode _currentUserMode;
+        public static UserMode CurrentUserMode
+        {
+            get
+            {
+                return _currentUserMode;
+            }
+            set
+            {
+                _currentUserMode = value;
+            }
+        }
+
+        private static PeerNode _peer;
+        public static PeerNode Peer
+        {
+            get
+            {
+                return _peer;
+            }
+        }
+
+        private static Thread _peerThread;
+        public static Thread PeerThread
+        {
+            get
+            {
+                return _peerThread;
             }
         }
 

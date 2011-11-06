@@ -16,15 +16,13 @@
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black">
                 <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas">
-                    <!-- for page objects
                     <ItemsControl x:Name="PageObjects"
-                                  ItemsSource="{Binding Path=PageObjectContainerViewModels}"
+                                  ItemsSource="{Binding Path=PageObjectViewModels}"
                                   ItemsPanel="{StaticResource PanelTemplate}"
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
                     </ItemsControl>
-                    -->
 
                     <InkCanvas Width="816" Height="1056" x:Name="MainInkCanvas"
                                Background="Transparent" 

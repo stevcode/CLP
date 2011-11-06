@@ -66,6 +66,36 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// The <see cref="CurrentPageViewModel" /> property's name.
+        /// </summary>
+        public const string CurrentPageViewModelPropertyName = "CurrentPageViewModel";
+
+        private CLPPageViewModel _currentPageViewModel = new CLPPageViewModel();
+
+        /// <summary>
+        /// Sets and gets the CurrentPageViewModel property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public CLPPageViewModel CurrentPageViewModel
+        {
+            get
+            {
+                return _currentPageViewModel;
+            }
+
+            set
+            {
+                if (_currentPageViewModel == value)
+                {
+                    return;
+                }
+
+                _currentPageViewModel = value;
+                RaisePropertyChanged(CurrentPageViewModelPropertyName);
+            }
+        }
+
         #endregion //Bindings
 
         #region Methods
@@ -86,7 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageViewModel viewModel = PageViewModels[index];
                 PageViewModels.Remove(viewModel);
 
-                _submissionViewModels.Remove(viewModel.Page.UniqueID);
+                //_submissionViewModels.Remove(viewModel.Page.UniqueID);
 
             }
         }

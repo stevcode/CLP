@@ -6,6 +6,8 @@ using System.IO;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
@@ -14,6 +16,7 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPServiceAgent
     {
         void AddPage(CLPPage page);
+        void RemovePage(string UniqueID);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
@@ -24,15 +27,41 @@ namespace Classroom_Learning_Partner.Model
         void SubmitPage(CLPPageViewModel pageVM);
         void Exit();
 
+        void SendLaserPosition(Point pt);
+
+
+
+        void AddPageObjectToPage(CLPPageObjectBase pageObject);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
     {
         public void AddPage(CLPPage page)
         {
-            throw new NotImplementedException();
+            //re-write constructor to take in location for abstraction
+            int currentPageIndex = -1;
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+            });
+
+            CLPPageViewModel viewModel = new CLPPageViewModel(page);
+            App.CurrentNotebookViewModel.InsertPage(currentPageIndex, viewModel);
+            App.CurrentNotebookViewModel.Notebook.Pages.Insert(currentPageIndex, page);
         }
 
+        public void RemovePage(string UniqueID)
+        {
+            //re-write and overload to accept UniqueID or location: RemovePageAt(loc)
+            int currentPageIndex = -1;
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+            });
+
+            App.CurrentNotebookViewModel.RemovePageAt(currentPageIndex);
+            App.CurrentNotebookViewModel.Notebook.Pages.RemoveAt(currentPageIndex);
+        }
 
         public void OpenNotebook(string notebookName)
         {
@@ -143,6 +172,38 @@ namespace Classroom_Learning_Partner.Model
         public void SubmitPage(CLPPageViewModel pageVM)
         {
             throw new NotImplementedException();
+        }
+
+
+
+
+
+        public void SendLaserPosition(Point pt)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void AddPageObjectToPage(CLPPageObjectBase pageObject)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            {
+                callbackMessage.Page.PageObjects.Add(pageObject);
+                CLPPageObjectBaseViewModel pageObjectViewModel;
+                if (pageObject is CLPImage)
+                {
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                }
+                else if (pageObject is CLPImageStamp)
+                {
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
+                else
+                {
+                    pageObjectViewModel = null;
+                }
+                callbackMessage.PageObjectContainerViewModels.Add(pageObjectViewModel);
+            });
         }
     }
 }

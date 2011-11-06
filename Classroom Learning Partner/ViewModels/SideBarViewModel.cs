@@ -92,8 +92,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 _selectedPage = value;
-                RaisePropertyChanged(SelectedPagePropertyName);
-                AppMessages.AddPageToDisplay.Send(_selectedPage);
+
+                if (_selectedPage == null)
+                {
+                    SelectedPage = PageViewModels[0];
+                }
+                else
+                {
+                    RaisePropertyChanged(SelectedPagePropertyName);
+                    AppMessages.AddPageToDisplay.Send(_selectedPage);
+                }
             }
         }
 

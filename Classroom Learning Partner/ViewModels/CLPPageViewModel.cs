@@ -5,6 +5,10 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
+using System.Collections.Generic;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -19,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
+        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
+
         #region Constructors
 
         /// <summary>
@@ -30,13 +36,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page)
         {
-
+            Page = page;
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
                 _strokes.Add(stroke);
             }
+            foreach (var pageObject in page.PageObjects)
+            {
+                if (pageObject is CLPImage)
+                {
+                    CLPPageObjectBaseViewModel pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    PageObjectContainerViewModels.Add(pageObjectViewModel);
+                }
+            }
 
+            _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
+        }
+
+        void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        {
+            List<string> removedStrokes = new List<string>();
+            foreach (Stroke stroke in e.Removed)
+            {
+
+                string stringStroke = StrokeToString(stroke);
+                if (Page.Strokes.Contains(stringStroke))
+                {
+                    removedStrokes.Add(stringStroke);
+                    Page.Strokes.Remove(stringStroke);
+                }
+                else
+                {
+                    Console.WriteLine("Stroke does not exist on the CLPPage");
+                }
+
+            }
+
+            List<string> addedStrokes = new List<string>();
+            foreach (Stroke stroke in e.Added)
+            {
+                if (!stroke.ContainsPropertyData(StrokeIDKey))
+                {
+                    string newUniqueID = Guid.NewGuid().ToString();
+                    stroke.AddPropertyData(StrokeIDKey, newUniqueID);
+                }
+                string stringStroke = StrokeToString(stroke);
+                addedStrokes.Add(stringStroke);
+                Page.Strokes.Add(stringStroke);
+            }
         }
 
         #endregion //Constructors
@@ -66,6 +114,15 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return _strokes;
+            }
+        }
+
+        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectContainerViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
+        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectContainerViewModels
+        {
+            get
+            {
+                return _pageObjectContainerViewModels;
             }
         }
 

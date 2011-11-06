@@ -1,26 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [Serializable]
-    public class CLPImage : CLPPageObjectBase
+    public class CLPImageStamp : CLPPageObjectBase
     {
-        #region Constructors
 
-        public CLPImage(string path) : base()
+        public CLPImageStamp(string path)
         {
             if (File.Exists(path))
             {
                 _byteSource = File.ReadAllBytes(path);
             }
 
+            LoadImageFromByteSource();
+            InitializeBase();
+
+            MetaData.Add("IsAnchored", new CLPAttribute("IsAnchored", "true"));
+        }
+
+        public CLPImageStamp(byte[] imgSource)
+        {
+            _byteSource = imgSource;
             LoadImageFromByteSource();
             InitializeBase();
         }
@@ -79,15 +88,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _sourceImage = genBmpImage;
         }
 
-        public CLPImage(byte[] imgSource)
-        {
-            _byteSource = imgSource;
-            LoadImageFromByteSource();
-            InitializeBase();
-        }
-
-        #endregion //Constructors
-
         #region Properties
 
         //Non-Serialized
@@ -111,6 +111,34 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get
             {
                 return _byteSource;
+            }
+        }
+
+        //returns true if stamp is anchor/placed by teacher
+        //returns false if stamp is a copy of the anchor; moved by the student
+        public bool IsAnchor
+        {
+            get
+            {
+                if (MetaData["IsAnchored"].SelectedValue == "true")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                if (value)
+                {
+                    MetaData["IsAnchored"].AttributeValues[0] = "true";
+                }
+                else
+                {
+                    MetaData["IsAnchored"].AttributeValues[0] = "false";
+                }
             }
         }
 

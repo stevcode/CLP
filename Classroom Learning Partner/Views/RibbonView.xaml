@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="150" d:DesignWidth="1280">
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <!--Application Menu Button-->
 
@@ -177,9 +177,9 @@
         </ribbon:RibbonTab>
 
         <!--Editing Tab-->
-        <!--<ribbon:RibbonTab Style="{StaticResource EditingModeOnlyVisibility}"
+        <ribbon:RibbonTab
             Header="Editing">
-            <ribbon:RibbonGroup
+           <!-- <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
                     Label="Pen"
@@ -197,7 +197,7 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup> 
 
             <ribbon:RibbonGroup
                 Header="Pen Color">
@@ -240,7 +240,7 @@
                     <ribbon:RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
 
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup>-->
             <ribbon:RibbonGroup
                 Header="Insert">
                 <ribbon:RibbonButton
@@ -248,20 +248,20 @@
                     LargeImageSource="..\Images\AddImage.png"
                     Command="{Binding Path=InsertImageCommand}" />
                 <ribbon:RibbonButton
-                    Label="Insert Picture Stamp"
+                    Label="Insert Image Stamp"
                     LargeImageSource="..\Images\AddPictureStamp.jpg"
-                    Command="{Binding Path=InsertPictureStampCommand}" />
-                <ribbon:RibbonButton
+                    Command="{Binding Path=InsertImageStampCommand}" />
+                <!--<ribbon:RibbonButton
                     Label="Insert Blank Stamp"
                     LargeImageSource="..\Images\AddPathStamp.png"
                     Command="{Binding Path=InsertBlankStampCommand}" />
                 <ribbon:RibbonButton
                     Label="Insert Recognition Grid"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=InsertRecognitionGridCommand}" />
+                    Command="{Binding Path=InsertRecognitionGridCommand}" />-->
 
             </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup
+            <!--<ribbon:RibbonGroup
                 Header="Text">
                 <ribbon:RibbonButton
                     Label="Insert Text Box"
@@ -288,18 +288,18 @@
                     Label="Underline"
                     LargeImageSource="..\Images\AddText.png"
                     IsChecked="{Binding Path=IsUnderlined, Mode=TwoWay}" />
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup> -->
             <ribbon:RibbonGroup
                 Header="Page">
                 <ribbon:RibbonButton
                     Label="Add Page Here"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=AddPageCommand}" />
+                    Command="{Binding Path=AddNewPageCommand}" />
                 <ribbon:RibbonButton
                     Label="Delete This Page"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=DeletePageCommand}" />
             </ribbon:RibbonGroup>
-        </ribbon:RibbonTab>-->
+        </ribbon:RibbonTab>
     </ribbon:Ribbon>
 </UserControl>

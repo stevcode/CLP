@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -170,6 +172,115 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Notebook Commands
+
+        #region Page Commands
+
+        private RelayCommand _addNewPageCommand;
+
+        /// <summary>
+        /// Gets the AddPageCommand.
+        /// </summary>
+        public RelayCommand AddNewPageCommand
+        {
+            get
+            {
+                return _addNewPageCommand
+                    ?? (_addNewPageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPService.AddPage(new CLPPage());
+                                          }));
+            }
+        }
+
+        private RelayCommand _deletePageCommand;
+
+        /// <summary>
+        /// Gets the DeletePageCommand.
+        /// </summary>
+        public RelayCommand DeletePageCommand
+        {
+            get
+            {
+                return _deletePageCommand
+                    ?? (_deletePageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              //change this to send uniqueID
+                                              CLPService.RemovePage("blah");
+                                          }));
+            }
+        }
+
+        #endregion //Page Commands
+
+        #region Insert Commands
+
+        private RelayCommand _insertImageCommand;
+
+        /// <summary>
+        /// Gets the InsertImageCommand.
+        /// </summary>
+        public RelayCommand InsertImageCommand
+        {
+            get
+            {
+                return _insertImageCommand
+                    ?? (_insertImageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              // Configure open file dialog box
+                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+                                              // Show open file dialog box
+                                              Nullable<bool> result = dlg.ShowDialog();
+
+                                              // Process open file dialog box results
+                                              if (result == true)
+                                              {
+                                                  // Open document
+                                                  string filename = dlg.FileName;
+                                                  CLPImage image = new CLPImage(filename);
+                                                  CLPService.AddPageObjectToPage(image);
+                                              }
+                                          }));
+            }
+        }
+
+        private RelayCommand _insertImageStampCommand;
+
+        /// <summary>
+        /// Gets the InsertImageStampCommand.
+        /// </summary>
+        public RelayCommand InsertImageStampCommand
+        {
+            get
+            {
+                return _insertImageStampCommand
+                    ?? (_insertImageStampCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              // Configure open file dialog box
+                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+                                              // Show open file dialog box
+                                              Nullable<bool> result = dlg.ShowDialog();
+
+                                              // Process open file dialog box results
+                                              if (result == true)
+                                              {
+                                                  // Open document
+                                                  string filename = dlg.FileName;
+                                                  CLPImageStamp image = new CLPImageStamp(filename);
+                                                  CLPService.AddPageObjectToPage(image);
+                                              }
+                                          }));
+            }
+        }
+
+        #endregion //Insert Commands
 
         private RelayCommand _submitPageCommand;
 
