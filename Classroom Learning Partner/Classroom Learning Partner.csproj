@@ -91,6 +91,7 @@
     <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
+    <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />

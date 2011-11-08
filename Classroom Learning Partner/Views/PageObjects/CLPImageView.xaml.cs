@@ -24,14 +24,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             InitializeComponent();
         }
 
-        private void closeButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-
-        }
+        
     }
 }

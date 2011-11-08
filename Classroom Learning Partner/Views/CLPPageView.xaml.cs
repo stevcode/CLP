@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views.PageObjects;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -64,14 +65,27 @@ namespace Classroom_Learning_Partner.Views
 
         private HitTestResultBehavior noFocusCallback(HitTestResult result)
         {
-            if (result.VisualHit.GetType() == typeof(CLPImageView))
+            if (result.VisualHit.GetType() == typeof(Rectangle))
             {
-                Console.WriteLine("blah");
-                (result.VisualHit as CLPImageView).Focus();
+                if ((result.VisualHit as Rectangle).Name == "HitBox")
+                {
+                    //Add timer to delay appearance of adorner
+                    
+                    //are these necessary?
+                    //PageObjectContainerView pageObjectContainerView = (LogicalTreeHelper.GetParent(LogicalTreeHelper.GetParent(LogicalTreeHelper.GetParent(result.VisualHit))) as PageObjectContainerView);
+                    //PageObjectContainerViewModel pageObjectContainerViewModel = (pageObjectContainerView.DataContext as PageObjectContainerViewModel);
+                    MainInkCanvas.IsHitTestVisible = false;
+                }
+                return HitTestResultBehavior.Stop;
             }
-            
+            else
+            {
+                MainInkCanvas.IsHitTestVisible = true;
+                return HitTestResultBehavior.Continue;
+            }
 
-            return HitTestResultBehavior.Continue;
+            
+            
         }
 
     }

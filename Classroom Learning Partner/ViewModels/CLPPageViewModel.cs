@@ -44,11 +44,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             foreach (var pageObject in page.PageObjects)
             {
+                CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    CLPPageObjectBaseViewModel pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
-                    PageObjectContainerViewModels.Add(pageObjectViewModel);
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    
                 }
+                else if (pageObject is CLPImageStamp)
+                {
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
+
+                PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);
+
+                PageObjectContainerViewModels.Add(pageObjectContainer);
             }
 
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
@@ -117,8 +126,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectContainerViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
-        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectContainerViewModels
+        private readonly ObservableCollection<PageObjectContainerViewModel> _pageObjectContainerViewModels = new ObservableCollection<PageObjectContainerViewModel>();
+        public ObservableCollection<PageObjectContainerViewModel> PageObjectContainerViewModels
         {
             get
             {

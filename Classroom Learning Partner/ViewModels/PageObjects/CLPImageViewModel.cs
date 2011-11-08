@@ -22,6 +22,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         {
             _sourceImage = image.SourceImage;
             this.Position = image.Position;
+            this.Height = image.Height;
+            this.Width = image.Width;
         }
 
         #region Binding

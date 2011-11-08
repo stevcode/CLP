@@ -169,7 +169,8 @@ namespace Classroom_Learning_Partner.Model
 
         public void SubmitPage(CLPPageViewModel pageVM)
         {
-            throw new NotImplementedException();
+            string s_page = ObjectSerializer.ToString(pageVM.Page);
+            App.Peer.Channel.SubmitPage(s_page);
         }
 
 
@@ -200,7 +201,7 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = null;
                 }
-                callbackMessage.PageObjectContainerViewModels.Add(pageObjectViewModel);
+                callbackMessage.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
             });
         }
     }

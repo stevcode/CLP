@@ -17,5 +17,8 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void Disconnect(string userName);
+
+        [OperationContract(IsOneWay = true)]
+        void SubmitPage(string page);
     }
 }
