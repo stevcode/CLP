@@ -92,9 +92,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.OpenNewNotebook();
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
+
+
 
         private RelayCommand _openNotebookCommand;
 

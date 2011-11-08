@@ -65,7 +65,7 @@
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
                 <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
-                <ListBox Grid.Row="1" x:Name="SubmissionsSideBar"
+                <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionViewModels}"
                      SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">

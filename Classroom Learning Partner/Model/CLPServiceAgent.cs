@@ -8,6 +8,7 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -63,7 +64,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNotebook(string notebookName)
         {
-            string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp2";
+            string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
             CLPNotebookViewModel newNotebookViewModel;
             if (File.Exists(filePath))
             {
@@ -102,21 +103,37 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNewNotebook()
         {
-            string notebookName = "blah1"; // get this from prompt askign new name of notebook
-            string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp2";
-            CLPNotebookViewModel newNotebookViewModel;
-            if (!File.Exists(filePath))
+            bool NameChooserLoop = true;
+
+            while (NameChooserLoop)
             {
-                newNotebookViewModel = new CLPNotebookViewModel();
-                newNotebookViewModel.Notebook.Name = notebookName;
-                App.NotebookViewModels.Add(newNotebookViewModel);
-                App.CurrentNotebookViewModel = newNotebookViewModel;
-                App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
+                nameChooser.Owner = Application.Current.MainWindow;
+                nameChooser.ShowDialog();
+                if (nameChooser.DialogResult == true)
+                {
+                    string notebookName = nameChooser.NotebookName.Text;
+                    string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
+                    CLPNotebookViewModel newNotebookViewModel;
+                    if (!File.Exists(filePath))
+                    {
+                        newNotebookViewModel = new CLPNotebookViewModel();
+                        newNotebookViewModel.Notebook.Name = notebookName;
+                        App.NotebookViewModels.Add(newNotebookViewModel);
+                        App.CurrentNotebookViewModel = newNotebookViewModel;
+                        App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                        NameChooserLoop = false;
+                    }
+                    else
+                    {
+                        MessageBox.Show("A Notebook with that name already exists. Please choose a different name.");
+                    }
+                }
+                else
+                {
+                    NameChooserLoop = false;
+                }
             }
-            //else error checking, file already exists, try different name
-      
-
-
         }
 
         public void SaveNotebook(CLPNotebookViewModel notebookVM)
