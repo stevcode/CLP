@@ -247,6 +247,10 @@
             <ribbon:RibbonGroup
                 Header="Insert">
                 <ribbon:RibbonButton
+                    Label="Insert Text Box"
+                    LargeImageSource="..\Images\AddText.png"
+                    Command="{Binding Path=InsertTextBoxCommand}" />
+                <ribbon:RibbonButton
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"
                     Command="{Binding Path=InsertImageCommand}" />
