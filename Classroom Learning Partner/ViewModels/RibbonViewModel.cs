@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         public const double PEN_RADIUS = 2;
         public const double MARKER_RADIUS = 5;
+        public const double ERASER_RADIUS = 5;
 
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
@@ -35,8 +36,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPService = new CLPServiceAgent();
             _drawingAttributes.Height = PEN_RADIUS;
             _drawingAttributes.Width = PEN_RADIUS;
-            _lastDrawingWidth = _drawingAttributes.Height;
-            _lastDrawingHeight = _drawingAttributes.Width;
             _drawingAttributes.Color = Colors.Black;
             _drawingAttributes.FitToCurve = true;
 
@@ -115,9 +114,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Pen Commands
 
-        private double _lastDrawingWidth;
-        private double _lastDrawingHeight;
-
         private RelayCommand _setPenCommand;
 
         /// <summary>
@@ -133,9 +129,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               DrawingAttributes.Height = PEN_RADIUS;
                                               DrawingAttributes.Width = PEN_RADIUS;
-                                              _lastDrawingHeight = DrawingAttributes.Height;
-                                              _lastDrawingWidth = DrawingAttributes.Width;
                                               EditingMode = InkCanvasEditingMode.Ink;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
                                           }));
             }
         }
@@ -155,9 +150,48 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               DrawingAttributes.Height = MARKER_RADIUS;
                                               DrawingAttributes.Width = MARKER_RADIUS;
-                                              _lastDrawingHeight = DrawingAttributes.Height;
-                                              _lastDrawingWidth = DrawingAttributes.Width;
                                               EditingMode = InkCanvasEditingMode.Ink;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
+                                          }));
+            }
+        }
+
+        private RelayCommand _setEraserCommand;
+
+        /// <summary>
+        /// Gets the SetEraserCommand.
+        /// </summary>
+        public RelayCommand SetEraserCommand
+        {
+            get
+            {
+                return _setEraserCommand
+                    ?? (_setEraserCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = ERASER_RADIUS;
+                                              DrawingAttributes.Width = ERASER_RADIUS;
+                                              EditingMode = InkCanvasEditingMode.EraseByPoint;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByPoint);
+                                          }));
+            }
+        }
+
+        private RelayCommand _setStrokeEraserCommand;
+
+        /// <summary>
+        /// Gets the SetStrokeEraserCommand.
+        /// </summary>
+        public RelayCommand SetStrokeEraserCommand
+        {
+            get
+            {
+                return _setStrokeEraserCommand
+                    ?? (_setStrokeEraserCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              EditingMode = InkCanvasEditingMode.EraseByStroke;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByStroke);
                                           }));
             }
         }
@@ -177,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CurrentColorButton = button as RibbonButton;
                                               DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
-                                              EditingMode = InkCanvasEditingMode.Ink;
+                                              _editingMode = InkCanvasEditingMode.Ink;
                                           }));
             }
         }

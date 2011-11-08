@@ -36,6 +36,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page)
         {
+            AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
+                                                                    {
+                                                                        this.EditingMode = newInkMode;
+                                                                    });
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {

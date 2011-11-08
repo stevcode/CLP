@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight.Messaging;
 using Classroom_Learning_Partner.ViewModels;
+using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner
 {
@@ -11,7 +12,21 @@ namespace Classroom_Learning_Partner
     {
         enum MessageTypes
         {
-            AddPageToDisplay
+            AddPageToDisplay,
+            ChangeInkMode
+        }
+
+        public static class ChangeInkMode
+        {
+            public static void Send(InkCanvasEditingMode inkMode)
+            {
+                Messenger.Default.Send<InkCanvasEditingMode>(inkMode);
+            }
+
+            public static void Register(object recipient, Action<InkCanvasEditingMode> action)
+            {
+                Messenger.Default.Register<InkCanvasEditingMode>(recipient, action);
+            }
         }
 
         public static class AddPageToDisplay
