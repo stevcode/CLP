@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Microsoft.Windows.Controls.Ribbon;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -23,22 +24,24 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
+        public const double PEN_RADIUS = 2;
+        public const double MARKER_RADIUS = 5;
+
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
         /// </summary>
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
-            _drawingAttributes.Height = 2;
-            _drawingAttributes.Width = 2;
+            _drawingAttributes.Height = PEN_RADIUS;
+            _drawingAttributes.Width = PEN_RADIUS;
             _lastDrawingWidth = _drawingAttributes.Height;
             _lastDrawingHeight = _drawingAttributes.Width;
             _drawingAttributes.Color = Colors.Black;
             _drawingAttributes.FitToCurve = true;
-        }
 
-        private double _lastDrawingWidth;
-        private double _lastDrawingHeight;
+            _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+        }
 
         private ICLPServiceAgent CLPService { get; set; }
 
@@ -74,7 +77,112 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #region Bindings
+
+        /// <summary>
+        /// The <see cref="CurrentColorButton" /> property's name.
+        /// </summary>
+        public const string CurrentColorButtonPropertyName = "CurrentColorButton";
+
+        private RibbonButton _currentColorButton = new RibbonButton();
+
+        /// <summary>
+        /// Sets and gets the CurrentColorButton property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public RibbonButton CurrentColorButton
+        {
+            get
+            {
+                return _currentColorButton;
+            }
+
+            set
+            {
+                if (_currentColorButton == value)
+                {
+                    return;
+                }
+
+                _currentColorButton = value;
+                RaisePropertyChanged(CurrentColorButtonPropertyName);
+            }
+        }
+
+        #endregion //Bindings
+
         #region Commands
+
+        #region Pen Commands
+
+        private double _lastDrawingWidth;
+        private double _lastDrawingHeight;
+
+        private RelayCommand _setPenCommand;
+
+        /// <summary>
+        /// Gets the SetPenCommand.
+        /// </summary>
+        public RelayCommand SetPenCommand
+        {
+            get
+            {
+                return _setPenCommand
+                    ?? (_setPenCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = PEN_RADIUS;
+                                              DrawingAttributes.Width = PEN_RADIUS;
+                                              _lastDrawingHeight = DrawingAttributes.Height;
+                                              _lastDrawingWidth = DrawingAttributes.Width;
+                                              EditingMode = InkCanvasEditingMode.Ink;
+                                          }));
+            }
+        }
+
+        private RelayCommand _setMarkerCommand;
+
+        /// <summary>
+        /// Gets the SetMarkerCommand.
+        /// </summary>
+        public RelayCommand SetMarkerCommand
+        {
+            get
+            {
+                return _setMarkerCommand
+                    ?? (_setMarkerCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = MARKER_RADIUS;
+                                              DrawingAttributes.Width = MARKER_RADIUS;
+                                              _lastDrawingHeight = DrawingAttributes.Height;
+                                              _lastDrawingWidth = DrawingAttributes.Width;
+                                              EditingMode = InkCanvasEditingMode.Ink;
+                                          }));
+            }
+        }
+
+        private RelayCommand<RibbonButton> _setPenColorCommand;
+
+        /// <summary>
+        /// Gets the SetPenColorCommand.
+        /// </summary>
+        public RelayCommand<RibbonButton> SetPenColorCommand
+        {
+            get
+            {
+                return _setPenColorCommand
+                    ?? (_setPenColorCommand = new RelayCommand<RibbonButton>(
+                                          (button) =>
+                                          {
+                                              CurrentColorButton = button as RibbonButton;
+                                              DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+                                              EditingMode = InkCanvasEditingMode.Ink;
+                                          }));
+            }
+        }
+
+        #endregion //Pen Commands
 
         #region Notebook Commands
 
