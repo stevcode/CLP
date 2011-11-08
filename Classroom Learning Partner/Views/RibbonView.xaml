@@ -7,6 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
+        <ribbon:Ribbon.ContextualTabGroups>
+            <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
+        </ribbon:Ribbon.ContextualTabGroups>
         <!--Application Menu Button-->
 
         <ribbon:Ribbon.ApplicationMenu>
@@ -178,8 +181,8 @@
 
         <!--Editing Tab-->
         <ribbon:RibbonTab
-            Header="Editing">
-           <!-- <ribbon:RibbonGroup
+            Header="General Editing" ContextualTabGroupHeader="Authoring">
+           <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
                     Label="Pen"
@@ -240,7 +243,7 @@
                     <ribbon:RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
 
-            </ribbon:RibbonGroup>-->
+            </ribbon:RibbonGroup>
             <ribbon:RibbonGroup
                 Header="Insert">
                 <ribbon:RibbonButton
