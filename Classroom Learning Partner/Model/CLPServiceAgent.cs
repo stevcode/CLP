@@ -141,7 +141,7 @@ namespace Classroom_Learning_Partner.Model
             //make async?
             //compare VM with model?
             //compare model w/ database
-            string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.Name + @".clp2";
+            string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.Name + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
@@ -154,7 +154,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 Directory.CreateDirectory(App.NotebookDirectory);
             }
-            foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp2"))
+            foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
             {
                 string notebookName = Path.GetFileNameWithoutExtension(fullFile);
                 NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
