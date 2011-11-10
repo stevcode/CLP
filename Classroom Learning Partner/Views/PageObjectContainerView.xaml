@@ -22,7 +22,7 @@
             HorizontalAdornerPlacement="Outside"
             VerticalAdornerPlacement="Outside">
         <ac:AdornedControl.AdornerContent>
-            <!-- This is the adorner -->
+             <!--This is the adorner-->
             <Canvas
                     x:Name="adornerCanvas"
                     HorizontalAlignment="Center"
@@ -144,9 +144,9 @@
                 </Grid>
             </Canvas>
         </ac:AdornedControl.AdornerContent>
-        <Grid>
-            <ContentControl Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-            <Rectangle x:Name="HitBox"  Fill="Transparent" />
+        <Grid x:Name="HitBox" Background="Transparent">
+            <Rectangle   Fill="Transparent" />
+            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}"/>
         </Grid>
     </ac:AdornedControl>
 

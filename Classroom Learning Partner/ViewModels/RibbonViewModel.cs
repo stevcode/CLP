@@ -364,6 +364,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Insert Commands
 
+        private RelayCommand _insertTextBoxCommand;
+
+        /// <summary>
+        /// Gets the InsertTextBoxCommand.
+        /// </summary>
+        public RelayCommand InsertTextBoxCommand
+        {
+            get
+            {
+                return _insertTextBoxCommand
+                    ?? (_insertTextBoxCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPTextBox textBox = new CLPTextBox();
+                                              CLPService.AddPageObjectToPage(textBox);
+                                          }));
+            }
+        }
+
         private RelayCommand _insertImageCommand;
 
         /// <summary>

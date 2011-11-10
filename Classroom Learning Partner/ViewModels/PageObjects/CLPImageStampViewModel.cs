@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         public CLPImageStampViewModel(CLPImageStamp stamp)
         {
+            PageObject = stamp;
             this.Position = stamp.Position;
             /* Change stamp handle dimensions here */
 

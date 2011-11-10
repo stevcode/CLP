@@ -57,5 +57,7 @@ namespace Classroom_Learning_Partner.Views
             }
             pageObjectContainerViewModel.Position = new Point(x, y);
         }
+
+      
     }
 }

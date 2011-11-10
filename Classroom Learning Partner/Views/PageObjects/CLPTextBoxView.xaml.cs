@@ -15,20 +15,13 @@ using System.Windows.Shapes;
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for CLPTextBoxView.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class CLPTextBoxView : UserControl
     {
-        public CLPImageView()
+        public CLPTextBoxView()
         {
             InitializeComponent();
-        }
-
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("click");
-        }
-
-        
+        }        
     }
 }

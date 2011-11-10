@@ -20,10 +20,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         public CLPImageViewModel(CLPImage image)
         {
+            PageObject = image;
             _sourceImage = image.SourceImage;
-            this.Position = image.Position;
-            this.Height = image.Height;
-            this.Width = image.Width;
+            
         }
 
         #region Binding

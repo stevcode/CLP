@@ -15,7 +15,9 @@
     <Grid Background="Transparent">
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black" Background="White">
-                <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove">
+                <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
+                                                                                                PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
+                                                                                                PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
                     <ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjectContainerViewModels}"
                                   ItemsPanel="{StaticResource PanelTemplate}"
@@ -29,8 +31,7 @@
                                Strokes="{Binding Path=Strokes}"
                                EditingMode="{Binding Path=EditingMode}"
                                EditingModeInverted="EraseByStroke"
-                               DefaultDrawingAttributes="{Binding Path=DefaultDA}"
-                               >
+                               DefaultDrawingAttributes="{Binding Path=DefaultDA}">
                     </InkCanvas>
                 </Canvas>
             </Border>
