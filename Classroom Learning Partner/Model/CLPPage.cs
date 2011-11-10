@@ -48,6 +48,15 @@ namespace Classroom_Learning_Partner.Model
                 return _metaData;
             }
         }
+        private CLPHistory _pageHistory = new CLPHistory();
+        public CLPHistory PageHistory
+        {
+            get
+            {
+                return _pageHistory;
+            }
+        }
+        
 
         #region MetaData
 

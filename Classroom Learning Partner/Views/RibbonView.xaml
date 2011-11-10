@@ -124,7 +124,19 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-
+            <ribbon:RibbonGroup
+                Header="Edit">
+                <ribbon:RibbonButton
+                    Label="Undo"
+                    LargeImageSource="..\Images\Undo.png"
+                    Command="{Binding Path=UndoCommand}" />
+                <ribbon:RibbonButton
+                    Label="Redo"
+                    LargeImageSource="..\Images\Redo.png"
+                    Command="{Binding Path=RedoCommand}" />
+                
+            </ribbon:RibbonGroup>
+            
             <ribbon:RibbonGroup>
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 

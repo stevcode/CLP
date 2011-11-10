@@ -472,7 +472,46 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        private RelayCommand _undoCommand;
 
+        /// <summary>
+        /// Gets the UndoCommand.
+        /// </summary>
+        public RelayCommand UndoCommand
+        {
+            get
+            {
+                return _undoCommand
+                    ?? (_undoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(System.DateTime.Now, "UNDO");
+                                              //historyItem.CLPHistoryObjectReference = System.DateTime.Now;
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              System.Console.WriteLine("Undo Message dispatched");
+                                          }));
+            }
+        }
+        private RelayCommand _redoCommand;
+
+        /// <summary>
+        /// Gets the RedoCommand.
+        /// </summary>
+        public RelayCommand RedoCommand
+        {
+            get
+            {
+                return _redoCommand
+                    ?? (_redoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(System.DateTime.Now, "REDO");
+                                              //historyItem.CLPHistoryObjectReference = System.DateTime.Now;
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              System.Console.WriteLine("Redo Message dispatched");
+                                          }));
+            }
+        }
         #endregion //Commands
     }
 }

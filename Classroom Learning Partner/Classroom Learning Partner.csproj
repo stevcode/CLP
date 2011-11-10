@@ -75,6 +75,8 @@
     </ApplicationDefinition>
     <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPAttribute.cs" />
+    <Compile Include="Model\CLPHistory.cs" />
+    <Compile Include="Model\CLPHistoryItem.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
+    <Compile Include="ViewModels\CLPHistoryViewModel.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -302,7 +305,12 @@
       <Name>AdornedControl</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Redo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

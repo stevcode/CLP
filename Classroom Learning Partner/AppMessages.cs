@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight.Messaging;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model;
 using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner
@@ -13,7 +14,8 @@ namespace Classroom_Learning_Partner
         enum MessageTypes
         {
             AddPageToDisplay,
-            ChangeInkMode
+            ChangeInkMode,
+            UpdateCLPHistory
         }
 
         public static class ChangeInkMode
@@ -53,6 +55,18 @@ namespace Classroom_Learning_Partner
             public static void Register(object recipient, Action<NotificationMessageAction<CLPPageViewModel>> action)
             {
                 Messenger.Default.Register<NotificationMessageAction<CLPPageViewModel>>(recipient, action);
+            }
+        }
+        public static class UpdateCLPHistory
+        {
+            public static void Send(CLPHistoryItem item)
+            {
+                Messenger.Default.Send(item, MessageTypes.UpdateCLPHistory);
+            }
+
+            public static void Register(object recipient, Action<CLPHistoryItem> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.UpdateCLPHistory, action);
             }
         }
     }
