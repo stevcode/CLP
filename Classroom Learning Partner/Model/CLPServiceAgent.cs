@@ -199,7 +199,6 @@ namespace Classroom_Learning_Partner.Model
             throw new NotImplementedException();
         }
 
-
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
             AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
@@ -224,6 +223,8 @@ namespace Classroom_Learning_Partner.Model
                 }
                 callbackMessage.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
             });
+            CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
+            AppMessages.UpdateCLPHistory.Send(item);
         }
     }
 }

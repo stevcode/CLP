@@ -319,15 +319,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Resource Include="Images\Undo.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Redo.png" />
-  </ItemGroup>
-  <ItemGroup>
+=======
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+>>>>>>> 414f83759e31363650194a01d1d1cd578b336fa0
   </ItemGroup>
-
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

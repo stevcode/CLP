@@ -491,7 +491,42 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        private RelayCommand _undoCommand;
 
+        /// <summary>
+        /// Gets the UndoCommand.
+        /// </summary>
+        public RelayCommand UndoCommand
+        {
+            get
+            {
+                return _undoCommand
+                    ?? (_undoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                          }));
+            }
+        }
+        private RelayCommand _redoCommand;
+
+        /// <summary>
+        /// Gets the RedoCommand.
+        /// </summary>
+        public RelayCommand RedoCommand
+        {
+            get
+            {
+                return _redoCommand
+                    ?? (_redoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                          }));
+            }
+        }
         #endregion //Commands
     }
 }

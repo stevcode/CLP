@@ -40,6 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                     {
                                                                         this.EditingMode = newInkMode;
                                                                     });
+
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
@@ -65,6 +66,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
+
+            _historyVM = new CLPHistoryViewModel(page.PageHistory);
         }
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -116,7 +119,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 _page = value;
             }
         }
-
+        private CLPHistoryViewModel _historyVM = new CLPHistoryViewModel();
+        public CLPHistoryViewModel HistoryVM
+        {
+            get
+            {
+                return _historyVM;
+            }
+            set
+            {
+                _historyVM = value;
+            }
+        }
         #endregion //Properties
 
         #region Bindings
