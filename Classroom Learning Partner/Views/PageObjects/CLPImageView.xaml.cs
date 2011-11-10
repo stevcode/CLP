@@ -24,6 +24,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             InitializeComponent();
         }
 
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("click");
+        }
+
         
     }
 }

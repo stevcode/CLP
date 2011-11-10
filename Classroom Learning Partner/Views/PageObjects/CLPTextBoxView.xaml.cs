@@ -22,6 +22,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPTextBoxView()
         {
             InitializeComponent();
-        }
+        }        
     }
 }

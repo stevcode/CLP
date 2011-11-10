@@ -507,6 +507,7 @@ namespace AdornedControl
         private void adornerContent_MouseEnter(object sender, MouseEventArgs e)
         {
             MouseEnterLogic();
+            e.Handled = false;
         }
 
         /// <summary>
@@ -515,6 +516,7 @@ namespace AdornedControl
         private void adornerContent_MouseLeave(object sender, MouseEventArgs e)
         {
             MouseLeaveLogic();
+            e.Handled = false;
         }
 
         /// <summary>
@@ -653,6 +655,7 @@ namespace AdornedControl
             base.OnMouseEnter(e);
 
             MouseEnterLogic();
+            e.Handled = false;
         }
 
         /// <summary>
@@ -663,6 +666,7 @@ namespace AdornedControl
             base.OnMouseLeave(e);
 
             MouseLeaveLogic();
+            e.Handled = false;
         }
 
         /// <summary>

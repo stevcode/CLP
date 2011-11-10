@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [Serializable]
     public class CLPTextBox : CLPPageObjectBase
     {
-        public CLPTextBox() : this("")
+        public CLPTextBox() : this("testing testin testingngng")
         {
         }
 
