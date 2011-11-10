@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views.PageObjects;
 using Classroom_Learning_Partner.ViewModels;
+using System.Windows.Threading;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -21,11 +22,18 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPageView : UserControl
     {
+        private const double ADORNER_DELAY = 800; //time to wait until adorner appears
+
         private bool isMouseDown = false;
+        private DispatcherTimer timer = null;
+        private int DirtyHitbox = 0;
 
         public CLPPageView()
         {
             InitializeComponent();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
+            timer.Tick += new EventHandler(timer_Tick);
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -59,25 +67,41 @@ namespace Classroom_Learning_Partner.Views
         {
             if (result.VisualHit.GetType() == typeof(Grid))
             {
+                //Console.WriteLine("over any grid");
                 if ((result.VisualHit as Grid).Name == "HitBox")
                 {
                     //Add timer to delay appearance of adorner
-                    //are these necessary?
-                    //PageObjectContainerView pageObjectContainerView = (LogicalTreeHelper.GetParent(LogicalTreeHelper.GetParent(LogicalTreeHelper.GetParent(result.VisualHit))) as PageObjectContainerView);
-                    //PageObjectContainerViewModel pageObjectContainerViewModel = (pageObjectContainerView.DataContext as PageObjectContainerViewModel);
-                    MainInkCanvas.IsHitTestVisible = false;
+                    if (DirtyHitbox > 3)
+                    {
+                        timer.Start();
+                    }
+                    DirtyHitbox = 0;
+                    
                 }
                 return HitTestResultBehavior.Stop;
                 
             }
             else
             {
+                DirtyHitbox++;
+                if (DirtyHitbox > 3)
+                {
+                    timer.Stop();
+                }
                 MainInkCanvas.IsHitTestVisible = true;
+                Console.WriteLine(DirtyHitbox.ToString());
                 return HitTestResultBehavior.Continue;
             }
 
             
             
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            Console.WriteLine("tick fired");
+            timer.Stop();
+            MainInkCanvas.IsHitTestVisible = false;
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

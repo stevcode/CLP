@@ -15,7 +15,7 @@
             <toolkit:RtfFormatter />
         </toolkit:RichTextBox.TextFormatter>
         <toolkit:RichTextBoxFormatBarManager.FormatBar>
-            <toolkit:RichTextBoxFormatBar />
+            <toolkit:RichTextBoxFormatBar Height="75" Width="150" />
         </toolkit:RichTextBoxFormatBarManager.FormatBar>
     </toolkit:RichTextBox>
 </UserControl>
