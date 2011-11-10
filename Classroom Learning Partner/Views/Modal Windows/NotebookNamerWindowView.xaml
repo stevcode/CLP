@@ -11,13 +11,13 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" FocusManager.FocusedElement="{Binding ElementName=NotebookName}">
             <Label>Choose Name for Notebook:</Label>
             <TextBox x:Name="NotebookName" Width="150" VerticalAlignment="Top"></TextBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right">
-            <Button Content="OK" Width="100" Height="30" Margin="5" Click="OKButton_Click"/>
-            <Button Content="Cancel" Width="100" Height="30" Margin="5" IsCancel="True"/>
+            <Button IsDefault="True" Content="OK" Width="100" Height="30" Margin="5" Click="OKButton_Click"/>
+            <Button IsCancel="True" Content="Cancel" Width="100" Height="30" Margin="5"/>
         </StackPanel>
     </Grid>
 </Window>
