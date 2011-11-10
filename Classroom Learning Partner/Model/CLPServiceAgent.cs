@@ -225,7 +225,6 @@ namespace Classroom_Learning_Partner.Model
             });
             CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
             AppMessages.UpdateCLPHistory.Send(item);
-            Console.WriteLine("Add Object send to History.");
         }
     }
 }

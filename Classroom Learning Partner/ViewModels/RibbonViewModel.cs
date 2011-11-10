@@ -504,10 +504,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(System.DateTime.Now, "UNDO");
-                                              //historyItem.CLPHistoryObjectReference = System.DateTime.Now;
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
                                               AppMessages.UpdateCLPHistory.Send(historyItem);
-                                              System.Console.WriteLine("Undo Message dispatched");
                                           }));
             }
         }
@@ -524,10 +522,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(System.DateTime.Now, "REDO");
-                                              //historyItem.CLPHistoryObjectReference = System.DateTime.Now;
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
                                               AppMessages.UpdateCLPHistory.Send(historyItem);
-                                              System.Console.WriteLine("Redo Message dispatched");
                                           }));
             }
         }

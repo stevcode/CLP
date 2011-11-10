@@ -18,8 +18,6 @@ namespace Classroom_Learning_Partner.Model
               * MOVE
               * ERASE
               * COPY
-              * UNDOSEND
-              * REDOSEND
               */
 
             

@@ -33,29 +33,18 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _history = history;
             CLPService = new CLPServiceAgent();
-            //change to updateHistory type
             AppMessages.UpdateCLPHistory.Register(this, (action) =>
             {
-                   Console.WriteLine("HistoryViewModel registered with messages");
-                   //Add historyItem to the list in history
                    
                    //switch: if undo, if redo, if move, etc
                    string type = action.ItemType;
                         if(type == "UNDO")
                         {
-                            DateTime timeUndo = (DateTime) action.CLPHistoryObjectReference;
-                            Console.WriteLine("Undo received by HistoryViewModel.");
-                           //_historyItems.Add(action);
-                           // includeHistoryItem(action);
-                            this.undo(timeUndo);
+                            this.undo();
                         }
                         else if(type == "REDO")
                         {
-                            DateTime timeRedo = (DateTime) action.CLPHistoryObjectReference;
-                            Console.WriteLine("Redo received by HistoryViewModel.");
-                            //_historyItems.Add(action);
-                            //includeHistoryItem(action);
-                            redo(timeRedo);
+                            this.redo();
                         }
                         else if(type == "ADD")
                         {
@@ -73,7 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             move(action);
                         }
-                   
+                        return;
             });
 
         }
@@ -133,32 +122,22 @@ namespace Classroom_Learning_Partner.ViewModels
         }
         public void add(CLPHistoryItem item)
         {
-            //CLPHistoryItem item = createHistoryItem(obj, CLPHistoryItem.CLPHistoryItemTypes.add);C:\classroom-learning-partner\Classroom Learning Partner\ViewModels\NotebookSelectorViewModel.cs
-            //item.MetaData.Add("ADD", new CLPAttribute("ADD", "true"));
-            //Console.WriteLine("ADD object received by History");
             _historyItems.Add(item);
             this.History.HistoryItems.Add(item);
             includeHistoryItem(item);
-            
-            Console.WriteLine("SIZE OF HISTORYITEMS LIST: " + _historyItems.Count);
+            return;
         }
         public void erase(object obj)
         {
-            //CLPHistoryItem item = createHistoryItem(obj, CLPHistoryItem.CLPHistoryItemTypes.erase);
-            //item.MetaData.Add("ERASE", new CLPAttribute("ERASE", "true"));
-            //_historyItems.Add(item);
+            return;
         }
         public void move(object obj)
         {
-            //CLPHistoryItem item = createHistoryItem(obj, CLPHistoryItem.CLPHistoryItemTypes.move);
-           // item.MetaData.Add("MOVE", new CLPAttribute("MOVE", "true"));
-           // _historyItems.Add(item);
+            return;
         }
         public void copy(object obj)
         {
-            //CLPHistoryItem item = includeHistoryItem(obj);
-            //item.MetaData.Add("COPY", new CLPAttribute("COPY", "true"));
-            //_historyItems.Add(item);
+            return;
         }
         private void includeHistoryItem(CLPHistoryItem item)
         {
@@ -169,53 +148,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 ObjectReferences.Add(itemID, obj);
                 this.History.ObjectReferences.Add(itemID, obj);
             }
-            //CLPHistoryItem item = new CLPHistoryItem(itemID, type);
             return;
 
         }
-        public void undo(DateTime time)
+        public void undo()
         {
             
             if (HistoryItems.Count <= 0) { return; }
-            int c = HistoryItems.Count;
-            for (int i = 0; i < c; i++)
-            {
-                Console.WriteLine(HistoryItems[i]);
-            }
             CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
-            if(HistoryItems.Contains(item)){
-                Console.WriteLine("item is in HistoryItems");}
-            bool removed = HistoryItems.Remove(item);
-            bool Hremoved = this.History.HistoryItems.Remove(item);
-            Console.WriteLine(removed + " " + Hremoved);
-            int d = HistoryItems.Count;
-            for (int i = 0; i < d; i++)
-            {
-                Console.WriteLine(HistoryItems[i]);
-            }
+            HistoryItems.Remove(item);
+            this.History.HistoryItems.Remove(item);
             UndoneHistoryItems.Add(item);
             this.History.UndoneHistoryItems.Add(item);
             Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
-            //Object obj = ObjectReferences[Convert.ToInt32(item.CLPHistoryObjectReference)];
-            //Send message to dispatch agent to display undo action
-            //CLPHistoryItem item2 = new CLPHistoryItem(obj, "UNDOSEND");
-            //AppMessages.UpdateCLPHistory.Send(item2);
-            Console.WriteLine("UNDO: ITEMS IN UNDONE = " + UndoneHistoryItems.Count + " ITEMS IN HISTITEMS = " + HistoryItems.Count);
             return;
         }
-        public void redo(DateTime time)
+        public void redo()
         {
             if (UndoneHistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
             UndoneHistoryItems.Remove(item);
-            HistoryItems.Add(item);
-            //check if the last action was an undo, because we want to skip over that.
+            History.UndoneHistoryItems.Remove(item);
             Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
-            //Send message to dispatch agent
-            CLPHistoryItem item2 = new CLPHistoryItem(obj, "REDOSEND");
-            //CLPPageObjectBase objBase = new CLPPageObjectBase(
-            //AppMessages.UpdateCLPHistory.Send(item2);
-            CLPService.AddPageObjectToPage((CLPPageObjectBase)item2.CLPHistoryObjectReference);
+            CLPService.AddPageObjectToPage((CLPPageObjectBase)obj);
             return;
         }
     }

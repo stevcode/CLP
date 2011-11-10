@@ -68,22 +68,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
 
             _historyVM = new CLPHistoryViewModel(page.PageHistory);
-
-            //Register to receive messages when the redo button is pressed
-            AppMessages.UpdateCLPHistory.Register(this, (action) =>
-            {
-                System.Type type = action.CLPHistoryObjectReference.GetType();
-                string itemType = action.ItemType;
-                if (itemType == "REDOSEND")
-                {
-                    //redo the action
-                }
-                else if (itemType == "UNDOSEND")
-                {
-                    //undo the action
-                    //undo(action);
-                }
-            });
         }
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
