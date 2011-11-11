@@ -12,19 +12,15 @@ namespace Classroom_Learning_Partner.Model
 
         #region Constructors
 
-        public CLPAttributeValue(string attributeName, string attributeValue)
+        public CLPAttributeValue(string attributeValue)
         {
-            _attributeName = attributeName;
-            _attributeValues.Add(attributeValue);
-            SelectedValue = _attributeValues[0];
+            SetAttributeValues(attributeValue);
             IsSortable = false;
         }
 
-        public CLPAttributeValue(string attributeName, List<string> attributeValues)
+        public CLPAttributeValue(List<string> attributeValues)
         {
-            _attributeName = attributeName;
-            _attributeValues = attributeValues;
-            SelectedValue = _attributeValues[0];
+            SetAttributeValues(attributeValues);
             IsSortable = false;
         }
 
@@ -32,16 +28,7 @@ namespace Classroom_Learning_Partner.Model
 
         #region Properties
 
-        private string _attributeName;
-        public string AttributeName
-        {
-            get
-            {
-                return _attributeName;
-            }
-        }
-
-        private List<string> _attributeValues = new List<string>();
+        private List<string> _attributeValues;
         public List<string> AttributeValues
         {
             get
@@ -50,10 +37,54 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public string SelectedValue { get; set; }
+        private int _selectedValueIndex;
+        public int SelectedValueIndex
+        {
+            get
+            {
+                return _selectedValueIndex;
+            }
+            set
+            {
+                if (value < _attributeValues.Count && value >= 0)
+                {
+                    _selectedValueIndex = value;
+                }
+                else
+                {
+                    Console.WriteLine("Attempted to set SelectedValueIndex out of bounds, defaulted to 0");
+                    _selectedValueIndex = 0;
+                }
+            }
+        }
+
+        public string SelectedValue
+        {
+            get
+            {
+                return AttributeValues[SelectedValueIndex];
+            }
+        }
 
         public bool IsSortable { get; set; }
 
         #endregion //Properties
+
+        #region Methods
+
+        public void SetAttributeValues(string value)
+        {
+            _attributeValues = new List<string>();
+            _attributeValues.Add(value);
+            SelectedValueIndex = 0;
+        }
+
+        public void SetAttributeValues(List<string> values)
+        {
+            _attributeValues = values;
+            SelectedValueIndex = 0;
+        }
+
+        #endregion //Methods
     }
 }

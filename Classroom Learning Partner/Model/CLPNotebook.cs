@@ -19,16 +19,17 @@ namespace Classroom_Learning_Partner.Model
             CLPPage page = new CLPPage();
             _pages.Add(page);
 
-            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", Guid.NewGuid().ToString()));
+
+            MetaData.SetValue("CreationDate", DateTime.Now.ToString());
+            MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
         }
 
         #endregion //Constructors
 
         #region Properties
 
-        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
-        public Dictionary<string, CLPAttributeValue> MetaData
+        private MetaDataContainer _metaData = new MetaDataContainer();
+        public MetaDataContainer MetaData
         {
             get
             {
@@ -57,40 +58,26 @@ namespace Classroom_Learning_Partner.Model
 
         #region MetaData
 
+        
+
         public string UniqueID
         {
             get
             {
-                return MetaData["UniqueID"].SelectedValue;
+                return MetaData.GetValue("UniqueID");
             }
 
         }
 
-        public string Name
+        public string NotebookName
         {
             get
             {
-                if (MetaData.ContainsKey("Name"))
-	            {
-		             return MetaData["Name"].SelectedValue;
-	            }
-                else
-                {
-                    MetaData.Add("Name",new CLPAttributeValue("Name", "NoName"));
-                    return "NoName";
-                }
-                
+                return MetaData.GetValue("NotebookName"); 
             }
             set
             {
-                if (MetaData.ContainsKey("Name"))
-	            {
-                    MetaData["Name"] = new CLPAttributeValue("Name", value);
-	            }
-                else
-	            {
-                    MetaData.Add("Name",new CLPAttributeValue("Name", value));
-	            }
+                MetaData.SetValue("NotebookName", value);
             }
         }
 
