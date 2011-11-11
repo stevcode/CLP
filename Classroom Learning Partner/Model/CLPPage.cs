@@ -14,8 +14,8 @@ namespace Classroom_Learning_Partner.Model
 
         public CLPPage()
         {
-            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", Guid.NewGuid().ToString()));
+            MetaData.SetValue("CreationDate", DateTime.Now.ToString());
+            MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
         }
 
         #endregion //Constructors
@@ -40,14 +40,15 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
-        public Dictionary<string, CLPAttributeValue> MetaData
+        private MetaDataContainer _metaData = new MetaDataContainer();
+        public MetaDataContainer MetaData
         {
             get
             {
                 return _metaData;
             }
         }
+
         private CLPHistory _pageHistory = new CLPHistory();
         public CLPHistory PageHistory
         {
@@ -56,7 +57,8 @@ namespace Classroom_Learning_Partner.Model
                 return _pageHistory;
             }
         }
-        
+
+        #endregion //Properties
 
         #region MetaData
 
@@ -64,13 +66,10 @@ namespace Classroom_Learning_Partner.Model
         {
             get
             {
-                return MetaData["UniqueID"].SelectedValue;
+                return MetaData.GetValue("UniqueID");
             }
-
         }
 
         #endregion //MetaData
-
-        #endregion
     }
 }

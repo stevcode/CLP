@@ -22,18 +22,20 @@ namespace Classroom_Learning_Partner.Model
 
             
             _CLPHistoryObjectReference = obj;
-            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", System.Guid.NewGuid().ToString()));
-            _metaData.Add("ItemType", new CLPAttributeValue("ItemType", itemType));
+            MetaData.SetValue("CreationDate", DateTime.Now.ToString());
+            MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
+            MetaData.SetValue("ItemType", itemType);
         }
-        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
-        public Dictionary<string, CLPAttributeValue> MetaData
-        {
-            get
-            {
-                return _metaData;
-            }
-        }
+
+         private MetaDataContainer _metaData = new MetaDataContainer();
+         public MetaDataContainer MetaData
+         {
+             get
+             {
+                 return _metaData;
+             }
+         }
+
         private object _CLPHistoryObjectReference;
         public object CLPHistoryObjectReference
         {
@@ -48,12 +50,12 @@ namespace Classroom_Learning_Partner.Model
         }
        
         #region MetaData
-        private String _itemType;
+
         public string ItemType
         {
             get
             {
-                return MetaData["ItemType"].SelectedValue;
+                return MetaData.GetValue("ItemType");
             }
 
         }

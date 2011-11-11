@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             LoadImageFromByteSource();
             InitializeBase();
 
-            MetaData.Add("IsAnchored", new CLPAttributeValue("IsAnchored", "true"));
+            MetaData.SetValue("IsAnchored", "True");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -40,27 +40,27 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 if (_sourceImage.Height > 1000)
                 {
-                    base.Height = 1000;
-                    double ratio = _sourceImage.Width / _sourceImage.Height;
-                    base.Width = 1000 * ratio;
+                    Height = 1000;
+                    double ratio = _sourceImage.Height / _sourceImage.Width;
+                    Width = 1000 * ratio;
                 }
                 else
                 {
-                    base.Height = _sourceImage.Height;
+                    Height = _sourceImage.Height;
                 }
 
                 if (_sourceImage.Width > 800)
                 {
-                    base.Width = 800;
-                    double ratio = _sourceImage.Height / _sourceImage.Width;
-                    base.Height = 800 * ratio;
+                    Width = 800;
+                    double ratio = _sourceImage.Width / _sourceImage.Height;
+                    Height = 800 * ratio;
                 }
                 else
                 {
-                    base.Width = _sourceImage.Width;
+                    Width = _sourceImage.Width;
                 }
 
-                base.Position = new System.Windows.Point(150, 150);
+                base.Position = new System.Windows.Point(10, 10);
             }
         }
 
@@ -116,11 +116,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         //returns true if stamp is anchor/placed by teacher
         //returns false if stamp is a copy of the anchor; moved by the student
-        public bool IsAnchor
+        public bool IsAnchored
         {
             get
             {
-                if (MetaData["IsAnchored"].SelectedValue == "true")
+                if (MetaData.GetValue("IsAnchored") == "True")
                 {
                     return true;
                 }
@@ -133,11 +133,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 if (value)
                 {
-                    MetaData["IsAnchored"].AttributeValues[0] = "true";
+                    MetaData.SetValue("IsAnchored", "True");
                 }
                 else
                 {
-                    MetaData["IsAnchored"].AttributeValues[0] = "false";
+                    MetaData.SetValue("IsAnchored", "False");
                 }
             }
         }

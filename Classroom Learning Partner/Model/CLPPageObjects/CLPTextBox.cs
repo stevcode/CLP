@@ -9,8 +9,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [Serializable]
     public class CLPTextBox : CLPPageObjectBase
     {
-        public CLPTextBox() : this("testing testin testingngng")
-        {
+        public CLPTextBox() : this("")
+        { 
         }
 
         public CLPTextBox(string s)
@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _text = s;
             Position = new Point(100, 100);
             Height = 200;
-            Width = 200;
+            Width = 400;
         }
 
         private string _text;

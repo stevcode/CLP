@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                     Width = _sourceImage.Width;
                 }
 
-                base.Position = new System.Windows.Point(150, 150);
+                base.Position = new System.Windows.Point(10, 10);
             }
         }
 

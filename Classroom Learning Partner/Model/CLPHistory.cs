@@ -13,14 +13,15 @@ namespace Classroom_Learning_Partner.Model
             
         }
 
-        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
-        public Dictionary<string, CLPAttributeValue> MetaData
+        private MetaDataContainer _metaData = new MetaDataContainer();
+        public MetaDataContainer MetaData
         {
             get
             {
                 return _metaData;
             }
         }
+
         private Dictionary<int, object> _objectReferences = new Dictionary<int, object>();
         public Dictionary<int, object> ObjectReferences
         {
@@ -37,11 +38,8 @@ namespace Classroom_Learning_Partner.Model
             {
                 return _historyItems;
             }
-            protected set
-            {
-                _historyItems = value;
-            }
         }
+
         //List to enable undo/redo functionality
         private ObservableCollection<CLPHistoryItem> _undoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
@@ -50,11 +48,8 @@ namespace Classroom_Learning_Partner.Model
             {
                 return _undoneHistoryItems;
             }
-            protected set
-            {
-                _undoneHistoryItems = value;
-            }
         }
+
      /*   public void add(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);

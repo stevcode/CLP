@@ -19,7 +19,6 @@ namespace Classroom_Learning_Partner.Model
             CLPPage page = new CLPPage();
             _pages.Add(page);
 
-
             MetaData.SetValue("CreationDate", DateTime.Now.ToString());
             MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
         }
