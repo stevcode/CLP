@@ -7,8 +7,6 @@ namespace Classroom_Learning_Partner.Model
 {
     public class CLPHistoryItem
     {
-
-       
          public CLPHistoryItem(object obj, string itemType)
         {
              /*CLPHistoryItem Types:

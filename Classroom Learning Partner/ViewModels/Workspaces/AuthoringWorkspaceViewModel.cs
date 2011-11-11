@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -19,7 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public AuthoringWorkspaceViewModel()
         {
-            
+            SideBar.SubmissionsSideBarVisibility = Visibility.Collapsed;
+            SideBar.ToggleSubmissionsButtonVisibility = Visibility.Collapsed;
         }
 
         //TODO make left/right/top/bottom orientations...switch to single Workspace view with canvas?

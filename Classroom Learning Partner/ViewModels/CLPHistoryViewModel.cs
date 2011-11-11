@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPHistoryViewModel() : this(new CLPHistory())
         { 
         }
+
         public CLPHistoryViewModel(CLPHistory history) 
         {
             _history = history;

@@ -262,6 +262,66 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _editNotebookCommand;
+
+        /// <summary>
+        /// Gets the EditNotebookCommand.
+        /// </summary>
+        public RelayCommand EditNotebookCommand
+        {
+            get
+            {
+                return _editNotebookCommand
+                    ?? (_editNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.IsAuthoring = true;
+                                              App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                          }));
+            }
+        }
+
+        private RelayCommand _doneEditingNotebookCommand;
+
+        /// <summary>
+        /// Gets the DoneEditingNotebookCommand.
+        /// </summary>
+        public RelayCommand DoneEditingNotebookCommand
+        {
+            get
+            {
+                return _doneEditingNotebookCommand
+                    ?? (_doneEditingNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.IsAuthoring = false;
+                                              switch (App.CurrentUserMode)
+                                              {
+                                                  case App.UserMode.Server:
+                                                      //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Instructor:
+                                                      //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Projector:
+                                                      //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Student:
+                                                      //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
+                                                      break;
+                                              }
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                          }));
+            }
+        }
+
         private RelayCommand _saveNotebookCommand;
 
         /// <summary>

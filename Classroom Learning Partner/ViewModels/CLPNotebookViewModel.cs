@@ -35,6 +35,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageViewModel pageVM = new CLPPageViewModel(page);
                 PageViewModels.Add(pageVM);
             }
+            foreach (string submissionUniqueID in Notebook.Submissions.Keys)
+            {
+                ObservableCollection<CLPPageViewModel> submissions = new ObservableCollection<CLPPageViewModel>();
+                foreach (CLPPage submission in Notebook.Submissions[submissionUniqueID])
+                {
+                    CLPPageViewModel submissionVM = new CLPPageViewModel(submission);
+                    submissions.Add(submissionVM);
+                }
+                SubmissionViewModels.Add(submissionUniqueID, submissions);
+            }
         }
 
         #endregion //Constructors
@@ -116,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageViewModel viewModel = PageViewModels[index];
                 PageViewModels.Remove(viewModel);
 
-                //_submissionViewModels.Remove(viewModel.Page.UniqueID);
+                _submissionViewModels.Remove(viewModel.Page.UniqueID);
 
             }
         }

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -22,8 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
             
             PageViewModels = App.CurrentNotebookViewModel.PageViewModels;
             //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
-            OpenNotebookNames.Add(App.CurrentNotebookViewModel.Notebook.Name);
-            SelectedPage = PageViewModels[0];
+            OpenNotebookNames.Add(App.CurrentNotebookViewModel.Notebook.NotebookName);
+            SelectedNotebookPage = PageViewModels[0];
         }
 
         #region Bindings
@@ -124,51 +125,115 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _selectedSubmissionPage = value;
                 RaisePropertyChanged(SelectedSubmissionPagePropertyName);
+                AppMessages.AddPageToDisplay.Send(_selectedSubmissionPage);
             }
         }
 
         /// <summary>
-        /// The <see cref="SelectedPage" /> property's name.
+        /// The <see cref="SelectedNotebookPage" /> property's name.
         /// </summary>
-        public const string SelectedPagePropertyName = "SelectedPage";
+        public const string SelectedNotebookPagePropertyName = "SelectedNotebookPage";
 
-        private CLPPageViewModel _selectedPage;
+        private CLPPageViewModel _selectedNotebookPage;
 
         /// <summary>
         /// Sets and gets the SelectedPage property.
         /// Changes to that property's value raise the PropertyChanged event. 
         /// This property's value is broadcasted by the MessengerInstance when it changes.
         /// </summary>
-        public CLPPageViewModel SelectedPage
+        public CLPPageViewModel SelectedNotebookPage
         {
             get
             {
-                return _selectedPage;
+                return _selectedNotebookPage;
             }
 
             set
             {
-                if (_selectedPage == value)
+                if (_selectedNotebookPage == value)
                 {
                     return;
                 }
 
-                _selectedPage = value;
+                
 
-                if (_selectedPage == null)
+                if (value == null)
                 {
-                    SelectedPage = PageViewModels[0];
+                    //breakpoint to see if this is ever reached/needed
+                    _selectedNotebookPage = PageViewModels[0];
                 }
                 else
                 {
-                    RaisePropertyChanged(SelectedPagePropertyName);
-                    AppMessages.AddPageToDisplay.Send(_selectedPage);
+                    _selectedNotebookPage = value;
+                    RaisePropertyChanged(SelectedNotebookPagePropertyName); 
                 }
-                if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(_selectedPage.Page.UniqueID))
-                {
-                    SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[_selectedPage.Page.UniqueID];
-                }
+
+                AppMessages.AddPageToDisplay.Send(_selectedNotebookPage);
+                //if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(_selectedNotebookPage.Page.UniqueID))
+                //{
+                //    SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[_selectedNotebookPage.Page.UniqueID];
+                //}
                 
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="SubmissionsSideBarVisibility" /> property's name.
+        /// </summary>
+        public const string SubmissionsSideBarVisibilityPropertyName = "SubmissionsSideBarVisibility";
+
+        private Visibility _submissionsSideBarVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the SubmissionsSideBarVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility SubmissionsSideBarVisibility
+        {
+            get
+            {
+                return _submissionsSideBarVisibility;
+            }
+
+            set
+            {
+                if (_submissionsSideBarVisibility == value)
+                {
+                    return;
+                }
+
+                _submissionsSideBarVisibility = value;
+                RaisePropertyChanged(SubmissionsSideBarVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="ToggleSubmissionsButtonVisibility" /> property's name.
+        /// </summary>
+        public const string ToggleSubmissionsButtonVisibilityPropertyName = "ToggleSubmissionsButtonVisibility";
+
+        private Visibility _toggleSubmissionsButtonVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the ToggleSubmissionsButtonVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility ToggleSubmissionsButtonVisibility
+        {
+            get
+            {
+                return _toggleSubmissionsButtonVisibility;
+            }
+
+            set
+            {
+                if (_toggleSubmissionsButtonVisibility == value)
+                {
+                    return;
+                }
+
+                _toggleSubmissionsButtonVisibility = value;
+                RaisePropertyChanged(ToggleSubmissionsButtonVisibilityPropertyName);
             }
         }
 

@@ -26,6 +26,10 @@
                                                   Command="{Binding Path=EditNotebookCommand}"
                                                   KeyTip="E"
                                                   ImageSource="..\Images\EditNotebook.png" />
+                <ribbon:RibbonApplicationMenuItem Header="Done Editing Notebook"
+                                                  Command="{Binding Path=DoneEditingNotebookCommand}"
+                                                  KeyTip="E"
+                                                  ImageSource="..\Images\EditNotebook.png" />
                 <ribbon:RibbonApplicationMenuItem Header="Save Notebook"
                                                   Command="{Binding Path=SaveNotebookCommand}"
                                                   KeyTip="S"

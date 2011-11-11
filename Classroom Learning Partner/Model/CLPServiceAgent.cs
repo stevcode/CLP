@@ -91,7 +91,21 @@ namespace Classroom_Learning_Partner.Model
                 }
 
 
-
+                switch (App.CurrentUserMode)
+                {
+                    case App.UserMode.Server:
+                        //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Instructor:
+                        //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Projector:
+                        //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Student:
+                        //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
+                        break;
+                }
                 
 
                 //change this to open Instructor/Student/Projector Workspace
@@ -118,9 +132,10 @@ namespace Classroom_Learning_Partner.Model
                     if (!File.Exists(filePath))
                     {
                         newNotebookViewModel = new CLPNotebookViewModel();
-                        newNotebookViewModel.Notebook.Name = notebookName;
+                        newNotebookViewModel.Notebook.NotebookName = notebookName;
                         App.NotebookViewModels.Add(newNotebookViewModel);
                         App.CurrentNotebookViewModel = newNotebookViewModel;
+                        App.IsAuthoring = true;
                         App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                         NameChooserLoop = false;
                     }
@@ -141,7 +156,7 @@ namespace Classroom_Learning_Partner.Model
             //make async?
             //compare VM with model?
             //compare model w/ database
-            string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.Name + @".clp";
+            string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
@@ -201,9 +216,9 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
-            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
-                callbackMessage.Page.PageObjects.Add(pageObject);
+                pageViewModel.Page.PageObjects.Add(pageObject);
                 CLPPageObjectBaseViewModel pageObjectViewModel;
                 if (pageObject is CLPImage)
                 {
@@ -221,7 +236,7 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = null;
                 }
-                callbackMessage.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
+                pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
             });
             CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
             AppMessages.UpdateCLPHistory.Send(item);

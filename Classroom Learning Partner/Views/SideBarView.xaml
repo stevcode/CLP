@@ -29,13 +29,13 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Height="40" Orientation="Horizontal">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}"></ComboBox>
-                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" />
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" FontSize="20"></ComboBox>
+                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
                     </StackPanel>
 
                     <ListBox Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
-                     SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
+                     SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -68,7 +68,8 @@
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionViewModels}"
                      SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
-                     IsSynchronizedWithCurrentItem="True">
+                     IsSynchronizedWithCurrentItem="True"
+                     Visibility="{Binding Path=SubmissionsSideBarVisibility}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border>
