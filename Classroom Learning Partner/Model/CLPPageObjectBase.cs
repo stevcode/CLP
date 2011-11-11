@@ -13,12 +13,12 @@ namespace Classroom_Learning_Partner.Model
     {
         protected CLPPageObjectBase()
         {
-            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", Guid.NewGuid().ToString()));
+            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
+            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", Guid.NewGuid().ToString()));
         }
 
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
+        public Dictionary<string, CLPAttributeValue> MetaData
         {
             get
             {

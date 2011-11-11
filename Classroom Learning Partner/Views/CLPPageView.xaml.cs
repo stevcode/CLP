@@ -84,11 +84,12 @@ namespace Classroom_Learning_Partner.Views
             else
             {
                 DirtyHitbox++;
-                if (DirtyHitbox > 3)
+                if (DirtyHitbox > 3 || isMouseDown)
                 {
                     timer.Stop();
+                    MainInkCanvas.IsHitTestVisible = true;
                 }
-                MainInkCanvas.IsHitTestVisible = true;
+                
                 Console.WriteLine(DirtyHitbox.ToString());
                 return HitTestResultBehavior.Continue;
             }
@@ -106,8 +107,8 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //e.Handled = false;
             isMouseDown = true;
+            timer.Stop();
         }
 
         private void TopCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

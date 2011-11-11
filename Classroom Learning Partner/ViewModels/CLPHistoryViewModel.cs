@@ -78,8 +78,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 _history = value;
             }
         }
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
+        public Dictionary<string, CLPAttributeValue> MetaData
         {
             get
             {

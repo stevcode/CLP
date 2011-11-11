@@ -19,16 +19,16 @@ namespace Classroom_Learning_Partner.Model
             CLPPage page = new CLPPage();
             _pages.Add(page);
 
-            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", Guid.NewGuid().ToString()));
+            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
+            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", Guid.NewGuid().ToString()));
         }
 
         #endregion //Constructors
 
         #region Properties
 
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
+        public Dictionary<string, CLPAttributeValue> MetaData
         {
             get
             {
@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.Model
 	            }
                 else
                 {
-                    MetaData.Add("Name",new CLPAttribute("Name", "NoName"));
+                    MetaData.Add("Name",new CLPAttributeValue("Name", "NoName"));
                     return "NoName";
                 }
                 
@@ -85,11 +85,11 @@ namespace Classroom_Learning_Partner.Model
             {
                 if (MetaData.ContainsKey("Name"))
 	            {
-                    MetaData["Name"] = new CLPAttribute("Name", value);
+                    MetaData["Name"] = new CLPAttributeValue("Name", value);
 	            }
                 else
 	            {
-                    MetaData.Add("Name",new CLPAttribute("Name", value));
+                    MetaData.Add("Name",new CLPAttributeValue("Name", value));
 	            }
             }
         }
@@ -144,8 +144,6 @@ namespace Classroom_Learning_Partner.Model
                 binFormat.Serialize(file, notebook);
             }
         }
-
-        
 
         #endregion //Public Interface
     }

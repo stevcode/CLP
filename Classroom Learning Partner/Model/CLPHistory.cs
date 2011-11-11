@@ -13,8 +13,8 @@ namespace Classroom_Learning_Partner.Model
             
         }
 
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
+        public Dictionary<string, CLPAttributeValue> MetaData
         {
             get
             {
@@ -58,26 +58,26 @@ namespace Classroom_Learning_Partner.Model
      /*   public void add(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);
-            item.MetaData.Add("ADD",new CLPAttribute("ADD","true"));
+            item.MetaData.Add("ADD",new CLPAttributeValue("ADD","true"));
             _historyItems.Add(item);
             Console.WriteLine("ADD to History");
         }
         public void erase(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);
-            item.MetaData.Add("ERASE", new CLPAttribute("ERASE", "true"));
+            item.MetaData.Add("ERASE", new CLPAttributeValue("ERASE", "true"));
             _historyItems.Add(item);
         }
         public void move(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);
-            item.MetaData.Add("MOVE", new CLPAttribute("MOVE", "true"));
+            item.MetaData.Add("MOVE", new CLPAttributeValue("MOVE", "true"));
             _historyItems.Add(item);
         }
         public void copy(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);
-            item.MetaData.Add("COPY", new CLPAttribute("COPY", "true"));
+            item.MetaData.Add("COPY", new CLPAttributeValue("COPY", "true"));
             _historyItems.Add(item);
         }
         private CLPHistoryItem createHistoryItem(object obj)

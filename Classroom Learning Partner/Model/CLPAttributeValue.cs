@@ -7,12 +7,12 @@ namespace Classroom_Learning_Partner.Model
     /// 
     /// </summary>
     [Serializable]
-    public class CLPAttribute
+    public class CLPAttributeValue
     {
 
         #region Constructors
 
-        public CLPAttribute(string attributeName, string attributeValue)
+        public CLPAttributeValue(string attributeName, string attributeValue)
         {
             _attributeName = attributeName;
             _attributeValues.Add(attributeValue);
@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.Model
             IsSortable = false;
         }
 
-        public CLPAttribute(string attributeName, List<string> attributeValues)
+        public CLPAttributeValue(string attributeName, List<string> attributeValues)
         {
             _attributeName = attributeName;
             _attributeValues = attributeValues;

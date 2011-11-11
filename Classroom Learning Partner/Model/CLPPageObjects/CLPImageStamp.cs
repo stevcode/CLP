@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             LoadImageFromByteSource();
             InitializeBase();
 
-            MetaData.Add("IsAnchored", new CLPAttribute("IsAnchored", "true"));
+            MetaData.Add("IsAnchored", new CLPAttributeValue("IsAnchored", "true"));
         }
 
         public CLPImageStamp(byte[] imgSource)

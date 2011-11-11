@@ -22,12 +22,12 @@ namespace Classroom_Learning_Partner.Model
 
             
             _CLPHistoryObjectReference = obj;
-            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", System.Guid.NewGuid().ToString()));
-            _metaData.Add("ItemType", new CLPAttribute("ItemType", itemType));
+            _metaData.Add("CreationDate", new CLPAttributeValue("CreationDate", DateTime.Now.ToString()));
+            _metaData.Add("UniqueID", new CLPAttributeValue("UniqueID", System.Guid.NewGuid().ToString()));
+            _metaData.Add("ItemType", new CLPAttributeValue("ItemType", itemType));
         }
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
+        public Dictionary<string, CLPAttributeValue> MetaData
         {
             get
             {
