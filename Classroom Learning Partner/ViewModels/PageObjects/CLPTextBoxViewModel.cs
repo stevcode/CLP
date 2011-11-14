@@ -40,6 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 }
 
                 _CLPText = value;
+                (PageObject as CLPTextBox).Text = value;
                 RaisePropertyChanged(CLPTextPropertyName);
             }
         }
