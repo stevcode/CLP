@@ -30,20 +30,12 @@
                     Width="{Binding Path=Width}"
                     Height="{Binding Path=Height}"
                     >
-                <Line
-                        X1="155"
-                        Y1="40"
-                        X2="160"
-                        Y2="40"
-                        Stroke="Black"
-                        StrokeThickness="1"
-                        />
                 <Button
                         x:Name="closeButton"
-                        Canvas.Left="160"
-                        Canvas.Top="29"
-                        Width="20"
-                        Height="20"
+                        Canvas.Right="-50"
+                        Canvas.Top="-50"
+                        Width="40"
+                        Height="40"
                         Click="closeButton_Click"
                         Cursor="Hand"
                         >
@@ -61,7 +53,7 @@
                                 <Path 
                                         Data="{StaticResource CloseX}" 
                                         Stretch="Fill" 
-                                        Stroke="Black" 
+                                        Stroke="Red" 
                                         StrokeThickness="3" 
                                         Margin="3.5" 
                                         />
@@ -70,20 +62,12 @@
                     </Button.Template>
 
                 </Button>
-                <Line
-                        X1="75"
-                        Y1="25"
-                        X2="75"
-                        Y2="30"
-                        Stroke="Black"
-                        StrokeThickness="1"
-                        />
                 <Grid
                         x:Name="dragButton"
-                        Canvas.Left="64"
-                        Canvas.Top="3"
-                        Width="22"
-                        Height="22"
+                        Canvas.Left="50"
+                        Canvas.Top="-50"
+                        Width="40"
+                        Height="40"
                         Cursor="ScrollAll"
                         >
                     <Ellipse

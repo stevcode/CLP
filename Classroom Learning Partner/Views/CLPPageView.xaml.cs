@@ -83,6 +83,10 @@ namespace Classroom_Learning_Partner.Views
             }
             else
             {
+                if (DirtyHitbox > 100)
+                {
+                    DirtyHitbox = 20; //stops DirtyHitbox from exceeding bounds of int
+                }
                 DirtyHitbox++;
                 if (DirtyHitbox > 3 || isMouseDown)
                 {
