@@ -31,6 +31,7 @@ namespace Classroom_Learning_Partner.Model
 
 
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
+        void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -240,6 +241,17 @@ namespace Classroom_Learning_Partner.Model
             });
             //CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
             //AppMessages.UpdateCLPHistory.Send(item);
+        }
+
+
+        public void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
+                pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+                //DATABASE remove page object from current page
+            });
         }
     }
 }

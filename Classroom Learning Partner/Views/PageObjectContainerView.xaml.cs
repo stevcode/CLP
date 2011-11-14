@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -23,15 +24,15 @@ namespace Classroom_Learning_Partner.Views
         public PageObjectContainerView()
         {
             InitializeComponent();
+            CLPService = new CLPServiceAgent();
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
-            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
-            {
-                callbackMessage.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-            });
+            CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)

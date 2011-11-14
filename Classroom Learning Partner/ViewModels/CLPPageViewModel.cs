@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
-        public static const Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
+        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
 
         #region Constructors
 
