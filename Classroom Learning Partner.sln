@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classroom Learning Partner", "Classroom Learning Partner\Classroom Learning Partner.csproj", "{86FEBAD6-E946-4865-B189-D064B37DE607}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdornedControl", "AdornedControl\AdornedControl.csproj", "{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
