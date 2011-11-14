@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.Model
 
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
+        void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -252,6 +253,14 @@ namespace Classroom_Learning_Partner.Model
                 pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
                 //DATABASE remove page object from current page
             });
+        }
+
+
+        public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
+        {
+            pageObjectContainerViewModel.Position = pt;
+            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+            //DATABASE change page object's position
         }
     }
 }

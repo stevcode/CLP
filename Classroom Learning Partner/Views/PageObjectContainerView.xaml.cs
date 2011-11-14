@@ -56,7 +56,9 @@ namespace Classroom_Learning_Partner.Views
             {
                 y = 1056 - pageObjectContainerViewModel.Height;
             }
-            pageObjectContainerViewModel.Position = new Point(x, y);
+
+            Point pt = new Point(x, y);
+            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
         }
 
       
