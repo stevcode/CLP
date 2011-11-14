@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Classroom_Learning_Partner.Model
 {
+    [Serializable]
     public class CLPHistory
     {
         public CLPHistory()

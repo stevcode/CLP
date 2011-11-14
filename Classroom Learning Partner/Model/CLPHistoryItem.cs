@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Classroom_Learning_Partner.Model
 {
+    [Serializable]
     public class CLPHistoryItem
     {
          public CLPHistoryItem(object obj, string itemType)

@@ -131,6 +131,31 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        public void InsertPage(int index, CLPPage page)
+        {
+            Pages.Insert(index, page);
+
+            GenerateSubmissionViews(page.UniqueID);
+        }
+
+        private void GenerateSubmissionViews(string pageUniqueID)
+        {
+            if (!Submissions.ContainsKey(pageUniqueID))
+            {
+                Submissions.Add(pageUniqueID, new ObservableCollection<CLPPage>());
+            }
+        }
+
+        public void RemovePageAt(int index)
+        {
+            if (Pages.Count > index)
+            {
+                CLPPage page = Pages[index];
+                Pages.Remove(page);
+                Submissions.Remove(page.UniqueID);
+            }
+        }
+
         #endregion //Public Interface
     }
 }

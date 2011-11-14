@@ -14,8 +14,8 @@ namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPServiceAgent
     {
-        void AddPage(CLPPage page);
-        void RemovePage(string UniqueID);
+        void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
+        void RemovePageAt(int pageIndex);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
@@ -35,31 +35,29 @@ namespace Classroom_Learning_Partner.Model
 
     public class CLPServiceAgent : ICLPServiceAgent
     {
-        public void AddPage(CLPPage page)
+        public void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex)
         {
-            //re-write constructor to take in location for abstraction
-            int currentPageIndex = -1;
-            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+            CLPPageViewModel pageViewModel = new CLPPageViewModel(page);
+            if (submissionIndex == -1)
             {
-                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
-            });
-
-            CLPPageViewModel viewModel = new CLPPageViewModel(page);
-            App.CurrentNotebookViewModel.InsertPage(currentPageIndex, viewModel);
-            App.CurrentNotebookViewModel.Notebook.Pages.Insert(currentPageIndex, page);
+                App.CurrentNotebookViewModel.InsertPage(notebookIndex, pageViewModel);
+                App.CurrentNotebookViewModel.Notebook.InsertPage(notebookIndex, page);
+                //DATABASE insertion, see InsertPage method in CLPNotebook,
+                //inserting new page requires generating the appropriate
+                //Submissions list associated with the page.
+            }
+            else
+            {
+                //not necessary to insert student submission directly?
+            }
         }
 
-        public void RemovePage(string UniqueID)
+        public void RemovePageAt(int pageIndex)
         {
-            //re-write and overload to accept UniqueID or location: RemovePageAt(loc)
-            int currentPageIndex = -1;
-            AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
-            {
-                currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
-            });
-
-            App.CurrentNotebookViewModel.RemovePageAt(currentPageIndex);
-            App.CurrentNotebookViewModel.Notebook.Pages.RemoveAt(currentPageIndex);
+            App.CurrentNotebookViewModel.RemovePageAt(pageIndex);
+            App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
+            //DATABASE remove. make sure to add new blank page if
+            //you remove last page in notebook.
         }
 
         public void OpenNotebook(string notebookName)
@@ -218,7 +216,6 @@ namespace Classroom_Learning_Partner.Model
         {
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
-                pageViewModel.Page.PageObjects.Add(pageObject);
                 CLPPageObjectBaseViewModel pageObjectViewModel;
                 if (pageObject is CLPImage)
                 {
@@ -236,10 +233,13 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = null;
                 }
+                
                 pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
+                pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
+                //DATABASE add pageobject to current page
             });
-            CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
-            AppMessages.UpdateCLPHistory.Send(item);
+            //CLPHistoryItem item = new CLPHistoryItem(pageObject, "ADD");
+            //AppMessages.UpdateCLPHistory.Send(item);
         }
     }
 }

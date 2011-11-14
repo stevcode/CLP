@@ -396,7 +396,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_addNewPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPService.AddPage(new CLPPage());
+                                              int currentPageIndex = -1;
+                                              AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+                                              {
+                                                  currentPageIndex = App.CurrentNotebookViewModel.GetNotebookPageIndex(pageViewModel);
+                                              });
+                                              if (currentPageIndex != -1)
+                                              {
+                                                  currentPageIndex++;
+                                                  CLPService.AddPageAt(new CLPPage(), currentPageIndex, -1);
+                                              }
+                                              else
+                                              {
+                                                  Console.WriteLine("[Error] Requested page is a submission, not a notebookpage");
+                                              }     
                                           }));
             }
         }
@@ -414,8 +427,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_deletePageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //change this to send uniqueID
-                                              CLPService.RemovePage("blah");
+                                              int currentPageIndex = -1;
+                                              AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+                                              {
+                                                  currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+                                              });
+                                              CLPService.RemovePageAt(currentPageIndex);
                                           }));
             }
         }

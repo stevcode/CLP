@@ -25,7 +25,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPNotebookViewModel() : this(new CLPNotebook())
         {
+            CLPService = new CLPServiceAgent();
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
@@ -67,6 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return _pageViewModels; }
         }
 
+        // <key, value> = <NotebookPageUniqueID, List of Submissions>
         private Dictionary<string, ObservableCollection<CLPPageViewModel>> _submissionViewModels = new Dictionary<string, ObservableCollection<CLPPageViewModel>>();
         public Dictionary<string, ObservableCollection<CLPPageViewModel>> SubmissionViewModels
         {
@@ -114,9 +118,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PageViewModels.Insert(index, pageViewModel);
 
+            GenerateSubmissionViews(pageViewModel.Page.UniqueID);
+        }
 
-
-            //GenerateSubmissionViews(pageViewModel.Page);
+        private void GenerateSubmissionViews(string pageUniqueID)
+        {
+            if (!SubmissionViewModels.ContainsKey(pageUniqueID))
+            {
+                SubmissionViewModels.Add(pageUniqueID, new ObservableCollection<CLPPageViewModel>());
+            }
         }
 
         public void RemovePageAt(int index)
@@ -125,9 +135,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPPageViewModel viewModel = PageViewModels[index];
                 PageViewModels.Remove(viewModel);
-
-                _submissionViewModels.Remove(viewModel.Page.UniqueID);
-
+                SubmissionViewModels.Remove(viewModel.Page.UniqueID);
+                if (PageViewModels.Count == 0)
+                {
+                    CLPService.AddPageAt(new CLPPage(), 0, -1);
+                }
             }
         }
 
@@ -154,34 +166,40 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public int GetPageIndex(CLPPageViewModel pageView)
+        public int GetNotebookPageIndex(CLPPageViewModel pageViewModel)
         {
-            //re-write to account for category of submission
-            //if (pageView is SubmissionViewModel)
-            //    return PageViewModels.IndexOf((pageView as SubmissionViewModel).OriginalPageViewModel);
-            //else
-            //    return PageViewModels.IndexOf(pageView);
-            return 0;
+            if (pageViewModel.Page.IsSubmission)
+            {
+                return -1;
+            }
+            else
+            {
+                return PageViewModels.IndexOf(pageViewModel);
+            }
         }
 
-        public int GetSubmissionIndex(CLPPageViewModel pageView)
+        public int GetSubmissionIndex(CLPPageViewModel pageViewModel)
         {
-            //re-write to account for category of submission
-            //if (pageView is SubmissionViewModel)
-            //{
-            //    int submissionIndex = -2;
-            //    SubmissionViewModel submissionView = pageView as SubmissionViewModel;
-            //    CLPPageViewModel originalPageView = submissionView.OriginalPageViewModel;
-            //    if (SubmissionViews.ContainsKey(originalPageView))
-            //        submissionIndex = SubmissionViews[originalPageView].IndexOf(submissionView);
-            //    if (submissionIndex < 0) submissionIndex = -2;
-            //    return submissionIndex;
-            //}
-            //else
-            //{
-            //    return -1;
-            //}
-            return 0;
+            if (pageViewModel.Page.IsSubmission)
+            {
+                int submissionIndex = -1;
+                foreach (string uniqueID in SubmissionViewModels.Keys)
+                {
+                    foreach (CLPPageViewModel submissionViewModel in SubmissionViewModels[uniqueID])
+                    {
+                        if (submissionViewModel.Page.UniqueID == pageViewModel.Page.UniqueID)
+                        {
+                            submissionIndex = SubmissionViewModels[uniqueID].IndexOf(submissionViewModel);
+                        }
+                    }
+                }
+
+                return submissionIndex;
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         public void AddStudentSubmission(string pageID, CLPPageViewModel submission)

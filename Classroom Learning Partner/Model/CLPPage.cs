@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.Model
         {
             MetaData.SetValue("CreationDate", DateTime.Now.ToString());
             MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
+            IsSubmission = false;
         }
 
         #endregion //Constructors
@@ -67,6 +68,32 @@ namespace Classroom_Learning_Partner.Model
             get
             {
                 return MetaData.GetValue("UniqueID");
+            }
+        }
+
+        public bool IsSubmission
+        {
+            get
+            {
+                if (MetaData.GetValue("IsSubmission") == "True")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                if (value)
+                {
+                    MetaData.SetValue("IsSubmission", "True");
+                }
+                else
+                {
+                    MetaData.SetValue("IsSubmission", "False");
+                }
             }
         }
 

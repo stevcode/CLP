@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
-        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
+        public static const Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
 
         #region Constructors
 
@@ -52,12 +52,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
-                    
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);      
                 }
                 else if (pageObject is CLPImageStamp)
                 {
                     pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
+                else if (pageObject is CLPTextBox)
+                {
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
                 }
 
                 PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);

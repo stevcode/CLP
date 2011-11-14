@@ -78,7 +78,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppMessages.cs" />
-    <Compile Include="Model\CLPAttribute.cs" />
+    <Compile Include="Model\CLPAttributeValue.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
@@ -90,6 +90,7 @@
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
+    <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="ViewModels\CLPHistoryViewModel.cs" />
@@ -327,7 +328,6 @@
   <ItemGroup>
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
   </ItemGroup>
-
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
