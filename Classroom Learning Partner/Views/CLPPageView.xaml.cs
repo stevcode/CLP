@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views.PageObjects;
 using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -27,6 +28,7 @@ namespace Classroom_Learning_Partner.Views
         private bool isMouseDown = false;
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
+        public CLPServiceAgent _CLPServiceAgent;
 
         public CLPPageView()
         {
@@ -107,6 +109,29 @@ namespace Classroom_Learning_Partner.Views
             Console.WriteLine("tick fired");
             timer.Stop();
             MainInkCanvas.IsHitTestVisible = false;
+            AppMessages.SetLaserPointerMode.Register(this, (action) =>
+            {
+                if (action) RootGrid.MouseMove += sendLaserPointerPosition;
+                else RootGrid.MouseMove -= sendLaserPointerPosition;
+            });
+
+            _CLPServiceAgent= new Classroom_Learning_Partner.Model.CLPServiceAgent();
+
+        }
+
+        private LaserPoint _laserPoint = new LaserPoint();
+        //get information from service agent to update pen position
+        public void updateLaserPointerPosition(Point pt)
+        {
+            //place the red dot at the coordinates, LaserPoint.xaml
+            RootGrid.Children.Add(_laserPoint);
+            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+
+        }
+
+        private void sendLaserPointerPosition(object sender, MouseEventArgs e)
+        {
+            _CLPServiceAgent.SendLaserPosition(e.GetPosition(this.RootGrid));   
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -604,6 +604,33 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+
+        private RelayCommand _SetLaserPointerModeCommand;
+
+        /// <summary>
+        /// Gets the MyCommand.
+        /// </summary>
+        public RelayCommand SetLaserPointerModeCommand
+        {
+            get
+            {
+                return _SetLaserPointerModeCommand
+                    ?? (_SetLaserPointerModeCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                            // do work here
+                                            // this.editMode, set to none so pen is turned off
+                                            // tell messenger to set a flag that we're listening for pen movement, 
+
+                                              EditingMode = InkCanvasEditingMode.None;
+
+                                              AppMessages.SetLaserPointerMode.Send(true);
+                                              
+                                              
+                                          }));
+            }
+        }
+
         #endregion //Commands
     }
 }
