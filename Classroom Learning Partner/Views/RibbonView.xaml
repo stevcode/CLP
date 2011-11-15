@@ -6,7 +6,11 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
+    <!--test-->
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
+        <ribbon:Ribbon.ContextualTabGroups>
+            <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
+        </ribbon:Ribbon.ContextualTabGroups>
         <!--Application Menu Button-->
 
         <ribbon:Ribbon.ApplicationMenu>
@@ -21,6 +25,10 @@
                                                   Command="{Binding Path=OpenNotebookCommand}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Edit Notebook"
                                                   Command="{Binding Path=EditNotebookCommand}"
+                                                  KeyTip="E"
+                                                  ImageSource="..\Images\EditNotebook.png" />
+                <ribbon:RibbonApplicationMenuItem Header="Done Editing Notebook"
+                                                  Command="{Binding Path=DoneEditingNotebookCommand}"
                                                   KeyTip="E"
                                                   ImageSource="..\Images\EditNotebook.png" />
                 <ribbon:RibbonApplicationMenuItem Header="Save Notebook"
@@ -80,6 +88,10 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
+                <ribbon:RibbonButton
+                    Label="Laser Pointer"
+                    LargeImageSource="..\Images\Pen.png"
+                    Command="{Binding Path=SetLaserPointerModeCommand}" />
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -124,7 +136,19 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-
+            <ribbon:RibbonGroup
+                Header="Edit">
+                <ribbon:RibbonButton
+                    Label="Undo"
+                    LargeImageSource="..\Images\Undo.png"
+                    Command="{Binding Path=UndoCommand}" />
+                <ribbon:RibbonButton
+                    Label="Redo"
+                    LargeImageSource="..\Images\Redo.png"
+                    Command="{Binding Path=RedoCommand}" />
+                
+            </ribbon:RibbonGroup>
+            
             <ribbon:RibbonGroup>
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
@@ -178,8 +202,8 @@
 
         <!--Editing Tab-->
         <ribbon:RibbonTab
-            Header="Editing">
-           <!-- <ribbon:RibbonGroup
+            Header="General Editing" ContextualTabGroupHeader="Authoring">
+           <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
                     Label="Pen"
@@ -240,9 +264,13 @@
                     <ribbon:RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
 
-            </ribbon:RibbonGroup>-->
+            </ribbon:RibbonGroup>
             <ribbon:RibbonGroup
                 Header="Insert">
+                <ribbon:RibbonButton
+                    Label="Insert Text Box"
+                    LargeImageSource="..\Images\AddText.png"
+                    Command="{Binding Path=InsertTextBoxCommand}" />
                 <ribbon:RibbonButton
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"

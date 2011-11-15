@@ -29,13 +29,13 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Height="40" Orientation="Horizontal">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}"></ComboBox>
-                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" />
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" FontSize="20"></ComboBox>
+                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
                     </StackPanel>
 
                     <ListBox Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
-                     SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
+                     SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -65,63 +65,34 @@
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
                 <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
-                <DockPanel Grid.Column="2" Name="SubmissionsSideBar">
-                    <!--Temp Hiding
-                    <DockPanel DockPanel.Dock="Top">
-
-                        // Sorting
-                        <Grid DockPanel.Dock="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Label Grid.Column="0" Grid.Row="0">Sort by:</Label>
-                            <ComboBox Grid.Column="0" Grid.Row="1"
-                  >
-                            </ComboBox>
-                            <Label Grid.Column="1" Grid.Row="0">Then sort by:</Label>
-                            <ComboBox Grid.Column="1" Grid.Row="1"
-                      />
-                        </Grid>
-                        // sorting
-
-                    </DockPanel>
-
-                    // List Of Submissions
-                    <ListBox
-                 ItemsSource="{Binding Path=PageViewModels}"
-                 SelectedItem="{Binding Path=SelectedPage, Mode=TwoWay}"
-                 IsSynchronizedWithCurrentItem="True">
-                        <ListBox.ItemTemplate>
-
-                            <DataTemplate>
-                                <Border>
-                                    <Grid Margin="5,10" Name="grid">
-                                        <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                        //<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
-                           HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
-                           Style="{StaticResource InstructorOnlyVisibility}"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.Template>
-                            <ControlTemplate>
-                                <ScrollViewer CanContentScroll="False">
-                                    <ScrollViewer.Resources>
-                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                    </ScrollViewer.Resources>
-                                    <ItemsPresenter/>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ListBox.Template>
-                    </ListBox>
-        -->
-        </DockPanel>
+                <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
+                     ItemsSource="{Binding Path=SubmissionViewModels}"
+                     SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
+                     IsSynchronizedWithCurrentItem="True"
+                     Visibility="{Binding Path=SubmissionsSideBarVisibility}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border>
+                                <Grid Margin="5,10" Name="grid">
+                                    <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                    <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
+                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Template>
+                        <ControlTemplate>
+                            <ScrollViewer CanContentScroll="False">
+                                <ScrollViewer.Resources>
+                                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                                </ScrollViewer.Resources>
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ListBox.Template>
+                </ListBox>
 
             </Grid>
 

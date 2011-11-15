@@ -27,6 +27,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return _pageObject;
             }
+            set
+            {
+                _pageObject = value;
+                this.Position = _pageObject.Position;
+                this.Height = _pageObject.Height;
+                this.Width = _pageObject.Width;
+            }
         }
 
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();

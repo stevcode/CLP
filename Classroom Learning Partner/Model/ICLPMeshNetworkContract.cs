@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -17,5 +18,11 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void Disconnect(string userName);
+
+        [OperationContract(IsOneWay = true)]
+        void SubmitPage(string page);
+
+	    [OperationContract(IsOneWay = true)]
+        void LaserUpdate(Point pt);
     }
 }

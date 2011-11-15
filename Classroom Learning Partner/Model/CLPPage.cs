@@ -14,8 +14,9 @@ namespace Classroom_Learning_Partner.Model
 
         public CLPPage()
         {
-            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", Guid.NewGuid().ToString()));
+            MetaData.SetValue("CreationDate", DateTime.Now.ToString());
+            MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
+            IsSubmission = false;
         }
 
         #endregion //Constructors
@@ -40,8 +41,8 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private MetaDataContainer _metaData = new MetaDataContainer();
+        public MetaDataContainer MetaData
         {
             get
             {
@@ -49,19 +50,53 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        private CLPHistory _pageHistory = new CLPHistory();
+        public CLPHistory PageHistory
+        {
+            get
+            {
+                return _pageHistory;
+            }
+        }
+
+        #endregion //Properties
+
         #region MetaData
 
         public string UniqueID
         {
             get
             {
-                return MetaData["UniqueID"].SelectedValue;
+                return MetaData.GetValue("UniqueID");
             }
+        }
 
+        public bool IsSubmission
+        {
+            get
+            {
+                if (MetaData.GetValue("IsSubmission") == "True")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                if (value)
+                {
+                    MetaData.SetValue("IsSubmission", "True");
+                }
+                else
+                {
+                    MetaData.SetValue("IsSubmission", "False");
+                }
+            }
         }
 
         #endregion //MetaData
-
-        #endregion
     }
 }

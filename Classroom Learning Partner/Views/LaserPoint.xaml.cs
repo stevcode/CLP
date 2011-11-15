@@ -12,23 +12,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for LaserPoint.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class LaserPoint : UserControl
     {
-        public CLPImageView()
+        public LaserPoint()
         {
             InitializeComponent();
         }
-
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("click");
-        }
-
-        
     }
 }

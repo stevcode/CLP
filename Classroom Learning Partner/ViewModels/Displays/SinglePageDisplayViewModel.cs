@@ -19,7 +19,8 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// </summary>
         public SinglePageDisplayViewModel()
         {
-            AppMessages.AddPageToDisplay.Register(this, (action) => {   this.PageViewModel = action;
+            AppMessages.AddPageToDisplay.Register(this, (pageViewModel) => {
+                                                                        this.PageViewModel = pageViewModel;
                                                                         this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                                                                         this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                                                                         });

@@ -29,12 +29,12 @@ namespace Classroom_Learning_Partner.Views
             if (SideBarBorder.Visibility == System.Windows.Visibility.Collapsed)
             {
                 SideBarBorder.Visibility = System.Windows.Visibility.Visible;
-                SideBarToggle.Content = "&lt;";
+                SideBarToggle.Content = "<";
             }
             else
             {
                 SideBarBorder.Visibility = System.Windows.Visibility.Collapsed;
-                SideBarToggle.Content = "&gt;";
+                SideBarToggle.Content = ">";
             }
         }
 

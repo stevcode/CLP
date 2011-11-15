@@ -12,6 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views.PageObjects;
+using Classroom_Learning_Partner.ViewModels;
+using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -20,58 +23,124 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPageView : UserControl
     {
+        private const double ADORNER_DELAY = 800; //time to wait until adorner appears
+
+        private bool isMouseDown = false;
+        private DispatcherTimer timer = null;
+        private int DirtyHitbox = 0;
+        public CLPServiceAgent CLPService;
+
         public CLPPageView()
         {
             InitializeComponent();
-            //Rectangle test = new Rectangle();
-            //test.Width = 150;
-            //test.Height = 150;
-            //SolidColorBrush myBrush = new SolidColorBrush(Colors.Blue);
-            //test.Fill = myBrush;
-            //test.MouseEnter += new MouseEventHandler(test_MouseEnter);
-            ////test.PreviewMouseMove += new MouseEventHandler(test_PreviewMouseMove);
-            //test.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(test_PreviewMouseLeftButtonDown);
-            //InkCanvas.SetTop(test, 300);
-            //InkCanvas.SetLeft(test, 300);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
+            timer.Tick += new EventHandler(timer_Tick);
+            this.CLPService = new CLPServiceAgent();
 
-            //MainInkCanvas.Children.Add(test);
+            AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
+            {
+                if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
+                else RootGrid.MouseMove -= sendLaserPointerPosition;
+            });
         }
-
-        //void test_MouseEnter(object sender, MouseEventArgs e)
-        //{
-        //    Console.WriteLine("MouseOver");
-        //    SolidColorBrush brushy = new SolidColorBrush(Colors.Red);
-        //    (sender as Rectangle).Fill = brushy;
-        //}
-
-        //void test_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    MainInkCanvas.EditingMode = InkCanvasEditingMode.Ink;
-        //}
-
-        //void test_PreviewMouseMove(object sender, MouseEventArgs e)
-        //{
-        //    Console.WriteLine("MouseOver");
-        //    SolidColorBrush brushy = new SolidColorBrush(Colors.Red);
-        //    (sender as Rectangle).Fill = brushy;
-        //}
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            Point pos = e.GetPosition(TopCanvas);
-            VisualTreeHelper.HitTest(TopCanvas, null, new HitTestResultCallback(noFocusCallback), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+            if (!isMouseDown)
+            {
+                VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+            }
         }
 
-        private HitTestResultBehavior noFocusCallback(HitTestResult result)
+        private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if (result.VisualHit.GetType() == typeof(CLPImageView))
+            if (o.GetType() == typeof(Grid))
             {
-                Console.WriteLine("blah");
-                (result.VisualHit as CLPImageView).Focus();
+                if ((o as Grid).Name == "HitBox")
+                {
+                    return HitTestFilterBehavior.ContinueSkipChildren;
+                }
+                else
+                {
+                    return HitTestFilterBehavior.Continue;
+                }
             }
-            
+            else
+            {
+                return HitTestFilterBehavior.Continue;
+            }
+        }
 
-            return HitTestResultBehavior.Continue;
+        private HitTestResultBehavior HitResult(HitTestResult result)
+        {
+            if (result.VisualHit.GetType() == typeof(Grid))
+            {
+                //Console.WriteLine("over any grid");
+                if ((result.VisualHit as Grid).Name == "HitBox")
+                {
+                    //Add timer to delay appearance of adorner
+                    if (DirtyHitbox > 3)
+                    {
+                        timer.Start();
+                    }
+                    DirtyHitbox = 0;
+                    
+                }
+                return HitTestResultBehavior.Stop;
+                
+            }
+            else
+            {
+                if (DirtyHitbox > 100)
+                {
+                    DirtyHitbox = 20; //stops DirtyHitbox from exceeding bounds of int
+                }
+                DirtyHitbox++;
+                if (DirtyHitbox > 3 || isMouseDown)
+                {
+                    timer.Stop();
+                    MainInkCanvas.IsHitTestVisible = true;
+                }
+                
+                return HitTestResultBehavior.Continue;
+            }
+
+            
+            
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            MainInkCanvas.IsHitTestVisible = false;
+
+        }
+
+        private LaserPoint _laserPoint = new LaserPoint();
+        //get information from service agent to update pen position
+        public void updateLaserPointerPosition(Point pt)
+        {
+            //place the red dot at the coordinates, LaserPoint.xaml
+            RootGrid.Children.Add(_laserPoint);
+            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+
+        }
+
+        private void sendLaserPointerPosition(object sender, MouseEventArgs e)
+        {
+            CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));   
+        }
+
+        private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            isMouseDown = true;
+            timer.Stop();
+        }
+
+        private void TopCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            isMouseDown = false;
         }
 
     }

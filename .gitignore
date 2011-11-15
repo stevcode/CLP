@@ -1,4 +1,7 @@
 
+*/obj/*
+*/bin/*
+*.suo
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
@@ -27,4 +30,3 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
-Classroom Learning Partner/obj/Debug/*

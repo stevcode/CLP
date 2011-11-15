@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight.Messaging;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model;
+using System.Windows.Controls;
+using System.Windows;
+
 
 namespace Classroom_Learning_Partner
 {
@@ -11,7 +15,24 @@ namespace Classroom_Learning_Partner
     {
         enum MessageTypes
         {
-            AddPageToDisplay
+            AddPageToDisplay,
+            ChangeInkMode,
+            UpdateCLPHistory, 
+	    SetLaserPointerMode,
+	    UpdateLaserPointerPosition
+        }
+
+        public static class ChangeInkMode
+        {
+            public static void Send(InkCanvasEditingMode inkMode)
+            {
+                Messenger.Default.Send<InkCanvasEditingMode>(inkMode);
+            }
+
+            public static void Register(object recipient, Action<InkCanvasEditingMode> action)
+            {
+                Messenger.Default.Register<InkCanvasEditingMode>(recipient, action);
+            }
         }
 
         public static class AddPageToDisplay
@@ -40,5 +61,48 @@ namespace Classroom_Learning_Partner
                 Messenger.Default.Register<NotificationMessageAction<CLPPageViewModel>>(recipient, action);
             }
         }
+
+        public static class UpdateCLPHistory
+        {
+            public static void Send(CLPHistoryItem item)
+            {
+                Messenger.Default.Send(item, MessageTypes.UpdateCLPHistory);
+            }
+
+            public static void Register(object recipient, Action<CLPHistoryItem> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.UpdateCLPHistory, action);
+            }
+        }
+
+        public static class SetLaserPointerMode
+        {
+            //do we need to set boolean? when we click a diff pen input on the ribbon, what exactly happens?
+            public static void Send(bool set)
+            {
+                Messenger.Default.Send(set, MessageTypes.SetLaserPointerMode);
+            }
+
+            //what exactly are these arguments?
+            public static void Register(object recipient, Action<bool> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.SetLaserPointerMode, action);
+            }
+        }
+
+        public static class UpdateLaserPointerPosition
+        {
+            public static void Send(Point pt)
+            {
+                Messenger.Default.Send(pt, MessageTypes.UpdateLaserPointerPosition);
+            }
+
+            public static void Register(object recipient, Action<bool> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.UpdateLaserPointerPosition, action);
+            }
+        }
+
+
     }
 }

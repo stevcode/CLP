@@ -36,6 +36,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page)
         {
+            AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
+                                                                    {
+                                                                        this.EditingMode = newInkMode;
+                                                                    });
+
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
@@ -44,14 +49,28 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             foreach (var pageObject in page.PageObjects)
             {
+                CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    CLPPageObjectBaseViewModel pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
-                    PageObjectContainerViewModels.Add(pageObjectViewModel);
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);      
                 }
+                else if (pageObject is CLPImageStamp)
+                {
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
+                else if (pageObject is CLPTextBox)
+                {
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                }
+
+                PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);
+
+                PageObjectContainerViewModels.Add(pageObjectContainer);
             }
 
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
+
+            _historyVM = new CLPHistoryViewModel(page.PageHistory);
         }
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -103,7 +122,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 _page = value;
             }
         }
-
+        private CLPHistoryViewModel _historyVM = new CLPHistoryViewModel();
+        public CLPHistoryViewModel HistoryVM
+        {
+            get
+            {
+                return _historyVM;
+            }
+            set
+            {
+                _historyVM = value;
+            }
+        }
         #endregion //Properties
 
         #region Bindings
@@ -117,8 +147,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private readonly ObservableCollection<CLPPageObjectBaseViewModel> _pageObjectContainerViewModels = new ObservableCollection<CLPPageObjectBaseViewModel>();
-        public ObservableCollection<CLPPageObjectBaseViewModel> PageObjectContainerViewModels
+        private readonly ObservableCollection<PageObjectContainerViewModel> _pageObjectContainerViewModels = new ObservableCollection<PageObjectContainerViewModel>();
+        public ObservableCollection<PageObjectContainerViewModel> PageObjectContainerViewModels
         {
             get
             {

@@ -111,6 +111,19 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        private static bool _isAuthoring = false;
+        public static bool IsAuthoring
+        {
+            get
+            {
+                return _isAuthoring;
+            }
+            set
+            {
+                _isAuthoring = value;
+            }
+        }
+
         private static UserMode _currentUserMode;
         public static UserMode CurrentUserMode
         {

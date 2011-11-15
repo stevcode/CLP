@@ -19,16 +19,16 @@ namespace Classroom_Learning_Partner.Model
             CLPPage page = new CLPPage();
             _pages.Add(page);
 
-            _metaData.Add("CreationDate", new CLPAttribute("CreationDate", DateTime.Now.ToString()));
-            _metaData.Add("UniqueID", new CLPAttribute("UniqueID", Guid.NewGuid().ToString()));
+            MetaData.SetValue("CreationDate", DateTime.Now.ToString());
+            MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
         }
 
         #endregion //Constructors
 
         #region Properties
 
-        private Dictionary<string, CLPAttribute> _metaData = new Dictionary<string, CLPAttribute>();
-        public Dictionary<string, CLPAttribute> MetaData
+        private MetaDataContainer _metaData = new MetaDataContainer();
+        public MetaDataContainer MetaData
         {
             get
             {
@@ -57,40 +57,26 @@ namespace Classroom_Learning_Partner.Model
 
         #region MetaData
 
+        
+
         public string UniqueID
         {
             get
             {
-                return MetaData["UniqueID"].SelectedValue;
+                return MetaData.GetValue("UniqueID");
             }
 
         }
 
-        public string Name
+        public string NotebookName
         {
             get
             {
-                if (MetaData.ContainsKey("Name"))
-	            {
-		             return MetaData["Name"].SelectedValue;
-	            }
-                else
-                {
-                    MetaData.Add("Name",new CLPAttribute("Name", "NoName"));
-                    return "NoName";
-                }
-                
+                return MetaData.GetValue("NotebookName"); 
             }
             set
             {
-                if (MetaData.ContainsKey("Name"))
-	            {
-                    MetaData["Name"] = new CLPAttribute("Name", value);
-	            }
-                else
-	            {
-                    MetaData.Add("Name",new CLPAttribute("Name", value));
-	            }
+                MetaData.SetValue("NotebookName", value);
             }
         }
 
@@ -145,7 +131,30 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        
+        public void InsertPage(int index, CLPPage page)
+        {
+            Pages.Insert(index, page);
+
+            GenerateSubmissionViews(page.UniqueID);
+        }
+
+        private void GenerateSubmissionViews(string pageUniqueID)
+        {
+            if (!Submissions.ContainsKey(pageUniqueID))
+            {
+                Submissions.Add(pageUniqueID, new ObservableCollection<CLPPage>());
+            }
+        }
+
+        public void RemovePageAt(int index)
+        {
+            if (Pages.Count > index)
+            {
+                CLPPage page = Pages[index];
+                Pages.Remove(page);
+                Submissions.Remove(page.UniqueID);
+            }
+        }
 
         #endregion //Public Interface
     }

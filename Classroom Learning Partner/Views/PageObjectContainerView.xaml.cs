@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -22,6 +24,43 @@ namespace Classroom_Learning_Partner.Views
         public PageObjectContainerView()
         {
             InitializeComponent();
+            CLPService = new CLPServiceAgent();
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
+
+        private void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+            CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+        }
+
+        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+            double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+            double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+            if (x < 0)
+            {
+                x = 0;
+            }
+            if (y < 0)
+            {
+                y = 0;
+            }
+            if (x > 816 - pageObjectContainerViewModel.Width)
+            {
+                x = 816 - pageObjectContainerViewModel.Width;
+            }
+            if (y > 1056 - pageObjectContainerViewModel.Height)
+            {
+                y = 1056 - pageObjectContainerViewModel.Height;
+            }
+
+            Point pt = new Point(x, y);
+            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+        }
+
+      
     }
 }

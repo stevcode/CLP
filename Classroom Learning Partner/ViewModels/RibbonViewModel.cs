@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Microsoft.Windows.Controls.Ribbon;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -23,22 +24,23 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
+        public const double PEN_RADIUS = 2;
+        public const double MARKER_RADIUS = 5;
+        public const double ERASER_RADIUS = 5;
+
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
         /// </summary>
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
-            _drawingAttributes.Height = 2;
-            _drawingAttributes.Width = 2;
-            _lastDrawingWidth = _drawingAttributes.Height;
-            _lastDrawingHeight = _drawingAttributes.Width;
+            _drawingAttributes.Height = PEN_RADIUS;
+            _drawingAttributes.Width = PEN_RADIUS;
             _drawingAttributes.Color = Colors.Black;
             _drawingAttributes.FitToCurve = true;
-        }
 
-        private double _lastDrawingWidth;
-        private double _lastDrawingHeight;
+            _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+        }
 
         private ICLPServiceAgent CLPService { get; set; }
 
@@ -74,7 +76,171 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #region Bindings
+
+        /// <summary>
+        /// The <see cref="CurrentColorButton" /> property's name.
+        /// </summary>
+        public const string CurrentColorButtonPropertyName = "CurrentColorButton";
+
+        private RibbonButton _currentColorButton = new RibbonButton();
+
+        /// <summary>
+        /// Sets and gets the CurrentColorButton property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public RibbonButton CurrentColorButton
+        {
+            get
+            {
+                return _currentColorButton;
+            }
+
+            set
+            {
+                if (_currentColorButton == value)
+                {
+                    return;
+                }
+
+                _currentColorButton = value;
+                RaisePropertyChanged(CurrentColorButtonPropertyName);
+            }
+        }
+
+        #endregion //Bindings
+
         #region Commands
+
+        #region Pen Commands
+
+        private RelayCommand _setPenCommand;
+
+        /// <summary>
+        /// Gets the SetPenCommand.
+        /// </summary>
+        public RelayCommand SetPenCommand
+        {
+            get
+            {
+                return _setPenCommand
+                    ?? (_setPenCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = PEN_RADIUS;
+                                              DrawingAttributes.Width = PEN_RADIUS;
+                                              EditingMode = InkCanvasEditingMode.Ink;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
+                                          }));
+            }
+        }
+
+        private RelayCommand _setMarkerCommand;
+
+        /// <summary>
+        /// Gets the SetMarkerCommand.
+        /// </summary>
+        public RelayCommand SetMarkerCommand
+        {
+            get
+            {
+                return _setMarkerCommand
+                    ?? (_setMarkerCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = MARKER_RADIUS;
+                                              DrawingAttributes.Width = MARKER_RADIUS;
+                                              EditingMode = InkCanvasEditingMode.Ink;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
+                                          }));
+            }
+        }
+
+        private RelayCommand _setEraserCommand;
+
+        /// <summary>
+        /// Gets the SetEraserCommand.
+        /// </summary>
+        public RelayCommand SetEraserCommand
+        {
+            get
+            {
+                return _setEraserCommand
+                    ?? (_setEraserCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              DrawingAttributes.Height = ERASER_RADIUS;
+                                              DrawingAttributes.Width = ERASER_RADIUS;
+                                              EditingMode = InkCanvasEditingMode.EraseByPoint;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByPoint);
+                                          }));
+            }
+        }
+
+        private RelayCommand _setStrokeEraserCommand;
+
+        /// <summary>
+        /// Gets the SetStrokeEraserCommand.
+        /// </summary>
+        public RelayCommand SetStrokeEraserCommand
+        {
+            get
+            {
+                return _setStrokeEraserCommand
+                    ?? (_setStrokeEraserCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              EditingMode = InkCanvasEditingMode.EraseByStroke;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByStroke);
+                                          }));
+            }
+        }
+
+        private RelayCommand<RibbonButton> _setPenColorCommand;
+
+        /// <summary>
+        /// Gets the SetPenColorCommand.
+        /// </summary>
+        public RelayCommand<RibbonButton> SetPenColorCommand
+        {
+            get
+            {
+                return _setPenColorCommand
+                    ?? (_setPenColorCommand = new RelayCommand<RibbonButton>(
+                                          (button) =>
+                                          {
+                                              CurrentColorButton = button as RibbonButton;
+                                              DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+                                              _editingMode = InkCanvasEditingMode.Ink;
+                                          }));
+            }
+        }
+
+        private RelayCommand _SetLaserPointerModeCommand;
+
+        /// <summary>
+        /// Gets the MyCommand.
+        /// </summary>
+        public RelayCommand SetLaserPointerModeCommand
+        {
+            get
+            {
+                return _SetLaserPointerModeCommand
+                    ?? (_SetLaserPointerModeCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              // do work here
+                                              // this.editMode, set to none so pen is turned off
+                                              // tell messenger to set a flag that we're listening for pen movement, 
+
+                                              EditingMode = InkCanvasEditingMode.None;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
+                                              AppMessages.SetLaserPointerMode.Send(true);
+                                          }));
+            }
+        }
+
+        #endregion //Pen Commands
 
         #region Notebook Commands
 
@@ -92,9 +258,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.OpenNewNotebook();
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
+
+
 
         private RelayCommand _openNotebookCommand;
 
@@ -110,6 +282,66 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                                          }));
+            }
+        }
+
+        private RelayCommand _editNotebookCommand;
+
+        /// <summary>
+        /// Gets the EditNotebookCommand.
+        /// </summary>
+        public RelayCommand EditNotebookCommand
+        {
+            get
+            {
+                return _editNotebookCommand
+                    ?? (_editNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.IsAuthoring = true;
+                                              App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                          }));
+            }
+        }
+
+        private RelayCommand _doneEditingNotebookCommand;
+
+        /// <summary>
+        /// Gets the DoneEditingNotebookCommand.
+        /// </summary>
+        public RelayCommand DoneEditingNotebookCommand
+        {
+            get
+            {
+                return _doneEditingNotebookCommand
+                    ?? (_doneEditingNotebookCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.IsAuthoring = false;
+                                              switch (App.CurrentUserMode)
+                                              {
+                                                  case App.UserMode.Server:
+                                                      //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Instructor:
+                                                      //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Projector:
+                                                      //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                                                      break;
+                                                  case App.UserMode.Student:
+                                                      //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
+                                                      break;
+                                              }
+                                          },
+                                          () =>
+                                          {
+                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
@@ -188,7 +420,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_addNewPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPService.AddPage(new CLPPage());
+                                              int currentPageIndex = -1;
+                                              AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+                                              {
+                                                  currentPageIndex = App.CurrentNotebookViewModel.GetNotebookPageIndex(pageViewModel);
+                                              });
+                                              if (currentPageIndex != -1)
+                                              {
+                                                  currentPageIndex++;
+                                                  CLPService.AddPageAt(new CLPPage(), currentPageIndex, -1);
+                                              }
+                                              else
+                                              {
+                                                  Console.WriteLine("[Error] Requested page is a submission, not a notebookpage");
+                                              }     
                                           }));
             }
         }
@@ -206,8 +451,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_deletePageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //change this to send uniqueID
-                                              CLPService.RemovePage("blah");
+                                              int currentPageIndex = -1;
+                                              AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+                                              {
+                                                  currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+                                              });
+                                              CLPService.RemovePageAt(currentPageIndex);
                                           }));
             }
         }
@@ -215,6 +464,25 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Commands
 
         #region Insert Commands
+
+        private RelayCommand _insertTextBoxCommand;
+
+        /// <summary>
+        /// Gets the InsertTextBoxCommand.
+        /// </summary>
+        public RelayCommand InsertTextBoxCommand
+        {
+            get
+            {
+                return _insertTextBoxCommand
+                    ?? (_insertTextBoxCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPTextBox textBox = new CLPTextBox();
+                                              CLPService.AddPageObjectToPage(textBox);
+                                          }));
+            }
+        }
 
         private RelayCommand _insertImageCommand;
 
@@ -321,6 +589,42 @@ namespace Classroom_Learning_Partner.ViewModels
                                               {
                                                   CLPService.Exit();
                                               }
+                                          }));
+            }
+        }
+        private RelayCommand _undoCommand;
+
+        /// <summary>
+        /// Gets the UndoCommand.
+        /// </summary>
+        public RelayCommand UndoCommand
+        {
+            get
+            {
+                return _undoCommand
+                    ?? (_undoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                          }));
+            }
+        }
+        private RelayCommand _redoCommand;
+
+        /// <summary>
+        /// Gets the RedoCommand.
+        /// </summary>
+        public RelayCommand RedoCommand
+        {
+            get
+            {
+                return _redoCommand
+                    ?? (_redoCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
+                                              AppMessages.UpdateCLPHistory.Send(historyItem);
                                           }));
             }
         }

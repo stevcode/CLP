@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         public CLPImageStampViewModel(CLPImageStamp stamp)
         {
+            PageObject = stamp;
             this.Position = stamp.Position;
             /* Change stamp handle dimensions here */
 
@@ -27,8 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             _points = (handle_width / 2 - handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_lower_width / 2).ToString() + " " + handle_height + " " + (handle_width / 2 - handle_lower_width / 2).ToString() + " " + handle_height;
 
             _sourceImage = stamp.SourceImage;
-            _isAnchor = stamp.IsAnchor;
-            if (!_isAnchor)
+            _isAnchored = stamp.IsAnchored;
+            if (!_isAnchored)
             {
                 HandleVisibility = Visibility.Collapsed;
                 BorderBrush = System.Windows.Media.Brushes.Transparent;
@@ -56,29 +57,29 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// The <see cref="IsAnchor" /> property's name.
         /// </summary>
-        public const string IsAnchorPropertyName = "IsAnchor";
+        public const string IsAnchorPropertyName = "IsAnchored";
 
-        private bool _isAnchor = true;
+        private bool _isAnchored = true;
 
         /// <summary>
         /// Sets and gets the IsAnchor property.
         /// Changes to that property's value raise the PropertyChanged event. 
         /// </summary>
-        public bool IsAnchor
+        public bool IsAnchored
         {
             get
             {
-                return _isAnchor;
+                return _isAnchored;
             }
 
             set
             {
-                if (_isAnchor == value)
+                if (_isAnchored == value)
                 {
                     return;
                 }
 
-                _isAnchor = value;
+                _isAnchored = value;
                 RaisePropertyChanged(IsAnchorPropertyName);
             }
         }

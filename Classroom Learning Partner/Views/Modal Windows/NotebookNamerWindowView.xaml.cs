@@ -9,26 +9,23 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views.Modal_Windows
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for NotebookNamerWindowView.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class NotebookNamerWindowView : Window
     {
-        public CLPImageView()
+        public NotebookNamerWindowView()
         {
             InitializeComponent();
         }
 
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click");
+            this.DialogResult = true;
         }
-
-        
     }
 }
