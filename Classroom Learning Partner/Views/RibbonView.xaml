@@ -90,7 +90,7 @@
                 <ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
-                    Command="{Binding Path=SetLaserPointerCommand}" />
+                    Command="{Binding Path=SetLaserPointerModeCommand}" />
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup

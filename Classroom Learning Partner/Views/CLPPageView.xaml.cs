@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.Views
         private bool isMouseDown = false;
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
-        public CLPServiceAgent _CLPServiceAgent;
+        public CLPServiceAgent CLPService;
 
         public CLPPageView()
         {
@@ -36,6 +36,13 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
+            this.CLPService = new CLPServiceAgent();
+
+            AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
+            {
+                if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
+                else RootGrid.MouseMove -= sendLaserPointerPosition;
+            });
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -109,13 +116,6 @@ namespace Classroom_Learning_Partner.Views
             Console.WriteLine("tick fired");
             timer.Stop();
             MainInkCanvas.IsHitTestVisible = false;
-            AppMessages.SetLaserPointerMode.Register(this, (action) =>
-            {
-                if (action) RootGrid.MouseMove += sendLaserPointerPosition;
-                else RootGrid.MouseMove -= sendLaserPointerPosition;
-            });
-
-            _CLPServiceAgent= new Classroom_Learning_Partner.Model.CLPServiceAgent();
 
         }
 
@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
         {
-            _CLPServiceAgent.SendLaserPosition(e.GetPosition(this.RootGrid));   
+            CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));   
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
