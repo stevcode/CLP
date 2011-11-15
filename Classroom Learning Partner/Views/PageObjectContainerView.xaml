@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+             xmlns:adorners="clr-namespace:Classroom_Learning_Partner.Views.Adorners"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="PageObjectContainerRoot">
@@ -30,12 +31,13 @@
                     Width="{Binding Path=Width}"
                     Height="{Binding Path=Height}"
                     >
+                <!--Close Button-->
                 <Button
                         x:Name="closeButton"
-                        Canvas.Right="-50"
-                        Canvas.Top="-50"
                         Width="40"
                         Height="40"
+                        Canvas.Right="-50"
+                        Canvas.Top="-50"
                         Click="closeButton_Click"
                         Cursor="Hand"
                         >
@@ -46,12 +48,13 @@
                                     >
                                 <Ellipse
                                         Stroke="Black"
+                                        StrokeThickness="3"
                                         VerticalAlignment="Stretch"
                                         HorizontalAlignment="Stretch"
                                         Fill="White"
                                         />
                                 <Path 
-                                        Data="{StaticResource CloseX}" 
+                                        Data="M0,0 L1,1 M0,1 L1,0" 
                                         Stretch="Fill" 
                                         Stroke="Red" 
                                         StrokeThickness="3" 
@@ -62,6 +65,7 @@
                     </Button.Template>
 
                 </Button>
+                <!--Drag Thumb-->
                 <Grid
                         x:Name="dragButton"
                         Canvas.Left="50"
@@ -72,6 +76,7 @@
                         >
                     <Ellipse
                             Stroke="Black"
+                            StrokeThickness="3"
                             VerticalAlignment="Stretch"
                             HorizontalAlignment="Stretch"
                             Fill="White"
@@ -92,8 +97,8 @@
                               />
                         <Path
                               Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 11,4 L 11,18"
+                              StrokeThickness="2"
+                              Data="M 20,5 L 20,35"
                               />
                         <Path
                               Stroke="Black"
@@ -104,13 +109,13 @@
                         <Path
                               Stroke="Black"
                               StrokeThickness="1"
-                              Data="M 20,11 L 17,9 L 17,13 L 20,11"
+                              Data="M 20,5 L 15,10 L 25,10 L 20,5"
                               Fill="Black"
                               />
                         <Path
                               Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 4,11 L 18,11"
+                              StrokeThickness="2"
+                              Data="M 5,20 L 35,20"
                               />
 
                     </Grid>

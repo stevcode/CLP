@@ -6,6 +6,7 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
+    <!--test-->
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
             <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
