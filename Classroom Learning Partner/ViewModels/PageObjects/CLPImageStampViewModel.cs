@@ -16,16 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         {
             PageObject = stamp;
             this.Position = stamp.Position;
-            /* Change stamp handle dimensions here */
-
-            Double handle_height = 50;
-            Double handle_upper_width = 100;
-            Double handle_lower_width = 80;
-
-            /* End of stamp handle dimensions */
-
-            Double handle_width = Math.Max(handle_upper_width, handle_lower_width);
-            _points = (handle_width / 2 - handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_lower_width / 2).ToString() + " " + handle_height + " " + (handle_width / 2 - handle_lower_width / 2).ToString() + " " + handle_height;
 
             _sourceImage = stamp.SourceImage;
             _isAnchored = stamp.IsAnchored;

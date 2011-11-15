@@ -9,10 +9,23 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Polygon Stroke="Black" StrokeThickness="1" Fill="Black"
+Canvas.Left="10" Canvas.Top="175" FillRule="Nonzero"
+Points="75,0 225,0 175,50 125,50">
+        </Polygon>
         <Polygon Grid.Row ="0" HorizontalAlignment="Center" Fill="Black" Points="{Binding Path=Points, Mode=TwoWay}"  Visibility="{Binding Path=HandleVisibility, Mode=TwoWay}" />
         <Border Grid.Row="1" BorderThickness="2" BorderBrush="{Binding Path=BorderBrush, Mode=TwoWay}" >
-            <Image Source="{Binding Path=SourceImage}" Margin="10" Visibility="Visible" />
+            <Image Source="{Binding Path=SourceImage}" Margin="4" Visibility="Visible" />
         </Border>
+        <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Parts:" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="14" />
+            <Button Grid.Column="1" Background="White" Click="PartsButton_Click" />
+        </Grid>
     </Grid>
 </UserControl>

@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             InitializeBase();
 
             MetaData.SetValue("IsAnchored", "True");
+            MetaData.SetValue("Parts", "");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -139,6 +140,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 {
                     MetaData.SetValue("IsAnchored", "False");
                 }
+            }
+        }
+
+        private int partsNumber;
+        public int PartsNumber
+        {
+            get
+            {
+                return Convert.ToInt32(MetaData.GetValue("Parts"));
+            }
+            set
+            {
+                MetaData.SetValue("Parts", value.ToString());
             }
         }
 
