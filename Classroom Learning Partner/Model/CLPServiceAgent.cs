@@ -29,7 +29,6 @@ namespace Classroom_Learning_Partner.Model
         void SendLaserPosition(Point pt);
 
 
-
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
@@ -206,12 +205,12 @@ namespace Classroom_Learning_Partner.Model
         }
 
 
-
-
-
         public void SendLaserPosition(Point pt)
         {
-            throw new NotImplementedException();
+            //call SendLaserPosition for network service agent? which will call updatePoint() in ...CLPPageViewModel.cs?
+            //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
+            App.Peer.Channel.LaserUpdate(pt);
+
         }
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)

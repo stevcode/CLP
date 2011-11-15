@@ -12,7 +12,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Background="Transparent">
+    <Grid Name="RootGrid" Background="Transparent">
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black" Background="White">
                 <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 

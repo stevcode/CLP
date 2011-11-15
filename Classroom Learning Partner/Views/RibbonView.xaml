@@ -6,6 +6,7 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
+    <!--test-->
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
             <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
@@ -87,6 +88,10 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
+                <ribbon:RibbonButton
+                    Label="Laser Pointer"
+                    LargeImageSource="..\Images\Pen.png"
+                    Command="{Binding Path=SetLaserPointerModeCommand}" />
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
