@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views.PageObjects;
 using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -27,6 +28,7 @@ namespace Classroom_Learning_Partner.Views
         private bool isMouseDown = false;
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
+        public CLPServiceAgent CLPService;
 
         public CLPPageView()
         {
@@ -34,6 +36,13 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
+            this.CLPService = new CLPServiceAgent();
+
+            AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
+            {
+                if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
+                else RootGrid.MouseMove -= sendLaserPointerPosition;
+            });
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -105,6 +114,22 @@ namespace Classroom_Learning_Partner.Views
         {
             timer.Stop();
             MainInkCanvas.IsHitTestVisible = false;
+
+        }
+
+        private LaserPoint _laserPoint = new LaserPoint();
+        //get information from service agent to update pen position
+        public void updateLaserPointerPosition(Point pt)
+        {
+            //place the red dot at the coordinates, LaserPoint.xaml
+            RootGrid.Children.Add(_laserPoint);
+            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+
+        }
+
+        private void sendLaserPointerPosition(object sender, MouseEventArgs e)
+        {
+            CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));   
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

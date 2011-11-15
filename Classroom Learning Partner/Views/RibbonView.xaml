@@ -88,6 +88,10 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
+                <ribbon:RibbonButton
+                    Label="Laser Pointer"
+                    LargeImageSource="..\Images\Pen.png"
+                    Command="{Binding Path=SetLaserPointerModeCommand}" />
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
