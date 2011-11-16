@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.Model
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
+        void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -260,6 +261,16 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.Position = pt;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             //DATABASE change page object's position
+        }
+
+
+        public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
+        {
+            pageObjectContainerViewModel.Height = height;
+            pageObjectContainerViewModel.Width = width;
+            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
+            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
+            //DATABASE change page object's dimensions
         }
     }
 }
