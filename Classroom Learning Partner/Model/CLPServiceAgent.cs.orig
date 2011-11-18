@@ -10,8 +10,11 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using MongoDB.Bson;
+<<<<<<< HEAD
 using GalaSoft.MvvmLight.Messaging;
+=======
+using MongoDB.Bson;
+>>>>>>> 2fd399edf1bb71593f231a5b34841ebda8492335
 
 namespace Classroom_Learning_Partner.Model
 {

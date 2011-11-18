@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using MongoDB.Driver;
 using System.Threading;
 
 namespace Classroom_Learning_Partner
@@ -42,6 +43,12 @@ namespace Classroom_Learning_Partner
             DispatcherHelper.Initialize();
 
             JoinMeshNetwork();
+        }
+
+        protected void ConnectToDB()
+        {
+            string ConnectionString = "mongodb://localhost";
+            _databaseServer = MongoServer.Create(ConnectionString);
         }
 
         #region Methods
@@ -147,6 +154,17 @@ namespace Classroom_Learning_Partner
                 return _peerThread;
             }
         }
+
+        private static MongoServer _databaseServer;
+        public static MongoServer DatabaseServer
+        {
+            get
+            {
+                return _databaseServer;
+            }
+        }
+
+
 
         #endregion //Properties
     }

@@ -16,25 +16,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         {
             PageObject = stamp;
             this.Position = stamp.Position;
-            /* Change stamp handle dimensions here */
-
-            Double handle_height = 50;
-            Double handle_upper_width = 100;
-            Double handle_lower_width = 80;
-
-            /* End of stamp handle dimensions */
-
-            Double handle_width = Math.Max(handle_upper_width, handle_lower_width);
-            _points = (handle_width / 2 - handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_upper_width / 2).ToString() + " 0 " + (handle_width / 2 + handle_lower_width / 2).ToString() + " " + handle_height + " " + (handle_width / 2 - handle_lower_width / 2).ToString() + " " + handle_height;
 
             _sourceImage = stamp.SourceImage;
             _isAnchored = stamp.IsAnchored;
-            if (!_isAnchored)
-            {
-                HandleVisibility = Visibility.Collapsed;
-                BorderBrush = System.Windows.Media.Brushes.Transparent;
-            }
-            _borderBrush = System.Windows.Media.Brushes.Black;
+            _parts = stamp.Parts;
         }
 
         #endregion //Constructors
@@ -83,94 +68,29 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 RaisePropertyChanged(IsAnchorPropertyName);
             }
         }
-
+        
         /// <summary>
-        /// The <see cref="Points" /> property's name.
+        /// The <see cref="StampParts" /> property's name.
         /// </summary>
-        public const string PointsPropertyName = "Points";
+        public const string PartsPropertyName = "StampParts";
 
-        private string _points = "";
+        private string _parts = "";
 
         /// <summary>
-        /// Sets and gets the Points property.
+        /// Sets and gets the StampParts property.
         /// Changes to that property's value raise the PropertyChanged event. 
         /// </summary>
-        public string Points
+        public string Parts
         {
             get
             {
-                return _points;
+                return _parts;
             }
 
             set
             {
-                if (_points == value)
-                {
-                    return;
-                }
-
-                _points = value;
-                RaisePropertyChanged(PointsPropertyName);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="HandleVisibility" /> property's name.
-        /// </summary>
-        public const string HandleVisibilityPropertyName = "HandleVisibility";
-
-        private Visibility _handleVisibility = Visibility.Visible;
-
-        /// <summary>
-        /// Sets and gets the HandleVisibility property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public Visibility HandleVisibility
-        {
-            get
-            {
-                return _handleVisibility;
-            }
-
-            set
-            {
-                if (_handleVisibility == value)
-                {
-                    return;
-                }
-
-                _handleVisibility = value;
-                RaisePropertyChanged(HandleVisibilityPropertyName);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="BorderBrush" /> property's name.
-        /// </summary>
-        public const string BorderBrushPropertyName = "BorderBrush";
-
-        private SolidColorBrush _borderBrush;
-
-        /// <summary>
-        /// Sets and gets the BorderBrush property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public SolidColorBrush BorderBrush
-        {
-            get
-            {
-                return _borderBrush;
-            }
-
-            set
-            {
-                if (_borderBrush == value)
-                {
-                    return;
-                }
-
-                _borderBrush = value;
-                RaisePropertyChanged(BorderBrushPropertyName);
+                _parts = value;
+                RaisePropertyChanged(PartsPropertyName);
             }
         }
 
