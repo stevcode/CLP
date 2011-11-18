@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.Model
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
 
-        public void AddSubmission(CLPPage page);
+        void AddSubmission(CLPPage page);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
