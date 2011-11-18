@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -23,5 +24,17 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             InitializeComponent();
         }
+
+
+        private void PartsButton_Click(object sender, RoutedEventArgs e)
+        {
+            KeypadWindowView keyPad = new KeypadWindowView();
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult == true) {
+                Button partsBtn = sender as Button;
+                partsBtn.Content = keyPad.Parts;
+            }
+        }
+        
     }
 }

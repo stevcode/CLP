@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             InitializeBase();
 
             MetaData.SetValue("IsAnchored", "True");
+            MetaData.SetValue("Parts", "");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -38,27 +39,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (_sourceImage != null)
             {
-                if (_sourceImage.Height > 1000)
-                {
-                    Height = 1000;
-                    double ratio = _sourceImage.Height / _sourceImage.Width;
-                    Width = 1000 * ratio;
-                }
-                else
-                {
-                    Height = _sourceImage.Height;
-                }
-
-                if (_sourceImage.Width > 800)
-                {
-                    Width = 800;
-                    double ratio = _sourceImage.Width / _sourceImage.Height;
-                    Height = 800 * ratio;
-                }
-                else
-                {
-                    Width = _sourceImage.Width;
-                }
+                Height = 300;
+                double ratio = _sourceImage.Height / _sourceImage.Width;
+                Width = Height * ratio;
 
                 base.Position = new System.Windows.Point(10, 10);
             }
@@ -139,6 +122,18 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 {
                     MetaData.SetValue("IsAnchored", "False");
                 }
+            }
+        }
+
+        public string Parts
+        {
+            get
+            {
+                return MetaData.GetValue("Parts");
+            }
+            set
+            {
+                MetaData.SetValue("Parts", value);
             }
         }
 

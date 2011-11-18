@@ -58,7 +58,7 @@
                                         Stretch="Fill" 
                                         Stroke="Red" 
                                         StrokeThickness="3" 
-                                        Margin="3.5" 
+                                        Margin="5" 
                                         />
                             </Grid>
                         </ControlTemplate>
@@ -68,7 +68,7 @@
                 <!--Drag Thumb-->
                 <Grid
                         x:Name="dragButton"
-                        Canvas.Left="50"
+                        Canvas.Left="-50"
                         Canvas.Top="-50"
                         Width="40"
                         Height="40"
@@ -86,13 +86,13 @@
                         <Path
                               Stroke="Black"
                               StrokeThickness="1"
-                              Data="M 11,2 L 13,6 L 9,6 L 11,2"
+                              Data="M 5,20 L 10,15 L 10,25 L 5,20"
                               Fill="Black"
                               />
                         <Path
                               Stroke="Black"
                               StrokeThickness="1"
-                              Data="M 11,20 L 13,17 L 9,17 L 11,20"
+                              Data="M 35,20 L 30,15 L 30,25 L 35,20"
                               Fill="Black"
                               />
                         <Path
@@ -103,7 +103,7 @@
                         <Path
                               Stroke="Black"
                               StrokeThickness="1"
-                              Data="M 2,11 L 6,9 L 6,13 L 2,11"
+                              Data="M 20,35 L 15,30 L 25,30 L 20,35"
                               Fill="Black"
                               />
                         <Path
@@ -120,7 +120,50 @@
 
                     </Grid>
                     <Thumb
-                            DragDelta="Thumb_DragDelta"
+                            DragDelta="MoveThumb_DragDelta"
+                            >
+                        <Thumb.Template>
+                            <ControlTemplate>
+                                <Rectangle
+                                        Fill="Transparent"
+                                        />
+                            </ControlTemplate>
+                        </Thumb.Template>
+                    </Thumb>
+                </Grid>
+                <!--Resize Thumb-->
+                <Grid
+                        x:Name="resizeButton"
+                        Canvas.Right="-50"
+                        Canvas.Bottom="-50"
+                        Width="40"
+                        Height="40"
+                        Cursor="SizeNWSE"
+                        >
+                    <Ellipse
+                            Stroke="Black"
+                            StrokeThickness="3"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            Fill="White"
+                            />
+                    <Grid
+                            >
+
+                        <Path
+                              Stroke="Black"
+                              StrokeThickness="2"
+                              Data="M 8,23 L 23,23 L 23,8"
+                              />
+                        <Path
+                              Stroke="Black"
+                              StrokeThickness="2"
+                              Data="M 12,27 L 27,27 L 27,12"
+                              />
+
+                    </Grid>
+                    <Thumb
+                            DragDelta="ResizeThumb_DragDelta"
                             >
                         <Thumb.Template>
                             <ControlTemplate>
