@@ -25,4 +25,8 @@ namespace Classroom_Learning_Partner.Model
 	    [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
     }
+
+    public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
+    {
+    }
 }

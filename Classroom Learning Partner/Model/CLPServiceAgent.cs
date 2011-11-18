@@ -9,6 +9,7 @@ using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Classroom_Learning_Partner.Model
 {

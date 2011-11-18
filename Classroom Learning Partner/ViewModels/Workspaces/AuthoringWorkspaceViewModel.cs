@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Windows;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -13,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class AuthoringWorkspaceViewModel : ViewModelBase
+    public class AuthoringWorkspaceViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the AuthoringWorkspaceViewModel class.
@@ -42,6 +43,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             {
                 return _display;
             }
+        }
+
+        public void Dispose()
+        {
+            Display.Dispose();
         }
     }
 }
