@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -12,7 +13,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class SinglePageDisplayViewModel : ViewModelBase
+    public class SinglePageDisplayViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the SinglePageDisplayViewModel class.
@@ -25,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                         this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
+            Console.WriteLine("registered");
             AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
         }
 
@@ -56,6 +58,18 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                 _pageViewModel = value;
                 RaisePropertyChanged(PageViewModelPropertyName);
             }
+        }
+
+        public override void Cleanup()
+        {
+            Console.WriteLine("unregistered");
+            Messenger.Default.Unregister<NotificationMessageAction<CLPPageViewModel>>(this);
+            base.Cleanup();
+        }
+
+        public void Dispose()
+        {
+            this.Cleanup();
         }
     }
 }

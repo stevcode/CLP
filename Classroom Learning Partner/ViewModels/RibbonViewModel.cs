@@ -79,6 +79,126 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// The <see cref="AuthoringTabVisibility" /> property's name.
+        /// </summary>
+        public const string AuthoringTabVisibilityPropertyName = "AuthoringTabVisibility";
+
+        private Visibility _authoringTabVisibility = Visibility.Hidden;
+
+        /// <summary>
+        /// Sets and gets the AuthoringTabVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility AuthoringTabVisibility
+        {
+            get
+            {
+                return _authoringTabVisibility;
+            }
+
+            set
+            {
+                if (_authoringTabVisibility == value)
+                {
+                    return;
+                }
+
+                _authoringTabVisibility = value;
+                RaisePropertyChanged(AuthoringTabVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="InstructorVisibility" /> property's name.
+        /// </summary>
+        public const string InstructorVisibilityPropertyName = "InstructorVisibility";
+
+        private Visibility _instructorVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the InstructorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility InstructorVisibility
+        {
+            get
+            {
+                return _instructorVisibility;
+            }
+
+            set
+            {
+                if (_instructorVisibility == value)
+                {
+                    return;
+                }
+
+                _instructorVisibility = value;
+                RaisePropertyChanged(InstructorVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="StudentVisibility" /> property's name.
+        /// </summary>
+        public const string StudentVisibilityPropertyName = "StudentVisibility";
+
+        private Visibility _studentVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the StudentVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility StudentVisibility
+        {
+            get
+            {
+                return _studentVisibility;
+            }
+
+            set
+            {
+                if (_studentVisibility == value)
+                {
+                    return;
+                }
+
+                _studentVisibility = value;
+                RaisePropertyChanged(StudentVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="ProjectorVisibility" /> property's name.
+        /// </summary>
+        public const string RibbonVisibilityPropertyName = "RibbonVisibility";
+
+        private Visibility _ribbonVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the ProjectorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility RibbonVisibility
+        {
+            get
+            {
+                return _ribbonVisibility;
+            }
+
+            set
+            {
+                if (_ribbonVisibility == value)
+                {
+                    return;
+                }
+
+                _ribbonVisibility = value;
+                RaisePropertyChanged(RibbonVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
         /// The <see cref="CurrentColorButton" /> property's name.
         /// </summary>
         public const string CurrentColorButtonPropertyName = "CurrentColorButton";
@@ -258,6 +378,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.OpenNewNotebook();
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           },
                                           () =>
                                           {
@@ -301,6 +422,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               App.IsAuthoring = true;
                                               App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           },
                                           () =>
                                           {
@@ -323,21 +445,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               App.IsAuthoring = false;
-                                              switch (App.CurrentUserMode)
-                                              {
-                                                  case App.UserMode.Server:
-                                                      //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Instructor:
-                                                      //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Projector:
-                                                      //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Student:
-                                                      //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
-                                                      break;
-                                              }
+                                              CLPService.SetWorkspace();
                                           },
                                           () =>
                                           {

@@ -22,6 +22,16 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=SetInstructorCommand}"
+              Gesture="CTRL+SHIFT+I" />
+        <KeyBinding Command="{Binding Path=SetStudentCommand}"
+              Gesture="CTRL+SHIFT+S" />
+        <KeyBinding Command="{Binding Path=SetProjectorCommand}"
+              Gesture="CTRL+SHIFT+P" />
+        <KeyBinding Command="{Binding Path=SetServerCommand}"
+              Gesture="CTRL+SHIFT+E" />
+    </Window.InputBindings>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>

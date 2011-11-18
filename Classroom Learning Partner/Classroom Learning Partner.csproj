@@ -116,7 +116,11 @@
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\InstructorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\StudentWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
     </Compile>
@@ -168,8 +172,20 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Workspaces\InstructorWorkspaceView.xaml.cs">
+      <DependentUpon>InstructorWorkspaceView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\ProjectorWorkspaceView.xaml.cs">
+      <DependentUpon>ProjectorWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\ServerWorkspaceView.xaml.cs">
+      <DependentUpon>ServerWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\StudentWorkspaceView.xaml.cs">
+      <DependentUpon>StudentWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -263,7 +279,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Workspaces\InstructorWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\ProjectorWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\ServerWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\StudentWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
