@@ -14,6 +14,8 @@ namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPServiceAgent
     {
+        void SetWorkspace();
+
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
 
@@ -91,25 +93,11 @@ namespace Classroom_Learning_Partner.Model
                 }
 
 
-                switch (App.CurrentUserMode)
-                {
-                    case App.UserMode.Server:
-                        //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
-                        break;
-                    case App.UserMode.Instructor:
-                        //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
-                        break;
-                    case App.UserMode.Projector:
-                        //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
-                        break;
-                    case App.UserMode.Student:
-                        //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
-                        break;
-                }
+                SetWorkspace();
                 
 
                 //change this to open Instructor/Student/Projector Workspace
-                App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                //App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
             }
             //else doesn't exist, error checking
         }
@@ -271,6 +259,27 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
             //DATABASE change page object's dimensions
+        }
+
+        public void SetWorkspace()
+        {
+            App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Hidden;
+
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                    break;
+                case App.UserMode.Instructor:
+                    App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
+                    break;
+                case App.UserMode.Projector:
+                    App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                    break;
+                case App.UserMode.Student:
+                    App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
+                    break;
+            }
         }
     }
 }

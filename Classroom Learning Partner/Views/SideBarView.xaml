@@ -28,12 +28,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Height="40" Orientation="Horizontal">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" FontSize="20"></ComboBox>
-                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
-                    </StackPanel>
+                    <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></ComboBox>
+                        <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
+                    </DockPanel>
 
-                    <ListBox Grid.Row="1"
+                    <ListBox Name="NotebookPageListBox" Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">

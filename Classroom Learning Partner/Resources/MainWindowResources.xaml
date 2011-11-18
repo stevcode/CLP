@@ -21,7 +21,7 @@
     <DataTemplate DataType="{x:Type wvm:AuthoringWorkspaceViewModel}">
         <wvw:AuthoringWorkspaceView />
     </DataTemplate>
-<!--
+
     <DataTemplate DataType="{x:Type wvm:InstructorWorkspaceViewModel}">
         <wvw:InstructorWorkspaceView />
     </DataTemplate>
@@ -37,7 +37,7 @@
     <DataTemplate DataType="{x:Type wvm:ServerWorkspaceViewModel}">
         <wvw:ServerWorkspaceView />
     </DataTemplate>
--->
+
     <!--DataTemplates for DisplayViewModels-->
 
     <DataTemplate DataType="{x:Type dvm:SinglePageDisplayViewModel}">

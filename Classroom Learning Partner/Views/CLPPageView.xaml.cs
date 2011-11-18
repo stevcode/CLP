@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown)
+            if (!isMouseDown && App.IsAuthoring)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }

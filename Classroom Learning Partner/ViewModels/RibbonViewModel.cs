@@ -79,6 +79,36 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// The <see cref="AuthoringTabVisibility" /> property's name.
+        /// </summary>
+        public const string AuthoringTabVisibilityPropertyName = "AuthoringTabVisibility";
+
+        private Visibility _authoringTabVisibility = Visibility.Hidden;
+
+        /// <summary>
+        /// Sets and gets the AuthoringTabVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility AuthoringTabVisibility
+        {
+            get
+            {
+                return _authoringTabVisibility;
+            }
+
+            set
+            {
+                if (_authoringTabVisibility == value)
+                {
+                    return;
+                }
+
+                _authoringTabVisibility = value;
+                RaisePropertyChanged(AuthoringTabVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
         /// The <see cref="CurrentColorButton" /> property's name.
         /// </summary>
         public const string CurrentColorButtonPropertyName = "CurrentColorButton";
@@ -258,6 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.OpenNewNotebook();
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           },
                                           () =>
                                           {
@@ -301,6 +332,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               App.IsAuthoring = true;
                                               App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           },
                                           () =>
                                           {
@@ -323,21 +355,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               App.IsAuthoring = false;
-                                              switch (App.CurrentUserMode)
-                                              {
-                                                  case App.UserMode.Server:
-                                                      //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Instructor:
-                                                      //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Projector:
-                                                      //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Student:
-                                                      //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
-                                                      break;
-                                              }
+                                              CLPService.SetWorkspace();
                                           },
                                           () =>
                                           {

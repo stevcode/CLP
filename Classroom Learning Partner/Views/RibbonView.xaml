@@ -9,7 +9,7 @@
     <!--test-->
     <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
-            <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
+            <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
         </ribbon:Ribbon.ContextualTabGroups>
         <!--Application Menu Button-->
 
