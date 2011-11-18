@@ -109,6 +109,96 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// The <see cref="InstructorVisibility" /> property's name.
+        /// </summary>
+        public const string InstructorVisibilityPropertyName = "InstructorVisibility";
+
+        private Visibility _instructorVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the InstructorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility InstructorVisibility
+        {
+            get
+            {
+                return _instructorVisibility;
+            }
+
+            set
+            {
+                if (_instructorVisibility == value)
+                {
+                    return;
+                }
+
+                _instructorVisibility = value;
+                RaisePropertyChanged(InstructorVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="StudentVisibility" /> property's name.
+        /// </summary>
+        public const string StudentVisibilityPropertyName = "StudentVisibility";
+
+        private Visibility _studentVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the StudentVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility StudentVisibility
+        {
+            get
+            {
+                return _studentVisibility;
+            }
+
+            set
+            {
+                if (_studentVisibility == value)
+                {
+                    return;
+                }
+
+                _studentVisibility = value;
+                RaisePropertyChanged(StudentVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="ProjectorVisibility" /> property's name.
+        /// </summary>
+        public const string RibbonVisibilityPropertyName = "RibbonVisibility";
+
+        private Visibility _ribbonVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the ProjectorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility RibbonVisibility
+        {
+            get
+            {
+                return _ribbonVisibility;
+            }
+
+            set
+            {
+                if (_ribbonVisibility == value)
+                {
+                    return;
+                }
+
+                _ribbonVisibility = value;
+                RaisePropertyChanged(RibbonVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
         /// The <see cref="CurrentColorButton" /> property's name.
         /// </summary>
         public const string CurrentColorButtonPropertyName = "CurrentColorButton";

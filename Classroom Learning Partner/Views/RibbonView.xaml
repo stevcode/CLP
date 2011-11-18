@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
     <!--test-->
-    <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
+    <ribbon:Ribbon Visibility="{Binding Path=RibbonVisibility}" IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
             <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
         </ribbon:Ribbon.ContextualTabGroups>
@@ -91,7 +91,8 @@
                 <ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
-                    Command="{Binding Path=SetLaserPointerModeCommand}" />
+                    Command="{Binding Path=SetLaserPointerModeCommand}"
+                    Visibility="{Binding Path=InstructorVisibility}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -153,7 +154,8 @@
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SubmitPageCommand}" 
-                    Label="Send To Teacher" />
+                    Label="Send To Teacher"
+                    Visibility="{Binding Path=StudentVisibility}"/>
             </ribbon:RibbonGroup>
 
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">

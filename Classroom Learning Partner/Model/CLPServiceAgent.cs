@@ -263,6 +263,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void SetWorkspace()
         {
+            App.IsAuthoring = false;
             App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Hidden;
 
             switch (App.CurrentUserMode)
@@ -271,12 +272,21 @@ namespace Classroom_Learning_Partner.Model
                     App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
                     break;
                 case App.UserMode.Instructor:
+                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Visible;
+                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Visible;
                     App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
                     break;
                 case App.UserMode.Projector:
+                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Collapsed;
                     App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
+                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Visible;
+                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Visible;
                     App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
                     break;
             }
