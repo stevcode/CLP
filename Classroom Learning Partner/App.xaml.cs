@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost";
+            string ConnectionString = "mongodb://18.111.92.56";
             _databaseServer = MongoServer.Create(ConnectionString);
         }
 

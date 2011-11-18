@@ -204,7 +204,9 @@ namespace Classroom_Learning_Partner.Model
         public void SubmitPage(CLPPageViewModel pageVM)
         {
             string s_page = ObjectSerializer.ToString(pageVM.Page);
-            App.Peer.Channel.SubmitPage(s_page);
+            // Get user collection reference
+            //App.DatabaseServer
+           
         }
 
 
