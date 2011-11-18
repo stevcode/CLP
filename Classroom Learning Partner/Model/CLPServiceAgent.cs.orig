@@ -8,7 +8,10 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+<<<<<<< HEAD
 using MongoDB.Driver;
+using MongoDB.Bson;
+=======
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
 using GalaSoft.MvvmLight.Messaging;
