@@ -72,19 +72,14 @@ namespace Classroom_Learning_Partner.Model
                 endpoint);
 
             var channel = _factory.CreateChannel();
-            //OnlineStatusHandler = channel.GetProperty<IOnlineStatus>();
-            //OnlineStatusHandler.Online += new EventHandler(OnlineStatusHandler_Online);
-            //OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
+            OnlineStatusHandler = channel.GetProperty<IOnlineStatus>();
+            OnlineStatusHandler.Online += new EventHandler(OnlineStatusHandler_Online);
+            OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
 
             
 
             channel.Open();
-            //Channel.InitializeMesh();
 
-            //while (!OnlineStatusHandler.IsOnline)
-            //{
-                
-            //}
             // wait until after the channel is open to allow access.
             Console.WriteLine("channel assigned");
             Channel = channel;
@@ -98,6 +93,7 @@ namespace Classroom_Learning_Partner.Model
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
             Console.WriteLine("Online");
+            Channel.Connect(Id);
         }
 
         public void Stop()

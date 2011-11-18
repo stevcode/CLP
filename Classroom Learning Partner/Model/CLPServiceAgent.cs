@@ -22,6 +22,8 @@ namespace Classroom_Learning_Partner.Model
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
 
+        public void AddSubmission(CLPPage page);
+
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
@@ -65,6 +67,11 @@ namespace Classroom_Learning_Partner.Model
             App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
             //DATABASE remove. make sure to add new blank page if
             //you remove last page in notebook.
+        }
+
+        public void AddSubmission(CLPPage page)
+        {
+            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
         }
 
         public void OpenNotebook(string notebookName)

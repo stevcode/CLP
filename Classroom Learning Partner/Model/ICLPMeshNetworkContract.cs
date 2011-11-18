@@ -11,9 +11,6 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPMeshNetworkContract
     {
         [OperationContract(IsOneWay = true)]
-        void InitializeMesh();
-
-        [OperationContract(IsOneWay = true)]
         void Connect(string userName);
 
         [OperationContract(IsOneWay = true)]

@@ -13,35 +13,28 @@ namespace Classroom_Learning_Partner.Model
     //[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
     {
-        public void InitializeMesh()
-        {
-            
-        }
+        private ICLPServiceAgent CLPService = new CLPServiceAgent();
 
         public void Connect(string userName)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Machine Connected: " + userName);
         }
 
         public void Disconnect(string userName)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Machine Disconnected: " + userName);
         }
 
         public void SubmitPage(string s_page)
         {
-            
+
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
                 Console.WriteLine("page received");
                 Console.WriteLine(s_page);
                 CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                if (!App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(page.UniqueID))
-                {
-                    App.CurrentNotebookViewModel.SubmissionViewModels.Add(page.UniqueID, new ObservableCollection<CLPPageViewModel>());
-                }
-                App.CurrentNotebookViewModel.SubmissionViewModels[page.UniqueID].Add(new CLPPageViewModel(page));                
-	    }
+                CLPService.AddSubmission(page);
+            }
 	}
 
         public void LaserUpdate(Point pt)
