@@ -8,21 +8,34 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+<<<<<<< HEAD
+<<<<<<< HEAD
+using MongoDB.Driver;
+using MongoDB.Bson;
+=======
+using Classroom_Learning_Partner.Views.Modal_Windows;
+>>>>>>> d83d8af8fd2a6c1e9a79c4e13ad4ced9f1db8717
+=======
 using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using MongoDB.Bson;
+<<<<<<< HEAD
 using GalaSoft.MvvmLight.Messaging;
+=======
+using MongoDB.Bson;
+>>>>>>> 2fd399edf1bb71593f231a5b34841ebda8492335
+>>>>>>> e05e632953d397743c4d2206bf2d5113d57cdf38
 
 namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPServiceAgent
     {
+<<<<<<< HEAD
+=======
         void SetWorkspace();
 
+>>>>>>> e05e632953d397743c4d2206bf2d5113d57cdf38
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
-
-        public void AddSubmission(CLPPage page);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
@@ -39,7 +52,10 @@ namespace Classroom_Learning_Partner.Model
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
+<<<<<<< HEAD
+=======
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+>>>>>>> e05e632953d397743c4d2206bf2d5113d57cdf38
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -67,11 +83,6 @@ namespace Classroom_Learning_Partner.Model
             App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
             //DATABASE remove. make sure to add new blank page if
             //you remove last page in notebook.
-        }
-
-        public void AddSubmission(CLPPage page)
-        {
-            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
         }
 
         public void OpenNotebook(string notebookName)
@@ -103,11 +114,33 @@ namespace Classroom_Learning_Partner.Model
                 }
 
 
+<<<<<<< HEAD
+                switch (App.CurrentUserMode)
+                {
+                    case App.UserMode.Server:
+                        //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Instructor:
+                        //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Projector:
+                        //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                        break;
+                    case App.UserMode.Student:
+                        //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
+                        break;
+                }
+                
+
+                //change this to open Instructor/Student/Projector Workspace
+                App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+=======
                 SetWorkspace();
                 
 
                 //change this to open Instructor/Student/Projector Workspace
                 //App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+>>>>>>> e05e632953d397743c4d2206bf2d5113d57cdf38
             }
             //else doesn't exist, error checking
         }
@@ -136,8 +169,6 @@ namespace Classroom_Learning_Partner.Model
                         App.IsAuthoring = true;
                         App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                         NameChooserLoop = false;
-                        //Send empty notebook to db
-                       //ObjectSerializer.ToString(newNotebookViewModel)
                     }
                     else
                     {
@@ -160,18 +191,6 @@ namespace Classroom_Learning_Partner.Model
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
-            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
-            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
-            //BsonDocument currentNotebook = new BsonDocument {
-            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
-            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
-            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
-            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
-            //    };
-            //iNote.Insert(currentNotebook);
-      
-            //MongoCollection<Employee> employees =
-          //hr.GetCollection<Employee>("employees");
         }
 
 
@@ -274,6 +293,8 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             //DATABASE change page object's position
         }
+<<<<<<< HEAD
+=======
 
 
         public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
@@ -315,5 +336,6 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
+>>>>>>> e05e632953d397743c4d2206bf2d5113d57cdf38
     }
 }
