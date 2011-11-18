@@ -8,9 +8,12 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+<<<<<<< HEAD
 using MongoDB.Driver;
-using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
+=======
+using Classroom_Learning_Partner.Views.Modal_Windows;
+>>>>>>> d83d8af8fd2a6c1e9a79c4e13ad4ced9f1db8717
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -34,7 +37,6 @@ namespace Classroom_Learning_Partner.Model
         void AddPageObjectToPage(CLPPageObjectBase pageObject);
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
-        void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -140,8 +142,6 @@ namespace Classroom_Learning_Partner.Model
                         App.IsAuthoring = true;
                         App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                         NameChooserLoop = false;
-                        //Send empty notebook to db
-                       //ObjectSerializer.ToString(newNotebookViewModel)
                     }
                     else
                     {
@@ -164,18 +164,6 @@ namespace Classroom_Learning_Partner.Model
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
-            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
-            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
-            //BsonDocument currentNotebook = new BsonDocument {
-            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
-            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
-            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
-            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
-            //    };
-            //iNote.Insert(currentNotebook);
-      
-            //MongoCollection<Employee> employees =
-          //hr.GetCollection<Employee>("employees");
         }
 
 
@@ -277,16 +265,6 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.Position = pt;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             //DATABASE change page object's position
-        }
-
-
-        public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
-        {
-            pageObjectContainerViewModel.Height = height;
-            pageObjectContainerViewModel.Width = width;
-            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
-            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
-            //DATABASE change page object's dimensions
         }
     }
 }
