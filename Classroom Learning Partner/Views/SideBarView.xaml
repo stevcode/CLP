@@ -61,7 +61,7 @@
                 </Grid>
 
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
-                <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+                <Rectangle Visibility="{Binding Path=SubmissionsSideBarVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionViewModels}"

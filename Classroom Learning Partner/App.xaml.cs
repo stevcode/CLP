@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Student;
+            CurrentUserMode = UserMode.Instructor;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();

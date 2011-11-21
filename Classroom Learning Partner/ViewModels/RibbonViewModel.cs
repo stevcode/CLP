@@ -40,6 +40,22 @@ namespace Classroom_Learning_Partner.ViewModels
             _drawingAttributes.FitToCurve = true;
 
             _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    break;
+                case App.UserMode.Instructor:
+                    InstructorVisibility = Visibility.Visible;
+                    break;
+                case App.UserMode.Projector:
+                    break;
+                case App.UserMode.Student:
+                    StudentVisibility = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private ICLPServiceAgent CLPService { get; set; }
