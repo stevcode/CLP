@@ -130,7 +130,8 @@ namespace Classroom_Learning_Partner.Views
         private LaserPoint _laserPoint = new LaserPoint();
         public void updateLaserPointerPosition(Point pt)
         {
-            //place the red dot at the coordinates, LaserPoint.xaml
+            // We cannot update the UI element directly, need to access it using the UI thread so we have this
+            // gross code which calls setUILaserPointerValue which will be able to update RootGrid
             Thread t = new Thread(new ThreadStart(
                 delegate
                 {
@@ -140,6 +141,7 @@ namespace Classroom_Learning_Partner.Views
             t.Start();
         }
 
+        // Does the actual updating of the LaserPoint
         private void setUILaserPointerValue(Point pt)
         {
             if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
