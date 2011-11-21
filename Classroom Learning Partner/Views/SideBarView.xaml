@@ -7,6 +7,13 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+            
+
+
+    </UserControl.Resources>
+    
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -49,16 +56,7 @@
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.Template>
-                            <ControlTemplate>
-                                <ScrollViewer CanContentScroll="False">
-                                    <ScrollViewer.Resources>
-                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                    </ScrollViewer.Resources>
-                                    <ItemsPresenter/>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ListBox.Template>
+                        
                     </ListBox>
                 </Grid>
 
@@ -82,16 +80,6 @@
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-                    <ListBox.Template>
-                        <ControlTemplate>
-                            <ScrollViewer CanContentScroll="False">
-                                <ScrollViewer.Resources>
-                                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                </ScrollViewer.Resources>
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ListBox.Template>
                 </ListBox>
 
             </Grid>
