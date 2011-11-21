@@ -54,8 +54,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
-                //AppMessages.UpdateLaserPointerPosition.Send(pt);
-                Console.WriteLine(pt.ToString());
+                AppMessages.UpdateLaserPointerPosition.Send(pt);
             }
         }
     }
