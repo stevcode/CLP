@@ -18,8 +18,8 @@ namespace Classroom_Learning_Partner
             AddPageToDisplay,
             ChangeInkMode,
             UpdateCLPHistory, 
-	    SetLaserPointerMode,
-	    UpdateLaserPointerPosition
+	        SetLaserPointerMode,
+	        UpdateLaserPointerPosition
         }
 
         public static class ChangeInkMode
@@ -77,13 +77,11 @@ namespace Classroom_Learning_Partner
 
         public static class SetLaserPointerMode
         {
-            //do we need to set boolean? when we click a diff pen input on the ribbon, what exactly happens?
             public static void Send(bool set)
             {
                 Messenger.Default.Send(set, MessageTypes.SetLaserPointerMode);
             }
 
-            //what exactly are these arguments?
             public static void Register(object recipient, Action<bool> action)
             {
                 Messenger.Default.Register(recipient, MessageTypes.SetLaserPointerMode, action);
@@ -97,7 +95,7 @@ namespace Classroom_Learning_Partner
                 Messenger.Default.Send(pt, MessageTypes.UpdateLaserPointerPosition);
             }
 
-            public static void Register(object recipient, Action<bool> action)
+            public static void Register(object recipient, Action<Point> action)
             {
                 Messenger.Default.Register(recipient, MessageTypes.UpdateLaserPointerPosition, action);
             }

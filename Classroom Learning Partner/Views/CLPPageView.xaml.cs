@@ -15,6 +15,7 @@ using Classroom_Learning_Partner.Views.PageObjects;
 using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -38,11 +39,20 @@ namespace Classroom_Learning_Partner.Views
             timer.Tick += new EventHandler(timer_Tick);
             this.CLPService = new CLPServiceAgent();
 
+            // Register so that we send mouse coordinates for the laser to the projector
+            // When the laser is enabled, add a listener to MouseMove so that sendLaserPointerPosition is called
             AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
             {
                 if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
                 else RootGrid.MouseMove -= sendLaserPointerPosition;
             });
+
+            //Register so we receive mouse coordinates for the laser on the projector
+            AppMessages.UpdateLaserPointerPosition.Register(this, (pt) =>
+            {
+                updateLaserPointerPosition(pt);
+            });
+            
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -120,22 +130,38 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private LaserPoint _laserPoint = new LaserPoint();
-        //get information from service agent to update pen position
         public void updateLaserPointerPosition(Point pt)
         {
             //place the red dot at the coordinates, LaserPoint.xaml
+            Thread t = new Thread(new ThreadStart(
+                delegate
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Render, new Action<Point>(setUILaserPointerValue), pt);
+                }
+            ));
+            t.Start();
+        }
+
+        private void setUILaserPointerValue(Point pt)
+        {
+            if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
             RootGrid.Children.Add(_laserPoint);
             _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
-
         }
 
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
         {
-            CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));   
+            if (isMouseDown)
+            {
+                Point pt = e.GetPosition(this.RootGrid);
+                if (pt.X > 816) pt.X = 816;
+                if (pt.Y > 1056) pt.Y = 1056;
+                CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));
+            }
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
+        {   
             isMouseDown = true;
             timer.Stop();
         }
