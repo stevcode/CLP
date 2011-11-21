@@ -10,19 +10,26 @@ using System.ServiceModel;
 
 namespace Classroom_Learning_Partner.Model
 {
-    //[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
     {
         private ICLPServiceAgent CLPService = new CLPServiceAgent();
+        int pagecount = 0;
 
         public void Connect(string userName)
         {
-            Console.WriteLine("Machine Connected: " + userName);
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                Console.WriteLine("Machine Connected: " + userName);
+            }
         }
 
         public void Disconnect(string userName)
         {
-            Console.WriteLine("Machine Disconnected: " + userName);
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                Console.WriteLine("Machine Disconnected: " + userName);
+            }
         }
 
         public void SubmitPage(string s_page)
@@ -35,7 +42,13 @@ namespace Classroom_Learning_Partner.Model
                 CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                 CLPService.AddSubmission(page);
             }
-	}
+            else if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                pagecount++;
+                Console.WriteLine("page received");
+                Console.WriteLine("Page Count: " + pagecount.ToString());
+            }
+        }
 
         public void LaserUpdate(Point pt)
         {

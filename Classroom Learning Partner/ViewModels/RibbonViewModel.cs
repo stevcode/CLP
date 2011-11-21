@@ -379,10 +379,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPService.OpenNewNotebook();
                                               AuthoringTabVisibility = Visibility.Visible;
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
@@ -423,10 +419,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                               App.IsAuthoring = true;
                                               App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                                               AuthoringTabVisibility = Visibility.Visible;
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
@@ -446,10 +438,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               App.IsAuthoring = false;
                                               CLPService.SetWorkspace();
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }

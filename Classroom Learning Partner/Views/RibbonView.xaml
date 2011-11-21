@@ -6,6 +6,13 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <!--test-->
     <ribbon:Ribbon Visibility="{Binding Path=RibbonVisibility}" IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
@@ -207,7 +214,7 @@
 
         <!--Editing Tab-->
         <ribbon:RibbonTab
-            Header="General Editing" ContextualTabGroupHeader="Authoring">
+            Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
            <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
