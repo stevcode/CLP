@@ -57,7 +57,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown)
+            if (!isMouseDown && App.IsAuthoring)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }
@@ -113,7 +113,6 @@ namespace Classroom_Learning_Partner.Views
                     MainInkCanvas.IsHitTestVisible = true;
                 }
                 
-                Console.WriteLine(DirtyHitbox.ToString());
                 return HitTestResultBehavior.Continue;
             }
 
@@ -123,7 +122,6 @@ namespace Classroom_Learning_Partner.Views
 
         void timer_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine("tick fired");
             timer.Stop();
             MainInkCanvas.IsHitTestVisible = false;
 

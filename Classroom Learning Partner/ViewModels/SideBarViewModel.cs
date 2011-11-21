@@ -169,10 +169,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 AppMessages.AddPageToDisplay.Send(_selectedNotebookPage);
-                //if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(_selectedNotebookPage.Page.UniqueID))
-                //{
-                //    SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[_selectedNotebookPage.Page.UniqueID];
-                //}
+                if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(_selectedNotebookPage.Page.UniqueID))
+                {
+                    SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[_selectedNotebookPage.Page.UniqueID];
+                }
                 
             }
         }

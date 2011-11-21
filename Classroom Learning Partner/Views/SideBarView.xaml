@@ -7,6 +7,13 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+            
+
+
+    </UserControl.Resources>
+    
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -28,12 +35,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Height="40" Orientation="Horizontal">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" FontSize="20"></ComboBox>
-                        <Button x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
-                    </StackPanel>
+                    <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></ComboBox>
+                        <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
+                    </DockPanel>
 
-                    <ListBox Grid.Row="1"
+                    <ListBox Name="NotebookPageListBox" Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
@@ -49,21 +56,12 @@
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.Template>
-                            <ControlTemplate>
-                                <ScrollViewer CanContentScroll="False">
-                                    <ScrollViewer.Resources>
-                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                    </ScrollViewer.Resources>
-                                    <ItemsPresenter/>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ListBox.Template>
+                        
                     </ListBox>
                 </Grid>
 
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
-                <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+                <Rectangle Visibility="{Binding Path=SubmissionsSideBarVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionViewModels}"
@@ -82,16 +80,6 @@
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-                    <ListBox.Template>
-                        <ControlTemplate>
-                            <ScrollViewer CanContentScroll="False">
-                                <ScrollViewer.Resources>
-                                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                </ScrollViewer.Resources>
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ListBox.Template>
                 </ListBox>
 
             </Grid>

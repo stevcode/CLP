@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.Views
             CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
         }
 
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void MoveThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
             double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
@@ -59,6 +59,31 @@ namespace Classroom_Learning_Partner.Views
 
             Point pt = new Point(x, y);
             CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+        }
+
+        private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+            double newHeight = pageObjectContainerViewModel.Height + e.VerticalChange;
+            double newWidth = pageObjectContainerViewModel.Width + e.HorizontalChange;
+            if (newHeight < 10)
+            {
+                newHeight = 10;
+            }
+            if (newWidth < 10)
+            {
+                newWidth = 10;
+            }
+            if (newHeight + pageObjectContainerViewModel.Position.Y > 1056)
+            {
+                newHeight = pageObjectContainerViewModel.Height;
+            }
+            if (newWidth + pageObjectContainerViewModel.Position.X > 816)
+            {
+                newWidth = pageObjectContainerViewModel.Width;
+            }
+
+            CLPService.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
         }
 
       

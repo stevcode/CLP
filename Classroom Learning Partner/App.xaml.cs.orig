@@ -6,8 +6,8 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
-using MongoDB.Driver;
 using System.Threading;
+using MongoDB.Driver;
 
 namespace Classroom_Learning_Partner
 {
@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Projector;
+            CurrentUserMode = UserMode.Instructor;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://18.28.5.202";
+            string ConnectionString = "mongodb://localhost";
             _databaseServer = MongoServer.Create(ConnectionString);
         }
 
@@ -108,19 +108,6 @@ namespace Classroom_Learning_Partner
             set
             {
                 _currentNotebookViewModel = value;
-            }
-        }
-
-        private static bool _isAuthoring = false;
-        public static bool IsAuthoring
-        {
-            get
-            {
-                return _isAuthoring;
-            }
-            set
-            {
-                _isAuthoring = value;
             }
         }
 

@@ -5,22 +5,26 @@ using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using System.ServiceModel.PeerResolvers;
+using System.Xml;
 
 namespace Classroom_Learning_Partner.Model
 {
     public class PeerNode
     {
-        public string Id { get; private set; }
+        public string MachineName { get; private set; }
 
-        public ICLPMeshNetworkContract Channel;
+        public ICLPMeshNetworkChannel Channel;
         public ICLPMeshNetworkContract Host;
+        public IOnlineStatus OnlineStatusHandler;
 
-        private DuplexChannelFactory<ICLPMeshNetworkContract> _factory;
+        private DuplexChannelFactory<ICLPMeshNetworkChannel> _factory;
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
 
         public PeerNode()
         {
-            Id = new Guid().ToString();
+            MachineName = Environment.MachineName;
+            App.MainWindowViewModel.TitleBarText = "Connecting...";
         }
 
         public void Run()
@@ -35,23 +39,66 @@ namespace Classroom_Learning_Partner.Model
             var binding = new NetPeerTcpBinding();
             binding.Security.Mode = SecurityMode.None;
 
+            // Allow big arguments on messages. Allow ~500 MB message.
+            binding.MaxReceivedMessageSize = 500 * 1024 * 1024;
+            binding.MaxBufferPoolSize = 500 * 1024 * 1024;
+
+            // Allow unlimited time to send/receive a message. 
+            // It also prevents closing idle sessions.
+            binding.ReceiveTimeout = TimeSpan.MaxValue;
+            binding.SendTimeout = TimeSpan.MaxValue;
+
+            XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+
+            // Remove quotas limitations
+            quotas.MaxArrayLength = int.MaxValue;
+            quotas.MaxBytesPerRead = int.MaxValue;
+            quotas.MaxDepth = int.MaxValue;
+            quotas.MaxNameTableCharCount = int.MaxValue;
+            quotas.MaxStringContentLength = int.MaxValue;
+            binding.ReaderQuotas = quotas;
+
+            //binding.Resolver.Mode = PeerResolverMode.Pnrp;
+
             var endpoint = new ServiceEndpoint(
-                ContractDescription.GetContract(typeof(ICLPMeshNetworkContract)),
+                ContractDescription.GetContract(typeof(ICLPMeshNetworkChannel)),
                 binding,
                 new EndpointAddress("net.p2p://Classroom_Learning_Partner.Model"));
 
+            //Host = new InstanceContext(new CLPMeshNetworkService());
             Host = new CLPMeshNetworkService();
 
-            _factory = new DuplexChannelFactory<ICLPMeshNetworkContract>(
+            _factory = new DuplexChannelFactory<ICLPMeshNetworkChannel>(
                 new InstanceContext(Host),
                 endpoint);
 
             var channel = _factory.CreateChannel();
 
-            ((ICommunicationObject)channel).Open();
+            channel.Open();
 
             // wait until after the channel is open to allow access.
             Channel = channel;
+
+            OnlineStatusHandler = Channel.GetProperty<IOnlineStatus>();
+            OnlineStatusHandler.Online += new EventHandler(OnlineStatusHandler_Online);
+            OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
+            if (OnlineStatusHandler.IsOnline)
+            {
+                Console.WriteLine("Online");
+                App.MainWindowViewModel.TitleBarText = "Connected";
+                Channel.Connect(MachineName);
+            }
+        }
+
+        void OnlineStatusHandler_Offline(object sender, EventArgs e)
+        {
+            App.MainWindowViewModel.TitleBarText = "Disconnected";
+        }
+
+        void OnlineStatusHandler_Online(object sender, EventArgs e)
+        {
+            App.MainWindowViewModel.TitleBarText = "Connected";
+            Channel.Connect(MachineName);   
         }
 
         public void Stop()
@@ -62,9 +109,11 @@ namespace Classroom_Learning_Partner.Model
         public void StopService()
         {
             //Channel.Disconnect()
-            ((ICommunicationObject)Channel).Close();
+            Channel.Close();
             if (_factory != null)
+            {
                 _factory.Close();
+            }
         }
     }
 }

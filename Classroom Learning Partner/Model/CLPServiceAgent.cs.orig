@@ -12,7 +12,6 @@ using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
 using GalaSoft.MvvmLight.Messaging;
-using System.Windows.Input;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -158,6 +157,7 @@ namespace Classroom_Learning_Partner.Model
             //compare VM with model?
             //compare model w/ database
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
+<<<<<<< HEAD
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
@@ -172,6 +172,22 @@ namespace Classroom_Learning_Partner.Model
             //iNote.Insert(currentNotebook);
       
             //MongoCollection<Employee> employees =
+=======
+            CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
+
+            //save to database?
+            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
+            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
+            //BsonDocument currentNotebook = new BsonDocument {
+            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
+            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
+            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
+            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
+            //    };
+            //iNote.Insert(currentNotebook);
+      
+            //MongoCollection<Employee> employees =
+>>>>>>> 3d06ed119f85f4ecf4efef24d077222d2578ec82
           //hr.GetCollection<Employee>("employees");
         }
 
@@ -315,8 +331,6 @@ namespace Classroom_Learning_Partner.Model
                     App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
                     break;
             }
-
-            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

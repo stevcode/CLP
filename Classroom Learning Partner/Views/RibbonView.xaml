@@ -6,9 +6,17 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
-    <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <!--test-->
+    <ribbon:Ribbon Visibility="{Binding Path=RibbonVisibility}" IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
-            <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
+            <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
         </ribbon:Ribbon.ContextualTabGroups>
         <!--Application Menu Button-->
 
@@ -17,7 +25,8 @@
                 <ribbon:RibbonApplicationMenuItem Header="New Notebook"
                                                   KeyTip="N"
                                                   ImageSource="..\Images\LargeIcon.png"
-                                                  Command="{Binding Path=NewNotebookCommand}" />
+                                                  Command="{Binding Path=NewNotebookCommand}"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Open Notebook"
                                                   KeyTip="O"
                                                   ImageSource="..\Images\OpenNotebook.png" 
@@ -25,11 +34,13 @@
                 <ribbon:RibbonApplicationMenuItem Header="Edit Notebook"
                                                   Command="{Binding Path=EditNotebookCommand}"
                                                   KeyTip="E"
-                                                  ImageSource="..\Images\EditNotebook.png" />
+                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Done Editing Notebook"
                                                   Command="{Binding Path=DoneEditingNotebookCommand}"
                                                   KeyTip="E"
-                                                  ImageSource="..\Images\EditNotebook.png" />
+                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Save Notebook"
                                                   Command="{Binding Path=SaveNotebookCommand}"
                                                   KeyTip="S"
@@ -90,7 +101,8 @@
                 <ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
-                    Command="{Binding Path=SetLaserPointerModeCommand}" />
+                    Command="{Binding Path=SetLaserPointerModeCommand}"
+                    Visibility="{Binding Path=InstructorVisibility}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -147,12 +159,13 @@
                     Command="{Binding Path=RedoCommand}" />
                 
             </ribbon:RibbonGroup>
-            
-            <ribbon:RibbonGroup>
+
+            <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SubmitPageCommand}" 
-                    Label="Send To Teacher" />
+                    Label="Send To Teacher"
+                    />
             </ribbon:RibbonGroup>
 
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
@@ -201,7 +214,7 @@
 
         <!--Editing Tab-->
         <ribbon:RibbonTab
-            Header="General Editing" ContextualTabGroupHeader="Authoring">
+            Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
            <ribbon:RibbonGroup
                 Header="Pen Type">
                 <ribbon:RibbonButton
