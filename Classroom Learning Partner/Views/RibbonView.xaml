@@ -277,12 +277,45 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup
-                Header="Insert">
-                <ribbon:RibbonButton
+            <ribbon:RibbonGroup Header="Text">
+
+                    <ribbon:RibbonButton
                     Label="Insert Text Box"
                     LargeImageSource="..\Images\AddText.png"
                     Command="{Binding Path=InsertTextBoxCommand}" />
+                <ribbon:RibbonControlGroup>
+                    <ComboBox x:Name="_fontFamily" IsEditable="True" Width="110"
+                                  />
+                    <ComboBox x:Name="_fontSize" IsEditable="True" Width="45"
+                                  />
+                </ribbon:RibbonControlGroup>
+
+                <ribbon:RibbonControlGroup>
+                    <ribbon:RibbonToggleButton
+                    SmallImageSource="..\Images\Bold16.png"
+                    Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+                    <ribbon:RibbonToggleButton
+                    SmallImageSource="..\Images\Italic16.png"
+                    Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+                    <ribbon:RibbonToggleButton
+                    SmallImageSource="..\Images\Underline16.png"
+                    Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+                </ribbon:RibbonControlGroup>
+            </ribbon:RibbonGroup>
+            <ribbon:RibbonGroup
+                Header="Insert">
                 <ribbon:RibbonButton
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"

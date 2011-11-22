@@ -386,6 +386,9 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+    <Resource Include="Images\Bold16.png" />
+    <Resource Include="Images\Italic16.png" />
+    <Resource Include="Images\Underline16.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
