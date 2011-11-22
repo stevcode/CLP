@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Microsoft.Windows.Controls.Ribbon;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -243,6 +244,94 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged(CurrentColorButtonPropertyName);
             }
         }
+
+        #region TextBox
+
+        private ObservableCollection<FontFamily> _fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies);
+        public ObservableCollection<FontFamily> Fonts
+        {
+            get
+            {
+                return _fonts;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontFamily" /> property's name.
+        /// </summary>
+        public const string CurrentFontFamilyPropertyName = "CurrentFontFamily";
+
+        private FontFamily _currectFontFamily = new FontFamily("Times New Roman");
+
+        /// <summary>
+        /// Sets and gets the CurrentFontFamily property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public FontFamily CurrentFontFamily
+        {
+            get
+            {
+                return _currectFontFamily;
+            }
+
+            set
+            {
+                if (_currectFontFamily == value)
+                {
+                    return;
+                }
+
+                _currectFontFamily = value;
+                RaisePropertyChanged(CurrentFontFamilyPropertyName);
+            }
+        }
+
+        private ObservableCollection<double> _fontSizes = new ObservableCollection<double>(){3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
+		                                                                                    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 15.0,
+		                                                                                    16.0, 17.0, 18.0, 19.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0,
+		                                                                                    32.0, 34.0, 36.0, 38.0, 40.0, 44.0, 48.0, 52.0, 56.0, 60.0, 64.0, 68.0, 72.0, 76.0,
+		                                                                                    80.0, 88.0, 96.0, 104.0, 112.0, 120.0, 128.0, 136.0, 144.0};
+
+        public ObservableCollection<double> FontSizes
+        {
+            get
+            {
+                return _fontSizes;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontSize" /> property's name.
+        /// </summary>
+        public const string CurrentFontSizePropertyName = "CurrentFontSize";
+
+        private double _currentFontSize = 24;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontSize property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public double CurrentFontSize
+        {
+            get
+            {
+                return _currentFontSize;
+            }
+
+            set
+            {
+                if (_currentFontSize == value)
+                {
+                    return;
+                }
+
+                _currentFontSize = value;
+                RaisePropertyChanged(CurrentFontSizePropertyName);
+            }
+        }
+
+
+        #endregion //TextBox
 
         #endregion //Bindings
 
