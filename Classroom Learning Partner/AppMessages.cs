@@ -21,35 +21,20 @@ namespace Classroom_Learning_Partner
             UpdateCLPHistory, 
 	    SetLaserPointerMode,
 	    UpdateLaserPointerPosition,
-            UpdateFontSize,
-            UpdateFontFamily
+            UpdateFont
         }
 
-        //
-        public static class UpdateFontSize
+        public static class UpdateFont
         {
-            public static void Send(double fontSize)
+            public static void Send(double fontSize, FontFamily font, Brush fontColor)
             {
-                Messenger.Default.Send(fontSize, MessageTypes.UpdateFontSize);
+                var t = Tuple.Create<double, FontFamily, Brush>(fontSize, font, fontColor);
+                Messenger.Default.Send(t, MessageTypes.UpdateFont);
             }
 
-            public static void Register(object recipient, Action<double> action)
+            public static void Register(object recipient, Action<Tuple<double, FontFamily, Brush>> action)
             {
-                Messenger.Default.Register(recipient, MessageTypes.UpdateFontSize, action);
-            }
-        }
-
-        //
-        public static class UpdateFontFamily
-        {
-            public static void Send(FontFamily font)
-            {
-                Messenger.Default.Send(font, MessageTypes.UpdateFontFamily);
-            }
-
-            public static void Register(object recipient, Action<FontFamily> action)
-            {
-                Messenger.Default.Register(recipient, MessageTypes.UpdateFontFamily, action);
+                Messenger.Default.Register(recipient, MessageTypes.UpdateFont, action);
             }
         }
 

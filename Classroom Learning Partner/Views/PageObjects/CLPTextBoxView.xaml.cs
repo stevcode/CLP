@@ -28,14 +28,24 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPTextBoxView()
         {
             InitializeComponent();
+            
             mainWindow = Application.Current.MainWindow as RibbonWindow;
             ribbonView = LogicalTreeHelper.FindLogicalNode(mainWindow, "RibbonView") as RibbonView;
 
-            AppMessages.UpdateFontSize.Register(this, (fontSize) => { SetFont(fontSize, null); });
-            AppMessages.UpdateFontFamily.Register(this, (font) => { SetFont(-1, font); });
+            AppMessages.UpdateFont.Register(this, (t) =>
+                                                        {
+                                                            if (!isUpdatingState)
+                                                            {
+                                                                isUpdatingState = true;
+                                                                SetFont(t.Item1, t.Item2, t.Item3);
+                                                                isUpdatingState = false;
+                                                            }
+                                                             
+                                                         });
+            
         }
 
-        private void SetFont(double fontSize, FontFamily font)
+        private void SetFont(double fontSize, FontFamily font, Brush fontColor)
         {
             // Make sure we have a selection. Should have one even if there is no text selected.
             if (RichTextBox.Selection != null)
@@ -50,6 +60,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         Paragraph p = new Paragraph();
                         if (fontSize > 0) p.FontSize = fontSize;
                         if (font != null) p.FontFamily = font;
+                        if (fontColor != null) p.Foreground = fontColor;
                         RichTextBox.Document.Blocks.Add(p);
                     }
                     else
@@ -66,6 +77,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                             Run newRun = new Run();
                             if (fontSize > 0) newRun.FontSize = fontSize;
                             if (font != null) newRun.FontFamily = font;
+                            if (fontColor != null) newRun.Foreground = fontColor;
                             curParagraph.Inlines.Add(newRun);
                             // Reset the cursor into the new block. 
                             // If we don't do this, the font size will default again when you start typing.
@@ -78,6 +90,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     TextRange selectionTextRange = new TextRange(RichTextBox.Selection.Start, RichTextBox.Selection.End);
                     if (fontSize > 0) selectionTextRange.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
                     if (font != null) selectionTextRange.ApplyPropertyValue(TextElement.FontFamilyProperty, font);
+                    if (fontColor != null) selectionTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, fontColor);
                 }
             }
             // Reset the focus onto the richtextbox after selecting the font in a toolbar etc
@@ -89,14 +102,19 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState();
+            if (!isUpdatingState)
+            {
+                UpdateVisualState();
+            }
         }
 
+        private bool isUpdatingState = false;
         public void UpdateVisualState()
         {
             UpdateToggleButtonState();
             UpdateSelectedFontFamily();
             UpdateSelectedFontSize();
+            UpdateSelectedFontColor();
         }
 
         private void UpdateToggleButtonState()
@@ -128,10 +146,25 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             ribbonView.FontSizeComboBox.SelectedValue = (value == DependencyProperty.UnsetValue) ? null : value;
         }
 
+        private void UpdateSelectedFontColor()
+        {
+            object value = RichTextBox.Selection.GetPropertyValue(TextElement.ForegroundProperty);
+            Brush currentFontColor = (Brush)((value == DependencyProperty.UnsetValue) ? null : value);
+            if (currentFontColor != null)
+            {
+                ribbonView.FontColorComboBox.SelectedItem = currentFontColor;
+            }
+        }
+
         protected override void OnLostMouseCapture(MouseEventArgs e)
         {
             base.OnLostMouseCapture(e);
             (ribbonView.DataContext as RibbonViewModel).LastFocusedTextBox = this;
+        }
+
+        private void RichTextBox_SelectionChanged_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

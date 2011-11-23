@@ -12,6 +12,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Microsoft.Windows.Controls.Ribbon;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.PageObjects;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -44,6 +45,13 @@ namespace Classroom_Learning_Partner.ViewModels
             _drawingAttributes.FitToCurve = true;
 
             _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+
+            foreach (var color in _colors)
+            {
+                _fontColors.Add(new SolidColorBrush(color));
+            }
+
+            CurrentFontColor = new SolidColorBrush(Colors.Black);
 
             switch (App.CurrentUserMode)
             {
@@ -286,7 +294,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontFamily = value;
                 RaisePropertyChanged(CurrentFontFamilyPropertyName);
-                AppMessages.UpdateFontFamily.Send(_currentFontFamily);
+                AppMessages.UpdateFont.Send(-1, _currentFontFamily, null);
             }
         }
 
@@ -331,7 +339,49 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontSize = value;
                 RaisePropertyChanged(CurrentFontSizePropertyName);
-                AppMessages.UpdateFontSize.Send(_currentFontSize);
+                AppMessages.UpdateFont.Send(_currentFontSize, null, null);
+            }
+        }
+
+        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.Blue, Colors.Purple, Colors.Brown, Colors.Green };
+        private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
+
+        public ObservableCollection<Brush> FontColors
+        {
+            get
+            {
+                return _fontColors;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontColor" /> property's name.
+        /// </summary>
+        public const string CurrentFontColorPropertyName = "CurrentFontColor";
+
+        private Brush _currentFontColor;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontColor property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Brush CurrentFontColor
+        {
+            get
+            {
+                return _currentFontColor;
+            }
+
+            set
+            {
+                if (_currentFontColor == value)
+                {
+                    return;
+                }
+
+                _currentFontColor = value;
+                RaisePropertyChanged(CurrentFontColorPropertyName);
+                AppMessages.UpdateFont.Send(-1, null, _currentFontColor);
             }
         }
 

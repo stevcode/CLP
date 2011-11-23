@@ -21,7 +21,7 @@
         <!--Application Menu Button-->
 
         <ribbon:Ribbon.ApplicationMenu>
-            <ribbon:RibbonApplicationMenu >
+            <ribbon:RibbonApplicationMenu>
                 <ribbon:RibbonApplicationMenuItem Header="New Notebook"
                                                   KeyTip="N"
                                                   ImageSource="..\Images\LargeIcon.png"
@@ -318,8 +318,18 @@
                         </ribbon:RibbonToggleButton.ControlSizeDefinition>
                     </ribbon:RibbonToggleButton>
 
-                    <ribbon:RibbonSplitButton
-                        Label="Font Color"></ribbon:RibbonSplitButton>
+                    <Label Content="Font Color" />
+
+                    <ComboBox x:Name="FontColorComboBox"
+                        ItemsSource="{Binding Path=FontColors}"
+                        SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
+                        Width="45">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </ribbon:RibbonControlGroup>
             </ribbon:RibbonGroup>
             
