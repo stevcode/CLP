@@ -282,11 +282,11 @@
                     LargeImageSource="..\Images\AddText.png"
                     Command="{Binding Path=InsertTextBoxCommand}" />
                 <ribbon:RibbonControlGroup>
-                    <ComboBox
+                    <ComboBox x:Name="FontFamilyComboBox"
                         ItemsSource="{Binding Path=Fonts}"
                         SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
                         Width="130"/>
-                    <ComboBox 
+                    <ComboBox x:Name="FontSizeComboBox"
                         ItemsSource="{Binding Path=FontSizes}"
                         SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
                         Width="45"/>
@@ -294,6 +294,7 @@
 
                 <ribbon:RibbonControlGroup>
                     <ribbon:RibbonToggleButton
+                        x:Name="BoldButton"
                         SmallImageSource="..\Images\Bold16.png"
                         Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
                         <ribbon:RibbonToggleButton.ControlSizeDefinition>
@@ -301,6 +302,7 @@
                         </ribbon:RibbonToggleButton.ControlSizeDefinition>
                     </ribbon:RibbonToggleButton>
                     <ribbon:RibbonToggleButton
+                        x:Name="ItalicButton"
                         SmallImageSource="..\Images\Italic16.png"
                         Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
                         <ribbon:RibbonToggleButton.ControlSizeDefinition>
@@ -308,6 +310,7 @@
                         </ribbon:RibbonToggleButton.ControlSizeDefinition>
                     </ribbon:RibbonToggleButton>
                     <ribbon:RibbonToggleButton
+                        x:Name="UnderlineButton"
                         SmallImageSource="..\Images\Underline16.png"
                         Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
                         <ribbon:RibbonToggleButton.ControlSizeDefinition>

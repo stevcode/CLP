@@ -7,6 +7,7 @@ using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Media;
 
 
 namespace Classroom_Learning_Partner
@@ -19,7 +20,37 @@ namespace Classroom_Learning_Partner
             ChangeInkMode,
             UpdateCLPHistory, 
 	    SetLaserPointerMode,
-	    UpdateLaserPointerPosition
+	    UpdateLaserPointerPosition,
+            UpdateFontSize,
+            UpdateFontFamily
+        }
+
+        //
+        public static class UpdateFontSize
+        {
+            public static void Send(double fontSize)
+            {
+                Messenger.Default.Send(fontSize, MessageTypes.UpdateFontSize);
+            }
+
+            public static void Register(object recipient, Action<double> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.UpdateFontSize, action);
+            }
+        }
+
+        //
+        public static class UpdateFontFamily
+        {
+            public static void Send(FontFamily font)
+            {
+                Messenger.Default.Send(font, MessageTypes.UpdateFontFamily);
+            }
+
+            public static void Register(object recipient, Action<FontFamily> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.UpdateFontFamily, action);
+            }
         }
 
         public static class ChangeInkMode

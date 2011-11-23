@@ -11,6 +11,7 @@ using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Microsoft.Windows.Controls.Ribbon;
 using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Views.PageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double PEN_RADIUS = 2;
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
+
+        public CLPTextBoxView LastFocusedTextBox = null;
 
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
@@ -261,7 +264,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string CurrentFontFamilyPropertyName = "CurrentFontFamily";
 
-        private FontFamily _currectFontFamily = new FontFamily("Times New Roman");
+        private FontFamily _currentFontFamily = new FontFamily("Times New Roman");
 
         /// <summary>
         /// Sets and gets the CurrentFontFamily property.
@@ -271,18 +274,19 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return _currectFontFamily;
+                return _currentFontFamily;
             }
 
             set
             {
-                if (_currectFontFamily == value)
+                if (_currentFontFamily == value)
                 {
                     return;
                 }
 
-                _currectFontFamily = value;
+                _currentFontFamily = value;
                 RaisePropertyChanged(CurrentFontFamilyPropertyName);
+                AppMessages.UpdateFontFamily.Send(_currentFontFamily);
             }
         }
 
@@ -327,6 +331,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontSize = value;
                 RaisePropertyChanged(CurrentFontSizePropertyName);
+                AppMessages.UpdateFontSize.Send(_currentFontSize);
             }
         }
 
