@@ -294,6 +294,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontFamily = value;
                 RaisePropertyChanged(CurrentFontFamilyPropertyName);
+                Console.WriteLine("fontfamily changed");
                 AppMessages.UpdateFont.Send(-1, _currentFontFamily, null);
             }
         }
@@ -339,6 +340,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontSize = value;
                 RaisePropertyChanged(CurrentFontSizePropertyName);
+                Console.WriteLine("fontsize changed");
                 AppMessages.UpdateFont.Send(_currentFontSize, null, null);
             }
         }
@@ -381,6 +383,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _currentFontColor = value;
                 RaisePropertyChanged(CurrentFontColorPropertyName);
+                Console.WriteLine("fontcolor changed");
                 AppMessages.UpdateFont.Send(-1, null, _currentFontColor);
             }
         }

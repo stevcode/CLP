@@ -34,19 +34,25 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             AppMessages.UpdateFont.Register(this, (t) =>
                                                         {
-                                                            if (!isUpdatingState)
+                                                            if (!isSettingFont)
                                                             {
-                                                                isUpdatingState = true;
-                                                                SetFont(t.Item1, t.Item2, t.Item3);
-                                                                isUpdatingState = false;
+                                                                if (!isUpdatingVisualState)
+                                                                {
+                                                                    isSettingFont = true;
+                                                                    SetFont(t.Item1, t.Item2, t.Item3);
+                                                                    isSettingFont = false;
+                                                                }
                                                             }
                                                              
                                                          });
+
+            (ribbonView.DataContext as RibbonViewModel).LastFocusedTextBox = this;
             
         }
 
         private void SetFont(double fontSize, FontFamily font, Brush fontColor)
         {
+            Console.WriteLine("setfont called");
             // Make sure we have a selection. Should have one even if there is no text selected.
             if (RichTextBox.Selection != null)
             {
@@ -102,19 +108,25 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (!isUpdatingState)
+            if (!isSettingFont)
             {
-                UpdateVisualState();
+                //UpdateVisualState();
             }
         }
 
-        private bool isUpdatingState = false;
+        private bool isSettingFont = false;
+        private bool isUpdatingVisualState = false;
         public void UpdateVisualState()
         {
-            UpdateToggleButtonState();
-            UpdateSelectedFontFamily();
-            UpdateSelectedFontSize();
-            UpdateSelectedFontColor();
+            if (!isUpdatingVisualState)
+            {
+                isUpdatingVisualState = true;
+                UpdateToggleButtonState();
+                UpdateSelectedFontFamily();
+                UpdateSelectedFontSize();
+                UpdateSelectedFontColor();
+                isUpdatingVisualState = false;
+            } 
         }
 
         private void UpdateToggleButtonState()
