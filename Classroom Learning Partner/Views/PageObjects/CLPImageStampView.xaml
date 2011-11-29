@@ -22,8 +22,8 @@ Points="0,0 150,0 100,50 50,50">
                 <ColumnDefinition Width="50*" />
                 <ColumnDefinition Width="50*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Parts:" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
-            <Button Grid.Column="1" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
+            <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
+            <Label Grid.Column="1" Content="Parts" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
         </Grid>
     </Grid>
 </UserControl>
