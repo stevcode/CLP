@@ -229,6 +229,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
+            //BUG - this is being called twice
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel;

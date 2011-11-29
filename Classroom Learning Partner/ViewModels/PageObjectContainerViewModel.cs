@@ -104,6 +104,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _width = value;
                 RaisePropertyChanged(WidthPropertyName);
+                if (PageObjectViewModel != null)
+                {
+                    PageObjectViewModel.Width = _width;
+                }     
             }
         }
 
@@ -134,6 +138,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _height = value;
                 RaisePropertyChanged(HeightPropertyName);
+                if (PageObjectViewModel != null)
+                {
+                    PageObjectViewModel.Height = _height;
+                }
             }
         }
     }

@@ -165,15 +165,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     _selectedNotebookPage = value;
-                    RaisePropertyChanged(SelectedNotebookPagePropertyName); 
+                    RaisePropertyChanged(SelectedNotebookPagePropertyName);
+                    AppMessages.AddPageToDisplay.Send(_selectedNotebookPage); 
                 }
 
-                AppMessages.AddPageToDisplay.Send(_selectedNotebookPage);
-                if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(_selectedNotebookPage.Page.UniqueID))
-                {
-                    SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[_selectedNotebookPage.Page.UniqueID];
-                }
-                
+                               
             }
         }
 

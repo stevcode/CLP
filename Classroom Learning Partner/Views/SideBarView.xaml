@@ -40,23 +40,31 @@
                         <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
                     </DockPanel>
 
-                    <ListBox Name="NotebookPageListBox" Grid.Row="1"
+                    <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border>
-                                    <Grid Margin="5,10" Name="grid">
-                                        <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                        <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
-                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
-                                    </Grid>
-                                </Border>
+                            <DataTemplate>                               
+                                    <Grid Margin="5,10" Name="grid" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
+                                    <Grid Grid.Column="1" VerticalAlignment="Center" >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                        <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
+                                                <Image Source="..\Images\DisplaySubmissionsButton.png" />
+                                            </Button>
+                                            <Label Grid.Row="1" Content="25" Width="25" />
+                                        </Grid>
+                                    </Grid>                              
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        
+                        </ListBox.ItemTemplate>             
                     </ListBox>
                 </Grid>
 
@@ -73,6 +81,7 @@
                             <Border>
                                 <Grid Margin="5,10" Name="grid">
                                     <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                    
                                     <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                                HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
                                Style="{StaticResource InstructorOnlyVisibility}"/> -->
