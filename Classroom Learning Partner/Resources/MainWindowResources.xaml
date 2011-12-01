@@ -41,8 +41,8 @@
 
     <!--DataTemplates for DisplayViewModels-->
 
-    <DataTemplate DataType="{x:Type dvm:SinglePageDisplayViewModel}">
-        <dvw:SinglePageDisplayView />
+    <DataTemplate DataType="{x:Type dvm:LinkedDisplayViewModel}">
+        <dvw:LinkedDisplayView />
     </DataTemplate>
 
     <!--DataTemplates for Other ViewModels-->

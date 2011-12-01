@@ -57,7 +57,6 @@ namespace Classroom_Learning_Partner.Views
         {
             CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
             CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
-            //int buttonIndex = this.NotebookPageListBox.ItemContainerGenerator.IndexFromContainer(sel);
             string pageID = pageViewModel.Page.UniqueID;
             if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(pageID))
             {
