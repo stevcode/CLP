@@ -93,7 +93,7 @@ namespace Classroom_Learning_Partner.Model
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
             Console.WriteLine("Online");
-            Channel.Connect(Id);
+           // Channel.Connect(Id);
         }
 
         public void Stop()

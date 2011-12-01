@@ -27,6 +27,7 @@ namespace Classroom_Learning_Partner.Model
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
+        void SaveNotebookDB(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
 
@@ -72,6 +73,7 @@ namespace Classroom_Learning_Partner.Model
         public void AddSubmission(CLPPage page)
         {
             App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
+            //App.Peer.Channel.
         }
 
         public void OpenNotebook(string notebookName)
@@ -158,23 +160,29 @@ namespace Classroom_Learning_Partner.Model
             //compare model w/ database
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
+            string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
+            App.Peer.Channel.SaveNotebookDB(s_notebook);
 
-            //save to database?
-            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
-            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
-            //BsonDocument currentNotebook = new BsonDocument {
-            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
-            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
-            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
-            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
-            //    };
-            //iNote.Insert(currentNotebook);
-      
-            //MongoCollection<Employee> employees =
-          //hr.GetCollection<Employee>("employees");
         }
 
-
+        public void SaveNotebookDB(CLPNotebook notebook)
+        {
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    //save to database
+                    MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
+                    MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Noteboks");
+                    BsonDocument currentNotebook = new BsonDocument {
+                        { "ID", notebook.MetaData.GetValue("UniqueID") },
+                        { "CreationDate", notebook.MetaData.GetValue("CreationDate") },
+                         { "NotebookName", notebook.MetaData.GetValue("NotebookName") },
+                          { "NotebookContent", ObjectSerializer.ToString(notebook) }
+                        };
+                    nbCollection.Insert(currentNotebook);
+                    break;
+            }
+        }
         public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
             if (!Directory.Exists(App.NotebookDirectory))

@@ -8,6 +8,7 @@ using System.Windows;
 using System.ServiceModel;
 
 
+
 namespace Classroom_Learning_Partner.Model
 {
     //[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
@@ -27,6 +28,8 @@ namespace Classroom_Learning_Partner.Model
 
         public void SubmitPage(string s_page)
         {
+            //recieve page
+            //App.PeerNode.channel
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -36,6 +39,22 @@ namespace Classroom_Learning_Partner.Model
                 CLPService.AddSubmission(page);
             }
 	}
+
+        public void SaveNotebookDB(string s_notebook)
+        {
+            //recieve notebook
+            //App.PeerNode.channel
+
+            if (App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                Console.WriteLine("Notebook save requtest received");
+                Console.WriteLine(s_notebook);
+                //DB call
+                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLPService.SaveNotebookDB(notebook);
+               
+            }
+        }
 
         public void LaserUpdate(Point pt)
         {
