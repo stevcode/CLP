@@ -7,6 +7,13 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+            
+
+
+    </UserControl.Resources>
+    
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -33,37 +40,36 @@
                         <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
                     </DockPanel>
 
-                    <ListBox Name="NotebookPageListBox" Grid.Row="1"
+                    <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
                      ItemsSource="{Binding Path=PageViewModels}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border>
-                                    <Grid Margin="5,10" Name="grid">
-                                        <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                        <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
-                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
-                                    </Grid>
-                                </Border>
+                            <DataTemplate>                               
+                                    <Grid Margin="5,10" Name="grid" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
+                                    <Grid Grid.Column="1" VerticalAlignment="Center" >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                        <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
+                                                <Image Source="..\Images\DisplaySubmissionsButton.png" />
+                                            </Button>
+                                            <Label Grid.Row="1" Content="25" Width="25" />
+                                        </Grid>
+                                    </Grid>                              
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.Template>
-                            <ControlTemplate>
-                                <ScrollViewer CanContentScroll="False">
-                                    <ScrollViewer.Resources>
-                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                    </ScrollViewer.Resources>
-                                    <ItemsPresenter/>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ListBox.Template>
+                        </ListBox.ItemTemplate>             
                     </ListBox>
                 </Grid>
 
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
-                <Rectangle Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+                <Rectangle Visibility="{Binding Path=SubmissionsSideBarVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionViewModels}"
@@ -75,6 +81,7 @@
                             <Border>
                                 <Grid Margin="5,10" Name="grid">
                                     <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                    
                                     <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                                HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
                                Style="{StaticResource InstructorOnlyVisibility}"/> -->
@@ -82,16 +89,6 @@
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-                    <ListBox.Template>
-                        <ControlTemplate>
-                            <ScrollViewer CanContentScroll="False">
-                                <ScrollViewer.Resources>
-                                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                                </ScrollViewer.Resources>
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ListBox.Template>
                 </ListBox>
 
             </Grid>

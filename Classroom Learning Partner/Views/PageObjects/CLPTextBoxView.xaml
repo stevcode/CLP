@@ -11,6 +11,9 @@
                                          Text="{Binding CLPText}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
                                          FontSize="24"
+                                         FontFamily="Times New Roman"
+                                         SelectionChanged="RichTextBox_SelectionChanged"
+                                         
                                          Width="{Binding Path=Width}"
                                          Height="{Binding Path=Height}" BorderThickness="2">
             <toolkit:RichTextBox.TextFormatter>

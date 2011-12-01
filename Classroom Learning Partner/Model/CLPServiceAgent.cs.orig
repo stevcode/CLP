@@ -8,10 +8,7 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
-<<<<<<< HEAD
 using MongoDB.Driver;
-using MongoDB.Bson;
-=======
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
 using GalaSoft.MvvmLight.Messaging;
@@ -25,7 +22,7 @@ namespace Classroom_Learning_Partner.Model
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
 
-        public void AddSubmission(CLPPage page);
+        void AddSubmission(CLPPage page);
 
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
@@ -160,6 +157,7 @@ namespace Classroom_Learning_Partner.Model
             //compare VM with model?
             //compare model w/ database
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
+<<<<<<< HEAD
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
 
             //save to database?
@@ -174,6 +172,22 @@ namespace Classroom_Learning_Partner.Model
             //iNote.Insert(currentNotebook);
       
             //MongoCollection<Employee> employees =
+=======
+            CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
+
+            //save to database?
+            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
+            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
+            //BsonDocument currentNotebook = new BsonDocument {
+            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
+            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
+            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
+            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
+            //    };
+            //iNote.Insert(currentNotebook);
+      
+            //MongoCollection<Employee> employees =
+>>>>>>> 3d06ed119f85f4ecf4efef24d077222d2578ec82
           //hr.GetCollection<Employee>("employees");
         }
 

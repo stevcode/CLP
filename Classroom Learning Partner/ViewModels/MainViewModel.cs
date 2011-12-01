@@ -26,16 +26,41 @@ namespace Classroom_Learning_Partner.ViewModels
         public MainViewModel()
         {
             CLPService = new CLPServiceAgent();
+            TitleBarText = "Disconnected";
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
         #region Bindings
 
+        /// <summary>
+        /// The <see cref="TitleBarText" /> property's name.
+        /// </summary>
+        public const string TitleBarTextPropertyName = "TitleBarText";
+
+        private string _titleBarText = "";
+
+        /// <summary>
+        /// Sets and gets the TitleBarText property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
         public string TitleBarText
         {
-            //get { return clpText + UserName + " (" + ConnectionStatus + ")"; }
-            get { return clpText; }
+            get
+            {
+                return _titleBarText;
+            }
+
+            set
+            {
+                if (_titleBarText == value)
+                {
+                    return;
+                }
+
+                _titleBarText = clpText + value;
+                RaisePropertyChanged(TitleBarTextPropertyName);
+            }
         }
 
         /// <summary>

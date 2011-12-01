@@ -10,6 +10,9 @@ using System.Windows.Controls;
 using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Microsoft.Windows.Controls.Ribbon;
+using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Views.PageObjects;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,6 +31,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
+        public CLPTextBoxView LastFocusedTextBox = null;
+
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
         /// </summary>
@@ -40,6 +45,29 @@ namespace Classroom_Learning_Partner.ViewModels
             _drawingAttributes.FitToCurve = true;
 
             _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+
+            foreach (var color in _colors)
+            {
+                _fontColors.Add(new SolidColorBrush(color));
+            }
+
+            CurrentFontColor = new SolidColorBrush(Colors.Black);
+
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    break;
+                case App.UserMode.Instructor:
+                    InstructorVisibility = Visibility.Visible;
+                    break;
+                case App.UserMode.Projector:
+                    break;
+                case App.UserMode.Student:
+                    StudentVisibility = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private ICLPServiceAgent CLPService { get; set; }
@@ -228,6 +256,141 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #region TextBox
+
+        private ObservableCollection<FontFamily> _fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies);
+        public ObservableCollection<FontFamily> Fonts
+        {
+            get
+            {
+                return _fonts;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontFamily" /> property's name.
+        /// </summary>
+        public const string CurrentFontFamilyPropertyName = "CurrentFontFamily";
+
+        private FontFamily _currentFontFamily = new FontFamily("Times New Roman");
+
+        /// <summary>
+        /// Sets and gets the CurrentFontFamily property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public FontFamily CurrentFontFamily
+        {
+            get
+            {
+                return _currentFontFamily;
+            }
+
+            set
+            {
+                if (_currentFontFamily == value)
+                {
+                    return;
+                }
+
+                _currentFontFamily = value;
+                RaisePropertyChanged(CurrentFontFamilyPropertyName);
+                Console.WriteLine("fontfamily changed");
+                AppMessages.UpdateFont.Send(-1, _currentFontFamily, null);
+            }
+        }
+
+        private ObservableCollection<double> _fontSizes = new ObservableCollection<double>(){3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
+		                                                                                    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 15.0,
+		                                                                                    16.0, 17.0, 18.0, 19.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0,
+		                                                                                    32.0, 34.0, 36.0, 38.0, 40.0, 44.0, 48.0, 52.0, 56.0, 60.0, 64.0, 68.0, 72.0, 76.0,
+		                                                                                    80.0, 88.0, 96.0, 104.0, 112.0, 120.0, 128.0, 136.0, 144.0};
+
+        public ObservableCollection<double> FontSizes
+        {
+            get
+            {
+                return _fontSizes;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontSize" /> property's name.
+        /// </summary>
+        public const string CurrentFontSizePropertyName = "CurrentFontSize";
+
+        private double _currentFontSize = 24;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontSize property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public double CurrentFontSize
+        {
+            get
+            {
+                return _currentFontSize;
+            }
+
+            set
+            {
+                if (_currentFontSize == value)
+                {
+                    return;
+                }
+
+                _currentFontSize = value;
+                RaisePropertyChanged(CurrentFontSizePropertyName);
+                Console.WriteLine("fontsize changed");
+                AppMessages.UpdateFont.Send(_currentFontSize, null, null);
+            }
+        }
+
+        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.Blue, Colors.Purple, Colors.Brown, Colors.Green };
+        private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
+
+        public ObservableCollection<Brush> FontColors
+        {
+            get
+            {
+                return _fontColors;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontColor" /> property's name.
+        /// </summary>
+        public const string CurrentFontColorPropertyName = "CurrentFontColor";
+
+        private Brush _currentFontColor;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontColor property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Brush CurrentFontColor
+        {
+            get
+            {
+                return _currentFontColor;
+            }
+
+            set
+            {
+                if (_currentFontColor == value)
+                {
+                    return;
+                }
+
+                _currentFontColor = value;
+                RaisePropertyChanged(CurrentFontColorPropertyName);
+                Console.WriteLine("fontcolor changed");
+                AppMessages.UpdateFont.Send(-1, null, _currentFontColor);
+            }
+        }
+
+
+        #endregion //TextBox
+
         #endregion //Bindings
 
         #region Commands
@@ -379,10 +542,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPService.OpenNewNotebook();
                                               AuthoringTabVisibility = Visibility.Visible;
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
@@ -423,10 +582,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                               App.IsAuthoring = true;
                                               App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                                               AuthoringTabVisibility = Visibility.Visible;
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }
@@ -446,10 +601,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               App.IsAuthoring = false;
                                               CLPService.SetWorkspace();
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
                                           }));
             }
         }

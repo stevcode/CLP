@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner
             AddPageToDisplay,
             ChangeInkMode,
             UpdateCLPHistory, 
+<<<<<<< HEAD
 	    SetLaserPointerMode,
 	    UpdateLaserPointerPosition,
             UpdateFont
@@ -36,6 +37,10 @@ namespace Classroom_Learning_Partner
             {
                 Messenger.Default.Register(recipient, MessageTypes.UpdateFont, action);
             }
+=======
+	        SetLaserPointerMode,
+	        UpdateLaserPointerPosition
+>>>>>>> d75a71d5ae19ba88f221d86ae8fff7b2a66c3933
         }
 
         public static class ChangeInkMode

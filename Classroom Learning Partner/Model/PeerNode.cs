@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.Model
 {
     public class PeerNode
     {
-        public string Id { get; private set; }
+        public string MachineName { get; private set; }
 
         public ICLPMeshNetworkChannel Channel;
         public ICLPMeshNetworkContract Host;
@@ -23,7 +23,8 @@ namespace Classroom_Learning_Partner.Model
 
         public PeerNode()
         {
-            Id = new Guid().ToString();
+            MachineName = Environment.MachineName;
+            App.MainWindowViewModel.TitleBarText = "Connecting...";
         }
 
         public void Run()
@@ -37,13 +38,13 @@ namespace Classroom_Learning_Partner.Model
         {
             var binding = new NetPeerTcpBinding();
             binding.Security.Mode = SecurityMode.None;
+
             // Allow big arguments on messages. Allow ~500 MB message.
             binding.MaxReceivedMessageSize = 500 * 1024 * 1024;
             binding.MaxBufferPoolSize = 500 * 1024 * 1024;
 
             // Allow unlimited time to send/receive a message. 
-            // It also prevents closing idle sessions. 
-            // From MSDN: To prevent the service from aborting idle sessions prematurely increase the Receive timeout on the service endpoint's binding.’
+            // It also prevents closing idle sessions.
             binding.ReceiveTimeout = TimeSpan.MaxValue;
             binding.SendTimeout = TimeSpan.MaxValue;
 
@@ -72,28 +73,32 @@ namespace Classroom_Learning_Partner.Model
                 endpoint);
 
             var channel = _factory.CreateChannel();
-            OnlineStatusHandler = channel.GetProperty<IOnlineStatus>();
-            OnlineStatusHandler.Online += new EventHandler(OnlineStatusHandler_Online);
-            OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
-
-            
 
             channel.Open();
 
             // wait until after the channel is open to allow access.
-            Console.WriteLine("channel assigned");
             Channel = channel;
+
+            OnlineStatusHandler = Channel.GetProperty<IOnlineStatus>();
+            OnlineStatusHandler.Online += new EventHandler(OnlineStatusHandler_Online);
+            OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
+            if (OnlineStatusHandler.IsOnline)
+            {
+                Console.WriteLine("Online");
+                App.MainWindowViewModel.TitleBarText = "Connected";
+                Channel.Connect(MachineName);
+            }
         }
 
         void OnlineStatusHandler_Offline(object sender, EventArgs e)
         {
-            Console.WriteLine("Offline");
+            App.MainWindowViewModel.TitleBarText = "Disconnected";
         }
 
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
-            Console.WriteLine("Online");
-           // Channel.Connect(Id);
+            App.MainWindowViewModel.TitleBarText = "Connected";
+            Channel.Connect(MachineName);   
         }
 
         public void Stop()
@@ -106,7 +111,9 @@ namespace Classroom_Learning_Partner.Model
             //Channel.Disconnect()
             Channel.Close();
             if (_factory != null)
+            {
                 _factory.Close();
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
 using GalaSoft.MvvmLight.Messaging;
+using System.Windows.Input;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -236,6 +237,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
+            //BUG - this is being called twice
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel;
@@ -322,6 +324,8 @@ namespace Classroom_Learning_Partner.Model
                     App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
                     break;
             }
+
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

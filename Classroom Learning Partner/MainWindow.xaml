@@ -17,7 +17,6 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Skins/MainSkin.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -40,7 +39,7 @@
         </Grid.RowDefinitions>
 
 
-        <vw:RibbonView Grid.Row="0" DataContext="{Binding Path=Ribbon}"></vw:RibbonView>
+        <vw:RibbonView x:Name="RibbonView" Grid.Row="0" DataContext="{Binding Path=Ribbon}"></vw:RibbonView>
         <ContentControl Grid.Row="1" Content="{Binding Path=Workspace}"></ContentControl>
 
     </Grid>
