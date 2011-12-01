@@ -173,7 +173,7 @@ namespace Classroom_Learning_Partner.Model
                 case App.UserMode.Server:
                     //save to database
                     MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
-                    MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Noteboks");
+                    MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
                     BsonDocument currentNotebook = new BsonDocument {
                         { "ID", notebook.MetaData.GetValue("UniqueID") },
                         { "CreationDate", notebook.MetaData.GetValue("CreationDate") },

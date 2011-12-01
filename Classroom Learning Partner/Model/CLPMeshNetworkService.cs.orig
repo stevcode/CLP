@@ -45,20 +45,15 @@ namespace Classroom_Learning_Partner.Model
                 CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                 CLPService.AddSubmission(page);
             }
-            else if (App.CurrentUserMode == App.UserMode.Server)
-            {
-                pagecount++;
-                Console.WriteLine("page received");
-                Console.WriteLine("Page Count: " + pagecount.ToString());
-            }
-        }
+<<<<<<< HEAD
+	}
 
         public void SaveNotebookDB(string s_notebook)
         {
             //recieve notebook
             //App.PeerNode.channel
 
-            if (App.CurrentUserMode == App.UserMode.Server)
+            if (App.CurrentUserMode == App.UserMode.Instructor)
             {
                 Console.WriteLine("Notebook save requtest received");
                 Console.WriteLine(s_notebook);
@@ -67,6 +62,14 @@ namespace Classroom_Learning_Partner.Model
                 CLPService.SaveNotebookDB(notebook);
                
             }
+=======
+            else if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                pagecount++;
+                Console.WriteLine("page received");
+                Console.WriteLine("Page Count: " + pagecount.ToString());
+            }
+>>>>>>> fd6a144361923a64fd46d529dc6b5edd66cd3ec7
         }
 
         public void LaserUpdate(Point pt)

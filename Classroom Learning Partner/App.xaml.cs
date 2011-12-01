@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Server;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -43,6 +43,15 @@ namespace Classroom_Learning_Partner
             DispatcherHelper.Initialize();
 
             JoinMeshNetwork();
+            switch (App.CurrentUserMode)
+            {
+                case UserMode.Instructor:
+                    ConnectToDB();
+                    break;
+                case UserMode.Server:
+                    ConnectToDB();
+                    break;
+            }
         }
 
         protected void ConnectToDB()
