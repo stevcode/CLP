@@ -33,8 +33,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             }
         }
 
-        private SinglePageDisplayViewModel _display = new SinglePageDisplayViewModel();
-        public SinglePageDisplayViewModel Display
+        private LinkedDisplayViewModel _display = new LinkedDisplayViewModel();
+        public LinkedDisplayViewModel Display
         {
             get
             {

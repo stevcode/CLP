@@ -87,7 +87,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return;
                 }
-
+                if (_workspace != null && _workspace is IDisposable)
+                {
+                    (_workspace as IDisposable).Dispose();
+                }
+                
                 _workspace = value;
                 RaisePropertyChanged(WorkspacePropertyName);
             }
