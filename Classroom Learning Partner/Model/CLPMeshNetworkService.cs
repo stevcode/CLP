@@ -50,6 +50,12 @@ namespace Classroom_Learning_Partner.Model
                 pagecount++;
                 Console.WriteLine("page received");
                 Console.WriteLine("Page Count: " + pagecount.ToString());
+                Console.WriteLine(s_page);
+                //Database call
+                CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                CLPService.SavePageDB(page);
+                
+
             }
         }
 

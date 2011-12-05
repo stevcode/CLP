@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.Model
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void SaveNotebookDB(CLPNotebook notebookVM);
+        void SavePageDB(CLPPage pageVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
 
@@ -162,7 +163,7 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
             string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
-            App.Peer.Channel.SaveNotebookDB(s_notebook);
+            App.Peer.Channel.SaveNotebookDB(s_notebook);//Database call
 
         }
 
@@ -172,7 +173,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 case App.UserMode.Server:
                     //save to database
-                    MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
+                    MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
                     MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
                     BsonDocument currentNotebook = new BsonDocument {
                         { "ID", notebook.MetaData.GetValue("UniqueID") },
@@ -181,6 +182,24 @@ namespace Classroom_Learning_Partner.Model
                           { "NotebookContent", ObjectSerializer.ToString(notebook) }
                         };
                     nbCollection.Insert(currentNotebook);
+                    break;
+            }
+        }
+
+        public void SavePageDB(CLPPage page)
+        {
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    //save to database
+                    MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                    MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
+                    BsonDocument currentPage = new BsonDocument {
+                        { "ID", page.MetaData.GetValue("UniqueID") },
+                        { "CreationDate", page.MetaData.GetValue("CreationDate") },
+                          { "PageContent", ObjectSerializer.ToString(page) }
+                        };
+                    pageCollection.Insert(currentPage);
                     break;
             }
         }
