@@ -13,12 +13,12 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class SinglePageDisplayViewModel : ViewModelBase, IDisposable
+    public class LinkedDisplayViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the SinglePageDisplayViewModel class.
+        /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public SinglePageDisplayViewModel()
+        public LinkedDisplayViewModel()
         {
             AppMessages.AddPageToDisplay.Register(this, (pageViewModel) => {
                                                                         this.PageViewModel = pageViewModel;
@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                         this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
-            Console.WriteLine("registered");
+            Console.WriteLine("SingePageDisplay Created");
             AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
         }
 

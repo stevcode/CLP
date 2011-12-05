@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Classroom_Learning_Partner.Views.Displays
 {
     /// <summary>
-    /// Interaction logic for SinglePageDisplayPreviewView.xaml
+    /// Interaction logic for LinkedDisplayView.xaml
     /// </summary>
-    public partial class SinglePageDisplayPreviewView : UserControl
+    public partial class LinkedDisplayView : UserControl
     {
-        public SinglePageDisplayPreviewView()
+        public LinkedDisplayView()
         {
             InitializeComponent();
         }

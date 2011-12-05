@@ -8,6 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
 
-            <dvw:SinglePageDisplayView Grid.Column="1" Content="{Binding Path=Display}" Margin="5"/>
+            <dvw:LinkedDisplayView Grid.Column="1" Content="{Binding Path=Display}" Margin="5"/>
 
 </UserControl>

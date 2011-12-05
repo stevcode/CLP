@@ -105,7 +105,7 @@
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
-    <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
@@ -130,11 +130,8 @@
     <Compile Include="Views\CLPPageView.xaml.cs">
       <DependentUpon>CLPPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Displays\SinglePageDisplayPreviewView.xaml.cs">
-      <DependentUpon>SinglePageDisplayPreviewView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Displays\SinglePageDisplayView.xaml.cs">
-      <DependentUpon>SinglePageDisplayView.xaml</DependentUpon>
+    <Compile Include="Views\Displays\LinkedDisplayView.xaml.cs">
+      <DependentUpon>LinkedDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
@@ -219,11 +216,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Displays\SinglePageDisplayPreviewView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Displays\SinglePageDisplayView.xaml">
+    <Page Include="Views\Displays\LinkedDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
