@@ -33,17 +33,14 @@
                         Canvas.Left="0"
                         Canvas.Top="-50"
                         Width="{Binding Path=Width}"
-                        Cursor="Hand"
+                        Cursor="Hand" PreviewMouseUp="Thumb_PreviewMouseUp"
                         >
-                        <Polygon Stroke="Black" StrokeThickness="1" Fill="Black" FillRule="Nonzero" HorizontalAlignment="Center"
-Points="0,0 150,0 100,50 50,50" />
-
-                    <Thumb
-                            DragDelta="Thumb_DragDelta"
-                            >
+                        <Polygon Stroke="Black" StrokeThickness="1" Fill="Black" FillRule="Nonzero" HorizontalAlignment="Center" Points="0,0 150,0 100,50 50,50"  />
+                    <Thumb DragDelta="Thumb_DragDelta">
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Rectangle
+                                        MouseDown="Thumb_MouseDown"
                                         Fill="Transparent"
                                         />
                             </ControlTemplate>

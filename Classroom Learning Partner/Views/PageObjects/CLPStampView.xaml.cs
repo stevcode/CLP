@@ -16,6 +16,7 @@ using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Resources;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -40,14 +41,27 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private ICLPServiceAgent CLPService { get; set; }
 
+        //datacontext from model to assign initial
+        private bool isPartsAssignedByTeacher = false;
+
         private void PartsButton_Click(object sender, RoutedEventArgs e)
         {
-            KeypadWindowView keyPad = new KeypadWindowView();
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult == true) {
-                Button partsBtn = sender as Button;
-                partsBtn.Content = keyPad.Parts;
+            if (!isPartsAssignedByTeacher || App.IsAuthoring)
+            {
+                KeypadWindowView keyPad = new KeypadWindowView();
+                keyPad.ShowDialog();
+                if (keyPad.DialogResult == true)
+                {
+                    Button partsBtn = sender as Button;
+                    partsBtn.Content = keyPad.Parts;
+                }
+
+                if (App.IsAuthoring)
+                {
+                    isPartsAssignedByTeacher = true;
+                }
             }
+            
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
@@ -77,6 +91,38 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             Point pt = new Point(x, y);
             CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+        }
+
+
+        private Point oldPosition;
+        private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+            oldPosition = pageObjectContainerViewModel.Position;
+            CLPImageStamp stamp = (this.DataContext as CLPStampViewModel).PageObject.Copy() as CLPImageStamp;
+            CLPService.AddPageObjectToPage(stamp);
+        }
+
+        private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+            Point newPosition = pageObjectContainerViewModel.Position;
+
+            double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+            double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+            //change these to be past the height/width of the container
+            if (deltaX > 50 && deltaY > 50)
+            {
+                CLPStampViewModel stampViewModel = this.DataContext as CLPStampViewModel;
+                stampViewModel.IsAnchored = false;
+                adornedControl.HideAdorner();
+            }
+            else
+            {
+                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+            }
         }
         
     }

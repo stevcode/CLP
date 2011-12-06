@@ -71,6 +71,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _sourceImage = genBmpImage;
         }
 
+        public override CLPPageObjectBase Copy()
+        {
+            CLPImageStamp newStamp = new CLPImageStamp(_byteSource);
+            //copy all metadata and create new unique ID/creation date for the moved stamp
+            newStamp.IsAnchored = IsAnchored;
+            newStamp.Parts = Parts;
+            newStamp.Position = Position;
+            newStamp.Height = Height;
+            newStamp.Width = Width;
+
+            return newStamp;
+        }
+
         #region Properties
 
         //Non-Serialized

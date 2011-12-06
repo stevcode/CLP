@@ -274,6 +274,8 @@ namespace Classroom_Learning_Partner.Model
         {
             pageObjectContainerViewModel.Position = pt;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+
+            //send change to projector and students?
             //DATABASE change page object's position
         }
 
