@@ -20,6 +20,8 @@ namespace AdornedControl
     /// </summary>
     public class AdornedControl : ContentControl
     {
+        
+
         #region Dependency Properties
 
         /// <summary>

@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPStampViewModel(pageObject as CLPImageStamp);
                 }
                 else if (pageObject is CLPTextBox)
                 {

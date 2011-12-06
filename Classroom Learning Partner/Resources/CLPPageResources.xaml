@@ -30,8 +30,8 @@
         <vwpo:CLPImageView />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vmpo:CLPImageStampViewModel}">
-        <vwpo:CLPImageStampView />
+    <DataTemplate DataType="{x:Type vmpo:CLPStampViewModel}">
+        <vwpo:CLPStampView />
     </DataTemplate>
 
 </ResourceDictionary>

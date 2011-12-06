@@ -8,11 +8,11 @@ using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    public class CLPImageStampViewModel : CLPPageObjectBaseViewModel
+    public class CLPStampViewModel : CLPPageObjectBaseViewModel
     {
         #region Constructors
 
-        public CLPImageStampViewModel(CLPImageStamp stamp)
+        public CLPStampViewModel(CLPImageStamp stamp)
         {
             PageObject = stamp;
             this.Position = stamp.Position;
