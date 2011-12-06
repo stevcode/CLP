@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPImageStamp : CLPPageObjectBase
+    public class CLPImageStamp : CLPPageObjectBase, ICLPStamp
     {
 
         public CLPImageStamp(string path)
@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             InitializeBase();
 
             MetaData.SetValue("IsAnchored", "True");
-            MetaData.SetValue("Parts", "");
+            MetaData.SetValue("Parts", "0");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 double ratio = _sourceImage.Height / _sourceImage.Width;
                 Width = Height * ratio;
 
-                base.Position = new System.Windows.Point(10, 10);
+                base.Position = new Point(10, 10);
             }
         }
 
@@ -138,15 +138,22 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
-        public string Parts
+        public int Parts
         {
             get
             {
-                return MetaData.GetValue("Parts");
+                if (MetaData.GetValue("Parts") == "")
+                {
+                    return 0;
+                }
+                else
+                {
+                    return Int32.Parse(MetaData.GetValue("Parts"));
+                }   
             }
             set
             {
-                MetaData.SetValue("Parts", value);
+                MetaData.SetValue("Parts", value.ToString());
             }
         }
 

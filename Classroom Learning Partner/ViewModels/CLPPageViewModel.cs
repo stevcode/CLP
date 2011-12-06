@@ -56,7 +56,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
                 }
                 else if (pageObject is CLPTextBox)
                 {
@@ -75,14 +79,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            List<string> removedStrokes = new List<string>();
+            //limit send to teacher by change bool value here
+
+            List<Stroke> removedStrokes = new List<Stroke>();
             foreach (Stroke stroke in e.Removed)
             {
 
                 string stringStroke = StrokeToString(stroke);
                 if (Page.Strokes.Contains(stringStroke))
                 {
-                    removedStrokes.Add(stringStroke);
+                    removedStrokes.Add(stroke);
                     Page.Strokes.Remove(stringStroke);
                 }
                 else
@@ -92,7 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             }
 
-            List<string> addedStrokes = new List<string>();
+            List<Stroke> addedStrokes = new List<Stroke>();
             foreach (Stroke stroke in e.Added)
             {
                 if (!stroke.ContainsPropertyData(StrokeIDKey))
@@ -101,8 +107,35 @@ namespace Classroom_Learning_Partner.ViewModels
                     stroke.AddPropertyData(StrokeIDKey, newUniqueID);
                 }
                 string stringStroke = StrokeToString(stroke);
-                addedStrokes.Add(stringStroke);
+                addedStrokes.Add(stroke);
                 Page.Strokes.Add(stringStroke);
+                //make call to service agent to database/projector can update
+            }
+
+            foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)
+            {
+                //add bool to pageObjectBase for accept strokes, that way you don't need to check if it's over if it's not going to accept
+
+                Rect rect = new Rect(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y, pageObjectContainerViewModel.Width, pageObjectContainerViewModel.Height);
+
+                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in addedStrokes)
+                {
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        addedStrokesOverObject.Add(stroke);
+                    }
+                }
+
+                StrokeCollection removedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in removedStrokes)
+                {
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        removedStrokesOverObject.Add(stroke);
+                    }
+                }
+                pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
         }
 

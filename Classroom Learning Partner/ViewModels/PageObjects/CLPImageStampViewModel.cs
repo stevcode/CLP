@@ -5,26 +5,27 @@ using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows;
 using System.Windows.Media;
+using Classroom_Learning_Partner.Model;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    public class CLPStampViewModel : CLPPageObjectBaseViewModel
+    public class CLPImageStampViewModel : CLPPageObjectBaseViewModel
     {
         #region Constructors
 
-        public CLPStampViewModel(CLPImageStamp stamp)
+        public CLPImageStampViewModel(CLPImageStamp stamp)
         {
-            PageObject = stamp;
-            this.Position = stamp.Position;
-
-            _sourceImage = stamp.SourceImage;
             _isAnchored = stamp.IsAnchored;
             _parts = stamp.Parts;
+            _sourceImage = stamp.SourceImage;
+            PageObject = stamp;           
         }
 
         #endregion //Constructors
 
-        #region Bindings
+        
 
         private ImageSource _sourceImage;
 
@@ -38,6 +39,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 return _sourceImage;
             }
         }
+
+        #region Bindings
 
         /// <summary>
         /// The <see cref="IsAnchor" /> property's name.
@@ -68,19 +71,19 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 RaisePropertyChanged(IsAnchorPropertyName);
             }
         }
-        
+
         /// <summary>
-        /// The <see cref="StampParts" /> property's name.
+        /// The <see cref="Parts" /> property's name.
         /// </summary>
-        public const string PartsPropertyName = "StampParts";
+        public const string PartsPropertyName = "Parts";
 
-        private string _parts = "";
+        private int _parts = 0;
 
         /// <summary>
-        /// Sets and gets the StampParts property.
+        /// Sets and gets the Parts property.
         /// Changes to that property's value raise the PropertyChanged event. 
         /// </summary>
-        public string Parts
+        public int Parts
         {
             get
             {
@@ -89,6 +92,11 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
             set
             {
+                if (_parts == value)
+                {
+                    return;
+                }
+
                 _parts = value;
                 RaisePropertyChanged(PartsPropertyName);
             }

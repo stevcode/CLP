@@ -93,6 +93,7 @@
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjectBase.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
@@ -110,9 +111,11 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
@@ -149,8 +152,11 @@
     <Compile Include="Views\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
-      <DependentUpon>CLPStampView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPBlankStampView.xaml.cs">
+      <DependentUpon>CLPBlankStampView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPImageStampView.xaml.cs">
+      <DependentUpon>CLPImageStampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
@@ -241,7 +247,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPStampView.xaml">
+    <Page Include="Views\PageObjects\CLPBlankStampView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPImageStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

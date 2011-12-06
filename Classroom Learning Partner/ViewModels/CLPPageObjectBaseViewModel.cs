@@ -2,6 +2,7 @@
 using System.Windows.Ink;
 using Classroom_Learning_Partner.Model;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -147,35 +148,35 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected virtual void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-        //    StrokeCollection strokesToRemove = new StrokeCollection();
-        //    foreach (Stroke objectStroke in PageObjectStrokes)
-        //    {
+            StrokeCollection strokesToRemove = new StrokeCollection();
+            foreach (Stroke objectStroke in PageObjectStrokes)
+            {
 
-        //        string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
-        //        foreach (Stroke pageStroke in removedStrokes)
-        //        {
-        //            string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
-        //            if (objectStrokeUniqueID == pageStrokeUniqueID)
-        //            {
-        //                strokesToRemove.Add(objectStroke);
-        //            }
-        //        }
-        //    }
+                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                foreach (Stroke pageStroke in removedStrokes)
+                {
+                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                    if (objectStrokeUniqueID == pageStrokeUniqueID)
+                    {
+                        strokesToRemove.Add(objectStroke);
+                    }
+                }
+            }
 
-        //    foreach (Stroke stroke in strokesToRemove)
-        //    {
-        //        PageObjectStrokes.Remove(stroke);
-        //    }
+            foreach (Stroke stroke in strokesToRemove)
+            {
+                PageObjectStrokes.Remove(stroke);
+            }
 
 
-        //    foreach (Stroke stroke in addedStrokes)
-        //    {
-        //        Stroke newStroke = stroke.Clone();
-        //        Matrix transform = new Matrix();
-        //        transform.Translate(OffsetX, OffsetY);
-        //        newStroke.Transform(transform, true);
-        //        PageObjectStrokes.Add(newStroke);
-        //    }
+            foreach (Stroke stroke in addedStrokes)
+            {
+                Stroke newStroke = stroke.Clone();
+                Matrix transform = new Matrix();
+                transform.Translate(-Position.X, -Position.Y);
+                newStroke.Transform(transform, true);
+                PageObjectStrokes.Add(newStroke);
+            }
         }
     }
 }
