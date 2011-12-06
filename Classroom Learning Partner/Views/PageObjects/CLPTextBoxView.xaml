@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     
-        <toolkit:RichTextBox x:Name="RichTextBox" Grid.Row="1" Margin="10" BorderBrush="Gray" Padding="10"
+        <toolkit:RichTextBox x:Name="RichTextBox" Grid.Row="1" Padding="10"
                                          Text="{Binding CLPText}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
                                          FontSize="24"

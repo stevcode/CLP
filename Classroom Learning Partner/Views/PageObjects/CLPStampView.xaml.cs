@@ -32,11 +32,16 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             
             adornedControl.IsMouseOverShowEnabled = false;
 
-            //if ((this.DataContext as CLPStampViewModel).IsAnchored)
-            //{
+            this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);            
+        }
+
+        void CLPStampView_Loaded(object sender, RoutedEventArgs e)
+        {
+            CLPStampViewModel stampViewModel = this.DataContext as CLPStampViewModel;
+            if (stampViewModel.IsAnchored)
+            {
                 adornedControl.ShowAdorner();
-            //}
-            
+            }
         }
 
         private ICLPServiceAgent CLPService { get; set; }
@@ -117,6 +122,8 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             {
                 CLPStampViewModel stampViewModel = this.DataContext as CLPStampViewModel;
                 stampViewModel.IsAnchored = false;
+                //make serviceagent call here to change model and database
+                (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
                 adornedControl.HideAdorner();
             }
             else

@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -23,12 +24,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             InitializeComponent();
         }
-
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("click");
-        }
-
-        
+       
     }
 }
