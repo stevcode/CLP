@@ -289,6 +289,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
                 }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                }
                 else if (pageObject is CLPTextBox)
                 {
                     pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
@@ -322,6 +326,8 @@ namespace Classroom_Learning_Partner.Model
         {
             pageObjectContainerViewModel.Position = pt;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+
+            //send change to projector and students?
             //DATABASE change page object's position
         }
 

@@ -11,34 +11,35 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Classroom_Learning_Partner.Views.Modal_Windows;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Resources;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.Views.Modal_Windows;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
-    /// Interaction logic for CLPImageStampView.xaml
+    /// Interaction logic for CLPBlankStampView.xaml
     /// </summary>
-    public partial class CLPImageStampView : UserControl
+    public partial class CLPBlankStampView : UserControl
     {
-        public CLPImageStampView()
+        public CLPBlankStampView()
         {
             InitializeComponent();
+
             CLPService = new CLPServiceAgent();
-            
+
             adornedControl.IsMouseOverShowEnabled = false;
 
-            this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);            
+            this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);  
         }
 
-        private CLPImageStampViewModel stampViewModel;
+        private CLPBlankStampViewModel stampViewModel;
         void CLPStampView_Loaded(object sender, RoutedEventArgs e)
         {
-            stampViewModel = this.DataContext as CLPImageStampViewModel;
+            stampViewModel = this.DataContext as CLPBlankStampViewModel;
             if (stampViewModel.IsAnchored)
             {
                 adornedControl.ShowAdorner();
@@ -67,7 +68,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     isPartsAssignedByTeacher = true;
                 }
             }
-            
+
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
@@ -106,8 +107,14 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
             oldPosition = pageObjectContainerViewModel.Position;
 
-            CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+            CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
             CLPService.AddPageObjectToPage(stamp);
+
+            stampViewModel.IsAnchored = false;
+            //make serviceagent call here to change model and database
+            (stampViewModel.PageObject as CLPBlankStamp).IsAnchored = false;
+            stampViewModel.ScribblesToStrokePaths();
+            
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -121,11 +128,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             //change these to be past the height/width of the container
             if (deltaX > 50 && deltaY > 50)
             {
-
-                stampViewModel.IsAnchored = false;
-                //make serviceagent call here to change model and database
-                (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
-
                 adornedControl.HideAdorner();
             }
             else
@@ -133,6 +135,5 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
             }
         }
-        
     }
 }
