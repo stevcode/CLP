@@ -11,6 +11,7 @@ using Classroom_Learning_Partner.ViewModels.PageObjects;
 using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Input;
 
@@ -30,6 +31,7 @@ namespace Classroom_Learning_Partner.Model
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void SaveNotebookDB(CLPNotebook notebookVM);
         void SavePageDB(CLPPage pageVM);
+        void SaveNotebooksFromDBToHD(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
 
@@ -75,7 +77,6 @@ namespace Classroom_Learning_Partner.Model
         public void AddSubmission(CLPPage page)
         {
             App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
-            //App.Peer.Channel.
         }
 
         public void OpenNotebook(string notebookName)
@@ -108,12 +109,15 @@ namespace Classroom_Learning_Partner.Model
 
 
                 SetWorkspace();
-                
+
 
                 //change this to open Instructor/Student/Projector Workspace
                 //App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
             }
-            //else doesn't exist, error checking
+            else //else doesn't exist, error checking
+            {
+                //check if notebook exisist on server
+            }
         }
 
 
@@ -185,7 +189,16 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-
+        public void SaveNotebooksFromDBToHD(CLPNotebook notebook)
+        {
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Student:
+                    string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
+                    CLPNotebook.SaveNotebookToFile(filePath, notebook);
+                    break;
+            }
+        }
         public void SavePageDB(CLPPage page)
         {
             switch (App.CurrentUserMode)
@@ -209,15 +222,23 @@ namespace Classroom_Learning_Partner.Model
             {
                 Directory.CreateDirectory(App.NotebookDirectory);
             }
-            foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
+            //foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
+            //{
+            //    string notebookName = Path.GetFileNameWithoutExtension(fullFile);
+            //    NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
+            //    notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
+            //}
+
+            //grab list of available notebooks from database
+            MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+            MongoCollection<BsonDocument> masterNotebooks = nb.GetCollection<BsonDocument>("MasterNotebooks");
+            //var query = Query.EQ("author", "Kurt Vonnegut");
+            foreach (BsonDocument masterNB in masterNotebooks.FindAll())
             {
-                string notebookName = Path.GetFileNameWithoutExtension(fullFile);
+                string notebookName = masterNB["NotebookName"].AsString;
                 NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
                 notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
             }
-
-            //grab list of available notebooks from database
-
             //compare?
         }
 

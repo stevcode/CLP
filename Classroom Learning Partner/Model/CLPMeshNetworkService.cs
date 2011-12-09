@@ -22,7 +22,10 @@ namespace Classroom_Learning_Partner.Model
             if (App.CurrentUserMode == App.UserMode.Server)
             {
                 Console.WriteLine("Machine Connected: " + userName);
+                //send out notebooks
+                //CLPService.SendNotebooks();
             }
+
         }
 
         public void Disconnect(string userName)
@@ -72,6 +75,15 @@ namespace Classroom_Learning_Partner.Model
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPService.SaveNotebookDB(notebook);
                
+            }
+        }
+
+        public void ReceiveNotebooks(string[] s_notebooks)
+        {
+            //Currently send all notebooks, specifiy this(with flag) later
+            foreach(string s_notebook in s_notebooks){
+                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLPService.SaveNotebooksFromDBToHD(notebook);
             }
         }
 

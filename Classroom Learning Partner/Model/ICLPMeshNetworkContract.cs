@@ -23,6 +23,9 @@ namespace Classroom_Learning_Partner.Model
         [OperationContract(IsOneWay = true)]
         void SaveNotebookDB(string notebook);
 
+        [OperationContract(IsOneWay = true)]
+        void ReceiveNotebooks(string[] s_notebooks);
+
 	    [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
     }
