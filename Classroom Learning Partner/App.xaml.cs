@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Server;
+            CurrentUserMode = UserMode.Student;
             switch (App.CurrentUserMode)
             {
                 case UserMode.Server:
@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
-
+            JoinMeshNetwork();
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             
             MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner
 
             DispatcherHelper.Initialize();
 
-            JoinMeshNetwork();
+           // JoinMeshNetwork();
             
         }
 

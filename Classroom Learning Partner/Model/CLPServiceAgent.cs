@@ -45,6 +45,10 @@ namespace Classroom_Learning_Partner.Model
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+
+        //Calls made on Server to DB
+        void RetrieveNotebooks(string username);
+        void DistributeNotebook(CLPNotebookViewModel notebookVM);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -167,7 +171,7 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
             string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
-            App.Peer.Channel.SaveNotebookDB(s_notebook);//Database call
+            App.Peer.Channel.SaveNotebookDB(s_notebook);//Server call
 
         }
 
@@ -372,6 +376,34 @@ namespace Classroom_Learning_Partner.Model
             }
 
             CommandManager.InvalidateRequerySuggested();
+        }
+
+        public void RetrieveNotebooks(string username){
+            //Use username to retrieve all student Notebooks and broadcast over mesh network
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> notebookCollection = nb.GetCollection<BsonDocument>("Notebooks");
+                var query = Query.EQ("user", username);
+                var cursor = notebookCollection.Find(query).SetFields(Fields.Include("NotebookContent"));
+                string s_notebook;
+                //int count = 1;
+                //s_notebook[0] = username;
+                foreach (BsonDocument notebook in cursor)
+                {
+                    s_notebook = username + "#" + notebook["NotebookContent"].AsString;
+                    App.Peer.Channel.ReceiveNotebook(s_notebook);
+                }
+                Console.WriteLine("Notebooks broadcast to user " + username);
+            }
+        }
+
+        public void DistributeNotebook(CLPNotebookViewModel notebookVM)
+        {
+            //Doyou need to save separtly? 
+            //make a copy of notebook in db for each student.
+            MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+            MongoCollection<BsonDocument> notebookCollection = nb.GetCollection<BsonDocument>("Notebooks");
         }
     }
 }
