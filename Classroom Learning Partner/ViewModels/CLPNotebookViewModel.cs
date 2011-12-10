@@ -166,6 +166,19 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public CLPPageViewModel GetPageByID(string pageUniqueID)
+        {
+            foreach (var pageViewModel in PageViewModels)
+            {
+                if (pageViewModel.Page.UniqueID == pageUniqueID)
+                {
+                    return pageViewModel;
+                }
+            }
+
+            return null;
+        }
+
         public int GetNotebookPageIndex(CLPPageViewModel pageViewModel)
         {
             if (pageViewModel.Page.IsSubmission)

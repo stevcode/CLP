@@ -88,7 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
 
-            List<Stroke> addedStrokes = new List<Stroke>();
+            StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
             {
                 if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
@@ -99,7 +99,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 addedStrokes.Add(stroke);    
             }
 
-            //make call to service agent so database/projector can update
+            if (App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                List<string> add = new List<string>(StrokesToStrings(addedStrokes));
+                List<string> remove = new List<string>(StrokesToStrings(e.Removed));
+                App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+            }
+            
 
             foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)
             {

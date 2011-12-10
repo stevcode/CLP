@@ -6,6 +6,7 @@ using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.ServiceModel;
+using System.Windows.Threading;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -24,6 +25,9 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
+
+        [OperationContract(IsOneWay = true)]
+        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -77,5 +81,34 @@ namespace Classroom_Learning_Partner.Model
                 AppMessages.UpdateLaserPointerPosition.Send(pt);
             }
         }
+
+
+        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        CLPPageViewModel pageViewModel = App.CurrentNotebookViewModel.GetPageByID(pageUniqueID);
+                        if (pageViewModel != null)
+                        {
+                            foreach (var stringStroke in strokesAdded)
+                            {
+                                pageViewModel.OtherStrokes.Add(CLPPageViewModel.StringToStroke(stringStroke));
+                            }
+                            foreach (var stringStroke in strokesRemoved)
+                            {
+                                pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
+                            }
+
+                        }
+                    }
+
+                    return null;
+                }, null);
+
+        }
+    
     }
 }
