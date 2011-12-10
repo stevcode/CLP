@@ -98,7 +98,6 @@
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
-    <Compile Include="Model\ICLPMeshNetworkContract.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
