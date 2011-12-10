@@ -29,22 +29,20 @@ namespace Classroom_Learning_Partner.Model
             filePath = fileDirectory + @"\" + fileName;
             if (!File.Exists(filePath))
             {
-                File.Create(filePath);
+                //File.Create(filePath);
+                File.WriteAllText(filePath, "**Log File Created**");
             }
-
-            string initializeString = "*** New Log Instance - " + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToShortTimeString() + " ***";
-
-            File.AppendAllText(filePath, initializeString);
-
         }
 
         public void InitializeLog()
         {
+            string initializeString = "*** New Log Instance - " + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " ***";
+            File.AppendAllText(filePath, Environment.NewLine + initializeString);
         }
 
         public void WriteToLog(string s)
         {
-            File.AppendAllText(filePath, s);
+            File.AppendAllText(filePath, Environment.NewLine + s);
         }
     }
 }
