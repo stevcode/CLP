@@ -152,10 +152,10 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (Stroke objectStroke in PageObjectStrokes)
             {
 
-                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
                 foreach (Stroke pageStroke in removedStrokes)
                 {
-                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
                     if (objectStrokeUniqueID == pageStrokeUniqueID)
                     {
                         strokesToRemove.Add(objectStroke);

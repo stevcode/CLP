@@ -99,6 +99,7 @@
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\ICLPMeshNetworkContract.cs" />
+    <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
+    <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
@@ -133,6 +135,9 @@
     </Compile>
     <Compile Include="Views\CLPPageView.xaml.cs">
       <DependentUpon>CLPPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\GridDisplayView.xaml.cs">
+      <DependentUpon>GridDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Displays\LinkedDisplayView.xaml.cs">
       <DependentUpon>LinkedDisplayView.xaml</DependentUpon>
@@ -220,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CLPPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\GridDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

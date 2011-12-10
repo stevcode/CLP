@@ -23,8 +23,6 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
-        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
-
         #region Constructors
 
         /// <summary>
@@ -45,7 +43,15 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
-                _strokes.Add(stroke);
+                if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "true")
+                {
+
+                }
+                else
+                {
+                    _strokes.Add(stroke);
+                }
+                
             }
             foreach (var pageObject in page.PageObjects)
             {
@@ -93,7 +99,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine("Stroke does not exist on the CLPPage");
+                    Logger.Instance.WriteToLog("Tried to remove stroke from page. Stroke does not exist");
                 }
 
             }
@@ -101,10 +107,10 @@ namespace Classroom_Learning_Partner.ViewModels
             List<Stroke> addedStrokes = new List<Stroke>();
             foreach (Stroke stroke in e.Added)
             {
-                if (!stroke.ContainsPropertyData(StrokeIDKey))
+                if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
                     string newUniqueID = Guid.NewGuid().ToString();
-                    stroke.AddPropertyData(StrokeIDKey, newUniqueID);
+                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                 }
                 string stringStroke = StrokeToString(stroke);
                 addedStrokes.Add(stroke);
@@ -177,6 +183,15 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return _strokes;
+            }
+        }
+
+        private StrokeCollection _otherStrokes = new StrokeCollection();
+        public StrokeCollection OtherStrokes
+        {
+            get
+            {
+                return _otherStrokes;
             }
         }
 
