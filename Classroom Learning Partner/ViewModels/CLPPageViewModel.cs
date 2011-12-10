@@ -43,15 +43,14 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
-                if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "true")
+                if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "false")
                 {
-
+                    _otherStrokes.Add(stroke);
                 }
                 else
                 {
                     _strokes.Add(stroke);
-                }
-                
+                } 
             }
             foreach (var pageObject in page.PageObjects)
             {
@@ -87,22 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //limit send to teacher by change bool value here
 
-            List<Stroke> removedStrokes = new List<Stroke>();
-            foreach (Stroke stroke in e.Removed)
-            {
 
-                string stringStroke = StrokeToString(stroke);
-                if (Page.Strokes.Contains(stringStroke))
-                {
-                    removedStrokes.Add(stroke);
-                    Page.Strokes.Remove(stringStroke);
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("Tried to remove stroke from page. Stroke does not exist");
-                }
-
-            }
 
             List<Stroke> addedStrokes = new List<Stroke>();
             foreach (Stroke stroke in e.Added)
@@ -112,11 +96,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     string newUniqueID = Guid.NewGuid().ToString();
                     stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                 }
-                string stringStroke = StrokeToString(stroke);
-                addedStrokes.Add(stroke);
-                Page.Strokes.Add(stringStroke);
-                //make call to service agent to database/projector can update
+                addedStrokes.Add(stroke);    
             }
+
+            //make call to service agent so database/projector can update
 
             foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)
             {
@@ -134,7 +117,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 StrokeCollection removedStrokesOverObject = new StrokeCollection();
-                foreach (Stroke stroke in removedStrokes)
+                foreach (Stroke stroke in e.Removed)
                 {
                     if (stroke.HitTest(rect, 3))
                     {
