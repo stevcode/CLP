@@ -175,34 +175,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public const string NumberOfSubmissionsPropertyName = "NumberOfSubmissions";
-        private int _numberOfSubmissions;
-        public int NumberOfSubmissions
-        {
-            get
-            {
-                if (_numberOfSubmissions == null)
-                {
-                    if (NotebookViewModel.SubmissionViewModels.ContainsKey(Page.UniqueID))
-                    {
-                        _numberOfSubmissions = NotebookViewModel.SubmissionViewModels[Page.UniqueID].Count;
-                    }
-                    else
-                    {
-                        _numberOfSubmissions = 0;
-                    }
-                }
-
-
-                return _numberOfSubmissions;
-            }
-            set
-            {
-                _numberOfSubmissions = value;
-                RaisePropertyChanged(NumberOfSubmissionsPropertyName);
-            }
-        }
-
         #endregion //Properties
 
         #region Bindings
@@ -291,6 +263,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _defaultDrawingAttributes = value;
                 RaisePropertyChanged(DefaultDAPropertyName);
+            }
+        }
+
+        public const string NumberOfSubmissionsPropertyName = "NumberOfSubmissions";
+
+        public int NumberOfSubmissions
+        {
+            get
+            {
+                return NotebookViewModel.SubmissionViewModels[Page.UniqueID].Count;
+            }
+            set
+            {
+                RaisePropertyChanged(NumberOfSubmissionsPropertyName);
             }
         }
 
