@@ -39,16 +39,18 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPPageViewModel pageVM = new CLPPageViewModel(page, this);
                 PageViewModels.Add(pageVM);
+
+                //create blank submissions key/value pairs
+                ObservableCollection<CLPPageViewModel> pages = new ObservableCollection<CLPPageViewModel>();
+                SubmissionViewModels.Add(page.UniqueID, pages);
             }
             foreach (string submissionUniqueID in Notebook.Submissions.Keys)
             {
-                ObservableCollection<CLPPageViewModel> submissions = new ObservableCollection<CLPPageViewModel>();
                 foreach (CLPPage submission in Notebook.Submissions[submissionUniqueID])
                 {
                     CLPPageViewModel submissionVM = new CLPPageViewModel(submission, this);
-                    submissions.Add(submissionVM);
+                    SubmissionViewModels[submissionUniqueID].Add(submissionVM);
                 }
-                SubmissionViewModels.Add(submissionUniqueID, submissions);
             }
         }
 
