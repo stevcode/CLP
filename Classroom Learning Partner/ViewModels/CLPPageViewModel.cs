@@ -162,6 +162,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
+
+        public string SubmitterName
+        {
+            get
+            {
+                return Page.SubmitterName;
+            }
+        }
+
         #endregion //Properties
 
         #region Bindings

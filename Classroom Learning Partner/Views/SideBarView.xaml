@@ -80,10 +80,9 @@
                             <Border>
                                 <Grid Margin="5,10" Name="grid">
                                     <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                    
-                                    <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
-                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
+
+                                    <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                                            HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
