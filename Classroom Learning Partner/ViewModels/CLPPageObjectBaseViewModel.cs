@@ -179,6 +179,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 transform.Translate(-Position.X, -Position.Y);
                 newStroke.Transform(transform, true);
                 PageObjectStrokes.Add(newStroke);
+
+                PageObject.PageObjectStrokes.Add(CLPPageViewModel.StrokeToString(newStroke));
             }
         }
     }

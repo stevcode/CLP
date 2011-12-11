@@ -66,8 +66,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 {
                     isPartsAssignedByTeacher = true;
                 }
-            }
-            
+            }  
         }
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
