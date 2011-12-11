@@ -28,6 +28,33 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class ThicknessConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            Visibility vis = (Visibility)value;
+            if (vis == Visibility.Visible)
+            {
+                return 2;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class Converters
     {
     }

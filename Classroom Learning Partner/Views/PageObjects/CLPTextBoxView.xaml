@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
+             xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <conv:ThicknessConverter x:Key="ThicknessConverter"/>
+    </UserControl.Resources>
     
         <toolkit:RichTextBox x:Name="RichTextBox" Grid.Row="1" Padding="10"
                                          Text="{Binding CLPText}" 
@@ -15,7 +19,7 @@
                                          SelectionChanged="RichTextBox_SelectionChanged"
                                          
                                          Width="{Binding Path=Width}"
-                                         Height="{Binding Path=Height}" BorderThickness="2">
+                                         Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility, Converter={StaticResource ThicknessConverter}}">
             <toolkit:RichTextBox.TextFormatter>
                 <toolkit:RtfFormatter />
             </toolkit:RichTextBox.TextFormatter>
