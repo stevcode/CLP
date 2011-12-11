@@ -36,8 +36,7 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></ComboBox>
-                        <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
                     </DockPanel>
 
                     <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
@@ -57,7 +56,7 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                        <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
+                                            <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
                                                 <Image Source="..\Images\DisplaySubmissionsButton.png" />
                                             </Button>
                                             <Label Grid.Row="1" Content="25" Width="25" />

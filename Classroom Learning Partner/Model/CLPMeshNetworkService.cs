@@ -21,7 +21,7 @@ namespace Classroom_Learning_Partner.Model
         void Disconnect(string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SubmitPage(string page);
+        void SubmitPage(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
@@ -56,20 +56,28 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void SubmitPage(string s_page)
+        public void SubmitPage(string s_page, string userName)
         {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
 
-            if (App.CurrentUserMode == App.UserMode.Instructor)
-            {
-                CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                CLPService.AddSubmission(page);
-            }
-            else if (App.CurrentUserMode == App.UserMode.Server)
-            {
-                pagecount++;
-                Console.WriteLine("page received");
-                Console.WriteLine("Page Count: " + pagecount.ToString());
-            }
+                    if (App.CurrentUserMode == App.UserMode.Instructor)
+                    {
+                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        page.IsSubmission = true;
+                        page.SubmitterName = userName;
+                        CLPService.AddSubmission(page);
+                    }
+                    else if (App.CurrentUserMode == App.UserMode.Server)
+                    {
+                        pagecount++;
+                        Console.WriteLine("page received");
+                        Console.WriteLine("Page Count: " + pagecount.ToString());
+                    }
+
+                    return null;
+                }, null);
         }
 
         public void LaserUpdate(Point pt)

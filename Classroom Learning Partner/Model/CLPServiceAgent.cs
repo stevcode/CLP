@@ -214,9 +214,8 @@ namespace Classroom_Learning_Partner.Model
 
         public void SubmitPage(CLPPageViewModel pageVM)
         {
-            pageVM.Page.SubmitterName = App.Peer.UserName;
             string s_page = ObjectSerializer.ToString(pageVM.Page);
-            App.Peer.Channel.SubmitPage(s_page);
+            App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
         }
 
 
