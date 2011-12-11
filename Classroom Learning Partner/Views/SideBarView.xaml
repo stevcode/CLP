@@ -51,7 +51,7 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
-                                    <Grid Grid.Column="1" VerticalAlignment="Center" >
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" >
                                             <Grid.RowDefinitions>
                                                 <RowDefinition />
                                                 <RowDefinition />
@@ -59,7 +59,7 @@
                                             <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
                                                 <Image Source="..\Images\DisplaySubmissionsButton.png" />
                                             </Button>
-                                            <Label Grid.Row="1" Content="25" Width="25" />
+                                            <Label Grid.Row="1" Content="{Binding Path=NumberOfSubmissions, Mode=OneWay}" HorizontalContentAlignment="Center" Width="25" />
                                         </Grid>
                                     </Grid>                              
                             </DataTemplate>

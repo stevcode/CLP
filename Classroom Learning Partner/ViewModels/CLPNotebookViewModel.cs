@@ -32,10 +32,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
+            _currentPageViewModel = new CLPPageViewModel(this);
+
             _notebook = notebook;
             foreach (CLPPage page in Notebook.Pages)
             {
-                CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                CLPPageViewModel pageVM = new CLPPageViewModel(page, this);
                 PageViewModels.Add(pageVM);
             }
             foreach (string submissionUniqueID in Notebook.Submissions.Keys)
@@ -43,7 +45,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 ObservableCollection<CLPPageViewModel> submissions = new ObservableCollection<CLPPageViewModel>();
                 foreach (CLPPage submission in Notebook.Submissions[submissionUniqueID])
                 {
-                    CLPPageViewModel submissionVM = new CLPPageViewModel(submission);
+                    CLPPageViewModel submissionVM = new CLPPageViewModel(submission, this);
                     submissions.Add(submissionVM);
                 }
                 SubmissionViewModels.Add(submissionUniqueID, submissions);
@@ -85,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string CurrentPageViewModelPropertyName = "CurrentPageViewModel";
 
-        private CLPPageViewModel _currentPageViewModel = new CLPPageViewModel();
+        private CLPPageViewModel _currentPageViewModel;
 
         /// <summary>
         /// Sets and gets the CurrentPageViewModel property.
@@ -228,6 +230,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 pages.Add(submission);
                 SubmissionViewModels.Add(pageID, pages);
             }
+
+            GetPageByID(pageID).NumberOfSubmissions++;
 
             Notebook.AddStudentSubmission(pageID, submission.Page);
         }

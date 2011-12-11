@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner.Model
     {
         public void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex)
         {
-            CLPPageViewModel pageViewModel = new CLPPageViewModel(page);
+            CLPPageViewModel pageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
             if (submissionIndex == -1)
             {
                 App.CurrentNotebookViewModel.InsertPage(notebookIndex, pageViewModel);
@@ -72,7 +72,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddSubmission(CLPPage page)
         {
-            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
+            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page, App.CurrentNotebookViewModel));
         }
 
         public void OpenNotebook(string notebookName)

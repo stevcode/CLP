@@ -28,12 +28,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
-        public CLPPageViewModel() : this(new CLPPage())
+        public CLPPageViewModel(CLPNotebookViewModel notebookViewModel) : this(new CLPPage(), notebookViewModel)
         {
         }
 
-        public CLPPageViewModel(CLPPage page)
+        public CLPNotebookViewModel NotebookViewModel { get; set; }
+
+        public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
+            NotebookViewModel = notebookViewModel; 
+
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -168,6 +172,34 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return Page.SubmitterName;
+            }
+        }
+
+        public const string NumberOfSubmissionsPropertyName = "NumberOfSubmissions";
+        private int _numberOfSubmissions;
+        public int NumberOfSubmissions
+        {
+            get
+            {
+                if (_numberOfSubmissions == null)
+                {
+                    if (NotebookViewModel.SubmissionViewModels.ContainsKey(Page.UniqueID))
+                    {
+                        _numberOfSubmissions = NotebookViewModel.SubmissionViewModels[Page.UniqueID].Count;
+                    }
+                    else
+                    {
+                        _numberOfSubmissions = 0;
+                    }
+                }
+
+
+                return _numberOfSubmissions;
+            }
+            set
+            {
+                _numberOfSubmissions = value;
+                RaisePropertyChanged(NumberOfSubmissionsPropertyName);
             }
         }
 
