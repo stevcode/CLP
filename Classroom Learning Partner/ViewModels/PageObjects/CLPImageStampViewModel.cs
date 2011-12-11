@@ -15,7 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
     {
         #region Constructors
 
-        public CLPImageStampViewModel(CLPImageStamp stamp)
+        public CLPImageStampViewModel(CLPImageStamp stamp, CLPPageViewModel pageViewModel)
+            : base(pageViewModel)
         {
             _isAnchored = stamp.IsAnchored;
             _parts = stamp.Parts;

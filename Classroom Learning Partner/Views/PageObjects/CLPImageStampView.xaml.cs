@@ -72,67 +72,75 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+            if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+            {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
 
-            double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-            double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-            if (x < 0)
-            {
-                x = 0;
-            }
-            if (y < 0)
-            {
-                y = 0;
-            }
-            if (x > 816 - pageObjectContainerViewModel.Width)
-            {
-                x = 816 - pageObjectContainerViewModel.Width;
-            }
-            if (y > 1056 - pageObjectContainerViewModel.Height)
-            {
-                y = 1056 - pageObjectContainerViewModel.Height;
-            }
+                double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+                double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+                if (x < 0)
+                {
+                    x = 0;
+                }
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                if (x > 816 - pageObjectContainerViewModel.Width)
+                {
+                    x = 816 - pageObjectContainerViewModel.Width;
+                }
+                if (y > 1056 - pageObjectContainerViewModel.Height)
+                {
+                    y = 1056 - pageObjectContainerViewModel.Height;
+                }
 
-            Point pt = new Point(x, y);
-            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                Point pt = new Point(x, y);
+                CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+            }
         }
 
 
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-            oldPosition = pageObjectContainerViewModel.Position;
+            if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+            {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                oldPosition = pageObjectContainerViewModel.Position;
 
-            CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
-            CLPService.AddPageObjectToPage(stamp);
+                CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+                CLPService.AddPageObjectToPage(stamp);
+            }     
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-            Point newPosition = pageObjectContainerViewModel.Position;
-
-            double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-            double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-            //change these to be past the height/width of the container
-            if (deltaX > 50 || deltaY > 50)
+            if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
             {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                Point newPosition = pageObjectContainerViewModel.Position;
 
-                stampViewModel.IsAnchored = false;
-                //make serviceagent call here to change model and database
-                (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                //change these to be past the height/width of the container
+                if (deltaX > 50 || deltaY > 50)
+                {
 
-                adornedControl.HideAdorner();
+                    stampViewModel.IsAnchored = false;
+                    //make serviceagent call here to change model and database
+                    (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+
+                    adornedControl.HideAdorner();
+                }
+                else
+                {
+                    CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                }
             }
-            else
-            {
-                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-            }
-        }
-        
+        }  
     }
 }

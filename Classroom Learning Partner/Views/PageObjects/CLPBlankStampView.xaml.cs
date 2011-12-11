@@ -73,67 +73,75 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+            if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+            {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
 
-            double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-            double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-            if (x < 0)
-            {
-                x = 0;
-            }
-            if (y < 0)
-            {
-                y = 0;
-            }
-            if (x > 816 - pageObjectContainerViewModel.Width)
-            {
-                x = 816 - pageObjectContainerViewModel.Width;
-            }
-            if (y > 1056 - pageObjectContainerViewModel.Height)
-            {
-                y = 1056 - pageObjectContainerViewModel.Height;
-            }
+                double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+                double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+                if (x < 0)
+                {
+                    x = 0;
+                }
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                if (x > 816 - pageObjectContainerViewModel.Width)
+                {
+                    x = 816 - pageObjectContainerViewModel.Width;
+                }
+                if (y > 1056 - pageObjectContainerViewModel.Height)
+                {
+                    y = 1056 - pageObjectContainerViewModel.Height;
+                }
 
-            Point pt = new Point(x, y);
-            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                Point pt = new Point(x, y);
+                CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+            } 
         }
 
 
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-            oldPosition = pageObjectContainerViewModel.Position;
+            if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+            {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                oldPosition = pageObjectContainerViewModel.Position;
 
-            CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
-            CLPService.AddPageObjectToPage(stamp);
+                CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
+                CLPService.AddPageObjectToPage(stamp);
 
-            stampViewModel.IsAnchored = false;
-            //make serviceagent call here to change model and database
-            (stampViewModel.PageObject as CLPBlankStamp).IsAnchored = false;
-            stampViewModel.ScribblesToStrokePaths();
-            
+                stampViewModel.IsAnchored = false;
+                //make serviceagent call here to change model and database
+                (stampViewModel.PageObject as CLPBlankStamp).IsAnchored = false;
+                stampViewModel.ScribblesToStrokePaths();
+            }
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-            PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-            Point newPosition = pageObjectContainerViewModel.Position;
+            if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+            {
+                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                Point newPosition = pageObjectContainerViewModel.Position;
 
-            double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-            double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-            //change these to be past the height/width of the container
-            if (deltaX > 50 || deltaY > 50)
-            {
-                adornedControl.HideAdorner();
-            }
-            else
-            {
-                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-            }
+                double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                //change these to be past the height/width of the container
+                if (deltaX > 50 || deltaY > 50)
+                {
+                    adornedControl.HideAdorner();
+                }
+                else
+                {
+                    CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                }
+            }            
         }
     }
 }

@@ -15,7 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPBlankStampViewModel class.
         /// </summary>
-        public CLPBlankStampViewModel(CLPBlankStamp stamp)
+        public CLPBlankStampViewModel(CLPBlankStamp stamp, CLPPageViewModel pageViewModel)
+            : base(pageViewModel)
         {
             _isAnchored = stamp.IsAnchored;
             _parts = stamp.Parts;
@@ -121,7 +122,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     }
                     geometry.Freeze();
 
-                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
+                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width, PageViewModel);
                     StrokePathViewModels.Add(strokePathViewModel);
                 }
             }

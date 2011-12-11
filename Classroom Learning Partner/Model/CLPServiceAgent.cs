@@ -229,25 +229,24 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
-            //BUG - this is being called twice
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
                 }
                 else if (pageObject is CLPBlankStamp)
                 {
-                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
                 }
                 else if (pageObject is CLPTextBox)
                 {
-                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
                 }
                 else
                 {

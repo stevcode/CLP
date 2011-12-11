@@ -61,19 +61,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);      
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, this);      
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, this);
                 }
                 else if (pageObject is CLPBlankStamp)
                 {
-                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, this);
                 }
                 else if (pageObject is CLPTextBox)
                 {
-                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, this);
                 }
 
                 PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);

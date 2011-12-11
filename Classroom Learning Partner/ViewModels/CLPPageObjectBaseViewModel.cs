@@ -17,8 +17,11 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase
     {
-        protected CLPPageObjectBaseViewModel()
+        public CLPPageViewModel PageViewModel { get; protected set; }
+
+        protected CLPPageObjectBaseViewModel(CLPPageViewModel pageViewModel)
         {
+            PageViewModel = pageViewModel;
         }
 
         private CLPPageObjectBase _pageObject;
