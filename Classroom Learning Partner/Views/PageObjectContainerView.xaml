@@ -147,6 +147,7 @@
                         Width="40"
                         Height="40"
                         Cursor="SizeNWSE"
+                        Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}"
                         >
                     <Ellipse
                             Stroke="Black"

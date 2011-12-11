@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             double deltaX = Math.Abs(newPosition.X - oldPosition.X);
             double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
             //change these to be past the height/width of the container
-            if (deltaX > 50 && deltaY > 50)
+            if (deltaX > 50 || deltaY > 50)
             {
                 adornedControl.HideAdorner();
             }
