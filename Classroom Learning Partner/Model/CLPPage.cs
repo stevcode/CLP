@@ -104,6 +104,18 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        public string SubmitterName
+        {
+            get
+            {
+                return MetaData.GetValue("SubmitterName");
+            }
+            set
+            {
+                MetaData.SetValue("SubmitterName", value);
+            }
+        }
+
         #endregion //MetaData
     }
 }

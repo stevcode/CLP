@@ -61,8 +61,6 @@ namespace Classroom_Learning_Partner.Model
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
-                Console.WriteLine("page received");
-                Console.WriteLine(s_page);
                 CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                 CLPService.AddSubmission(page);
             }
