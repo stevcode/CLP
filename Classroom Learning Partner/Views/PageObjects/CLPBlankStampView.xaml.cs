@@ -88,13 +88,13 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 {
                     y = 0;
                 }
-                if (x > 816 - pageObjectContainerViewModel.Width)
+                if (x > 1056 - pageObjectContainerViewModel.Width)
                 {
-                    x = 816 - pageObjectContainerViewModel.Width;
+                    x = 1056 - pageObjectContainerViewModel.Width;
                 }
-                if (y > 1056 - pageObjectContainerViewModel.Height)
+                if (y > 816 - pageObjectContainerViewModel.Height)
                 {
-                    y = 1056 - pageObjectContainerViewModel.Height;
+                    y = 816 - pageObjectContainerViewModel.Height;
                 }
 
                 Point pt = new Point(x, y);

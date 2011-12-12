@@ -48,6 +48,12 @@ namespace Classroom_Learning_Partner.Views
                 else RootGrid.MouseMove -= sendLaserPointerPosition;
             });
 
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                RootGrid.Children.Add(_laserPoint);
+                _laserPoint.Visibility = Visibility.Collapsed;
+            }
+
             //Register so we receive mouse coordinates for the laser on the projector
             AppMessages.UpdateLaserPointerPosition.Register(this, (pt) =>
             {
@@ -132,9 +138,6 @@ namespace Classroom_Learning_Partner.Views
                 
                 return HitTestResultBehavior.Continue;
             }
-
-            
-            
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -145,6 +148,7 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private LaserPoint _laserPoint = new LaserPoint();
+        private Thickness _laserPointMargins = new Thickness();
         public void updateLaserPointerPosition(Point pt)
         {
             // We cannot update the UI element directly, need to access it using the UI thread so we have this
@@ -161,9 +165,11 @@ namespace Classroom_Learning_Partner.Views
         // Does the actual updating of the LaserPoint
         private void setUILaserPointerValue(Point pt)
         {
-            if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
-            RootGrid.Children.Add(_laserPoint);
-            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+            //if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
+            _laserPoint.Visibility = Visibility.Visible;
+            _laserPointMargins.Left = pt.X;
+            _laserPointMargins.Top = pt.Y;
+            _laserPoint.RootGrid.Margin = _laserPointMargins;
         }
 
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
@@ -171,9 +177,9 @@ namespace Classroom_Learning_Partner.Views
             if (isMouseDown)
             {
                 Point pt = e.GetPosition(this.RootGrid);
-                if (pt.X > 816) pt.X = 816;
-                if (pt.Y > 1056) pt.Y = 1056;
-                CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
+                CLPService.SendLaserPosition(pt);
             }
         }
 

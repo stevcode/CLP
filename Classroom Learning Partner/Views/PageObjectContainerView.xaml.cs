@@ -48,13 +48,13 @@ namespace Classroom_Learning_Partner.Views
             {
                 y = 0;
             }
-            if (x > 816 - pageObjectContainerViewModel.Width)
+            if (x > 1056 - pageObjectContainerViewModel.Width)
             {
-                x = 816 - pageObjectContainerViewModel.Width;
+                x = 1056 - pageObjectContainerViewModel.Width;
             }
-            if (y > 1056 - pageObjectContainerViewModel.Height)
+            if (y > 816 - pageObjectContainerViewModel.Height)
             {
-                y = 1056 - pageObjectContainerViewModel.Height;
+                y = 816 - pageObjectContainerViewModel.Height;
             }
 
             Point pt = new Point(x, y);
@@ -74,11 +74,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 newWidth = 10;
             }
-            if (newHeight + pageObjectContainerViewModel.Position.Y > 1056)
+            if (newHeight + pageObjectContainerViewModel.Position.Y > 816)
             {
                 newHeight = pageObjectContainerViewModel.Height;
             }
-            if (newWidth + pageObjectContainerViewModel.Position.X > 816)
+            if (newWidth + pageObjectContainerViewModel.Position.X > 1056)
             {
                 newWidth = pageObjectContainerViewModel.Width;
             }
