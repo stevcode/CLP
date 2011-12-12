@@ -177,8 +177,8 @@ namespace Classroom_Learning_Partner.Views
             if (isMouseDown)
             {
                 Point pt = e.GetPosition(this.RootGrid);
-                if (pt.X > 816) pt.X = 816;
-                if (pt.Y > 1056) pt.Y = 1056;
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
                 CLPService.SendLaserPosition(pt);
             }
         }

@@ -5,7 +5,7 @@
                     xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
                     xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
     <ItemsPanelTemplate x:Key="PanelTemplate">
-        <Canvas Width="816" Height="1056" Background="Transparent" />
+        <Canvas Width="1056" Height="816" Background="Transparent" />
     </ItemsPanelTemplate>
 
     <Style x:Key="ContainerStyle">
