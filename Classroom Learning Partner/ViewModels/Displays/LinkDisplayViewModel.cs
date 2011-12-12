@@ -21,14 +21,19 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public LinkedDisplayViewModel()
         {
             AppMessages.AddPageToDisplay.Register(this, (pageViewModel) => {
-                                                                        this.PageViewModel = pageViewModel;
-                                                                        this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-                                                                        this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                            if (this.IsActive)
+                                                                            {
+                                                                                this.PageViewModel = pageViewModel;
+                                                                                this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
+                                                                                this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                            }                                                   
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
-            Console.WriteLine("SingePageDisplay Created");
             AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
         }
+
+        public bool IsActive { get; set; }
+        public bool IsOnProjector { get; set; }
 
         /// <summary>
         /// The <see cref="PageViewModel" /> property's name.

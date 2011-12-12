@@ -16,7 +16,7 @@
 
             <vw:SideBarView  Grid.Column="0" DataContext="{Binding Path=SideBar}"/>
 
-            <dvw:LinkedDisplayView Grid.Column="1" Content="{Binding Path=Display}" Margin="5"/>
+            <ContentControl Grid.Column="1" Content="{Binding Path=Display}" Margin="5"/>
 
         </Grid>
     </Grid>

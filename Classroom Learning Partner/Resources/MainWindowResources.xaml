@@ -45,6 +45,10 @@
         <dvw:LinkedDisplayView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type dvm:GridDisplayViewModel}">
+        <dvw:GridDisplayView />
+    </DataTemplate>
+
     <!--DataTemplates for Other ViewModels-->
 
     <DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">

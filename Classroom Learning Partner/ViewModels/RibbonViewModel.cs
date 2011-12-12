@@ -828,6 +828,68 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Insert Commands
 
+        #region Display Commands
+
+        private RelayCommand _sendDisplayToProjectorCommand;
+
+        /// <summary>
+        /// Gets the SendDisplayToProjectorCommand.
+        /// </summary>
+        public RelayCommand SendDisplayToProjectorCommand
+        {
+            get
+            {
+                return _sendDisplayToProjectorCommand
+                    ?? (_sendDisplayToProjectorCommand = new RelayCommand(
+                                          () =>
+                                          {
+
+                                          }));
+            }
+        }
+
+        private RelayCommand _switchToLinkedDisplayCommand;
+
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand.
+        /// </summary>
+        public RelayCommand SwitchToLinkedDisplayCommand
+        {
+            get
+            {
+                return _switchToLinkedDisplayCommand
+                    ?? (_switchToLinkedDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
+                                          }));
+            }
+        }
+
+        private RelayCommand _createNewGridDisplayCommand;
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand.
+        /// </summary>
+        public RelayCommand CreateNewGridDisplayCommand
+        {
+            get
+            {
+                return _createNewGridDisplayCommand
+                    ?? (_createNewGridDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
+                                          }));
+            }
+        }
+
+        #endregion //Display Commands
+
         private RelayCommand _submitPageCommand;
 
         /// <summary>
