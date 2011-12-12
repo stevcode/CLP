@@ -11,19 +11,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views.Displays
 {
     /// <summary>
-    /// Interaction logic for CLPImageView.xaml
+    /// Interaction logic for GridDisplayView.xaml
     /// </summary>
-    public partial class CLPImageView : UserControl
+    public partial class GridDisplayView : UserControl
     {
-        public CLPImageView()
+        public GridDisplayView()
         {
             InitializeComponent();
         }
-       
     }
 }

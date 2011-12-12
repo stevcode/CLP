@@ -23,19 +23,21 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
-        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
-
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
-        public CLPPageViewModel() : this(new CLPPage())
+        public CLPPageViewModel(CLPNotebookViewModel notebookViewModel) : this(new CLPPage(), notebookViewModel)
         {
         }
 
-        public CLPPageViewModel(CLPPage page)
+        public CLPNotebookViewModel NotebookViewModel { get; set; }
+
+        public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
+            NotebookViewModel = notebookViewModel; 
+
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -45,22 +47,33 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
-                _strokes.Add(stroke);
+                if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "false")
+                {
+                    _otherStrokes.Add(stroke);
+                }
+                else
+                {
+                    _strokes.Add(stroke);
+                } 
             }
             foreach (var pageObject in page.PageObjects)
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);      
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, this);      
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, this);
+                }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, this);
                 }
                 else if (pageObject is CLPTextBox)
                 {
-                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, this);
                 }
 
                 PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);
@@ -75,34 +88,53 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            List<string> removedStrokes = new List<string>();
-            foreach (Stroke stroke in e.Removed)
-            {
+            //limit send to teacher by change bool value here
 
-                string stringStroke = StrokeToString(stroke);
-                if (Page.Strokes.Contains(stringStroke))
-                {
-                    removedStrokes.Add(stringStroke);
-                    Page.Strokes.Remove(stringStroke);
-                }
-                else
-                {
-                    Console.WriteLine("Stroke does not exist on the CLPPage");
-                }
 
-            }
 
-            List<string> addedStrokes = new List<string>();
+            StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
             {
-                if (!stroke.ContainsPropertyData(StrokeIDKey))
+                if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
                     string newUniqueID = Guid.NewGuid().ToString();
-                    stroke.AddPropertyData(StrokeIDKey, newUniqueID);
+                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                 }
-                string stringStroke = StrokeToString(stroke);
-                addedStrokes.Add(stringStroke);
-                Page.Strokes.Add(stringStroke);
+                addedStrokes.Add(stroke);    
+            }
+
+            if (App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                List<string> add = new List<string>(StrokesToStrings(addedStrokes));
+                List<string> remove = new List<string>(StrokesToStrings(e.Removed));
+                App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+            }
+            
+
+            foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)
+            {
+                //add bool to pageObjectBase for accept strokes, that way you don't need to check if it's over if it's not going to accept
+
+                Rect rect = new Rect(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y, pageObjectContainerViewModel.Width, pageObjectContainerViewModel.Height);
+
+                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in addedStrokes)
+                {
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        addedStrokesOverObject.Add(stroke);
+                    }
+                }
+
+                StrokeCollection removedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in e.Removed)
+                {
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        removedStrokesOverObject.Add(stroke);
+                    }
+                }
+                pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
         }
 
@@ -134,6 +166,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
+
+        public string SubmitterName
+        {
+            get
+            {
+                return Page.SubmitterName;
+            }
+        }
+
         #endregion //Properties
 
         #region Bindings
@@ -144,6 +185,15 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return _strokes;
+            }
+        }
+
+        private StrokeCollection _otherStrokes = new StrokeCollection();
+        public StrokeCollection OtherStrokes
+        {
+            get
+            {
+                return _otherStrokes;
             }
         }
 
@@ -213,6 +263,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _defaultDrawingAttributes = value;
                 RaisePropertyChanged(DefaultDAPropertyName);
+            }
+        }
+
+        public const string NumberOfSubmissionsPropertyName = "NumberOfSubmissions";
+
+        public int NumberOfSubmissions
+        {
+            get
+            {
+                return NotebookViewModel.SubmissionViewModels[Page.UniqueID].Count;
+            }
+            set
+            {
+                RaisePropertyChanged(NumberOfSubmissionsPropertyName);
             }
         }
 

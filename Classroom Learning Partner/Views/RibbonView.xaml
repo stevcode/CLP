@@ -342,6 +342,10 @@
                     Label="Insert Image Stamp"
                     LargeImageSource="..\Images\AddPictureStamp.jpg"
                     Command="{Binding Path=InsertImageStampCommand}" />
+                <ribbon:RibbonButton
+                    Label="Insert Blank Stamp"
+                    LargeImageSource="..\Images\AddPathStamp.png"
+                    Command="{Binding Path=InsertBlankStampCommand}" />
             </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Page">

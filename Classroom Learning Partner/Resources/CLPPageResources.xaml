@@ -15,7 +15,7 @@
                 Value="{Binding Position.Y}" />
     </Style>
 
-    <Geometry x:Key="CloseX">M0,0 L1,1 M0,1 L1,0</Geometry>
+
 
 
     <DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
@@ -32,6 +32,10 @@
 
     <DataTemplate DataType="{x:Type vmpo:CLPImageStampViewModel}">
         <vwpo:CLPImageStampView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vmpo:CLPBlankStampViewModel}">
+        <vwpo:CLPBlankStampView />
     </DataTemplate>
 
 </ResourceDictionary>

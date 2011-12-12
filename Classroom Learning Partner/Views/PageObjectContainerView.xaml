@@ -5,15 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
              xmlns:adorners="clr-namespace:Classroom_Learning_Partner.Views.Adorners"
+             xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="PageObjectContainerRoot">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>              
             </ResourceDictionary.MergedDictionaries>
+            <conv:LengthConverter x:Key="LengthConverter"/>
         </ResourceDictionary>
+        
     </UserControl.Resources>
 
     <ac:AdornedControl
@@ -31,6 +34,11 @@
                     Width="{Binding Path=Width}"
                     Height="{Binding Path=Height}"
                     >
+                <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
+                           Canvas.Top="-5" Canvas.Left="-5"
+                           Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
+                           Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}"
+                           />
                 <!--Close Button-->
                 <Button
                         x:Name="closeButton"
@@ -139,6 +147,7 @@
                         Width="40"
                         Height="40"
                         Cursor="SizeNWSE"
+                        Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}"
                         >
                     <Ellipse
                             Stroke="Black"

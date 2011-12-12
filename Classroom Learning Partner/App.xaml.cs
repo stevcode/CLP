@@ -36,6 +36,7 @@ namespace Classroom_Learning_Partner
             window.Show();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+            Logger.Instance.InitializeLog();
             
             MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 

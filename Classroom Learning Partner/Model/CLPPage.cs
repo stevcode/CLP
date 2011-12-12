@@ -10,6 +10,13 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPPage
     {
+        #region StrokeKeys for Stroke MetaData
+
+        public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
+        public static Guid Mutable = new Guid("00000000-0000-0000-0000-000000000002");
+        
+        #endregion //StrokeKeys
+
         #region Constructors
 
         public CLPPage()
@@ -94,6 +101,18 @@ namespace Classroom_Learning_Partner.Model
                 {
                     MetaData.SetValue("IsSubmission", "False");
                 }
+            }
+        }
+
+        public string SubmitterName
+        {
+            get
+            {
+                return MetaData.GetValue("SubmitterName");
+            }
+            set
+            {
+                MetaData.SetValue("SubmitterName", value);
             }
         }
 

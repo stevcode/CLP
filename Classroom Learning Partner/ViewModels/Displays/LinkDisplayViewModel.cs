@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// </summary>
         public const string PageViewModelPropertyName = "PageViewModel";
 
-        private CLPPageViewModel _pageViewModel = new CLPPageViewModel();
+        private CLPPageViewModel _pageViewModel = new CLPPageViewModel(App.CurrentNotebookViewModel);
 
         /// <summary>
         /// Sets and gets the PageViewModel property.

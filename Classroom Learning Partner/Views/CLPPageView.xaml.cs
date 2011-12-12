@@ -16,6 +16,7 @@ using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
 using System.Threading;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -63,7 +64,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown && App.IsAuthoring)
+            if (!isMouseDown && !(this.DataContext as CLPPageViewModel).Page.IsSubmission)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }
@@ -95,12 +96,28 @@ namespace Classroom_Learning_Partner.Views
                 //Console.WriteLine("over any grid");
                 if ((result.VisualHit as Grid).Name == "HitBox")
                 {
-                    //Add timer to delay appearance of adorner
-                    if (DirtyHitbox > 3)
+                    bool isOverStampedObject = false;
+
+                    var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
+                    if (gridChild is CLPImageStampViewModel)
                     {
-                        timer.Start();
+                        isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
                     }
-                    DirtyHitbox = 0;
+                    else if (gridChild is CLPBlankStampViewModel)
+                    {
+                        isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
+                    }                    
+
+                    if (App.IsAuthoring || isOverStampedObject)
+                    {
+                        //Add timer to delay appearance of adorner
+                        if (DirtyHitbox > 3)
+                        {
+                            timer.Start();
+                        }
+                        DirtyHitbox = 0;
+                    }
+                    
                     
                 }
                 return HitTestResultBehavior.Stop;

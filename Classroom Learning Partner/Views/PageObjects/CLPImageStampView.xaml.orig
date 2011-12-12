@@ -7,6 +7,7 @@
              xmlns:adorners="clr-namespace:Classroom_Learning_Partner.Views.Adorners"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+<<<<<<< HEAD
     <ac:AdornedControl
             x:Name="adornedControl"
             HorizontalAlignment="Center"
@@ -52,11 +53,34 @@
                         <ColumnDefinition Width="50*" />
                         <ColumnDefinition Width="50*" />
                     </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
-            <Label Grid.Column="1" Content="Parts" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
+                    <Label Grid.Column="0" Content="Parts:" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
+                    <Button Grid.Column="1" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
                 </Grid>
             </Canvas>
         </ac:AdornedControl.AdornerContent>
         <Image Source="{Binding Path=SourceImage}" />
     </ac:AdornedControl>
+=======
+    <Grid VerticalAlignment="Stretch" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Polygon Grid.Row="0" Stroke="Black" StrokeThickness="1" Fill="Black" FillRule="Nonzero" HorizontalAlignment="Center"
+Points="0,0 150,0 100,50 50,50">
+        </Polygon>
+        <Border Grid.Row="1"  BorderThickness="2" BorderBrush="Gray" >
+            <Image Source="{Binding Path=SourceImage}" Margin="4" Visibility="Visible" />
+        </Border>
+        <Grid Grid.Row="2" HorizontalAlignment="Center" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="50*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
+            <Label Grid.Column="1" Content="Parts" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
+        </Grid>
+    </Grid>
+>>>>>>> ac7a7c449494bda2ed73f118ea423b373dcd4b1f
 </UserControl>

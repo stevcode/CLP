@@ -26,6 +26,7 @@
                                   VerticalAlignment="Stretch"
                                   >
                     </ItemsControl>
+                    <InkPresenter Width="816" Height="1056" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
                     <InkCanvas Width="816" Height="1056" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=Strokes}"
