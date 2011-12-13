@@ -6,14 +6,7 @@
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.Resources>
-
-            
-
-
-    </UserControl.Resources>
-    
+             d:DesignHeight="300" d:DesignWidth="300">    
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -51,8 +44,8 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
-                                        <Grid Grid.Column="1" VerticalAlignment="Center" >
-                                            <Grid.RowDefinitions>
+                                    <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
+                                        <Grid.RowDefinitions>
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>

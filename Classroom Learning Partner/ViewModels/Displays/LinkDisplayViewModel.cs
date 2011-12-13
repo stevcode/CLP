@@ -29,7 +29,11 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                             }                                                   
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
+
+            bool IsActiveTemp = this.IsActive;
+            this.IsActive = true;
             AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
+            this.IsActive = IsActiveTemp;
         }
 
         public bool IsActive { get; set; }

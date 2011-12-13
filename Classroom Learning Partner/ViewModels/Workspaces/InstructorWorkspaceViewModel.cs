@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             Display = LinkedDisplay;
             LinkedDisplay.IsActive = true;
-            LinkedDisplay.IsOnProjector = false;
+            LinkedDisplay.IsOnProjector = true;
             GridDisplay.IsActive = false;
             GridDisplay.IsOnProjector = false;
         }

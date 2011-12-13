@@ -28,7 +28,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                     pageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                     pageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                     this.DisplayPages.Add(pageViewModel);
-                    Console.WriteLine("page added to grid");
                 }
             });
         }

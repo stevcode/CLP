@@ -20,6 +20,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ProjectorWorkspaceViewModel()
         {
             Display = LinkedDisplay;
+            LinkedDisplay.IsActive = true;
+            LinkedDisplay.IsOnProjector = true;
+            GridDisplay.IsActive = false;
+            GridDisplay.IsOnProjector = false;
         }
 
         private LinkedDisplayViewModel _linkedDisplay = new LinkedDisplayViewModel();

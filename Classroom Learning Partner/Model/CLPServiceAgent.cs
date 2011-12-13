@@ -264,12 +264,14 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel)
         {
-            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            {
-                pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-                pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-                //DATABASE remove page object from current page
-            });
+            pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
+            pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            //{
+            //    pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
+            //    pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+            //    //DATABASE remove page object from current page
+            //});
         }
 
 
