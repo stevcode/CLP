@@ -13,6 +13,7 @@ using Microsoft.Windows.Controls.Ribbon;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.PageObjects;
 using System.Collections.Generic;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -843,7 +844,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_sendDisplayToProjectorCommand = new RelayCommand(
                                           () =>
                                           {
-
+                                              if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+                                              {
+                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                                                  App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay");
+                                              }
+                                              else
+                                              {
+                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                                                  App.Peer.Channel.SwitchProjectorDisplay("GridDisplay");
+                                              }
                                           }));
             }
         }

@@ -28,7 +28,9 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Instructor;
+            CLPService = new CLPServiceAgent();
+
+            CurrentUserMode = UserMode.Projector;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -38,13 +40,24 @@ namespace Classroom_Learning_Partner
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             Logger.Instance.InitializeLog();
             
-            MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                App.CurrentNotebookViewModel = new CLPNotebookViewModel();
+                App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
+                CLPService.SetWorkspace();
+            }
+            else
+	        {
+                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+	        }
 
             DispatcherHelper.Initialize();
 
             JoinMeshNetwork();
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
 
         protected void ConnectToDB()
         {

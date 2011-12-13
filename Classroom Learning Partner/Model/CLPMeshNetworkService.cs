@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.ServiceModel;
 using System.Windows.Threading;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -28,6 +29,12 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
+
+        [OperationContract(IsOneWay = true)]
+        void SwitchProjectorDisplay(string displayType);
+
+        [OperationContract(IsOneWay = true)]
+        void AddPageToDisplay(string stringPage);
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -115,6 +122,43 @@ namespace Classroom_Learning_Partner.Model
                 }, null);
 
         }
-    
+
+        public void SwitchProjectorDisplay(string displayType)
+        {
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                if (displayType == "LinkedDisplay")
+                {
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                }
+                else
+                {
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                }
+            }
+        }
+
+
+        public void AddPageToDisplay(string stringPage)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        CLPPage page = (ObjectSerializer.ToObject(stringPage) as CLPPage);
+                        AppMessages.AddPageToDisplay.Send(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+                    }
+                    return null;
+                }, null);
+        }
     }
 }

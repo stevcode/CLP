@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Command;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -28,6 +29,14 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                     pageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                     pageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                     this.DisplayPages.Add(pageViewModel);
+                    if (App.CurrentUserMode == App.UserMode.Instructor)
+                    {
+                        if (this.IsOnProjector)
+                        {
+                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                            App.Peer.Channel.AddPageToDisplay(pageString);
+                        }
+                    }
                 }
             });
         }

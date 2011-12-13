@@ -17,6 +17,7 @@
                 <Grid>
                     <vw:CLPPageView DataContext="{Binding}" />
                     <Button
+                        Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}"
                         x:Name="closeButton"
                         Width="40"
                         Height="40"

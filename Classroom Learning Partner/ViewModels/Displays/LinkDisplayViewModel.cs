@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -26,6 +27,14 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                                 this.PageViewModel = pageViewModel;
                                                                                 this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                                                                                 this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                                if (App.CurrentUserMode == App.UserMode.Instructor)
+                                                                                {
+                                                                                    if (this.IsOnProjector)
+                                                                                    {
+                                                                                        string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                                                                                        App.Peer.Channel.AddPageToDisplay(pageString);
+                                                                                    }
+                                                                                }
                                                                             }                                                   
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });

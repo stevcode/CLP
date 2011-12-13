@@ -43,7 +43,7 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
+                                    <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" IsHitTestVisible="False" />
                                     <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
                                         <Grid.RowDefinitions>
                                                 <RowDefinition />
@@ -72,7 +72,7 @@
                         <DataTemplate>
                             <Border>
                                 <Grid Margin="5,10" Name="grid">
-                                    <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
+                                    <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" IsHitTestVisible="False" />
 
                                     <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                                             HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
