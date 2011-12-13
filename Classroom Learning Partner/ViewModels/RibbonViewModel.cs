@@ -412,6 +412,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               DrawingAttributes.Height = PEN_RADIUS;
                                               DrawingAttributes.Width = PEN_RADIUS;
+                                              if (EditingMode == InkCanvasEditingMode.None)
+                                              {
+                                                  AppMessages.SetLaserPointerMode.Send(false);
+                                              }
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
                                           }));

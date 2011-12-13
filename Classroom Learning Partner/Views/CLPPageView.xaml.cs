@@ -45,13 +45,22 @@ namespace Classroom_Learning_Partner.Views
             AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
             {
                 if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
-                else RootGrid.MouseMove -= sendLaserPointerPosition;
+                else
+                {
+                    RootGrid.MouseMove -= sendLaserPointerPosition;
+                    CLPService.TurnOffLaser();  
+                }
             });
 
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
-                RootGrid.Children.Add(_laserPoint);
+                TopCanvas.Children.Add(_laserPoint);
                 _laserPoint.Visibility = Visibility.Collapsed;
+
+                AppMessages.TurnOffLaser.Register(this, (action) =>
+                {
+                    _laserPoint.Visibility = Visibility.Collapsed;
+                });
             }
 
             //Register so we receive mouse coordinates for the laser on the projector
@@ -59,6 +68,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 updateLaserPointerPosition(pt);
             });
+
             
         }
 
@@ -149,21 +159,9 @@ namespace Classroom_Learning_Partner.Views
 
         private LaserPoint _laserPoint = new LaserPoint();
         private Thickness _laserPointMargins = new Thickness();
-        public void updateLaserPointerPosition(Point pt)
-        {
-            // We cannot update the UI element directly, need to access it using the UI thread so we have this
-            // gross code which calls setUILaserPointerValue which will be able to update RootGrid
-            Thread t = new Thread(new ThreadStart(
-                delegate
-                {
-                    Dispatcher.Invoke(DispatcherPriority.Render, new Action<Point>(setUILaserPointerValue), pt);
-                }
-            ));
-            t.Start();
-        }
 
         // Does the actual updating of the LaserPoint
-        private void setUILaserPointerValue(Point pt)
+        private void updateLaserPointerPosition(Point pt)
         {
             //if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
             _laserPoint.Visibility = Visibility.Visible;
@@ -172,6 +170,8 @@ namespace Classroom_Learning_Partner.Views
             _laserPoint.RootGrid.Margin = _laserPointMargins;
         }
 
+        // use this variable so we're not sending redundant info over the network for TurnOffLaser()
+        private bool _isLaserOn;
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
         {
             if (isMouseDown)
@@ -180,6 +180,15 @@ namespace Classroom_Learning_Partner.Views
                 if (pt.X > 1056) pt.X = 1056;
                 if (pt.Y > 816) pt.Y = 816;
                 CLPService.SendLaserPosition(pt);
+                _isLaserOn = true;
+            }
+            else
+            {
+                if (_isLaserOn)
+                {
+                    CLPService.TurnOffLaser();
+                    _isLaserOn = false;
+                }
             }
         }
 

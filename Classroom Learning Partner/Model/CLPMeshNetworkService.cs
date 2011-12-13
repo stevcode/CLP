@@ -27,6 +27,9 @@ namespace Classroom_Learning_Partner.Model
         void LaserUpdate(Point pt);
 
         [OperationContract(IsOneWay = true)]
+        void TurnOffLaser();
+
+        [OperationContract(IsOneWay = true)]
         void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
     }
 
@@ -82,12 +85,32 @@ namespace Classroom_Learning_Partner.Model
 
         public void LaserUpdate(Point pt)
         {
-            if (App.CurrentUserMode == App.UserMode.Projector)
-            {
-                AppMessages.UpdateLaserPointerPosition.Send(pt);
-            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        AppMessages.UpdateLaserPointerPosition.Send(pt);
+                    }
+                    return null;
+                }, null);
+
         }
 
+        public void TurnOffLaser()
+        {
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        AppMessages.TurnOffLaser.Send();
+                    }
+                    return null;
+                }, null);
+        }
 
         public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
         {
