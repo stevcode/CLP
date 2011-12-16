@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
-        public CLPTextBoxView LastFocusedTextBox = null;
+        
 
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
@@ -71,6 +71,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #region Properties
+
+        public CLPTextBoxView LastFocusedTextBox = null;
+
         private ICLPServiceAgent CLPService { get; set; }
 
         private DrawingAttributes _drawingAttributes = new DrawingAttributes();
@@ -104,6 +108,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 _editingMode = value;
             }
         }
+
+        #endregion //Properties
 
         #region Bindings
 
@@ -388,7 +394,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 AppMessages.UpdateFont.Send(-1, null, _currentFontColor);
             }
         }
-
 
         #endregion //TextBox
 
@@ -844,17 +849,26 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_sendDisplayToProjectorCommand = new RelayCommand(
                                           () =>
                                           {
-                                              if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+                                              if (App.Peer.Channel != null)
                                               {
-                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-                                                  App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay");
-                                              }
-                                              else
-                                              {
-                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-                                                  (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                                                  App.Peer.Channel.SwitchProjectorDisplay("GridDisplay");
+                                                  if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                                                      App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+                                                  }
+                                                  else
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                                                      List<string> pageList = new List<string>();
+                                                      foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+                                                      {
+                                                          pageList.Add(ObjectSerializer.ToString(page.Page));
+                                                      }
+
+                                                      App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
+                                                  }
                                               }
                                           }));
             }
@@ -915,9 +929,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_submitPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.RequestCurrentDisplayedPage.Send( (callbackMessage) =>
+                                              AppMessages.RequestCurrentDisplayedPage.Send( (clpPageViewModel) =>
                                                   {
-                                                      CLPService.SubmitPage(callbackMessage);
+                                                      CLPService.SubmitPage(clpPageViewModel);
                                                   });
                                           }));
             }
@@ -957,8 +971,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  //clpPageViewModel.Undo();
+                                              });
                                           }));
             }
         }
@@ -975,8 +991,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  //clpPageViewModel.Redo();
+                                              });
                                           }));
             }
         }

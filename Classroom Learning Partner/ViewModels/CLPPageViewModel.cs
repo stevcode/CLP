@@ -47,14 +47,17 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
-                if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "false")
+                if (stroke.ContainsPropertyData(CLPPage.Mutable))
                 {
-                    _otherStrokes.Add(stroke);
+                    if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "false")
+                    {
+                        _otherStrokes.Add(stroke);
+                    }
+                    else
+                    {
+                        _strokes.Add(stroke);
+                    }
                 }
-                else
-                {
-                    _strokes.Add(stroke);
-                } 
             }
             foreach (var pageObject in page.PageObjects)
             {
@@ -107,7 +110,31 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 List<string> add = new List<string>(StrokesToStrings(addedStrokes));
                 List<string> remove = new List<string>(StrokesToStrings(e.Removed));
-                App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+                if (Page.IsSubmission)
+                {
+                    if (App.Peer.Channel != null)
+                    {
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID);
+                    }
+                }
+                else
+                {
+                    if (App.Peer.Channel != null)
+                    {
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+                    }
+                }
+                
+            }
+
+            foreach (var stroke in addedStrokes)
+            {
+                stroke.AddPropertyData(CLPPage.Mutable, "true");
+                Page.Strokes.Add(StrokeToString(stroke));
+            }
+            foreach (var stroke in e.Removed)
+            {
+                Page.Strokes.Remove(StrokeToString(stroke));
             }
             
 

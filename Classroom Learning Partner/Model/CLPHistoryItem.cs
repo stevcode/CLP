@@ -8,7 +8,7 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPHistoryItem
     {
-         public CLPHistoryItem(object obj, string itemType)
+         public CLPHistoryItem(string itemType)
         {
              /*CLPHistoryItem Types:
               * UNDO
@@ -19,8 +19,6 @@ namespace Classroom_Learning_Partner.Model
               * COPY
               */
 
-            
-            _CLPHistoryObjectReference = obj;
             MetaData.SetValue("CreationDate", DateTime.Now.ToString());
             MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
             MetaData.SetValue("ItemType", itemType);
@@ -34,19 +32,6 @@ namespace Classroom_Learning_Partner.Model
                  return _metaData;
              }
          }
-
-        private object _CLPHistoryObjectReference;
-        public object CLPHistoryObjectReference
-        {
-            get
-            {
-                return _CLPHistoryObjectReference;
-            }
-            set
-            {
-                _CLPHistoryObjectReference = value;
-            }
-        }
        
         #region MetaData
 
@@ -57,6 +42,42 @@ namespace Classroom_Learning_Partner.Model
                 return MetaData.GetValue("ItemType");
             }
 
+        }
+
+        public string ObjectID
+        {
+            get
+            {
+                return MetaData.GetValue("ObjectID");
+            }
+            set
+            {
+                MetaData.SetValue("ObjectID", value);
+            }
+        }
+
+        public string OldValue
+        {
+            get
+            {
+                return MetaData.GetValue("OldValue");
+            }
+            set
+            {
+                MetaData.SetValue("OldValue", value);
+            }
+        }
+
+        public string NewValue
+        {
+            get
+            {
+                return MetaData.GetValue("NewValue");
+            }
+            set
+            {
+                MetaData.SetValue("NewValue", value);
+            }
         }
 
         #endregion //MetaData

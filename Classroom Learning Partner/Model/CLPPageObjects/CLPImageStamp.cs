@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     public class CLPImageStamp : CLPPageObjectBase, ICLPStamp
     {
 
-        public CLPImageStamp(string path)
+        public CLPImageStamp(string path) : base()
         {
             if (File.Exists(path))
             {

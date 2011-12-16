@@ -214,8 +214,11 @@ namespace Classroom_Learning_Partner.Model
 
         public void SubmitPage(CLPPageViewModel pageVM)
         {
-            string s_page = ObjectSerializer.ToString(pageVM.Page);
-            App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+            if (App.Peer.Channel != null)
+            {
+                string s_page = ObjectSerializer.ToString(pageVM.Page);
+                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+            }
         }
 
 
@@ -223,7 +226,10 @@ namespace Classroom_Learning_Partner.Model
         {
             //call SendLaserPosition for network service agent? which will call updatePoint() in ...CLPPageViewModel.cs?
             //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
-            App.Peer.Channel.LaserUpdate(pt);
+            if (App.Peer.Channel != null)
+            {
+                App.Peer.Channel.LaserUpdate(pt);
+            }
 
         }
 

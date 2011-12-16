@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.Model
         void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
 
         [OperationContract(IsOneWay = true)]
-        void SwitchProjectorDisplay(string displayType);
+        void SwitchProjectorDisplay(string displayType, List<string> gridDisplayPages);
 
         [OperationContract(IsOneWay = true)]
         void AddPageToDisplay(string stringPage);
@@ -95,7 +95,6 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-
         public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -103,19 +102,21 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        CLPPageViewModel pageViewModel = App.CurrentNotebookViewModel.GetPageByID(pageUniqueID);
-                        if (pageViewModel != null)
+                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
                         {
-                            foreach (var stringStroke in strokesAdded)
+                            if (pageViewModel.Page.UniqueID == pageUniqueID)
                             {
-                                pageViewModel.OtherStrokes.Add(CLPPageViewModel.StringToStroke(stringStroke));
+                                foreach (var stringStroke in strokesAdded)
+                                {
+                                    pageViewModel.OtherStrokes.Add(CLPPageViewModel.StringToStroke(stringStroke));
+                                }
+                                foreach (var stringStroke in strokesRemoved)
+                                {
+                                    pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
+                                }
                             }
-                            foreach (var stringStroke in strokesRemoved)
-                            {
-                                pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
-                            }
-
                         }
+
                     }
 
                     return null;
@@ -123,29 +124,59 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
-        public void SwitchProjectorDisplay(string displayType)
+        public void SwitchProjectorDisplay(string displayType, List<string> gridDisplayPages)
         {
-            if (App.CurrentUserMode == App.UserMode.Projector)
-            {
-                if (displayType == "LinkedDisplay")
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
                 {
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-                }
-                else
-                {
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-                }
-            }
-        }
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        if (displayType == "LinkedDisplay")
+                        {
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                        }
+                        else
+                        {
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
 
+                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Clear();
+                            foreach (var stringPage in gridDisplayPages)
+                            {
+                                CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
+                                bool isAlreadyInCurrentNotebook = false;
+                                foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                                {
+                                    if (pageViewModel.Page.UniqueID == page.UniqueID)
+                                    {
+                                        isAlreadyInCurrentNotebook = true;
+                                    }
+                                }
+
+                                if (isAlreadyInCurrentNotebook)
+                                {
+                                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+                                }
+                                else
+                                {
+                                    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+                                    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+                                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
+                                }
+                            }
+                        }
+
+                    }
+                    return null;
+                }, null);
+        }
 
         public void AddPageToDisplay(string stringPage)
         {
@@ -154,8 +185,31 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        CLPPage page = (ObjectSerializer.ToObject(stringPage) as CLPPage);
-                        AppMessages.AddPageToDisplay.Send(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+                        CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
+                        bool isAlreadyInCurrentNotebook = false;
+                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                        {
+                            if (page.IsSubmission)
+                            {
+                                page.UniqueID = page.SubmissionID;
+                            }
+                            if (pageViewModel.Page.UniqueID == page.UniqueID)
+                            {
+                                isAlreadyInCurrentNotebook = true;
+                            }
+                            
+                        }
+
+                        if (isAlreadyInCurrentNotebook)
+                        {
+                            AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
+                        }
+                        else
+                        {
+                            CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+                            App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+                            AppMessages.AddPageToDisplay.Send(newPageViewModel);
+                        }
                     }
                     return null;
                 }, null);
