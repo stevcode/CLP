@@ -37,6 +37,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void MoveThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
             double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
             double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;

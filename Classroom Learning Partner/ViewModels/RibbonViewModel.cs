@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.PageObjects;
 using System.Collections.Generic;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -40,6 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
+            CanSendToTeacher = true;
             _drawingAttributes.Height = PEN_RADIUS;
             _drawingAttributes.Width = PEN_RADIUS;
             _drawingAttributes.Color = Colors.Black;
@@ -933,12 +935,63 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_submitPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.RequestCurrentDisplayedPage.Send( (clpPageViewModel) =>
+                                              
+                                              IsSending = true;
+                                              Timer timer = new Timer();
+                                              timer.Interval = 1000;
+                                              timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                                              timer.Enabled = true;
+
+                                              if (CanSendToTeacher)
+                                              {
+                                                  Console.WriteLine("actual send");
+                                                  AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                                   {
                                                       CLPService.SubmitPage(clpPageViewModel);
                                                   });
+                                              }
+                                              CanSendToTeacher = false;
                                           }));
             }
+        }
+
+        public bool CanSendToTeacher { get; set; }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Timer timer = sender as Timer;
+            timer.Stop();
+            timer.Elapsed -= timer_Elapsed;
+            IsSending = false;
+        }
+
+        public const string IsSendingPropertyName = "IsSending";
+        private bool _isSending;
+        public bool IsSending
+        {
+            get
+            {
+                return _isSending;
+            }
+            set
+            {
+                _isSending = value;
+                RaisePropertyChanged(IsSendingPropertyName);
+                RaisePropertyChanged(SendButtonPropertyName);
+                RaisePropertyChanged(IsSentInfoVisibilityPropertyName);
+            }
+        }
+
+        public const string SendButtonPropertyName = "SendButtonVisibility";
+        public Visibility SendButtonVisibility
+        {
+            get { return (IsSending ? Visibility.Collapsed : Visibility.Visible); }
+        }
+
+        public const string IsSentInfoVisibilityPropertyName = "IsSentInfoVisibility";
+        public Visibility IsSentInfoVisibility
+        {
+            get { return (IsSending ? Visibility.Visible : Visibility.Collapsed); }
         }
 
         private RelayCommand _exitCommand;

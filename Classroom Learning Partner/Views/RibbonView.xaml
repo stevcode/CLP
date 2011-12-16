@@ -165,7 +165,12 @@
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SubmitPageCommand}" 
                     Label="Send To Teacher"
-                    />
+                    Visibility="{Binding Path=SendButtonVisibility}"/>
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\Happy.png" 
+                    Label="Thank you!"
+                    IsEnabled="False"
+                    Visibility="{Binding Path=IsSentInfoVisibility}"/>
             </ribbon:RibbonGroup>'
             
             <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">

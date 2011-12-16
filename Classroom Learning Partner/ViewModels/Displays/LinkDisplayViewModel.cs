@@ -29,10 +29,13 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                                 this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                                                                                 if (App.CurrentUserMode == App.UserMode.Instructor)
                                                                                 {
-                                                                                    if (this.IsOnProjector)
+                                                                                    if (App.Peer.Channel != null)
                                                                                     {
-                                                                                        string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                                                                        App.Peer.Channel.AddPageToDisplay(pageString);
+                                                                                        if (this.IsOnProjector)
+                                                                                        {
+                                                                                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                                                                                            App.Peer.Channel.AddPageToDisplay(pageString);
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }                                                   

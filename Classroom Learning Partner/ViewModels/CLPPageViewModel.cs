@@ -85,15 +85,21 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
+            _pageObjectContainerViewModels.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_pageObjectContainerViewModels_CollectionChanged);
 
             _historyVM = new CLPHistoryViewModel(page.PageHistory);
+        }
+
+        void _pageObjectContainerViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
         }
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             //limit send to teacher by change bool value here
 
-
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
             StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
