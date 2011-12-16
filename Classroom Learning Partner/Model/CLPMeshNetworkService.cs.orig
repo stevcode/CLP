@@ -105,6 +105,8 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
+<<<<<<< HEAD
+=======
         public void TurnOffLaser()
         {
 
@@ -118,6 +120,8 @@ namespace Classroom_Learning_Partner.Model
                     return null;
                 }, null);
         }
+
+>>>>>>> e1db8bb983995976d42499732e191c6973f6693d
         public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

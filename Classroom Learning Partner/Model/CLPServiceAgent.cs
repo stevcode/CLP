@@ -224,13 +224,16 @@ namespace Classroom_Learning_Partner.Model
 
         public void SendLaserPosition(Point pt)
         {
-            //call SendLaserPosition for network service agent? which will call updatePoint() in ...CLPPageViewModel.cs?
             //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
             if (App.Peer.Channel != null)
             {
                 App.Peer.Channel.LaserUpdate(pt);
             }
+        }
 
+        public void TurnOffLaser()
+        {
+            App.Peer.Channel.TurnOffLaser();
         }
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
