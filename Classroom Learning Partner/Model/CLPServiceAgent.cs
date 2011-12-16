@@ -233,7 +233,10 @@ namespace Classroom_Learning_Partner.Model
 
         public void TurnOffLaser()
         {
-            App.Peer.Channel.TurnOffLaser();
+            if (App.Peer.Channel != null)
+            {
+                App.Peer.Channel.TurnOffLaser();
+            }
         }
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
