@@ -60,6 +60,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 {
                     Button partsBtn = sender as Button;
                     partsBtn.Content = keyPad.Parts;
+
+                    //unecessary because of binding?
+                    //PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                    //PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                    //(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).Parts = Int32.Parse(keyPad.Parts);
                 }
 
                 if (App.IsAuthoring)

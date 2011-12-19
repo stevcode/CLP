@@ -22,7 +22,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         {
             PageObject = image;
             _sourceImage = image.SourceImage;
-            
         }
 
         #region Binding

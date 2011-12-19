@@ -52,7 +52,7 @@
                         <ColumnDefinition Width="50*" />
                         <ColumnDefinition Width="50*" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts}" FontSize="24" Width="50" />
+                    <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts, Mode=TwoWay}" FontSize="24" Width="50" />
                     <Label Grid.Column="1" Content="Parts" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
                 </Grid>
             </Canvas>

@@ -93,8 +93,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 {
                     return;
                 }
-
                 _parts = value;
+                //bad, quick hack, update to set database values
+                (PageObject as CLPBlankStamp).Parts = value;
+
                 RaisePropertyChanged(PartsPropertyName);
             }
         }
