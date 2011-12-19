@@ -8,6 +8,7 @@ using System.Windows;
 using System.ServiceModel;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using System.Windows.Ink;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -38,6 +39,9 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void AddPageToDisplay(string stringPage);
+
+        [OperationContract(IsOneWay = true)]
+        void RemovePageFromGridDisplay(string pageID);
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -131,10 +135,21 @@ namespace Classroom_Learning_Partner.Model
                             {
                                 foreach (var stringStroke in strokesAdded)
                                 {
-                                    pageViewModel.OtherStrokes.Add(CLPPageViewModel.StringToStroke(stringStroke));
+                                    Stroke stroke = CLPPageViewModel.StringToStroke(stringStroke);
+                                    pageViewModel.OtherStrokes.Add(stroke);
                                 }
                                 foreach (var stringStroke in strokesRemoved)
                                 {
+                                    Stroke sentStroke = CLPPageViewModel.StringToStroke(stringStroke);
+                                    foreach (var stroke in pageViewModel.OtherStrokes.ToList())
+                                    {
+                                        string a = sentStroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                                        string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                                        if (a == b)
+                                        {
+                                            pageViewModel.OtherStrokes.Remove(stroke);
+                                        }
+                                    }
                                     pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
                                 }
                             }
@@ -236,6 +251,31 @@ namespace Classroom_Learning_Partner.Model
                     }
                     return null;
                 }, null);
+        }
+
+
+        public void RemovePageFromGridDisplay(string pageID)
+        {
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //    (DispatcherOperationCallback)delegate(object arg)
+            //    {
+            //        if (App.CurrentUserMode == App.UserMode.Projector)
+            //        {
+
+
+            //            if (isAlreadyInCurrentNotebook)
+            //            {
+            //                AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
+            //            }
+            //            else
+            //            {
+            //                CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+            //                App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+            //                AppMessages.AddPageToDisplay.Send(newPageViewModel);
+            //            }
+            //        }
+            //        return null;
+            //    }, null);
         }
     }
 }

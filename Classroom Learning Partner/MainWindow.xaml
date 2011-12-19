@@ -9,7 +9,7 @@
         Height="800"
         Width="1280"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
         Title="{Binding Path=TitleBarText}">

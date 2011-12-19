@@ -97,9 +97,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            //limit send to teacher by change bool value here
-
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+
+            foreach (var stroke in e.Removed)
+            {
+                Page.Strokes.Remove(StrokeToString(stroke));
+            }
 
             StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
@@ -109,8 +112,25 @@ namespace Classroom_Learning_Partner.ViewModels
                     string newUniqueID = Guid.NewGuid().ToString();
                     stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                 }
+                foreach (var strokeRemoved in e.Removed)
+                {
+                    string a = strokeRemoved.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    if (a == b)
+                    {
+                        string newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    }
+                }
                 addedStrokes.Add(stroke);    
             }
+
+            foreach (var stroke in addedStrokes)
+            {
+                stroke.AddPropertyData(CLPPage.Mutable, "true");
+                Page.Strokes.Add(StrokeToString(stroke));
+            }
+            
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -133,15 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 
             }
 
-            foreach (var stroke in addedStrokes)
-            {
-                stroke.AddPropertyData(CLPPage.Mutable, "true");
-                Page.Strokes.Add(StrokeToString(stroke));
-            }
-            foreach (var stroke in e.Removed)
-            {
-                Page.Strokes.Remove(StrokeToString(stroke));
-            }
+            
             
 
             foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)

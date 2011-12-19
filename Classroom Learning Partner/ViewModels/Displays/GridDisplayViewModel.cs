@@ -29,17 +29,23 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                     pageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                     pageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
                     this.DisplayPages.Add(pageViewModel);
-                    if (App.CurrentUserMode == App.UserMode.Instructor)
-                    {
-                        if (App.Peer.Channel != null)
-                        {
-                            if (this.IsOnProjector)
-                            {
-                                string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                App.Peer.Channel.AddPageToDisplay(pageString);
-                            }
-                        } 
-                    }
+                    //if (App.CurrentUserMode == App.UserMode.Instructor)
+                    //{
+                    //    if (App.Peer.Channel != null)
+                    //    {
+                    //        if (this.IsOnProjector)
+                    //        {
+                    //            if (pageViewModel.Page.IsSubmission)
+                    //            {
+                    //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.SubmissionID);
+                    //            }
+                    //            else
+                    //            {
+                    //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.UniqueID);
+                    //            }
+                    //        }
+                    //    } 
+                    //}
                 }
             });
         }
@@ -70,13 +76,25 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                           (pageViewModel) =>
                                           {
                                               DisplayPages.Remove(pageViewModel);
+
+                                              //if (App.CurrentUserMode == App.UserMode.Instructor)
+                                              //{
+                                              //    if (App.Peer.Channel != null)
+                                              //    {
+                                              //        if (this.IsOnProjector)
+                                              //        {
+                                              //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                                              //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
+                                              //        }
+                                              //    }
+                                              //}
                                           }));
             }
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
