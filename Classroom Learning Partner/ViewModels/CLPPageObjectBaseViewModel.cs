@@ -169,6 +169,9 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (Stroke stroke in strokesToRemove)
             {
                 PageObjectStrokes.Remove(stroke);
+
+                string stringStroke = CLPPageViewModel.StrokeToString(stroke);
+                PageObject.PageObjectStrokes.Remove(stringStroke);
             }
 
 
