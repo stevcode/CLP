@@ -104,40 +104,50 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+            if (e.ChangedButton != MouseButton.Right)
             {
-                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                oldPosition = pageObjectContainerViewModel.Position;
+                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                {
+                    poly.Fill = new SolidColorBrush(Colors.Green);
 
-                CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
-                CLPService.AddPageObjectToPage(stamp);
-            }     
+                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                    oldPosition = pageObjectContainerViewModel.Position;
+
+                    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+                    CLPService.AddPageObjectToPage(stamp);
+                } 
+            } 
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+            if (e.ChangedButton != MouseButton.Right)
             {
-                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                Point newPosition = pageObjectContainerViewModel.Position;
-
-                double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-                double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-                //change these to be past the height/width of the container
-                if (deltaX > 50 || deltaY > 50)
+                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
                 {
+                    poly.Fill = new SolidColorBrush(Colors.Black);
 
-                    stampViewModel.IsAnchored = false;
-                    //make serviceagent call here to change model and database
-                    (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                    Point newPosition = pageObjectContainerViewModel.Position;
 
-                    adornedControl.HideAdorner();
-                }
-                else
-                {
-                    CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                    //change these to be past the height/width of the container
+                    if (deltaX > 50 || deltaY > 50)
+                    {
+
+                        stampViewModel.IsAnchored = false;
+                        //make serviceagent call here to change model and database
+                        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+
+                        adornedControl.HideAdorner();
+                    }
+                    else
+                    {
+                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                    }
                 }
             }
         }  

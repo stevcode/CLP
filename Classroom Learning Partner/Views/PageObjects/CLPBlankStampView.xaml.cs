@@ -106,42 +106,52 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+            if (e.ChangedButton != MouseButton.Right)
             {
-                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                oldPosition = pageObjectContainerViewModel.Position;
+                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+                {
+                    poly.Fill = new SolidColorBrush(Colors.Green);
 
-                CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
-                CLPService.AddPageObjectToPage(stamp);
+                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                    oldPosition = pageObjectContainerViewModel.Position;
 
-                stampViewModel.IsAnchored = false;
-                //make serviceagent call here to change model and database
-                (stampViewModel.PageObject as CLPBlankStamp).IsAnchored = false;
-                stampViewModel.ScribblesToStrokePaths();
+                    CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
+                    CLPService.AddPageObjectToPage(stamp);
+
+                    stampViewModel.IsAnchored = false;
+                    //make serviceagent call here to change model and database
+                    (stampViewModel.PageObject as CLPBlankStamp).IsAnchored = false;
+                    stampViewModel.ScribblesToStrokePaths();
+                }
             }
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+            if (e.ChangedButton != MouseButton.Right)
             {
-                PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                Point newPosition = pageObjectContainerViewModel.Position;
+                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+                {
+                    poly.Fill = new SolidColorBrush(Colors.Black);
 
-                double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-                double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-                //change these to be past the height/width of the container
-                if (deltaX > 50 || deltaY > 50)
-                {
-                    adornedControl.HideAdorner();
-                }
-                else
-                {
-                    CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-                }
-            }            
+                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                    Point newPosition = pageObjectContainerViewModel.Position;
+
+                    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                    //change these to be past the height/width of the container
+                    if (deltaX > 50 || deltaY > 50)
+                    {
+                        adornedControl.HideAdorner();
+                    }
+                    else
+                    {
+                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                    }
+                }  
+            }       
         }
     }
 }

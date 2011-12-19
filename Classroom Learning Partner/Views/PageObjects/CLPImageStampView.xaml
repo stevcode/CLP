@@ -35,7 +35,7 @@
                         Width="{Binding Path=Width}"
                         Cursor="Hand" PreviewMouseUp="Thumb_PreviewMouseUp"
                         >
-                        <Polygon Stroke="Black" StrokeThickness="1" Fill="Black" FillRule="Nonzero" HorizontalAlignment="Center" Points="0,0 150,0 100,50 50,50"  />
+                        <Polygon x:Name="poly" Stroke="Black" StrokeThickness="1" Fill="Black" FillRule="Nonzero" HorizontalAlignment="Center" Points="0,0 150,0 100,50 50,50"  />
                     <Thumb DragDelta="Thumb_DragDelta">
                         <Thumb.Template>
                             <ControlTemplate>
