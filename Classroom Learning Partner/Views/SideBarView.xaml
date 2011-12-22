@@ -37,13 +37,14 @@
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>                               
-                                    <Grid Margin="5,10" Name="grid" >
+                            <DataTemplate>
+                                <Border>
+                                    <Grid Margin="5,10" Name="grid" MouseDown="preview_PreviewMouseDown">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                    <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" IsHitTestVisible="False" />
+                                    <vw:CLPPagePreviewView  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" />
                                     <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
                                         <Grid.RowDefinitions>
                                                 <RowDefinition />
@@ -54,7 +55,8 @@
                                             </Button>
                                             <Label Grid.Row="1" Content="{Binding Path=NumberOfSubmissions, Mode=OneWay}" HorizontalContentAlignment="Center" Width="25" />
                                         </Grid>
-                                    </Grid>                              
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>             
                     </ListBox>
@@ -71,8 +73,8 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border>
-                                <Grid Margin="5,10" Name="grid">
-                                    <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" IsHitTestVisible="False" />
+                                <Grid Margin="5,10" Name="grid" PreviewMouseDown="preview_PreviewMouseDown">
+                                    <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" />
 
                                     <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                                             HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
