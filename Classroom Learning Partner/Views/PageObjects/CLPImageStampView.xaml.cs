@@ -32,8 +32,16 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             
             adornedControl.IsMouseOverShowEnabled = false;
 
-            this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);            
+            this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);
+
+            CLPPagePreviewView preview = UIHelper.TryFindParent<CLPPagePreviewView>(adornedControl);
+            if (preview != null)
+            {
+                isOnPreview = true;
+            }
         }
+
+        private bool isOnPreview = false;
 
         private CLPImageStampViewModel stampViewModel;
         void CLPStampView_Loaded(object sender, RoutedEventArgs e)
@@ -109,7 +117,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Right)
+
+
+            if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
                 if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
                 {
@@ -127,7 +137,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Right)
+            if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
                 if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
                 {

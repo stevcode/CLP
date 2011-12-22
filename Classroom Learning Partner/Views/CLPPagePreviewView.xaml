@@ -27,7 +27,7 @@
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=Strokes}"
-                               EditingMode="None">
+                               EditingMode="None" >
                     </InkCanvas>
 
 
