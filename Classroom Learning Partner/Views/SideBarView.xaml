@@ -72,7 +72,7 @@
                      Visibility="{Binding Path=SubmissionsSideBarVisibility}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border>
+                            <Border >
                                 <Grid Margin="5,10" Name="grid" PreviewMouseDown="preview_PreviewMouseDown">
                                     <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" />
 
