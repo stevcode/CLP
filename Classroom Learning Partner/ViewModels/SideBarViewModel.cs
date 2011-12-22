@@ -94,9 +94,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 _submissionViewModels = value;
+                newSubmissionsSelected = true;
                 RaisePropertyChanged(SubmissionViewModelsPropertyName);
+                
             }
         }
+
+        private bool newSubmissionsSelected = false;
 
         /// <summary>
         /// The <see cref="SelectedSubmissionPage" /> property's name.
@@ -118,14 +122,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             set
             {
-                if (_selectedSubmissionPage == value)
-                {
-                    return;
-                }
+                //if (_selectedSubmissionPage == value)
+                //{
+                //    return;
+                //}
 
                 _selectedSubmissionPage = value;
                 RaisePropertyChanged(SelectedSubmissionPagePropertyName);
-                AppMessages.AddPageToDisplay.Send(_selectedSubmissionPage);
+                if (!newSubmissionsSelected)
+                {
+                    AppMessages.AddPageToDisplay.Send(_selectedSubmissionPage);
+                }
+                newSubmissionsSelected = false;
             }
         }
 
@@ -150,10 +158,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             set
             {
-                if (_selectedNotebookPage == value)
-                {
-                    return;
-                }
+                //if (_selectedNotebookPage == value)
+                //{
+                //    return;
+                //}
 
                 
 
