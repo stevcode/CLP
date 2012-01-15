@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.Model
     {
         public void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex)
         {
-            CLPPageViewModel pageViewModel = new CLPPageViewModel(page);
+            CLPPageViewModel pageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
             if (submissionIndex == -1)
             {
                 App.CurrentNotebookViewModel.InsertPage(notebookIndex, pageViewModel);
@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddSubmission(CLPPage page)
         {
-            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page));
+            App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page, App.CurrentNotebookViewModel));
         }
 
         public void OpenNotebook(string notebookName)
@@ -266,40 +266,51 @@ namespace Classroom_Learning_Partner.Model
 
         public void SubmitPage(CLPPageViewModel pageVM)
         {
-            string s_page = ObjectSerializer.ToString(pageVM.Page);
-            App.Peer.Channel.SubmitPage(s_page);
+            if (App.Peer.Channel != null)
+            {
+                string s_page = ObjectSerializer.ToString(pageVM.Page);
+                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+            }
         }
 
 
         public void SendLaserPosition(Point pt)
         {
-            //call SendLaserPosition for network service agent? which will call updatePoint() in ...CLPPageViewModel.cs?
             //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
-            App.Peer.Channel.LaserUpdate(pt);
+            if (App.Peer.Channel != null)
+            {
+                App.Peer.Channel.LaserUpdate(pt);
+            }
+        }
 
+        public void TurnOffLaser()
+        {
+            if (App.Peer.Channel != null)
+            {
+                App.Peer.Channel.TurnOffLaser();
+            }
         }
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
-            //BUG - this is being called twice
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
                 }
                 else if (pageObject is CLPBlankStamp)
                 {
-                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
                 }
                 else if (pageObject is CLPTextBox)
                 {
-                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
                 }
                 else
                 {
@@ -317,12 +328,14 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel)
         {
-            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            {
-                pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-                pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-                //DATABASE remove page object from current page
-            });
+            pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
+            pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            //{
+            //    pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
+            //    pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+            //    //DATABASE remove page object from current page
+            //});
         }
 
 

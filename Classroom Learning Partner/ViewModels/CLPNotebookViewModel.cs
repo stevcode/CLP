@@ -32,21 +32,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
+            _currentPageViewModel = new CLPPageViewModel(this);
+
             _notebook = notebook;
             foreach (CLPPage page in Notebook.Pages)
             {
-                CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                CLPPageViewModel pageVM = new CLPPageViewModel(page, this);
                 PageViewModels.Add(pageVM);
+
+                //create blank submissions key/value pairs
+                ObservableCollection<CLPPageViewModel> pages = new ObservableCollection<CLPPageViewModel>();
+                SubmissionViewModels.Add(page.UniqueID, pages);
             }
             foreach (string submissionUniqueID in Notebook.Submissions.Keys)
             {
-                ObservableCollection<CLPPageViewModel> submissions = new ObservableCollection<CLPPageViewModel>();
                 foreach (CLPPage submission in Notebook.Submissions[submissionUniqueID])
                 {
-                    CLPPageViewModel submissionVM = new CLPPageViewModel(submission);
-                    submissions.Add(submissionVM);
+                    CLPPageViewModel submissionVM = new CLPPageViewModel(submission, this);
+                    SubmissionViewModels[submissionUniqueID].Add(submissionVM);
                 }
-                SubmissionViewModels.Add(submissionUniqueID, submissions);
             }
         }
 
@@ -85,7 +89,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string CurrentPageViewModelPropertyName = "CurrentPageViewModel";
 
-        private CLPPageViewModel _currentPageViewModel = new CLPPageViewModel();
+        private CLPPageViewModel _currentPageViewModel;
 
         /// <summary>
         /// Sets and gets the CurrentPageViewModel property.
@@ -166,6 +170,19 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public CLPPageViewModel GetPageByID(string pageUniqueID)
+        {
+            foreach (var pageViewModel in PageViewModels)
+            {
+                if (pageViewModel.Page.UniqueID == pageUniqueID)
+                {
+                    return pageViewModel;
+                }
+            }
+
+            return null;
+        }
+
         public int GetNotebookPageIndex(CLPPageViewModel pageViewModel)
         {
             if (pageViewModel.Page.IsSubmission)
@@ -215,6 +232,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 pages.Add(submission);
                 SubmissionViewModels.Add(pageID, pages);
             }
+
+            GetPageByID(pageID).NumberOfSubmissions++;
 
             Notebook.AddStudentSubmission(pageID, submission.Page);
         }

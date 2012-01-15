@@ -64,5 +64,22 @@ namespace Classroom_Learning_Partner.Views
                 sideBarViewModel.SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[pageID];
             }
         }
+
+        private void preview_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Grid grid = sender as Grid;
+            CLPPagePreviewView preview = grid.Children[0] as CLPPagePreviewView;
+            CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
+            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
+
+            if (pageViewModel.Page.IsSubmission)
+            {
+                sideBarViewModel.SelectedSubmissionPage = pageViewModel;
+            }
+            else
+            {
+                sideBarViewModel.SelectedNotebookPage = pageViewModel;
+            }
+        }
     }
 }

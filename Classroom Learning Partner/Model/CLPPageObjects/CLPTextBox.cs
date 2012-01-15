@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         { 
         }
 
-        public CLPTextBox(string s)
+        public CLPTextBox(string s) : base()
         {
             _text = s;
             Position = new Point(100, 100);

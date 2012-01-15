@@ -13,10 +13,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [Serializable]
     public class CLPBlankStamp : CLPPageObjectBase, ICLPStamp
     {
-        public CLPBlankStamp()
+        public CLPBlankStamp() : base()
         {
-            Height = 300;
-            Width = 200;
+            Height = 150;
+            Width = 150;
             base.Position = new Point(10, 10);
             IsAnchored = true;
 

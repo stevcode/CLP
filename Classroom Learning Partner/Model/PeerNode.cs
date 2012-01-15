@@ -13,6 +13,7 @@ namespace Classroom_Learning_Partner.Model
     public class PeerNode
     {
         public string MachineName { get; private set; }
+        public string UserName { get; private set; }
 
         public ICLPMeshNetworkChannel Channel;
         public ICLPMeshNetworkContract Host;
@@ -24,6 +25,7 @@ namespace Classroom_Learning_Partner.Model
         public PeerNode()
         {
             MachineName = Environment.MachineName;
+            UserName = MachineName;
             App.MainWindowViewModel.TitleBarText = "Connecting...";
         }
 
@@ -65,7 +67,6 @@ namespace Classroom_Learning_Partner.Model
                 binding,
                 new EndpointAddress("net.p2p://Classroom_Learning_Partner.Model"));
 
-            //Host = new InstanceContext(new CLPMeshNetworkService());
             Host = new CLPMeshNetworkService();
 
             _factory = new DuplexChannelFactory<ICLPMeshNetworkChannel>(
@@ -84,7 +85,7 @@ namespace Classroom_Learning_Partner.Model
             OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
             if (OnlineStatusHandler.IsOnline)
             {
-                Console.WriteLine("Online");
+                Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
                 App.MainWindowViewModel.TitleBarText = "Connected";
                 Channel.Connect(MachineName);
             }
@@ -92,11 +93,13 @@ namespace Classroom_Learning_Partner.Model
 
         void OnlineStatusHandler_Offline(object sender, EventArgs e)
         {
+            Logger.Instance.WriteToLog("Disconnected from Mesh: " + DateTime.Now.ToLongTimeString());
             App.MainWindowViewModel.TitleBarText = "Disconnected";
         }
 
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
+            Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
             App.MainWindowViewModel.TitleBarText = "Connected";
             Channel.Connect(MachineName);   
         }

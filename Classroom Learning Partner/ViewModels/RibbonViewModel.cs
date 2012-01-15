@@ -13,6 +13,8 @@ using Microsoft.Windows.Controls.Ribbon;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.PageObjects;
 using System.Collections.Generic;
+using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -31,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
-        public CLPTextBoxView LastFocusedTextBox = null;
+        
 
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
@@ -39,6 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
+            CanSendToTeacher = true;
             _drawingAttributes.Height = PEN_RADIUS;
             _drawingAttributes.Width = PEN_RADIUS;
             _drawingAttributes.Color = Colors.Black;
@@ -69,6 +72,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
         }
+
+        #region Properties
+
+        public CLPTextBoxView LastFocusedTextBox = null;
 
         private ICLPServiceAgent CLPService { get; set; }
 
@@ -103,6 +110,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 _editingMode = value;
             }
         }
+
+        #endregion //Properties
 
         #region Bindings
 
@@ -388,7 +397,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-
         #endregion //TextBox
 
         #endregion //Bindings
@@ -412,6 +420,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               DrawingAttributes.Height = PEN_RADIUS;
                                               DrawingAttributes.Width = PEN_RADIUS;
+                                              if (EditingMode == InkCanvasEditingMode.None)
+                                              {
+                                                  AppMessages.SetLaserPointerMode.Send(false);
+                                              }
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
                                           }));
@@ -830,6 +842,88 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Insert Commands
 
+        #region Display Commands
+
+        private RelayCommand _sendDisplayToProjectorCommand;
+
+        /// <summary>
+        /// Gets the SendDisplayToProjectorCommand.
+        /// </summary>
+        public RelayCommand SendDisplayToProjectorCommand
+        {
+            get
+            {
+                return _sendDisplayToProjectorCommand
+                    ?? (_sendDisplayToProjectorCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              if (App.Peer.Channel != null)
+                                              {
+                                                  if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                                                      App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+                                                  }
+                                                  else
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                                                      List<string> pageList = new List<string>();
+                                                      foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+                                                      {
+                                                          pageList.Add(ObjectSerializer.ToString(page.Page));
+                                                      }
+
+                                                      App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
+                                                  }
+                                              }
+                                          }));
+            }
+        }
+
+        private RelayCommand _switchToLinkedDisplayCommand;
+
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand.
+        /// </summary>
+        public RelayCommand SwitchToLinkedDisplayCommand
+        {
+            get
+            {
+                return _switchToLinkedDisplayCommand
+                    ?? (_switchToLinkedDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
+                                          }));
+            }
+        }
+
+        private RelayCommand _createNewGridDisplayCommand;
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand.
+        /// </summary>
+        public RelayCommand CreateNewGridDisplayCommand
+        {
+            get
+            {
+                return _createNewGridDisplayCommand
+                    ?? (_createNewGridDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
+                                          }));
+            }
+        }
+
+        #endregion //Display Commands
+
         private RelayCommand _submitPageCommand;
 
         /// <summary>
@@ -843,12 +937,63 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_submitPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.RequestCurrentDisplayedPage.Send( (callbackMessage) =>
+                                              
+                                              IsSending = true;
+                                              Timer timer = new Timer();
+                                              timer.Interval = 1000;
+                                              timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                                              timer.Enabled = true;
+
+                                              if (CanSendToTeacher)
+                                              {
+                                                  Console.WriteLine("actual send");
+                                                  AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                                   {
-                                                      CLPService.SubmitPage(callbackMessage);
+                                                      CLPService.SubmitPage(clpPageViewModel);
                                                   });
+                                              }
+                                              CanSendToTeacher = false;
                                           }));
             }
+        }
+
+        public bool CanSendToTeacher { get; set; }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Timer timer = sender as Timer;
+            timer.Stop();
+            timer.Elapsed -= timer_Elapsed;
+            IsSending = false;
+        }
+
+        public const string IsSendingPropertyName = "IsSending";
+        private bool _isSending;
+        public bool IsSending
+        {
+            get
+            {
+                return _isSending;
+            }
+            set
+            {
+                _isSending = value;
+                RaisePropertyChanged(IsSendingPropertyName);
+                RaisePropertyChanged(SendButtonPropertyName);
+                RaisePropertyChanged(IsSentInfoVisibilityPropertyName);
+            }
+        }
+
+        public const string SendButtonPropertyName = "SendButtonVisibility";
+        public Visibility SendButtonVisibility
+        {
+            get { return (IsSending ? Visibility.Collapsed : Visibility.Visible); }
+        }
+
+        public const string IsSentInfoVisibilityPropertyName = "IsSentInfoVisibility";
+        public Visibility IsSentInfoVisibility
+        {
+            get { return (IsSending ? Visibility.Visible : Visibility.Collapsed); }
         }
 
         private RelayCommand _exitCommand;
@@ -885,8 +1030,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  //clpPageViewModel.Undo();
+                                              });
                                           }));
             }
         }
@@ -903,8 +1050,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  //clpPageViewModel.Redo();
+                                              });
                                           }));
             }
         }

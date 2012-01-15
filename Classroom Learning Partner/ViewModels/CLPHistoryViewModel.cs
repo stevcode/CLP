@@ -34,39 +34,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _history = history;
             CLPService = new CLPServiceAgent();
-            AppMessages.UpdateCLPHistory.Register(this, (action) =>
-            {
-                   
-                   //switch: if undo, if redo, if move, etc
-                   string type = action.ItemType;
-                        if(type == "UNDO")
-                        {
-                            this.undo();
-                        }
-                        else if(type == "REDO")
-                        {
-                            this.redo();
-                        }
-                        else if(type == "ADD")
-                        {
-                            add(action);
-                        }
-                        else if(type == "COPY")
-                        {
-                            copy(action);
-                        }
-                        else if(type == "ERASE")
-                        {
-                            erase(action);
-                        }
-                        else if(type == "MOVE")
-                        {
-                            move(action);
-                        }
-                        return;
-            });
-
         }
+
         private CLPHistory _history;
         public CLPHistory History
         {
@@ -79,16 +48,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 _history = value;
             }
         }
-        private Dictionary<string, CLPAttributeValue> _metaData = new Dictionary<string, CLPAttributeValue>();
-        public Dictionary<string, CLPAttributeValue> MetaData
-        {
-            get
-            {
-                return _metaData;
-            }
-        }
-        private Dictionary<int, object> _objectReferences = new Dictionary<int, object>();
-        public Dictionary<int, object> ObjectReferences
+
+        private Dictionary<string, object> _objectReferences = new Dictionary<string, object>();
+        public Dictionary<string, object> ObjectReferences
         {
             get
             {
@@ -108,6 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyItems = value;
             }
         }
+
         //List to enable undo/redo functionality
         private ObservableCollection<CLPHistoryItem> _undoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
@@ -124,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void add(CLPHistoryItem item)
         {
             _historyItems.Add(item);
-            this.History.HistoryItems.Add(item);
+            //this.History.HistoryItems.Add(item);
             includeHistoryItem(item);
             return;
         }
@@ -142,13 +105,13 @@ namespace Classroom_Learning_Partner.ViewModels
         }
         private void includeHistoryItem(CLPHistoryItem item)
         {
-            object obj = item.CLPHistoryObjectReference;
-            int itemID = obj.GetHashCode();
-            if (!ObjectReferences.ContainsKey(itemID))
-            {
-                ObjectReferences.Add(itemID, obj);
-                this.History.ObjectReferences.Add(itemID, obj);
-            }
+            //object obj = item.CLPHistoryObjectReference;
+            //int itemID = obj.GetHashCode();
+            //if (!ObjectReferences.ContainsKey(itemID))
+            //{
+            //    ObjectReferences.Add(itemID, obj);
+            //    this.History.ObjectReferences.Add(itemID, obj);
+            //}
             return;
 
         }
@@ -158,20 +121,20 @@ namespace Classroom_Learning_Partner.ViewModels
             if (HistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
             HistoryItems.Remove(item);
-            this.History.HistoryItems.Remove(item);
-            UndoneHistoryItems.Add(item);
-            this.History.UndoneHistoryItems.Add(item);
-            Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
+            //this.History.HistoryItems.Remove(item);
+            //UndoneHistoryItems.Add(item);
+            //this.History.UndoneHistoryItems.Add(item);
+            //Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
             return;
         }
         public void redo()
         {
             if (UndoneHistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-            UndoneHistoryItems.Remove(item);
-            History.UndoneHistoryItems.Remove(item);
-            Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
-            CLPService.AddPageObjectToPage((CLPPageObjectBase)obj);
+            //UndoneHistoryItems.Remove(item);
+            //History.UndoneHistoryItems.Remove(item);
+            //Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
+            //CLPService.AddPageObjectToPage((CLPPageObjectBase)obj);
             return;
         }
     }

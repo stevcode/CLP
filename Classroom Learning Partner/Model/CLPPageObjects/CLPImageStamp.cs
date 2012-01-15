@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     public class CLPImageStamp : CLPPageObjectBase, ICLPStamp
     {
 
-        public CLPImageStamp(string path)
+        public CLPImageStamp(string path) : base()
         {
             if (File.Exists(path))
             {
@@ -39,9 +39,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (_sourceImage != null)
             {
-                Height = 300;
+                Width = 150;
                 double ratio = _sourceImage.Height / _sourceImage.Width;
-                Width = Height * ratio;
+                Height = Width * ratio;
 
                 base.Position = new Point(10, 10);
             }

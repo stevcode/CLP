@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Ink;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -23,8 +25,8 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private Dictionary<int, object> _objectReferences = new Dictionary<int, object>();
-        public Dictionary<int, object> ObjectReferences
+        private readonly Dictionary<string, object> _objectReferences = new Dictionary<string, object>();
+        private Dictionary<string, object> ObjectReferences
         {
             get
             {
@@ -32,8 +34,8 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private ObservableCollection<CLPHistoryItem> _historyItems = new ObservableCollection<CLPHistoryItem>();
-        public ObservableCollection<CLPHistoryItem> HistoryItems
+        private readonly ObservableCollection<CLPHistoryItem> _historyItems = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> HistoryItems
         {
             get
             {
@@ -42,8 +44,8 @@ namespace Classroom_Learning_Partner.Model
         }
 
         //List to enable undo/redo functionality
-        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
-        public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
+        private readonly ObservableCollection<CLPHistoryItem> _undoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> UndoneHistoryItems
         {
             get
             {
@@ -51,7 +53,48 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-     /*   public void add(object obj)
+        #region Public Methods
+
+        public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
+        {
+            string uniqueID = null;
+            if (obj is CLPPageObjectBase)
+            {
+                uniqueID = (obj as CLPPageObjectBase).UniqueID;
+            }
+            else if (obj is Stroke)
+            {
+                uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
+
+            if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
+            {
+                AddObjectToReferences(uniqueID, obj);
+            }
+
+            historyItem.ObjectID = uniqueID;
+            HistoryItems.Add(historyItem);
+        }
+
+        private void AddObjectToReferences(string key, object obj)
+        {
+            if (obj is Stroke)
+            {
+                ObjectReferences.Add(key, CLPPageViewModel.StrokeToString(obj as Stroke));
+            }
+            else if (obj is CLPPageObjectBase)
+            {
+                ObjectReferences.Add(key, obj);
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("Unknown Object attempted to write to History");
+            }
+        }
+
+        #endregion //Public Methods
+
+        /*   public void add(object obj)
         {
             CLPHistoryItem item = createHistoryItem(obj);
             item.MetaData.Add("ADD",new CLPAttributeValue("ADD","true"));

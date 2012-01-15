@@ -42,17 +42,28 @@ namespace Classroom_Learning_Partner
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
-            JoinMeshNetwork();
-            _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-            
-            MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 
+            _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+            Logger.Instance.InitializeLog();
+            
+ CLPService = new CLPServiceAgent();
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                App.CurrentNotebookViewModel = new CLPNotebookViewModel();
+                App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
+                CLPService.SetWorkspace();
+            }
+            else
+	        {
+                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+	        }
 
             DispatcherHelper.Initialize();
 
-           // JoinMeshNetwork();
-            
+            JoinMeshNetwork();
         }
+
+        private ICLPServiceAgent CLPService { get; set; }
 
         protected void ConnectToDB()
         {

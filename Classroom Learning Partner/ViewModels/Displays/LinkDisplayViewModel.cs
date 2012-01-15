@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -21,21 +22,41 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public LinkedDisplayViewModel()
         {
             AppMessages.AddPageToDisplay.Register(this, (pageViewModel) => {
-                                                                        this.PageViewModel = pageViewModel;
-                                                                        this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-                                                                        this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                            if (this.IsActive)
+                                                                            {
+                                                                                this.PageViewModel = pageViewModel;
+                                                                                this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
+                                                                                this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+                                                                                if (App.CurrentUserMode == App.UserMode.Instructor)
+                                                                                {
+                                                                                    if (App.Peer.Channel != null)
+                                                                                    {
+                                                                                        if (this.IsOnProjector)
+                                                                                        {
+                                                                                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                                                                                            App.Peer.Channel.AddPageToDisplay(pageString);
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }                                                   
                                                                         });
             AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
-            Console.WriteLine("SingePageDisplay Created");
+
+            bool IsActiveTemp = this.IsActive;
+            this.IsActive = true;
             AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
+            this.IsActive = IsActiveTemp;
         }
+
+        public bool IsActive { get; set; }
+        public bool IsOnProjector { get; set; }
 
         /// <summary>
         /// The <see cref="PageViewModel" /> property's name.
         /// </summary>
         public const string PageViewModelPropertyName = "PageViewModel";
 
-        private CLPPageViewModel _pageViewModel = new CLPPageViewModel();
+        private CLPPageViewModel _pageViewModel = new CLPPageViewModel(App.CurrentNotebookViewModel);
 
         /// <summary>
         /// Sets and gets the PageViewModel property.

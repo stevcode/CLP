@@ -22,6 +22,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SideBar.SubmissionsSideBarVisibility = Visibility.Collapsed;
             SideBar.ToggleSubmissionsButtonVisibility = Visibility.Collapsed;
+            Display.IsActive = true;
+            Display.IsOnProjector = false;
         }
 
         private SideBarViewModel _sideBar = new SideBarViewModel();

@@ -6,14 +6,7 @@
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.Resources>
-
-            
-
-
-    </UserControl.Resources>
-    
+             d:DesignHeight="300" d:DesignWidth="300">    
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -36,8 +29,7 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></ComboBox>
-                        <Button DockPanel.Dock="Right" x:Name="ToggleSubmissionsSideBar" Height="35" Width="35" PreviewMouseUp="ToggleSubmissionsSideBar_PreviewMouseUp" Visibility="{Binding Path=ToggleSubmissionsButtonVisibility}" />
+                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
                     </DockPanel>
 
                     <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
@@ -45,24 +37,26 @@
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>                               
-                                    <Grid Margin="5,10" Name="grid" >
+                            <DataTemplate>
+                                <Border>
+                                    <Grid Margin="5,10" Name="grid" MouseDown="preview_PreviewMouseDown">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <vw:CLPPagePreviewView Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150"/>
-                                    <Grid Grid.Column="1" VerticalAlignment="Center" >
-                                            <Grid.RowDefinitions>
+                                    <vw:CLPPagePreviewView  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" />
+                                    <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
+                                        <Grid.RowDefinitions>
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                        <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
+                                            <Button Height="50" Width="25" Grid.Row="0" Click="Button_Click">
                                                 <Image Source="..\Images\DisplaySubmissionsButton.png" />
                                             </Button>
-                                            <Label Grid.Row="1" Content="25" Width="25" />
+                                            <Label Grid.Row="1" Content="{Binding Path=NumberOfSubmissions, Mode=OneWay}" HorizontalContentAlignment="Center" Width="25" />
                                         </Grid>
-                                    </Grid>                              
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>             
                     </ListBox>
@@ -78,13 +72,12 @@
                      Visibility="{Binding Path=SubmissionsSideBarVisibility}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border>
-                                <Grid Margin="5,10" Name="grid">
-                                    <vw:CLPPagePreviewView x:Name="preview" MaxWidth="150"/>
-                                    
-                                    <!--<Label Content="{Binding Path=NumberOfSubmissions}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="True"
-                               Style="{StaticResource InstructorOnlyVisibility}"/> -->
+                            <Border >
+                                <Grid Margin="5,10" Name="grid" PreviewMouseDown="preview_PreviewMouseDown">
+                                    <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" />
+
+                                    <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                                            HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
                                 </Grid>
                             </Border>
                         </DataTemplate>

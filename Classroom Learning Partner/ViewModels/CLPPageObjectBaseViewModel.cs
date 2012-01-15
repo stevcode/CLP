@@ -17,8 +17,11 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase
     {
-        protected CLPPageObjectBaseViewModel()
+        public CLPPageViewModel PageViewModel { get; protected set; }
+
+        protected CLPPageObjectBaseViewModel(CLPPageViewModel pageViewModel)
         {
+            PageViewModel = pageViewModel;
         }
 
         private CLPPageObjectBase _pageObject;
@@ -152,10 +155,10 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (Stroke objectStroke in PageObjectStrokes)
             {
 
-                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
                 foreach (Stroke pageStroke in removedStrokes)
                 {
-                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPageViewModel.StrokeIDKey).ToString();
+                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
                     if (objectStrokeUniqueID == pageStrokeUniqueID)
                     {
                         strokesToRemove.Add(objectStroke);
@@ -166,6 +169,9 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (Stroke stroke in strokesToRemove)
             {
                 PageObjectStrokes.Remove(stroke);
+
+                string stringStroke = CLPPageViewModel.StrokeToString(stroke);
+                PageObject.PageObjectStrokes.Remove(stringStroke);
             }
 
 
@@ -176,6 +182,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 transform.Translate(-Position.X, -Position.Y);
                 newStroke.Transform(transform, true);
                 PageObjectStrokes.Add(newStroke);
+
+                PageObject.PageObjectStrokes.Add(CLPPageViewModel.StrokeToString(newStroke));
             }
         }
     }

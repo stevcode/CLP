@@ -23,6 +23,9 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SideBar.SubmissionsSideBarVisibility = Visibility.Collapsed;
             SideBar.ToggleSubmissionsButtonVisibility = Visibility.Collapsed;
+            Display.IsActive = true;
+            Display.IsOnProjector = false;
+
         }
 
         //TODO make left/right/top/bottom orientations...switch to single Workspace view with canvas?

@@ -16,6 +16,7 @@ using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
 using System.Threading;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -44,20 +45,36 @@ namespace Classroom_Learning_Partner.Views
             AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
             {
                 if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
-                else RootGrid.MouseMove -= sendLaserPointerPosition;
+                else
+                {
+                    RootGrid.MouseMove -= sendLaserPointerPosition;
+                    CLPService.TurnOffLaser();  
+                }
             });
+
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                TopCanvas.Children.Add(_laserPoint);
+                _laserPoint.Visibility = Visibility.Collapsed;
+
+                AppMessages.TurnOffLaser.Register(this, (action) =>
+                {
+                    _laserPoint.Visibility = Visibility.Collapsed;
+                });
+            }
 
             //Register so we receive mouse coordinates for the laser on the projector
             AppMessages.UpdateLaserPointerPosition.Register(this, (pt) =>
             {
                 updateLaserPointerPosition(pt);
             });
+
             
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown && App.IsAuthoring)
+            if (!isMouseDown && !(this.DataContext as CLPPageViewModel).Page.IsSubmission)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }
@@ -89,12 +106,28 @@ namespace Classroom_Learning_Partner.Views
                 //Console.WriteLine("over any grid");
                 if ((result.VisualHit as Grid).Name == "HitBox")
                 {
-                    //Add timer to delay appearance of adorner
-                    if (DirtyHitbox > 3)
+                    bool isOverStampedObject = false;
+
+                    var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
+                    if (gridChild is CLPImageStampViewModel)
                     {
-                        timer.Start();
+                        isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
                     }
-                    DirtyHitbox = 0;
+                    else if (gridChild is CLPBlankStampViewModel)
+                    {
+                        isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
+                    }                    
+
+                    if (App.IsAuthoring || isOverStampedObject)
+                    {
+                        //Add timer to delay appearance of adorner
+                        if (DirtyHitbox > 3)
+                        {
+                            timer.Start();
+                        }
+                        DirtyHitbox = 0;
+                    }
+                    
                     
                 }
                 return HitTestResultBehavior.Stop;
@@ -115,9 +148,6 @@ namespace Classroom_Learning_Partner.Views
                 
                 return HitTestResultBehavior.Continue;
             }
-
-            
-            
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -128,35 +158,37 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private LaserPoint _laserPoint = new LaserPoint();
-        public void updateLaserPointerPosition(Point pt)
-        {
-            // We cannot update the UI element directly, need to access it using the UI thread so we have this
-            // gross code which calls setUILaserPointerValue which will be able to update RootGrid
-            Thread t = new Thread(new ThreadStart(
-                delegate
-                {
-                    Dispatcher.Invoke(DispatcherPriority.Render, new Action<Point>(setUILaserPointerValue), pt);
-                }
-            ));
-            t.Start();
-        }
+        private Thickness _laserPointMargins = new Thickness();
 
         // Does the actual updating of the LaserPoint
-        private void setUILaserPointerValue(Point pt)
+        private void updateLaserPointerPosition(Point pt)
         {
-            if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
-            RootGrid.Children.Add(_laserPoint);
-            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+            //if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
+            _laserPoint.Visibility = Visibility.Visible;
+            _laserPointMargins.Left = pt.X;
+            _laserPointMargins.Top = pt.Y;
+            _laserPoint.RootGrid.Margin = _laserPointMargins;
         }
 
+        // use this variable so we're not sending redundant info over the network for TurnOffLaser()
+        private bool _isLaserOn;
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
         {
             if (isMouseDown)
             {
                 Point pt = e.GetPosition(this.RootGrid);
-                if (pt.X > 816) pt.X = 816;
-                if (pt.Y > 1056) pt.Y = 1056;
-                CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
+                CLPService.SendLaserPosition(pt);
+                _isLaserOn = true;
+            }
+            else
+            {
+                if (_isLaserOn)
+                {
+                    CLPService.TurnOffLaser();
+                    _isLaserOn = false;
+                }
             }
         }
 

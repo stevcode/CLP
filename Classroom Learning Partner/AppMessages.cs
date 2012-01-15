@@ -19,8 +19,9 @@ namespace Classroom_Learning_Partner
             AddPageToDisplay,
             ChangeInkMode,
             UpdateCLPHistory, 
-	    SetLaserPointerMode,
-	    UpdateLaserPointerPosition,
+	        SetLaserPointerMode,
+	        UpdateLaserPointerPosition,
+            TurnOffLaser,
             UpdateFont
         }
 
@@ -117,6 +118,17 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        public static class TurnOffLaser
+        {
+            public static void Send()
+            {
+                Messenger.Default.Send(MessageTypes.TurnOffLaser);
+            }
 
+            public static void Register(object recipient, Action<Point> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.TurnOffLaser, action);
+            }
+        }
     }
 }

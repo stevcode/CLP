@@ -165,7 +165,28 @@
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SubmitPageCommand}" 
                     Label="Send To Teacher"
-                    />
+                    Visibility="{Binding Path=SendButtonVisibility}"/>
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\Happy.png" 
+                    Label="Thank you!"
+                    IsEnabled="False"
+                    Visibility="{Binding Path=IsSentInfoVisibility}"/>
+            </ribbon:RibbonGroup>'
+            
+            <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\Projector.png"
+                    Label="Send To Projector"
+                    Command="{Binding Path=SendDisplayToProjectorCommand}" />
+                <ribbon:RibbonSeparator Height="65" Width="20" Background="Black" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\SingleDisplay.png"
+                    Label="Linked Display"
+                    Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\GridDisplay.png"
+                    Label="New Grid Display"
+                    Command="{Binding Path=CreateNewGridDisplayCommand}" />
             </ribbon:RibbonGroup>
 
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
