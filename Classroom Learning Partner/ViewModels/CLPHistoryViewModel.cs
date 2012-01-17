@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return _undoneHistoryItems;
             }
-            protected set
+            set
             {
                 _undoneHistoryItems = value;
             }
@@ -124,18 +124,40 @@ namespace Classroom_Learning_Partner.ViewModels
             //this.History.HistoryItems.Remove(item);
             //UndoneHistoryItems.Add(item);
             //this.History.UndoneHistoryItems.Add(item);
-            //Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
+            Object obj = ObjectReferences[item.MetaData.GetValue("UniqueID")];
+           // CLPImage image;
+           // if(obj is CLPImage){
+           //     image = (CLPImage)obj;
+           // }
+            // Waiting for Steve to add handle for ObjectContainerViewModel.
+           // CLPService.RemovePageObjectFromPage(PageObjectContainerViewModel);
             return;
         }
         public void redo()
         {
             if (UndoneHistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-            //UndoneHistoryItems.Remove(item);
+            UndoneHistoryItems.Remove(item);
             //History.UndoneHistoryItems.Remove(item);
-            //Object obj = ObjectReferences[item.CLPHistoryObjectReference.GetHashCode()];
-            //CLPService.AddPageObjectToPage((CLPPageObjectBase)obj);
+            Object obj = ObjectReferences[item.MetaData.GetValue("UniqueID")];
+            CLPService.AddPageObjectToPage((CLPPageObjectBase)obj);
             return;
+        }
+        public void startPlayback()
+        {
+            //replay history of this page
+            //System.Console.WriteLine("Start Playback");
+
+
+        }
+        public void stopPlayback()
+        {
+            //pause playback history
+            //System.Console.WriteLine("Stop Playback");
+        }
+        public void resetHistory()
+        {
+            //reset history to the beginning
         }
     }
 }

@@ -189,6 +189,12 @@
                     Command="{Binding Path=CreateNewGridDisplayCommand}" />
             </ribbon:RibbonGroup>
 
+            <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play2.png"
+                    Label="Enable Playback"
+                    Command="{Binding Path=EnablePlaybackCommand}" />
+            </ribbon:RibbonGroup>
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>

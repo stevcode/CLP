@@ -41,6 +41,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 return _historyItems;
             }
+            
         }
 
         //List to enable undo/redo functionality
@@ -51,6 +52,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 return _undoneHistoryItems;
             }
+            
         }
 
         #region Public Methods
@@ -74,6 +76,26 @@ namespace Classroom_Learning_Partner.Model
 
             historyItem.ObjectID = uniqueID;
             HistoryItems.Add(historyItem);
+        }
+        public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
+        {
+            string uniqueID = null;
+            if (obj is CLPPageObjectBase)
+            {
+                uniqueID = (obj as CLPPageObjectBase).UniqueID;
+            }
+            else if (obj is Stroke)
+            {
+                uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
+
+            if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
+            {
+                AddObjectToReferences(uniqueID, obj);
+            }
+
+            historyItem.ObjectID = uniqueID;
+            UndoneHistoryItems.Add(historyItem);
         }
 
         private void AddObjectToReferences(string key, object obj)

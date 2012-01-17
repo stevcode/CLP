@@ -22,7 +22,8 @@ namespace Classroom_Learning_Partner
 	        SetLaserPointerMode,
 	        UpdateLaserPointerPosition,
             TurnOffLaser,
-            UpdateFont
+            UpdateFont,
+            ChangePlayback
         }
 
         public static class UpdateFont
@@ -89,6 +90,19 @@ namespace Classroom_Learning_Partner
             public static void Register(object recipient, Action<CLPHistoryItem> action)
             {
                 Messenger.Default.Register(recipient, MessageTypes.UpdateCLPHistory, action);
+            }
+        }
+
+        public static class ChangePlayback
+        {
+            public static void Send(bool item)
+            {
+                Messenger.Default.Send(item, MessageTypes.ChangePlayback);
+            }
+
+            public static void Register(object recipient, Action<bool> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.ChangePlayback, action);
             }
         }
 

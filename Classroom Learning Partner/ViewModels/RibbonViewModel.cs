@@ -1015,6 +1015,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        #region HistoryCommands
         private RelayCommand _undoCommand;
 
         /// <summary>
@@ -1055,7 +1056,26 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        private RelayCommand _enablePlaybackCommand;
 
+        /// <summary>
+        /// Gets the RedoCommand.
+        /// </summary>
+        public RelayCommand EnablePlaybackCommand
+        {
+            get
+            {
+                return _enablePlaybackCommand
+                    ?? (_enablePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                                //set CLPPageViewModel.IsPlayback = true   
+                                              AppMessages.ChangePlayback.Send(true);
+                                              
+                                          }));
+            }
+        }
+        #endregion //History Commands
         #endregion //Commands
     }
 }
