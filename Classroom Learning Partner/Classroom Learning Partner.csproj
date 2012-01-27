@@ -96,6 +96,7 @@
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />

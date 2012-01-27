@@ -11,21 +11,16 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPImageStamp : CLPPageObjectBase, ICLPStamp
+    public class CLPImageStamp : CLPStampBase
     {
-
         public CLPImageStamp(string path) : base()
         {
             if (File.Exists(path))
             {
                 _byteSource = File.ReadAllBytes(path);
             }
-
             LoadImageFromByteSource();
             InitializeBase();
-
-            MetaData.SetValue("IsAnchored", "True");
-            MetaData.SetValue("Parts", "0");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -39,11 +34,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (_sourceImage != null)
             {
-                Width = 150;
                 double ratio = _sourceImage.Height / _sourceImage.Width;
                 Height = Width * ratio;
-
-                base.Position = new Point(10, 10);
             }
         }
 
@@ -107,53 +99,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get
             {
                 return _byteSource;
-            }
-        }
-
-        //returns true if stamp is anchor/placed by teacher
-        //returns false if stamp is a copy of the anchor; moved by the student
-        public bool IsAnchored
-        {
-            get
-            {
-                if (MetaData.GetValue("IsAnchored") == "True")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                if (value)
-                {
-                    MetaData.SetValue("IsAnchored", "True");
-                }
-                else
-                {
-                    MetaData.SetValue("IsAnchored", "False");
-                }
-            }
-        }
-
-        public int Parts
-        {
-            get
-            {
-                if (MetaData.GetValue("Parts") == "")
-                {
-                    return 0;
-                }
-                else
-                {
-                    return Int32.Parse(MetaData.GetValue("Parts"));
-                }   
-            }
-            set
-            {
-                MetaData.SetValue("Parts", value.ToString());
             }
         }
 
