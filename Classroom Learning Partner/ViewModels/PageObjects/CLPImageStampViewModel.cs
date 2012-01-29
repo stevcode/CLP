@@ -11,12 +11,12 @@ using System.Windows.Shapes;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    public class CLPImageStampViewModel : CLPPageObjectBaseViewModel
+    public class CLPImageStampViewModel : CLPStampBaseViewModel
     {
         #region Constructors
 
         public CLPImageStampViewModel(CLPImageStamp stamp, CLPPageViewModel pageViewModel)
-            : base(pageViewModel)
+            : base(stamp, pageViewModel)
         {
             _isAnchored = stamp.IsAnchored;
             _parts = stamp.Parts;
@@ -25,8 +25,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         }
 
         #endregion //Constructors
-
-        
 
         private ImageSource _sourceImage;
 
@@ -43,35 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         #region Bindings
 
-        /// <summary>
-        /// The <see cref="IsAnchor" /> property's name.
-        /// </summary>
-        public const string IsAnchorPropertyName = "IsAnchored";
 
-        private bool _isAnchored = true;
-
-        /// <summary>
-        /// Sets and gets the IsAnchor property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public bool IsAnchored
-        {
-            get
-            {
-                return _isAnchored;
-            }
-
-            set
-            {
-                if (_isAnchored == value)
-                {
-                    return;
-                }
-
-                _isAnchored = value;
-                RaisePropertyChanged(IsAnchorPropertyName);
-            }
-        }
 
         /// <summary>
         /// The <see cref="Parts" /> property's name.
