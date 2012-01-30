@@ -21,12 +21,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public CLPBlankStampViewModel(CLPBlankStamp stamp, CLPPageViewModel pageViewModel)
             : base(stamp, pageViewModel)
         {
-
-            _parts = stamp.Parts;
             PageObjectStrokes = CLPPageViewModel.StringsToStrokes(stamp.PageObjectStrokes);
-            PageObject = stamp;
 
-            if (!_isAnchored)
+            if (!IsAnchored)
             {
                 ScribblesToStrokePaths();
             }
@@ -42,46 +39,13 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             get { return _strokePathViewModels; }
         }
 
-
-        /// <summary>
-        /// The <see cref="Parts" /> property's name.
-        /// </summary>
-        public const string PartsPropertyName = "Parts";
-
-        private int _parts = 0;
-
-        /// <summary>
-        /// Sets and gets the Parts property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public int Parts
-        {
-            get
-            {
-                return _parts;
-            }
-
-            set
-            {
-                if (_parts == value)
-                {
-                    return;
-                }
-                _parts = value;
-                //bad, quick hack, update to set database values
-                (PageObject as CLPBlankStamp).Parts = value;
-
-                RaisePropertyChanged(PartsPropertyName);
-            }
-        }
-
         #endregion //Bindings
 
         #region Methods
 
         public void ScribblesToStrokePaths()
         {
-            if (!_isAnchored)
+            if (!IsAnchored)
             {
                 foreach (Stroke stroke in PageObjectStrokes)
                 {
@@ -111,7 +75,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 this.ProcessStrokes(addedStrokes, removedStrokes);
             }
         }
-
 
         #endregion //Methods
     }

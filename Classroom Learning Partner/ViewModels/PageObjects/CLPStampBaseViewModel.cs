@@ -19,7 +19,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public CLPStampBaseViewModel(CLPStampBase stamp, CLPPageViewModel pageViewModel)
             : base(pageViewModel)
         {
+            PageObject = stamp;
             _isAnchored = stamp.IsAnchored;
+            _parts = stamp.Parts;
         }
 
         #endregion //Constructors
@@ -31,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         public const string IsAnchorPropertyName = "IsAnchored";
 
-        protected bool _isAnchored = true;
+        private bool _isAnchored = true;
 
         /// <summary>
         /// Sets and gets the IsAnchor property.
@@ -53,6 +55,38 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
                 _isAnchored = value;
                 RaisePropertyChanged(IsAnchorPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="Parts" /> property's name.
+        /// </summary>
+        public const string PartsPropertyName = "Parts";
+
+        private int _parts = 0;
+
+        /// <summary>
+        /// Sets and gets the Parts property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public int Parts
+        {
+            get
+            {
+                return _parts;
+            }
+
+            set
+            {
+                if (_parts == value)
+                {
+                    return;
+                }
+
+                _parts = value;
+                //bad, quick hack, update to set database values
+                (PageObject as CLPStampBase).Parts = value;
+                RaisePropertyChanged(PartsPropertyName);
             }
         }
 
