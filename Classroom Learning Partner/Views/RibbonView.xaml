@@ -194,6 +194,14 @@
                     LargeImageSource="..\Images\play2.png"
                     Label="Enable Playback"
                     Command="{Binding Path=EnablePlaybackCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="{Binding Path=RecordImage}"
+                    Label="Record"
+                    Command="{Binding Path=AudioCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play.png"
+                    Label="Play Audio"
+                    Command="{Binding Path=PlayAudioCommand}" />
             </ribbon:RibbonGroup>
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>

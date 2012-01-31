@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner
 
             CLPService = new CLPServiceAgent();
 
-            CurrentUserMode = UserMode.Student;
+            CurrentUserMode = UserMode.Instructor;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
