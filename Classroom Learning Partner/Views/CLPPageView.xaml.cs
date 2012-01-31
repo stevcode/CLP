@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
 using System.Threading;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -32,6 +33,8 @@ namespace Classroom_Learning_Partner.Views
         private int DirtyHitbox = 0;
         public CLPServiceAgent CLPService;
 
+        private bool isSnapTileEnabled = false;
+
         public CLPPageView()
         {
             InitializeComponent();
@@ -39,6 +42,11 @@ namespace Classroom_Learning_Partner.Views
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
             this.CLPService = new CLPServiceAgent();
+
+            AppMessages.SetSnapTileMode.Register(this, (setSnapTileEnabled) =>
+                {
+                    isSnapTileEnabled = setSnapTileEnabled;
+                });
 
             // Register so that we send mouse coordinates for the laser to the projector
             // When the laser is enabled, add a listener to MouseMove so that sendLaserPointerPosition is called
@@ -116,7 +124,17 @@ namespace Classroom_Learning_Partner.Views
                     else if (gridChild is CLPBlankStampViewModel)
                     {
                         isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
-                    }                    
+                    }
+                    else if (gridChild is CLPSnapTileViewModel)
+                    {
+                        if ((gridChild as CLPSnapTileViewModel).PrevTile == null)
+                        {
+                            isOverStampedObject = true;
+                        }
+                        
+                        
+                        //refactor name to encompass all objects that need to have adorner layer shown - steve
+                    }
 
                     if (App.IsAuthoring || isOverStampedObject)
                     {
@@ -176,7 +194,7 @@ namespace Classroom_Learning_Partner.Views
         {
             if (isMouseDown)
             {
-                Point pt = e.GetPosition(this.RootGrid);
+                Point pt = e.GetPosition(this.TopCanvas);
                 if (pt.X > 1056) pt.X = 1056;
                 if (pt.Y > 816) pt.Y = 816;
                 CLPService.SendLaserPosition(pt);
@@ -193,14 +211,23 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {   
+        {
+
             isMouseDown = true;
             timer.Stop();
+
         }
 
         private void TopCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = false;
+            if (isSnapTileEnabled)
+            {
+                Point pt = e.GetPosition(this.TopCanvas);
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
+                CLPService.AddPageObjectToPage(new CLPSnapTile(pt));
+            }
         }
 
     }

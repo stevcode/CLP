@@ -86,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
         public void Dispose()
         {
-            LinkedDisplay.Dispose();
+            //LinkedDisplay.Dispose();
         }
     }
 }

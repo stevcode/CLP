@@ -22,7 +22,8 @@ namespace Classroom_Learning_Partner
 	        SetLaserPointerMode,
 	        UpdateLaserPointerPosition,
             TurnOffLaser,
-            UpdateFont
+            UpdateFont,
+            SetSnapTileMode
         }
 
         public static class UpdateFont
@@ -128,6 +129,19 @@ namespace Classroom_Learning_Partner
             public static void Register(object recipient, Action<Point> action)
             {
                 Messenger.Default.Register(recipient, MessageTypes.TurnOffLaser, action);
+            }
+        }
+
+        public static class SetSnapTileMode
+        {
+            public static void Send(bool snapTileOnOff)
+            {
+                Messenger.Default.Send(snapTileOnOff, MessageTypes.SetSnapTileMode);
+            }
+
+            public static void Register(object recipient, Action<bool> action)
+            {
+                Messenger.Default.Register(recipient, MessageTypes.SetSnapTileMode, action);
             }
         }
     }

@@ -39,6 +39,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPTextBoxViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
+            }
             
         }
 

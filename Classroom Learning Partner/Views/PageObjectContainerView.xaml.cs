@@ -13,6 +13,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -59,7 +61,7 @@ namespace Classroom_Learning_Partner.Views
             }
 
             Point pt = new Point(x, y);
-            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+            CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);          
         }
 
         private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
@@ -85,6 +87,41 @@ namespace Classroom_Learning_Partner.Views
             }
 
             CLPService.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
+        }
+
+        private void dragButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                CLPSnapTileViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
+                foreach (var container in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels)
+                {
+                    if (container.PageObjectViewModel is CLPSnapTileViewModel)
+                    {
+                        
+                        CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
+                        if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
+                        {
+                            Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
+                            Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
+                            double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
+                            double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
+                            if (deltaX < 50 && deltaY < 60)
+                            {
+                                otherTile.NextTile = tile;
+                                tile.PrevTile = otherTile;
+
+                                Point pt = new Point(otherTile.PageObject.Position.X, otherTile.PageObject.Position.Y + CLPSnapTile.TILE_HEIGHT);
+                                CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
+                
+            }
         }
 
       
