@@ -414,7 +414,7 @@ namespace Classroom_Learning_Partner.ViewModels
                  for(int i = 0; i < size; i++)
                  {
                      Console.WriteLine(i + " loop of replay");
-                     TimeSpan waittime = new TimeSpan(3);
+                    // TimeSpan waittime = new TimeSpan(
                     /* if (UndoneHistoryItems.Count > 1)
                      {
                          int len = UndoneHistoryItems.Count;
@@ -423,7 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
                      * */
                      //Console.WriteLine("waittime " + waittime);
                      redo();
-                     System.Threading.Thread.Sleep(waittime);
+                     //System.Threading.Thread.Sleep(waittime);
                      
                  }
                  
