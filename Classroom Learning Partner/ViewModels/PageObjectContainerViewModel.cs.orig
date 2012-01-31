@@ -41,10 +41,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPTextBoxViewModel;
             }
+<<<<<<< HEAD
             else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
             }
+            
+        }
+=======
+>>>>>>> 4569ebb4432c401016703c987f18035c039c21ca
 
             //Register with messages to turn invisible to start playback
             playbackOn = false;

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Ink;
 using System.Windows;
@@ -8,7 +9,9 @@ using System.Windows.Media;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System;
+using System.Windows.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -37,12 +40,33 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
             NotebookViewModel = notebookViewModel; 
-
+            // _historyVM = new CLPHistoryViewModel(this);
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
                                                                     });
 
+            AppMessages.ChangePlayback.Register(this, (playback) =>
+            {
+                //System.Console.WriteLine("Change Playback 1, HistoryItems.Count: " + _historyVM.HistoryItems.Count);
+                //System.Console.WriteLine("Change Playback 1, ObjectRefIds: " + _historyVM.ObjectReferences.Count);
+                if (this.PlaybackControlsVisibility == Visibility.Collapsed)
+                    this.PlaybackControlsVisibility = Visibility.Visible;
+                else
+                    this.PlaybackControlsVisibility = Visibility.Collapsed;
+
+
+            });
+            AppMessages.SendPlaybackItem.Register(this, (item) =>
+            {
+                if (item != null)
+                {
+                   
+                    
+                        ShowPlayback(item);
+                    
+                }
+            });
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
@@ -87,7 +111,8 @@ namespace Classroom_Learning_Partner.ViewModels
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
             _pageObjectContainerViewModels.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_pageObjectContainerViewModels_CollectionChanged);
 
-            _historyVM = new CLPHistoryViewModel(page.PageHistory);
+            _historyVM = new CLPHistoryViewModel(this, page.PageHistory);
+            AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
         void _pageObjectContainerViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -102,6 +127,9 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in e.Removed)
             {
                 Page.Strokes.Remove(StrokeToString(stroke));
+                //make history item for each removed stroke(DELETE type)
+                CLPHistoryItem item = new CLPHistoryItem("ERASE");
+                HistoryVM.AddHistoryItem(stroke, item);
             }
 
             StrokeCollection addedStrokes = new StrokeCollection();
@@ -124,11 +152,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 addedStrokes.Add(stroke);    
             }
+            
 
             foreach (var stroke in addedStrokes)
             {
                 stroke.AddPropertyData(CLPPage.Mutable, "true");
                 Page.Strokes.Add(StrokeToString(stroke));
+                //create history item for each added stroke 
+                CLPHistoryItem item = new CLPHistoryItem("ADD");
+                HistoryVM.AddHistoryItem(stroke, item);
             }
             
 
@@ -199,7 +231,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _page = value;
             }
         }
-        private CLPHistoryViewModel _historyVM = new CLPHistoryViewModel();
+        private CLPHistoryViewModel _historyVM;
         public CLPHistoryViewModel HistoryVM
         {
             get
@@ -217,6 +249,21 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return Page.SubmitterName;
+            }
+        }
+        private Visibility _playbackControlsVisibility = Visibility.Collapsed;
+        public Visibility PlaybackControlsVisibility
+        {
+            get
+            {
+                return _playbackControlsVisibility;
+            }
+            set
+            {
+                _playbackControlsVisibility = value;
+                RaisePropertyChanged("PlaybackControlsVisibility");
+               
+                
             }
         }
 
@@ -325,6 +372,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+
         #endregion //Bindings
 
         #region Methods
@@ -371,7 +419,67 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             return strings;
         }
-
+       
         #endregion //Methods
+        #region Commands
+        private RelayCommand _startPlaybackCommand;
+
+        /// <summary>
+        /// Gets the StartPlaybackCommand.
+        /// </summary>
+        /// 
+        public RelayCommand StartPlaybackCommand
+        {
+            get
+            {
+                return _startPlaybackCommand
+                    ?? (_startPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              HistoryVM.startPlayback();
+                                          }));
+            }
+        }
+        private void ShowPlayback(CLPHistoryItem item)
+        {
+            foreach (var container in PageObjectContainerViewModels)
+            {
+                //System.Console.WriteLine(container.PageObjectViewModel.PageObject.UniqueID + " : " + item.ObjectID);
+                //System.Console.WriteLine(container.PageObjectViewModel.PageObject.MetaData.GetValue("UniqueID") + " : " + item.MetaData.GetValue("UniqueID"));
+             if (container.PageObjectViewModel.PageObject.UniqueID == item.ObjectID) 
+             {
+                 Console.WriteLine("Changing visibility of " + item.ObjectID);
+                 if (item.ItemType == "ADD")
+                 {
+                     container.Visible = Visibility.Visible;
+                 }
+                 else if (item.ItemType == "ERASE")
+                 {
+                     Console.WriteLine("ERASING OBJECT");
+                     container.Visible = Visibility.Collapsed;
+                 }
+                 
+             }
+            }
+        }
+        private RelayCommand _stopPlaybackCommand;
+
+        /// <summary>
+        /// Gets the StartPlaybackCommand.
+        /// </summary>
+        public RelayCommand StopPlaybackCommand
+        {
+            get
+            {
+                return _stopPlaybackCommand
+                    ?? (_stopPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              //_historyVM.stopPlayback();
+                                            
+                                          }));
+            }
+        }
+        #endregion //Commands
     }
 }

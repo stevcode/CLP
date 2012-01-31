@@ -24,7 +24,9 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
-            VerticalAdornerPlacement="Outside">
+            VerticalAdornerPlacement="Outside"
+            Visibility="{Binding Path=Visible}"
+        >
         <ac:AdornedControl.AdornerContent>
              <!--This is the adorner-->
             <Canvas
@@ -33,7 +35,8 @@
                     VerticalAlignment="Center"
                     Width="{Binding Path=Width}"
                     Height="{Binding Path=Height}"
-                    >
+                    Visibility="{Binding Path=Visible, Mode=TwoWay}"    
+                >
                 <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
                            Canvas.Top="-5" Canvas.Left="-5"
                            Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
@@ -188,7 +191,8 @@
         </ac:AdornedControl.AdornerContent>
         <Grid x:Name="HitBox" Background="Transparent">
             <Rectangle   Fill="Transparent" />
-            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}"/>
+            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+            <!-- Visibility="{Binding Path=Visible}"-->
         </Grid>
     </ac:AdornedControl>
 

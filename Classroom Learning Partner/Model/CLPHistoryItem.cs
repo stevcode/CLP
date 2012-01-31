@@ -22,8 +22,8 @@ namespace Classroom_Learning_Partner.Model
             MetaData.SetValue("CreationDate", DateTime.Now.ToString());
             MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
             MetaData.SetValue("ItemType", itemType);
-        }
 
+        }
          private MetaDataContainer _metaData = new MetaDataContainer();
          public MetaDataContainer MetaData
          {

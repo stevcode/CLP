@@ -180,7 +180,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged(InstructorVisibilityPropertyName);
             }
         }
-
+        public const string RecordImagePropertyName = "RecordImage";
+        private Uri _recordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+        public Uri RecordImage
+        {
+            get
+            {
+                return _recordImage;
+            }
+            set
+            {
+                _recordImage = value;
+                RaisePropertyChanged("RecordImage");
+            }
+        }
         /// <summary>
         /// The <see cref="StudentVisibility" /> property's name.
         /// </summary>
@@ -1107,6 +1120,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        #region HistoryCommands
         private RelayCommand _undoCommand;
 
         /// <summary>
@@ -1120,9 +1134,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
+                                              //AppMessages.Audio.Send("Undo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
-                                                  //clpPageViewModel.Undo();
+                                                  clpPageViewModel.HistoryVM.undo();
                                               });
                                           }));
             }
@@ -1140,14 +1155,72 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
+                                              //AppMessages.Audio.Send("Redo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
-                                                  //clpPageViewModel.Redo();
+                                                  clpPageViewModel.HistoryVM.redo();
                                               });
                                           }));
             }
         }
+        
+        private RelayCommand _audioCommand;
+        private bool recording = false;
+        public RelayCommand AudioCommand
+        {
+            get
+            {
+                return _audioCommand
+                    ?? (_audioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.Audio.Send("start");
+                                              recording = !recording;
+                                              if (recording)
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\pause.png", UriKind.Relative);
+                                              }
+                                              else
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+                                              }
+                                          }));
+            }
+        }
+        private RelayCommand _playAudioCommand;
+        public RelayCommand PlayAudioCommand
+        {
+            get
+            {
+                return _playAudioCommand
+                    ?? (_playAudioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              //set CLPPageViewModel.IsPlayback = true   
+                                              //AppMessages.ChangePlayback.Send(true);
+                                              AppMessages.Audio.Send("play");
 
+                                          }));
+            }
+        }
+        private RelayCommand _enablePlaybackCommand;
+        public RelayCommand EnablePlaybackCommand
+        {
+            get
+            {
+                return _enablePlaybackCommand
+                    ?? (_enablePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                                //set CLPPageViewModel.IsPlayback = true   
+                                              
+                                              AppMessages.ChangePlayback.Send(true);
+                                              
+                                              
+                                          }));
+            }
+        }
+        #endregion //History Commands
         #endregion //Commands
     }
 }
