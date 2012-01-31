@@ -38,4 +38,8 @@
         <vwpo:CLPBlankStampView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
+        <vw:CLPHistoryView />
+    </DataTemplate>
+
 </ResourceDictionary>

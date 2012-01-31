@@ -58,7 +58,11 @@
     <DataTemplate DataType="{x:Type vm:CLPPageViewModel}">
         <vw:CLPPageView/>
     </DataTemplate>
-    
+
+    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
+        <vw:CLPHistoryView/>
+    </DataTemplate>
+
     <!--Visual Datatemplates-->
 
     <Style TargetType="{x:Type ListBox}">

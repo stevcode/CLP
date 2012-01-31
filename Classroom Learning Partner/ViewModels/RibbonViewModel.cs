@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         public const string RecordImagePropertyName = "RecordImage";
-        private Uri _recordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+        private Uri _recordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
         public Uri RecordImage
         {
             get
@@ -1042,7 +1042,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //AppMessages.Audio.Send("Undo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
                                                   clpPageViewModel.HistoryVM.undo();
@@ -1063,7 +1062,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //AppMessages.Audio.Send("Redo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
                                                   clpPageViewModel.HistoryVM.redo();
@@ -1086,11 +1084,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                               recording = !recording;
                                               if (recording)
                                               {
-                                                  RecordImage = new Uri("..\\Images\\pause.png", UriKind.Relative);
+                                                  RecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
                                               }
                                               else
                                               {
-                                                  RecordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+                                                  RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
                                               }
                                           }));
             }
@@ -1104,9 +1102,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_playAudioCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //set CLPPageViewModel.IsPlayback = true   
-                                              //AppMessages.ChangePlayback.Send(true);
                                               AppMessages.Audio.Send("play");
+
 
                                           }));
             }
@@ -1120,11 +1117,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_enablePlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                                //set CLPPageViewModel.IsPlayback = true   
-                                              
                                               AppMessages.ChangePlayback.Send(true);
-                                              
-                                              
+
                                           }));
             }
         }

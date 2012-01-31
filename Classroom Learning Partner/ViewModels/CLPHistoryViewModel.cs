@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Windows.Ink;
 using System.Windows;
+using GalaSoft.MvvmLight.Command;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -32,33 +33,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPHistoryViewModel(CLPPageViewModel page, CLPHistory history)
         {
-            PlaybackCounter = 0;
             PageVM = page;
             _historyItems = history.HistoryItems;
             _undoneHistoryItems = history.UndoneHistoryItems;
             _objectReferences = history.ObjectReferences;
-            //shouldn't really be an audio message...
-            AppMessages.Audio.Register(this, (item) =>
-            {
-                if (item == "startPlayback")
-                {
-                    startPlayback();
-                    
-                }
-                else if (item == "Redo")
-                {
-                    redo();
-                }
-                else if (item == "Undo")
-                {
-                    undo();
-                }
-            });
-            
-        
-        
             _history = history;
             CLPService = new CLPServiceAgent();
+            AppMessages.ChangePlayback.Register(this, (playback) =>
+            {
+                if (this.PlaybackControlsVisibility == Visibility.Collapsed)
+                    this.PlaybackControlsVisibility = Visibility.Visible;
+                else
+                    this.PlaybackControlsVisibility = Visibility.Collapsed;
+
+
+            });
         }
         private CLPPageViewModel _pageVM;
         public CLPPageViewModel PageVM
@@ -103,7 +92,21 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
         }
+        private Visibility _playbackControlsVisibility = Visibility.Collapsed;
+        public Visibility PlaybackControlsVisibility
+        {
+            get
+            {
+                return _playbackControlsVisibility;
+            }
+            set
+            {
+                _playbackControlsVisibility = value;
+                RaisePropertyChanged("PlaybackControlsVisibility");
 
+
+            }
+        }
         //List to enable undo/redo functionality
         private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;// = new ObservableCollection<CLPHistoryItem>();
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
@@ -113,17 +116,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _undoneHistoryItems;
             }
             
-        }
-
-        private int _playbackCounter;
-        public int PlaybackCounter
-        {
-            get { return _playbackCounter; }
-            set 
-            {
-                _playbackCounter = value;
-            }
-
         }
         #region addhistoryitems
         public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
@@ -137,6 +129,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
+            else if (obj is String)
+            {
+                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
 
             if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
             {
@@ -145,9 +141,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             historyItem.ObjectID = uniqueID;
             _historyItems.Add(historyItem);
-
-            System.Console.WriteLine("AddHistoryItem: HistoryItems.Count: " + HistoryItems.Count());
-            System.Console.WriteLine("ObjectRefIds: " + ObjectReferences.Count());
         }
         public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
         {
@@ -194,18 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-        public void erase(object obj)
-        {
-            return;
-        }
-        public void move(object obj)
-        {
-            return;
-        }
-        public void copy(object obj)
-        {
-            return;
-        }
+        
         private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
         {
             CLPPageObjectBaseViewModel pageObjectViewModel;
@@ -238,15 +220,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             
             if (HistoryItems.Count <= 0) { return; }
-            
             CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
-            //CLPHistoryItem actionItem;
-            //String type = "";
             if (item.ItemType == "ADD")
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be removed");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
@@ -260,7 +238,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be added");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.AddStrokeToPage(stroke, PageVM, true);
@@ -295,17 +272,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
                 }
             }
-
-            //actionItem = new CLPHistoryItem(type);
-            //actionItem.ObjectID = item.ObjectID;
-            //TODO: Need to add in the other HistoryItem types
-            
-           // Waiting for Steve to add handle for ObjectContainerViewModel.
-           // CLPService.RemovePageObjectFromPage(PageObjectContainerViewModel);
             HistoryItems.Remove(item);
             AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
-            //History.AddHistoryItem(ObjectReferences[undoItem.ObjectID], undoItem);
-            //AppMessages.SendPlaybackItem.Send(actionItem);
             return;
         }
          
@@ -319,7 +287,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be removed");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
@@ -333,7 +300,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be added");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.AddStrokeToPage(stroke, PageVM, true);
@@ -371,25 +337,10 @@ namespace Classroom_Learning_Partner.ViewModels
             UndoneHistoryItems.Remove(item);
             AddHistoryItem(ObjectReferences[item.ObjectID], item);
             return;
-             
-            /*CLPHistoryItem redoItem = new CLPHistoryItem("REDO");
-            if (UndoneHistoryItems.Count <= 0) { return; }
-            CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-            redoItem.ObjectID = item.ObjectID;
-            History.UndoneHistoryItems.Remove(item);
-            AppMessages.SendPlaybackItem.Send(item);
-            */
         }
-        //For the interaction history playback feature:
+        //For the interaction history playback feature
         public void startPlayback()
         {
-            
-            //replay history of this page
-            //System.Console.WriteLine("Start Playback");
-            //HistoryItems.ElementAt(PlaybackCounter).  make container of only this object visible
-            // System.Console.WriteLine("playback counter at " + PlaybackCounter);
-            //System.Console.WriteLine("historyItems at " + HistoryItems.Count);
-            /// Version shows actions click by click
           /*  try
             {
                 AppMessages.SendPlaybackItem.Send(HistoryItems.ElementAt(PlaybackCounter));
@@ -434,11 +385,27 @@ namespace Classroom_Learning_Partner.ViewModels
             public void stopPlayback()
         {
             //pause playback history
-            //System.Console.WriteLine("Stop Playback");
         }
         public void resetHistory()
         {
             //reset history to the beginning
         }
+        #region relayCommands
+        private RelayCommand _startPlaybackCommand;
+        public RelayCommand StartPlaybackCommand
+        {
+            get
+            {
+                return _startPlaybackCommand
+                    ?? (_startPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              Console.WriteLine("START PLAYBACK COMMAND");
+                                              startPlayback();
+                                          }));
+            }
+        }
+    
+        #endregion //relayCommands
     }
 }
