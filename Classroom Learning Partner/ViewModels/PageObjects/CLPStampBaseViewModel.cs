@@ -20,8 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             : base(pageViewModel)
         {
             PageObject = stamp;
-            _isAnchored = stamp.IsAnchored;
-            _parts = stamp.Parts;
+            IsAnchored = stamp.IsAnchored;
+            Parts = stamp.Parts;
         }
 
         #endregion //Constructors
