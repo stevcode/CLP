@@ -131,6 +131,7 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\StudentWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
     </Compile>
@@ -202,6 +203,9 @@
     </Compile>
     <Compile Include="Views\Workspaces\StudentWorkspaceView.xaml.cs">
       <DependentUpon>StudentWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
+      <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -316,6 +320,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\StudentWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\UserLoginWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
