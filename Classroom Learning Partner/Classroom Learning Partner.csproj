@@ -114,6 +114,7 @@
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
