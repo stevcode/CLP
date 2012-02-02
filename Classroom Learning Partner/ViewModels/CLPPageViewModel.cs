@@ -421,6 +421,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
        
         #endregion //Methods
+
         #region Commands
         private RelayCommand _startPlaybackCommand;
 

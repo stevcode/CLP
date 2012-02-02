@@ -165,6 +165,12 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
 
                         adornedControl.HideAdorner();
+                        
+                        if (App.Peer.Channel != null)
+                        {
+                            string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+                            App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
+                        } 
                     }
                     else
                     {
