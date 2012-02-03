@@ -116,6 +116,27 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
+        private void Thumb_MouseOver(object sender, MouseEventArgs e)
+        {
+            if (!isOnPreview)
+            {
+                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+                {
+                    poly.Fill = new SolidColorBrush(Colors.Green);
+                }
+            }
+        }
+
+        private void Thumb_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!isOnPreview)
+            {
+                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+                {
+                    poly.Fill = new SolidColorBrush(Colors.Black);
+                }
+            }
+        }
 
         private Point oldPosition;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
