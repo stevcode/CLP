@@ -1,8 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
-using GalaSoft.MvvmLight.Threading;
+﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System;
-using GalaSoft.MvvmLight.Command;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
