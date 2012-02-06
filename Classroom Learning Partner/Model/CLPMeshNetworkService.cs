@@ -317,9 +317,9 @@ namespace Classroom_Learning_Partner.Model
                                 {
                                     pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
                                 }
-                                else if (pageObject is CLPSnapTile)
+                                else if (pageObject is CLPSnapTileContainer)
                                 {
-                                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
+                                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
                                 }
                                 else
                                 {

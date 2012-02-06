@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPSnapTileViewModel class.
         /// </summary>
-        public CLPSnapTileViewModel(CLPSnapTile tile, CLPPageViewModel pageViewModel)
+        public CLPSnapTileViewModel(CLPSnapTileContainer tile, CLPPageViewModel pageViewModel)
             : base(pageViewModel)
         {
             PageObject = tile;

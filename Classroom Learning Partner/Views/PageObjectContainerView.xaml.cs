@@ -112,7 +112,7 @@ namespace Classroom_Learning_Partner.Views
                                 otherTile.NextTile = tile;
                                 tile.PrevTile = otherTile;
 
-                                Point pt = new Point(otherTile.PageObject.Position.X, otherTile.PageObject.Position.Y + CLPSnapTile.TILE_HEIGHT);
+                                Point pt = new Point(otherTile.PageObject.Position.X, otherTile.PageObject.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
                                 CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
                                 break;
                             }
