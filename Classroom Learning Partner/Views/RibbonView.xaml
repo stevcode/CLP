@@ -98,11 +98,15 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
-                <ribbon:RibbonButton
+                <!--<ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding Path=SetLaserPointerModeCommand}"
                     Visibility="{Binding Path=InstructorVisibility}"/>
+                <ribbon:RibbonButton
+                    Label="Snap Tile"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=SetSnapTileCommand}"/>-->
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -147,7 +151,7 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup
+            <!--<ribbon:RibbonGroup
                 Header="Edit">
                 <ribbon:RibbonButton
                     Label="Undo"
@@ -158,7 +162,7 @@
                     LargeImageSource="..\Images\Redo.png"
                     Command="{Binding Path=RedoCommand}" />
                 
-            </ribbon:RibbonGroup>
+            </ribbon:RibbonGroup>-->
 
             <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                 <ribbon:RibbonButton
@@ -171,7 +175,7 @@
                     Label="Thank you!"
                     IsEnabled="False"
                     Visibility="{Binding Path=IsSentInfoVisibility}"/>
-            </ribbon:RibbonGroup>'
+            </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
                 <ribbon:RibbonButton
@@ -189,6 +193,20 @@
                     Command="{Binding Path=CreateNewGridDisplayCommand}" />
             </ribbon:RibbonGroup>
 
+            <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play2.png"
+                    Label="Enable Playback"
+                    Command="{Binding Path=EnablePlaybackCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="{Binding Path=RecordImage}"
+                    Label="Record"
+                    Command="{Binding Path=AudioCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play.png"
+                    Label="Play Audio"
+                    Command="{Binding Path=PlayAudioCommand}" />
+            </ribbon:RibbonGroup>-->
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>

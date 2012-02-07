@@ -37,5 +37,13 @@
                 </Canvas>
             </Border>
         </Viewbox>
+        <Grid Name="ControlsGrid" Background="Transparent" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="60" Visibility="{Binding Path=PlaybackControlsVisibility}">
+            <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}" Visibility="{Binding Path=PlaybackControlsVisibility}">
+                <Image Source="..\Images\play2.png"></Image>
+            </Button>
+            <Button Name="Stop" HorizontalAlignment="Right" Command="{Binding Path=StopPlaybackCommand}" Visibility="{Binding Path=PlaybackControlsVisibility}">
+                <Image Source="..\Images\pause.png"></Image>
+            </Button>
+         </Grid>
     </Grid>
 </UserControl>
