@@ -85,7 +85,6 @@ namespace Classroom_Learning_Partner.Model
             {
                 //alternatively, pull from database and build
                 CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
-                notebook.NotebookName = notebookName;
                 newNotebookViewModel = new CLPNotebookViewModel(notebook);
 
 

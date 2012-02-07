@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner
 
             CLPService = new CLPServiceAgent();
 
-            CurrentUserMode = UserMode.Student;
+            CurrentUserMode = UserMode.Projector;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -46,6 +46,10 @@ namespace Classroom_Learning_Partner
                 App.CurrentNotebookViewModel = new CLPNotebookViewModel();
                 App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
                 CLPService.SetWorkspace();
+            }
+            else if (App.CurrentUserMode == UserMode.Student)
+            {
+                MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
             }
             else
 	        {

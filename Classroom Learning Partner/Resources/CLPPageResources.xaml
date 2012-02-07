@@ -38,4 +38,8 @@
         <vwpo:CLPBlankStampView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
+        <vwpo:CLPSnapTileView />
+    </DataTemplate>
+
 </ResourceDictionary>

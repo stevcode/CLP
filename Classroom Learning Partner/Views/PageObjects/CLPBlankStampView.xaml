@@ -54,14 +54,14 @@
                         </Thumb.Template>
                     </Thumb>
                 </Grid>
-                <Grid Width="{Binding Path=Width}" Canvas.Left="0" Canvas.Bottom="-80" HorizontalAlignment="Center" Margin="10">
+                <!--<Grid Width="{Binding Path=Width}" Canvas.Left="0" Canvas.Bottom="-80" HorizontalAlignment="Center" Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width=".33*" />
                         <ColumnDefinition Width=".66*" />
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Background="White" Click="PartsButton_Click" Content="{Binding Path=Parts, Mode=TwoWay}" FontSize="24" Width="50" />
-                    <!--<Label Grid.Column="1" Content="" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />-->
-                </Grid>
+                    //<Label Grid.Column="1" Content="" Margin="4" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="28" />
+                </Grid>-->
             </Canvas>
         </ac:AdornedControl.AdornerContent>
         <Border>
