@@ -40,6 +40,19 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private PageObjectContainerViewModel _container;
+        public PageObjectContainerViewModel Container
+        {
+            get
+            {
+                return _container;
+            }
+            set
+            {
+                _container = value;
+            }
+        }
+        
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {

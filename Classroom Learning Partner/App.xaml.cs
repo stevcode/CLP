@@ -58,6 +58,10 @@ namespace Classroom_Learning_Partner
                 App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
                 CLPService.SetWorkspace();
             }
+            else if (App.CurrentUserMode == UserMode.Student)
+            {
+                MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
+            }
             else if (App.CurrentUserMode == App.UserMode.Server)
             {
                 CLPService.SetWorkspace();

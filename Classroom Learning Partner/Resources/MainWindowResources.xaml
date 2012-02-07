@@ -39,6 +39,10 @@
         <wvw:ServerWorkspaceView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type wvm:UserLoginWorkspaceViewModel}">
+        <wvw:UserLoginWorkspaceView />
+    </DataTemplate>
+
     <!--DataTemplates for DisplayViewModels-->
 
     <DataTemplate DataType="{x:Type dvm:LinkedDisplayViewModel}">

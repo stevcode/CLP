@@ -15,6 +15,12 @@ using Classroom_Learning_Partner.Views.PageObjects;
 using System.Collections.Generic;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Timers;
+using System.Windows.Documents;
+using System.Windows.Xps;
+using System.Windows.Xps.Packaging;
+using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Workspaces;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -174,7 +180,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged(InstructorVisibilityPropertyName);
             }
         }
-
+        public const string RecordImagePropertyName = "RecordImage";
+        private Uri _recordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+        public Uri RecordImage
+        {
+            get
+            {
+                return _recordImage;
+            }
+            set
+            {
+                _recordImage = value;
+                RaisePropertyChanged("RecordImage");
+            }
+        }
         /// <summary>
         /// The <see cref="StudentVisibility" /> property's name.
         /// </summary>
@@ -423,6 +442,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               if (EditingMode == InkCanvasEditingMode.None)
                                               {
                                                   AppMessages.SetLaserPointerMode.Send(false);
+                                                  AppMessages.SetSnapTileMode.Send(false);
                                               }
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
@@ -514,7 +534,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RelayCommand _SetLaserPointerModeCommand;
 
         /// <summary>
-        /// Gets the MyCommand.
+        /// Gets the SetLaserPointerModeCommand.
         /// </summary>
         public RelayCommand SetLaserPointerModeCommand
         {
@@ -524,13 +544,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_SetLaserPointerModeCommand = new RelayCommand(
                                           () =>
                                           {
-                                              // do work here
-                                              // this.editMode, set to none so pen is turned off
-                                              // tell messenger to set a flag that we're listening for pen movement, 
-
                                               EditingMode = InkCanvasEditingMode.None;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
                                               AppMessages.SetLaserPointerMode.Send(true);
+                                          }));
+            }
+        }
+
+        private RelayCommand _SetSnapTileCommand;
+
+        /// <summary>
+        /// Gets the SetSnapTileCommand.
+        /// </summary>
+        public RelayCommand SetSnapTileCommand
+        {
+            get
+            {
+                return _SetSnapTileCommand
+                    ?? (_SetSnapTileCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              
+                                              EditingMode = InkCanvasEditingMode.None;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
+                                              AppMessages.SetSnapTileMode.Send(true);
                                           }));
             }
         }
@@ -671,7 +708,75 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_convertToXPSCommand = new RelayCommand(
                                           () =>
                                           {
+                                              FixedDocument doc = new FixedDocument();
+                                              doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
+
+                                              if (App.CurrentUserMode == App.UserMode.Instructor)
+                                              {
+                                                  
+                                              }
+                                              //foreach page here
+                                              //foreach (var pageView in A)
+                                              //{
+
+                                              //}
+                                              int i = 0;
+                                              foreach (CLPPageViewModel pageVM in App.CurrentNotebookViewModel.PageViewModels)
+                                              {
+                                                  PageContent pageContent = new PageContent();
+                                                  FixedPage fixedPage = new FixedPage();
+
+                                                  CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                                                  currentPage.DataContext = pageVM;
+                                                  currentPage.UpdateLayout();
+                                                  //currentPage.Visibility = Visibility.Hidden;
+
+                                                  RenderTargetBitmap bmp = new RenderTargetBitmap((int)(96 * 8.5), 96 * 11, 96d, 96d, PixelFormats.Pbgra32); //new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                                                  bmp.Render(currentPage.MainInkCanvas);
+                                                  PngBitmapEncoder encoder = new PngBitmapEncoder();
+                                                  encoder.Frames.Add(BitmapFrame.Create(bmp));
+                                                  using (Stream s = File.Create(@"C:\" + i.ToString() + ".png"))
+                                                  {
+                                                      encoder.Save(s);
+                                                  }
+                                                  i++;
+
+                                                  //Create first page of document
+                                                  RotateTransform rotate = new RotateTransform(90.0);
+                                                  TranslateTransform translate = new TranslateTransform(816+2, -2);
+                                                  TransformGroup transform = new TransformGroup();
+                                                  transform.Children.Add(rotate);
+                                                  transform.Children.Add(translate);
+                                                  currentPage.RenderTransform = transform;
+
+                                                  
+
+                                                  
+
+                                                  fixedPage.Children.Add(currentPage);
+                                                  ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                                                  doc.Pages.Add(pageContent);
+                                              }
+
+                                              //Save the document
+                                              string filename = App.CurrentNotebookViewModel.Notebook.NotebookName + ".xps";
+                                              string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
+                                              if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                                              {
+                                                  Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+                                              }
+                                              if (File.Exists(path))
+                                              {
+                                                  File.Delete(path);
+                                              }
+                              
+
+                                              XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
+                                              
+                                              XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
+                                              xw.Write(doc);
+                                              xpsd.Close();
                                           }));
             }
         }
@@ -1017,6 +1122,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        #region HistoryCommands
         private RelayCommand _undoCommand;
 
         /// <summary>
@@ -1030,9 +1136,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
+                                              //AppMessages.Audio.Send("Undo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
-                                                  //clpPageViewModel.Undo();
+                                                  clpPageViewModel.HistoryVM.undo();
                                               });
                                           }));
             }
@@ -1050,14 +1157,72 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
+                                              //AppMessages.Audio.Send("Redo");
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                               {
-                                                  //clpPageViewModel.Redo();
+                                                  clpPageViewModel.HistoryVM.redo();
                                               });
                                           }));
             }
         }
+        
+        private RelayCommand _audioCommand;
+        private bool recording = false;
+        public RelayCommand AudioCommand
+        {
+            get
+            {
+                return _audioCommand
+                    ?? (_audioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.Audio.Send("start");
+                                              recording = !recording;
+                                              if (recording)
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\pause.png", UriKind.Relative);
+                                              }
+                                              else
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\play.png", UriKind.Relative);
+                                              }
+                                          }));
+            }
+        }
+        private RelayCommand _playAudioCommand;
+        public RelayCommand PlayAudioCommand
+        {
+            get
+            {
+                return _playAudioCommand
+                    ?? (_playAudioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              //set CLPPageViewModel.IsPlayback = true   
+                                              //AppMessages.ChangePlayback.Send(true);
+                                              AppMessages.Audio.Send("play");
 
+                                          }));
+            }
+        }
+        private RelayCommand _enablePlaybackCommand;
+        public RelayCommand EnablePlaybackCommand
+        {
+            get
+            {
+                return _enablePlaybackCommand
+                    ?? (_enablePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                                //set CLPPageViewModel.IsPlayback = true   
+                                              
+                                              AppMessages.ChangePlayback.Send(true);
+                                              
+                                              
+                                          }));
+            }
+        }
+        #endregion //History Commands
         #endregion //Commands
     }
 }

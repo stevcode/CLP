@@ -9,6 +9,8 @@ using System.ServiceModel;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows.Ink;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 
 
@@ -53,6 +55,9 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void RemovePageFromGridDisplay(string pageID);
+
+        [OperationContract(IsOneWay = true)]
+        void AddPageObjectToPage(string pageID, string stringPageObject);
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -337,6 +342,61 @@ namespace Classroom_Learning_Partner.Model
             //        }
             //        return null;
             //    }, null);
+        }
+
+
+        public void AddPageObjectToPage(string pageID, string stringPageObject)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        
+                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                        {
+                            if (pageViewModel.Page.UniqueID == pageID)
+                            {
+                                object pageObject = ObjectSerializer.ToObject(stringPageObject);
+
+
+                                CLPPageObjectBaseViewModel pageObjectViewModel;
+                                if (pageObject is CLPImage)
+                                {
+                                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
+                                }
+                                else if (pageObject is CLPImageStamp)
+                                {
+                                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
+                                }
+                                else if (pageObject is CLPBlankStamp)
+                                {
+                                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
+                                }
+                                else if (pageObject is CLPTextBox)
+                                {
+                                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
+                                }
+                                else if (pageObject is CLPSnapTile)
+                                {
+                                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
+                                }
+                                else
+                                {
+                                    pageObjectViewModel = null;
+                                }
+
+                                pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
+                                pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
+                                break;
+                            }
+                        }
+                    }
+                                
+
+                    return null;
+                }, null);
         }
     }
 }

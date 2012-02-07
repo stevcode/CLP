@@ -6,6 +6,7 @@ using System.IO;
 
 namespace Classroom_Learning_Partner.Model
 {
+    //logger.instance.writetolog("");
     public class Logger
     {
         static readonly Logger _instance = new Logger();
