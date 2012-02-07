@@ -27,6 +27,16 @@ namespace Classroom_Learning_Partner.Model
         void SubmitPage(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
+        void SaveNotebookDB(string s_notebook, string userName);
+
+        [OperationContract(IsOneWay = true)]
+        void DistributeNotebook(string s_notebook, string author);
+
+        [OperationContract(IsOneWay = true)]
+        void ReceiveNotebook(string page, string userName);
+        
+
+        [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
 
         [OperationContract(IsOneWay = true)]
@@ -55,11 +65,13 @@ namespace Classroom_Learning_Partner.Model
         private ICLPServiceAgent CLPService = new CLPServiceAgent();
         int pagecount = 0;
 
+
         public void Connect(string userName)
         {
-            if (App.CurrentUserMode == App.UserMode.Server)
+            //Called when Student or Instructor Connect
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
-                Console.WriteLine("Machine Connected: " + userName);
+                Console.WriteLine("Instructor/Student Machine Connected: " + userName);
                 //Users Notebooks to user machine
                 //Currently username is the machine name -> CHANGE when using actual names
                 CLPService.RetrieveNotebooks(userName);
@@ -74,19 +86,16 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
-
+     
         public void SubmitPage(string s_page, string userName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
              {
-            //recieve page
-            //App.PeerNode.channel
-
                     if (App.CurrentUserMode == App.UserMode.Instructor)
                     {
-                                    Console.WriteLine("page received");
-                Console.WriteLine(s_page);
+                        Console.WriteLine("page received");
+                        Console.WriteLine(s_page);
 
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         page.IsSubmission = true;
@@ -96,43 +105,51 @@ namespace Classroom_Learning_Partner.Model
                     else if (App.CurrentUserMode == App.UserMode.Server)
                     {
                         pagecount++;
-                        Console.WriteLine("page received");
-                        Console.WriteLine("Page Count: " + pagecount.ToString());
-                Console.WriteLine(s_page);
-                //Database call
-                CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                CLPService.SavePageDB(page);
+                        Console.WriteLine("Page Recieved, Current Count: " + pagecount.ToString());
+                        //Database call
+                        if (App.DatabaseUse == App.DatabaseMode.Using)
+                        {
+                            CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                            CLPService.SavePageDB(page);
+                        }
+                    }
              return null;
              }, null);   
 
-            }
         }
 
-        public void SaveNotebookDB(string s_notebook)
+        public void SaveNotebookDB(string s_notebook, string userName)
         {
             //recieve notebook
             //App.PeerNode.channel
 
-            if (App.CurrentUserMode == App.UserMode.Server)
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Notebook save requtest received");
-                Console.WriteLine(s_notebook);
+                //Console.WriteLine(s_notebook);
                 //DB call
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.SaveNotebookDB(notebook);
+                CLPService.SaveNotebookDB(notebook, userName);
                
             }
         }
-
-        public void ReceiveNotebook(string s_notebook)
+        public void DistributeNotebook(string s_notebook, string author)
+        {
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLPService.DistributeNotebookServer(notebook, author);
+            }
+        }
+        public void ReceiveNotebook(string s_notebook, string userName)
         {
             Console.WriteLine("ReceiveNotebooks called");
             //Console.WriteLine(s_notebook);
-            string[] splitUserNotebook = s_notebook.Split(new char[] { '#' }, 2);
-            if (splitUserNotebook[0] == App.Peer.MachineName && App.CurrentUserMode != App.UserMode.Server)
+            //string[] splitUserNotebook = s_notebook.Split(new char[] { '#' }, 2);
+            if (userName == App.Peer.UserName && App.CurrentUserMode != App.UserMode.Server)
             {
-
-                CLPNotebook notebook = (ObjectSerializer.ToObject(splitUserNotebook[1]) as CLPNotebook);
+                Console.WriteLine("ReceiveNotebooks - recieved one notebook");
+                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPService.SaveNotebooksFromDBToHD(notebook);
                
             }

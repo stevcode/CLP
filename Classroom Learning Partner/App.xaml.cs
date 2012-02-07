@@ -24,17 +24,22 @@ namespace Classroom_Learning_Partner
             Student
         }
 
+        public enum DatabaseMode
+        {
+            Using,
+            NotUsing
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            CurrentUserMode = UserMode.Student;
+            CLPService = new CLPServiceAgent();
+            //#############################
+            CurrentUserMode = UserMode.Server;
+            _databaseUse = DatabaseMode.Using;
             switch (App.CurrentUserMode)
             {
                 case UserMode.Server:
-                    ConnectToDB();
-                    break;
-                default:
                     ConnectToDB();
                     break;
             }
@@ -45,22 +50,25 @@ namespace Classroom_Learning_Partner
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             Logger.Instance.InitializeLog();
-            
- CLPService = new CLPServiceAgent();
+
+           
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
                 App.CurrentNotebookViewModel = new CLPNotebookViewModel();
                 App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
                 CLPService.SetWorkspace();
             }
+            else if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                CLPService.SetWorkspace();
+            }
             else
-	        {
-                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
-	        }
-
+            {
+                 MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();  
+            }
             DispatcherHelper.Initialize();
-
             JoinMeshNetwork();
+            
         }
 
         private ICLPServiceAgent CLPService { get; set; }
@@ -69,6 +77,7 @@ namespace Classroom_Learning_Partner
         {
             string ConnectionString = "mongodb://18.28.5.202";
             _databaseServer = MongoServer.Create(ConnectionString);
+            Console.WriteLine("Conencted to DB");
         }
 
         #region Methods
@@ -172,6 +181,15 @@ namespace Classroom_Learning_Partner
             get
             {
                 return _peerThread;
+            }
+        }
+
+        private static DatabaseMode _databaseUse;
+        public static DatabaseMode DatabaseUse
+        {
+            get
+            {
+                return _databaseUse;
             }
         }
 

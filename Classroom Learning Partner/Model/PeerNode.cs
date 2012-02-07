@@ -85,9 +85,14 @@ namespace Classroom_Learning_Partner.Model
             OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
             if (OnlineStatusHandler.IsOnline)
             {
-                Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
+                //Writing line to log is down below
+                //This caused a race condition where two threads tried to write at the same time
+                //Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
                 App.MainWindowViewModel.TitleBarText = "Connected";
-                Channel.Connect(MachineName);
+                if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
+                {
+                   Channel.Connect(MachineName);
+                }
             }
         }
 
@@ -101,7 +106,10 @@ namespace Classroom_Learning_Partner.Model
         {
             Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
             App.MainWindowViewModel.TitleBarText = "Connected";
-            Channel.Connect(MachineName);   
+            if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                Channel.Connect(MachineName);
+            }
         }
 
         public void Stop()
