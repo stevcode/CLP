@@ -46,6 +46,10 @@ namespace Classroom_Learning_Partner.Model
         void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+
+        //Calls made on Server to DB
+        void RetrieveNotebooks(string username);
+        void DistributeNotebook(CLPNotebookViewModel notebookVM);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -168,7 +172,7 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
             string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
-            App.Peer.Channel.SaveNotebookDB(s_notebook);//Database call
+            App.Peer.Channel.SaveNotebookDB(s_notebook);//Server call
 
         }
 
@@ -290,6 +294,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
                 }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                }
                 else if (pageObject is CLPTextBox)
                 {
                     pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
@@ -323,6 +331,8 @@ namespace Classroom_Learning_Partner.Model
         {
             pageObjectContainerViewModel.Position = pt;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+
+            //send change to projector and students?
             //DATABASE change page object's position
         }
 
@@ -367,6 +377,34 @@ namespace Classroom_Learning_Partner.Model
             }
 
             CommandManager.InvalidateRequerySuggested();
+        }
+
+        public void RetrieveNotebooks(string username){
+            //Use username to retrieve all student Notebooks and broadcast over mesh network
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> notebookCollection = nb.GetCollection<BsonDocument>("Notebooks");
+                var query = Query.EQ("user", username);
+                var cursor = notebookCollection.Find(query).SetFields(Fields.Include("NotebookContent"));
+                string s_notebook;
+                //int count = 1;
+                //s_notebook[0] = username;
+                foreach (BsonDocument notebook in cursor)
+                {
+                    s_notebook = username + "#" + notebook["NotebookContent"].AsString;
+                    App.Peer.Channel.ReceiveNotebook(s_notebook);
+                }
+                Console.WriteLine("Notebooks broadcast to user " + username);
+            }
+        }
+
+        public void DistributeNotebook(CLPNotebookViewModel notebookVM)
+        {
+            //Doyou need to save separtly? 
+            //make a copy of notebook in db for each student.
+            MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+            MongoCollection<BsonDocument> notebookCollection = nb.GetCollection<BsonDocument>("Notebooks");
         }
     }
 }
@@ -598,24 +636,22 @@ namespace Classroom_Learning_Partner.Model
         public void SendLaserPosition(Point pt)
         {
             //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
-<<<<<<< HEAD
             if (App.Peer.Channel != null)
             {
                 App.Peer.Channel.LaserUpdate(pt);
             }
-=======
-            App.Peer.Channel.LaserUpdate(pt);
         }
->>>>>>> e1db8bb983995976d42499732e191c6973f6693d
 
         public void TurnOffLaser()
         {
-            App.Peer.Channel.TurnOffLaser();
+            if (App.Peer.Channel != null)
+            {
+                App.Peer.Channel.TurnOffLaser();
+            }
         }
 
         public void AddPageObjectToPage(CLPPageObjectBase pageObject)
         {
-            //BUG - this is being called twice
             AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel;
@@ -630,10 +666,6 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPBlankStamp)
                 {
                     pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-                }
-                else if (pageObject is CLPBlankStamp)
-                {
-                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
                 }
                 else if (pageObject is CLPTextBox)
                 {
@@ -719,4 +751,4 @@ namespace Classroom_Learning_Partner.Model
         }
     }
 }
->>>>>>> 594f53cceb0319b0e15c7dcfe4752c93ed061d78
+>>>>>>> cb42bc47c4b564c851e29ca14e0b5a62ef92b26c
