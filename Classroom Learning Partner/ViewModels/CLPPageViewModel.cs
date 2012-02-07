@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -40,7 +41,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
             NotebookViewModel = notebookViewModel; 
-            // _historyVM = new CLPHistoryViewModel(this);
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
             });
-            
+             
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
@@ -156,7 +156,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             
-
+            
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
                 List<string> add = new List<string>(StrokesToStrings(addedStrokes));
@@ -281,7 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _otherStrokes;
             }
         }
-
+        
         private readonly ObservableCollection<PageObjectContainerViewModel> _pageObjectContainerViewModels = new ObservableCollection<PageObjectContainerViewModel>();
         public ObservableCollection<PageObjectContainerViewModel> PageObjectContainerViewModels
         {
@@ -415,12 +415,13 @@ namespace Classroom_Learning_Partner.ViewModels
        
         #endregion //Methods
         #region Commands
- //       private RelayCommand _startPlaybackCommand;
+       private RelayCommand _startPlaybackCommand;
 
         /// <summary>
         /// Gets the StartPlaybackCommand.
         /// </summary>
-      /*  public RelayCommand StartPlaybackCommand
+       private delegate void NoArgDelegate();
+        public RelayCommand StartPlaybackCommand
         {
             get
             {
@@ -429,31 +430,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               Console.WriteLine("PageVM startplayback");
-                                              HistoryVM.startPlayback();
+                                              // Start fetching the playback items asynchronously.
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+                                              fetcher.BeginInvoke(null, null);
+                                              
+
                                           }));
             }
         }
         
-        private void ShowPlayback(CLPHistoryItem item)
-        {
-            foreach (var container in PageObjectContainerViewModels)
-            {
-                if (container.PageObjectViewModel.PageObject.UniqueID == item.ObjectID) 
-             {
-                 Console.WriteLine("Changing visibility of " + item.ObjectID);
-                 if (item.ItemType == "ADD")
-                 {
-                     container.Visible = Visibility.Visible;
-                 }
-                 else if (item.ItemType == "ERASE")
-                 {
-                     Console.WriteLine("ERASING OBJECT");
-                     container.Visible = Visibility.Collapsed;
-                 }
-                 
-             }
-            }
-        }
+  
         
         private RelayCommand _stopPlaybackCommand;
 
@@ -468,11 +454,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_stopPlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //_historyVM.stopPlayback();
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
+                                              fetcher.BeginInvoke(null, null);
                                             
                                           }));
             }
-        }*/
+        }
         #endregion //Commands
     }
 }

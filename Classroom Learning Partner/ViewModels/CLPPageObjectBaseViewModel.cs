@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    abstract public class CLPPageObjectBaseViewModel : ViewModelBase
+    abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
     {
         public CLPPageViewModel PageViewModel { get; protected set; }
 

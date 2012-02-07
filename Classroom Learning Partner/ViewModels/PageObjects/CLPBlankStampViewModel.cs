@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
 
-    public class CLPBlankStampViewModel : CLPPageObjectBaseViewModel
+    public class CLPBlankStampViewModel : CLPPageObjectBaseViewModel 
     {
         /// <summary>
         /// Initializes a new instance of the CLPBlankStampViewModel class.

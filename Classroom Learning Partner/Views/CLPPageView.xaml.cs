@@ -31,7 +31,6 @@ namespace Classroom_Learning_Partner.Views
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
         public CLPServiceAgent CLPService;
-
         public CLPPageView()
         {
             InitializeComponent();
@@ -39,7 +38,9 @@ namespace Classroom_Learning_Partner.Views
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
             this.CLPService = new CLPServiceAgent();
-
+            //We need the inkCanvas in HistoryVM to start a new thread to enable playback
+            this.CLPService.SendInkCanvas(MainInkCanvas);
+            
             // Register so that we send mouse coordinates for the laser to the projector
             // When the laser is enabled, add a listener to MouseMove so that sendLaserPointerPosition is called
             AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>

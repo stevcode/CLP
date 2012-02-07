@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner.Model
         void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+        void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -335,12 +336,6 @@ namespace Classroom_Learning_Partner.Model
             if(s != null)
                 page.Strokes.Remove(s);
 
-          /*  if (!undoRedo)
-            {
-                CLPHistoryItem item = new CLPHistoryItem("ERASE");
-                page.HistoryVM.AddHistoryItem(stroke, item);
-            }
-            */
         }
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
         {
@@ -352,12 +347,6 @@ namespace Classroom_Learning_Partner.Model
         {
             page.Strokes.Add(stroke);
             
-            /*if (!undoRedo)
-            {
-                CLPHistoryItem item = new CLPHistoryItem("ADD");
-                page.HistoryVM.AddHistoryItem(stroke, item);
-            }
-             * */
         }
         public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
         {
@@ -427,6 +416,15 @@ namespace Classroom_Learning_Partner.Model
             }
             undoRedo = false;
         }
+        public void SendInkCanvas(System.Windows.Controls.InkCanvas ink)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.HistoryVM.InkCanvas = ink;
+            });
+        }
+       
+        
         public void SetWorkspace()
         {
             App.IsAuthoring = false;

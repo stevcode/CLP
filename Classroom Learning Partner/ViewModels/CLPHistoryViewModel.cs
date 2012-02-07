@@ -11,6 +11,7 @@ using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Windows.Ink;
 using System.Windows;
 using GalaSoft.MvvmLight.Command;
+using System.Windows.Media.Animation;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -49,6 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             });
         }
+        #region properties
         private CLPPageViewModel _pageVM;
         public CLPPageViewModel PageVM
         {
@@ -117,6 +119,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
         }
+        private object _inkCanvas;
+        public object InkCanvas
+        {
+            get
+            {
+                return _inkCanvas;
+            }
+            set
+            {
+                _inkCanvas = value;
+            }
+
+        }
+#endregion //properties
         #region addhistoryitems
         public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
         {
@@ -338,59 +354,184 @@ namespace Classroom_Learning_Partner.ViewModels
             AddHistoryItem(ObjectReferences[item.ObjectID], item);
             return;
         }
+        #region playback
         //For the interaction history playback feature
+        //invokes another thread to make the UI update at the correct times
+        private delegate void NoArgDelegate();
         public void startPlayback()
         {
-          /*  try
-            {
-                AppMessages.SendPlaybackItem.Send(HistoryItems.ElementAt(PlaybackCounter));
-                if (PlaybackCounter < HistoryItems.Count - 1)
-                {
-                    PlaybackCounter++;
-                }
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            */
-
-
-                int size = HistoryItems.Count;
+            this.AbortPlayback = false;
+            int size = HistoryItems.Count;
                  for(int i = 0; i < size; i++)
                  {
-                     undo();
-                 }
-           
-                 for(int i = 0; i < size; i++)
-                 {
-                     Console.WriteLine(i + " loop of replay");
-                    // TimeSpan waittime = new TimeSpan(
-                    /* if (UndoneHistoryItems.Count > 1)
+                     CLPHistoryItem item = HistoryItems.ElementAt(HistoryItems.Count - 1);
+                     if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
                      {
-                         int len = UndoneHistoryItems.Count;
-                         waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len-2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len-1).MetaData.GetValue("CreationDate"));
+                         System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                         inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
                      }
-                     * */
-                     //Console.WriteLine("waittime " + waittime);
-                     redo();
-                     //System.Threading.Thread.Sleep(waittime);
+                     else
+                     {
+                         CLPPageObjectBase obj = getRealPageObject(item) as CLPPageObjectBase;
+                         if (obj != null)
+                         {
+                             obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
+                         }
+                         else
+                         {
+                             GetPageObject(item).PageObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));  
+                         }
+                     }
+                 }
+                 System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+                 for(int i = 0; i < size; i++)
+                 {
+                     TimeSpan waittime = new TimeSpan(0, 0, 2);
+                     try
+                     {
+                         if (UndoneHistoryItems.Count >= 2)
+                         {
+                             int len = UndoneHistoryItems.Count;
+                             waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len - 2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len - 1).MetaData.GetValue("CreationDate"));
+                         }
+                     }
+                     catch (ArgumentOutOfRangeException e)
+                     {
+                         Console.WriteLine(UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1).MetaData.GetValue("CreationDate"));
+                         Console.WriteLine("OUT OF RANGE: " + UndoneHistoryItems.Count);
+                     }
+                     
+                     try
+                     {
+                         CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
+                         if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
+                         {
+                             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                             inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                         }
+                         else
+                         {
+                             CLPPageObjectBase obj = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
+                             if (obj != null)
+                             {
+                                 obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, new NoArgDelegate(redo));
+                             }
+                             else
+                             {
+                                 GetPageObject(item).PageObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                             }
+                         }
+                     }
+                     catch (NullReferenceException n)
+                     {
+                         Console.WriteLine(n.ToString());
+                     }
+                     if (waittime > new TimeSpan(0, 0, 0))
+                     {
+                         DateTime wait = DateTime.Now + waittime;
+                         while(DateTime.Now < wait)
+                         {
+                             if(AbortPlayback == true)
+                             {
+                                 abortPlayback();
+                                 return;
+                             }
+                         }
+                          
+                     }
+                     else
+                     {
+                         DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
+                         while (DateTime.Now < wait)
+                         {
+                             if (AbortPlayback == true)
+                             {
+                                 abortPlayback();
+                                 return;
+                             }
+                         }
+                     }
                      
                  }
-                 
-                
-             
-            
+           
         }
-            public void stopPlayback()
+        private bool _abortPlayback;
+        private bool AbortPlayback
         {
-            //pause playback history
+            get
+            {
+                return _abortPlayback;
+            }
+            set
+            {
+                _abortPlayback = value;
+            }
+
         }
-        public void resetHistory()
+        private void abortPlayback()
         {
-            //reset history to the beginning
+            foreach (var i in UndoneHistoryItems)
+            {
+                try
+                {
+                    CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
+                    if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
+                    {
+                        System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                        inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                    }
+                    else
+                    {
+                        CLPPageObjectBase obj = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
+                        obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, new NoArgDelegate(redo));
+                    }
+                }
+                catch (NullReferenceException n)
+                {
+                    Console.WriteLine(n.ToString());
+                }
+            }
         }
+        private object getRealPageObject(CLPHistoryItem item)
+        {
+            if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
+            {
+                Stroke s = null;
+                Stroke stroke = CLPPageViewModel.StringToStroke(ObjectReferences[item.ObjectID] as string);
+                foreach (var v in PageVM.Page.Strokes)
+                {
+                    Stroke actualStroke = CLPPageViewModel.StringToStroke(v);
+                    if (stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString().Equals(actualStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString()))
+                    {
+                        s = actualStroke;
+                        break;
+                    }
+                }
+                if (s != null)
+                    return s;
+            }
+            CLPPageObjectBase pageObject = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
+            foreach (var v in this.PageVM.Page.PageObjects)
+            {
+                if (HistoryItems.ElementAt(HistoryItems.Count - 1).ObjectID.Equals(v.UniqueID))
+                {
+                    pageObject = v as CLPPageObjectBase;
+                    return pageObject;
+                }
+            }
+            return null;
+          
+        }
+        public void stopPlayback()
+        {
+            //stops and resets playback history
+            this.AbortPlayback = true;
+        }
+        
+        #endregion //playback
         #region relayCommands
+        /*
+         * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
         private RelayCommand _startPlaybackCommand;
         public RelayCommand StartPlaybackCommand
         {
@@ -405,7 +546,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
-    
+    */
         #endregion //relayCommands
     }
 }
