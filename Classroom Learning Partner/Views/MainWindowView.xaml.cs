@@ -3,17 +3,17 @@ using Classroom_Learning_Partner.ViewModels;
 using Microsoft.Windows.Controls.Ribbon;
 using Classroom_Learning_Partner.Model;
 
-namespace Classroom_Learning_Partner
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : RibbonWindow
+    public partial class MainWindowView : RibbonWindow
     {
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
-        public MainWindow()
+        public MainWindowView()
         {
             InitializeComponent();
             CLPService = new CLPServiceAgent();

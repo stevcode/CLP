@@ -7,6 +7,7 @@ using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using MongoDB.Driver;
 using System.Threading;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner
 {
@@ -31,7 +32,7 @@ namespace Classroom_Learning_Partner
 
             CurrentUserMode = UserMode.Instructor;
 
-            MainWindow window = new MainWindow();
+            MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
