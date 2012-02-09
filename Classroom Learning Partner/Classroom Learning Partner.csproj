@@ -137,6 +137,9 @@
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CLPHistoryView.xaml.cs">
+      <DependentUpon>CLPHistoryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
@@ -230,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Adorners\CloseButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CLPHistoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -420,6 +427,8 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+    <Resource Include="Images\mic_stop.png" />
+    <Resource Include="Images\mic_start.png" />
     <Resource Include="Images\play2.png" />
     <Resource Include="Images\pause.png" />
     <Resource Include="Images\DisplaySubmissionsButton.png" />
