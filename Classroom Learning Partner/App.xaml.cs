@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using GalaSoft.MvvmLight.Threading;
 using System;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;

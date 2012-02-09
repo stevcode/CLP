@@ -88,7 +88,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppMessages.cs" />
-    <Compile Include="Model\CLPAttributeValue.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
@@ -98,11 +97,10 @@
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
-    <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
