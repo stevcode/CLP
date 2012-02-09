@@ -151,7 +151,7 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-            <!--<ribbon:RibbonGroup
+            <ribbon:RibbonGroup
                 Header="Edit">
                 <ribbon:RibbonButton
                     Label="Undo"
@@ -162,7 +162,7 @@
                     LargeImageSource="..\Images\Redo.png"
                     Command="{Binding Path=RedoCommand}" />
                 
-            </ribbon:RibbonGroup>-->
+            </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                 <ribbon:RibbonButton
@@ -193,7 +193,7 @@
                     Command="{Binding Path=CreateNewGridDisplayCommand}" />
             </ribbon:RibbonGroup>
 
-            <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+            <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\play2.png"
                     Label="Enable Playback"
@@ -206,7 +206,7 @@
                     LargeImageSource="..\Images\play.png"
                     Label="Play Audio"
                     Command="{Binding Path=PlayAudioCommand}" />
-            </ribbon:RibbonGroup>-->
+            </ribbon:RibbonGroup>
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>

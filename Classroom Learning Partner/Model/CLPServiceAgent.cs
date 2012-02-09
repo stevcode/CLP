@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner.Model
         void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+        void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -285,18 +286,10 @@ namespace Classroom_Learning_Partner.Model
                 if (!undoRedo)
                 {
                     CLPHistoryItem item = new CLPHistoryItem("ADD");
-                    //update VM instead of history
                     pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
                 }
                 //DATABASE add pageobject to current page
             });
-            //item.ObjectID = pageObject.MetaData.GetValue("UniqueID");
-            /*List<object> itemInfo = new List<object>(2); 
-            itemInfo.Add(pageObject);
-            itemInfo.Add(item);
-            AppMessages.RequestCurrentDisplayedPage.Send(itemInfo);
-            //AppMessages.UpdateCLPHistory.Send(itemInfo);
-             */
         }
         
         public void RemovePageObjectFromPage(CLPPageObjectBaseViewModel pageObject, bool undo)
@@ -318,7 +311,6 @@ namespace Classroom_Learning_Partner.Model
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("ERASE");
-                //update VM instead of history
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
             }
         }
@@ -336,34 +328,36 @@ namespace Classroom_Learning_Partner.Model
         
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page)
         {
-            page.Strokes.Remove(stroke);
-            if (!undoRedo)
+            Stroke s = null;
+            foreach (var v in page.Strokes)
             {
-                CLPHistoryItem item = new CLPHistoryItem("ERASE");
-                page.HistoryVM.AddHistoryItem(stroke, item);
+                
+                if(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString().Equals(v.GetPropertyData(CLPPage.StrokeIDKey).ToString()) )
+                    {
+                        s = v;
+                        break;
+                    }
             }
-            
+            if(s != null)
+                page.Strokes.Remove(s);
+
         }
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
         {
-            undoRedo = isUndo;
+            page.undoFlag = isUndo;
             RemoveStrokeFromPage(stroke, page);
-            undoRedo = false;
+            page.undoFlag = false;
         }
         public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page)
         {
             page.Strokes.Add(stroke);
-            if (!undoRedo)
-            {
-                CLPHistoryItem item = new CLPHistoryItem("ADD");
-                page.HistoryVM.AddHistoryItem(stroke, item);
-            }
+            
         }
         public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
         {
-            undoRedo = isUndo;
+            page.undoFlag = isUndo;
             AddStrokeToPage(stroke, page);
-            undoRedo = false;
+            page.undoFlag = false;
         }
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {
@@ -375,7 +369,6 @@ namespace Classroom_Learning_Partner.Model
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("MOVE");
-                //update VM instead of history
                 item.OldValue = oldLocation.ToString();
                 item.NewValue = pt.ToString();
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
@@ -434,7 +427,6 @@ namespace Classroom_Learning_Partner.Model
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("RESIZE");
-                //update VM instead of history
                 item.OldValue = oldValue.ToString();
                 item.NewValue = newValue.ToString();
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
@@ -453,6 +445,15 @@ namespace Classroom_Learning_Partner.Model
             }
             undoRedo = false;
         }
+        public void SendInkCanvas(System.Windows.Controls.InkCanvas ink)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.HistoryVM.InkCanvas = ink;
+            });
+        }
+       
+        
         public void SetWorkspace()
         {
             App.IsAuthoring = false;
