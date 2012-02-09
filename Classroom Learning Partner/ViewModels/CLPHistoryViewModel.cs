@@ -397,8 +397,7 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      catch (ArgumentOutOfRangeException e)
                      {
-                         Console.WriteLine(UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1).MetaData.GetValue("CreationDate"));
-                         Console.WriteLine("OUT OF RANGE: " + UndoneHistoryItems.Count);
+                         Logger.Instance.WriteToLog(e.ToString());
                      }
                      
                      try
@@ -428,6 +427,10 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      if (waittime > new TimeSpan(0, 0, 0))
                      {
+                         if(waittime > new TimeSpan(0, 0, 15))
+                         {
+                             waittime = new TimeSpan(0, 0, 15);
+                         }
                          DateTime wait = DateTime.Now + waittime;
                          while(DateTime.Now < wait)
                          {
