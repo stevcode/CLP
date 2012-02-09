@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.Model
     public class PeerNode
     {
         public string MachineName { get; private set; }
-        public string UserName { get; private set; }
+        public string UserName { get; set; }
 
         public ICLPMeshNetworkChannel Channel;
         public ICLPMeshNetworkContract Host;

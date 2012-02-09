@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Model
     /// 
     /// </summary>
     [Serializable]
-    abstract public class CLPPageObjectBase : DependencyObject
+    abstract public class CLPPageObjectBase
     {
         protected CLPPageObjectBase()
         {

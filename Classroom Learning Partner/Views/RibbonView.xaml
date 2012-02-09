@@ -98,11 +98,15 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
-                <ribbon:RibbonButton
+                <!--<ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding Path=SetLaserPointerModeCommand}"
                     Visibility="{Binding Path=InstructorVisibility}"/>
+                <ribbon:RibbonButton
+                    Label="Snap Tile"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=SetSnapTileCommand}"/>-->
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -171,7 +175,7 @@
                     Label="Thank you!"
                     IsEnabled="False"
                     Visibility="{Binding Path=IsSentInfoVisibility}"/>
-            </ribbon:RibbonGroup>'
+            </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
                 <ribbon:RibbonButton

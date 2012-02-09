@@ -55,7 +55,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\MongoDB.Driver.dll</HintPath>
     </Reference>
+    <Reference Include="ReachFramework" />
     <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity">
@@ -96,6 +98,7 @@
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\StudentWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
     </Compile>
@@ -169,6 +174,9 @@
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\CLPSnapTileView.xaml.cs">
+      <DependentUpon>CLPSnapTileView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
     </Compile>
@@ -198,6 +206,9 @@
     </Compile>
     <Compile Include="Views\Workspaces\StudentWorkspaceView.xaml.cs">
       <DependentUpon>StudentWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
+      <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -275,6 +286,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PageObjects\CLPSnapTileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PageObjects\CLPTextBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -312,6 +327,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\StudentWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\UserLoginWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

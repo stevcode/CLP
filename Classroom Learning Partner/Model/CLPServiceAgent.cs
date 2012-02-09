@@ -86,6 +86,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 //alternatively, pull from database and build
                 CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
+                notebook.NotebookName = notebookName;
                 newNotebookViewModel = new CLPNotebookViewModel(notebook);
 
 
@@ -270,6 +271,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
                 }
+                else if (pageObject is CLPSnapTile)
+                {
+                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
+                }
                 else
                 {
                     pageObjectViewModel = null;
@@ -358,13 +363,37 @@ namespace Classroom_Learning_Partner.Model
         {
             Point oldLocation = pageObjectContainerViewModel.Position;
             pageObjectContainerViewModel.Position = pt;
+            pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+            
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("MOVE");
                 item.OldValue = oldLocation.ToString();
                 item.NewValue = pt.ToString();
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+            }
+
+
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                CLPSnapTileViewModel snapTileVM = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
+                if (snapTileVM.NextTile != null)
+                {
+                    foreach (var container in snapTileVM.PageViewModel.PageObjectContainerViewModels)
+                    {
+                        if (container.PageObjectViewModel is CLPSnapTileViewModel)
+                        {
+                            if ((container.PageObjectViewModel as CLPSnapTileViewModel).PageObject.UniqueID == snapTileVM.NextTile.PageObject.UniqueID)
+                            {
+                                container.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTile.TILE_HEIGHT);
+                                container.PageObjectViewModel.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTile.TILE_HEIGHT);
+                                container.PageObjectViewModel.PageObject.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTile.TILE_HEIGHT);
+                            }
+                        }
+                        
+                    }
+                }
             }
             //send change to projector and students?
             //DATABASE change page object's position

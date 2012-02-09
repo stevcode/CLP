@@ -40,6 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _objectReferences = history.ObjectReferences;
             _history = history;
             CLPService = new CLPServiceAgent();
+                   
             AppMessages.ChangePlayback.Register(this, (playback) =>
             {
                 if (this.PlaybackControlsVisibility == Visibility.Collapsed)
@@ -76,7 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private Dictionary<string, object> _objectReferences;// = new Dictionary<string, object>();
+        private Dictionary<string, object> _objectReferences;
         public Dictionary<string, object> ObjectReferences
         {
             get
@@ -85,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private ObservableCollection<CLPHistoryItem> _historyItems;// = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> _historyItems;
         public ObservableCollection<CLPHistoryItem> HistoryItems
         {
             get
@@ -110,7 +111,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         //List to enable undo/redo functionality
-        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;// = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
         {
             get
@@ -124,7 +125,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return _inkCanvas;
+                return _inkCanvas as System.Windows.Controls.InkCanvas;
             }
             set
             {
@@ -360,28 +361,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private delegate void NoArgDelegate();
         public void startPlayback()
         {
+            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                         
             this.AbortPlayback = false;
             int size = HistoryItems.Count;
                  for(int i = 0; i < size; i++)
                  {
-                     CLPHistoryItem item = HistoryItems.ElementAt(HistoryItems.Count - 1);
-                     if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
-                     {
-                         System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-                         inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
-                     }
-                     else
-                     {
-                         CLPPageObjectBase obj = getRealPageObject(item) as CLPPageObjectBase;
-                         if (obj != null)
-                         {
-                             obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
-                         }
-                         else
-                         {
-                             GetPageObject(item).PageObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));  
-                         }
-                     }
+                    inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
                  }
                  System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
                  for(int i = 0; i < size; i++)
@@ -399,32 +385,8 @@ namespace Classroom_Learning_Partner.ViewModels
                      {
                          Logger.Instance.WriteToLog(e.ToString());
                      }
-                     
-                     try
-                     {
-                         CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-                         if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
-                         {
-                             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-                             inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
-                         }
-                         else
-                         {
-                             CLPPageObjectBase obj = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
-                             if (obj != null)
-                             {
-                                 obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, new NoArgDelegate(redo));
-                             }
-                             else
-                             {
-                                 GetPageObject(item).PageObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
-                             }
-                         }
-                     }
-                     catch (NullReferenceException n)
-                     {
-                         Console.WriteLine(n.ToString());
-                     }
+                     inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                       
                      if (waittime > new TimeSpan(0, 0, 0))
                      {
                          if(waittime > new TimeSpan(0, 0, 15))
@@ -473,58 +435,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
         private void abortPlayback()
         {
+            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                        
             foreach (var i in UndoneHistoryItems)
             {
-                try
-                {
-                    CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-                    if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
-                    {
-                        System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-                        inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
-                    }
-                    else
-                    {
-                        CLPPageObjectBase obj = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
-                        obj.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, new NoArgDelegate(redo));
-                    }
-                }
-                catch (NullReferenceException n)
-                {
-                    Console.WriteLine(n.ToString());
-                }
+                inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
             }
+                   
         }
-        private object getRealPageObject(CLPHistoryItem item)
-        {
-            if (ObjectReferences[item.ObjectID] is String || ObjectReferences[item.ObjectID] is Stroke)
-            {
-                Stroke s = null;
-                Stroke stroke = CLPPageViewModel.StringToStroke(ObjectReferences[item.ObjectID] as string);
-                foreach (var v in PageVM.Page.Strokes)
-                {
-                    Stroke actualStroke = CLPPageViewModel.StringToStroke(v);
-                    if (stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString().Equals(actualStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString()))
-                    {
-                        s = actualStroke;
-                        break;
-                    }
-                }
-                if (s != null)
-                    return s;
-            }
-            CLPPageObjectBase pageObject = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
-            foreach (var v in this.PageVM.Page.PageObjects)
-            {
-                if (HistoryItems.ElementAt(HistoryItems.Count - 1).ObjectID.Equals(v.UniqueID))
-                {
-                    pageObject = v as CLPPageObjectBase;
-                    return pageObject;
-                }
-            }
-            return null;
-          
-        }
+      
         public void stopPlayback()
         {
             //stops and resets playback history

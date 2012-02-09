@@ -84,6 +84,7 @@
                         Width="40"
                         Height="40"
                         Cursor="ScrollAll"
+                        PreviewMouseUp="dragButton_PreviewMouseUp"
                         >
                     <Ellipse
                             Stroke="Black"
