@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner.Model
                 App.MainWindowViewModel.TitleBarText = "Connected";
                 if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
                 {
-                   Channel.Connect(MachineName);
+                    Channel.Connect(MachineName);  
                 }
             }
         }

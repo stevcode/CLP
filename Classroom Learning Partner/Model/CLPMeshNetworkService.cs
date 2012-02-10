@@ -73,7 +73,6 @@ namespace Classroom_Learning_Partner.Model
 
         public void Connect(string userName)
         {
-            //Called when Student or Instructor Connect
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Instructor/Student Machine Connected: " + userName);
@@ -81,7 +80,7 @@ namespace Classroom_Learning_Partner.Model
                 //Currently username is the machine name -> CHANGE when using actual names
                 CLPService.RetrieveNotebooks(userName);
             }
-
+          
         }
 
         public void Disconnect(string userName)
@@ -156,6 +155,12 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("ReceiveNotebooks - recieved one notebook");
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPService.SaveNotebooksFromDBToHD(notebook);
+                //reload notebook chooser window if already open
+                //if (App.MainWindowViewModel.Workspace.GetType().Equals(new NotebookChooserWorkspaceViewModel().GetType()))
+                //{
+                //    App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                //}
+                
                
             }
         }

@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
             CLPService = new CLPServiceAgent();
             //#############################
-            CurrentUserMode = UserMode.Server;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.Using;
             switch (App.CurrentUserMode)
             {
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://18.28.5.202";
+            string ConnectionString = "mongodb://18.28.6.168";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Conencted to DB");
         }
