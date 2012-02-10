@@ -649,7 +649,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               App.IsAuthoring = false;
+                                              CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
                                               CLPService.SetWorkspace();
+                                             
                                           }));
             }
         }

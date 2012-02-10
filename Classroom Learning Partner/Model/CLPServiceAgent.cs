@@ -11,9 +11,11 @@ using Classroom_Learning_Partner.ViewModels.PageObjects;
 using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Input;
 using System.Windows.Ink;
+
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -25,10 +27,13 @@ namespace Classroom_Learning_Partner.Model
         void RemovePageAt(int pageIndex);
 
         void AddSubmission(CLPPage page);
-
+        void DistributeNotebook(CLPNotebookViewModel notebookVM, string author);
         void OpenNotebook(string notebookName);
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
+        void SaveNotebookDB(CLPNotebook notebookVM, string userName);
+        void SavePageDB(CLPPage pageVM);
+        void SaveNotebooksFromDBToHD(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
 
@@ -43,7 +48,11 @@ namespace Classroom_Learning_Partner.Model
         void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page);
         void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
+
         void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
+        //Calls made on Server to DB
+        void RetrieveNotebooks(string username);
+        void DistributeNotebookServer(CLPNotebook notebookVM, string author);
     }
 
     public class CLPServiceAgent : ICLPServiceAgent
@@ -109,12 +118,15 @@ namespace Classroom_Learning_Partner.Model
 
 
                 SetWorkspace();
-                
+
 
                 //change this to open Instructor/Student/Projector Workspace
                 //App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
             }
-            //else doesn't exist, error checking
+            else //else doesn't exist, error checking
+            {
+                //check if notebook exisist on server
+            }
         }
 
 
@@ -142,7 +154,7 @@ namespace Classroom_Learning_Partner.Model
                         App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
                         NameChooserLoop = false;
                         //Send empty notebook to db
-                       //ObjectSerializer.ToString(newNotebookViewModel)
+                        //ObjectSerializer.ToString(newNotebookViewModel)
                     }
                     else
                     {
@@ -163,22 +175,66 @@ namespace Classroom_Learning_Partner.Model
             //compare model w/ database
             string filePath = App.NotebookDirectory + @"\" + notebookVM.Notebook.NotebookName + @".clp";
             CLPNotebook.SaveNotebookToFile(filePath, notebookVM.Notebook);
-
-            //save to database?
-            //MongoDatabase nb = App.DatabaseServer.GetDatabase("Noteboks");
-            //MongoCollection<BsonDocument> iNote = nb.GetCollection<BsonDocument>("Noteboks");
-            //BsonDocument currentNotebook = new BsonDocument {
-            //    { "ID", notebookVM.Notebook.MetaData.GetValue("UniqueID") },
-            //    { "CreationDate", notebookVM.Notebook.MetaData.GetValue("CreationDate") },
-            //     { "NotebookName", notebookVM.Notebook.MetaData.GetValue("NotebookName") },
-            //      { "NotebookContent", ObjectSerializer.ToString(notebookVM.Notebook) }
-            //    };
-            //iNote.Insert(currentNotebook);
-      
-            //MongoCollection<Employee> employees =
-          //hr.GetCollection<Employee>("employees");
+            Console.WriteLine("Notebook saved locally");
+            if (App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
+                Console.WriteLine("Notebook seralized");
+                App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
+                Console.WriteLine("Notebook saving called on mesh");
+            }
         }
 
+        public void SaveNotebookDB(CLPNotebook notebook, string userName)
+        {
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
+            {
+                //save to database
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
+                var query = Query.EQ("ID", notebook.MetaData.GetValue("UniqueID"));
+                BsonDocument currentNotebook = nbCollection.FindOne(query);
+                if (currentNotebook != null)
+                {
+                    //update with newer notebook version
+                    currentNotebook["SaveDate"] = DateTime.Now.ToString();
+                    currentNotebook["NotebookContent"] = ObjectSerializer.ToString(notebook);
+                    nbCollection.Save(currentNotebook);
+                }
+                else
+                {
+                    nbCollection.Insert(createBsonNotebook(notebook, userName));
+                }
+
+
+
+            }
+        }
+        public void SaveNotebooksFromDBToHD(CLPNotebook notebook)
+        {
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Student:
+                    string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
+                    CLPNotebook.SaveNotebookToFile(filePath, notebook);
+                    break;
+            }
+        }
+        public void SavePageDB(CLPPage page)
+        {
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
+            {
+                //save to database
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
+                BsonDocument currentPage = new BsonDocument {
+                    { "ID", page.MetaData.GetValue("UniqueID") },
+                    { "CreationDate", page.MetaData.GetValue("CreationDate") },
+                        { "PageContent", ObjectSerializer.ToString(page) }
+                    };
+                pageCollection.Insert(currentPage);
+            }
+        }
 
         public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
@@ -186,16 +242,13 @@ namespace Classroom_Learning_Partner.Model
             {
                 Directory.CreateDirectory(App.NotebookDirectory);
             }
+            //normal operation - take what is already avalible
             foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
             {
                 string notebookName = Path.GetFileNameWithoutExtension(fullFile);
                 NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
                 notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
             }
-
-            //grab list of available notebooks from database
-
-            //compare?
         }
 
 
@@ -210,9 +263,9 @@ namespace Classroom_Learning_Partner.Model
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
             //sync with database
             //run network disconnect
-            
+
             Environment.Exit(0);
-            
+
         }
 
 
@@ -280,7 +333,7 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = null;
                 }
-                
+
                 pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
                 pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
                 
@@ -486,6 +539,75 @@ namespace Classroom_Learning_Partner.Model
             }
 
             CommandManager.InvalidateRequerySuggested();
+        }
+
+        public void RetrieveNotebooks(string username)
+        {
+            //Use username to retrieve all student Notebooks and broadcast over mesh network
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> notebookCollection = nb.GetCollection<BsonDocument>("Notebooks");
+                var query = Query.EQ("User", username);
+                var cursor = notebookCollection.Find(query).SetFields(Fields.Include("NotebookContent"));
+                string s_notebook;
+                foreach (BsonDocument notebook in cursor)
+                {
+                    s_notebook = notebook["NotebookContent"].AsString;
+                    App.Peer.Channel.ReceiveNotebook(s_notebook, username);
+                }
+                Console.WriteLine("Notebooks broadcast to user " + username);
+            }
+        }
+
+        public void DistributeNotebook(CLPNotebookViewModel notebookVM, string author)
+        {
+            if (App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                App.Peer.Channel.DistributeNotebook(ObjectSerializer.ToString(notebookVM.Notebook), author);
+            }
+
+        }
+
+        public void DistributeNotebookServer(CLPNotebook notebook, string author)
+        {
+            //Get Notebooks collection, and save teacher's copy of notebook
+            MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+            MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
+            nbCollection.Insert(createBsonNotebook(notebook, author));
+
+            //save notebook in MasterNotebook collection (needed?)
+            MongoCollection<BsonDocument> masterNBCollection = nb.GetCollection<BsonDocument>("MasterNotebooks");
+            masterNBCollection.Insert(createBsonNotebook(notebook, App.Peer.UserName));
+
+            //Access students in class
+            MongoCollection<BsonDocument> classesCollection = nb.GetCollection<BsonDocument>("Classes");
+            var query = Query.EQ("name", "TestClass"); //change in future to refer to current class
+            BsonDocument currentClass = classesCollection.FindOne(query);
+            BsonArray students = currentClass["students"].AsBsonArray;
+
+            //Prepair to allocate a copy of new notebook for each student in class
+            System.Collections.ArrayList studentNotebookCopies = new System.Collections.ArrayList();
+            foreach (string singleStudent in students)
+            {
+                //Create copy of notebook for each student
+                studentNotebookCopies.Add(createBsonNotebook(notebook, singleStudent));
+            }
+            nbCollection.InsertBatch(studentNotebookCopies.ToArray());
+            
+        }
+
+        private BsonDocument createBsonNotebook(CLPNotebook notebook, string userName)
+        {
+            BsonDocument currentNotebook = new BsonDocument {
+                    { "ID", notebook.MetaData.GetValue("UniqueID") },
+                    {"User", userName}, 
+                    { "CreationDate", notebook.MetaData.GetValue("CreationDate") },
+                    {"SaveDate", DateTime.Now.ToString()},
+                    { "NotebookName", notebook.MetaData.GetValue("NotebookName") },
+                    { "NotebookContent", ObjectSerializer.ToString(notebook) }
+                    };
+            return currentNotebook;
         }
     }
 }
