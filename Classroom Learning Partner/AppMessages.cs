@@ -108,18 +108,6 @@ namespace Classroom_Learning_Partner
                 Messenger.Default.Register(recipient, MessageTypes.ChangePlayback, action);
             }
         }
-        public static class SendPlaybackItem
-        {
-            public static void Send(CLPHistoryItem item)
-            {
-                Messenger.Default.Send(item, MessageTypes.SendPlaybackItem);
-            }
-
-            public static void Register(object recipient, Action<CLPHistoryItem> action)
-            {
-                Messenger.Default.Register(recipient, MessageTypes.SendPlaybackItem, action);
-            }
-        }
         public static class Audio
         {
             public static void Send(String item)

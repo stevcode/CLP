@@ -99,6 +99,7 @@
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
@@ -134,6 +136,9 @@
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CLPHistoryView.xaml.cs">
+      <DependentUpon>CLPHistoryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
@@ -228,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Adorners\CloseButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CLPHistoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -418,6 +427,8 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+    <Resource Include="Images\mic_stop.png" />
+    <Resource Include="Images\mic_start.png" />
     <Resource Include="Images\play2.png" />
     <Resource Include="Images\pause.png" />
     <Resource Include="Images\DisplaySubmissionsButton.png" />

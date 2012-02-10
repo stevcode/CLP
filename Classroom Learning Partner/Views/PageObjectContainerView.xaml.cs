@@ -52,12 +52,18 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
 
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                isStampedObject = true;
+            }
+
             if (App.IsAuthoring || isStampedObject)
             {
                 CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
             }
         }
 
+        private bool isDragging = false;
         private void MoveThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             
@@ -78,6 +84,11 @@ namespace Classroom_Learning_Partner.Views
                 {
                     isStampedObject = true;
                 }
+            }
+
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                isStampedObject = true;
             }
 
 
@@ -104,6 +115,7 @@ namespace Classroom_Learning_Partner.Views
                 }
 
                 Point pt = new Point(x, y);
+                isDragging = true;
                 CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
             }
         }
@@ -157,38 +169,51 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
 
-
-            if (App.IsAuthoring || isStampedObject)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
             {
-                if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
-                {
-                    CLPSnapTileViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
-                    foreach (var container in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels)
-                    {
-                        if (container.PageObjectViewModel is CLPSnapTileViewModel)
-                        {
-
-                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
-                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
-                            {
-                                Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
-                                Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
-                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
-                                double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
-                                if (deltaX < 50 && deltaY < 60)
-                                {
-                                    otherTile.NextTile = tile;
-                                    tile.PrevTile = otherTile;
-
-                                    Point pt = new Point(otherTile.PageObject.Position.X, otherTile.PageObject.Position.Y + CLPSnapTile.TILE_HEIGHT);
-                                    CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                isStampedObject = true;
             }
+
+
+            if (isDragging)
+            {
+	            if (App.IsAuthoring || isStampedObject)
+	            {
+	                if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+	                {
+	                    CLPSnapTileViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
+	                    foreach (var container in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels)
+	                    {
+	                        if (container.PageObjectViewModel is CLPSnapTileViewModel)
+	                        {
+	
+	                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
+	                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
+	                            {
+	                                Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
+	                                Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
+	                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
+	                                double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
+	                                if (deltaX < 50 && deltaY < 60)
+	                                {
+                                        foreach (var tileColor in tile.Tiles)
+                                        {
+                                            otherTile.Tiles.Add(tileColor);
+                                        }
+
+                                        container.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
+
+                                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+	                                    break;
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+            }
+
+            isDragging = false;
         }
 
     }
