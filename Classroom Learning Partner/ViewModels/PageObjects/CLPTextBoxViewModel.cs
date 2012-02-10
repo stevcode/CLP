@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
     public class CLPTextBoxViewModel : CLPPageObjectBaseViewModel
     {
-        public CLPTextBoxViewModel(CLPTextBox textBox)
+        public CLPTextBoxViewModel(CLPTextBox textBox, CLPPageViewModel pageViewModel) : base(pageViewModel)
         {
             PageObject = textBox;
             _CLPText = textBox.Text;

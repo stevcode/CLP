@@ -18,11 +18,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image)
+        public CLPImageViewModel(CLPImage image, CLPPageViewModel pageViewModel) : base(pageViewModel)
         {
             PageObject = image;
             _sourceImage = image.SourceImage;
-            
         }
 
         #region Binding

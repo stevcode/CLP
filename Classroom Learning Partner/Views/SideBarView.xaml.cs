@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -49,6 +50,35 @@ namespace Classroom_Learning_Partner.Views
             {
                 SubmissionsSideBar.Visibility = System.Windows.Visibility.Collapsed;
                 TempRectangle.Visibility = System.Windows.Visibility.Collapsed;
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
+            CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
+            string pageID = pageViewModel.Page.UniqueID;
+            if (App.CurrentNotebookViewModel.SubmissionViewModels.ContainsKey(pageID))
+            {
+                SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
+                sideBarViewModel.SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[pageID];
+            }
+        }
+
+        private void preview_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Grid grid = sender as Grid;
+            CLPPagePreviewView preview = grid.Children[0] as CLPPagePreviewView;
+            CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
+            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
+
+            if (pageViewModel.Page.IsSubmission)
+            {
+                sideBarViewModel.SelectedSubmissionPage = pageViewModel;
+            }
+            else
+            {
+                sideBarViewModel.SelectedNotebookPage = pageViewModel;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Windows;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -13,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class AuthoringWorkspaceViewModel : ViewModelBase
+    public class AuthoringWorkspaceViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the AuthoringWorkspaceViewModel class.
@@ -22,6 +23,9 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SideBar.SubmissionsSideBarVisibility = Visibility.Collapsed;
             SideBar.ToggleSubmissionsButtonVisibility = Visibility.Collapsed;
+            Display.IsActive = true;
+            Display.IsOnProjector = false;
+
         }
 
         //TODO make left/right/top/bottom orientations...switch to single Workspace view with canvas?
@@ -35,13 +39,18 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             }
         }
 
-        private SinglePageDisplayViewModel _display = new SinglePageDisplayViewModel();
-        public SinglePageDisplayViewModel Display
+        private LinkedDisplayViewModel _display = new LinkedDisplayViewModel();
+        public LinkedDisplayViewModel Display
         {
             get
             {
                 return _display;
             }
+        }
+
+        public void Dispose()
+        {
+            Display.Dispose();
         }
     }
 }

@@ -97,6 +97,12 @@ namespace Classroom_Learning_Partner.Model
             return null;
         }
 
-
+        public string UniqueID
+        {
+            get
+            {
+                return MetaData.GetValue("UniqueID");
+            }
+        }
     }
 }

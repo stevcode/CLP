@@ -12,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Classroom_Learning_Partner.Views.Displays
+namespace Classroom_Learning_Partner.Views.Workspaces
 {
     /// <summary>
-    /// Interaction logic for SinglePageDisplayView.xaml
+    /// Interaction logic for UserLoginWorkspaceView.xaml
     /// </summary>
-    public partial class SinglePageDisplayView : UserControl
+    public partial class UserLoginWorkspaceView : UserControl
     {
-        public SinglePageDisplayView()
+        public UserLoginWorkspaceView()
         {
             InitializeComponent();
         }

@@ -5,7 +5,7 @@
                     xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
                     xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
     <ItemsPanelTemplate x:Key="PanelTemplate">
-        <Canvas Width="816" Height="1056" Background="Transparent" />
+        <Canvas Width="1056" Height="816" Background="Transparent" />
     </ItemsPanelTemplate>
 
     <Style x:Key="ContainerStyle">
@@ -15,7 +15,7 @@
                 Value="{Binding Position.Y}" />
     </Style>
 
-    <Geometry x:Key="CloseX">M0,0 L1,1 M0,1 L1,0</Geometry>
+
 
 
     <DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
@@ -33,5 +33,19 @@
     <DataTemplate DataType="{x:Type vmpo:CLPImageStampViewModel}">
         <vwpo:CLPImageStampView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vmpo:CLPBlankStampViewModel}">
+        <vwpo:CLPBlankStampView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
+        <vwpo:CLPSnapTileView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
+        <vw:CLPHistoryView />
+    </DataTemplate>
+    
+    
 
 </ResourceDictionary>

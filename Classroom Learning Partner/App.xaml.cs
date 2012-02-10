@@ -28,7 +28,9 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Instructor;
+            CLPService = new CLPServiceAgent();
+
+            CurrentUserMode = UserMode.Projector;
 
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -36,18 +38,34 @@ namespace Classroom_Learning_Partner
             window.Show();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+            Logger.Instance.InitializeLog();
             
-            MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                App.CurrentNotebookViewModel = new CLPNotebookViewModel();
+                App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
+                CLPService.SetWorkspace();
+            }
+            else if (App.CurrentUserMode == UserMode.Student)
+            {
+                MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
+            }
+            else
+	        {
+                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+	        }
 
             DispatcherHelper.Initialize();
 
             JoinMeshNetwork();
         }
 
+        private ICLPServiceAgent CLPService { get; set; }
+
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://18.111.92.56";
+            string ConnectionString = "mongodb://18.28.5.202";
             _databaseServer = MongoServer.Create(ConnectionString);
         }
 

@@ -6,19 +6,27 @@
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1280">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <!--test-->
-    <ribbon:Ribbon IsMinimized="{Binding IsMinimized}">
+    <ribbon:Ribbon Visibility="{Binding Path=RibbonVisibility}" IsMinimized="{Binding IsMinimized}">
         <ribbon:Ribbon.ContextualTabGroups>
-            <ribbon:RibbonContextualTabGroup Header="Authoring" Visibility="Visible" Background="Red" />
+            <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
         </ribbon:Ribbon.ContextualTabGroups>
         <!--Application Menu Button-->
 
         <ribbon:Ribbon.ApplicationMenu>
-            <ribbon:RibbonApplicationMenu >
+            <ribbon:RibbonApplicationMenu>
                 <ribbon:RibbonApplicationMenuItem Header="New Notebook"
                                                   KeyTip="N"
                                                   ImageSource="..\Images\LargeIcon.png"
-                                                  Command="{Binding Path=NewNotebookCommand}" />
+                                                  Command="{Binding Path=NewNotebookCommand}"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Open Notebook"
                                                   KeyTip="O"
                                                   ImageSource="..\Images\OpenNotebook.png" 
@@ -26,11 +34,13 @@
                 <ribbon:RibbonApplicationMenuItem Header="Edit Notebook"
                                                   Command="{Binding Path=EditNotebookCommand}"
                                                   KeyTip="E"
-                                                  ImageSource="..\Images\EditNotebook.png" />
+                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Done Editing Notebook"
                                                   Command="{Binding Path=DoneEditingNotebookCommand}"
                                                   KeyTip="E"
-                                                  ImageSource="..\Images\EditNotebook.png" />
+                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
                 <ribbon:RibbonApplicationMenuItem Header="Save Notebook"
                                                   Command="{Binding Path=SaveNotebookCommand}"
                                                   KeyTip="S"
@@ -88,10 +98,15 @@
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser2.jpg"
                     Command="{Binding Path=SetStrokeEraserCommand}" />
-                <ribbon:RibbonButton
+                <!--<ribbon:RibbonButton
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
-                    Command="{Binding Path=SetLaserPointerModeCommand}" />
+                    Command="{Binding Path=SetLaserPointerModeCommand}"
+                    Visibility="{Binding Path=InstructorVisibility}"/>-->
+                <ribbon:RibbonButton
+                    Label="Snap Tile"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=SetSnapTileCommand}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -148,14 +163,50 @@
                     Command="{Binding Path=RedoCommand}" />
                 
             </ribbon:RibbonGroup>
-            
-            <ribbon:RibbonGroup>
+
+            <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\Send.png" 
                     Command="{Binding Path=SubmitPageCommand}" 
-                    Label="Send To Teacher" />
+                    Label="Send To Teacher"
+                    Visibility="{Binding Path=SendButtonVisibility}"/>
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\Happy.png" 
+                    Label="Thank you!"
+                    IsEnabled="False"
+                    Visibility="{Binding Path=IsSentInfoVisibility}"/>
+            </ribbon:RibbonGroup>
+            
+            <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\Projector.png"
+                    Label="Send To Projector"
+                    Command="{Binding Path=SendDisplayToProjectorCommand}" />
+                <ribbon:RibbonSeparator Height="65" Width="20" Background="Black" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\SingleDisplay.png"
+                    Label="Linked Display"
+                    Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\GridDisplay.png"
+                    Label="New Grid Display"
+                    Command="{Binding Path=CreateNewGridDisplayCommand}" />
             </ribbon:RibbonGroup>
 
+            <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play2.png"
+                    Label="Enable Playback"
+                    Command="{Binding Path=EnablePlaybackCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="{Binding Path=RecordImage}"
+                    Label="Record"
+                    Command="{Binding Path=AudioCommand}" />
+                <ribbon:RibbonButton
+                    LargeImageSource="..\Images\play.png"
+                    Label="Play Audio"
+                    Command="{Binding Path=PlayAudioCommand}" />
+            </ribbon:RibbonGroup>
             <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
@@ -202,9 +253,8 @@
 
         <!--Editing Tab-->
         <ribbon:RibbonTab
-            Header="General Editing" ContextualTabGroupHeader="Authoring">
-           <ribbon:RibbonGroup
-                Header="Pen Type">
+            Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
+            <ribbon:RibbonGroup Header="Pen Type">
                 <ribbon:RibbonButton
                     Label="Pen"
                     LargeImageSource="..\Images\Pen.png"
@@ -223,8 +273,7 @@
                     Command="{Binding Path=SetStrokeEraserCommand}" />
             </ribbon:RibbonGroup> 
 
-            <ribbon:RibbonGroup
-                Header="Pen Color">
+            <ribbon:RibbonGroup Header="Pen Color">
                 <ribbon:RibbonGroup.Resources>
                     <Style x:Name="ColorButtonStyleEditing" TargetType="{x:Type ribbon:RibbonButton}">
                         <Setter Property="Width" Value="25"/>
@@ -265,12 +314,65 @@
                 </Border>
 
             </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup
-                Header="Insert">
+            
+            <ribbon:RibbonGroup Header="Text">
                 <ribbon:RibbonButton
                     Label="Insert Text Box"
                     LargeImageSource="..\Images\AddText.png"
                     Command="{Binding Path=InsertTextBoxCommand}" />
+                <ribbon:RibbonControlGroup>
+                    <ComboBox x:Name="FontFamilyComboBox"
+                        ItemsSource="{Binding Path=Fonts}"
+                        SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
+                        Width="130"/>
+                    <ComboBox x:Name="FontSizeComboBox"
+                        ItemsSource="{Binding Path=FontSizes}"
+                        SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
+                        Width="45"/>
+                </ribbon:RibbonControlGroup>
+
+                <ribbon:RibbonControlGroup>
+                    <ribbon:RibbonToggleButton
+                        x:Name="BoldButton"
+                        SmallImageSource="..\Images\Bold16.png"
+                        Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+                    <ribbon:RibbonToggleButton
+                        x:Name="ItalicButton"
+                        SmallImageSource="..\Images\Italic16.png"
+                        Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+                    <ribbon:RibbonToggleButton
+                        x:Name="UnderlineButton"
+                        SmallImageSource="..\Images\Underline16.png"
+                        Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                            <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                    </ribbon:RibbonToggleButton>
+
+                    <Label Content="Font Color" />
+
+                    <ComboBox x:Name="FontColorComboBox"
+                        ItemsSource="{Binding Path=FontColors}"
+                        SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
+                        Width="45">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ribbon:RibbonControlGroup>
+            </ribbon:RibbonGroup>
+            
+            <ribbon:RibbonGroup Header="Insert">
                 <ribbon:RibbonButton
                     Label="Insert Image"
                     LargeImageSource="..\Images\AddImage.png"
@@ -279,46 +381,13 @@
                     Label="Insert Image Stamp"
                     LargeImageSource="..\Images\AddPictureStamp.jpg"
                     Command="{Binding Path=InsertImageStampCommand}" />
-                <!--<ribbon:RibbonButton
+                <ribbon:RibbonButton
                     Label="Insert Blank Stamp"
                     LargeImageSource="..\Images\AddPathStamp.png"
                     Command="{Binding Path=InsertBlankStampCommand}" />
-                <ribbon:RibbonButton
-                    Label="Insert Recognition Grid"
-                    LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=InsertRecognitionGridCommand}" />-->
-
             </ribbon:RibbonGroup>
-            <!--<ribbon:RibbonGroup
-                Header="Text">
-                <ribbon:RibbonButton
-                    Label="Insert Text Box"
-                    LargeImageSource="..\Images\AddText.png"
-                    Command="{Binding Path=InsertTextBoxCommand}" />
-                <ComboBox
-                    ItemsSource="{Binding Path=Fonts}"
-                    SelectedItem="{Binding Path=FontFamily, Mode=TwoWay}"
-                    SelectedIndex="0"/>
-                <ComboBox 
-                    SelectedItem="{Binding Path=FontSize, Mode=TwoWay}"
-                    ItemsSource="{Binding Path=Sizes}"/>
-
-
-                <ribbon:RibbonToggleButton
-                    Label="Bold"
-                    LargeImageSource="..\Images\AddText.png"
-                    IsChecked="{Binding Path=IsBold, Mode=TwoWay}" />
-                <ribbon:RibbonToggleButton
-                    Label="Italics"
-                    LargeImageSource="..\Images\AddText.png"
-                    IsChecked="{Binding Path=IsItalic, Mode=TwoWay}" />
-                <ribbon:RibbonToggleButton
-                    Label="Underline"
-                    LargeImageSource="..\Images\AddText.png"
-                    IsChecked="{Binding Path=IsUnderlined, Mode=TwoWay}" />
-            </ribbon:RibbonGroup> -->
-            <ribbon:RibbonGroup
-                Header="Page">
+            
+            <ribbon:RibbonGroup Header="Page">
                 <ribbon:RibbonButton
                     Label="Add Page Here"
                     LargeImageSource="..\Images\LargeIcon.png"

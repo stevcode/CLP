@@ -10,6 +10,13 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPPage
     {
+        #region StrokeKeys for Stroke MetaData
+
+        public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
+        public static Guid Mutable = new Guid("00000000-0000-0000-0000-000000000002");
+        
+        #endregion //StrokeKeys
+
         #region Constructors
 
         public CLPPage()
@@ -69,6 +76,22 @@ namespace Classroom_Learning_Partner.Model
             {
                 return MetaData.GetValue("UniqueID");
             }
+            set
+            {
+                MetaData.SetValue("UniqueID", value);
+            }
+        }
+
+        public string SubmissionID
+        {
+            get
+            {
+                return MetaData.GetValue("SubmissionID");
+            }
+            set
+            {
+                MetaData.SetValue("SubmissionID", value);
+            }
         }
 
         public bool IsSubmission
@@ -89,11 +112,27 @@ namespace Classroom_Learning_Partner.Model
                 if (value)
                 {
                     MetaData.SetValue("IsSubmission", "True");
+                    if (MetaData.GetValue("SubmissionID") == "NULL_KEY")
+                    {
+                        MetaData.SetValue("SubmissionID", Guid.NewGuid().ToString());
+                    } 
                 }
                 else
                 {
                     MetaData.SetValue("IsSubmission", "False");
                 }
+            }
+        }
+
+        public string SubmitterName
+        {
+            get
+            {
+                return MetaData.GetValue("SubmitterName");
+            }
+            set
+            {
+                MetaData.SetValue("SubmitterName", value);
             }
         }
 

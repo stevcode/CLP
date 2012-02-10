@@ -11,21 +11,16 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPImageStamp : CLPPageObjectBase
+    public class CLPImageStamp : CLPStampBase
     {
-
-        public CLPImageStamp(string path)
+        public CLPImageStamp(string path) : base()
         {
             if (File.Exists(path))
             {
                 _byteSource = File.ReadAllBytes(path);
             }
-
             LoadImageFromByteSource();
             InitializeBase();
-
-            MetaData.SetValue("IsAnchored", "True");
-            MetaData.SetValue("Parts", "");
         }
 
         public CLPImageStamp(byte[] imgSource)
@@ -39,11 +34,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (_sourceImage != null)
             {
-                Height = 300;
                 double ratio = _sourceImage.Height / _sourceImage.Width;
-                Width = Height * ratio;
-
-                base.Position = new System.Windows.Point(10, 10);
+                Height = Width * ratio;
             }
         }
 
@@ -71,6 +63,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _sourceImage = genBmpImage;
         }
 
+        public override CLPPageObjectBase Copy()
+        {
+            CLPImageStamp newStamp = new CLPImageStamp(_byteSource);
+            //copy all metadata and create new unique ID/creation date for the moved stamp
+            newStamp.IsAnchored = IsAnchored;
+            newStamp.Parts = Parts;
+            newStamp.Position = Position;
+            newStamp.Height = Height;
+            newStamp.Width = Width;
+
+            return newStamp;
+        }
+
         #region Properties
 
         //Non-Serialized
@@ -94,46 +99,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get
             {
                 return _byteSource;
-            }
-        }
-
-        //returns true if stamp is anchor/placed by teacher
-        //returns false if stamp is a copy of the anchor; moved by the student
-        public bool IsAnchored
-        {
-            get
-            {
-                if (MetaData.GetValue("IsAnchored") == "True")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                if (value)
-                {
-                    MetaData.SetValue("IsAnchored", "True");
-                }
-                else
-                {
-                    MetaData.SetValue("IsAnchored", "False");
-                }
-            }
-        }
-
-        public string Parts
-        {
-            get
-            {
-                return MetaData.GetValue("Parts");
-            }
-            set
-            {
-                MetaData.SetValue("Parts", value);
             }
         }
 

@@ -9,7 +9,7 @@
         Height="800"
         Width="1280"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
         Title="{Binding Path=TitleBarText}">
@@ -17,11 +17,20 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Skins/MainSkin.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=SetInstructorCommand}"
+              Gesture="CTRL+SHIFT+I" />
+        <KeyBinding Command="{Binding Path=SetStudentCommand}"
+              Gesture="CTRL+SHIFT+S" />
+        <KeyBinding Command="{Binding Path=SetProjectorCommand}"
+              Gesture="CTRL+SHIFT+P" />
+        <KeyBinding Command="{Binding Path=SetServerCommand}"
+              Gesture="CTRL+SHIFT+E" />
+    </Window.InputBindings>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -30,8 +39,8 @@
         </Grid.RowDefinitions>
 
 
-        <vw:RibbonView Grid.Row="0" DataContext="{Binding Path=Ribbon}"></vw:RibbonView>
-        <ContentControl Grid.Row="1" Content="{Binding Path=Workspace}"></ContentControl>
+        <vw:RibbonView x:Name="RibbonView" Grid.Row="0" DataContext="{Binding Path=Ribbon}"></vw:RibbonView>
+        <ContentControl x:Name="Workspace" Grid.Row="1" Content="{Binding Path=Workspace}"></ContentControl>
 
     </Grid>
 </ribbon:RibbonWindow>

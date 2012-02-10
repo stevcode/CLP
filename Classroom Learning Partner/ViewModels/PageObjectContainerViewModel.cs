@@ -23,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
+            Visible = Visibility.Visible;
+
             if (pageObjectBaseViewModel is CLPImageViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPImageViewModel;
@@ -31,13 +33,33 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPImageStampViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPBlankStampViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPBlankStampViewModel;
+            }
             else if (pageObjectBaseViewModel is CLPTextBoxViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPTextBoxViewModel;
             }
-            
-        }
+            else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
+            }
 
+            //Register with messages to turn invisible to start playback
+            playbackOn = false;
+           /* AppMessages.ChangePlayback.Register(this, (playback) =>
+            {
+                playbackOn = !playbackOn;
+                if (!playbackOn)
+                    this.Visible = Visibility.Visible;
+                else
+                    this.Visible = Visibility.Collapsed;
+               //RaisePropertyChanged("Visible");
+                
+            }); */
+        }
+        private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel
         {
@@ -104,6 +126,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _width = value;
                 RaisePropertyChanged(WidthPropertyName);
+                if (PageObjectViewModel != null)
+                {
+                    PageObjectViewModel.Width = _width;
+                }     
             }
         }
 
@@ -134,6 +160,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _height = value;
                 RaisePropertyChanged(HeightPropertyName);
+                if (PageObjectViewModel != null)
+                {
+                    PageObjectViewModel.Height = _height;
+                }
+            }
+        }
+        private Visibility _visible;
+        public Visibility Visible
+        {
+            get
+            {
+                return _visible;
+            }
+            set
+            {
+                _visible = value;
+                RaisePropertyChanged("Visible");
             }
         }
     }

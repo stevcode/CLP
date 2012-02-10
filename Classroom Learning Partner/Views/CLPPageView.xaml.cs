@@ -15,6 +15,9 @@ using Classroom_Learning_Partner.Views.PageObjects;
 using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
+using System.Threading;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -29,6 +32,7 @@ namespace Classroom_Learning_Partner.Views
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
         public CLPServiceAgent CLPService;
+        private bool isSnapTileEnabled = false;
 
         public CLPPageView()
         {
@@ -37,17 +41,49 @@ namespace Classroom_Learning_Partner.Views
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
             this.CLPService = new CLPServiceAgent();
+            //We need the inkCanvas in HistoryVM to start a new thread to enable playback
+            this.CLPService.SendInkCanvas(MainInkCanvas);
+            
+            AppMessages.SetSnapTileMode.Register(this, (setSnapTileEnabled) =>
+                {
+                    isSnapTileEnabled = setSnapTileEnabled;
+                });
 
+            // Register so that we send mouse coordinates for the laser to the projector
+            // When the laser is enabled, add a listener to MouseMove so that sendLaserPointerPosition is called
             AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
             {
                 if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
-                else RootGrid.MouseMove -= sendLaserPointerPosition;
+                else
+                {
+                    RootGrid.MouseMove -= sendLaserPointerPosition;
+                    CLPService.TurnOffLaser();  
+                }
             });
+
+            if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                TopCanvas.Children.Add(_laserPoint);
+                _laserPoint.Visibility = Visibility.Collapsed;
+
+                AppMessages.TurnOffLaser.Register(this, (action) =>
+                {
+                    _laserPoint.Visibility = Visibility.Collapsed;
+                });
+            }
+
+            //Register so we receive mouse coordinates for the laser on the projector
+            AppMessages.UpdateLaserPointerPosition.Register(this, (pt) =>
+            {
+                updateLaserPointerPosition(pt);
+            });
+
+            
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown)
+            if (!isMouseDown && !(this.DataContext as CLPPageViewModel).Page.IsSubmission)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }
@@ -79,12 +115,33 @@ namespace Classroom_Learning_Partner.Views
                 //Console.WriteLine("over any grid");
                 if ((result.VisualHit as Grid).Name == "HitBox")
                 {
-                    //Add timer to delay appearance of adorner
-                    if (DirtyHitbox > 3)
+                    bool isOverStampedObject = false;
+
+                    var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
+                    if (gridChild is CLPImageStampViewModel)
                     {
-                        timer.Start();
+                        isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
                     }
-                    DirtyHitbox = 0;
+                    else if (gridChild is CLPBlankStampViewModel)
+                    {
+                        isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
+                    }
+                    else if (gridChild is CLPSnapTileViewModel)
+                    {
+                        isOverStampedObject = true;                      
+                        //refactor name to encompass all objects that need to have adorner layer shown - steve
+                    }
+
+                    if (App.IsAuthoring || isOverStampedObject)
+                    {
+                        //Add timer to delay appearance of adorner
+                        if (DirtyHitbox > 3)
+                        {
+                            timer.Start();
+                        }
+                        DirtyHitbox = 0;
+                    }
+                    
                     
                 }
                 return HitTestResultBehavior.Stop;
@@ -105,9 +162,6 @@ namespace Classroom_Learning_Partner.Views
                 
                 return HitTestResultBehavior.Continue;
             }
-
-            
-            
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -118,29 +172,58 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private LaserPoint _laserPoint = new LaserPoint();
-        //get information from service agent to update pen position
-        public void updateLaserPointerPosition(Point pt)
-        {
-            //place the red dot at the coordinates, LaserPoint.xaml
-            RootGrid.Children.Add(_laserPoint);
-            _laserPoint.RootGrid.Margin = new Thickness(pt.X, pt.Y, 0, 0);
+        private Thickness _laserPointMargins = new Thickness();
 
+        // Does the actual updating of the LaserPoint
+        private void updateLaserPointerPosition(Point pt)
+        {
+            //if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
+            _laserPoint.Visibility = Visibility.Visible;
+            _laserPointMargins.Left = pt.X;
+            _laserPointMargins.Top = pt.Y;
+            _laserPoint.RootGrid.Margin = _laserPointMargins;
         }
 
+        // use this variable so we're not sending redundant info over the network for TurnOffLaser()
+        private bool _isLaserOn;
         private void sendLaserPointerPosition(object sender, MouseEventArgs e)
         {
-            CLPService.SendLaserPosition(e.GetPosition(this.RootGrid));   
+            if (isMouseDown)
+            {
+                Point pt = e.GetPosition(this.TopCanvas);
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
+                CLPService.SendLaserPosition(pt);
+                _isLaserOn = true;
+            }
+            else
+            {
+                if (_isLaserOn)
+                {
+                    CLPService.TurnOffLaser();
+                    _isLaserOn = false;
+                }
+            }
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+
             isMouseDown = true;
             timer.Stop();
+
         }
 
         private void TopCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = false;
+            if (isSnapTileEnabled)
+            {
+                Point pt = e.GetPosition(this.TopCanvas);
+                if (pt.X > 1056) pt.X = 1056;
+                if (pt.Y > 816) pt.Y = 816;
+                CLPService.AddPageObjectToPage(new CLPSnapTile(pt, "SpringGreen"));
+            }
         }
 
     }

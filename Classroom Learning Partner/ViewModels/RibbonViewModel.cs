@@ -10,6 +10,17 @@ using System.Windows.Controls;
 using System;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Microsoft.Windows.Controls.Ribbon;
+using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Views.PageObjects;
+using System.Collections.Generic;
+using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Timers;
+using System.Windows.Documents;
+using System.Windows.Xps;
+using System.Windows.Xps.Packaging;
+using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Workspaces;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,19 +39,49 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
+        
+
         /// <summary>
         /// Initializes a new instance of the RibbonViewModel class.
         /// </summary>
         public RibbonViewModel()
         {
             CLPService = new CLPServiceAgent();
+            CanSendToTeacher = true;
             _drawingAttributes.Height = PEN_RADIUS;
             _drawingAttributes.Width = PEN_RADIUS;
             _drawingAttributes.Color = Colors.Black;
             _drawingAttributes.FitToCurve = true;
 
             _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+
+            foreach (var color in _colors)
+            {
+                _fontColors.Add(new SolidColorBrush(color));
+            }
+
+            CurrentFontColor = new SolidColorBrush(Colors.Black);
+
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    break;
+                case App.UserMode.Instructor:
+                    InstructorVisibility = Visibility.Visible;
+                    break;
+                case App.UserMode.Projector:
+                    break;
+                case App.UserMode.Student:
+                    StudentVisibility = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
         }
+
+        #region Properties
+
+        public CLPTextBoxView LastFocusedTextBox = null;
 
         private ICLPServiceAgent CLPService { get; set; }
 
@@ -76,7 +117,142 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #endregion //Properties
+
         #region Bindings
+
+        /// <summary>
+        /// The <see cref="AuthoringTabVisibility" /> property's name.
+        /// </summary>
+        public const string AuthoringTabVisibilityPropertyName = "AuthoringTabVisibility";
+
+        private Visibility _authoringTabVisibility = Visibility.Hidden;
+
+        /// <summary>
+        /// Sets and gets the AuthoringTabVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility AuthoringTabVisibility
+        {
+            get
+            {
+                return _authoringTabVisibility;
+            }
+
+            set
+            {
+                if (_authoringTabVisibility == value)
+                {
+                    return;
+                }
+
+                _authoringTabVisibility = value;
+                RaisePropertyChanged(AuthoringTabVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="InstructorVisibility" /> property's name.
+        /// </summary>
+        public const string InstructorVisibilityPropertyName = "InstructorVisibility";
+
+        private Visibility _instructorVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the InstructorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility InstructorVisibility
+        {
+            get
+            {
+                return _instructorVisibility;
+            }
+
+            set
+            {
+                if (_instructorVisibility == value)
+                {
+                    return;
+                }
+
+                _instructorVisibility = value;
+                RaisePropertyChanged(InstructorVisibilityPropertyName);
+            }
+        }
+        public const string RecordImagePropertyName = "RecordImage";
+        private Uri _recordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+        public Uri RecordImage
+        {
+            get
+            {
+                return _recordImage;
+            }
+            set
+            {
+                _recordImage = value;
+                RaisePropertyChanged("RecordImage");
+            }
+        }
+        /// <summary>
+        /// The <see cref="StudentVisibility" /> property's name.
+        /// </summary>
+        public const string StudentVisibilityPropertyName = "StudentVisibility";
+
+        private Visibility _studentVisibility = Visibility.Collapsed;
+
+        /// <summary>
+        /// Sets and gets the StudentVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility StudentVisibility
+        {
+            get
+            {
+                return _studentVisibility;
+            }
+
+            set
+            {
+                if (_studentVisibility == value)
+                {
+                    return;
+                }
+
+                _studentVisibility = value;
+                RaisePropertyChanged(StudentVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="ProjectorVisibility" /> property's name.
+        /// </summary>
+        public const string RibbonVisibilityPropertyName = "RibbonVisibility";
+
+        private Visibility _ribbonVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the ProjectorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility RibbonVisibility
+        {
+            get
+            {
+                return _ribbonVisibility;
+            }
+
+            set
+            {
+                if (_ribbonVisibility == value)
+                {
+                    return;
+                }
+
+                _ribbonVisibility = value;
+                RaisePropertyChanged(RibbonVisibilityPropertyName);
+            }
+        }
 
         /// <summary>
         /// The <see cref="CurrentColorButton" /> property's name.
@@ -108,6 +284,140 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        #region TextBox
+
+        private ObservableCollection<FontFamily> _fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies);
+        public ObservableCollection<FontFamily> Fonts
+        {
+            get
+            {
+                return _fonts;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontFamily" /> property's name.
+        /// </summary>
+        public const string CurrentFontFamilyPropertyName = "CurrentFontFamily";
+
+        private FontFamily _currentFontFamily = new FontFamily("Times New Roman");
+
+        /// <summary>
+        /// Sets and gets the CurrentFontFamily property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public FontFamily CurrentFontFamily
+        {
+            get
+            {
+                return _currentFontFamily;
+            }
+
+            set
+            {
+                if (_currentFontFamily == value)
+                {
+                    return;
+                }
+
+                _currentFontFamily = value;
+                RaisePropertyChanged(CurrentFontFamilyPropertyName);
+                Console.WriteLine("fontfamily changed");
+                AppMessages.UpdateFont.Send(-1, _currentFontFamily, null);
+            }
+        }
+
+        private ObservableCollection<double> _fontSizes = new ObservableCollection<double>(){3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
+		                                                                                    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 15.0,
+		                                                                                    16.0, 17.0, 18.0, 19.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0,
+		                                                                                    32.0, 34.0, 36.0, 38.0, 40.0, 44.0, 48.0, 52.0, 56.0, 60.0, 64.0, 68.0, 72.0, 76.0,
+		                                                                                    80.0, 88.0, 96.0, 104.0, 112.0, 120.0, 128.0, 136.0, 144.0};
+
+        public ObservableCollection<double> FontSizes
+        {
+            get
+            {
+                return _fontSizes;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontSize" /> property's name.
+        /// </summary>
+        public const string CurrentFontSizePropertyName = "CurrentFontSize";
+
+        private double _currentFontSize = 24;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontSize property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public double CurrentFontSize
+        {
+            get
+            {
+                return _currentFontSize;
+            }
+
+            set
+            {
+                if (_currentFontSize == value)
+                {
+                    return;
+                }
+
+                _currentFontSize = value;
+                RaisePropertyChanged(CurrentFontSizePropertyName);
+                Console.WriteLine("fontsize changed");
+                AppMessages.UpdateFont.Send(_currentFontSize, null, null);
+            }
+        }
+
+        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.Blue, Colors.Purple, Colors.Brown, Colors.Green };
+        private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
+
+        public ObservableCollection<Brush> FontColors
+        {
+            get
+            {
+                return _fontColors;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="CurrentFontColor" /> property's name.
+        /// </summary>
+        public const string CurrentFontColorPropertyName = "CurrentFontColor";
+
+        private Brush _currentFontColor;
+
+        /// <summary>
+        /// Sets and gets the CurrentFontColor property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Brush CurrentFontColor
+        {
+            get
+            {
+                return _currentFontColor;
+            }
+
+            set
+            {
+                if (_currentFontColor == value)
+                {
+                    return;
+                }
+
+                _currentFontColor = value;
+                RaisePropertyChanged(CurrentFontColorPropertyName);
+                Console.WriteLine("fontcolor changed");
+                AppMessages.UpdateFont.Send(-1, null, _currentFontColor);
+            }
+        }
+
+        #endregion //TextBox
+
         #endregion //Bindings
 
         #region Commands
@@ -129,6 +439,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               DrawingAttributes.Height = PEN_RADIUS;
                                               DrawingAttributes.Width = PEN_RADIUS;
+                                              if (EditingMode == InkCanvasEditingMode.None)
+                                              {
+                                                  AppMessages.SetLaserPointerMode.Send(false);
+                                                  AppMessages.SetSnapTileMode.Send(false);
+                                              }
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
                                           }));
@@ -219,7 +534,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RelayCommand _SetLaserPointerModeCommand;
 
         /// <summary>
-        /// Gets the MyCommand.
+        /// Gets the SetLaserPointerModeCommand.
         /// </summary>
         public RelayCommand SetLaserPointerModeCommand
         {
@@ -229,13 +544,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_SetLaserPointerModeCommand = new RelayCommand(
                                           () =>
                                           {
-                                              // do work here
-                                              // this.editMode, set to none so pen is turned off
-                                              // tell messenger to set a flag that we're listening for pen movement, 
-
                                               EditingMode = InkCanvasEditingMode.None;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
                                               AppMessages.SetLaserPointerMode.Send(true);
+                                          }));
+            }
+        }
+
+        private RelayCommand _SetSnapTileCommand;
+
+        /// <summary>
+        /// Gets the SetSnapTileCommand.
+        /// </summary>
+        public RelayCommand SetSnapTileCommand
+        {
+            get
+            {
+                return _SetSnapTileCommand
+                    ?? (_SetSnapTileCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              
+                                              EditingMode = InkCanvasEditingMode.None;
+                                              AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
+                                              AppMessages.SetSnapTileMode.Send(true);
                                           }));
             }
         }
@@ -258,10 +590,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.OpenNewNotebook();
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           }));
             }
         }
@@ -301,10 +630,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               App.IsAuthoring = true;
                                               App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                              AuthoringTabVisibility = Visibility.Visible;
                                           }));
             }
         }
@@ -323,25 +649,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               App.IsAuthoring = false;
-                                              switch (App.CurrentUserMode)
-                                              {
-                                                  case App.UserMode.Server:
-                                                      //App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Instructor:
-                                                      //App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Projector:
-                                                      //App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
-                                                      break;
-                                                  case App.UserMode.Student:
-                                                      //App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
-                                                      break;
-                                              }
-                                          },
-                                          () =>
-                                          {
-                                              return App.CurrentUserMode == App.UserMode.Instructor;
+                                              CLPService.SetWorkspace();
                                           }));
             }
         }
@@ -398,7 +706,75 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_convertToXPSCommand = new RelayCommand(
                                           () =>
                                           {
+                                              FixedDocument doc = new FixedDocument();
+                                              doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
+
+                                              if (App.CurrentUserMode == App.UserMode.Instructor)
+                                              {
+                                                  
+                                              }
+                                              //foreach page here
+                                              //foreach (var pageView in A)
+                                              //{
+
+                                              //}
+                                              int i = 0;
+                                              foreach (CLPPageViewModel pageVM in App.CurrentNotebookViewModel.PageViewModels)
+                                              {
+                                                  PageContent pageContent = new PageContent();
+                                                  FixedPage fixedPage = new FixedPage();
+
+                                                  CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                                                  currentPage.DataContext = pageVM;
+                                                  currentPage.UpdateLayout();
+                                                  //currentPage.Visibility = Visibility.Hidden;
+
+                                                  RenderTargetBitmap bmp = new RenderTargetBitmap((int)(96 * 8.5), 96 * 11, 96d, 96d, PixelFormats.Pbgra32); //new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                                                  bmp.Render(currentPage.MainInkCanvas);
+                                                  PngBitmapEncoder encoder = new PngBitmapEncoder();
+                                                  encoder.Frames.Add(BitmapFrame.Create(bmp));
+                                                  using (Stream s = File.Create(@"C:\" + i.ToString() + ".png"))
+                                                  {
+                                                      encoder.Save(s);
+                                                  }
+                                                  i++;
+
+                                                  //Create first page of document
+                                                  RotateTransform rotate = new RotateTransform(90.0);
+                                                  TranslateTransform translate = new TranslateTransform(816+2, -2);
+                                                  TransformGroup transform = new TransformGroup();
+                                                  transform.Children.Add(rotate);
+                                                  transform.Children.Add(translate);
+                                                  currentPage.RenderTransform = transform;
+
+                                                  
+
+                                                  
+
+                                                  fixedPage.Children.Add(currentPage);
+                                                  ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                                                  doc.Pages.Add(pageContent);
+                                              }
+
+                                              //Save the document
+                                              string filename = App.CurrentNotebookViewModel.Notebook.NotebookName + ".xps";
+                                              string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
+                                              if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                                              {
+                                                  Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+                                              }
+                                              if (File.Exists(path))
+                                              {
+                                                  File.Delete(path);
+                                              }
+                              
+
+                                              XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
+                                              
+                                              XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
+                                              xw.Write(doc);
+                                              xpsd.Close();
                                           }));
             }
         }
@@ -548,7 +924,108 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _insertBlankStampCommand;
+
+        /// <summary>
+        /// Gets the InsertBlankStampCommand.
+        /// </summary>
+        public RelayCommand InsertBlankStampCommand
+        {
+            get
+            {
+                return _insertBlankStampCommand
+                    ?? (_insertBlankStampCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPBlankStamp stamp = new CLPBlankStamp();
+                                              CLPService.AddPageObjectToPage(stamp);
+                                          }));
+            }
+        }
+
         #endregion //Insert Commands
+
+        #region Display Commands
+
+        private RelayCommand _sendDisplayToProjectorCommand;
+
+        /// <summary>
+        /// Gets the SendDisplayToProjectorCommand.
+        /// </summary>
+        public RelayCommand SendDisplayToProjectorCommand
+        {
+            get
+            {
+                return _sendDisplayToProjectorCommand
+                    ?? (_sendDisplayToProjectorCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              if (App.Peer.Channel != null)
+                                              {
+                                                  if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                                                      App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+                                                  }
+                                                  else
+                                                  {
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                                                      List<string> pageList = new List<string>();
+                                                      foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+                                                      {
+                                                          pageList.Add(ObjectSerializer.ToString(page.Page));
+                                                      }
+
+                                                      App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
+                                                  }
+                                              }
+                                          }));
+            }
+        }
+
+        private RelayCommand _switchToLinkedDisplayCommand;
+
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand.
+        /// </summary>
+        public RelayCommand SwitchToLinkedDisplayCommand
+        {
+            get
+            {
+                return _switchToLinkedDisplayCommand
+                    ?? (_switchToLinkedDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
+                                          }));
+            }
+        }
+
+        private RelayCommand _createNewGridDisplayCommand;
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand.
+        /// </summary>
+        public RelayCommand CreateNewGridDisplayCommand
+        {
+            get
+            {
+                return _createNewGridDisplayCommand
+                    ?? (_createNewGridDisplayCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
+                                          }));
+            }
+        }
+
+        #endregion //Display Commands
 
         private RelayCommand _submitPageCommand;
 
@@ -563,12 +1040,63 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_submitPageCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.RequestCurrentDisplayedPage.Send( (callbackMessage) =>
+                                              
+                                              IsSending = true;
+                                              Timer timer = new Timer();
+                                              timer.Interval = 1000;
+                                              timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                                              timer.Enabled = true;
+
+                                              if (CanSendToTeacher)
+                                              {
+                                                  Console.WriteLine("actual send");
+                                                  AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
                                                   {
-                                                      CLPService.SubmitPage(callbackMessage);
+                                                      CLPService.SubmitPage(clpPageViewModel);
                                                   });
+                                              }
+                                              CanSendToTeacher = false;
                                           }));
             }
+        }
+
+        public bool CanSendToTeacher { get; set; }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Timer timer = sender as Timer;
+            timer.Stop();
+            timer.Elapsed -= timer_Elapsed;
+            IsSending = false;
+        }
+
+        public const string IsSendingPropertyName = "IsSending";
+        private bool _isSending;
+        public bool IsSending
+        {
+            get
+            {
+                return _isSending;
+            }
+            set
+            {
+                _isSending = value;
+                RaisePropertyChanged(IsSendingPropertyName);
+                RaisePropertyChanged(SendButtonPropertyName);
+                RaisePropertyChanged(IsSentInfoVisibilityPropertyName);
+            }
+        }
+
+        public const string SendButtonPropertyName = "SendButtonVisibility";
+        public Visibility SendButtonVisibility
+        {
+            get { return (IsSending ? Visibility.Collapsed : Visibility.Visible); }
+        }
+
+        public const string IsSentInfoVisibilityPropertyName = "IsSentInfoVisibility";
+        public Visibility IsSentInfoVisibility
+        {
+            get { return (IsSending ? Visibility.Visible : Visibility.Collapsed); }
         }
 
         private RelayCommand _exitCommand;
@@ -592,6 +1120,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        #region HistoryCommands
         private RelayCommand _undoCommand;
 
         /// <summary>
@@ -605,8 +1134,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_undoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "UNDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  clpPageViewModel.HistoryVM.undo();
+                                              });
                                           }));
             }
         }
@@ -623,12 +1154,67 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_redoCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPHistoryItem historyItem = new CLPHistoryItem(null, "REDO");
-                                              AppMessages.UpdateCLPHistory.Send(historyItem);
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  clpPageViewModel.HistoryVM.redo();
+                                              });
                                           }));
             }
         }
+        
+        private RelayCommand _audioCommand;
+        private bool recording = false;
+        public RelayCommand AudioCommand
+        {
+            get
+            {
+                return _audioCommand
+                    ?? (_audioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.Audio.Send("start");
+                                              recording = !recording;
+                                              if (recording)
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                                              }
+                                              else
+                                              {
+                                                  RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+                                              }
+                                          }));
+            }
+        }
+        private RelayCommand _playAudioCommand;
+        public RelayCommand PlayAudioCommand
+        {
+            get
+            {
+                return _playAudioCommand
+                    ?? (_playAudioCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.Audio.Send("play");
 
+
+                                          }));
+            }
+        }
+        private RelayCommand _enablePlaybackCommand;
+        public RelayCommand EnablePlaybackCommand
+        {
+            get
+            {
+                return _enablePlaybackCommand
+                    ?? (_enablePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              AppMessages.ChangePlayback.Send(true);
+
+                                          }));
+            }
+        }
+        #endregion //History Commands
         #endregion //Commands
     }
 }

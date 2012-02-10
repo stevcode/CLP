@@ -2,6 +2,8 @@
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using GalaSoft.MvvmLight.Threading;
 using System;
+using GalaSoft.MvvmLight.Command;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -23,17 +25,42 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            
+            CLPService = new CLPServiceAgent();
+            TitleBarText = "Disconnected";
         }
 
-        
+        private ICLPServiceAgent CLPService { get; set; }
 
         #region Bindings
 
+        /// <summary>
+        /// The <see cref="TitleBarText" /> property's name.
+        /// </summary>
+        public const string TitleBarTextPropertyName = "TitleBarText";
+
+        private string _titleBarText = "";
+
+        /// <summary>
+        /// Sets and gets the TitleBarText property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
         public string TitleBarText
         {
-            //get { return clpText + UserName + " (" + ConnectionStatus + ")"; }
-            get { return clpText; }
+            get
+            {
+                return _titleBarText;
+            }
+
+            set
+            {
+                if (_titleBarText == value)
+                {
+                    return;
+                }
+
+                _titleBarText = clpText + value;
+                RaisePropertyChanged(TitleBarTextPropertyName);
+            }
         }
 
         /// <summary>
@@ -60,7 +87,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return;
                 }
-
+                if (_workspace != null && _workspace is IDisposable)
+                {
+                    (_workspace as IDisposable).Dispose();
+                }
+                
                 _workspace = value;
                 RaisePropertyChanged(WorkspacePropertyName);
             }
@@ -77,6 +108,86 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Bindings
+
+        #region Commands
+
+        private RelayCommand _setInstructorCommand;
+
+        /// <summary>
+        /// Gets the SetInstructorCommand.
+        /// </summary>
+        public RelayCommand SetInstructorCommand
+        {
+            get
+            {
+                return _setInstructorCommand
+                    ?? (_setInstructorCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.CurrentUserMode = App.UserMode.Instructor;
+                                              CLPService.SetWorkspace();
+                                          }));
+            }
+        }
+
+        private RelayCommand _setStudentCommand;
+
+        /// <summary>
+        /// Gets the SetStudentCommand.
+        /// </summary>
+        public RelayCommand SetStudentCommand
+        {
+            get
+            {
+                return _setStudentCommand
+                    ?? (_setStudentCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.CurrentUserMode = App.UserMode.Student;
+                                              CLPService.SetWorkspace();
+                                          }));
+            }
+        }
+
+        private RelayCommand _setProjectorCommand;
+
+        /// <summary>
+        /// Gets the SetProjectorCommand.
+        /// </summary>
+        public RelayCommand SetProjectorCommand
+        {
+            get
+            {
+                return _setProjectorCommand
+                    ?? (_setProjectorCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.CurrentUserMode = App.UserMode.Projector;
+                                              CLPService.SetWorkspace();
+                                          }));
+            }
+        }
+
+        private RelayCommand _setServerCommand;
+
+        /// <summary>
+        /// Gets the SetServerCommand.
+        /// </summary>
+        public RelayCommand SetServerCommand
+        {
+            get
+            {
+                return _setServerCommand
+                    ?? (_setServerCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              App.CurrentUserMode = App.UserMode.Server;
+                                              CLPService.SetWorkspace();
+                                          }));
+            }
+        }
+
+        #endregion //Commands
 
         ////public override void Cleanup()
         ////{

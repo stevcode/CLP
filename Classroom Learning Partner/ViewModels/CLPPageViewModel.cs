@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Ink;
 using System.Windows;
@@ -8,7 +9,10 @@ using System.Windows.Media;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -23,44 +27,69 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPPageViewModel : ViewModelBase
     {
-        public static Guid StrokeIDKey = new Guid("03457307-3475-3450-3035-640435034540");
-
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
-        public CLPPageViewModel() : this(new CLPPage())
+        public CLPPageViewModel(CLPNotebookViewModel notebookViewModel) : this(new CLPPage(), notebookViewModel)
         {
         }
 
-        public CLPPageViewModel(CLPPage page)
+        public CLPNotebookViewModel NotebookViewModel { get; set; }
+
+        public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
+            NotebookViewModel = notebookViewModel; 
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
                                                                     });
 
+            AppMessages.ChangePlayback.Register(this, (playback) =>
+            {
+                if (this.PlaybackControlsVisibility == Visibility.Collapsed)
+                    this.PlaybackControlsVisibility = Visibility.Visible;
+                else
+                    this.PlaybackControlsVisibility = Visibility.Collapsed;
+
+
+            });
+             
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
                 Stroke stroke = StringToStroke(stringStroke);
-                _strokes.Add(stroke);
+                if (stroke.ContainsPropertyData(CLPPage.Mutable))
+                {
+                    if (stroke.GetPropertyData(CLPPage.Mutable).ToString() == "false")
+                    {
+                        _otherStrokes.Add(stroke);
+                    }
+                    else
+                    {
+                        _strokes.Add(stroke);
+                    }
+                }
             }
             foreach (var pageObject in page.PageObjects)
             {
                 CLPPageObjectBaseViewModel pageObjectViewModel = null;
                 if (pageObject is CLPImage)
                 {
-                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);      
+                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, this);      
                 }
                 else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, this);
+                }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, this);
                 }
                 else if (pageObject is CLPTextBox)
                 {
-                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, this);
                 }
 
                 PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);
@@ -69,40 +98,113 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(_strokes_StrokesChanged);
+            _pageObjectContainerViewModels.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_pageObjectContainerViewModels_CollectionChanged);
 
-            _historyVM = new CLPHistoryViewModel(page.PageHistory);
+            _historyVM = new CLPHistoryViewModel(this, page.PageHistory);
+            AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
+        void _pageObjectContainerViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+        }
+        public bool undoFlag;
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            List<string> removedStrokes = new List<string>();
-            foreach (Stroke stroke in e.Removed)
-            {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-                string stringStroke = StrokeToString(stroke);
-                if (Page.Strokes.Contains(stringStroke))
+            foreach (var stroke in e.Removed)
+            {
+                Page.Strokes.Remove(StrokeToString(stroke));
+                if (!undoFlag)
                 {
-                    removedStrokes.Add(stringStroke);
-                    Page.Strokes.Remove(stringStroke);
+                    CLPHistoryItem item = new CLPHistoryItem("ERASE");
+                    HistoryVM.AddHistoryItem(stroke, item);
+                }
+            }
+
+            StrokeCollection addedStrokes = new StrokeCollection();
+            foreach (Stroke stroke in e.Added)
+            {
+                if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                {
+                    string newUniqueID = Guid.NewGuid().ToString();
+                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                }
+                foreach (var strokeRemoved in e.Removed)
+                {
+                    string a = strokeRemoved.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    if (a == b)
+                    {
+                        string newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    }
+                }
+                addedStrokes.Add(stroke);    
+            }
+            
+
+            foreach (var stroke in addedStrokes)
+            {
+                stroke.AddPropertyData(CLPPage.Mutable, "true");
+                Page.Strokes.Add(StrokeToString(stroke));
+                if (!undoFlag)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem("ADD");
+                    HistoryVM.AddHistoryItem(stroke, item);
+                }
+            }
+            
+            
+            if (App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                List<string> add = new List<string>(StrokesToStrings(addedStrokes));
+                List<string> remove = new List<string>(StrokesToStrings(e.Removed));
+                if (Page.IsSubmission)
+                {
+                    if (App.Peer.Channel != null)
+                    {
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Stroke does not exist on the CLPPage");
+                    if (App.Peer.Channel != null)
+                    {
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+                    }
                 }
-
+                
             }
 
-            List<string> addedStrokes = new List<string>();
-            foreach (Stroke stroke in e.Added)
+            
+            
+
+            foreach (PageObjectContainerViewModel pageObjectContainerViewModel in PageObjectContainerViewModels)
             {
-                if (!stroke.ContainsPropertyData(StrokeIDKey))
+                //add bool to pageObjectBase for accept strokes, that way you don't need to check if it's over if it's not going to accept
+
+                Rect rect = new Rect(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y, pageObjectContainerViewModel.Width, pageObjectContainerViewModel.Height);
+
+                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in addedStrokes)
                 {
-                    string newUniqueID = Guid.NewGuid().ToString();
-                    stroke.AddPropertyData(StrokeIDKey, newUniqueID);
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        addedStrokesOverObject.Add(stroke);
+                    }
                 }
-                string stringStroke = StrokeToString(stroke);
-                addedStrokes.Add(stringStroke);
-                Page.Strokes.Add(stringStroke);
+
+                StrokeCollection removedStrokesOverObject = new StrokeCollection();
+                foreach (Stroke stroke in e.Removed)
+                {
+                    if (stroke.HitTest(rect, 3))
+                    {
+                        removedStrokesOverObject.Add(stroke);
+                    }
+                }
+                pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
         }
 
@@ -122,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _page = value;
             }
         }
-        private CLPHistoryViewModel _historyVM = new CLPHistoryViewModel();
+        private CLPHistoryViewModel _historyVM;
         public CLPHistoryViewModel HistoryVM
         {
             get
@@ -134,6 +236,30 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
+        
+        public string SubmitterName
+        {
+            get
+            {
+                return Page.SubmitterName;
+            }
+        }
+   private Visibility _playbackControlsVisibility = Visibility.Collapsed;
+        public Visibility PlaybackControlsVisibility
+        {
+            get
+            {
+                return _playbackControlsVisibility;
+            }
+            set
+            {
+                _playbackControlsVisibility = value;
+                RaisePropertyChanged("PlaybackControlsVisibility");
+               
+                
+            }
+        }
+        
         #endregion //Properties
 
         #region Bindings
@@ -147,6 +273,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private StrokeCollection _otherStrokes = new StrokeCollection();
+        public StrokeCollection OtherStrokes
+        {
+            get
+            {
+                return _otherStrokes;
+            }
+        }
+        
         private readonly ObservableCollection<PageObjectContainerViewModel> _pageObjectContainerViewModels = new ObservableCollection<PageObjectContainerViewModel>();
         public ObservableCollection<PageObjectContainerViewModel> PageObjectContainerViewModels
         {
@@ -155,7 +290,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _pageObjectContainerViewModels;
             }
         }
-
+        
         /// <summary>
         /// The <see cref="EditingMode" /> property's name.
         /// </summary>
@@ -216,6 +351,21 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public const string NumberOfSubmissionsPropertyName = "NumberOfSubmissions";
+
+        public int NumberOfSubmissions
+        {
+            get
+            {
+                return NotebookViewModel.SubmissionViewModels[Page.UniqueID].Count;
+            }
+            set
+            {
+                RaisePropertyChanged(NumberOfSubmissionsPropertyName);
+            }
+        }
+
+
         #endregion //Bindings
 
         #region Methods
@@ -262,7 +412,55 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             return strings;
         }
-
+       
         #endregion //Methods
+
+        #region Commands
+       private RelayCommand _startPlaybackCommand;
+
+        /// <summary>
+        /// Gets the StartPlaybackCommand.
+        /// </summary>
+       private delegate void NoArgDelegate();
+        public RelayCommand StartPlaybackCommand
+        {
+            get
+            {
+                return _startPlaybackCommand
+                    ?? (_startPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              Console.WriteLine("PageVM startplayback");
+                                              // Start fetching the playback items asynchronously.
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+                                              fetcher.BeginInvoke(null, null);
+                                              
+
+                                          }));
+            }
+        }
+        
+  
+        
+        private RelayCommand _stopPlaybackCommand;
+
+        /// <summary>
+        /// Gets the StartPlaybackCommand.
+        /// </summary>
+        public RelayCommand StopPlaybackCommand
+        {
+            get
+            {
+                return _stopPlaybackCommand
+                    ?? (_stopPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
+                                              fetcher.BeginInvoke(null, null);
+                                            
+                                          }));
+            }
+        }
+        #endregion //Commands
     }
 }

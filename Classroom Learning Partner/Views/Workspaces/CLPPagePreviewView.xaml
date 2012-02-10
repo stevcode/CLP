@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" x:Name="CLPPagePreview">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,7 +15,7 @@
     <Grid>
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black">
-                <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas">
+                <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas">
                     <ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjectContainerViewModels}"
                                   ItemsPanel="{StaticResource PanelTemplate}"
@@ -24,10 +24,10 @@
                                   VerticalAlignment="Stretch">
                     </ItemsControl>
 
-                    <InkCanvas Width="816" Height="1056" x:Name="MainInkCanvas"
+                    <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=Strokes}"
-                               EditingMode="None">
+                               EditingMode="None" >
                     </InkCanvas>
 
 

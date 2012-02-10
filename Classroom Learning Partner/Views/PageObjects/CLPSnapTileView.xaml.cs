@@ -11,17 +11,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Resources;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
-namespace Classroom_Learning_Partner.Views.Displays
+namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
-    /// Interaction logic for SinglePageDisplayPreviewView.xaml
+    /// Interaction logic for CLPSnapTileView.xaml
     /// </summary>
-    public partial class SinglePageDisplayPreviewView : UserControl
+    public partial class CLPSnapTileView : UserControl
     {
-        public SinglePageDisplayPreviewView()
+        public CLPSnapTileView()
         {
             InitializeComponent();
-        }
+        }   
     }
 }

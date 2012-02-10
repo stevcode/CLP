@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -15,7 +16,7 @@
     <Grid Name="RootGrid" Background="Transparent">
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black" Background="White">
-                <Canvas Width="816" Height="1056" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
+                <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
                                                                                                 PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
                                                                                                 PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
                     <ItemsControl x:Name="PageObjects"
@@ -26,7 +27,8 @@
                                   VerticalAlignment="Stretch"
                                   >
                     </ItemsControl>
-                    <InkCanvas Width="816" Height="1056" x:Name="MainInkCanvas"
+                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
+                    <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=Strokes}"
                                EditingMode="{Binding Path=EditingMode}"
@@ -36,5 +38,14 @@
                 </Canvas>
             </Border>
         </Viewbox>
+        <vw:CLPHistoryView x:Name="CLPHistoryView" Visibility="{Binding Path=PlaybackControlsVisibility}"/>
+        <!--<Grid Name="ControlsGrid" Background="Transparent" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="60" Visibility="{Binding Path=PlaybackControlsVisibility}">
+            <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}" Visibility="{Binding Path=PlaybackControlsVisibility}">
+                <Image Source="..\Images\play2.png"></Image>
+            </Button>
+            <Button Name="Stop" HorizontalAlignment="Right" Command="{Binding Path=StopPlaybackCommand}" Visibility="{Binding Path=PlaybackControlsVisibility}">
+                <Image Source="..\Images\pause.png"></Image>
+            </Button>
+         </Grid> -->
     </Grid>
 </UserControl>
