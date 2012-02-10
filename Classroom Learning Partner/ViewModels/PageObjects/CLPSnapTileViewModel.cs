@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -15,11 +16,27 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             : base(pageViewModel)
         {
             PageObject = tile;
-            
+            foreach (var tileColor in tile.Tiles)
+            {
+                Tiles.Add(tileColor);
+            }
+
+            _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
         }
 
-        public CLPSnapTileViewModel NextTile { get; set; }
-        public CLPSnapTileViewModel PrevTile { get; set; }
+        void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Height = CLPSnapTile.TILE_HEIGHT * Tiles.Count;
+        }
+
+        private ObservableCollection<string> _tiles = new ObservableCollection<string>();
+        /// <summary>
+        /// List of color names, each list item being a tile in the tower.
+        /// </summary>
+        public ObservableCollection<string> Tiles
+        {
+            get { return _tiles; }
+        }
 
 
     }

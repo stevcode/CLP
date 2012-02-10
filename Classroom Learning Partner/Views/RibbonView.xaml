@@ -102,11 +102,11 @@
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding Path=SetLaserPointerModeCommand}"
-                    Visibility="{Binding Path=InstructorVisibility}"/>
+                    Visibility="{Binding Path=InstructorVisibility}"/>-->
                 <ribbon:RibbonButton
                     Label="Snap Tile"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=SetSnapTileCommand}"/>-->
+                    Command="{Binding Path=SetSnapTileCommand}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup

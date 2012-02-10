@@ -128,12 +128,7 @@ namespace Classroom_Learning_Partner.Views
                     }
                     else if (gridChild is CLPSnapTileViewModel)
                     {
-                        if ((gridChild as CLPSnapTileViewModel).PrevTile == null)
-                        {
-                            isOverStampedObject = true;
-                        }
-                        
-                        
+                        isOverStampedObject = true;                      
                         //refactor name to encompass all objects that need to have adorner layer shown - steve
                     }
 
@@ -227,7 +222,7 @@ namespace Classroom_Learning_Partner.Views
                 Point pt = e.GetPosition(this.TopCanvas);
                 if (pt.X > 1056) pt.X = 1056;
                 if (pt.Y > 816) pt.Y = 816;
-                CLPService.AddPageObjectToPage(new CLPSnapTile(pt));
+                CLPService.AddPageObjectToPage(new CLPSnapTile(pt, "SpringGreen"));
             }
         }
 
