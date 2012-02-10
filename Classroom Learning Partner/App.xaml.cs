@@ -38,8 +38,6 @@ namespace Classroom_Learning_Partner
             window.Show();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-            Logger.Instance.InitializeLog();
-            
 
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
@@ -55,8 +53,6 @@ namespace Classroom_Learning_Partner
 	        {
                 MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
 	        }
-
-            DispatcherHelper.Initialize();
 
             JoinMeshNetwork();
         }
@@ -88,8 +84,8 @@ namespace Classroom_Learning_Partner
 
         #region Properties
 
-        private static MainViewModel _mainWindowViewModel;
-        public static MainViewModel MainWindowViewModel
+        private static MainWindowViewModel _mainWindowViewModel;
+        public static MainWindowViewModel MainWindowViewModel
         {
             get
             {

@@ -49,7 +49,7 @@
 
             <!--Application Menu Button-->
             <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu>
+                <ribbon:RibbonApplicationMenu SmallImageSource="..\Images\File.png">
                     
                     <ribbon:RibbonApplicationMenuItem Header="New Notebook"
                                                   KeyTip="N"

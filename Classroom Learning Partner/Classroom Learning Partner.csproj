@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Inkwell.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core">
       <HintPath>..\packages\Catel.Core.2.5\lib\net40\Catel.Core.dll</HintPath>
@@ -126,6 +129,7 @@
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\InstructorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\StudentWorkspaceViewModel.cs" />
@@ -189,6 +193,9 @@
     </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
+      <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\ProjectorWorkspaceView.xaml.cs">
       <DependentUpon>ProjectorWorkspaceView.xaml</DependentUpon>
@@ -302,6 +309,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Workspaces\NotebookWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\ProjectorWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -410,6 +421,10 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+    <Resource Include="Inkwell.ico" />
+    <Resource Include="Images\Inkwell.ico" />
+    <Resource Include="Images\Inkwell.png" />
+    <Resource Include="Images\File.png" />
     <Resource Include="Images\play2.png" />
     <Resource Include="Images\pause.png" />
     <Resource Include="Images\DisplaySubmissionsButton.png" />

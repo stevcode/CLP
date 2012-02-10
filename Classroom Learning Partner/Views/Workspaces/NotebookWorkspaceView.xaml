@@ -1,0 +1,18 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.Workspaces.NotebookWorkspaceView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:ViewModels="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
+                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
+                   x:TypeArguments="vm:NotebookWorkspaceViewModel">
+    
+    <!-- Resources -->
+    <UserControl.Resources>
+
+    </UserControl.Resources>
+
+    <!-- Content -->
+    <Grid>
+        <Label Content="Here goes your real content" />
+    </Grid>
+</catel:UserControl>
