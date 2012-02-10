@@ -55,9 +55,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\MongoDB.Driver.dll</HintPath>
     </Reference>
+<<<<<<< HEAD
+    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+=======
     <Reference Include="ReachFramework" />
     <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Printing" />
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity">
@@ -95,6 +99,16 @@
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjectBase.cs" />
+<<<<<<< HEAD
+    <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
+    <Compile Include="Model\CLPServiceAgent.cs" />
+    <Compile Include="Model\ICLPMeshNetworkContract.cs" />
+    <Compile Include="Model\MetaDataContainer.cs" />
+    <Compile Include="Model\ObjectSerializer.cs" />
+    <Compile Include="Model\PeerNode.cs" />
+=======
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
@@ -108,10 +122,20 @@
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="ViewModels\AudioViewModel.cs" />
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Compile Include="ViewModels\CLPHistoryViewModel.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
+<<<<<<< HEAD
+    <Compile Include="ViewModels\Displays\SinglePageDisplayViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
+    <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
+=======
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -124,10 +148,18 @@
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Compile Include="ViewModels\SideBarViewModel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
+<<<<<<< HEAD
+    <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
+    <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
+      <DependentUpon>CloseButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CLPPagePreviewView.xaml.cs">
+=======
     <Compile Include="ViewModels\Workspaces\InstructorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
@@ -140,20 +172,29 @@
     <Compile Include="Views\CLPHistoryView.xaml.cs">
       <DependentUpon>CLPHistoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
-      <DependentUpon>KeypadWindowView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Workspaces\CLPPagePreviewView.xaml.cs">
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CLPPageView.xaml.cs">
       <DependentUpon>CLPPageView.xaml</DependentUpon>
     </Compile>
+<<<<<<< HEAD
+    <Compile Include="Views\Displays\SinglePageDisplayPreviewView.xaml.cs">
+      <DependentUpon>SinglePageDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\SinglePageDisplayView.xaml.cs">
+      <DependentUpon>SinglePageDisplayView.xaml</DependentUpon>
+=======
     <Compile Include="Views\Displays\GridDisplayView.xaml.cs">
       <DependentUpon>GridDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Displays\LinkedDisplayView.xaml.cs">
       <DependentUpon>LinkedDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
+      <DependentUpon>KeypadWindowView.xaml</DependentUpon>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookNamerWindowView.xaml.cs">
       <DependentUpon>NotebookNamerWindowView.xaml</DependentUpon>
@@ -167,18 +208,24 @@
     <Compile Include="Views\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
     </Compile>
+<<<<<<< HEAD
+=======
     <Compile Include="Views\PageObjects\CLPBlankStampView.xaml.cs">
       <DependentUpon>CLPBlankStampView.xaml</DependentUpon>
     </Compile>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Compile Include="Views\PageObjects\CLPImageStampView.xaml.cs">
       <DependentUpon>CLPImageStampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
     </Compile>
+<<<<<<< HEAD
+=======
     <Compile Include="Views\PageObjects\CLPSnapTileView.xaml.cs">
       <DependentUpon>CLPSnapTileView.xaml</DependentUpon>
     </Compile>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
     </Compile>
@@ -194,6 +241,11 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
+<<<<<<< HEAD
+    <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
+      <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
+    </Compile>
+=======
     <Compile Include="Views\Workspaces\InstructorWorkspaceView.xaml.cs">
       <DependentUpon>InstructorWorkspaceView.xaml</DependentUpon>
     </Compile>
@@ -212,6 +264,7 @@
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -232,6 +285,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+    <Page Include="Skins\MainSkin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Adorners\CloseButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CLPPagePreviewView.xaml">
+=======
     <Page Include="Views\Adorners\CloseButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -240,11 +304,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Workspaces\CLPPagePreviewView.xaml">
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -252,11 +313,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+    <Page Include="Views\Displays\SinglePageDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\SinglePageDisplayView.xaml">
+=======
     <Page Include="Views\Displays\GridDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\LinkedDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -276,10 +349,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+=======
     <Page Include="Views\PageObjects\CLPBlankStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Page Include="Views\PageObjects\CLPImageStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -288,10 +364,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+=======
     <Page Include="Views\PageObjects\CLPSnapTileView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Page Include="Views\PageObjects\CLPTextBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -312,14 +391,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+=======
     <Page Include="Views\Workspaces\InstructorWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
     <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+<<<<<<< HEAD
+=======
     <Page Include="Views\Workspaces\ProjectorWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -336,6 +420,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -427,6 +512,8 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+<<<<<<< HEAD
+=======
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />
     <Resource Include="Images\play2.png" />
@@ -435,6 +522,7 @@
     <Resource Include="Images\Bold16.png" />
     <Resource Include="Images\Italic16.png" />
     <Resource Include="Images\Underline16.png" />
+>>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
