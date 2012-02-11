@@ -2,32 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Windows;
 using System.Collections.ObjectModel;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
-    public class CLPSnapTileViewModel : CLPPageObjectBaseViewModel
+    [Serializable]
+    public class CLPSnapTile : CLPPageObjectBase
     {
+        #region Variables
+
+        public const int TILE_HEIGHT = 50;
+
+        #endregion
+
+        #region Constructor & destructor
         /// <summary>
-        /// Initializes a new instance of the CLPSnapTileViewModel class.
+        /// Initializes a new object from scratch.
         /// </summary>
-        public CLPSnapTileViewModel(CLPSnapTileContainer tile, CLPPageViewModel pageViewModel)
-            : base(pageViewModel)
+        public CLPSnapTile(Point pt, string color)
+            : base()
         {
-            PageObject = tile;
-            foreach (var tileColor in tile.Tiles)
-            {
-                Tiles.Add(tileColor);
-            }
+            Position = pt;
+            Tiles.Add(color);
+            Height = TILE_HEIGHT * Tiles.Count;
+            Width = TILE_HEIGHT;
 
             _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
         }
 
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Height = CLPSnapTile.TILE_HEIGHT * Tiles.Count;
+            Height = TILE_HEIGHT * Tiles.Count;
         }
+
+        #endregion
+
+        #region Properties
 
         private ObservableCollection<string> _tiles = new ObservableCollection<string>();
         /// <summary>
@@ -38,6 +49,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             get { return _tiles; }
         }
 
+        
 
+        #endregion
     }
 }

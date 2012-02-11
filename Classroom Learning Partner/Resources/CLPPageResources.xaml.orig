@@ -38,14 +38,13 @@
         <vwpo:CLPBlankStampView />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
-        <vwpo:CLPSnapTileView />
-    </DataTemplate>
-
+<<<<<<< HEAD
     <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
         <vw:CLPHistoryView />
+=======
+    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
+        <vwpo:CLPSnapTileView />
+>>>>>>> 7a93d1ae57a55f7769f35a320483e6e666e1b0e4
     </DataTemplate>
-    
-    
 
 </ResourceDictionary>

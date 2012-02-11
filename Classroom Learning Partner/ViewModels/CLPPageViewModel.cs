@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -40,7 +41,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
             NotebookViewModel = notebookViewModel; 
-            // _historyVM = new CLPHistoryViewModel(this);
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -48,8 +48,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AppMessages.ChangePlayback.Register(this, (playback) =>
             {
-                //System.Console.WriteLine("Change Playback 1, HistoryItems.Count: " + _historyVM.HistoryItems.Count);
-                //System.Console.WriteLine("Change Playback 1, ObjectRefIds: " + _historyVM.ObjectReferences.Count);
                 if (this.PlaybackControlsVisibility == Visibility.Collapsed)
                     this.PlaybackControlsVisibility = Visibility.Visible;
                 else
@@ -57,16 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
             });
-            AppMessages.SendPlaybackItem.Register(this, (item) =>
-            {
-                if (item != null)
-                {
-                   
-                    
-                        ShowPlayback(item);
-                    
-                }
-            });
+             
             Page = page;
             foreach (string stringStroke in page.Strokes)
             {
@@ -119,7 +108,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
         }
-
+        public bool undoFlag;
         void _strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
@@ -127,9 +116,11 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in e.Removed)
             {
                 Page.Strokes.Remove(StrokeToString(stroke));
-                //make history item for each removed stroke(DELETE type)
-                CLPHistoryItem item = new CLPHistoryItem("ERASE");
-                HistoryVM.AddHistoryItem(stroke, item);
+                if (!undoFlag)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem("ERASE");
+                    HistoryVM.AddHistoryItem(stroke, item);
+                }
             }
 
             StrokeCollection addedStrokes = new StrokeCollection();
@@ -158,12 +149,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 stroke.AddPropertyData(CLPPage.Mutable, "true");
                 Page.Strokes.Add(StrokeToString(stroke));
-                //create history item for each added stroke 
-                CLPHistoryItem item = new CLPHistoryItem("ADD");
-                HistoryVM.AddHistoryItem(stroke, item);
+                if (!undoFlag)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem("ADD");
+                    HistoryVM.AddHistoryItem(stroke, item);
+                }
             }
             
-
+            
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
                 List<string> add = new List<string>(StrokesToStrings(addedStrokes));
@@ -243,7 +236,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
-
+        
         public string SubmitterName
         {
             get
@@ -251,7 +244,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return Page.SubmitterName;
             }
         }
-        private Visibility _playbackControlsVisibility = Visibility.Collapsed;
+   private Visibility _playbackControlsVisibility = Visibility.Collapsed;
         public Visibility PlaybackControlsVisibility
         {
             get
@@ -266,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 
             }
         }
-
+        
         #endregion //Properties
 
         #region Bindings
@@ -288,7 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _otherStrokes;
             }
         }
-
+        
         private readonly ObservableCollection<PageObjectContainerViewModel> _pageObjectContainerViewModels = new ObservableCollection<PageObjectContainerViewModel>();
         public ObservableCollection<PageObjectContainerViewModel> PageObjectContainerViewModels
         {
@@ -297,7 +290,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _pageObjectContainerViewModels;
             }
         }
-
+        
         /// <summary>
         /// The <see cref="EditingMode" /> property's name.
         /// </summary>
@@ -423,12 +416,12 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
-        private RelayCommand _startPlaybackCommand;
+       private RelayCommand _startPlaybackCommand;
 
         /// <summary>
         /// Gets the StartPlaybackCommand.
         /// </summary>
-        /// 
+       private delegate void NoArgDelegate();
         public RelayCommand StartPlaybackCommand
         {
             get
@@ -437,32 +430,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_startPlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                              HistoryVM.startPlayback();
+                                              Console.WriteLine("PageVM startplayback");
+                                              // Start fetching the playback items asynchronously.
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+                                              fetcher.BeginInvoke(null, null);
+                                              
+
                                           }));
             }
         }
-        private void ShowPlayback(CLPHistoryItem item)
-        {
-            foreach (var container in PageObjectContainerViewModels)
-            {
-                //System.Console.WriteLine(container.PageObjectViewModel.PageObject.UniqueID + " : " + item.ObjectID);
-                //System.Console.WriteLine(container.PageObjectViewModel.PageObject.MetaData.GetValue("UniqueID") + " : " + item.MetaData.GetValue("UniqueID"));
-             if (container.PageObjectViewModel.PageObject.UniqueID == item.ObjectID) 
-             {
-                 Console.WriteLine("Changing visibility of " + item.ObjectID);
-                 if (item.ItemType == "ADD")
-                 {
-                     container.Visible = Visibility.Visible;
-                 }
-                 else if (item.ItemType == "ERASE")
-                 {
-                     Console.WriteLine("ERASING OBJECT");
-                     container.Visible = Visibility.Collapsed;
-                 }
-                 
-             }
-            }
-        }
+        
+  
+        
         private RelayCommand _stopPlaybackCommand;
 
         /// <summary>
@@ -476,7 +455,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_stopPlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                              //_historyVM.stopPlayback();
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
+                                              fetcher.BeginInvoke(null, null);
                                             
                                           }));
             }

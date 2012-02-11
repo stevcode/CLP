@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 using System;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
@@ -7,7 +8,6 @@ using System.IO;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using MongoDB.Driver;
 using System.Threading;
-using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner
 {
@@ -24,32 +24,23 @@ namespace Classroom_Learning_Partner
             Student
         }
 
-        public enum DatabaseMode
-        {
-            Using,
-            NotUsing
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
             CLPService = new CLPServiceAgent();
-            //#############################
-            CurrentUserMode = UserMode.Server;
-            _databaseUse = DatabaseMode.NotUsing;
-            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
-            
-            {
-                ConnectToDB();
-            }
-            MainWindowView window = new MainWindowView();
+
+            CurrentUserMode = UserMode.Projector;
+
+            MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+            Logger.Instance.InitializeLog();
+            
 
-           
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
                 App.CurrentNotebookViewModel = new CLPNotebookViewModel();
@@ -60,25 +51,22 @@ namespace Classroom_Learning_Partner
             {
                 MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
             }
-            else if (App.CurrentUserMode == App.UserMode.Server)
-            {
-                CLPService.SetWorkspace();
-            }
             else
-            {
-                 MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();  
-            }
+	        {
+                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+	        }
+
+            DispatcherHelper.Initialize();
+
             JoinMeshNetwork();
-            
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://18.28.6.168";
+            string ConnectionString = "mongodb://18.28.5.202";
             _databaseServer = MongoServer.Create(ConnectionString);
-            Console.WriteLine("Conencted to DB");
         }
 
         #region Methods
@@ -100,8 +88,8 @@ namespace Classroom_Learning_Partner
 
         #region Properties
 
-        private static MainWindowViewModel _mainWindowViewModel;
-        public static MainWindowViewModel MainWindowViewModel
+        private static MainViewModel _mainWindowViewModel;
+        public static MainViewModel MainWindowViewModel
         {
             get
             {
@@ -182,15 +170,6 @@ namespace Classroom_Learning_Partner
             get
             {
                 return _peerThread;
-            }
-        }
-
-        private static DatabaseMode _databaseUse;
-        public static DatabaseMode DatabaseUse
-        {
-            get
-            {
-                return _databaseUse;
             }
         }
 

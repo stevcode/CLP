@@ -101,6 +101,7 @@
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
@@ -137,6 +139,12 @@
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CLPHistoryView.xaml.cs">
+      <DependentUpon>CLPHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
+      <DependentUpon>KeypadWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
@@ -148,9 +156,6 @@
     </Compile>
     <Compile Include="Views\Displays\LinkedDisplayView.xaml.cs">
       <DependentUpon>LinkedDisplayView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
-      <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookNamerWindowView.xaml.cs">
       <DependentUpon>NotebookNamerWindowView.xaml</DependentUpon>
@@ -233,6 +238,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CLPHistoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Workspaces\CLPPagePreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -246,10 +259,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\LinkedDisplayView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -423,6 +432,8 @@
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Inkwell.ico" />
     <Resource Include="Images\Inkwell.ico" />
+    <Resource Include="Images\mic_stop.png" />
+    <Resource Include="Images\mic_start.png" />
     <Resource Include="Images\Inkwell.png" />
     <Resource Include="Images\File.png" />
     <Resource Include="Images\play2.png" />

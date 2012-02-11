@@ -13,7 +13,6 @@ namespace Classroom_Learning_Partner.Model
     public class PeerNode
     {
         public string MachineName { get; private set; }
-        public string UserName { get; set; }
 
         public ICLPMeshNetworkChannel Channel;
         public ICLPMeshNetworkContract Host;
@@ -25,7 +24,6 @@ namespace Classroom_Learning_Partner.Model
         public PeerNode()
         {
             MachineName = Environment.MachineName;
-            UserName = MachineName;
             App.MainWindowViewModel.TitleBarText = "Connecting...";
         }
 
@@ -67,6 +65,7 @@ namespace Classroom_Learning_Partner.Model
                 binding,
                 new EndpointAddress("net.p2p://Classroom_Learning_Partner.Model"));
 
+            //Host = new InstanceContext(new CLPMeshNetworkService());
             Host = new CLPMeshNetworkService();
 
             _factory = new DuplexChannelFactory<ICLPMeshNetworkChannel>(
@@ -85,31 +84,26 @@ namespace Classroom_Learning_Partner.Model
             OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
             if (OnlineStatusHandler.IsOnline)
             {
-                //Writing line to log is down below
-                //This caused a race condition where two threads tried to write at the same time
-                //Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
+                Console.WriteLine("Online");
                 App.MainWindowViewModel.TitleBarText = "Connected";
-                if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
-                {
-                    Channel.Connect(MachineName);  
-                }
+                Channel.Connect(MachineName);
             }
         }
 
         void OnlineStatusHandler_Offline(object sender, EventArgs e)
         {
-            Logger.Instance.WriteToLog("Disconnected from Mesh: " + DateTime.Now.ToLongTimeString());
             App.MainWindowViewModel.TitleBarText = "Disconnected";
         }
 
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
-            Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
+<<<<<<< HEAD
+            Console.WriteLine("Online");
+           // Channel.Connect(Id);
+=======
             App.MainWindowViewModel.TitleBarText = "Connected";
-            if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
-            {
-                Channel.Connect(MachineName);
-            }
+            Channel.Connect(MachineName);   
+>>>>>>> fd6a144361923a64fd46d529dc6b5edd66cd3ec7
         }
 
         public void Stop()

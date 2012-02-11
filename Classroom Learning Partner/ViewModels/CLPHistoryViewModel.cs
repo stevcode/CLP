@@ -10,6 +10,8 @@ using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Windows.Ink;
 using System.Windows;
+using GalaSoft.MvvmLight.Command;
+using System.Windows.Media.Animation;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -32,34 +34,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPHistoryViewModel(CLPPageViewModel page, CLPHistory history)
         {
-            PlaybackCounter = 0;
             PageVM = page;
             _historyItems = history.HistoryItems;
             _undoneHistoryItems = history.UndoneHistoryItems;
             _objectReferences = history.ObjectReferences;
-            //shouldn't really be an audio message...
-            AppMessages.Audio.Register(this, (item) =>
-            {
-                if (item == "startPlayback")
-                {
-                    startPlayback();
-                    
-                }
-                else if (item == "Redo")
-                {
-                    redo();
-                }
-                else if (item == "Undo")
-                {
-                    undo();
-                }
-            });
-            
-        
-        
             _history = history;
             CLPService = new CLPServiceAgent();
+                   
+            AppMessages.ChangePlayback.Register(this, (playback) =>
+            {
+                if (this.PlaybackControlsVisibility == Visibility.Collapsed)
+                    this.PlaybackControlsVisibility = Visibility.Visible;
+                else
+                    this.PlaybackControlsVisibility = Visibility.Collapsed;
+
+
+            });
         }
+        #region properties
         private CLPPageViewModel _pageVM;
         public CLPPageViewModel PageVM
         {
@@ -85,7 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private Dictionary<string, object> _objectReferences;// = new Dictionary<string, object>();
+        private Dictionary<string, object> _objectReferences;
         public Dictionary<string, object> ObjectReferences
         {
             get
@@ -94,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private ObservableCollection<CLPHistoryItem> _historyItems;// = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> _historyItems;
         public ObservableCollection<CLPHistoryItem> HistoryItems
         {
             get
@@ -103,9 +95,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
         }
+        private Visibility _playbackControlsVisibility = Visibility.Collapsed;
+        public Visibility PlaybackControlsVisibility
+        {
+            get
+            {
+                return _playbackControlsVisibility;
+            }
+            set
+            {
+                _playbackControlsVisibility = value;
+                RaisePropertyChanged("PlaybackControlsVisibility");
 
+
+            }
+        }
         //List to enable undo/redo functionality
-        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;// = new ObservableCollection<CLPHistoryItem>();
+        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
         {
             get
@@ -114,17 +120,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
         }
-
-        private int _playbackCounter;
-        public int PlaybackCounter
+        private object _inkCanvas;
+        public object InkCanvas
         {
-            get { return _playbackCounter; }
-            set 
+            get
             {
-                _playbackCounter = value;
+                return _inkCanvas as System.Windows.Controls.InkCanvas;
+            }
+            set
+            {
+                _inkCanvas = value;
             }
 
         }
+#endregion //properties
         #region addhistoryitems
         public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
         {
@@ -137,6 +146,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
+            else if (obj is String)
+            {
+                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
 
             if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
             {
@@ -145,9 +158,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             historyItem.ObjectID = uniqueID;
             _historyItems.Add(historyItem);
-
-            System.Console.WriteLine("AddHistoryItem: HistoryItems.Count: " + HistoryItems.Count());
-            System.Console.WriteLine("ObjectRefIds: " + ObjectReferences.Count());
         }
         public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
         {
@@ -194,18 +204,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-        public void erase(object obj)
-        {
-            return;
-        }
-        public void move(object obj)
-        {
-            return;
-        }
-        public void copy(object obj)
-        {
-            return;
-        }
+        
         private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
         {
             CLPPageObjectBaseViewModel pageObjectViewModel;
@@ -238,15 +237,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             
             if (HistoryItems.Count <= 0) { return; }
-            
             CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
-            //CLPHistoryItem actionItem;
-            //String type = "";
             if (item.ItemType == "ADD")
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be removed");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
@@ -260,7 +255,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be added");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.AddStrokeToPage(stroke, PageVM, true);
@@ -295,17 +289,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
                 }
             }
-
-            //actionItem = new CLPHistoryItem(type);
-            //actionItem.ObjectID = item.ObjectID;
-            //TODO: Need to add in the other HistoryItem types
-            
-           // Waiting for Steve to add handle for ObjectContainerViewModel.
-           // CLPService.RemovePageObjectFromPage(PageObjectContainerViewModel);
             HistoryItems.Remove(item);
             AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
-            //History.AddHistoryItem(ObjectReferences[undoItem.ObjectID], undoItem);
-            //AppMessages.SendPlaybackItem.Send(actionItem);
             return;
         }
          
@@ -319,7 +304,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be removed");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
@@ -333,7 +317,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
-                    Console.WriteLine("Stroke to be added");
                     String strokeString = ObjectReferences[item.ObjectID] as String;
                     Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
                     CLPService.AddStrokeToPage(stroke, PageVM, true);
@@ -371,74 +354,121 @@ namespace Classroom_Learning_Partner.ViewModels
             UndoneHistoryItems.Remove(item);
             AddHistoryItem(ObjectReferences[item.ObjectID], item);
             return;
-             
-            /*CLPHistoryItem redoItem = new CLPHistoryItem("REDO");
-            if (UndoneHistoryItems.Count <= 0) { return; }
-            CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-            redoItem.ObjectID = item.ObjectID;
-            History.UndoneHistoryItems.Remove(item);
-            AppMessages.SendPlaybackItem.Send(item);
-            */
         }
-        //For the interaction history playback feature:
+        #region playback
+        //For the interaction history playback feature
+        //invokes another thread to make the UI update at the correct times
+        private delegate void NoArgDelegate();
         public void startPlayback()
         {
-            
-            //replay history of this page
-            //System.Console.WriteLine("Start Playback");
-            //HistoryItems.ElementAt(PlaybackCounter).  make container of only this object visible
-            // System.Console.WriteLine("playback counter at " + PlaybackCounter);
-            //System.Console.WriteLine("historyItems at " + HistoryItems.Count);
-            /// Version shows actions click by click
-          /*  try
-            {
-                AppMessages.SendPlaybackItem.Send(HistoryItems.ElementAt(PlaybackCounter));
-                if (PlaybackCounter < HistoryItems.Count - 1)
-                {
-                    PlaybackCounter++;
-                }
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            */
-
-
-                int size = HistoryItems.Count;
+            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                         
+            this.AbortPlayback = false;
+            int size = HistoryItems.Count;
                  for(int i = 0; i < size; i++)
                  {
-                     undo();
+                    inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
                  }
-           
+                 System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
                  for(int i = 0; i < size; i++)
                  {
-                     Console.WriteLine(i + " loop of replay");
-                     TimeSpan waittime = new TimeSpan(3);
-                    /* if (UndoneHistoryItems.Count > 1)
+                     TimeSpan waittime = new TimeSpan(0, 0, 2);
+                     try
                      {
-                         int len = UndoneHistoryItems.Count;
-                         waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len-2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len-1).MetaData.GetValue("CreationDate"));
+                         if (UndoneHistoryItems.Count >= 2)
+                         {
+                             int len = UndoneHistoryItems.Count;
+                             waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len - 2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len - 1).MetaData.GetValue("CreationDate"));
+                         }
                      }
-                     * */
-                     //Console.WriteLine("waittime " + waittime);
-                     redo();
-                     System.Threading.Thread.Sleep(waittime);
+                     catch (ArgumentOutOfRangeException e)
+                     {
+                         Logger.Instance.WriteToLog(e.ToString());
+                     }
+                     inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                       
+                     if (waittime > new TimeSpan(0, 0, 0))
+                     {
+                         if(waittime > new TimeSpan(0, 0, 15))
+                         {
+                             waittime = new TimeSpan(0, 0, 15);
+                         }
+                         DateTime wait = DateTime.Now + waittime;
+                         while(DateTime.Now < wait)
+                         {
+                             if(AbortPlayback == true)
+                             {
+                                 abortPlayback();
+                                 return;
+                             }
+                         }
+                          
+                     }
+                     else
+                     {
+                         DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
+                         while (DateTime.Now < wait)
+                         {
+                             if (AbortPlayback == true)
+                             {
+                                 abortPlayback();
+                                 return;
+                             }
+                         }
+                     }
                      
                  }
-                 
-                
-             
-            
+           
         }
-            public void stopPlayback()
+        private bool _abortPlayback;
+        private bool AbortPlayback
         {
-            //pause playback history
-            //System.Console.WriteLine("Stop Playback");
+            get
+            {
+                return _abortPlayback;
+            }
+            set
+            {
+                _abortPlayback = value;
+            }
+
         }
-        public void resetHistory()
+        private void abortPlayback()
         {
-            //reset history to the beginning
+            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                        
+            foreach (var i in UndoneHistoryItems)
+            {
+                inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
+            }
+                   
         }
+      
+        public void stopPlayback()
+        {
+            //stops and resets playback history
+            this.AbortPlayback = true;
+        }
+        
+        #endregion //playback
+        #region relayCommands
+        /*
+         * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
+        private RelayCommand _startPlaybackCommand;
+        public RelayCommand StartPlaybackCommand
+        {
+            get
+            {
+                return _startPlaybackCommand
+                    ?? (_startPlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              Console.WriteLine("START PLAYBACK COMMAND");
+                                              startPlayback();
+                                          }));
+            }
+        }
+    */
+        #endregion //relayCommands
     }
 }
