@@ -117,6 +117,15 @@
             <!--Home Tab-->
             <ribbon:RibbonTab Header="Home">
                 
+                <ribbon:RibbonGroup Header="Notebook">
+                    
+                    <ribbon:RibbonToggleButton
+                        Label="Show Notebook Pages"
+                        LargeImageSource="..\Images\OpenNotebook.png"
+                        Command="{Binding Path=ShowNotebookPagesCommand}"/>
+                    
+                </ribbon:RibbonGroup>
+                
                 <ribbon:RibbonGroup Header="Pen Type">
 
                     <ribbon:RibbonToggleButton
