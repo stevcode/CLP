@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows;
-using System.Windows.Media;
-using Classroom_Learning_Partner.Model;
-using System.Windows.Controls;
-using System.Windows.Shapes;
+﻿using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
