@@ -214,7 +214,7 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" />
                 
-                </ribbon:RibbonGroup>-->
+                </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                     
@@ -233,35 +233,44 @@
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+                    
                     <ribbon:RibbonButton
-                    LargeImageSource="..\Images\Projector.png"
-                    Label="Send To Projector"
-                    Command="{Binding Path=SendDisplayToProjectorCommand}" />
+                        LargeImageSource="..\Images\Projector.png"
+                        Label="Send To Projector"
+                        Command="{Binding Path=SendDisplayToProjectorCommand}" />
+                    
                     <ribbon:RibbonSeparator Height="65" Width="20" Background="Black" />
+                    
                     <ribbon:RibbonButton
-                    LargeImageSource="..\Images\SingleDisplay.png"
-                    Label="Linked Display"
-                    Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+                        LargeImageSource="..\Images\SingleDisplay.png"
+                        Label="Linked Display"
+                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+                    
                     <ribbon:RibbonButton
-                    LargeImageSource="..\Images\GridDisplay.png"
-                    Label="New Grid Display"
-                    Command="{Binding Path=CreateNewGridDisplayCommand}" />
+                        LargeImageSource="..\Images\GridDisplay.png"
+                        Label="New Grid Display"
+                        Command="{Binding Path=CreateNewGridDisplayCommand}" />
+                    
                 </ribbon:RibbonGroup>
 
-                <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
-                <ribbon:RibbonButton
-                    LargeImageSource="..\Images\play2.png"
-                    Label="Enable Playback"
-                    Command="{Binding Path=EnablePlaybackCommand}" />
-                <ribbon:RibbonButton
-                    LargeImageSource="{Binding Path=RecordImage}"
-                    Label="Record"
-                    Command="{Binding Path=AudioCommand}" />
-                <ribbon:RibbonButton
-                    LargeImageSource="..\Images\play.png"
-                    Label="Play Audio"
-                    Command="{Binding Path=PlayAudioCommand}" />
-            </ribbon:RibbonGroup>-->
+                <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\play2.png"
+                        Label="Enable Playback"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="{Binding Path=RecordImage}"
+                        Label="Record"
+                        Command="{Binding Path=AudioCommand}" />
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\play.png"
+                        Label="Play Audio"
+                        Command="{Binding Path=PlayAudioCommand}" />
+                    
+                </ribbon:RibbonGroup>
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
