@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Model
 
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
+        void DuplicatePageAt(int pageIndex);
 
         void AddSubmission(CLPPage page);
         void DistributeNotebook(CLPNotebookViewModel notebookVM, string author);
@@ -80,6 +81,101 @@ namespace Classroom_Learning_Partner.Model
             App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
             //DATABASE remove. make sure to add new blank page if
             //you remove last page in notebook.
+        }
+
+        public void DuplicatePageAt(int pageIndex)
+        {
+            CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
+            CLPPage copyPage = new CLPPage();
+            CLPPageObjectBase pageObject = new CLPBlankStamp();
+            foreach (CLPPageObjectBase obj in originalPage.PageObjects)
+            {
+                if (obj is CLPBlankStamp)
+                {
+                    CLPBlankStamp copyStamp = new CLPBlankStamp();
+                    CLPBlankStamp originalStamp = obj as CLPBlankStamp;
+                    copyStamp.Height = originalStamp.Height;
+                    copyStamp.IsAnchored = originalStamp.IsAnchored;
+                    copyStamp.Parts = originalStamp.Parts;
+                    copyStamp.Position = originalStamp.Position;
+                    copyStamp.Width = originalStamp.Width;
+                    copyStamp.ZIndex = originalStamp.ZIndex;
+                    foreach (var stroke in originalStamp.PageObjectStrokes)
+                    {
+                        copyStamp.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyStamp;
+                }
+                else if (obj is CLPImage)
+                {
+                    CLPImage originalImage = obj as CLPImage;
+                    CLPImage copyImage = new CLPImage(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = originalImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPImageStamp)
+                {
+                    CLPImageStamp originalImage = obj as CLPImageStamp;
+                    CLPImageStamp copyImage = new CLPImageStamp(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.IsAnchored = originalImage.IsAnchored;
+                    copyImage.Parts = originalImage.Parts;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = copyImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPSnapTile)
+                {
+                    CLPSnapTile originalTile = obj as CLPSnapTile;
+                    CLPSnapTile copyTile = new CLPSnapTile(originalTile.Position, "SpringGreen");
+                    copyTile.Height = originalTile.Height;
+                    copyTile.Width = originalTile.Width;
+                    copyTile.ZIndex = originalTile.ZIndex;
+                    foreach (var t in originalTile.Tiles)
+                    {
+                        copyTile.Tiles.Add(t);
+                    }
+                    foreach (var stroke in originalTile.PageObjectStrokes)
+                    {
+                        copyTile.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTile;
+                }
+                else if (obj is CLPTextBox)
+                {
+                    CLPTextBox originalTextBox = obj as CLPTextBox;
+                    CLPTextBox copyTextBox = new CLPTextBox();
+                    copyTextBox.Height = originalTextBox.Height;
+                    copyTextBox.Position = originalTextBox.Position;
+                    copyTextBox.Text = originalTextBox.Text;
+                    copyTextBox.Width = originalTextBox.Width;
+                    copyTextBox.ZIndex = originalTextBox.ZIndex;
+                    foreach (var stroke in originalTextBox.PageObjectStrokes)
+                    {
+                        copyTextBox.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTextBox;
+                }
+                copyPage.PageObjects.Add(pageObject);
+
+            }
+            foreach (var stroke in originalPage.Strokes)
+            {
+                copyPage.Strokes.Add(stroke);
+            }
+            AddPageAt(copyPage, App.CurrentNotebookViewModel.PageViewModels.Count, -1);
         }
 
         public void AddSubmission(CLPPage page)

@@ -396,6 +396,10 @@
                     Label="Delete This Page"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=DeletePageCommand}" />
+                <ribbon:RibbonButton
+                    Label="Duplicate This Page"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=DuplicatePageCommand}" />
             </ribbon:RibbonGroup>
         </ribbon:RibbonTab>
     </ribbon:Ribbon>

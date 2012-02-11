@@ -838,7 +838,28 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        private RelayCommand _duplicatePageCommand;
 
+        /// <summary>
+        /// Gets the DuplicatePageCommand.
+        /// </summary>
+        public RelayCommand DuplicatePageCommand
+        {
+            get
+            {
+                return _duplicatePageCommand
+                    ?? (_duplicatePageCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              int currentPageIndex = -1;
+                                              AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
+                                              {
+                                                  currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
+                                              });
+                                              CLPService.DuplicatePageAt(currentPageIndex);
+                                          }));
+            }
+        }
         #endregion //Page Commands
 
         #region Insert Commands

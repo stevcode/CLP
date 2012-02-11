@@ -146,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
-
+        
         public CLPPageViewModel GetPage(int pageIndex, int submissionIndex)
         {
             if (submissionIndex < -1) return null;
