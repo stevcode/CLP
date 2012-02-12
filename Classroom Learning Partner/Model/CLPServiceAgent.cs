@@ -141,9 +141,11 @@ namespace Classroom_Learning_Partner.Model
 
                     if (!File.Exists(filePath))
                     {
-                        //App.NotebookViewModels.Add(newNotebookViewModel);
-                        //App.CurrentNotebookViewModel = newNotebookViewModel;
+                        CLPNotebook newNotebook = new CLPNotebook();
+                        App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
+                        App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
                         App.MainWindowViewModel.IsAuthoring = true;
+                        App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
                         NameChooserLoop = false;
                         //Send empty notebook to db

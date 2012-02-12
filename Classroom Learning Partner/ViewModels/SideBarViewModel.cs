@@ -12,9 +12,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the NotebookSideBarViewModel class.
         /// </summary>
-        public SideBarViewModel(CLPNotebook notebook) : base()
+        public SideBarViewModel() : base()
         {
-            Notebook = notebook;
+            Notebook = App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex];
             
 
             //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Pages")]
+        [ViewModelToModel("Notebook")]
         public ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Submissions")]
+        [ViewModelToModel("Notebook")]
         public Dictionary<string, ObservableCollection<CLPPage>> Submissions
         {
             get { return GetValue<Dictionary<string, ObservableCollection<CLPPage>>>(SubmissionsProperty); }

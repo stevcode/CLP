@@ -32,6 +32,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+            OpenNotebooks = new ObservableCollection<CLPNotebook>();
+            CurrentNotebookIndex = -1;
 
             //MainWindow Commands
             SetInstructorCommand = new Command(OnSetInstructorCommandExecute);
@@ -64,9 +66,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //Steve - Can this be done in XAML? And switched to toggle button?
             RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
 
-            AuthoringTabVisibility = Visibility.Hidden;
-            InstructorVisibility = Visibility.Hidden;
-            StudentVisibility = Visibility.Hidden;
+            AuthoringTabVisibility = Visibility.Collapsed;
+            InstructorVisibility = Visibility.Collapsed;
+            StudentVisibility = Visibility.Collapsed;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -85,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Ribbon Commands
 
-
+            NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
 
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
@@ -129,6 +131,34 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<CLPNotebook> OpenNotebooks
+        {
+            get { return GetValue<ObservableCollection<CLPNotebook>>(OpenNotebooksProperty); }
+            set { SetValue(OpenNotebooksProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the OpenNotebooks property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<CLPNotebook>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int CurrentNotebookIndex
+        {
+            get { return GetValue<int>(CurrentNotebookIndexProperty); }
+            set { SetValue(CurrentNotebookIndexProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CurrentNotebook property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentNotebookIndexProperty = RegisterProperty("CurrentNotebookIndex", typeof(int));
 
         /// <summary>
         /// Gets or sets the Authoring flag.
@@ -622,26 +652,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Notebook Commands
 
-        //private RelayCommand _newNotebookCommand;
+        /// <summary>
+        /// Gets the NewNotebookCommand command.
+        /// </summary>
+        public Command NewNotebookCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the NewNotebookCommand.
-        ///// </summary>
-        //public RelayCommand NewNotebookCommand
-        //{
-        //    get
-        //    {
-        //        return _newNotebookCommand
-        //            ?? (_newNotebookCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      CLPService.OpenNewNotebook();
-        //                                      AuthoringTabVisibility = Visibility.Visible;
-        //                                  }));
-        //    }
-        //}
-
-
+        /// <summary>
+        /// Method to invoke when the NewNotebookCommand command is executed.
+        /// </summary>
+        private void OnNewNotebookCommandExecute()
+        {
+            CLPService.OpenNewNotebook();
+            AuthoringTabVisibility = Visibility.Visible;
+        }
 
         //private RelayCommand _openNotebookCommand;
 

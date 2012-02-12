@@ -25,6 +25,9 @@ namespace Classroom_Learning_Partner.Model
         public CLPNotebook()
         {
             CreationDate = DateTime.Now;
+            UniqueID = Guid.NewGuid().ToString();
+            Pages = new ObservableCollection<CLPPage>();
+            Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             //TODO: this first default page should probably be removed.
             CLPPage page = new CLPPage();
             Pages.Add(page);

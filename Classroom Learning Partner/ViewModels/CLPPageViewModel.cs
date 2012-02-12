@@ -42,6 +42,9 @@ namespace Classroom_Learning_Partner.ViewModels
              
             Page = page;
 
+            Strokes = new StrokeCollection();
+            OtherStrokes = new StrokeCollection();
+
             foreach (string stringStroke in Page.Strokes)
             {
                 Stroke stroke = CLPPage.StringToStroke(stringStroke);
@@ -57,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-
+            
             Strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(Strokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
 
@@ -87,7 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("PageHistory")]
+        [ViewModelToModel("Page")]
         public CLPHistory PageHistory
         {
             get { return GetValue<CLPHistory>(PageHistoryProperty); }
@@ -102,7 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("PageObjects")]
+        [ViewModelToModel("Page")]
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
@@ -117,7 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("SubmitterName")]
+        [ViewModelToModel("Page")]
         public string SubmitterName
         {
             get { return GetValue<string>(SubmitterNameProperty); }

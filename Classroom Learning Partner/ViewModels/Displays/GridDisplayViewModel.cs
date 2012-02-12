@@ -14,6 +14,8 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public GridDisplayViewModel()
             : base()
         {
+            DisplayedPages = new ObservableCollection<CLPPage>();
+
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
@@ -72,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if (propertyName == "CurrentPage")
+            if (propertyName == "CurrentPage" && IsActive)
             {
                 AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
                 //Steve - send to projector
