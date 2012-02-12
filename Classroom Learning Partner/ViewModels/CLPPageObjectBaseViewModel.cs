@@ -183,7 +183,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageObjectStrokes.Remove(stroke);
 
-                string stringStroke = CLPPageViewModel.StrokeToString(stroke);
+                string stringStroke = CLPPage.StrokeToString(stroke);
                 PageObject.PageObjectStrokes.Remove(stringStroke);
             }
 
@@ -196,7 +196,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newStroke.Transform(transform, true);
                 PageObjectStrokes.Add(newStroke);
 
-                PageObject.PageObjectStrokes.Add(CLPPageViewModel.StrokeToString(newStroke));
+                PageObject.PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
             }
         }
     }

@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPImageStamp : CLPStampBase
+    public class CLPImageStamp : CLPStampBase, ICLPPageObject
     {
         public CLPImageStamp(string path) : base()
         {
@@ -103,5 +103,17 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         }
 
         #endregion //Properties
+
+        #region Methods
+
+        public ICLPPageObject Duplicate()
+        {
+            CLPImageStamp newImageStamp = this.Clone() as CLPImageStamp;
+            newImageStamp.UniqueID = Guid.NewGuid().ToString();
+
+            return newImageStamp;
+        }
+
+        #endregion //Methods
     }
 }

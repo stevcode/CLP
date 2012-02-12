@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
+using System.Windows.Ink;
+using System.Windows;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -57,16 +60,16 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets a list of pageObjects on the page.
         /// </summary>
-        public ObservableCollection<CLPPageObjectBase> PageObjects
+        public ObservableCollection<ICLPPageObject> PageObjects
         {
-            get { return GetValue<ObservableCollection<CLPPageObjectBase>>(PageObjectsProperty); }
+            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
             private set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<CLPPageObjectBase>), new ObservableCollection<CLPPageObjectBase>());
+        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
         /// Gets the CLPPage history.
@@ -85,16 +88,16 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool IsSubmissions
+        public bool IsSubmission
         {
-            get { return GetValue<bool>(IsSubmissionsProperty); }
-            set { SetValue(IsSubmissionsProperty, value); }
+            get { return GetValue<bool>(IsSubmissionProperty); }
+            set { SetValue(IsSubmissionProperty, value); }
         }
 
         /// <summary>
         /// Register the IsSubmissions property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData IsSubmissionsProperty = RegisterProperty("IsSubmissions", typeof(bool), false);
+        public static readonly PropertyData IsSubmissionProperty = RegisterProperty("IsSubmission", typeof(bool), false);
 
         /// <summary>
         /// UniqueID of the page.
@@ -152,6 +155,20 @@ namespace Classroom_Learning_Partner.Model
         /// </summary>
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
 
+        /// <summary>
+        /// Time the page was submitted.
+        /// </summary>
+        public DateTime SubmissionTime
+        {
+            get { return GetValue<DateTime>(SubmissionTimeProperty); }
+            set { SetValue(SubmissionTimeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SubmissionTime property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
+
         #endregion
 
         #region Methods
@@ -170,6 +187,50 @@ namespace Classroom_Learning_Partner.Model
         {
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
         }
+
+        public static Stroke StringToStroke(string stroke)
+        {
+            StrokeCollectionConverter converter = new StrokeCollectionConverter();
+            StrokeCollection sc = new StrokeCollection();
+            sc = (StrokeCollection)converter.ConvertFromString(stroke);
+            return sc[0];
+        }
+
+        public static string StrokeToString(Stroke stroke)
+        {
+            StrokeCollection sc = new StrokeCollection();
+            sc.Add(stroke);
+            StrokeCollectionConverter converter = new StrokeCollectionConverter();
+            string stringStroke = (string)converter.ConvertToString(sc);
+            return stringStroke;
+        }
+
+        /**
+         * Helper method that converts a ObservableCollection of strings to a StrokeCollection
+         */
+        public static StrokeCollection StringsToStrokes(ObservableCollection<string> strings)
+        {
+            StrokeCollection strokes = new StrokeCollection();
+            foreach (string s in strings)
+            {
+                strokes.Add(StringToStroke(s));
+            }
+            return strokes;
+        }
+
+        /**
+         * Helper method that converts a StrokeCollection to an ObservableCollection of strings
+         */
+        public static ObservableCollection<string> StrokesToStrings(StrokeCollection strokes)
+        {
+            ObservableCollection<string> strings = new ObservableCollection<string>();
+            foreach (Stroke stroke in strokes)
+            {
+                strings.Add(StrokeToString(stroke));
+            }
+            return strings;
+        }
+
         #endregion
     }
 

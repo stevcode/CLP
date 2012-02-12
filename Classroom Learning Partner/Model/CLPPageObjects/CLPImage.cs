@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     /// 
     /// </summary>
     [Serializable]
-    public class CLPImage : CLPPageObjectBase
+    public class CLPImage : CLPPageObjectBase, ICLPPageObject
     {
         #region Variables
         #endregion
@@ -77,6 +77,14 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         protected override void ValidateBusinessRules()
         {
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
+        }
+
+        public ICLPPageObject Duplicate()
+        {
+            CLPImage newImage = this.Clone() as CLPImage;
+            newImage.UniqueID = Guid.NewGuid().ToString();
+
+            return newImage;
         }
 
         #endregion
@@ -184,5 +192,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         //}
 
         //#endregion //Properties
+
+        
     }
 }

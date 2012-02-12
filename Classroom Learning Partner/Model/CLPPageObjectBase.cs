@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.Model
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Classroom_Learning_Partner.Model
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         /// <summary>

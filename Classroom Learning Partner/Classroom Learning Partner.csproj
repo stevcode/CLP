@@ -107,13 +107,13 @@
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
+    <Compile Include="Model\CLPPageObjects\ICLPPageObject.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="ViewModels\AudioViewModel.cs" />
-    <Compile Include="ViewModels\CLPHistoryViewModel.cs" />
     <Compile Include="ViewModels\CLPNotebookViewModel.cs" />
     <Compile Include="ViewModels\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -140,9 +140,6 @@
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CLPHistoryView.xaml.cs">
-      <DependentUpon>CLPHistoryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
@@ -225,10 +222,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Adorners\CloseButtonView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\CLPHistoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
