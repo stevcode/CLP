@@ -1,18 +1,10 @@
-﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Media;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     public class CLPImageViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
@@ -20,8 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         public CLPImageViewModel(CLPImage image, CLPPageViewModel pageViewModel) : base(pageViewModel)
         {
+            LoadImageFromByteSource(image.ByteSource);
             PageObject = image;
-            _sourceImage = image.SourceImage;
         }
 
         #region Binding
@@ -57,5 +49,24 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         }
 
         #endregion //Binding
+
+
+        private void LoadImageFromByteSource(byte[] byteSource)
+        {
+            MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
+            BitmapImage genBmpImage = new BitmapImage();
+
+            genBmpImage.BeginInit();
+            genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
+            genBmpImage.StreamSource = memoryStream;
+            genBmpImage.EndInit();
+            genBmpImage.Freeze();
+
+            memoryStream.Dispose();
+            memoryStream.Close();
+            memoryStream = null;
+
+            _sourceImage = genBmpImage;
+        }
     }
 }

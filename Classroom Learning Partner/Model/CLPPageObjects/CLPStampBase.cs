@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -13,8 +14,8 @@ namespace Classroom_Learning_Partner.Model
     {
         protected CLPStampBase() : base()
         {
-            MetaData.SetValue("IsAnchored", "True");
-            MetaData.SetValue("Parts", "0");
+            IsAnchored = true;
+            Parts = 0;
             base.Position = new Point(10, 10);
             Width = 150;
         }
@@ -23,50 +24,35 @@ namespace Classroom_Learning_Partner.Model
 
         //returns true if stamp is anchor/placed by teacher
         //returns false if stamp is a copy of the anchor; moved by the student
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public bool IsAnchored
         {
-            get
-            {
-                if (MetaData.GetValue("IsAnchored") == "True")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            set
-            {
-                if (value)
-                {
-                    MetaData.SetValue("IsAnchored", "True");
-                }
-                else
-                {
-                    MetaData.SetValue("IsAnchored", "False");
-                }
-            }
+            get { return GetValue<bool>(IsAnchoredProperty); }
+            set { SetValue(IsAnchoredProperty, value); }
         }
 
+        /// <summary>
+        /// Register the IsAnchored property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsAnchoredProperty = RegisterProperty("IsAnchored", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public int Parts
         {
-            get
-            {
-                if (MetaData.GetValue("Parts") == "")
-                {
-                    return 0;
-                }
-                else
-                {
-                    return Int32.Parse(MetaData.GetValue("Parts"));
-                }
-            }
-            set
-            {
-                MetaData.SetValue("Parts", value.ToString());
-            }
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
         }
+
+        /// <summary>
+        /// Register the Parts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), 0);
+
+       
 
         #endregion //Properties
     }

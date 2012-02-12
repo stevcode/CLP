@@ -16,10 +16,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             
-            PageViewModels = App.CurrentNotebookViewModel.PageViewModels;
+
             //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
-            OpenNotebookNames.Add(App.CurrentNotebookViewModel.Notebook.NotebookName);
-            SelectedNotebookPage = PageViewModels[0];
+            SelectedNotebookPage = Pages[0];
         }
 
         #region Model

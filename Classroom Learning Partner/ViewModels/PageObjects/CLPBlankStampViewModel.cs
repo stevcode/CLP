@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Catel.MVVM;
+using Catel.Data;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Shapes;
 using System.Windows.Media;
@@ -6,6 +7,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -21,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public CLPBlankStampViewModel(CLPBlankStamp stamp, CLPPageViewModel pageViewModel)
             : base(stamp, pageViewModel)
         {
-            PageObjectStrokes = CLPPageViewModel.StringsToStrokes(stamp.PageObjectStrokes);
+            PageObjectStrokes = CLPPage.StringsToStrokes(stamp.PageObjectStrokes);
 
             if (!IsAnchored)
             {

@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (obj is Stroke)
             {
-                ObjectReferences.Add(key, CLPPageViewModel.StrokeToString(obj as Stroke));
+                ObjectReferences.Add(key, CLPPage.StrokeToString(obj as Stroke));
             }
             else if (obj is CLPPageObjectBase)
             {
