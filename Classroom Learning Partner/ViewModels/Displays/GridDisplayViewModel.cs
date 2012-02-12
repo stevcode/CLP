@@ -36,10 +36,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// </summary>
         public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
 
-        // TODO: Move code below to constructor
-
-        // TODO: Move code above to constructor
-
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>

@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Windows;
+using System.Windows.Input;
+using System;
+using Catel.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for PageObjectContainerView.xaml
     /// </summary>
-    public partial class PageObjectContainerView : UserControl
+    public partial class PageObjectContainerView : UserControl<PageObjectContainerViewModel>
     {
         public PageObjectContainerView()
         {
@@ -57,7 +48,7 @@ namespace Classroom_Learning_Partner.Views
                 isStampedObject = true;
             }
 
-            if (App.IsAuthoring || isStampedObject)
+            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
             {
                 CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
             }
@@ -92,9 +83,9 @@ namespace Classroom_Learning_Partner.Views
             }
 
 
-            if (App.IsAuthoring || isStampedObject)
+            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
             {
-                App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+                App.MainWindowViewModel.CanSendToTeacher = true;
                 double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
                 double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
                 if (x < 0)
@@ -122,7 +113,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            if (App.IsAuthoring)
+            if (App.MainWindowViewModel.IsAuthoring)
             {
                 PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
                 double newHeight = pageObjectContainerViewModel.Height + e.VerticalChange;
@@ -177,38 +168,39 @@ namespace Classroom_Learning_Partner.Views
 
             if (isDragging)
             {
-	            if (App.IsAuthoring || isStampedObject)
+	            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
 	            {
 	                if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
 	                {
 	                    CLPSnapTileViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
-	                    foreach (var container in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels)
-	                    {
-	                        if (container.PageObjectViewModel is CLPSnapTileViewModel)
-	                        {
-	
-	                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
-	                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
-	                            {
-	                                Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
-	                                Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
-	                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
-	                                double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
-	                                if (deltaX < 50 && deltaY < 60)
-	                                {
-                                        foreach (var tileColor in tile.Tiles)
-                                        {
-                                            otherTile.Tiles.Add(tileColor);
-                                        }
+                        //Steve - re-write for pageObjectContainer revamp
+                        //foreach (var pageObject in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjects)
+                        //{
+                        //    if (pageObject.PageObjectViewModel is CLPSnapTileViewModel)
+                        //    {
 
-                                        container.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
+                        //        CLPSnapTileViewModel otherTile = pageObject.PageObjectViewModel as CLPSnapTileViewModel;
+                        //        if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
+                        //        {
+                        //            Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
+                        //            Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
+                        //            double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
+                        //            double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
+                        //            if (deltaX < 50 && deltaY < 60)
+                        //            {
+                        //                foreach (var tileColor in tile.Tiles)
+                        //                {
+                        //                    otherTile.Tiles.Add(tileColor);
+                        //                }
 
-                                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-	                                    break;
-	                                }
-	                            }
-	                        }
-	                    }
+                        //                pageObject.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
+
+                        //                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                        //                break;
+                        //            }
+                        //        }
+                        //    }
+                        //}
 	                }
 	            }
             }

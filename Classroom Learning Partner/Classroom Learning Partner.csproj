@@ -137,9 +137,6 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
-    <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
-      <DependentUpon>CloseButtonView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
@@ -217,10 +214,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Adorners\CloseButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,24 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using System.Windows;
+﻿using System.Windows;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Catel.MVVM;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     public class PageObjectContainerViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the PageObjectContainerViewModel class.
         /// </summary>
-        public PageObjectContainerViewModel(CLPPageObjectBaseViewModel pageObjectBaseViewModel)
+        public PageObjectContainerViewModel(CLPPageObjectBaseViewModel pageObjectBaseViewModel) : base()
         {
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
