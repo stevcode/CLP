@@ -7,7 +7,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Initializes a new instance of the BlankWorkspaceViewModel class.
         /// </summary>
-        public BlankWorkspaceViewModel()
+        public BlankWorkspaceViewModel() : base()
         {
         }
 

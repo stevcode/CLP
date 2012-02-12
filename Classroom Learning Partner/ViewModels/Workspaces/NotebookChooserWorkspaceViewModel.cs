@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Initializes a new instance of the NotebookChooserWorkspaceViewModel class.
         /// </summary>
-        public NotebookChooserWorkspaceViewModel()
+        public NotebookChooserWorkspaceViewModel() : base()
         {
             CLPService = new CLPServiceAgent();
             NotebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();

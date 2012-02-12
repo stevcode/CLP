@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
         public NotebookWorkspaceViewModel()
+            : base()
         {
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             LinkedDisplay = new LinkedDisplayViewModel();

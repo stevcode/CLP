@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Initializes a new instance of the ProjectorWorkspaceViewModel class.
         /// </summary>
         public ProjectorWorkspaceViewModel()
+            : base()
         {
             LinkedDisplay = new LinkedDisplayViewModel();
             GridDisplay = new GridDisplayViewModel();

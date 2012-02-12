@@ -1,99 +1,114 @@
-﻿using GalaSoft.MvvmLight;
-using System;
+﻿using Catel.MVVM;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class GridDisplayViewModel : ViewModelBase, IDisposable
+    [InterestedIn(typeof(SideBarViewModel))]
+    public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
         /// Initializes a new instance of the GridDisplayViewModel class.
         /// </summary>
         public GridDisplayViewModel()
+            : base()
         {
-            AppMessages.AddPageToDisplay.Register(this, (pageViewModel) =>
-            {
-                if (this.IsActive)
-                {
-                    pageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-                    pageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
-                    this.DisplayPages.Add(pageViewModel);
-                    //if (App.CurrentUserMode == App.UserMode.Instructor)
-                    //{
-                    //    if (App.Peer.Channel != null)
-                    //    {
-                    //        if (this.IsOnProjector)
-                    //        {
-                    //            if (pageViewModel.Page.IsSubmission)
-                    //            {
-                    //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.SubmissionID);
-                    //            }
-                    //            else
-                    //            {
-                    //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.UniqueID);
-                    //            }
-                    //        }
-                    //    } 
-                    //}
-                }
-            });
+            RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<CLPPage> DisplayedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            set { SetValue(DisplayedPagesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DisplayedPages property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Gets the RemovePageFromGridDisplayCommand command.
+        /// </summary>
+        public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
+
+        // TODO: Move code below to constructor
+
+        // TODO: Move code above to constructor
+
+        /// <summary>
+        /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
+        /// </summary>
+        private void OnRemovePageFromGridDisplayCommandExecute(CLPPage page)
+        {
+            DisplayedPages.Remove(page);
+
+            //if (App.CurrentUserMode == App.UserMode.Instructor)
+            //{
+            //    if (App.Peer.Channel != null)
+            //    {
+            //        if (this.IsOnProjector)
+            //        {
+            //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+            //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
+            //        }
+            //    }
+            //}
+        }
+
+        public string DisplayName
+        {
+            get { return "GridDisplay"; }
         }
 
         public bool IsActive { get; set; }
         public bool IsOnProjector { get; set; }
 
-        private ObservableCollection<CLPPageViewModel> _displayPages = new ObservableCollection<CLPPageViewModel>();
-        public ObservableCollection<CLPPageViewModel> DisplayPages
+
+        public void AddPageToDisplay(CLPPage page)
         {
-            get
-            {
-                return _displayPages;
-            }
+            DisplayedPages.Add(page);
         }
 
-        private RelayCommand<CLPPageViewModel> _removePageFromGridDisplayCommand;
-
-        /// <summary>
-        /// Gets the RemovePageFromGridDisplayCommand.
-        /// </summary>
-        public RelayCommand<CLPPageViewModel> RemovePageFromGridDisplayCommand
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            get
+            if (propertyName == "CurrentPage")
             {
-                return _removePageFromGridDisplayCommand
-                    ?? (_removePageFromGridDisplayCommand = new RelayCommand<CLPPageViewModel>(
-                                          (pageViewModel) =>
-                                          {
-                                              DisplayPages.Remove(pageViewModel);
-
-                                              //if (App.CurrentUserMode == App.UserMode.Instructor)
-                                              //{
-                                              //    if (App.Peer.Channel != null)
-                                              //    {
-                                              //        if (this.IsOnProjector)
-                                              //        {
-                                              //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                              //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
-                                              //        }
-                                              //    }
-                                              //}
-                                          }));
+                AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+                //Steve - send to projector
+                //App.Peer.Channel.AddPageToDisplay? if IsOnProjector
+                // if (this.IsActive)
+                //{
+                //    if (App.CurrentUserMode == App.UserMode.Instructor)
+                //    {
+                //        if (App.Peer.Channel != null)
+                //        {
+                //            if (this.IsOnProjector)
+                //            {
+                //            //run this in background thread?
+                //                string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                //                App.Peer.Channel.AddPageToDisplay(pageString);
+                //                
+                //                //alternative?
+                //                if (pageViewModel.Page.IsSubmission)
+                //            {
+                //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.SubmissionID);
+                //            }
+                //            else
+                //            {
+                //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.UniqueID);
+                //            }
+                //            }
+                //        }
+                //    }
+                //}
             }
-        }
 
-        public void Dispose()
-        {
-            //throw new NotImplementedException();
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
     }
 }

@@ -1,94 +1,74 @@
-﻿using System;
-using Classroom_Learning_Partner.Model;
+﻿using Classroom_Learning_Partner.Model;
+using Catel.MVVM;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class LinkedDisplayViewModel : ViewModelBase, IDisposable
+    [InterestedIn(typeof(SideBarViewModel))]
+    public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
         public LinkedDisplayViewModel()
+            : base()
         {
-            AppMessages.AddPageToDisplay.Register(this, (pageViewModel) => {
-                                                                            if (this.IsActive)
-                                                                            {
-                                                                                this.PageViewModel = pageViewModel;
-                                                                                this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-                                                                                this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
-                                                                                if (App.CurrentUserMode == App.UserMode.Instructor)
-                                                                                {
-                                                                                    if (App.Peer.Channel != null)
-                                                                                    {
-                                                                                        if (this.IsOnProjector)
-                                                                                        {
-                                                                                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                                                                            App.Peer.Channel.AddPageToDisplay(pageString);
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }                                                   
-                                                                        });
-            AppMessages.RequestCurrentDisplayedPage.Register(this, (action) => { action.Execute(PageViewModel); });
+        }
 
-            bool IsActiveTemp = this.IsActive;
-            this.IsActive = true;
-            AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.PageViewModels[0]);
-            this.IsActive = IsActiveTemp;
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [Model]
+        public CLPPage DisplayedPage
+        {
+            get { return GetValue<CLPPage>(DisplayedPageProperty); }
+            set { SetValue(DisplayedPageProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DisplayedPage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
+
+        public string DisplayName
+        {
+            get { return "LinkedDisplay"; }
         }
 
         public bool IsActive { get; set; }
         public bool IsOnProjector { get; set; }
 
-        /// <summary>
-        /// The <see cref="PageViewModel" /> property's name.
-        /// </summary>
-        public const string PageViewModelPropertyName = "PageViewModel";
-
-        private CLPPageViewModel _pageViewModel = new CLPPageViewModel(App.CurrentNotebookViewModel);
-
-        /// <summary>
-        /// Sets and gets the PageViewModel property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public CLPPageViewModel PageViewModel
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            get
+            if (propertyName == "CurrentPage")
             {
-                return _pageViewModel;
+                AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+                //Steve - send to projector
+                //App.Peer.Channel.AddPageToDisplay? if IsOnProjector
+                // if (this.IsActive)
+                //{
+                //    if (App.CurrentUserMode == App.UserMode.Instructor)
+                //    {
+                //        if (App.Peer.Channel != null)
+                //        {
+                //            if (this.IsOnProjector)
+                //            {
+                //            //run this in background thread?
+                //                string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+                //                App.Peer.Channel.AddPageToDisplay(pageString);
+                //            }
+                //        }
+                //    }
+                //}
             }
 
-            set
-            {
-                if (_pageViewModel == value)
-                {
-                    return;
-                }
-
-                _pageViewModel = value;
-                RaisePropertyChanged(PageViewModelPropertyName);
-            }
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        public override void Cleanup()
-        {
-            Console.WriteLine("unregistered");
-            Messenger.Default.Unregister<NotificationMessageAction<CLPPageViewModel>>(this);
-            base.Cleanup();
-        }
 
-        public void Dispose()
+        public void AddPageToDisplay(CLPPage page)
         {
-            this.Cleanup();
+            DisplayedPage = page;
         }
     }
 }

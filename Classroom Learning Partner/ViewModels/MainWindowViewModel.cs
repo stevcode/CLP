@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the MainWindowViewModel class.
         /// </summary>
         public MainWindowViewModel()
+            : base()
         {
             CLPService = new CLPServiceAgent();
 

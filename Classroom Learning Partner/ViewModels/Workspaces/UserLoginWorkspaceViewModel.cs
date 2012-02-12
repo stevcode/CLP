@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Initializes a new instance of the UserLoginWorkspaceViewModel class.
         /// </summary>
         public UserLoginWorkspaceViewModel()
+            : base()
         {
             LogInCommand = new Command<string>(OnLogInCommandExecute);
 

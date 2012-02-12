@@ -8,6 +8,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Initializes a new instance of the ServerWorkspaceViewModel class.
         /// </summary>
         public ServerWorkspaceViewModel()
+            : base()
         {
         }
 
