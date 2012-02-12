@@ -7,6 +7,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
     public interface IWorkspaceViewModel
     {
-        public string WorkspaceName { get; }
+        string WorkspaceName { get; }
     }
 }

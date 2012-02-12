@@ -1,25 +1,20 @@
-﻿using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
+using Catel.Data;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     public class SideBarViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the NotebookSideBarViewModel class.
         /// </summary>
-        public SideBarViewModel()
+        public SideBarViewModel(CLPNotebook notebook) : base()
         {
+            Notebook = notebook;
             
             PageViewModels = App.CurrentNotebookViewModel.PageViewModels;
             //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
@@ -27,219 +22,124 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedNotebookPage = PageViewModels[0];
         }
 
+        #region Model
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [Model]
+        public CLPNotebook Notebook
+        {
+            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Notebook property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Pages")]
+        public ObservableCollection<CLPPage> Pages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
+            private set { SetValue(PagesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Pages property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Submissions")]
+        public Dictionary<string, ObservableCollection<CLPPage>> Submissions
+        {
+            get { return GetValue<Dictionary<string, ObservableCollection<CLPPage>>>(SubmissionsProperty); }
+            private set { SetValue(SubmissionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Submissions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>));
+
+        #endregion //Model
+
         #region Bindings
 
-        private ObservableCollection<string> _openNotebookNames = new ObservableCollection<string>();
-        public ObservableCollection<string> OpenNotebookNames
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<CLPPage> SubmissionPages
         {
-            get
-            {
-                return _openNotebookNames;
-            }
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
+            set { SetValue(SubmissionPagesProperty, value); }
         }
 
         /// <summary>
-        /// The <see cref="PageViewModels" /> property's name.
+        /// Register the SubmissionPages property so it is known in the class.
         /// </summary>
-        public const string PageViewModelsPropertyName = "PageViewModels";
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
-        private ObservableCollection<CLPPageViewModel> _pageViewModels = new ObservableCollection<CLPPageViewModel>();
-
-        /// <summary>
-        /// Sets and gets the PageViewModels property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> PageViewModels
-        {
-            get
-            {
-                return _pageViewModels;
-            }
-
-            set
-            {
-                if (_pageViewModels == value)
-                {
-                    return;
-                }
-
-                _pageViewModels = value;
-                RaisePropertyChanged(PageViewModelsPropertyName);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="SubmissionViewModels" /> property's name.
-        /// </summary>
-        public const string SubmissionViewModelsPropertyName = "SubmissionViewModels";
-
-        private ObservableCollection<CLPPageViewModel> _submissionViewModels = new ObservableCollection<CLPPageViewModel>();
-
-        /// <summary>
-        /// Sets and gets the SubmissionViewModels property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> SubmissionViewModels
-        {
-            get
-            {
-                return _submissionViewModels;
-            }
-
-            set
-            {
-                if (_submissionViewModels == value)
-                {
-                    return;
-                }
-
-                _submissionViewModels = value;
-                newSubmissionsSelected = true;
-                RaisePropertyChanged(SubmissionViewModelsPropertyName);
-                
-            }
-        }
+       
 
         private bool newSubmissionsSelected = false;
 
         /// <summary>
-        /// The <see cref="SelectedSubmissionPage" /> property's name.
+        /// Gets or sets the property value.
         /// </summary>
-        public const string SelectedSubmissionPagePropertyName = "SelectedSubmissionPage";
-
-        private CLPPageViewModel _selectedSubmissionPage;
-
-        /// <summary>
-        /// Sets and gets the SelectedSubmissionPage property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public CLPPageViewModel SelectedSubmissionPage
+        public CLPPage SelectedNotebookPage
         {
-            get
-            {
-                return _selectedSubmissionPage;
-            }
-
+            get { return GetValue<CLPPage>(SelectedNotebookPageProperty); }
             set
             {
-                //if (_selectedSubmissionPage == value)
-                //{
-                //    return;
-                //}
-
-                _selectedSubmissionPage = value;
-                RaisePropertyChanged(SelectedSubmissionPagePropertyName);
-                if (!newSubmissionsSelected)
-                {
-                    AppMessages.AddPageToDisplay.Send(_selectedSubmissionPage);
-                }
-                newSubmissionsSelected = false;
+                SetValue(SelectedNotebookPageProperty, value);
+                CurrentPage = SelectedNotebookPage;
             }
         }
 
         /// <summary>
-        /// The <see cref="SelectedNotebookPage" /> property's name.
+        /// Register the SelectedNotebookPage property so it is known in the class.
         /// </summary>
-        public const string SelectedNotebookPagePropertyName = "SelectedNotebookPage";
-
-        private CLPPageViewModel _selectedNotebookPage;
+        public static readonly PropertyData SelectedNotebookPageProperty = RegisterProperty("SelectedNotebookPage", typeof(CLPPage));
 
         /// <summary>
-        /// Sets and gets the SelectedPage property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// This property's value is broadcasted by the MessengerInstance when it changes.
+        /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel SelectedNotebookPage
+        public CLPPage SelectedSubmissionPage
         {
-            get
-            {
-                return _selectedNotebookPage;
-            }
-
+            get { return GetValue<CLPPage>(SelectedSubmissionPageProperty); }
             set
             {
-                //if (_selectedNotebookPage == value)
-                //{
-                //    return;
-                //}
-
-                
-
-                if (value == null)
-                {
-                    //breakpoint to see if this is ever reached/needed
-                    _selectedNotebookPage = PageViewModels[0];
-                }
-                else
-                {
-                    _selectedNotebookPage = value;
-                    RaisePropertyChanged(SelectedNotebookPagePropertyName);
-                    AppMessages.AddPageToDisplay.Send(_selectedNotebookPage); 
-                }
-
-                               
+                SetValue(SelectedSubmissionPageProperty, value);
+                CurrentPage = SelectedSubmissionPage;
             }
         }
 
         /// <summary>
-        /// The <see cref="SubmissionsSideBarVisibility" /> property's name.
+        /// Register the SelectedSubmissionPage property so it is known in the class.
         /// </summary>
-        public const string SubmissionsSideBarVisibilityPropertyName = "SubmissionsSideBarVisibility";
-
-        private Visibility _submissionsSideBarVisibility = Visibility.Visible;
+        public static readonly PropertyData SelectedSubmissionPageProperty = RegisterProperty("SelectedSubmissionPage", typeof(CLPPage));
 
         /// <summary>
-        /// Sets and gets the SubmissionsSideBarVisibility property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Gets or sets the property value.
         /// </summary>
-        public Visibility SubmissionsSideBarVisibility
+        public CLPPage CurrentPage
         {
-            get
-            {
-                return _submissionsSideBarVisibility;
-            }
-
-            set
-            {
-                if (_submissionsSideBarVisibility == value)
-                {
-                    return;
-                }
-
-                _submissionsSideBarVisibility = value;
-                RaisePropertyChanged(SubmissionsSideBarVisibilityPropertyName);
-            }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
         /// <summary>
-        /// The <see cref="ToggleSubmissionsButtonVisibility" /> property's name.
+        /// Register the CurrentPage property so it is known in the class.
         /// </summary>
-        public const string ToggleSubmissionsButtonVisibilityPropertyName = "ToggleSubmissionsButtonVisibility";
-
-        private Visibility _toggleSubmissionsButtonVisibility = Visibility.Visible;
-
-        /// <summary>
-        /// Sets and gets the ToggleSubmissionsButtonVisibility property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public Visibility ToggleSubmissionsButtonVisibility
-        {
-            get
-            {
-                return _toggleSubmissionsButtonVisibility;
-            }
-
-            set
-            {
-                if (_toggleSubmissionsButtonVisibility == value)
-                {
-                    return;
-                }
-
-                _toggleSubmissionsButtonVisibility = value;
-                RaisePropertyChanged(ToggleSubmissionsButtonVisibilityPropertyName);
-            }
-        }
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         #endregion //Bindings
     }

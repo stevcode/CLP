@@ -8,11 +8,11 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
 {
     public interface IDisplayViewModel
     {
-        public string DisplayName { get; }
+        string DisplayName { get; }
 
-        public bool IsOnProjector { get; set; }
-        public bool IsActive { get; set; }
+        bool IsOnProjector { get; set; }
+        bool IsActive { get; set; }
 
-        public void AddPageToDisplay(CLPPage page);
+        void AddPageToDisplay(CLPPage page);
     }
 }

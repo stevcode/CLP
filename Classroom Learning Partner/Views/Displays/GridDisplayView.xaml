@@ -7,6 +7,7 @@
              d:DesignHeight="301" d:DesignWidth="302"
              xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
+             xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              x:TypeArguments="vmd:GridDisplayViewModel">
     
     <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
