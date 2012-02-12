@@ -1,17 +1,17 @@
 ﻿using System.Windows;
-using Classroom_Learning_Partner.ViewModels;
 using Microsoft.Windows.Controls.Ribbon;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainWindowView.xaml
     /// </summary>
     public partial class MainWindowView : RibbonWindow
     {
         /// <summary>
-        /// Initializes a new instance of the MainWindow class.
+        /// Initializes a new instance of the MainWindowView class.
         /// </summary>
         public MainWindowView()
         {
@@ -33,5 +33,12 @@ namespace Classroom_Learning_Partner.Views
                 CLPService.Exit();
             }
         }
+
+        private void RibbonWindow_Closed(object sender, System.EventArgs e)
+        {
+            (DataContext as MainWindowViewModel).SaveAndCloseViewModel();
+        }
+
+
     }
 }

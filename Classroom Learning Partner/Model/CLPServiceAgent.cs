@@ -12,7 +12,6 @@ using MongoDB.Driver;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
 using MongoDB.Driver.Builders;
-using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Input;
 using System.Windows.Ink;
 
@@ -21,7 +20,6 @@ namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPServiceAgent
     {
-        void SetWorkspace();
 
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
@@ -508,38 +506,7 @@ namespace Classroom_Learning_Partner.Model
         }
        
         
-        public void SetWorkspace()
-        {
-            App.IsAuthoring = false;
-            App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Hidden;
 
-            switch (App.CurrentUserMode)
-            {
-                case App.UserMode.Server:
-                    App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
-                    break;
-                case App.UserMode.Instructor:
-                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Visible;
-                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Collapsed;
-                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Visible;
-                    App.MainWindowViewModel.Workspace = new InstructorWorkspaceViewModel();
-                    break;
-                case App.UserMode.Projector:
-                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Collapsed;
-                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Collapsed;
-                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Collapsed;
-                    App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
-                    break;
-                case App.UserMode.Student:
-                    App.MainWindowViewModel.Ribbon.InstructorVisibility = Visibility.Collapsed;
-                    App.MainWindowViewModel.Ribbon.StudentVisibility = Visibility.Visible;
-                    App.MainWindowViewModel.Ribbon.RibbonVisibility = Visibility.Visible;
-                    App.MainWindowViewModel.Workspace = new StudentWorkspaceViewModel();
-                    break;
-            }
-
-            //CommandManager.InvalidateRequerySuggested();
-        }
 
         public void RetrieveNotebooks(string username)
         {

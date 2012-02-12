@@ -1,110 +1,114 @@
-﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
-using System;
+﻿using System;
+using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class MainViewModel : ViewModelBase
+
+    public class MainWindowViewModel : ViewModelBase
     {
         public const string clpText = "Classroom Learning Partner - ";
 
         /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
+        /// Initializes a new instance of the MainWindowViewModel class.
         /// </summary>
-        public MainViewModel()
+        public MainWindowViewModel()
         {
             CLPService = new CLPServiceAgent();
-            TitleBarText = "Disconnected";
+            SetTitleBarText("Starting Up");
+            IsAuthoring = false;
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
+        #region NonRibbon Items
         #region Bindings
 
         /// <summary>
-        /// The <see cref="TitleBarText" /> property's name.
-        /// </summary>
-        public const string TitleBarTextPropertyName = "TitleBarText";
-
-        private string _titleBarText = "";
-
-        /// <summary>
-        /// Sets and gets the TitleBarText property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Gets or sets the Title Bar text of the window.
         /// </summary>
         public string TitleBarText
         {
-            get
-            {
-                return _titleBarText;
-            }
-
-            set
-            {
-                if (_titleBarText == value)
-                {
-                    return;
-                }
-
-                _titleBarText = clpText + value;
-                RaisePropertyChanged(TitleBarTextPropertyName);
-            }
+            get { return GetValue<string>(TitleBarTextProperty); }
+            private set { SetValue(TitleBarTextProperty, value); }
         }
 
         /// <summary>
-        /// The <see cref="Workspace" /> property's name.
+        /// Register the TitleBarText property so it is known in the class.
         /// </summary>
-        public const string WorkspacePropertyName = "Workspace";
-
-        private ViewModelBase _workspace = new BlankWorkspaceViewModel();
+        public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof(string));
 
         /// <summary>
-        /// Sets and gets the Workspace property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Gets or sets the current Workspace.
         /// </summary>
-        public ViewModelBase Workspace
+        public IWorkspaceViewModel SelectedWorkspace
         {
-            get
-            {
-                return _workspace;
-            }
-
-            set
-            {
-                if (_workspace == value)
-                {
-                    return;
-                }
-                if (_workspace != null && _workspace is IDisposable)
-                {
-                    (_workspace as IDisposable).Dispose();
-                }
-                
-                _workspace = value;
-                RaisePropertyChanged(WorkspacePropertyName);
-            }
+            get { return GetValue<IWorkspaceViewModel>(SelectedWorkspaceProperty); }
+            set { SetValue(SelectedWorkspaceProperty, value); }
         }
 
-
-        private RibbonViewModel _ribbon = new RibbonViewModel();
-        public RibbonViewModel Ribbon
-        {
-            get
-            {
-                return _ribbon;
-            }
-        }
+        /// <summary>
+        /// Register the SelectedWorkspace property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SelectedWorkspaceProperty = RegisterProperty("SelectedWorkspace", typeof(IWorkspaceViewModel));
 
         #endregion //Bindings
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the Authoring flag.
+        /// </summary>
+        public bool IsAuthoring
+        {
+            get { return GetValue<bool>(IsAuthoringProperty); }
+            set { SetValue(IsAuthoringProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsAuthoring property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool));
+
+        #endregion //Properties
+
+        #region Methods
+
+        //Sets the text in the title bar of the window, endText can add optional information
+        public void SetTitleBarText(string endText)
+        {
+            string isOnline = "Disconnected";
+            if (App.Peer.OnlineStatusHandler.IsOnline)
+            {
+                isOnline = "Connected";
+            }
+            TitleBarText = clpText + "Logged In As: " + App.Peer.UserName + " Connection Status: " + isOnline + " " + endText;
+        }
+
+        private void SetWorkspace()
+        {
+            IsAuthoring = false;
+
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                    break;
+                case App.UserMode.Instructor:
+                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel();
+                    break;
+                case App.UserMode.Projector:
+                    App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                    break;
+                case App.UserMode.Student:
+                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel();
+                    break;
+            }
+        }
+
+        #endregion //Methods
 
         #region Commands
 
@@ -185,12 +189,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-
-        ////public override void Cleanup()
-        ////{
-        ////    // Clean up if needed
-
-        ////    base.Cleanup();
-        ////}
+        #endregion //NonRibbon Items
     }
 }

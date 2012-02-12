@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
+        xmlns:vww="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
         mc:Ignorable="d"
         Height="800"
         Width="1280"
@@ -12,6 +13,7 @@
         WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
+        Closed="RibbonWindow_Closed"
         Title="{Binding Path=TitleBarText}">
     
     <Window.Resources>
@@ -484,8 +486,75 @@
             </ribbon:RibbonTab>
             
         </ribbon:Ribbon>
-        
-        <ContentControl x:Name="Workspace" Grid.Row="1" Content="{Binding Path=Workspace}" />
+
+        <!-- Control that dynamically determines what Display to show -->
+        <Control Grid.Column="1">
+            <Control.Resources>
+
+                <ControlTemplate x:Key="BlankWorkspaceTemplate">
+                    <vww:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
+                    <vww:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="NotebookWorkspaceTemplate">
+                    <vww:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
+                    <vww:ProjectorWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="ServerWorkspaceTemplate">
+                    <vww:ServerWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
+                    <vww:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                </ControlTemplate>
+
+            </Control.Resources>
+
+            <Control.Style>
+                <Style TargetType="{x:Type Control}">
+                    <Style.Triggers>
+
+                        <!-- BlankWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="BlankWorkspace">
+                            <Setter Property="Template" Value="{StaticResource BlankWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- NotebookChooserWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
+                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- NotebookWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookWorkspace">
+                            <Setter Property="Template" Value="{StaticResource NotebookWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- ProjectorWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ProjectorWorkspace">
+                            <Setter Property="Template" Value="{StaticResource ProjectorWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- ServerWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ServerWorkspace">
+                            <Setter Property="Template" Value="{StaticResource ServerWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- UserLoginWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="UserLoginWorkspace">
+                            <Setter Property="Template" Value="{StaticResource UserLoginWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Control.Style>
+        </Control>
 
     </Grid>
 </ribbon:RibbonWindow>

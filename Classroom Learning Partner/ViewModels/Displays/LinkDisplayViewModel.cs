@@ -1,6 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using System;
+﻿using System;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays

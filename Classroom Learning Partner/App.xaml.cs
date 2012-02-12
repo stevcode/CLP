@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
                 ConnectToDB();
             }
             MainWindowView window = new MainWindowView();
-            _mainWindowViewModel = new MainViewModel();
+            _mainWindowViewModel = new MainWindowViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
 

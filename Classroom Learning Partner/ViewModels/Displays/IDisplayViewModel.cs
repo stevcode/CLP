@@ -7,7 +7,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
 {
     public interface IDisplayViewModel
     {
-        public string Name { get; }
+        public string DisplayName { get; }
 
         public bool IsOnProjector { get; set; }
     }

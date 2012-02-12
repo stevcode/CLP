@@ -35,12 +35,12 @@
                     <Style.Triggers>
                         
                         <!-- LinkeDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay.Name}" Value="LinkedDisplay">
+                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="LinkedDisplay">
                             <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay.Name}" Value="GridDisplay">
+                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="GridDisplay">
                             <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
                         </DataTrigger>
 

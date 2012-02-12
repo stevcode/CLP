@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.Command;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
