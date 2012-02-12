@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
 
+            CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
 
             foreach (var color in _colors)
@@ -151,11 +152,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetTitleBarText(string endText)
         {
             string isOnline = "Disconnected";
-            if (App.Peer.OnlineStatusHandler.IsOnline)
+            string userName = "none";
+            if (App.Peer != null)
             {
-                isOnline = "Connected";
+                if (App.Peer.OnlineStatusHandler.IsOnline)
+                {
+                    isOnline = "Connected";
+                }
+
+                userName = App.Peer.UserName;
             }
-            TitleBarText = clpText + "Logged In As: " + App.Peer.UserName + " Connection Status: " + isOnline + " " + endText;
+
+            TitleBarText = clpText + "Logged In As: " + userName + " Connection Status: " + isOnline + " " + endText;
         }
 
         public void SetWorkspace()

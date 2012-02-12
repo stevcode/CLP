@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner
         {
             base.OnStartup(e);
             //#############################
-            CurrentUserMode = UserMode.Server;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.NotUsing;
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
