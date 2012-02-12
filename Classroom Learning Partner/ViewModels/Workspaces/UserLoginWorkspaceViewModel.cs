@@ -1,34 +1,21 @@
-﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.Model;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using Catel.MVVM;
 using System;
-using GalaSoft.MvvmLight.Command;
-using System.Windows.Controls;
+using System.IO;
+using System.Collections.ObjectModel;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class UserLoginWorkspaceViewModel : ViewModelBase
+    public class UserLoginWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the UserLoginWorkspaceViewModel class.
         /// </summary>
         public UserLoginWorkspaceViewModel()
         {
-            CLPService = new CLPServiceAgent();
-            //CLPService.ChooseNotebook(this);
+            LogInCommand = new Command<string>(OnLogInCommandExecute);
 
-
-
+            UserNames = new ObservableCollection<string>();
             string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if (File.Exists(filePath))
@@ -42,39 +29,41 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             }
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
-
         #region Bindings
 
-        private ObservableCollection<string> _userNames = new ObservableCollection<string>();
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public ObservableCollection<string> UserNames
         {
-            get
-            {
-                return _userNames;
-            }
+            get { return GetValue<ObservableCollection<string>>(UserNamesProperty); }
+            private set { SetValue(UserNamesProperty, value); }
         }
+
+        /// <summary>
+        /// Register the UserNames property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData UserNamesProperty = RegisterProperty("UserNames", typeof(ObservableCollection<string>));
 
         #endregion //Bindings
 
-        private RelayCommand<string> _logInCommand;
+        /// <summary>
+        /// Gets the LogInCommand command.
+        /// </summary>
+        public Command<string> LogInCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SetPenCommand.
+        /// Method to invoke when the LogInCommand command is executed.
         /// </summary>
-        public RelayCommand<string> LogInCommand
+        private void OnLogInCommandExecute(string userName)
         {
-            get
-            {
-                return _logInCommand
-                    ?? (_logInCommand = new RelayCommand<string>(
-                                          (userName) =>
-                                          {
-                                              App.Peer.UserName = userName;
-                                              
-                                              App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
-                                          }));
-            }
+            App.Peer.UserName = userName;
+            App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+        }
+
+        public string WorkspaceName
+        {
+            get { return "UserLoginWorkspace"; }
         }
     }
 }

@@ -130,15 +130,12 @@
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\SideBarViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\AuthoringWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\InstructorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\StudentWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Adorners\CloseButtonView.xaml.cs">
       <DependentUpon>CloseButtonView.xaml</DependentUpon>

@@ -1,21 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
-using System.IO;
+﻿using Catel.MVVM;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class NotebookChooserWorkspaceViewModel : ViewModelBase
+    public class NotebookChooserWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the NotebookChooserWorkspaceViewModel class.
@@ -23,18 +13,31 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public NotebookChooserWorkspaceViewModel()
         {
             CLPService = new CLPServiceAgent();
+            NotebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
             CLPService.ChooseNotebook(this);
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
-        private ObservableCollection<NotebookSelectorViewModel> _notebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
+
+        //Steve - No need for NotebookSelecterViewModel, convert to something cleaner
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public ObservableCollection<NotebookSelectorViewModel> NotebookSelectorViewModels
         {
-            get
-            {
-                return _notebookSelectorViewModels;
-            }
+            get { return GetValue<ObservableCollection<NotebookSelectorViewModel>>(NotebookSelectorViewModelsProperty); }
+            set { SetValue(NotebookSelectorViewModelsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the NotebookSelectorViewModels property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookSelectorViewModelsProperty = RegisterProperty("NotebookSelectorViewModels", typeof(ObservableCollection<NotebookSelectorViewModel>));
+
+        public string WorkspaceName
+        {
+            get { return "NotebookChooserWorkspace"; }
         }
     }
 }

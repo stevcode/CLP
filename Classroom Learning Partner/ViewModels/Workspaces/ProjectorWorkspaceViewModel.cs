@@ -1,5 +1,6 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -12,66 +13,70 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// See http://www.galasoft.ch/mvvm/getstarted
     /// </para>
     /// </summary>
-    public class ProjectorWorkspaceViewModel : ViewModelBase
+    public class ProjectorWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the ProjectorWorkspaceViewModel class.
         /// </summary>
         public ProjectorWorkspaceViewModel()
         {
-            Display = LinkedDisplay;
+            LinkedDisplay = new LinkedDisplayViewModel();
+            GridDisplay = new GridDisplayViewModel();
+
+            SelectedDisplay = LinkedDisplay;
             LinkedDisplay.IsActive = true;
             LinkedDisplay.IsOnProjector = true;
             GridDisplay.IsActive = false;
             GridDisplay.IsOnProjector = false;
         }
 
-        private LinkedDisplayViewModel _linkedDisplay = new LinkedDisplayViewModel();
+
+        //Steve - Do these displays need to be set here, or can I just set SelectedDisplay to new display values when created?
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public LinkedDisplayViewModel LinkedDisplay
         {
-            get
-            {
-                return _linkedDisplay;
-            }
+            get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
+            private set { SetValue(LinkedDisplayProperty, value); }
         }
 
-        private GridDisplayViewModel _gridDisplay = new GridDisplayViewModel();
+        /// <summary>
+        /// Register the LinkedDisplay property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public GridDisplayViewModel GridDisplay
         {
-            get
-            {
-                return _gridDisplay;
-            }
+            get { return GetValue<GridDisplayViewModel>(GridDisplayProperty); }
+            set { SetValue(GridDisplayProperty, value); }
         }
 
         /// <summary>
-        /// The <see cref="Display" /> property's name.
+        /// Register the GridDisplay property so it is known in the class.
         /// </summary>
-        public const string DisplayPropertyName = "Display";
-
-        private ViewModelBase _display = null;
+        public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(GridDisplayViewModel));
 
         /// <summary>
-        /// Sets and gets the Display property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Gets or sets the property value.
         /// </summary>
-        public ViewModelBase Display
+        public IDisplayViewModel SelectedDisplay
         {
-            get
-            {
-                return _display;
-            }
+            get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
+            set { SetValue(SelectedDisplayProperty, value); }
+        }
 
-            set
-            {
-                if (_display == value)
-                {
-                    return;
-                }
+        /// <summary>
+        /// Register the SelectedDisplay property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
 
-                _display = value;
-                RaisePropertyChanged(DisplayPropertyName);
-            }
+        public string WorkspaceName
+        {
+            get { return "ProjectorWorkspace"; }
         }
     }
 }

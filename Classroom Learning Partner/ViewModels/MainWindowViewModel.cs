@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
 
-            //Commands
+            //MainWindow Commands
             SetInstructorCommand = new Command(OnSetInstructorCommandExecute);
             SetStudentCommand = new Command(OnSetStudentCommandExecute);
             SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
@@ -46,7 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
 
-            _currentColorButton.Background = new SolidColorBrush(Colors.Black);
+            CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
 
             foreach (var color in _colors)
             {
