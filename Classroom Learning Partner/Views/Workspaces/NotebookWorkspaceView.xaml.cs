@@ -1,9 +1,8 @@
-﻿namespace Classroom_Learning_Partner.Views.Workspaces
-{
-    using Catel.Windows.Controls;
+﻿using Catel.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
-    using ViewModels;
-    //using Classroom_Learning_Partner.ViewModels.Workspaces;
+namespace Classroom_Learning_Partner.Views.Workspaces
+{
 
     /// <summary>
     /// Interaction logic for NotebookWorkspaceView.xaml.
