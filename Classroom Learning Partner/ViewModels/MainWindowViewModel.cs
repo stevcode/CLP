@@ -19,11 +19,18 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPService = new CLPServiceAgent();
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+
+
+            SetInstructorCommand = new Command(OnSetInstructorCommandExecute);
+            SetStudentCommand = new Command(OnSetStudentCommandExecute);
+            SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
+            SetServerCommand = new Command(OnSetServerCommandExecute);
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
         #region NonRibbon Items
+
         #region Bindings
 
         /// <summary>
@@ -87,23 +94,23 @@ namespace Classroom_Learning_Partner.ViewModels
             TitleBarText = clpText + "Logged In As: " + App.Peer.UserName + " Connection Status: " + isOnline + " " + endText;
         }
 
-        private void SetWorkspace()
+        public void SetWorkspace()
         {
             IsAuthoring = false;
 
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
-                    App.MainWindowViewModel.Workspace = new ServerWorkspaceViewModel();
+                    SelectedWorkspace = new ServerWorkspaceViewModel();
                     break;
                 case App.UserMode.Instructor:
-                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel();
+                    SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Projector:
-                    App.MainWindowViewModel.Workspace = new ProjectorWorkspaceViewModel();
+                    SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
-                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel();
+                    SelectedWorkspace = new UserLoginWorkspaceViewModel();
                     break;
             }
         }
@@ -112,83 +119,70 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private RelayCommand _setInstructorCommand;
+        /// <summary>
+        /// Gets the SetInstructorCommand command.
+        /// </summary>
+        public Command SetInstructorCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SetInstructorCommand.
+        /// Method to invoke when the SetInstructorCommand command is executed.
         /// </summary>
-        public RelayCommand SetInstructorCommand
+        private void OnSetInstructorCommandExecute()
         {
-            get
-            {
-                return _setInstructorCommand
-                    ?? (_setInstructorCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              App.CurrentUserMode = App.UserMode.Instructor;
-                                              CLPService.SetWorkspace();
-                                          }));
-            }
+            App.CurrentUserMode = App.UserMode.Instructor;
+            SetWorkspace();
         }
 
-        private RelayCommand _setStudentCommand;
+        /// <summary>
+        /// Gets the SetStudentCommand command.
+        /// </summary>
+        public Command SetStudentCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SetStudentCommand.
+        /// Method to invoke when the SetStudentCommand command is executed.
         /// </summary>
-        public RelayCommand SetStudentCommand
+        private void OnSetStudentCommandExecute()
         {
-            get
-            {
-                return _setStudentCommand
-                    ?? (_setStudentCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              App.CurrentUserMode = App.UserMode.Student;
-                                              CLPService.SetWorkspace();
-                                          }));
-            }
+            App.CurrentUserMode = App.UserMode.Student;
+            SetWorkspace();
         }
 
-        private RelayCommand _setProjectorCommand;
+        /// <summary>
+        /// Gets the SetProjectorCommand command.
+        /// </summary>
+        public Command SetProjectorCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SetProjectorCommand.
+        /// Method to invoke when the SetProjectorCommand command is executed.
         /// </summary>
-        public RelayCommand SetProjectorCommand
+        private void OnSetProjectorCommandExecute()
         {
-            get
-            {
-                return _setProjectorCommand
-                    ?? (_setProjectorCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              App.CurrentUserMode = App.UserMode.Projector;
-                                              CLPService.SetWorkspace();
-                                          }));
-            }
+            App.CurrentUserMode = App.UserMode.Projector;
+            SetWorkspace();
         }
 
-        private RelayCommand _setServerCommand;
+        /// <summary>
+        /// Gets the SetServerCommand command.
+        /// </summary>
+        public Command SetServerCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SetServerCommand.
+        /// Method to invoke when the SetServerCommand command is executed.
         /// </summary>
-        public RelayCommand SetServerCommand
+        private void OnSetServerCommandExecute()
         {
-            get
-            {
-                return _setServerCommand
-                    ?? (_setServerCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              App.CurrentUserMode = App.UserMode.Server;
-                                              CLPService.SetWorkspace();
-                                          }));
-            }
+            App.CurrentUserMode = App.UserMode.Server;
+            SetWorkspace();
         }
 
         #endregion //Commands
+
         #endregion //NonRibbon Items
+
+        #region Ribbon
+
+
+
+        #endregion //Ribbon
     }
 }

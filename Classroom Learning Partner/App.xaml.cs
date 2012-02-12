@@ -33,52 +33,24 @@ namespace Classroom_Learning_Partner
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            CLPService = new CLPServiceAgent();
             //#############################
             CurrentUserMode = UserMode.Server;
             _databaseUse = DatabaseMode.NotUsing;
-            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
-            
+            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
                 ConnectToDB();
             }
+
             MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainWindowViewModel();
             window.DataContext = MainWindowViewModel;
             window.Show();
+            MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-
            
-            if (App.CurrentUserMode == App.UserMode.Projector)
-            {
-                App.CurrentNotebookViewModel = new CLPNotebookViewModel();
-                App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
-                CLPService.SetWorkspace();
-            }
-            else if (App.CurrentUserMode == UserMode.Student)
-            {
-                MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
-            }
-            else if (App.CurrentUserMode == App.UserMode.Server)
-            {
-                CLPService.SetWorkspace();
-            }
-            else
-            {
-                 MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();  
-            }
             JoinMeshNetwork();
-            
-        }
-
-        private ICLPServiceAgent CLPService { get; set; }
-
-        protected void ConnectToDB()
-        {
-            string ConnectionString = "mongodb://18.28.6.168";
-            _databaseServer = MongoServer.Create(ConnectionString);
-            Console.WriteLine("Conencted to DB");
+            MainWindowViewModel.SetWorkspace();
         }
 
         #region Methods
@@ -94,6 +66,13 @@ namespace Classroom_Learning_Partner
         {
             Peer.Stop();
             PeerThread.Join();
+        }
+
+        protected void ConnectToDB()
+        {
+            string ConnectionString = "mongodb://18.28.6.168";
+            _databaseServer = MongoServer.Create(ConnectionString);
+            Console.WriteLine("Connected to DB");
         }
 
         #endregion //Methods
@@ -115,42 +94,6 @@ namespace Classroom_Learning_Partner
             get
             {
                 return _notebookDirectory;
-            }
-        }
-
-        private static ObservableCollection<CLPNotebookViewModel> _notebookViewModels = new ObservableCollection<CLPNotebookViewModel>();
-        public static ObservableCollection<CLPNotebookViewModel> NotebookViewModels
-        {
-            get
-            {
-                return _notebookViewModels;
-            }
-        }
-
-        //make this send message?
-        private static CLPNotebookViewModel _currentNotebookViewModel;
-        public static CLPNotebookViewModel CurrentNotebookViewModel
-        {
-            get
-            {
-                return _currentNotebookViewModel;
-            }
-            set
-            {
-                _currentNotebookViewModel = value;
-            }
-        }
-
-        private static bool _isAuthoring = false;
-        public static bool IsAuthoring
-        {
-            get
-            {
-                return _isAuthoring;
-            }
-            set
-            {
-                _isAuthoring = value;
             }
         }
 
@@ -202,8 +145,6 @@ namespace Classroom_Learning_Partner
                 return _databaseServer;
             }
         }
-
-
 
         #endregion //Properties
     }
