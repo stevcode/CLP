@@ -1,8 +1,7 @@
 ﻿using System.Windows;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Catel.MVVM;
 
-namespace Classroom_Learning_Partner.ViewModels
+namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
     public class PageObjectContainerViewModel : ViewModelBase
     {
@@ -32,9 +31,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPTextBoxViewModel;
             }
-            else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
+            else if (pageObjectBaseViewModel is CLPSnapTileContainerViewModel)
             {
-                _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileContainerViewModel;
             }
 
             //Register with messages to turn invisible to start playback

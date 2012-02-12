@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System;
 using Catel.Windows.Controls;
 
-namespace Classroom_Learning_Partner.Views
+namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
     /// Interaction logic for PageObjectContainerView.xaml
@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
 
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
             {
                 isStampedObject = true;
             }
@@ -77,7 +77,7 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
 
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
             {
                 isStampedObject = true;
             }
@@ -160,7 +160,7 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
 
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
             {
                 isStampedObject = true;
             }
@@ -170,9 +170,9 @@ namespace Classroom_Learning_Partner.Views
             {
 	            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
 	            {
-	                if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+	                if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
 	                {
-	                    CLPSnapTileViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
+	                    CLPSnapTileContainerViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileContainerViewModel;
                         //Steve - re-write for pageObjectContainer revamp
                         //foreach (var pageObject in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjects)
                         //{

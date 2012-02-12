@@ -121,11 +121,11 @@
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
-    <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPSnapTileContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
@@ -158,7 +158,7 @@
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjectContainerView.xaml.cs">
+    <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPBlankStampView.xaml.cs">
@@ -170,8 +170,8 @@
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPSnapTileView.xaml.cs">
-      <DependentUpon>CLPSnapTileView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPSnapTileContainerView.xaml.cs">
+      <DependentUpon>CLPSnapTileContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
@@ -245,7 +245,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjectContainerView.xaml">
+    <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -261,7 +261,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPSnapTileView.xaml">
+    <Page Include="Views\PageObjects\CLPSnapTileContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

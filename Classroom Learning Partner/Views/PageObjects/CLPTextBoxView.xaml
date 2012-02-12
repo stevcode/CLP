@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPTextBoxView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPTextBoxView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,10 @@
              xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:vmo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
+             x:TypeArguments="vmo:CLPTextBoxViewModel">
     <UserControl.Resources>
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
     </UserControl.Resources>
@@ -19,10 +22,10 @@
                                          SelectionChanged="RichTextBox_SelectionChanged"
                                          
                                          Width="{Binding Path=Width}"
-                                         Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility, Converter={StaticResource ThicknessConverter}}">
+                                         Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility, Converter={StaticResource ThicknessConverter}}">
             <toolkit:RichTextBox.TextFormatter>
                 <toolkit:RtfFormatter />
             </toolkit:RichTextBox.TextFormatter>
         </toolkit:RichTextBox>
     
-</UserControl>
+</catel:UserControl>

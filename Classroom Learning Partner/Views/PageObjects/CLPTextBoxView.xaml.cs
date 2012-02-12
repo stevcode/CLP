@@ -1,36 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
-using Microsoft.Windows.Controls.Ribbon;
+﻿using Catel.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
+using System.Windows;
+using System.Windows.Media;
+using System;
+using System.Windows.Documents;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Linq;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
     /// Interaction logic for CLPTextBoxView.xaml
     /// </summary>
-    public partial class CLPTextBoxView : UserControl
+    public partial class CLPTextBoxView : UserControl<CLPTextBoxViewModel>
     {
-        private RibbonWindow mainWindow;
-        private RibbonView ribbonView;
+        private MainWindowView ribbonView;
+
 
         public CLPTextBoxView()
         {
             InitializeComponent();
-            
-            mainWindow = Application.Current.MainWindow as RibbonWindow;
-            ribbonView = LogicalTreeHelper.FindLogicalNode(mainWindow, "RibbonView") as RibbonView;
+
+            ribbonView = Application.Current.MainWindow as MainWindowView;
 
             AppMessages.UpdateFont.Register(this, (t) =>
                                                         {
@@ -46,7 +39,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                                                              
                                                          });
 
-            (ribbonView.DataContext as RibbonViewModel).LastFocusedTextBox = this;
+            App.MainWindowViewModel.LastFocusedTextBox = this;
             
         }
 
@@ -74,8 +67,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         // Get current position of cursor
                         TextPointer curCaret = RichTextBox.CaretPosition;
                         // Get the current block object that the cursor is in
-                        Block curBlock = RichTextBox.Document.Blocks.Where
-                            (x => x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1).FirstOrDefault();
+                        Block curBlock = RichTextBox.Document.Blocks.Where(x => x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1).FirstOrDefault();
                         if (curBlock != null)
                         {
                             Paragraph curParagraph = curBlock as Paragraph;
@@ -100,7 +92,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 }
             }
             // Reset the focus onto the richtextbox after selecting the font in a toolbar etc
-            if ((ribbonView.DataContext as RibbonViewModel).LastFocusedTextBox == this)
+            if (App.MainWindowViewModel.LastFocusedTextBox == this)
             {
                 RichTextBox.Focus();
             }
@@ -171,7 +163,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         protected override void OnLostMouseCapture(MouseEventArgs e)
         {
             base.OnLostMouseCapture(e);
-            (ribbonView.DataContext as RibbonViewModel).LastFocusedTextBox = this;
+            App.MainWindowViewModel.LastFocusedTextBox = this;
         }
 
         private void RichTextBox_SelectionChanged_1(object sender, RoutedEventArgs e)

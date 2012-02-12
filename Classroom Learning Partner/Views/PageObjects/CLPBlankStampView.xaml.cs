@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Resources;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
     /// Interaction logic for CLPBlankStampView.xaml
     /// </summary>
-    public partial class CLPBlankStampView : UserControl
+    public partial class CLPBlankStampView : UserControl<CLPBlankStampViewModel>
     {
         public CLPBlankStampView()
         {
@@ -64,7 +57,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!isPartsAssignedByTeacher || App.IsAuthoring)
+                if (!isPartsAssignedByTeacher || App.MainWindowViewModel.IsAuthoring)
                 {
                     KeypadWindowView keyPad = new KeypadWindowView();
                     keyPad.ShowDialog();
@@ -74,7 +67,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         partsBtn.Content = keyPad.Parts;
                     }
 
-                    if (App.IsAuthoring)
+                    if (App.MainWindowViewModel.IsAuthoring)
                     {
                         isPartsAssignedByTeacher = true;
                     }

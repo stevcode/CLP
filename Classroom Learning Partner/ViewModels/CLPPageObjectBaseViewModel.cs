@@ -1,25 +1,17 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Catel.MVVM;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.Model;
 using System.Windows;
 using System.Windows.Media;
+using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
     {
         public CLPPageViewModel PageViewModel { get; protected set; }
 
-        protected CLPPageObjectBaseViewModel(CLPPageViewModel pageViewModel)
+        protected CLPPageObjectBaseViewModel(CLPPageViewModel pageViewModel) : base()
         {
             PageViewModel = pageViewModel;
         }

@@ -119,7 +119,7 @@ namespace Classroom_Learning_Partner.Views
                     {
                         isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
                     }
-                    else if (gridChild is CLPSnapTileViewModel)
+                    else if (gridChild is CLPSnapTileContainerViewModel)
                     {
                         isOverStampedObject = true;                      
                         //refactor name to encompass all objects that need to have adorner layer shown - steve

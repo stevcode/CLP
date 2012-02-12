@@ -385,7 +385,7 @@ namespace Classroom_Learning_Partner.Model
                                 }
                                 else if (pageObject is CLPSnapTileContainer)
                                 {
-                                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
+                                    pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
                                 }
                                 else
                                 {

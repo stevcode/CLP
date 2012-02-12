@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    public class CLPSnapTileViewModel : CLPPageObjectBaseViewModel
+    public class CLPSnapTileContainerViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPSnapTileViewModel class.
         /// </summary>
-        public CLPSnapTileViewModel(CLPSnapTileContainer tile, CLPPageViewModel pageViewModel)
+        public CLPSnapTileContainerViewModel(CLPSnapTileContainer tile, CLPPageViewModel pageViewModel)
             : base(pageViewModel)
         {
             PageObject = tile;
@@ -26,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Height = CLPSnapTile.TILE_HEIGHT * Tiles.Count;
+            Height = CLPSnapTileContainer.TILE_HEIGHT * Tiles.Count;
         }
 
         private ObservableCollection<string> _tiles = new ObservableCollection<string>();

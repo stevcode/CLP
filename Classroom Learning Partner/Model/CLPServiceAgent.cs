@@ -325,7 +325,7 @@ namespace Classroom_Learning_Partner.Model
                 }
                 else if (pageObject is CLPSnapTileContainer)
                 {
-                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
+                    pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
                 }
                 else
                 {
@@ -427,16 +427,16 @@ namespace Classroom_Learning_Partner.Model
             }
 
 
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
             {
-                CLPSnapTileViewModel snapTileVM = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel;
+                CLPSnapTileContainerViewModel snapTileVM = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileContainerViewModel;
                 if (snapTileVM.NextTile != null)
                 {
                     foreach (var container in snapTileVM.PageViewModel.PageObjectContainerViewModels)
                     {
-                        if (container.PageObjectViewModel is CLPSnapTileViewModel)
+                        if (container.PageObjectViewModel is CLPSnapTileContainerViewModel)
                         {
-                            if ((container.PageObjectViewModel as CLPSnapTileViewModel).PageObject.UniqueID == snapTileVM.NextTile.PageObject.UniqueID)
+                            if ((container.PageObjectViewModel as CLPSnapTileContainerViewModel).PageObject.UniqueID == snapTileVM.NextTile.PageObject.UniqueID)
                             {
                                 container.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
                                 container.PageObjectViewModel.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
