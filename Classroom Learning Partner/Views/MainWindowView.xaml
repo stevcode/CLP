@@ -30,7 +30,7 @@
         <KeyBinding Command="{Binding Path=SetProjectorCommand}"
               Gesture="CTRL+SHIFT+P" />
         <KeyBinding Command="{Binding Path=SetServerCommand}"
-              Gesture="CTRL+SHIFT+E" />
+              Gesture="CTRL+SHIFT+D" />
     </Window.InputBindings>
 
     <Grid x:Name="LayoutRoot">
