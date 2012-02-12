@@ -22,17 +22,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" Background="LightBlue">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
 
-                    <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
-                    </DockPanel>
 
-                    <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
+                    <ListBox x:Name="NotebookPageListBox" Grid.Row="0"
+                     VirtualizingStackPanel.IsVirtualizing="True"
                      ItemsSource="{Binding Path=PageViewModels}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
@@ -60,12 +53,13 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>             
                     </ListBox>
-                </Grid>
+
 
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
                 <Rectangle Visibility="{Binding Path=SubmissionsSideBarVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
+                     VirtualizingStackPanel.IsVirtualizing="True"
                      ItemsSource="{Binding Path=SubmissionViewModels}"
                      SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True"
@@ -87,8 +81,6 @@
             </Grid>
 
         </Border>
-
-        <Button Name="SideBarToggle" Grid.Column="1" Height="55" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Content="&lt;" PreviewMouseUp="SideBarToggle_PreviewMouseUp" />
 
     </Grid>
 </UserControl>

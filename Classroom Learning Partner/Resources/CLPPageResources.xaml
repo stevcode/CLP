@@ -18,7 +18,7 @@
 
 
 
-    <DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
+    <!--<DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
         <vw:PageObjectContainerView />
     </DataTemplate>
 
@@ -44,7 +44,7 @@
 
     <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
         <vw:CLPHistoryView />
-    </DataTemplate>
+    </DataTemplate>-->
     
     
 

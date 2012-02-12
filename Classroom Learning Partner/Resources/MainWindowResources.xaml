@@ -11,7 +11,7 @@
 
     <!--DataTemplates for WorkspaceViewModels-->
     
-    <DataTemplate DataType="{x:Type wvm:BlankWorkspaceViewModel}">
+    <!--<DataTemplate DataType="{x:Type wvm:BlankWorkspaceViewModel}">
         <wvw:BlankWorkspaceView />
     </DataTemplate>
 
@@ -41,21 +41,21 @@
 
     <DataTemplate DataType="{x:Type wvm:UserLoginWorkspaceViewModel}">
         <wvw:UserLoginWorkspaceView />
-    </DataTemplate>
+    </DataTemplate>-->
 
     <!--DataTemplates for DisplayViewModels-->
 
-    <DataTemplate DataType="{x:Type dvm:LinkedDisplayViewModel}">
+    <!--<DataTemplate DataType="{x:Type dvm:LinkedDisplayViewModel}">
         <dvw:LinkedDisplayView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dvm:GridDisplayViewModel}">
         <dvw:GridDisplayView />
-    </DataTemplate>
+    </DataTemplate>-->
 
     <!--DataTemplates for Other ViewModels-->
 
-    <DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">
+    <!--<DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">
         <vw:NotebookSelectorView />
     </DataTemplate>
 
@@ -65,7 +65,7 @@
 
     <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
         <vw:CLPHistoryView/>
-    </DataTemplate>
+    </DataTemplate>-->
 
     <!--Visual Datatemplates-->
 
