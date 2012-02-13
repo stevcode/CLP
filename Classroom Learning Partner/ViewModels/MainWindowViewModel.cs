@@ -199,9 +199,12 @@ namespace Classroom_Learning_Partner.ViewModels
             string userName = "none";
             if (App.Peer != null)
             {
-                if (App.Peer.OnlineStatusHandler.IsOnline)
+                if (App.Peer.OnlineStatusHandler != null)
                 {
-                    isOnline = "Connected";
+                    if (App.Peer.OnlineStatusHandler.IsOnline)
+                    {
+                        isOnline = "Connected";
+                    }
                 }
 
                 userName = App.Peer.UserName;
@@ -815,6 +818,7 @@ namespace Classroom_Learning_Partner.ViewModels
             int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             if (index != -1)
             {
+                //Steve - SideBar doesn't select next page when current page is deleted
                 OpenNotebooks[CurrentNotebookIndex].RemovePageAt(index);
             }
         }
@@ -831,60 +835,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             // TODO: Handle command logic here
         }
-
-        //private RelayCommand _addNewPageCommand;
-
-        ///// <summary>
-        ///// Gets the AddPageCommand.
-        ///// </summary>
-        //public RelayCommand AddNewPageCommand
-        //{
-        //    get
-        //    {
-        //        return _addNewPageCommand
-        //            ?? (_addNewPageCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      int currentPageIndex = -1;
-        //                                      AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-        //                                      {
-        //                                          currentPageIndex = App.CurrentNotebookViewModel.GetNotebookPageIndex(pageViewModel);
-        //                                      });
-        //                                      if (currentPageIndex != -1)
-        //                                      {
-        //                                          currentPageIndex++;
-        //                                          CLPService.AddPageAt(new CLPPage(), currentPageIndex, -1);
-        //                                      }
-        //                                      else
-        //                                      {
-        //                                          Console.WriteLine("[Error] Requested page is a submission, not a notebookpage");
-        //                                      }
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _deletePageCommand;
-
-        ///// <summary>
-        ///// Gets the DeletePageCommand.
-        ///// </summary>
-        //public RelayCommand DeletePageCommand
-        //{
-        //    get
-        //    {
-        //        return _deletePageCommand
-        //            ?? (_deletePageCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      int currentPageIndex = -1;
-        //                                      AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
-        //                                      {
-        //                                          currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
-        //                                      });
-        //                                      CLPService.RemovePageAt(currentPageIndex);
-        //                                  }));
-        //    }
-        //}
 
         #endregion //Page Commands
 

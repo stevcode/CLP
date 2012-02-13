@@ -76,5 +76,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             DisplayedPage = page;
         }
+
     }
 }

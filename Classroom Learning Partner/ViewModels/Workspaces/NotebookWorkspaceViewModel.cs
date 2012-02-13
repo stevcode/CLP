@@ -130,6 +130,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
+            
         }
     }
 }
