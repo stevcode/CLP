@@ -31,6 +31,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             }
         }
 
+        public override string Title { get { return "BlankStampVM"; } }
+
         #endregion //Constructors
 
         #region Bindings

@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Views.Displays
         public LinkedDisplayView()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
     }
 }

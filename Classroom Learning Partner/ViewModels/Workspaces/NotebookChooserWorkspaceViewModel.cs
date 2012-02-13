@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using Catel.Data;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -12,13 +13,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public NotebookChooserWorkspaceViewModel() : base()
         {
-            CLPService = new CLPServiceAgent();
+            Console.WriteLine(Title + " created");
             NotebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
-            CLPService.ChooseNotebook(this);
+            CLPServiceAgent.Instance.ChooseNotebook(this);
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
-
+        public override string Title { get { return "NotebookChooserWorkspaceVM"; } }
 
         //Steve - No need for NotebookSelecterViewModel, convert to something cleaner
         /// <summary>

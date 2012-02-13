@@ -16,10 +16,7 @@ namespace Classroom_Learning_Partner.Views
         public MainWindowView()
         {
             InitializeComponent();
-            CLPService = new CLPServiceAgent();
         }
-
-        private ICLPServiceAgent CLPService { get; set; }
 
         private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -30,13 +27,36 @@ namespace Classroom_Learning_Partner.Views
             }
             else
             {
-                CLPService.Exit();
+                CLPServiceAgent.Instance.Exit();
             }
         }
 
         private void RibbonWindow_Closed(object sender, System.EventArgs e)
         {
             (DataContext as MainWindowViewModel).SaveAndCloseViewModel();
+        }
+
+        private void ToolsGroup_Checked(object sender, RoutedEventArgs e)
+        {
+            foreach (var button in ToolsGroup.Items)
+            {
+                (button as RibbonToggleButton).Checked -= ToolsGroup_Checked;
+                (button as RibbonToggleButton).IsChecked = false;
+                (button as RibbonToggleButton).Checked += ToolsGroup_Checked;
+            }
+            if (AuthoringToolsGroup != null)
+            {
+                foreach (var button in AuthoringToolsGroup.Items)
+                {
+                    (button as RibbonToggleButton).Checked -= ToolsGroup_Checked;
+                    (button as RibbonToggleButton).IsChecked = false;
+                    (button as RibbonToggleButton).Checked += ToolsGroup_Checked;
+                }
+            }
+
+            (sender as RibbonToggleButton).Checked -= ToolsGroup_Checked;
+            (sender as RibbonToggleButton).IsChecked = true;
+            (sender as RibbonToggleButton).Checked += ToolsGroup_Checked;
         }
 
 

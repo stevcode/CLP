@@ -33,6 +33,7 @@ namespace Classroom_Learning_Partner
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            CLPServiceAgent.Instance.Initialize();
             //#############################
             CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.NotUsing;

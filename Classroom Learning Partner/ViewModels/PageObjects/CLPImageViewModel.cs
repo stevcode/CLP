@@ -16,6 +16,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             PageObject = image;
         }
 
+        public override string Title { get { return "ImageVM"; } }
+
         #region Binding
 
         /// <summary>

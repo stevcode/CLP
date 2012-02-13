@@ -20,6 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
         }
 
+        public override string Title { get { return "SnapTileContainerVM"; } }
+
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Height = CLPSnapTileContainer.TILE_HEIGHT * Tiles.Count;

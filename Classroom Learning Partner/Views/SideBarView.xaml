@@ -25,7 +25,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <ListBox x:Name="NotebookPageListBox" Grid.Row="0"
+                <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
                      VirtualizingStackPanel.IsVirtualizing="True"
                      ItemsSource="{Binding Path=Pages}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"

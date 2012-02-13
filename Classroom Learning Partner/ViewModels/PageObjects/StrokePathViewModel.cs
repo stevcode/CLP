@@ -17,6 +17,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             _pathWidth = width;
         }
 
+        public override string Title { get { return "StrokePathVM"; } }
+
         #endregion //Constructor
 
         #region Bindings

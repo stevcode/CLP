@@ -67,7 +67,6 @@ namespace Classroom_Learning_Partner.Model
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
     {
-        private ICLPServiceAgent CLPService = new CLPServiceAgent();
         int pagecount = 0;
 
 
@@ -78,7 +77,7 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Instructor/Student Machine Connected: " + userName);
                 //Users Notebooks to user machine
                 //Currently username is the machine name -> CHANGE when using actual names
-                CLPService.RetrieveNotebooks(userName);
+                CLPServiceAgent.Instance.RetrieveNotebooks(userName);
             }
           
         }
@@ -104,7 +103,7 @@ namespace Classroom_Learning_Partner.Model
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
-                        CLPService.AddSubmission(page);
+                        CLPServiceAgent.Instance.AddSubmission(page);
                     }
                     else if (App.CurrentUserMode == App.UserMode.Server)
                     {
@@ -114,7 +113,7 @@ namespace Classroom_Learning_Partner.Model
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPService.SavePageDB(page);
+                            CLPServiceAgent.Instance.SavePageDB(page);
                         }
                     }
              return null;
@@ -133,7 +132,7 @@ namespace Classroom_Learning_Partner.Model
                 //Console.WriteLine(s_notebook);
                 //DB call
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.SaveNotebookDB(notebook, userName);
+                CLPServiceAgent.Instance.SaveNotebookDB(notebook, userName);
                
             }
         }
@@ -142,7 +141,7 @@ namespace Classroom_Learning_Partner.Model
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.DistributeNotebookServer(notebook, author);
+                CLPServiceAgent.Instance.DistributeNotebookServer(notebook, author);
             }
         }
         public void ReceiveNotebook(string s_notebook, string userName)
@@ -154,7 +153,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 Console.WriteLine("ReceiveNotebooks - recieved one notebook");
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.SaveNotebooksFromDBToHD(notebook);
+                CLPServiceAgent.Instance.SaveNotebooksFromDBToHD(notebook);
                 //reload notebook chooser window if already open
                 //if (App.MainWindowViewModel.Workspace.GetType().Equals(new NotebookChooserWorkspaceViewModel().GetType()))
                 //{
@@ -242,23 +241,23 @@ namespace Classroom_Learning_Partner.Model
                     {
                         if (displayType == "LinkedDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
                         }
                         else
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
 
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
-                            foreach (var stringPage in gridDisplayPages)
-                            {
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
+                            //foreach (var stringPage in gridDisplayPages)
+                            //{
                                 //CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
                                 //bool isAlreadyInCurrentNotebook = false;
                                 //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
@@ -279,7 +278,7 @@ namespace Classroom_Learning_Partner.Model
                                 //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
                                 //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
                                 //}
-                            }
+                            //}
                         }
 
                     }

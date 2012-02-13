@@ -28,9 +28,7 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
-            //TODO: this first default page should probably be removed.
-            CLPPage page = new CLPPage();
-            Pages.Add(page);
+            AddPage(new CLPPage());
         }
 
         /// <summary>
@@ -132,7 +130,13 @@ namespace Classroom_Learning_Partner.Model
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
         }
 
-        public void InsertPage(int index, CLPPage page)
+        public void AddPage(CLPPage page)
+        {
+            Pages.Add(page);
+            GenerateSubmissionViews(page.UniqueID);
+        }
+
+        public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
 
@@ -149,18 +153,18 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageAt(int index)
         {
-            if (Pages.Count > index)
+            if (Pages.Count > index && index >= 0)
             {
                 Submissions.Remove(Pages[index].UniqueID);
                 Pages.RemoveAt(index);
-                if (Pages.Count == 0)
-                {
-                    Pages.Add(new CLPPage());
-                }
+            }
+            if (Pages.Count == 0)
+            {
+                AddPage(new CLPPage());
             }
         }
 
-        public CLPPage GetPage(int pageIndex, int submissionIndex)
+        public CLPPage GetPageAt(int pageIndex, int submissionIndex)
         {
             if (submissionIndex < -1) return null;
             if (submissionIndex == -1)
@@ -183,7 +187,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public CLPPage GetPageByID(string pageUniqueID)
+        public CLPPage GetNotebookPageByID(string pageUniqueID)
         {
             foreach (var page in Pages)
             {

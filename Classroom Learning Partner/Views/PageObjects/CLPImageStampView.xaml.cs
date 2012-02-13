@@ -21,7 +21,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPImageStampView()
         {
             InitializeComponent();
-            CLPService = new CLPServiceAgent();
             
             adornedControl.IsMouseOverShowEnabled = false;
 
@@ -48,8 +47,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 isOnPreview = true;
             }
         }
-
-        private ICLPServiceAgent CLPService { get; set; }
 
         //datacontext from model to assign initial
         private bool isPartsAssignedByTeacher = false;
@@ -110,7 +107,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     }
 
                     Point pt = new Point(x, y);
-                    CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
                 }
             }
         }
@@ -151,7 +148,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     oldPosition = pageObjectContainerViewModel.Position;
 
                     CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
-                    CLPService.AddPageObjectToPage(stamp);
+                    //CLPService.AddPageObjectToPage(stamp);
                 } 
             } 
         }
@@ -188,7 +185,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     }
                     else
                     {
-                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                        //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                     }
                 }
             }

@@ -17,10 +17,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public PageObjectContainerView()
         {
             InitializeComponent();
-            CLPService = new CLPServiceAgent();
         }
-
-        private ICLPServiceAgent CLPService { get; set; }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -50,7 +47,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
             {
-                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
             }
         }
 
@@ -107,7 +104,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
                 Point pt = new Point(x, y);
                 isDragging = true;
-                CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
             }
         }
 
@@ -135,7 +132,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     newWidth = pageObjectContainerViewModel.Width;
                 }
 
-                CLPService.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
+                //CLPService.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
             }
         }
 

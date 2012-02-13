@@ -16,6 +16,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PageViewModel = pageViewModel;
         }
 
+        public override string Title { get { return "APageObjectBaseVM"; } }
+
         private CLPPageObjectBase _pageObject;
         public CLPPageObjectBase PageObject
         {

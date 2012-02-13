@@ -22,8 +22,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             InitializeComponent();
 
-            CLPService = new CLPServiceAgent();
-
             adornedControl.IsMouseOverShowEnabled = false;
 
             this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);  
@@ -47,8 +45,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 isOnPreview = true;
             }
         }
-
-        private ICLPServiceAgent CLPService { get; set; }
 
         //datacontext from model to assign initial
         private bool isPartsAssignedByTeacher = false;
@@ -104,7 +100,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     }
 
                     Point pt = new Point(x, y);
-                    CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
                 }
             }
         }
@@ -145,7 +141,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     oldPosition = pageObjectContainerViewModel.Position;
 
                     CLPBlankStamp stamp = stampViewModel.PageObject.Copy() as CLPBlankStamp;
-                    CLPService.AddPageObjectToPage(stamp);
+                    //CLPService.AddPageObjectToPage(stamp);
 
                     stampViewModel.IsAnchored = false;
                     //make serviceagent call here to change model and database
@@ -181,7 +177,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     }
                     else
                     {
-                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                        //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                     }
                 }  
             }       

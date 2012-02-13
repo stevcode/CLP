@@ -1,18 +1,20 @@
 ﻿using Classroom_Learning_Partner.Model;
 using Catel.MVVM;
 using Catel.Data;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    [InterestedIn(typeof(SideBarViewModel))]
     public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel()
+        public LinkedDisplayViewModel(CLPPage page)
             : base()
         {
+            DisplayedPage = page;
+            Console.WriteLine("linked display created, isactive: " + IsActive.ToString());
         }
 
         /// <summary>
@@ -35,35 +37,39 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             get { return "LinkedDisplay"; }
         }
 
-        public bool IsActive { get; set; }
-        public bool IsOnProjector { get; set; }
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsActive
         {
-            if (propertyName == "CurrentPage" && IsActive)
+            get { return GetValue<bool>(IsActiveProperty); }
+            set
             {
-                AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
-                //Steve - send to projector
-                //App.Peer.Channel.AddPageToDisplay? if IsOnProjector
-                // if (this.IsActive)
-                //{
-                //    if (App.CurrentUserMode == App.UserMode.Instructor)
-                //    {
-                //        if (App.Peer.Channel != null)
-                //        {
-                //            if (this.IsOnProjector)
-                //            {
-                //            //run this in background thread?
-                //                string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                //                App.Peer.Channel.AddPageToDisplay(pageString);
-                //            }
-                //        }
-                //    }
-                //}
+                SetValue(IsActiveProperty, value);
+                Console.WriteLine("linkeddisplay IsActive set to: " + value.ToString());
             }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
+
+        /// <summary>
+        /// Register the IsActive property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsActiveProperty = RegisterProperty("IsActive", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsOnProjector
+        {
+            get { return GetValue<bool>(IsOnProjectorProperty); }
+            set { SetValue(IsOnProjectorProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsOnProjector property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+
+        public override string Title { get { return "LinkDisplayVM"; } }
 
 
         public void AddPageToDisplay(CLPPage page)

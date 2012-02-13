@@ -24,7 +24,6 @@ namespace Classroom_Learning_Partner.Views
         private bool isMouseDown = false;
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
-        public CLPServiceAgent CLPService;
         private bool isSnapTileEnabled = false;
 
         public CLPPageView()
@@ -33,9 +32,8 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
-            this.CLPService = new CLPServiceAgent();
             //We need the inkCanvas in HistoryVM to start a new thread to enable playback
-            this.CLPService.SendInkCanvas(MainInkCanvas);
+            CLPServiceAgent.Instance.SendInkCanvas(MainInkCanvas);
             
             AppMessages.SetSnapTileMode.Register(this, (setSnapTileEnabled) =>
                 {
@@ -215,7 +213,7 @@ namespace Classroom_Learning_Partner.Views
                 Point pt = e.GetPosition(this.TopCanvas);
                 if (pt.X > 1056) pt.X = 1056;
                 if (pt.Y > 816) pt.Y = 816;
-                CLPService.AddPageObjectToPage(new CLPSnapTileContainer(pt, "SpringGreen"));
+                CLPServiceAgent.Instance.AddPageObjectToPage(new CLPSnapTileContainer(pt, "SpringGreen"));
             }
         }
 

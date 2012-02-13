@@ -11,12 +11,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public NotebookSelectorViewModel(string notebookName) : base()
         {
-            CLPService = new CLPServiceAgent();
             NotebookName = notebookName;
             SelectNotebookCommand = new Command(OnSelectNotebookCommandExecute);
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
+        public override string Title { get { return "NotebookSelectorVM"; } }
 
         #region Bindings
 
@@ -46,7 +45,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSelectNotebookCommandExecute()
         {
-            CLPService.OpenNotebook(NotebookName);
+            CLPServiceAgent.Instance.OpenNotebook(NotebookName);
         }
     }
 }

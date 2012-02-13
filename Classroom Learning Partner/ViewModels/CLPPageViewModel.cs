@@ -16,6 +16,7 @@ using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
         #region Constructors
@@ -25,9 +26,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page) : base()
         {
+            Console.WriteLine(Title + " created");
             PlaybackControlsVisibility = Visibility.Collapsed;
-            DefaultDA = new DrawingAttributes();
-            EditingMode = InkCanvasEditingMode.None;
+            DefaultDA = App.MainWindowViewModel.DrawingAttributes;
+            EditingMode = App.MainWindowViewModel.EditingMode;
 
             //History Stuff
             //AppMessages.ChangePlayback.Register(this, (playback) =>
@@ -66,6 +68,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
+
+        public override string Title { get { return "PageVM"; } }
 
         public bool undoFlag;
         #endregion //Constructors
@@ -316,6 +320,16 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //Steve - implement saving feature here
             return base.Save();
+        }
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if (propertyName == "EditingMode")
+            {
+                EditingMode = (viewModel as MainWindowViewModel).EditingMode;
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods

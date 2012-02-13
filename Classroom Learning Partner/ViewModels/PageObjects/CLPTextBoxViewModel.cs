@@ -15,6 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             _CLPText = textBox.Text;
         }
 
+        public override string Title { get { return "TextBoxVM"; } }
+
         /// <summary>
         /// The <see cref="CLPText" /> property's name.
         /// </summary>

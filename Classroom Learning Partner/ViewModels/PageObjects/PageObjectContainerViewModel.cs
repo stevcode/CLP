@@ -49,6 +49,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 
             }); */
         }
+
+        public override string Title { get { return "PageObjectContainerVM"; } }
+
         private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel

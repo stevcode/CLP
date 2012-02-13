@@ -24,6 +24,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             Parts = stamp.Parts;
         }
 
+        public override string Title { get { return "AStampBaseVM"; } }
+
         #endregion //Constructors
 
         #region Bindings

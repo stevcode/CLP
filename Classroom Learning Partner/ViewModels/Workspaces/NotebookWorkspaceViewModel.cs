@@ -2,71 +2,72 @@
 using Classroom_Learning_Partner.ViewModels.Displays;
 using Catel.Data;
 using System.Windows.Media;
+using System;
+using Classroom_Learning_Partner.Model;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
     /// <summary>
     /// UserControl view model.
     /// </summary>
+    [InterestedIn(typeof(MainWindowViewModel))]
+    [InterestedIn(typeof(SideBarViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
-        public NotebookWorkspaceViewModel()
+        public NotebookWorkspaceViewModel(CLPNotebook notebook)
             : base()
         {
+            Notebook = notebook;
+            Console.WriteLine(Title + " created");
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-            LinkedDisplay = new LinkedDisplayViewModel();
-            GridDisplay = new GridDisplayViewModel();
-
+            LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
-            LinkedDisplay.IsActive = true;
+            SelectedDisplay.IsActive = true;
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
-                LinkedDisplay.IsOnProjector = true;
+                SelectedDisplay.IsOnProjector = true;
             }
             else
             {
-                LinkedDisplay.IsOnProjector = false;
+                SelectedDisplay.IsOnProjector = false;
             }
-            
-            GridDisplay.IsActive = false;
-            GridDisplay.IsOnProjector = false;
         }
 
-        //Steve - Do I need SideBar prop here?
+        public override string Title { get { return "NotebookWorkspaceVM"; } }
 
-        //Steve - Do these displays need to be set here, or can I just set SelectedDisplay to new display values when created?
-        // Same with BG color, can be XAML?
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [Model]
+        public CLPNotebook Notebook
+        {
+            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Notebook property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public LinkedDisplayViewModel LinkedDisplay
         {
             get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
-            private set { SetValue(LinkedDisplayProperty, value); }
+            set { SetValue(LinkedDisplayProperty, value); }
         }
 
         /// <summary>
         /// Register the LinkedDisplay property so it is known in the class.
         /// </summary>
         public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public GridDisplayViewModel GridDisplay
-        {
-            get { return GetValue<GridDisplayViewModel>(GridDisplayProperty); }
-            set { SetValue(GridDisplayProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the GridDisplay property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(GridDisplayViewModel));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -99,6 +100,36 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public string WorkspaceName
         {
             get { return "NotebookWorkspace"; }
+        }
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if (propertyName == "IsAuthoring")
+            {
+                SelectedDisplay = LinkedDisplay;
+                if ((viewModel as MainWindowViewModel).IsAuthoring)
+                {
+                    SelectedDisplay.IsOnProjector = false;
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
+                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
+                    if (App.CurrentUserMode == App.UserMode.Instructor)
+                    {
+                        SelectedDisplay.IsOnProjector = true;
+                    }
+                }
+            }
+
+            if (propertyName == "CurrentPage")
+            {
+                SelectedDisplay.AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
     }
 }

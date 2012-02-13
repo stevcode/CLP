@@ -14,9 +14,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public UserLoginWorkspaceViewModel()
             : base()
         {
+            Console.WriteLine(Title + " created");
             LogInCommand = new Command<string>(OnLogInCommandExecute);
 
             UserNames = new ObservableCollection<string>();
+            //Steve - move to CLPService and grab from database
             string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if (File.Exists(filePath))
@@ -29,6 +31,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
             }
         }
+
+        public override string Title { get { return "UserLoginWorkspaceVM"; } }
 
         #region Bindings
 
@@ -59,6 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         private void OnLogInCommandExecute(string userName)
         {
             App.Peer.UserName = userName;
+            App.MainWindowViewModel.SetTitleBarText("");
             App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 

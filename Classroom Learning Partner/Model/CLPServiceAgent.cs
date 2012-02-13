@@ -18,67 +18,15 @@ using System.Windows.Ink;
 
 namespace Classroom_Learning_Partner.Model
 {
-    public interface ICLPServiceAgent
+    
+    public class CLPServiceAgent
     {
-
-        void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
-        void RemovePageAt(int pageIndex);
-
-        void AddSubmission(CLPPage page);
-        void DistributeNotebook(CLPNotebook notebook, string author);
-        void OpenNotebook(string notebookName);
-        void OpenNewNotebook();
-        void SaveNotebook(CLPNotebook notebook);
-        void SaveNotebookDB(CLPNotebook notebook, string userName);
-        void SavePageDB(CLPPage page);
-        void SaveNotebooksFromDBToHD(CLPNotebook notebook);
-        void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
-        //void ConvertNotebookToXPS(CLPNotebook notebook);
-
-        void SubmitPage(CLPPage page);
-        void Exit();
-
-        //void SendLaserPosition(Point pt);
-
-
-        void AddPageObjectToPage(CLPPageObjectBase pageObject);
-        void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel);
-        void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page);
-        void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt);
-        void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
-
-        void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
-        //Calls made on Server to DB
-        void RetrieveNotebooks(string username);
-        void DistributeNotebookServer(CLPNotebook notebookVM, string author);
-    }
-
-    public class CLPServiceAgent : ICLPServiceAgent
-    {
-        public void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex)
+        private CLPServiceAgent()
         {
-            //CLPPageViewModel pageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-            //if (submissionIndex == -1)
-            //{
-            //    App.CurrentNotebookViewModel.InsertPage(notebookIndex, pageViewModel);
-            //    App.CurrentNotebookViewModel.Notebook.InsertPage(notebookIndex, page);
-            //    //DATABASE insertion, see InsertPage method in CLPNotebook,
-            //    //inserting new page requires generating the appropriate
-            //    //Submissions list associated with the page.
-            //}
-            //else
-            //{
-            //    //not necessary to insert student submission directly?
-            //}
         }
 
-        public void RemovePageAt(int pageIndex)
-        {
-            //App.CurrentNotebookViewModel.RemovePageAt(pageIndex);
-            //App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
-            //DATABASE remove. make sure to add new blank page if
-            //you remove last page in notebook.
-        }
+        private static CLPServiceAgent _instance = new CLPServiceAgent();
+        public static CLPServiceAgent Instance { get { return _instance; } }
 
         public void AddSubmission(CLPPage page)
         {
@@ -95,35 +43,29 @@ namespace Classroom_Learning_Partner.Model
                 notebook.NotebookName = notebookName;
 
                 int count = 0;
-                //foreach (CLPNotebookViewModel notebookVM in App.NotebookViewModels)
-                //{
-                //    if (notebookVM.Notebook.UniqueID == newNotebookViewModel.Notebook.UniqueID)
-                //    {
-                //        App.CurrentNotebookViewModel = notebookVM;
-                //        count++;
-                //        break;
-                //    }
-                //}
+                foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
+                {
+                    if (otherNotebook.UniqueID == notebook.UniqueID)
+                    {
+                        App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.IndexOf(otherNotebook);
+                        count++;
+                        break;
+                    }
+                }
 
-                //if (count == 0)
-                //{
-                //    App.NotebookViewModels.Add(newNotebookViewModel);
-                //    App.CurrentNotebookViewModel = newNotebookViewModel;
-                //}
+                if (count == 0)
+                {
+                    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                    App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
+                }
 
-
-                //SetWorkspace();
-
-
-                //change this to open Instructor/Student/Projector Workspace
-                //App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
+                App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
             }
             else //else doesn't exist, error checking
             {
                 //check if notebook exisist on server
             }
         }
-
 
         public void OpenNewNotebook()
         {
@@ -142,11 +84,13 @@ namespace Classroom_Learning_Partner.Model
                     if (!File.Exists(filePath))
                     {
                         CLPNotebook newNotebook = new CLPNotebook();
+                        newNotebook.NotebookName = notebookName;
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
+                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
+                        
                         NameChooserLoop = false;
                         //Send empty notebook to db
                         //ObjectSerializer.ToString(newNotebookViewModel)
@@ -173,7 +117,7 @@ namespace Classroom_Learning_Partner.Model
             if (App.DatabaseUse == App.DatabaseMode.Using)
             {
                 string s_notebook = ObjectSerializer.ToString(notebook);
-                Console.WriteLine("Notebook seralized");
+                Console.WriteLine("Notebook serialized");
                 App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
                 Console.WriteLine("Notebook saving called on mesh");
             }
@@ -199,9 +143,6 @@ namespace Classroom_Learning_Partner.Model
                 {
                     nbCollection.Insert(createBsonNotebook(notebook, userName));
                 }
-
-
-
             }
         }
         public void SaveNotebooksFromDBToHD(CLPNotebook notebook)
@@ -236,13 +177,14 @@ namespace Classroom_Learning_Partner.Model
             {
                 Directory.CreateDirectory(App.NotebookDirectory);
             }
-            //normal operation - take what is already avalible
+            //normal operation - take what is already available
             foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
             {
                 string notebookName = Path.GetFileNameWithoutExtension(fullFile);
                 NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
                 notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
             }
+            //Jessie - grab notebookNames from database if using DB
         }
 
 
@@ -571,6 +513,10 @@ namespace Classroom_Learning_Partner.Model
                     { "NotebookContent", ObjectSerializer.ToString(notebook) }
                     };
             return currentNotebook;
+        }
+
+        public void Initialize()
+        {
         }
     }
 }

@@ -129,38 +129,38 @@
                     
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup Header="Pen Type">
+                <ribbon:RibbonGroup x:Name="ToolsGroup" Header="Pen Type">
 
                     <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}" />
+                        Command="{Binding Path=SetPenCommand}" IsChecked="True" Checked="ToolsGroup_Checked" />
                     
                     <ribbon:RibbonToggleButton
                         Label="Marker"
                         LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}" />
+                        Command="{Binding Path=SetMarkerCommand}" Checked="ToolsGroup_Checked" />
                     
                     <ribbon:RibbonToggleButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}"/>
+                        Command="{Binding Path=SetEraserCommand}" Checked="ToolsGroup_Checked"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Stroke Eraser"
                         LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}" />
+                        Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked"/>
 
-                    <ribbon:RibbonToggleButton
+                    <!--<ribbon:RibbonToggleButton
                         Label="Laser Pointer"
                         LargeImageSource="..\Images\Pen.png"
                         Command="{Binding Path=SetLaserPointerModeCommand}"
-                        Visibility="{Binding Path=InstructorVisibility}"/>
+                        Visibility="{Binding Path=InstructorVisibility}" Checked="ToolsGroup_Checked"/>-->
                     
                     <ribbon:RibbonToggleButton
                         Label="Snap Tile"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=SetSnapTileCommand}"/>
+                        Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
                     
                 </ribbon:RibbonGroup>
 
@@ -206,7 +206,7 @@
 
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup Header="History">
+                <!--<ribbon:RibbonGroup Header="History">
                     
                     <ribbon:RibbonButton
                         Label="Undo"
@@ -217,7 +217,7 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" />
                 
-                </ribbon:RibbonGroup>
+                </ribbon:RibbonGroup>-->
 
                 <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                     
@@ -256,7 +256,7 @@
                     
                 </ribbon:RibbonGroup>
 
-                <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
                     
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\play2.png"
@@ -273,7 +273,8 @@
                         Label="Play Audio"
                         Command="{Binding Path=PlayAudioCommand}" />
                     
-                </ribbon:RibbonGroup>
+                </ribbon:RibbonGroup>-->
+                
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
@@ -320,28 +321,28 @@
 
             <!--Editing Tab-->
             <ribbon:RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
-                
-                <ribbon:RibbonGroup Header="Pen Type">
-                    
-                    <ribbon:RibbonButton
+
+                <ribbon:RibbonGroup x:Name="AuthoringToolsGroup" Header="Pen Type">
+
+                    <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}" />
-                    
-                    <ribbon:RibbonButton
+                        Command="{Binding Path=SetPenCommand}" Checked="ToolsGroup_Checked" />
+
+                    <ribbon:RibbonToggleButton
                         Label="Marker"
                         LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}" />
-                    
-                    <ribbon:RibbonButton
+                        Command="{Binding Path=SetMarkerCommand}" Checked="ToolsGroup_Checked" />
+
+                    <ribbon:RibbonToggleButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}"/>
-                    
-                    <ribbon:RibbonButton
+                        Command="{Binding Path=SetEraserCommand}" Checked="ToolsGroup_Checked" />
+
+                    <ribbon:RibbonToggleButton
                         Label="Stroke Eraser"
                         LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}" />
+                        Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked" />
                     
                 </ribbon:RibbonGroup>
 
@@ -474,14 +475,19 @@
                     
                     <ribbon:RibbonButton
                         Label="Add Page Here"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\AddPage.png"
                         Command="{Binding Path=AddNewPageCommand}" />
                     
                     <ribbon:RibbonButton
                         Label="Delete This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
-                    
+
+                    <ribbon:RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
+
                 </ribbon:RibbonGroup>
                 
             </ribbon:RibbonTab>

@@ -21,6 +21,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             _sourceImage = stamp.SourceImage;
         }
 
+        public override string Title { get { return "ImageStampVM"; } }
+
         #endregion //Constructors
 
         #region Bindings

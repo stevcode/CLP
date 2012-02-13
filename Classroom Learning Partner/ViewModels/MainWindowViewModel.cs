@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Timers;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -27,8 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public MainWindowViewModel()
             : base()
         {
-            CLPService = new CLPServiceAgent();
-
+            Console.WriteLine(Title + " created");
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
@@ -86,15 +86,29 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Ribbon Commands
+            SetPenCommand = new Command(OnSetPenCommandExecute);
+            SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
+            SetEraserCommand = new Command(OnSetEraserCommandExecute);
+            SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
+            SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
+            OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
+            EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
+            DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
+            SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
+            SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
+
+            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
+            DeletePageCommand = new Command(OnDeletePageCommandExecute);
+            CopyPageCommand = new Command(OnCopyPageCommandExecute);
 
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
+        public override string Title { get { return "MainWindowVM"; } }
 
         #region NonRibbon Items
 
@@ -500,132 +514,77 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Pen Commands
 
-        //private RelayCommand _setPenCommand;
+        /// <summary>
+        /// Gets the SetPenCommand command.
+        /// </summary>
+        public Command SetPenCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetPenCommand.
-        ///// </summary>
-        //public RelayCommand SetPenCommand
-        //{
-        //    get
-        //    {
-        //        return _setPenCommand
-        //            ?? (_setPenCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      DrawingAttributes.Height = PEN_RADIUS;
-        //                                      DrawingAttributes.Width = PEN_RADIUS;
-        //                                      if (EditingMode == InkCanvasEditingMode.None)
-        //                                      {
-        //                                          AppMessages.SetLaserPointerMode.Send(false);
-        //                                          AppMessages.SetSnapTileMode.Send(false);
-        //                                      }
-        //                                      EditingMode = InkCanvasEditingMode.Ink;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetPenCommand command is executed.
+        /// </summary>
+        private void OnSetPenCommandExecute()
+        {
+            DrawingAttributes.Height = PEN_RADIUS;
+            DrawingAttributes.Width = PEN_RADIUS;
+            EditingMode = InkCanvasEditingMode.Ink;
+        }
 
-        //private RelayCommand _setMarkerCommand;
+        /// <summary>
+        /// Gets the SetMarkerCommand command.
+        /// </summary>
+        public Command SetMarkerCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetMarkerCommand.
-        ///// </summary>
-        //public RelayCommand SetMarkerCommand
-        //{
-        //    get
-        //    {
-        //        return _setMarkerCommand
-        //            ?? (_setMarkerCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      DrawingAttributes.Height = MARKER_RADIUS;
-        //                                      DrawingAttributes.Width = MARKER_RADIUS;
-        //                                      EditingMode = InkCanvasEditingMode.Ink;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetMarkerCommand command is executed.
+        /// </summary>
+        private void OnSetMarkerCommandExecute()
+        {
+            DrawingAttributes.Height = MARKER_RADIUS;
+            DrawingAttributes.Width = MARKER_RADIUS;
+            EditingMode = InkCanvasEditingMode.Ink;
+        }
 
-        //private RelayCommand _setEraserCommand;
+        /// <summary>
+        /// Gets the SetEraserCommand command.
+        /// </summary>
+        public Command SetEraserCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetEraserCommand.
-        ///// </summary>
-        //public RelayCommand SetEraserCommand
-        //{
-        //    get
-        //    {
-        //        return _setEraserCommand
-        //            ?? (_setEraserCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      DrawingAttributes.Height = ERASER_RADIUS;
-        //                                      DrawingAttributes.Width = ERASER_RADIUS;
-        //                                      EditingMode = InkCanvasEditingMode.EraseByPoint;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByPoint);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetEraserCommand command is executed.
+        /// </summary>
+        private void OnSetEraserCommandExecute()
+        {
+            DrawingAttributes.Height = ERASER_RADIUS;
+            DrawingAttributes.Width = ERASER_RADIUS;
+            EditingMode = InkCanvasEditingMode.EraseByPoint;
+        }
 
-        //private RelayCommand _setStrokeEraserCommand;
+                /// <summary>
+        /// Gets the SetStrokeEraserCommand command.
+        /// </summary>
+        public Command SetStrokeEraserCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetStrokeEraserCommand.
-        ///// </summary>
-        //public RelayCommand SetStrokeEraserCommand
-        //{
-        //    get
-        //    {
-        //        return _setStrokeEraserCommand
-        //            ?? (_setStrokeEraserCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      EditingMode = InkCanvasEditingMode.EraseByStroke;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByStroke);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetStrokeEraserCommand command is executed.
+        /// </summary>
+        private void OnSetStrokeEraserCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.EraseByStroke;
+        }
 
-        //private RelayCommand<RibbonButton> _setPenColorCommand;
+        /// <summary>
+        /// Gets the SetPenColorCommand command.
+        /// </summary>
+        public Command<RibbonButton> SetPenColorCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetPenColorCommand.
-        ///// </summary>
-        //public RelayCommand<RibbonButton> SetPenColorCommand
-        //{
-        //    get
-        //    {
-        //        return _setPenColorCommand
-        //            ?? (_setPenColorCommand = new RelayCommand<RibbonButton>(
-        //                                  (button) =>
-        //                                  {
-        //                                      CurrentColorButton = button as RibbonButton;
-        //                                      DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
-        //                                      _editingMode = InkCanvasEditingMode.Ink;
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _SetLaserPointerModeCommand;
-
-        ///// <summary>
-        ///// Gets the SetLaserPointerModeCommand.
-        ///// </summary>
-        //public RelayCommand SetLaserPointerModeCommand
-        //{
-        //    get
-        //    {
-        //        return _SetLaserPointerModeCommand
-        //            ?? (_SetLaserPointerModeCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      EditingMode = InkCanvasEditingMode.None;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
-        //                                      AppMessages.SetLaserPointerMode.Send(true);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetPenColorCommand command is executed.
+        /// </summary>
+        private void OnSetPenColorCommandExecute(RibbonButton button)
+        {
+            CurrentColorButton = button as RibbonButton;
+            DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+        }
 
         //private RelayCommand _SetSnapTileCommand;
 
@@ -662,107 +621,81 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnNewNotebookCommandExecute()
         {
-            CLPService.OpenNewNotebook();
-            AuthoringTabVisibility = Visibility.Visible;
+            CLPServiceAgent.Instance.OpenNewNotebook();
         }
 
-        //private RelayCommand _openNotebookCommand;
+        /// <summary>
+        /// Gets the OpenNotebookCommand command.
+        /// </summary>
+        public Command OpenNotebookCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the OpenNotebookCommand.
-        ///// </summary>
-        //public RelayCommand OpenNotebookCommand
-        //{
-        //    get
-        //    {
-        //        return _openNotebookCommand
-        //            ?? (_openNotebookCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the OpenNotebookCommand command is executed.
+        /// </summary>
+        private void OnOpenNotebookCommandExecute()
+        {
+            SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+        }
 
-        //private RelayCommand _editNotebookCommand;
+        /// <summary>
+        /// Gets the EditNotebookCommand command.
+        /// </summary>
+        public Command EditNotebookCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the EditNotebookCommand.
-        ///// </summary>
-        //public RelayCommand EditNotebookCommand
-        //{
-        //    get
-        //    {
-        //        return _editNotebookCommand
-        //            ?? (_editNotebookCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      App.IsAuthoring = true;
-        //                                      App.MainWindowViewModel.Workspace = new AuthoringWorkspaceViewModel();
-        //                                      AuthoringTabVisibility = Visibility.Visible;
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the EditNotebookCommand command is executed.
+        /// </summary>
+        private void OnEditNotebookCommandExecute()
+        {
+            IsAuthoring = true;
+        }
 
-        //private RelayCommand _doneEditingNotebookCommand;
+                /// <summary>
+        /// Gets the DoneEditingNotebookCommand command.
+        /// </summary>
+        public Command DoneEditingNotebookCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the DoneEditingNotebookCommand.
-        ///// </summary>
-        //public RelayCommand DoneEditingNotebookCommand
-        //{
-        //    get
-        //    {
-        //        return _doneEditingNotebookCommand
-        //            ?? (_doneEditingNotebookCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      App.IsAuthoring = false;
-        //                                      CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
-        //                                      CLPService.SetWorkspace();
+        /// <summary>
+        /// Method to invoke when the DoneEditingNotebookCommand command is executed.
+        /// </summary>
+        private void OnDoneEditingNotebookCommandExecute()
+        {
+            IsAuthoring = false;
+            //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
+        }
 
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Gets the SaveNotebookCommand command.
+        /// </summary>
+        public Command SaveNotebookCommand { get; private set; }
 
-        //private RelayCommand _saveNotebookCommand;
+        /// <summary>
+        /// Method to invoke when the SaveNotebookCommand command is executed.
+        /// </summary>
+        private void OnSaveNotebookCommandExecute()
+        {
+            CLPServiceAgent.Instance.SaveNotebook(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
+        }
 
-        ///// <summary>
-        ///// Gets the SaveNotebookCommand.
-        ///// </summary>
-        //public RelayCommand SaveNotebookCommand
-        //{
-        //    get
-        //    {
-        //        return _saveNotebookCommand
-        //            ?? (_saveNotebookCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      CLPService.SaveNotebook(App.CurrentNotebookViewModel);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Gets the SaveAllNotebooksCommand command.
+        /// </summary>
+        public Command SaveAllNotebooksCommand { get; private set; }
 
-        //private RelayCommand _saveAllNotebooksCommand;
+        // TODO: Move code below to constructor
 
-        ///// <summary>
-        ///// Gets the SaveAllNotebooksCommand.
-        ///// </summary>
-        //public RelayCommand SaveAllNotebooksCommand
-        //{
-        //    get
-        //    {
-        //        return _saveAllNotebooksCommand
-        //            ?? (_saveAllNotebooksCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      foreach (CLPNotebookViewModel notebookVM in App.NotebookViewModels)
-        //                                      {
-        //                                          CLPService.SaveNotebook(notebookVM);
-        //                                      }
-        //                                  }));
-        //    }
-        //}
+        // TODO: Move code above to constructor
+
+        /// <summary>
+        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// </summary>
+        private void OnSaveAllNotebooksCommandExecute()
+        {
+            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                CLPServiceAgent.Instance.SaveNotebook(notebook);
+            }
+        }
 
         //private RelayCommand _convertToXPSCommand;
 
@@ -853,6 +786,51 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Notebook Commands
 
         #region Page Commands
+
+        /// <summary>
+        /// Gets the AddPageCommand command.
+        /// </summary>
+        public Command AddNewPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AddPageCommand command is executed.
+        /// </summary>
+        private void OnAddNewPageCommandExecute()
+        {
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            index++;
+            OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, new CLPPage());
+        }
+
+        /// <summary>
+        /// Gets the DeletePageCommand command.
+        /// </summary>
+        public Command DeletePageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the DeletePageCommand command is executed.
+        /// </summary>
+        private void OnDeletePageCommandExecute()
+        {
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            if (index != -1)
+            {
+                OpenNotebooks[CurrentNotebookIndex].RemovePageAt(index);
+            }
+        }
+
+        /// <summary>
+        /// Gets the CopyPageCommand command.
+        /// </summary>
+        public Command CopyPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CopyPageCommand command is executed.
+        /// </summary>
+        private void OnCopyPageCommandExecute()
+        {
+            // TODO: Handle command logic here
+        }
 
         //private RelayCommand _addNewPageCommand;
 
@@ -1098,6 +1076,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Display Commands
 
+        #region Submission Command
+
         /// <summary>
         /// Gets the SubmitPageCommand command.
         /// </summary>
@@ -1125,8 +1105,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             CanSendToTeacher = false;
         }
-
-        
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1206,6 +1184,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
 
+        #endregion //Submission Command
+
         /// <summary>
         /// Gets the ExitCommand command.
         /// </summary>
@@ -1219,7 +1199,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (MessageBox.Show("Are you sure you want to exit?",
                                         "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                                       {
-                                                          CLPService.Exit();
+                                                          CLPServiceAgent.Instance.Exit();
                                                       }
         }
 

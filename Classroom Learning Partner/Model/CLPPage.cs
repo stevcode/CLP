@@ -30,6 +30,7 @@ namespace Classroom_Learning_Partner.Model
         public CLPPage()
         {
             CreationDate = DateTime.Now;
+            UniqueID = Guid.NewGuid().ToString();
         }
 
         /// <summary>

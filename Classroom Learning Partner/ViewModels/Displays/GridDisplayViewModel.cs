@@ -19,6 +19,8 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
+        public override string Title { get { return "GridDisplayVM"; } }
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

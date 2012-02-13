@@ -4,9 +4,11 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using Catel.Data;
 using System.Collections.Generic;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class SideBarViewModel : ViewModelBase
     {
         /// <summary>
@@ -14,12 +16,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public SideBarViewModel() : base()
         {
+            Console.WriteLine(Title + " created");
             Notebook = App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex];
-            
-
-            //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
-            SelectedNotebookPage = Pages[0];
         }
+
+        public override string Title { get { return "SideBarVM"; } }
 
         #region Model
 
@@ -86,10 +87,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
-       
-
-        private bool newSubmissionsSelected = false;
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -141,5 +138,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         #endregion //Bindings
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if (propertyName == "CurrentNotebookIndex")
+            {
+                int index = (viewModel as MainWindowViewModel).CurrentNotebookIndex;
+                Notebook = App.MainWindowViewModel.OpenNotebooks[index];
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
     }
 }

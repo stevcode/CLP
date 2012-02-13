@@ -1,4 +1,5 @@
 ﻿using Catel.MVVM;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -10,7 +11,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ServerWorkspaceViewModel()
             : base()
         {
+            Console.WriteLine(Title + " created");
         }
+
+        public override string Title { get { return "ServerWorkspaceVM"; } }
 
         public string WorkspaceName
         {
