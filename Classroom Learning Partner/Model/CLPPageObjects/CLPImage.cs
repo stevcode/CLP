@@ -33,8 +33,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Height = 300;
             Width = 300;
             LoadImageFromByteSource(ByteSource);
-        }
 
+        }
+        private bool IsAlive = false;
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
@@ -45,7 +46,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         protected override void OnDeserialized()
         {
-            LoadImageFromByteSource(ByteSource);
+            if (!IsAlive)
+            {
+                LoadImageFromByteSource(ByteSource);
+            }
+            IsAlive = true;
             base.OnDeserialized();
         }
 

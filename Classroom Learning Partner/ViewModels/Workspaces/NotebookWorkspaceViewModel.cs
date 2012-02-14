@@ -38,6 +38,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             }
         }
 
+        protected override void Close()
+        {
+            Console.WriteLine(Title + " closed");
+            base.Close();
+        }
+
         public override string Title { get { return "NotebookWorkspaceVM"; } }
 
         /// <summary>

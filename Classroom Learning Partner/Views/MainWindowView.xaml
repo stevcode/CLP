@@ -159,7 +159,7 @@
                     
                     <ribbon:RibbonToggleButton
                         Label="Snap Tile"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\SnapTileIcon.png"
                         Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
                     
                 </ribbon:RibbonGroup>

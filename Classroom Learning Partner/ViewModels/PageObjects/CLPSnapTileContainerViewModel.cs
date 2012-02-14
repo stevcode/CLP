@@ -1,5 +1,7 @@
 ﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Collections.ObjectModel;
+using Catel.MVVM;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -12,29 +14,32 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             : base()
         {
             PageObject = tile;
-            foreach (var tileColor in tile.Tiles)
-            {
-                Tiles.Add(tileColor);
-            }
 
-            _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
+            Tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Tiles_CollectionChanged);
         }
 
         public override string Title { get { return "SnapTileContainerVM"; } }
 
-        void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void Tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Height = CLPSnapTileContainer.TILE_HEIGHT * Tiles.Count;
         }
 
-        private ObservableCollection<string> _tiles = new ObservableCollection<string>();
+
         /// <summary>
-        /// List of color names, each list item being a tile in the tower.
+        /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("PageObject")]
         public ObservableCollection<string> Tiles
         {
-            get { return _tiles; }
+            get { return GetValue<ObservableCollection<string>>(TilesProperty); }
+            set { SetValue(TilesProperty, value); }
         }
+
+        /// <summary>
+        /// Register the Tiles property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData TilesProperty = RegisterProperty("Tiles", typeof(ObservableCollection<string>));
 
 
     }

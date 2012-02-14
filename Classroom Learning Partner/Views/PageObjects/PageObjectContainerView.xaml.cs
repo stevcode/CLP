@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public PageObjectContainerView()
         {
             InitializeComponent();
+            
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
@@ -47,7 +48,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
             {
-                //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObjectContainerViewModel.PageObject);
             }
         }
 
@@ -57,7 +58,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
 
-            //bool isStampedObject = false;
+            bool isStampedObject = false;
             //if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
             //{
             //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
@@ -80,32 +81,32 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             //}
 
 
-            //if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
-            //{
-            //    App.MainWindowViewModel.CanSendToTeacher = true;
-            //    double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-            //    double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-            //    if (x < 0)
-            //    {
-            //        x = 0;
-            //    }
-            //    if (y < 0)
-            //    {
-            //        y = 0;
-            //    }
-            //    if (x > 1056 - pageObjectContainerViewModel.Width)
-            //    {
-            //        x = 1056 - pageObjectContainerViewModel.Width;
-            //    }
-            //    if (y > 816 - pageObjectContainerViewModel.Height)
-            //    {
-            //        y = 816 - pageObjectContainerViewModel.Height;
-            //    }
+            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
+            {
+                App.MainWindowViewModel.CanSendToTeacher = true;
+                double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+                double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+                if (x < 0)
+                {
+                    x = 0;
+                }
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                if (x > 1056 - pageObjectContainerViewModel.Width)
+                {
+                    x = 1056 - pageObjectContainerViewModel.Width;
+                }
+                if (y > 816 - pageObjectContainerViewModel.Height)
+                {
+                    y = 816 - pageObjectContainerViewModel.Height;
+                }
 
-            //    Point pt = new Point(x, y);
-            //    isDragging = true;
-            //    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
-            //}
+                Point pt = new Point(x, y);
+                isDragging = true;
+                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+            }
         }
 
         private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
@@ -132,7 +133,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     newWidth = pageObjectContainerViewModel.Width;
                 }
 
-                //CLPService.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
+                CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
             }
         }
 

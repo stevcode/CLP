@@ -68,6 +68,12 @@ namespace Classroom_Learning_Partner.ViewModels
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
+        protected override void Close()
+        {
+            Console.WriteLine(Title + " closed");
+            base.Close();
+        }
+
         public override string Title { get { return "PageVM"; } }
 
         public bool undoFlag;

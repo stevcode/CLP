@@ -14,6 +14,7 @@ using MongoDB.Bson;
 using MongoDB.Driver.Builders;
 using System.Windows.Input;
 using System.Windows.Ink;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -145,6 +146,7 @@ namespace Classroom_Learning_Partner.Model
                 }
             }
         }
+
         public void SaveNotebooksFromDBToHD(CLPNotebook notebook)
         {
             switch (App.CurrentUserMode)
@@ -155,6 +157,7 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
+
         public void SavePageDB(CLPPage page)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -288,8 +291,10 @@ namespace Classroom_Learning_Partner.Model
             RemovePageObjectFromPage(pageObject);
             undoRedo = false;
         }
-        public void RemovePageObjectFromPage(PageObjectContainerViewModel pageObjectContainerViewModel)
+        public void RemovePageObjectFromPage(ICLPPageObject pageObject)
         {
+            //Steve - will not work with grid display
+            ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Remove(pageObject);
             //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
             //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
             ////AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
@@ -351,10 +356,8 @@ namespace Classroom_Learning_Partner.Model
         }
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {
-            //Point oldLocation = pageObjectContainerViewModel.Position;
-            //pageObjectContainerViewModel.Position = pt;
-            //pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
-            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+            Point oldLocation = pageObjectContainerViewModel.Position;
+            pageObjectContainerViewModel.Position = pt;
             
             //if (!undoRedo)
             //{

@@ -18,6 +18,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             CLPServiceAgent.Instance.ChooseNotebook(this);
         }
 
+        protected override void Close()
+        {
+            Console.WriteLine(Title + " closed");
+            base.Close();
+        }
+
         public override string Title { get { return "NotebookChooserWorkspaceVM"; } }
 
         //Steve - No need for NotebookSelecterViewModel, convert to something cleaner

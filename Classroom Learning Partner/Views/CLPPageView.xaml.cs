@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.Views
         public CLPPageView()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
@@ -109,6 +110,7 @@ namespace Classroom_Learning_Partner.Views
                     bool isOverStampedObject = false;
 
                     var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
+                    //Steve - if gridChild is IAdorned
                     if (gridChild is CLPImageStampViewModel)
                     {
                         isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
@@ -202,12 +204,14 @@ namespace Classroom_Learning_Partner.Views
 
             isMouseDown = true;
             timer.Stop();
-
+            //STeve - if inUpMode clpservice.up(pos)
         }
 
         private void TopCanvas_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = false;
+
+            //STeve - if inDownMode clpservice.down(pos)
             if (isSnapTileEnabled)
             {
                 Point pt = e.GetPosition(this.TopCanvas);

@@ -11,7 +11,7 @@
     <ListView ItemsSource="{Binding Path=Tiles}" Height="{Binding Path=Height}" Width="54" Background="Azure" BorderThickness="0" Margin="0" Padding="0">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <Rectangle Fill="SpringGreen" Stroke="Black" StrokeThickness="2" Margin="0" Height="48" Width="48" />
+                <Rectangle Fill="SpringGreen" Stroke="Black" StrokeThickness="2" Margin="0" Height="46" Width="46" />
             </DataTemplate>
         </ListView.ItemTemplate>
 

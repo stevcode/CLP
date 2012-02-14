@@ -386,6 +386,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="External Libraries\Catel.Core.dll" />
+    <Resource Include="Images\SnapTileIcon.png" />
     <Resource Include="External Libraries\Catel.Core.xml" />
     <Content Include="External Libraries\Catel.Windows.dll" />
     <Content Include="External Libraries\Catel.Windows.Toolkit.dll" />
