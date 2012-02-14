@@ -15,8 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
     {
         #region Constructors
 
-        public CLPImageStampViewModel(CLPImageStamp stamp, CLPPageViewModel pageViewModel)
-            : base(stamp, pageViewModel)
+        public CLPImageStampViewModel(CLPImageStamp stamp)
+            : base(stamp)
         {
             _sourceImage = stamp.SourceImage;
         }

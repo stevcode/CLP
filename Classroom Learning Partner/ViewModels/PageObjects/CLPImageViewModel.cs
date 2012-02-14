@@ -2,6 +2,8 @@
 using System.Windows.Media;
 using System.IO;
 using System.Windows.Media.Imaging;
+using Catel.Data;
+using Catel.MVVM;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -10,9 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image, CLPPageViewModel pageViewModel) : base(pageViewModel)
+        public CLPImageViewModel(CLPImage image) : base()
         {
-            LoadImageFromByteSource(image.ByteSource);
             PageObject = image;
         }
 
@@ -21,54 +22,20 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         #region Binding
 
         /// <summary>
-        /// The <see cref="SourceImage" /> property's name.
+        /// Gets or sets the property value.
         /// </summary>
-        public const string SourceImagePropertyName = "SourceImage";
-
-        private ImageSource _sourceImage;
-
-        /// <summary>
-        /// Sets and gets the SourceImage property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
+        [ViewModelToModel("PageObject")]
         public ImageSource SourceImage
         {
-            get
-            {
-                return _sourceImage;
-            }
-
-            set
-            {
-                if (_sourceImage == value)
-                {
-                    return;
-                }
-
-                _sourceImage = value;
-                RaisePropertyChanged(SourceImagePropertyName);
-            }
+            get { return GetValue<ImageSource>(SourceImageProperty); }
+            set { SetValue(SourceImageProperty, value); }
         }
+
+        /// <summary>
+        /// Register the SourceImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
 
         #endregion //Binding
-
-
-        private void LoadImageFromByteSource(byte[] byteSource)
-        {
-            MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
-            BitmapImage genBmpImage = new BitmapImage();
-
-            genBmpImage.BeginInit();
-            genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
-            genBmpImage.StreamSource = memoryStream;
-            genBmpImage.EndInit();
-            genBmpImage.Freeze();
-
-            memoryStream.Dispose();
-            memoryStream.Close();
-            memoryStream = null;
-
-            _sourceImage = genBmpImage;
-        }
     }
 }

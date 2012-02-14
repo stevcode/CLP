@@ -10,9 +10,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         public PageObjectContainerViewModel(CLPPageObjectBaseViewModel pageObjectBaseViewModel) : base()
         {
-            Position = pageObjectBaseViewModel.Position;
-            Width = pageObjectBaseViewModel.Width;
-            Height = pageObjectBaseViewModel.Height;
+            //Position = pageObjectBaseViewModel.Position;
+            //Width = pageObjectBaseViewModel.Width;
+            //Height = pageObjectBaseViewModel.Height;
             Visible = Visibility.Visible;
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 RaisePropertyChanged(WidthPropertyName);
                 if (PageObjectViewModel != null)
                 {
-                    PageObjectViewModel.Width = _width;
+                    //PageObjectViewModel.Width = _width;
                 }     
             }
         }
@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 RaisePropertyChanged(HeightPropertyName);
                 if (PageObjectViewModel != null)
                 {
-                    PageObjectViewModel.Height = _height;
+                    //PageObjectViewModel.Height = _height;
                 }
             }
         }

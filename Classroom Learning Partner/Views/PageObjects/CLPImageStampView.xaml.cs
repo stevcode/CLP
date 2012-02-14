@@ -82,33 +82,33 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
 
-                    double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-                    double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-                    if (x < 0)
-                    {
-                        x = 0;
-                    }
-                    if (y < 0)
-                    {
-                        y = 0;
-                    }
-                    if (x > 1056 - pageObjectContainerViewModel.Width)
-                    {
-                        x = 1056 - pageObjectContainerViewModel.Width;
-                    }
-                    if (y > 816 - pageObjectContainerViewModel.Height)
-                    {
-                        y = 816 - pageObjectContainerViewModel.Height;
-                    }
+                //    double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+                //    double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+                //    if (x < 0)
+                //    {
+                //        x = 0;
+                //    }
+                //    if (y < 0)
+                //    {
+                //        y = 0;
+                //    }
+                //    if (x > 1056 - pageObjectContainerViewModel.Width)
+                //    {
+                //        x = 1056 - pageObjectContainerViewModel.Width;
+                //    }
+                //    if (y > 816 - pageObjectContainerViewModel.Height)
+                //    {
+                //        y = 816 - pageObjectContainerViewModel.Height;
+                //    }
 
-                    Point pt = new Point(x, y);
-                    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
-                }
+                //    Point pt = new Point(x, y);
+                //    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                //}
             }
         }
 
@@ -116,10 +116,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Green);
-                }
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Green);
+                //}
             }
         }
 
@@ -127,10 +127,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Black);
-                }
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Black);
+                //}
             }
         }
 
@@ -139,17 +139,17 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Green);
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Green);
 
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                    oldPosition = pageObjectContainerViewModel.Position;
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //    oldPosition = pageObjectContainerViewModel.Position;
 
-                    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
-                    //CLPService.AddPageObjectToPage(stamp);
-                } 
+                //    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+                //    //CLPService.AddPageObjectToPage(stamp);
+                //} 
             } 
         }
 
@@ -157,37 +157,37 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Black);
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Black);
 
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                    Point newPosition = pageObjectContainerViewModel.Position;
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //    Point newPosition = pageObjectContainerViewModel.Position;
 
-                    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-                    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-                    //change these to be past the height/width of the container
-                    if (deltaX > 50 || deltaY > 50)
-                    {
+                //    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                //    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                //    //change these to be past the height/width of the container
+                //    if (deltaX > 50 || deltaY > 50)
+                //    {
 
-                        stampViewModel.IsAnchored = false;
-                        //make serviceagent call here to change model and database
-                        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                //        stampViewModel.IsAnchored = false;
+                //        //make serviceagent call here to change model and database
+                //        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
 
-                        adornedControl.HideAdorner();
+                //        adornedControl.HideAdorner();
 
-                        if (App.Peer.Channel != null && App.CurrentUserMode == App.UserMode.Instructor)
-                        {
-                            string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-                            App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
-                        } 
-                    }
-                    else
-                    {
-                        //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-                    }
-                }
+                //        if (App.Peer.Channel != null && App.CurrentUserMode == App.UserMode.Instructor)
+                //        {
+                //            string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+                //            App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
+                //        } 
+                //    }
+                //    else
+                //    {
+                //        //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                //    }
+                //}
             }
         }  
     }

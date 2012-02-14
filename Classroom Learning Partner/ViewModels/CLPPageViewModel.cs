@@ -93,16 +93,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Page")]
-        public CLPHistory PageHistory
-        {
-            get { return GetValue<CLPHistory>(PageHistoryProperty); }
-            private set { SetValue(PageHistoryProperty, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         [ViewModelToModel("Page","Strokes")]
         public ObservableCollection<string> StringStrokes
         {
@@ -114,11 +104,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the name property so it is known in the class.
         /// </summary>
         public static readonly PropertyData StringStrokesProperty = RegisterProperty("StringStrokes", typeof(ObservableCollection<string>));
-
-        /// <summary>
-        /// Register the History property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -134,6 +119,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public CLPHistory PageHistory
+        {
+            get { return GetValue<CLPHistory>(PageHistoryProperty); }
+            set { SetValue(PageHistoryProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageHistory property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -344,12 +344,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Steve - account for removal of pageObjectContainers
                 //pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
-        }
-
-        protected override bool Save()
-        {
-            //Steve - implement saving feature here
-            return base.Save();
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)

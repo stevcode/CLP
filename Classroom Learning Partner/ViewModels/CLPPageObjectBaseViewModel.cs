@@ -4,48 +4,80 @@ using Classroom_Learning_Partner.Model;
 using System.Windows;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
     {
-        public CLPPageViewModel PageViewModel { get; protected set; }
-
-        protected CLPPageObjectBaseViewModel(CLPPageViewModel pageViewModel) : base()
+        protected CLPPageObjectBaseViewModel() : base()
         {
-            PageViewModel = pageViewModel;
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
 
-        private CLPPageObjectBase _pageObject;
+        #region Model
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [Model]
         public CLPPageObjectBase PageObject
         {
-            get
-            {
-                return _pageObject;
-            }
-            set
-            {
-                _pageObject = value;
-                this.Position = _pageObject.Position;
-                this.Height = _pageObject.Height;
-                this.Width = _pageObject.Width;
-            }
+            get { return GetValue<CLPPageObjectBase>(PageObjectProperty); }
+            protected set { SetValue(PageObjectProperty, value); }
         }
 
-        private PageObjectContainerViewModel _container;
-        public PageObjectContainerViewModel Container
+        /// <summary>
+        /// Register the PageObject property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(CLPPageObjectBase));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double Height
         {
-            get
-            {
-                return _container;
-            }
-            set
-            {
-                _container = value;
-            }
+            get { return GetValue<double>(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
         }
+
+        /// <summary>
+        /// Register the Height property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double Width
+        {
+            get { return GetValue<double>(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Width property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public Point Position
+        {
+            get { return GetValue<Point>(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Position property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point));
         
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
@@ -57,99 +89,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #region Bindings
-
-        /// <summary>
-        /// The <see cref="Height" /> property's name.
-        /// </summary>
-        public const string HeightPropertyName = "Height";
-
-        private double _height = 0;
-
-        /// <summary>
-        /// Sets and gets the Height property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public double Height
-        {
-            get
-            {
-                return _height;
-            }
-
-            set
-            {
-                if (_height == value)
-                {
-                    return;
-                }
-
-                _height = value;
-                RaisePropertyChanged(HeightPropertyName);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="Width" /> property's name.
-        /// </summary>
-        public const string WidthPropertyName = "Width";
-
-        private double _width = 0;
-
-        /// <summary>
-        /// Sets and gets the Width property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public double Width
-        {
-            get
-            {
-                return _width;
-            }
-
-            set
-            {
-                if (_width == value)
-                {
-                    return;
-                }
-
-                _width = value;
-                RaisePropertyChanged(WidthPropertyName);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="Position" /> property's name.
-        /// </summary>
-        public const string PositionPropertyName = "Position";
-
-        private Point _position = new Point(0,0);
-
-        /// <summary>
-        /// Sets and gets the Position property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public Point Position
-        {
-            get
-            {
-                return _position;
-            }
-
-            set
-            {
-                if (_position == value)
-                {
-                    return;
-                }
-
-                _position = value;
-                RaisePropertyChanged(PositionPropertyName);
-            }
-        }
-
-        #endregion //Bindings
+        #endregion //Model
 
         public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedScribbles)
         {

@@ -351,10 +351,10 @@ namespace Classroom_Learning_Partner.Model
         }
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {
-            Point oldLocation = pageObjectContainerViewModel.Position;
-            pageObjectContainerViewModel.Position = pt;
-            pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
-            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
+            //Point oldLocation = pageObjectContainerViewModel.Position;
+            //pageObjectContainerViewModel.Position = pt;
+            //pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
+            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             
             //if (!undoRedo)
             //{

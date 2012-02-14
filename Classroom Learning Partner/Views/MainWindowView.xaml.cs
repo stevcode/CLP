@@ -58,7 +58,5 @@ namespace Classroom_Learning_Partner.Views
             (sender as RibbonToggleButton).IsChecked = true;
             (sender as RibbonToggleButton).Checked += ToolsGroup_Checked;
         }
-
-
     }
 }

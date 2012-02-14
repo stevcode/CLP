@@ -50,7 +50,6 @@ namespace Classroom_Learning_Partner.Model
             InkStrokes = StringsToStrokes(Strokes);
             base.OnDeserialized();
         }
-        
 
         #region Properties
 

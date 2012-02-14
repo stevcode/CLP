@@ -8,8 +8,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPSnapTileViewModel class.
         /// </summary>
-        public CLPSnapTileContainerViewModel(CLPSnapTileContainer tile, CLPPageViewModel pageViewModel)
-            : base(pageViewModel)
+        public CLPSnapTileContainerViewModel(CLPSnapTileContainer tile)
+            : base()
         {
             PageObject = tile;
             foreach (var tileColor in tile.Tiles)

@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     /// 
     /// </summary>
     [Serializable]
+    [AllowNonSerializableMembers]
     public class CLPImage : CLPPageObjectBase, ICLPPageObject
     {
         #region Variables
@@ -41,6 +42,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         protected CLPImage(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
+        protected override void OnDeserialized()
+        {
+            LoadImageFromByteSource(ByteSource);
+            base.OnDeserialized();
+        }
+
         #endregion
 
         #region Properties
@@ -59,24 +66,41 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// </summary>
         public static readonly PropertyData ByteSourceProperty = RegisterProperty("ByteSource", typeof(byte[]), null);
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ImageSource SourceImage
+        {
+            get { return GetValue<ImageSource>(SourceImageProperty); }
+            set { SetValue(SourceImageProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SourceImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null, true, false);
+
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
+        private void LoadImageFromByteSource(byte[] byteSource)
         {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
+            MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
+            BitmapImage genBmpImage = new BitmapImage();
 
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
+            genBmpImage.BeginInit();
+            genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
+            genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
+            genBmpImage.StreamSource = memoryStream;
+            genBmpImage.EndInit();
+            genBmpImage.Freeze();
+
+            memoryStream.Dispose();
+            memoryStream.Close();
+            memoryStream = null;
+
+            SourceImage = genBmpImage;
         }
 
         public ICLPPageObject Duplicate()

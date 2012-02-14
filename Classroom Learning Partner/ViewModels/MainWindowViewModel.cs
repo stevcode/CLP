@@ -103,6 +103,8 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
 
+            InsertImageCommand = new Command(OnInsertImageCommandExecute);
+
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -858,6 +860,35 @@ namespace Classroom_Learning_Partner.ViewModels
         //                                  }));
         //    }
         //}
+
+
+        /// <summary>
+        /// Gets the InsertImageCommand command.
+        /// </summary>
+        public Command InsertImageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertImageCommand command is executed.
+        /// </summary>
+        private void OnInsertImageCommandExecute()
+        {
+            // Configure open file dialog box
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                // Open document
+                string filename = dlg.FileName;
+                CLPImage image = new CLPImage(filename);
+                //CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
+            }
+        }
 
         //private RelayCommand _insertImageCommand;
 

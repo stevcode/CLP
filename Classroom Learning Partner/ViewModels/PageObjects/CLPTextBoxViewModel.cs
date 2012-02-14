@@ -9,7 +9,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
     public class CLPTextBoxViewModel : CLPPageObjectBaseViewModel
     {
-        public CLPTextBoxViewModel(CLPTextBox textBox, CLPPageViewModel pageViewModel) : base(pageViewModel)
+        public CLPTextBoxViewModel(CLPTextBox textBox)
+            : base()
         {
             PageObject = textBox;
             _CLPText = textBox.Text;

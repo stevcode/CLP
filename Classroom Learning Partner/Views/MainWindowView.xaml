@@ -122,10 +122,10 @@
                 
                 <ribbon:RibbonGroup Header="Notebook">
                     
-                    <ribbon:RibbonToggleButton
+                    <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
                         Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        Command="{Binding Path=ShowNotebookPagesCommand}"/>
+                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="True" />
                     
                 </ribbon:RibbonGroup>
                 

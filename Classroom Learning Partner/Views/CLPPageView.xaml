@@ -8,6 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
+             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
              x:TypeArguments="vm:CLPPageViewModel">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -29,6 +30,11 @@
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   >
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl DataContext="{Binding}" />
+                            </DataTemplate>  
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
