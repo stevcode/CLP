@@ -78,6 +78,10 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<CLPPageViewModel>(SelectedNotebookPageProperty); }
             set
             {
+                if (SelectedNotebookPage != null)
+                {
+                	SelectedNotebookPage.SaveViewModel();
+                }
                 SetValue(SelectedNotebookPageProperty, value);
                 CurrentPage = SelectedNotebookPage;
             }
