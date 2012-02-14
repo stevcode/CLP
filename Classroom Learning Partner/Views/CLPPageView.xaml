@@ -32,7 +32,7 @@
                                   >
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl DataContext="{Binding}" />
+                                <vwpo:PageObjectContainerView DataContext="{Binding}" />
                             </DataTemplate>  
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

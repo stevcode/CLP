@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 ByteSource = File.ReadAllBytes(path);
             }
-
+            LoadImageFromByteSource(ByteSource);
             Position = new System.Windows.Point(10, 10);
             Height = 300;
             Width = 300;
@@ -72,7 +72,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public ImageSource SourceImage
         {
             get { return GetValue<ImageSource>(SourceImageProperty); }
-            set { SetValue(SourceImageProperty, value); }
+            private set { SetValue(SourceImageProperty, value); }
         }
 
         /// <summary>
@@ -101,6 +101,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             memoryStream = null;
 
             SourceImage = genBmpImage;
+        }
+
+        public string PageObjectType
+        {
+            get { return "CLPImage"; }
         }
 
         public ICLPPageObject Duplicate()

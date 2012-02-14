@@ -106,6 +106,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
+        public string PageObjectType
+        {
+            get { return "CLPImageStamp"; }
+        }
+
         public ICLPPageObject Duplicate()
         {
             CLPImageStamp newImageStamp = this.Clone() as CLPImageStamp;

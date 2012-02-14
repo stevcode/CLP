@@ -40,5 +40,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
             return newStamp;
         }
+
+        public string PageObjectType
+        {
+            get { return "CLPBlankStamp"; }
+        }
     }
 }

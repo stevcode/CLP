@@ -76,6 +76,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
         }
 
+        public string PageObjectType
+        {
+            get { return "CLPTextBox"; }
+        }
+
         public ICLPPageObject Duplicate()
         {
             CLPTextBox newTextBox = this.Clone() as CLPTextBox;

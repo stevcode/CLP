@@ -7,6 +7,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     public interface ICLPPageObject
     {
+        string PageObjectType { get; }
+
         ICLPPageObject Duplicate();
     }
 }

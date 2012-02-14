@@ -411,8 +411,8 @@ namespace Classroom_Learning_Partner.Model
             Tuple<double, double> newValue = new Tuple<double, double>(height, width);
             pageObjectContainerViewModel.Height = height;
             pageObjectContainerViewModel.Width = width;
-            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
-            pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
+            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
+            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
             //DATABASE change page object's dimensions
             //if (!undoRedo)
             //{
