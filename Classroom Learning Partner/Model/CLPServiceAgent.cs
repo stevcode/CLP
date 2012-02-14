@@ -319,7 +319,7 @@ namespace Classroom_Learning_Partner.Model
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page)
         {
             Stroke s = null;
-            foreach (var v in page.Strokes)
+            foreach (var v in page.InkStrokes)
             {
                 
                 if(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString().Equals(v.GetPropertyData(CLPPage.StrokeIDKey).ToString()) )
@@ -329,7 +329,7 @@ namespace Classroom_Learning_Partner.Model
                     }
             }
             if(s != null)
-                page.Strokes.Remove(s);
+                page.InkStrokes.Remove(s);
 
         }
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
@@ -340,7 +340,7 @@ namespace Classroom_Learning_Partner.Model
         }
         public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page)
         {
-            page.Strokes.Add(stroke);
+            page.InkStrokes.Add(stroke);
             
         }
         public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page, bool isUndo)

@@ -33,7 +33,7 @@
                     <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
-                               Strokes="{Binding Path=Strokes}"
+                               Strokes="{Binding Path=InkStrokes}"
                                EditingMode="{Binding Path=EditingMode}"
                                EditingModeInverted="EraseByStroke"
                                DefaultDrawingAttributes="{Binding Path=DefaultDA}">

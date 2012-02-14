@@ -44,26 +44,25 @@ namespace Classroom_Learning_Partner.ViewModels
              
             Page = page;
 
-            Strokes = new StrokeCollection();
             OtherStrokes = new StrokeCollection();
 
-            foreach (string stringStroke in Page.Strokes)
-            {
-                Stroke stroke = CLPPage.StringToStroke(stringStroke);
-                if (stroke.ContainsPropertyData(CLPPage.Immutable))
-                {
-                    if (stroke.GetPropertyData(CLPPage.Immutable).ToString() == "true")
-                    {
-                        OtherStrokes.Add(stroke);
-                    }
-                    else
-                    {
-                        Strokes.Add(stroke);
-                    }
-                }
-            }
+            //foreach (string stringStroke in Page.Strokes)
+            //{
+            //    Stroke stroke = CLPPage.StringToStroke(stringStroke);
+            //    if (stroke.ContainsPropertyData(CLPPage.Immutable))
+            //    {
+            //        if (stroke.GetPropertyData(CLPPage.Immutable).ToString() == "true")
+            //        {
+            //            OtherStrokes.Add(stroke);
+            //        }
+            //        else
+            //        {
+            //            InkStrokes.Add(stroke);
+            //        }
+            //    }
+            //}
             
-            Strokes.StrokesChanged += new StrokeCollectionChangedEventHandler(Strokes_StrokesChanged);
+            InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
 
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
@@ -100,6 +99,21 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<CLPHistory>(PageHistoryProperty); }
             private set { SetValue(PageHistoryProperty, value); }
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page","Strokes")]
+        public ObservableCollection<string> StringStrokes
+        {
+            get { return GetValue<ObservableCollection<string>>(StringStrokesProperty); }
+            set { SetValue(StringStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the name property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData StringStrokesProperty = RegisterProperty("StringStrokes", typeof(ObservableCollection<string>));
 
         /// <summary>
         /// Register the History property so it is known in the class.
@@ -139,6 +153,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("Page")]
+        public bool IsSubmission
+        {
+            get { return GetValue<bool>(IsSubmissionProperty); }
+            set { SetValue(IsSubmissionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsSubmission property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsSubmissionProperty = RegisterProperty("IsSubmission", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public Visibility PlaybackControlsVisibility
         {
             get { return GetValue<Visibility>(PlaybackControlsVisibilityProperty); }
@@ -157,16 +186,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public StrokeCollection Strokes
+        [ViewModelToModel("Page")]
+        public StrokeCollection InkStrokes
         {
-            get { return GetValue<StrokeCollection>(StrokesProperty); }
-            set { SetValue(StrokesProperty, value); }
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>
-        /// Register the Strokes property so it is known in the class.
+        /// Register the InkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData StrokesProperty = RegisterProperty("Strokes", typeof(StrokeCollection));
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -219,19 +249,19 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CanSendToTeacher = true;
         }
 
-        void Strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.CanSendToTeacher = true;
 
-            //foreach (var stroke in e.Removed)
-            //{
-            //    //Page.Strokes.Remove(StrokeToString(stroke));
-            //    if (!undoFlag)
-            //    {
-            //        //CLPHistoryItem item = new CLPHistoryItem("ERASE");
-            //        //HistoryVM.AddHistoryItem(stroke, item);
-            //    }
-            //}
+            foreach (var stroke in e.Removed)
+            {
+                Page.Strokes.Remove(CLPPage.StrokeToString(stroke));
+                //if (!undoFlag)
+                //{
+                //    //CLPHistoryItem item = new CLPHistoryItem("ERASE");
+                //    //HistoryVM.AddHistoryItem(stroke, item);
+                //}
+            }
 
             StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
@@ -255,16 +285,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
 
-            //foreach (var stroke in addedStrokes)
-            //{
-            //    stroke.AddPropertyData(CLPPage.Mutable, "true");
-            //    Page.Strokes.Add(StrokeToString(stroke));
-            //    if (!undoFlag)
-            //    {
-            //        CLPHistoryItem item = new CLPHistoryItem("ADD");
-            //        HistoryVM.AddHistoryItem(stroke, item);
-            //    }
-            //}
+            foreach (var stroke in addedStrokes)
+            {
+                stroke.AddPropertyData(CLPPage.Immutable, "false");
+                Page.Strokes.Add(CLPPage.StrokeToString(stroke));
+                //if (!undoFlag)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem("ADD");
+                //    HistoryVM.AddHistoryItem(stroke, item);
+                //}
+            }
 
 
             if (App.CurrentUserMode == App.UserMode.Instructor)

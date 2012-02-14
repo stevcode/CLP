@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.Model
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
+    [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
     {
         #region Variables
@@ -31,6 +32,8 @@ namespace Classroom_Learning_Partner.Model
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
+            InkStrokes = new StrokeCollection();
+            Strokes = new ObservableCollection<string>();
         }
 
         /// <summary>
@@ -42,7 +45,28 @@ namespace Classroom_Learning_Partner.Model
             : base(info, context) { }
         #endregion
 
+        protected override void OnDeserialized()
+        {
+            InkStrokes = StringsToStrokes(Strokes);
+            base.OnDeserialized();
+        }
+        
+
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InkStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), new StrokeCollection(), true, false);
 
         /// <summary>
         /// Gets a list of stringified strokes on the page.
