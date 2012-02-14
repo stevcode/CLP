@@ -36,13 +36,13 @@ namespace Classroom_Learning_Partner.Views
             CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
             SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
 
-            if (pageViewModel.Page.IsSubmission)
+            if (pageViewModel.IsSubmission)
             {
-                sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
+                sideBarViewModel.SelectedSubmissionPage = pageViewModel;
             }
             else
             {
-                sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
+                sideBarViewModel.SelectedNotebookPage = pageViewModel;
             }
         }
     }

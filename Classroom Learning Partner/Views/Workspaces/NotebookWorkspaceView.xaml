@@ -14,7 +14,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <vw:SideBarView DataContext="{Binding Notebook}"  Grid.Column="0" />
+        <vw:SideBarView DataContext="{Binding SideBar}"  Grid.Column="0" />
 
         <!-- Control that dynamically determines what Display to show -->
         <Control Grid.Column="1">

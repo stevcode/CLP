@@ -802,9 +802,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnAddNewPageCommandExecute()
         {
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            //Steve - clpserviceagent
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
             index++;
-            OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, new CLPPage());
+            CLPPage page = new CLPPage();
+            OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, page);
+            (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
 
         /// <summary>
@@ -817,11 +820,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDeletePageCommandExecute()
         {
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            //Steve - clpserviceagent
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
             if (index != -1)
             {
-                //Steve - SideBar doesn't select next page when current page is deleted
+                
                 OpenNotebooks[CurrentNotebookIndex].RemovePageAt(index);
+                (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
             }
         }
 
