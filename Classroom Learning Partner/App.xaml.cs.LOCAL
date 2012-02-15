@@ -35,11 +35,13 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
             CLPService = new CLPServiceAgent();
             //#############################
-            CurrentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.NotUsing;
-            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
+            CurrentUserMode = UserMode.Server;
+            _databaseUse = DatabaseMode.Using;
+            switch (App.CurrentUserMode)
             {
-                ConnectToDB();
+                case UserMode.Server:
+                    ConnectToDB();
+                    break;
             }
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
@@ -55,10 +57,6 @@ namespace Classroom_Learning_Partner
                 App.CurrentNotebookViewModel = new CLPNotebookViewModel();
                 App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
                 CLPService.SetWorkspace();
-            }
-            else if (App.CurrentUserMode == UserMode.Student)
-            {
-                MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
             }
             else if (App.CurrentUserMode == App.UserMode.Server)
             {
@@ -77,7 +75,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://18.28.6.168";
+            string ConnectionString = "mongodb://18.28.5.202";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Conencted to DB");
         }

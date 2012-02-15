@@ -102,11 +102,11 @@
                     Label="Laser Pointer"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding Path=SetLaserPointerModeCommand}"
-                    Visibility="{Binding Path=InstructorVisibility}"/>
+                    Visibility="{Binding Path=InstructorVisibility}"/>-->
                 <ribbon:RibbonButton
                     Label="Snap Tile"
                     LargeImageSource="..\Images\LargeIcon.png"
-                    Command="{Binding Path=SetSnapTileCommand}"/>-->
+                    Command="{Binding Path=SetSnapTileCommand}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup
@@ -195,12 +195,12 @@
 
             <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
                 <ribbon:RibbonButton
-                    LargeImageSource="..\Images\play2.png"
+                    LargeImageSource="..\Images\video.png"
                     Label="Enable Playback"
                     Command="{Binding Path=EnablePlaybackCommand}" />
                 <ribbon:RibbonButton
                     LargeImageSource="{Binding Path=RecordImage}"
-                    Label="Record"
+                    Label="Record Audio"
                     Command="{Binding Path=AudioCommand}" />
                 <ribbon:RibbonButton
                     LargeImageSource="..\Images\play.png"
@@ -396,6 +396,10 @@
                     Label="Delete This Page"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=DeletePageCommand}" />
+                <ribbon:RibbonButton
+                    Label="Duplicate This Page"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=DuplicatePageCommand}" />
             </ribbon:RibbonGroup>
         </ribbon:RibbonTab>
     </ribbon:Ribbon>

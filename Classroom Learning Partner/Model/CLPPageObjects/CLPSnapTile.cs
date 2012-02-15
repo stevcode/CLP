@@ -3,36 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
     public class CLPSnapTile : CLPPageObjectBase
     {
+        #region Variables
+
         public const int TILE_HEIGHT = 50;
 
-        public CLPSnapTile()
-            : this(new Point(10, 10), null, null)
-        {
-        }
+        #endregion
 
-        public CLPSnapTile(Point pt)
-            : this(pt, null, null)
-        {
-        }
-
-        public CLPSnapTile(Point pt, CLPSnapTile nextTile, CLPSnapTile prevTile)
+        #region Constructor & destructor
+        /// <summary>
+        /// Initializes a new object from scratch.
+        /// </summary>
+        public CLPSnapTile(Point pt, string color)
             : base()
         {
-            Height = TILE_HEIGHT;
+            Position = pt;
+            Tiles.Add(color);
+            Height = TILE_HEIGHT * Tiles.Count;
             Width = TILE_HEIGHT;
-            base.Position = pt;
-            NextTile = nextTile;
-            PrevTile = prevTile;
+
+            _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
         }
 
-        public CLPSnapTile NextTile { get; set; }
-        public CLPSnapTile PrevTile { get; set; }
+        void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Height = TILE_HEIGHT * Tiles.Count;
+        }
 
+        #endregion
+
+        #region Properties
+
+        private ObservableCollection<string> _tiles = new ObservableCollection<string>();
+        /// <summary>
+        /// List of color names, each list item being a tile in the tower.
+        /// </summary>
+        public ObservableCollection<string> Tiles
+        {
+            get { return _tiles; }
+        }
+
+        
+
+        #endregion
     }
 }
