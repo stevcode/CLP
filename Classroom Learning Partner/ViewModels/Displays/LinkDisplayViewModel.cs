@@ -10,38 +10,30 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel(CLPPageViewModel page)
+        public LinkedDisplayViewModel(CLPPage page)
             : base()
         {
             DisplayedPage = page;
             if (DisplayedPage != null)
             {
-                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
+                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.UniqueID);
             }
         }
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel DisplayedPage
+        [Model(SupportIEditableObject=false)]
+        public CLPPage DisplayedPage
         {
-            get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
-            set { SetValue(DisplayedPageProperty, value);
-            if (value != null)
-            {
-            	Console.WriteLine("DisplayPage changed to pageVM" + value.Page.UniqueID);
-            }
-            else
-            {
-                Console.WriteLine("DisplayPage set to null value");
-            }
-            }
+            get { return GetValue<CLPPage>(DisplayedPageProperty); }
+            private set { SetValue(DisplayedPageProperty, value); }
         }
 
         /// <summary>
         /// Register the DisplayedPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
 
         public string DisplayName
         {
@@ -83,7 +75,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public override string Title { get { return "LinkDisplayVM"; } }
 
 
-        public void AddPageToDisplay(CLPPageViewModel page)
+        public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
         }

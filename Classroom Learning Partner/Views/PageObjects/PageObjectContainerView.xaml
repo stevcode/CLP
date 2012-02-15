@@ -196,20 +196,20 @@
         <Grid x:Name="HitBox" Background="Transparent">
             <Rectangle   Fill="Transparent" />
             <!-- Control that dynamically determines what Display to show -->
-            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding PageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
+            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
 
                 <Control.Resources>
 
                     <ControlTemplate x:Key="CLPImageTemplate">
-                        <vwpo:CLPImageView DataContext="{Binding PageObject}" />
+                        <vwpo:CLPImageView DataContext="{Binding}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="CLPTextBoxTemplate">
-                        <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
+                        <vwpo:CLPTextBoxView DataContext="{Binding}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="CLPSquareShapeTemplate">
-                        <vwpo:CLPSquareShapeView DataContext="{Binding PageObject}" />
+                        <vwpo:CLPSquareShapeView DataContext="{Binding}" />
                     </ControlTemplate>
 
                 </Control.Resources>

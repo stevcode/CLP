@@ -13,6 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         bool IsOnProjector { get; set; }
         bool IsActive { get; set; }
 
-        void AddPageToDisplay(CLPPageViewModel page);
+        void AddPageToDisplay(CLPPage page);
     }
 }

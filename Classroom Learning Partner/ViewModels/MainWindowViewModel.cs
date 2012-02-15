@@ -806,7 +806,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddNewPageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             index++;
             CLPPage page = new CLPPage();
             OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, page);
@@ -824,7 +824,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDeletePageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
+            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             if (index != -1)
             {
                 
@@ -955,7 +955,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPSquareShape square = new CLPSquareShape();
             //CLPServiceAgent.Instance.AddPageObjectToPage(image);
-            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
+            CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.CurrentPage;
+            page.PageObjects.Add(square);
+            //((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
         }
 
 

@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.Views.Displays
         public LinkedDisplayView()
         {
             InitializeComponent();
-            CloseViewModelOnUnloaded = false;
+            //CloseViewModelOnUnloaded = false;
         }
 
         private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)

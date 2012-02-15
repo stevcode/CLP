@@ -66,7 +66,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
 
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
+            VMuniqueID = Guid.NewGuid().ToString();
         }
+
+        private string VMuniqueID;
 
         protected override void Close()
         {
@@ -253,6 +256,7 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.CanSendToTeacher = true;
+            Console.WriteLine("adding page ofject to page with uniqueID: " + Page.UniqueID + ", from pageVM: " + VMuniqueID);
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)

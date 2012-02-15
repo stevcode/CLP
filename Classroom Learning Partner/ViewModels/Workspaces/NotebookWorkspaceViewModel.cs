@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             //LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
 
             SideBar = new SideBarViewModel(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
+            SideBar.SelectedNotebookPage = SideBar.Pages[0];
             LinkedDisplay = new LinkedDisplayViewModel(SideBar.CurrentPage);
 
             SelectedDisplay = LinkedDisplay;
@@ -157,7 +158,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
             if (propertyName == "CurrentPage")
             {
-                SelectedDisplay.AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+                if (SelectedDisplay != null)
+                {
+                	SelectedDisplay.AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+                }
             }
 
             //if (propertyName == "CurrentNotebookIndex")

@@ -90,23 +90,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<CLPPageViewModel> SubmissionPages
+        public ObservableCollection<CLPPage> SubmissionPages
         {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(SubmissionPagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
             set { SetValue(SubmissionPagesProperty, value); }
         }
 
         /// <summary>
         /// Register the SubmissionPages property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPageViewModel>));
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel SelectedNotebookPage
+        public CLPPage SelectedNotebookPage
         {
-            get { return GetValue<CLPPageViewModel>(SelectedNotebookPageProperty); }
+            get { return GetValue<CLPPage>(SelectedNotebookPageProperty); }
             set
             {
                 SetValue(SelectedNotebookPageProperty, value);
@@ -117,14 +117,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the SelectedNotebookPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SelectedNotebookPageProperty = RegisterProperty("SelectedNotebookPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData SelectedNotebookPageProperty = RegisterProperty("SelectedNotebookPage", typeof(CLPPage));
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel SelectedSubmissionPage
+        public CLPPage SelectedSubmissionPage
         {
-            get { return GetValue<CLPPageViewModel>(SelectedSubmissionPageProperty); }
+            get { return GetValue<CLPPage>(SelectedSubmissionPageProperty); }
             set
             {
                 SetValue(SelectedSubmissionPageProperty, value);
@@ -135,21 +135,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the SelectedSubmissionPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SelectedSubmissionPageProperty = RegisterProperty("SelectedSubmissionPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData SelectedSubmissionPageProperty = RegisterProperty("SelectedSubmissionPage", typeof(CLPPage));
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel CurrentPage
+        public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
             set { SetValue(CurrentPageProperty, value); }
         }
 
         /// <summary>
         /// Register the CurrentPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         #endregion //Bindings
 

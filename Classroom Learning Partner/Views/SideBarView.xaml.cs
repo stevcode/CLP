@@ -39,12 +39,12 @@ namespace Classroom_Learning_Partner.Views
 
             if (pageViewModel.IsSubmission)
             {
-                sideBarViewModel.SelectedSubmissionPage = pageViewModel;
+                sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
             }
             else
             {
                 Console.WriteLine("SelectedNotebookPage set");
-                sideBarViewModel.SelectedNotebookPage = pageViewModel;
+                sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
             }
         }
 
