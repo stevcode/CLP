@@ -2,6 +2,7 @@
 using Catel.MVVM;
 using Catel.Data;
 using System;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -78,6 +79,12 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
+        }
+
+        public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
+        {
+            DisplayedPage.PageObjects.Add(pageObject);
+
         }
 
     }

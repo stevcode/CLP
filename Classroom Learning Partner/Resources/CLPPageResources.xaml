@@ -22,7 +22,7 @@
         <vw:PageObjectContainerView />
     </DataTemplate>-->
 
-    <DataTemplate DataType="{x:Type vmpo:CLPTextBoxViewModel}">
+    <!--<DataTemplate DataType="{x:Type vmpo:CLPTextBoxViewModel}">
         <vwpo:CLPTextBoxView />
     </DataTemplate>
 
@@ -40,6 +40,6 @@
 
     <DataTemplate DataType="{x:Type vmpo:CLPSnapTileContainerViewModel}">
         <vwpo:CLPSnapTileContainerView />
-    </DataTemplate>   
+    </DataTemplate>-->   
 
 </ResourceDictionary>
