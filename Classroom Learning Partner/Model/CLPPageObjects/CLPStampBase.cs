@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.Model
 {

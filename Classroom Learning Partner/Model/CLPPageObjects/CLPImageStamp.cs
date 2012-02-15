@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -72,6 +68,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             newStamp.Position = Position;
             newStamp.Height = Height;
             newStamp.Width = Width;
+
+            foreach (var stringStroke in PageObjectStrokes)
+            {
+                newStamp.PageObjectStrokes.Add(stringStroke);
+            }
 
             return newStamp;
         }

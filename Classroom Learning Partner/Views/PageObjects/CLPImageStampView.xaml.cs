@@ -28,13 +28,12 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPImageStampView()
         {
             InitializeComponent();
+
             CLPService = new CLPServiceAgent();
             
             adornedControl.IsMouseOverShowEnabled = false;
 
             this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);
-
-            
         }
 
         private bool isOnPreview = false;
@@ -159,6 +158,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
                     CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
                     CLPService.AddPageObjectToPage(stamp);
+
+                    stampViewModel.IsAnchored = false;
+                    //make serviceagent call here to change model and database
+                    (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                    stampViewModel.ScribblesToStrokePaths();
                 } 
             } 
         }
@@ -180,7 +184,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     //change these to be past the height/width of the container
                     if (deltaX > 50 || deltaY > 50)
                     {
-
                         stampViewModel.IsAnchored = false;
                         //make serviceagent call here to change model and database
                         (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
