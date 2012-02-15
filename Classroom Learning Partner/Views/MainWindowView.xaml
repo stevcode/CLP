@@ -538,11 +538,6 @@
                             <Setter Property="Template" Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
-                        <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
-                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
-                        </DataTrigger>
-
                         <!-- NotebookWorkspace trigger -->
                         <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookWorkspace">
                             <Setter Property="Template" Value="{StaticResource NotebookWorkspaceTemplate}" />
@@ -561,6 +556,11 @@
                         <!-- UserLoginWorkspace trigger -->
                         <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="UserLoginWorkspace">
                             <Setter Property="Template" Value="{StaticResource UserLoginWorkspaceTemplate}" />
+                        </DataTrigger>
+
+                        <!-- NotebookChooserWorkspace trigger -->
+                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
+                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

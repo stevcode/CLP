@@ -88,8 +88,9 @@ namespace Classroom_Learning_Partner.Model
                         newNotebook.NotebookName = notebookName;
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
                         App.MainWindowViewModel.IsAuthoring = true;
+                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
+                        
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
                         
                         NameChooserLoop = false;
@@ -188,6 +189,13 @@ namespace Classroom_Learning_Partner.Model
                 notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
             }
             //Jessie - grab notebookNames from database if using DB
+        }
+
+        public void AddPageObjectToPage()
+        {
+            CLPSquareShape square = new CLPSquareShape();
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Notebook.Pages[0].PageObjects.Add(square);
+
         }
 
 

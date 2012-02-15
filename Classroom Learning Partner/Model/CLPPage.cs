@@ -34,6 +34,7 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             InkStrokes = new StrokeCollection();
             Strokes = new ObservableCollection<string>();
+            PageObjects = new ObservableCollection<ICLPPageObject>();
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Classroom_Learning_Partner.Model
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
+            private set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>
@@ -94,6 +95,12 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
+
+        public void test(ICLPPageObject pageObject)
+        {
+
+            PageObjects.Add(pageObject);
+        }
 
         /// <summary>
         /// Gets the CLPPage history.

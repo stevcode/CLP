@@ -6,10 +6,10 @@
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              x:TypeArguments="vmd:LinkedDisplayViewModel" Unloaded="UserControl_Unloaded">
     <Grid>
-        <vw:CLPPageView DataContext="{Binding Path=DisplayedPage}" />
+        <!--<vw:CLPPageView DataContext="{Binding Path=DisplayedPage}" />-->
     </Grid>
 </catel:UserControl>

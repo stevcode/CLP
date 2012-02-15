@@ -121,13 +121,28 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            set { SetValue(PageObjectsProperty, value); }
+            private set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            private set { SetValue(InkStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InkStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -192,20 +207,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public StrokeCollection InkStrokes
-        {
-            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the InkStrokes property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
+        
 
         /// <summary>
         /// Gets or sets the property value.

@@ -6,7 +6,7 @@
              xmlns:dvw="clr-namespace:Classroom_Learning_Partner.Views.Displays"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
              xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
              x:TypeArguments="vmw:ProjectorWorkspaceViewModel">

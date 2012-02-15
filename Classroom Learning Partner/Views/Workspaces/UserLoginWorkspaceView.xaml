@@ -6,7 +6,7 @@
              xmlns:wvw="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Background="CadetBlue"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
              x:TypeArguments="vmw:UserLoginWorkspaceViewModel">
     <ListBox ItemsSource="{Binding Path=UserNames}">
