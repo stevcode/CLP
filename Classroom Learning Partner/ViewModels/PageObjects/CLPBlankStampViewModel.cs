@@ -36,7 +36,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
         public ObservableCollection<StrokePathViewModel> StrokePathViewModels
         {
-            get { return _strokePathViewModels; }
+            get
+            {
+                return _strokePathViewModels;
+            }
         }
 
         #endregion //Bindings

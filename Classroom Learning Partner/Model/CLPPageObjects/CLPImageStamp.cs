@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             if (File.Exists(path))
             {
-                _byteSource = File.ReadAllBytes(path);
+                ByteSource = File.ReadAllBytes(path);
             }
             LoadImageFromByteSource();
             InitializeBase();
@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public CLPImageStamp(byte[] imgSource)
         {
-            _byteSource = imgSource;
+            ByteSource = imgSource;
             LoadImageFromByteSource();
             InitializeBase();
         }
@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             memoryStream.Close();
             memoryStream = null;
 
-            _sourceImage = genBmpImage;
+            SourceImage = genBmpImage;
         }
 
         public override CLPPageObjectBase Copy()
@@ -91,6 +91,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 }
                 return _sourceImage;
             }
+            set
+            {
+                _sourceImage = value;
+            }
         }
 
         private byte[] _byteSource;
@@ -99,6 +103,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get
             {
                 return _byteSource;
+            }
+            set
+            {
+                _byteSource = value;
             }
         }
 

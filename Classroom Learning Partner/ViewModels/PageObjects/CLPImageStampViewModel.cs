@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public CLPImageStampViewModel(CLPImageStamp stamp, CLPPageViewModel pageViewModel)
             : base(stamp, pageViewModel)
         {
-            _sourceImage = stamp.SourceImage;
+            SourceImage = stamp.SourceImage;
         }
 
         #endregion //Constructors
@@ -35,6 +35,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             get
             {
                 return _sourceImage;
+            }
+            set 
+            {
+                _sourceImage = value;
             }
         }
 
