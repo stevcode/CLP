@@ -1,5 +1,6 @@
 ﻿using Catel.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System;
 
 namespace Classroom_Learning_Partner.Views.Displays
 {
@@ -12,6 +13,11 @@ namespace Classroom_Learning_Partner.Views.Displays
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
+        }
+
+        private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Console.WriteLine("DisplayView unloaded");
         }
     }
 }

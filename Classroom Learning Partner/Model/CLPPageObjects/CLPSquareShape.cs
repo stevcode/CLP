@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Runtime.Serialization;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
@@ -15,6 +16,14 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Height = 300;
             Width = 300;
         }
+
+        /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected CLPSquareShape(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
 
         public string PageObjectType
         {

@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the InkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), new StrokeCollection(), true, false);
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), new StrokeCollection()); //, true, false
 
         /// <summary>
         /// Gets a list of stringified strokes on the page.

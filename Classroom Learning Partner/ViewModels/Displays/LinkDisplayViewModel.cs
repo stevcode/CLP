@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
-            Console.WriteLine("linked display created, isactive: " + IsActive.ToString());
+            Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
         }
 
         /// <summary>
@@ -23,7 +23,9 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public CLPPageViewModel DisplayedPage
         {
             get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
-            set { SetValue(DisplayedPageProperty, value); }
+            set { SetValue(DisplayedPageProperty, value);
+            Console.WriteLine("DisplayPage changed to pageVM" + DisplayedPage.Page.UniqueID);
+            }
         }
 
         /// <summary>

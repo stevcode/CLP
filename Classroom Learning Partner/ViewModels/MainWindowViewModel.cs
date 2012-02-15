@@ -888,7 +888,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 string filename = dlg.FileName;
                 CLPImage image = new CLPImage(filename);
                 //CLPServiceAgent.Instance.AddPageObjectToPage(image);
-                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page.PageObjects.Add(image);
             }
         }
 

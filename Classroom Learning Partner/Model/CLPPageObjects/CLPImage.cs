@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Register the SourceImage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null, true, false);
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null); //, true, false
 
         #endregion
 

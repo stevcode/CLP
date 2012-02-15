@@ -28,6 +28,7 @@ namespace Classroom_Learning_Partner.Views
 
         public CLPPageView()
         {
+            CloseViewModelOnUnloaded = false;
             InitializeComponent();
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
