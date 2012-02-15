@@ -15,7 +15,7 @@
     </UserControl.Resources>
     
         <toolkit:RichTextBox x:Name="RichTextBox" Grid.Row="1" Padding="10"
-                                         Text="{Binding CLPText}" 
+                                         Text="{Binding Text}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
                                          FontSize="24"
                                          FontFamily="Times New Roman"

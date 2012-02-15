@@ -103,7 +103,10 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
 
+            InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
+
+            InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
 
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
@@ -847,25 +850,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Insert Commands
 
-        //private RelayCommand _insertTextBoxCommand;
+        /// <summary>
+        /// Gets the InsertTextBoxCommand command.
+        /// </summary>
+        public Command InsertTextBoxCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the InsertTextBoxCommand.
-        ///// </summary>
-        //public RelayCommand InsertTextBoxCommand
-        //{
-        //    get
-        //    {
-        //        return _insertTextBoxCommand
-        //            ?? (_insertTextBoxCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      CLPTextBox textBox = new CLPTextBox();
-        //                                      CLPService.AddPageObjectToPage(textBox);
-        //                                  }));
-        //    }
-        //}
-
+        /// <summary>
+        /// Method to invoke when the InsertTextBoxCommand command is executed.
+        /// </summary>
+        private void OnInsertTextBoxCommandExecute()
+        {
+            CLPTextBox textBox = new CLPTextBox();
+            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(textBox);
+        }
 
         /// <summary>
         /// Gets the InsertImageCommand command.
@@ -894,38 +891,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
             }
         }
-
-        //private RelayCommand _insertImageCommand;
-
-        ///// <summary>
-        ///// Gets the InsertImageCommand.
-        ///// </summary>
-        //public RelayCommand InsertImageCommand
-        //{
-        //    get
-        //    {
-        //        return _insertImageCommand
-        //            ?? (_insertImageCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      // Configure open file dialog box
-        //                                      Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-        //                                      dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
-
-        //                                      // Show open file dialog box
-        //                                      Nullable<bool> result = dlg.ShowDialog();
-
-        //                                      // Process open file dialog box results
-        //                                      if (result == true)
-        //                                      {
-        //                                          // Open document
-        //                                          string filename = dlg.FileName;
-        //                                          CLPImage image = new CLPImage(filename);
-        //                                          CLPService.AddPageObjectToPage(image);
-        //                                      }
-        //                                  }));
-        //    }
-        //}
 
         //private RelayCommand _insertImageStampCommand;
 
@@ -977,6 +942,22 @@ namespace Classroom_Learning_Partner.ViewModels
         //                                  }));
         //    }
         //}
+
+        /// <summary>
+        /// Gets the InsertSquareShapeCommand command.
+        /// </summary>
+        public Command InsertSquareShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertSquareShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertSquareShapeCommandExecute()
+        {
+            CLPSquareShape square = new CLPSquareShape();
+            //CLPServiceAgent.Instance.AddPageObjectToPage(image);
+            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
+        }
+
 
         #endregion //Insert Commands
 

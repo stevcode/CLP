@@ -105,6 +105,7 @@
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPSquareShape.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPPageObjects\ICLPPageObject.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPSquareShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
@@ -156,6 +158,9 @@
     </Compile>
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPSquareShapeView.xaml.cs">
+      <DependentUpon>CLPSquareShapeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -241,6 +246,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NotebookSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPSquareShapeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

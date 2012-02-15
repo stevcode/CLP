@@ -468,7 +468,12 @@
                         Label="Insert Blank Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}" />
-                    
+
+                    <ribbon:RibbonButton
+                        Label="Insert Square"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}" />
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Page">

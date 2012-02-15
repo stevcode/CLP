@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Media;
+using Catel.MVVM;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -13,40 +15,23 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             : base()
         {
             PageObject = textBox;
-            _CLPText = textBox.Text;
         }
 
         public override string Title { get { return "TextBoxVM"; } }
 
         /// <summary>
-        /// The <see cref="CLPText" /> property's name.
+        /// Gets or sets the property value.
         /// </summary>
-        public const string CLPTextPropertyName = "CLPText";
-
-        private string _CLPText;
+        [ViewModelToModel("PageObject")]
+        public string Text
+        {
+            get { return GetValue<string>(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
 
         /// <summary>
-        /// Sets and gets the CLPText property.
-        /// Changes to that property's value raise the PropertyChanged event. 
+        /// Register the Text property so it is known in the class.
         /// </summary>
-        public string CLPText
-        {
-            get
-            {
-                return _CLPText;
-            }
-
-            set
-            {
-                if (_CLPText == value)
-                {
-                    return;
-                }
-
-                _CLPText = value;
-                (PageObject as CLPTextBox).Text = value;
-                RaisePropertyChanged(CLPTextPropertyName);
-            }
-        }
+        public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
     }
 }

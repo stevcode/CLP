@@ -198,28 +198,46 @@
             <!-- Control that dynamically determines what Display to show -->
             <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding PageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
 
-            <Control.Resources>
+                <Control.Resources>
 
-                <ControlTemplate x:Key="CLPImageTemplate">
-                    <vwpo:CLPImageView DataContext="{Binding PageObject}" />
-                </ControlTemplate>
+                    <ControlTemplate x:Key="CLPImageTemplate">
+                        <vwpo:CLPImageView DataContext="{Binding PageObject}" />
+                    </ControlTemplate>
 
-            </Control.Resources>
+                    <ControlTemplate x:Key="CLPTextBoxTemplate">
+                        <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
+                    </ControlTemplate>
 
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
+                    <ControlTemplate x:Key="CLPSquareShapeTemplate">
+                        <vwpo:CLPSquareShapeView DataContext="{Binding PageObject}" />
+                    </ControlTemplate>
 
-                        <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
-                            <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                        </DataTrigger>
+                </Control.Resources>
 
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </ContentControl>
-    </Grid>
+                <Control.Style>
+                    <Style TargetType="{x:Type Control}">
+                        <Style.Triggers>
+
+                            <!-- CLPImage trigger -->
+                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
+                                <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                            </DataTrigger>
+
+                            <!-- CLPTextBox trigger -->
+                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
+                                <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                            </DataTrigger>
+
+                            <!-- CLPSquareShape trigger -->
+                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSquareShape">
+                                <Setter Property="Template" Value="{StaticResource CLPSquareShapeTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Control.Style>
+            </ContentControl>
+        </Grid>
 
     </ac:AdornedControl>
 
