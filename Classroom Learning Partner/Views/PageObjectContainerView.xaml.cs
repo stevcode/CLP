@@ -190,6 +190,7 @@ namespace Classroom_Learning_Partner.Views
 	                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
 	                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
 	                            {
+                                    int oldCount = otherTile.Tiles.Count;
 	                                Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
 	                                Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
 	                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
@@ -202,7 +203,15 @@ namespace Classroom_Learning_Partner.Views
                                         }
 
                                         container.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
-
+                                        CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
+                                        container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
+                                        item.OldValue = oldCount.ToString();
+                                        item.NewValue = otherTile.Tiles.Count.ToString();
+                                        CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
+                                        foreach (var tileColor in tile.Tiles)
+                                        {
+                                            t.Tiles.Add("SpringGreen");
+                                        }
                                         CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
 	                                    break;
 	                                }

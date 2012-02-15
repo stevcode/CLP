@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
-            Visible = Visibility.Visible;
+            //Visible = Visibility.Visible;
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
             {
@@ -46,20 +46,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
             }
 
-            //Register with messages to turn invisible to start playback
-            playbackOn = false;
-           /* AppMessages.ChangePlayback.Register(this, (playback) =>
-            {
-                playbackOn = !playbackOn;
-                if (!playbackOn)
-                    this.Visible = Visibility.Visible;
-                else
-                    this.Visible = Visibility.Collapsed;
-               //RaisePropertyChanged("Visible");
-                
-            }); */
+            // playbackOn = false;
+
         }
-        private bool playbackOn;
+        // private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel
         {
@@ -74,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string PositionPropertyName = "Position";
 
-        private Point _position = new Point(0,0);
+        private Point _position = new Point(0, 0);
 
         /// <summary>
         /// Sets and gets the Position property.
@@ -129,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (PageObjectViewModel != null)
                 {
                     PageObjectViewModel.Width = _width;
-                }     
+                }
             }
         }
 
@@ -166,18 +156,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
-        private Visibility _visible;
-        public Visibility Visible
-        {
-            get
-            {
-                return _visible;
-            }
-            set
-            {
-                _visible = value;
-                RaisePropertyChanged("Visible");
-            }
-        }
+        /*       private Visibility _visible;
+               public Visibility Visible
+               {
+                   get
+                   {
+                       return _visible;
+                   }
+                   set
+                   {
+                       _visible = value;
+                       RaisePropertyChanged("Visible");
+                   }
+               }
+           }
+         * */
     }
 }

@@ -430,7 +430,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_startPlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                              Console.WriteLine("PageVM startplayback");
+                                              //Console.WriteLine("PageVM startplayback");
                                               // Start fetching the playback items asynchronously.
                                               NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
                                               fetcher.BeginInvoke(null, null);

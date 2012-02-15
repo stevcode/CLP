@@ -227,6 +227,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
             }
+            else if (pageObject is CLPSnapTile)
+            {
+                pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
+            }
             else
             {
                 pageObjectViewModel = null;
@@ -274,6 +278,33 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPService.ChangePageObjectPosition(GetPageObject(item), Point.Parse(item.OldValue), true);
                 }
+            }
+            else if (item.ItemType == "STACK_TILE")
+            {
+
+                if (ObjectReferences[item.ObjectID] is CLPSnapTile)
+                {
+                    CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
+                    
+                    foreach (var container in PageVM.PageObjectContainerViewModels)
+                    {
+                        if (container.PageObjectViewModel.PageObject == tile)
+                        {
+                            CLPSnapTileViewModel tileVM = container.PageObjectViewModel as CLPSnapTileViewModel;
+                            int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
+                            for (int i = 0; i < diff; i++)
+                            {
+                                tile.Tiles.Remove("SpringGreen");
+                                tileVM.Tiles.Remove("SpringGreen");
+                            }
+                            
+                            container.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
+                        }
+                    }
+
+                }
+
+
             }
             else if (item.ItemType == "RESIZE")
             {
@@ -323,8 +354,42 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
+                    //probably not necessary
+                 /*   if (ObjectReferences[item.ObjectID] is CLPSnapTile)
+                    {
+                        CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
+                        tile.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
+                      
+                    }
+                  */
                     CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true);
                 }
+
+            }
+            else if (item.ItemType == "STACK_TILE")
+            {
+                    
+                    if (ObjectReferences[item.ObjectID] is CLPSnapTile)
+                    {
+                        CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
+                        
+                        foreach (var container in PageVM.PageObjectContainerViewModels)
+                        {
+                            if (container.PageObjectViewModel.PageObject == tile)
+                            {
+                                CLPSnapTileViewModel tileVM = container.PageObjectViewModel as CLPSnapTileViewModel;
+                                int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
+                                for (int i = 0; i < diff; i++)
+                                {
+                                    tileVM.Tiles.Add("SpringGreen");
+                                    tile.Tiles.Add("SpringGreen");
+                                }
+                                container.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
+                            }
+                        }
+
+                    }
+                
 
             }
             else if (item.ItemType == "MOVE")
@@ -362,12 +427,19 @@ namespace Classroom_Learning_Partner.ViewModels
         public void startPlayback()
         {
             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-                         
+            
             this.AbortPlayback = false;
             int size = HistoryItems.Count;
                  for(int i = 0; i < size; i++)
                  {
-                    inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
+                     try
+                     {
+                         inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
+                     }
+                     catch (NullReferenceException n)
+                     {
+                         Logger.Instance.WriteToLog("InkCanvas Null in HistoryVM.");
+                     }
                  }
                  System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
                  for(int i = 0; i < size; i++)
@@ -385,8 +457,14 @@ namespace Classroom_Learning_Partner.ViewModels
                      {
                          Logger.Instance.WriteToLog(e.ToString());
                      }
-                     inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
-                       
+                     try
+                     {
+                         inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                     }
+                     catch (NullReferenceException n)
+                     {
+                         Logger.Instance.WriteToLog("InkCanvas null reference in historyVM. " + n.ToString());
+                     }
                      if (waittime > new TimeSpan(0, 0, 0))
                      {
                          if(waittime > new TimeSpan(0, 0, 15))
