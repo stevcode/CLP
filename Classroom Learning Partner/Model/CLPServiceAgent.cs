@@ -15,6 +15,7 @@ using MongoDB.Driver.Builders;
 using System.Windows.Input;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Windows.Media;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -90,6 +91,7 @@ namespace Classroom_Learning_Partner.Model
                         App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
+                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
                         
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
                         
@@ -189,13 +191,6 @@ namespace Classroom_Learning_Partner.Model
                 notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
             }
             //Jessie - grab notebookNames from database if using DB
-        }
-
-        public void AddPageObjectToPage()
-        {
-            CLPSquareShape square = new CLPSquareShape();
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Notebook.Pages[0].PageObjects.Add(square);
-
         }
 
 

@@ -10,6 +10,6 @@
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              x:TypeArguments="vmd:LinkedDisplayViewModel" Unloaded="UserControl_Unloaded">
     <Grid>
-        <!--<vw:CLPPageView DataContext="{Binding Path=DisplayedPage}" />-->
+        <vw:CLPPageView DataContext="{Binding Path=DisplayedPage}" />
     </Grid>
 </catel:UserControl>

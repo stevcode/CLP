@@ -15,31 +15,4 @@
                 Value="{Binding Position.Y}" />
     </Style>
 
-
-
-
-    <!--<DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
-        <vw:PageObjectContainerView />
-    </DataTemplate>-->
-
-    <!--<DataTemplate DataType="{x:Type vmpo:CLPTextBoxViewModel}">
-        <vwpo:CLPTextBoxView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vmpo:CLPImageViewModel}">
-        <vwpo:CLPImageView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vmpo:CLPImageStampViewModel}">
-        <vwpo:CLPImageStampView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vmpo:CLPBlankStampViewModel}">
-        <vwpo:CLPBlankStampView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileContainerViewModel}">
-        <vwpo:CLPSnapTileContainerView />
-    </DataTemplate>-->   
-
 </ResourceDictionary>

@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             //LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
 
             SideBar = new SideBarViewModel(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
-            //SideBar.SelectedNotebookPage = SideBar.Pages[0];
+            SideBar.SelectedNotebookPage = SideBar.Pages[0];
             SelectedDisplay = new LinkedDisplayViewModel(SideBar.CurrentPage);
 
             LinkedDisplay = SelectedDisplay as LinkedDisplayViewModel;

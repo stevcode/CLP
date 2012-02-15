@@ -953,13 +953,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertSquareShapeCommandExecute()
         {
-            CLPServiceAgent.Instance.AddPageObjectToPage();
-            //((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).AddPageObjectToCurrentPage(square);
-            //CLPServiceAgent.Instance.AddPageObjectToPage(image);
-            //CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.CurrentPage;
-            //page.PageObjects.Add(square);
-            //((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
-            //((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.test(square);
+            CLPSquareShape square = new CLPSquareShape();
+            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
         }
 
 

@@ -6,5 +6,5 @@
                    x:TypeArguments="vm:CLPSquareShapeViewModel">
     
 
-    <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Blue" Stroke="Black" StrokeThickness="4" />
+    <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
 </catel:UserControl>

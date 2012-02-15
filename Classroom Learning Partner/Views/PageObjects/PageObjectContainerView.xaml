@@ -201,15 +201,15 @@
                 <Control.Resources>
 
                     <ControlTemplate x:Key="CLPImageTemplate">
-                        <vwpo:CLPImageView DataContext="{Binding}" />
+                        <vwpo:CLPImageView DataContext="{Binding PageObject}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="CLPTextBoxTemplate">
-                        <vwpo:CLPTextBoxView DataContext="{Binding}" />
+                        <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="CLPSquareShapeTemplate">
-                        <vwpo:CLPSquareShapeView DataContext="{Binding}" />
+                        <vwpo:CLPSquareShapeView DataContext="{Binding PageObject}" />
                     </ControlTemplate>
 
                 </Control.Resources>
