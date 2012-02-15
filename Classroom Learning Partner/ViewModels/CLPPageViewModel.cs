@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System;
 using System.Windows.Threading;
 using System.Threading;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -290,7 +291,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _pageObjectContainerViewModels;
             }
         }
-        
+        public const string PlaybackImagePropertyName = "PlaybackImage";
+        private Uri _playbackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+        public Uri PlaybackImage
+        {
+            get
+            {
+                return _playbackImage;
+            }
+            set
+            {
+                _playbackImage = value;
+
+                RaisePropertyChanged("PlaybackImage");
+            }
+        }
         /// <summary>
         /// The <see cref="EditingMode" /> property's name.
         /// </summary>
@@ -432,7 +447,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               //Console.WriteLine("PageVM startplayback");
                                               // Start fetching the playback items asynchronously.
-                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.start_pausePlayback);
                                               fetcher.BeginInvoke(null, null);
                                               
 
@@ -458,6 +473,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                               NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
                                               fetcher.BeginInvoke(null, null);
                                             
+                                          }));
+            }
+        }
+        private RelayCommand _pausePlaybackCommand;
+        public RelayCommand PausePlaybackCommand
+        {
+            get
+            {
+                return _pausePlaybackCommand
+                    ?? (_pausePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.pausePlayback);
+                                              fetcher.BeginInvoke(null, null);
+
                                           }));
             }
         }

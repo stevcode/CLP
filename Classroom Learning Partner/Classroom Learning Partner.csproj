@@ -427,6 +427,9 @@
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
+    <Resource Include="Images\stop.png" />
+    <Resource Include="Images\pause_blue.png" />
+    <Resource Include="Images\play_green.png" />
     <Resource Include="Images\video.png" />
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />

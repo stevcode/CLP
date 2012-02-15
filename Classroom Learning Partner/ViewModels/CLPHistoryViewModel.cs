@@ -12,6 +12,8 @@ using System.Windows.Ink;
 using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -110,6 +112,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             }
         }
+
         //List to enable undo/redo functionality
         private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
@@ -354,14 +357,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    //probably not necessary
-                 /*   if (ObjectReferences[item.ObjectID] is CLPSnapTile)
-                    {
-                        CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
-                        tile.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
-                      
-                    }
-                  */
                     CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true);
                 }
 
@@ -426,6 +421,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private delegate void NoArgDelegate();
         public void startPlayback()
         {
+            PlaybackStarted = true;
+            PausePlayback = false;
             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
             
             this.AbortPlayback = false;
@@ -472,23 +469,28 @@ namespace Classroom_Learning_Partner.ViewModels
                              waittime = new TimeSpan(0, 0, 15);
                          }
                          DateTime wait = DateTime.Now + waittime;
-                         while(DateTime.Now < wait)
+                         while(DateTime.Now < wait || PausePlayback == true)
                          {
                              if(AbortPlayback == true)
                              {
+                                 PlaybackStarted = false;
+                                 PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                                  abortPlayback();
                                  return;
                              }
+                             
                          }
                           
                      }
                      else
                      {
                          DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
-                         while (DateTime.Now < wait)
+                         while (DateTime.Now < wait || PausePlayback == true)
                          {
                              if (AbortPlayback == true)
                              {
+                                 PlaybackStarted = false;
+                                 PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                                  abortPlayback();
                                  return;
                              }
@@ -496,7 +498,34 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      
                  }
+                 PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                 PlaybackStarted = false;
            
+        }
+        
+        private bool _pausePlayback;
+        private bool PausePlayback
+        {
+            get
+            {
+                return _pausePlayback;
+            }
+            set
+            {
+                _pausePlayback = value;
+            }
+        }
+        private bool _playbackStarted;
+        private bool PlaybackStarted
+        {
+            get
+            {
+                return _playbackStarted;
+            }
+            set
+            {
+                _playbackStarted = value;
+            }
         }
         private bool _abortPlayback;
         private bool AbortPlayback
@@ -508,6 +537,28 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 _abortPlayback = value;
+            }
+
+        }
+        public void start_pausePlayback()
+        {
+            if (PlaybackStarted)
+            {
+                if (PausePlayback)
+                {
+                    PausePlayback = false;
+                    PageVM.PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
+                }
+                else
+                {
+                    PausePlayback = true;
+                    PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                }
+            }
+            else
+            {
+                PageVM.PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
+                startPlayback();
             }
 
         }
@@ -527,7 +578,18 @@ namespace Classroom_Learning_Partner.ViewModels
             //stops and resets playback history
             this.AbortPlayback = true;
         }
-        
+
+        public void pausePlayback()
+        {
+            if (this.PausePlayback)
+            {
+                this.PausePlayback = false;
+            }
+            else
+            {
+                this.PausePlayback = true;
+            }
+        }
         #endregion //playback
         #region relayCommands
         /*
