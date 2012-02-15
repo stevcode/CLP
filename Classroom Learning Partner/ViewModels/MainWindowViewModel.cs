@@ -810,7 +810,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
             CLPPage page = new CLPPage();
             OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, page);
-            (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
+            //(SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Pages.Insert(index, page);
         }
 
         /// <summary>
@@ -829,7 +829,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 
                 OpenNotebooks[CurrentNotebookIndex].RemovePageAt(index);
-                (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
+                //(SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Pages.RemoveAt(index);
             }
         }
 
@@ -888,7 +888,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 string filename = dlg.FileName;
                 CLPImage image = new CLPImage(filename);
                 //CLPServiceAgent.Instance.AddPageObjectToPage(image);
-                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page.PageObjects.Add(image);
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
             }
         }
 

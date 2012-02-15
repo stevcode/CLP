@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject=false)]
         public CLPPageObjectBase PageObject
         {
             get { return GetValue<CLPPageObjectBase>(PageObjectProperty); }

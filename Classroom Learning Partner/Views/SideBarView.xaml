@@ -10,7 +10,8 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
-             x:TypeArguments="vm:SideBarViewModel" >   
+             x:TypeArguments="vm:SideBarViewModel"
+             Loaded="UserControl_Loaded">   
 
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>

@@ -19,21 +19,24 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
-        public NotebookWorkspaceViewModel(CLPNotebook notebook)
+        public NotebookWorkspaceViewModel()
             : base()
         {
-            Notebook = notebook;
             Console.WriteLine(Title + " created");
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-            NotebookPages = new ObservableCollection<CLPPageViewModel>();
-            foreach (var page in Notebook.Pages)
-            {
-                NotebookPages.Add(new CLPPageViewModel(page));
-            }
+            //NotebookPages = new ObservableCollection<CLPPageViewModel>();
+            //foreach (var page in Notebook.Pages)
+            //{
+            //    NotebookPages.Add(new CLPPageViewModel(page));
+            //}
 
-            SideBar = new SideBarViewModel(NotebookPages);
+            //SideBar = new SideBarViewModel(NotebookPages);
 
-            LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
+            //LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
+
+            SideBar = new SideBarViewModel(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
+            LinkedDisplay = new LinkedDisplayViewModel(SideBar.CurrentPage);
+
             SelectedDisplay = LinkedDisplay;
             SelectedDisplay.IsActive = true;
 
@@ -55,34 +58,19 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
         public override string Title { get { return "NotebookWorkspaceVM"; } }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [Model]
-        public CLPNotebook Notebook
-        {
-            get { return GetValue<CLPNotebook>(NotebookProperty); }
-            set { SetValue(NotebookProperty, value); }
-        }
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //public ObservableCollection<CLPPageViewModel> NotebookPages
+        //{
+        //    get { return GetValue<ObservableCollection<CLPPageViewModel>>(NotebookPagesProperty); }
+        //    set { SetValue(NotebookPagesProperty, value); }
+        //}
 
-        /// <summary>
-        /// Register the Notebook property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> NotebookPages
-        {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(NotebookPagesProperty); }
-            set { SetValue(NotebookPagesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the NotebookPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPageViewModel>));
+        ///// <summary>
+        ///// Register the NotebookPages property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPageViewModel>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -90,7 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public SideBarViewModel SideBar
         {
             get { return GetValue<SideBarViewModel>(SideBarProperty); }
-            set { SetValue(SideBarProperty, value); }
+            private set { SetValue(SideBarProperty, value); }
         }
 
         /// <summary>
@@ -104,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public LinkedDisplayViewModel LinkedDisplay
         {
             get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
-            set { SetValue(LinkedDisplayProperty, value); }
+            private set { SetValue(LinkedDisplayProperty, value); }
         }
 
         /// <summary>
@@ -172,16 +160,16 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedDisplay.AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
             }
 
-            if (propertyName == "CurrentNotebookIndex")
-            {
-                int index = (viewModel as MainWindowViewModel).CurrentNotebookIndex;
-                Notebook = App.MainWindowViewModel.OpenNotebooks[index];
-                NotebookPages.Clear();
-                foreach (var page in Notebook.Pages)
-                {
-                    NotebookPages.Add(new CLPPageViewModel(page));
-                }
-            }
+            //if (propertyName == "CurrentNotebookIndex")
+            //{
+            //    int index = (viewModel as MainWindowViewModel).CurrentNotebookIndex;
+            //    Notebook = App.MainWindowViewModel.OpenNotebooks[index];
+            //    //NotebookPages.Clear();
+            //    //foreach (var page in Notebook.Pages)
+            //    //{
+            //    //    NotebookPages.Add(new CLPPageViewModel(page));
+            //    //}
+            //}
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             

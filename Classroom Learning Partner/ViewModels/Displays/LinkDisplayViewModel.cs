@@ -14,7 +14,10 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
-            Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
+            if (DisplayedPage != null)
+            {
+                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
+            }
         }
 
         /// <summary>
@@ -24,7 +27,14 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
             set { SetValue(DisplayedPageProperty, value);
-            Console.WriteLine("DisplayPage changed to pageVM" + DisplayedPage.Page.UniqueID);
+            if (value != null)
+            {
+            	Console.WriteLine("DisplayPage changed to pageVM" + value.Page.UniqueID);
+            }
+            else
+            {
+                Console.WriteLine("DisplayPage set to null value");
+            }
             }
         }
 

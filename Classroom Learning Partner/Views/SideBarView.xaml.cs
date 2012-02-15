@@ -3,6 +3,7 @@ using Catel.Windows.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -22,11 +23,11 @@ namespace Classroom_Learning_Partner.Views
             CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
             string pageID = pageViewModel.Page.UniqueID;
             SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
-            if (sideBarViewModel.Submissions.ContainsKey(pageID))
-            {
+            //if (sideBarViewModel.Submissions.ContainsKey(pageID))
+            //{
 
-                sideBarViewModel.SubmissionPages = sideBarViewModel.Submissions[pageID];
-            }
+            //    sideBarViewModel.SubmissionPages = sideBarViewModel.Submissions[pageID];
+            //}
         }
 
         private void preview_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -42,7 +43,17 @@ namespace Classroom_Learning_Partner.Views
             }
             else
             {
+                Console.WriteLine("SelectedNotebookPage set");
                 sideBarViewModel.SelectedNotebookPage = pageViewModel;
+            }
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            if (!NotebookPageListBox.Items.IsEmpty)
+            {
+            	NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
             }
         }
     }

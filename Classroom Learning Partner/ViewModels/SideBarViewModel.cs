@@ -8,15 +8,16 @@ using System;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class SideBarViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the NotebookSideBarViewModel class.
         /// </summary>
-        public SideBarViewModel(ObservableCollection<CLPPageViewModel> notebookPages)
+        public SideBarViewModel(CLPNotebook notebook)
             : base()
         {
-            Pages = notebookPages;
+            Notebook = notebook;
             Console.WriteLine(Title + " created");
         }
 
@@ -27,30 +28,60 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<CLPPageViewModel> Pages
+        [Model(SupportIEditableObject = false)]
+        public CLPNotebook Notebook
         {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(PagesProperty); }
-            private set { SetValue(PagesProperty, value); }
+            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Notebook property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public ObservableCollection<CLPPage> Pages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
         }
 
         /// <summary>
         /// Register the Pages property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPageViewModel>));
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Dictionary<string, ObservableCollection<CLPPageViewModel>> Submissions
-        {
-            get { return GetValue<Dictionary<string, ObservableCollection<CLPPageViewModel>>>(SubmissionsProperty); }
-            set { SetValue(SubmissionsProperty, value); }
-        }
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //public ObservableCollection<CLPPageViewModel> Pages
+        //{
+        //    get { return GetValue<ObservableCollection<CLPPageViewModel>>(PagesProperty); }
+        //    private set { SetValue(PagesProperty, value); }
+        //}
 
-        /// <summary>
-        /// Register the Submissions property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPageViewModel>>));
+        ///// <summary>
+        ///// Register the Pages property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPageViewModel>));
+
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //public Dictionary<string, ObservableCollection<CLPPageViewModel>> Submissions
+        //{
+        //    get { return GetValue<Dictionary<string, ObservableCollection<CLPPageViewModel>>>(SubmissionsProperty); }
+        //    set { SetValue(SubmissionsProperty, value); }
+        //}
+
+        ///// <summary>
+        ///// Register the Submissions property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPageViewModel>>));
 
         #endregion //Model
 
@@ -78,10 +109,6 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<CLPPageViewModel>(SelectedNotebookPageProperty); }
             set
             {
-                if (SelectedNotebookPage != null)
-                {
-                	SelectedNotebookPage.SaveViewModel();
-                }
                 SetValue(SelectedNotebookPageProperty, value);
                 CurrentPage = SelectedNotebookPage;
             }
@@ -125,5 +152,22 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
 
         #endregion //Bindings
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if (propertyName == "CurrentNotebookIndex")
+            {
+                int index = (viewModel as MainWindowViewModel).CurrentNotebookIndex;
+                Notebook = App.MainWindowViewModel.OpenNotebooks[index];
+                //NotebookPages.Clear();
+                //foreach (var page in Notebook.Pages)
+                //{
+                //    NotebookPages.Add(new CLPPageViewModel(page));
+                //}
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+
+        }
     }
 }
