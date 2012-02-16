@@ -329,6 +329,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
                 }
+                else if (pageObject is CLPSquare)
+                {
+                    pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+                }
                 else
                 {
                     pageObjectViewModel = null;

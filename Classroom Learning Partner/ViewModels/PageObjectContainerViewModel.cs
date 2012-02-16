@@ -45,6 +45,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPSquareViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
+            }
 
             //Register with messages to turn invisible to start playback
             playbackOn = false;

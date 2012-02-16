@@ -945,6 +945,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _insertSquareCommand;
+
+        /// <summary>
+        /// Gets the InsertBlankStampCommand.
+        /// </summary>
+        public RelayCommand InsertSquareCommand
+        {
+            get
+            {
+                return _insertSquareCommand
+                    ?? (_insertSquareCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPSquare square = new CLPSquare();
+                                              CLPService.AddPageObjectToPage(square);
+                                          }));
+            }
+        }
+
         #endregion //Insert Commands
 
         #region Display Commands

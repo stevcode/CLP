@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Variables
 
-        public const int TILE_HEIGHT = 50;
+        public const int TILE_HEIGHT = 45;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             Position = pt;
             Tiles.Add(color);
-            Height = TILE_HEIGHT * Tiles.Count;
+            Height = (TILE_HEIGHT+6) * Tiles.Count;
             Width = TILE_HEIGHT;
 
             _tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_tiles_CollectionChanged);
@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Height = TILE_HEIGHT * Tiles.Count;
+            Height = (TILE_HEIGHT + 6) * Tiles.Count;
         }
 
         #endregion

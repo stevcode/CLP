@@ -91,6 +91,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, this);
                 }
+                else if (pageObject is CLPSquare)
+                {
+                    pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, this);
+                }
 
                 PageObjectContainerViewModel pageObjectContainer = new PageObjectContainerViewModel(pageObjectViewModel);
 
