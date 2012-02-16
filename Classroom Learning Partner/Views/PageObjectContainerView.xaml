@@ -47,7 +47,7 @@
                         x:Name="closeButton"
                         Width="40"
                         Height="40"
-                        Canvas.Right="-50"
+                        Canvas.Left="-50"
                         Canvas.Top="-50"
                         Click="closeButton_Click"
                         Cursor="Hand"
@@ -79,7 +79,7 @@
                 <!--Drag Thumb-->
                 <Grid
                         x:Name="dragButton"
-                        Canvas.Left="-50"
+                        Canvas.Right="-50"
                         Canvas.Top="-50"
                         Width="40"
                         Height="40"
