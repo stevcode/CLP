@@ -190,20 +190,34 @@ namespace Classroom_Learning_Partner.Views
 	                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
 	                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
 	                            {
-	                                Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
-	                                Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
+
 	                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
-	                                double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
-	                                if (deltaX < 50 && deltaY < 60)
+	                                double deltaYBottomSnap = Math.Abs(pageObjectContainerViewModel.Position.Y - (container.Position.Y + container.Height));
+                                    double deltaYTopSnap = Math.Abs(container.Position.Y - (pageObjectContainerViewModel.Position.Y + pageObjectContainerViewModel.Height));
+	                                if (deltaX < 50)
 	                                {
-                                        foreach (var tileColor in tile.Tiles)
+                                        if (deltaYBottomSnap < 40)
                                         {
-                                            otherTile.Tiles.Add(tileColor);
+                                            foreach (var tileColor in tile.Tiles)
+                                            {
+                                                otherTile.Tiles.Add(tileColor);
+                                            }
+
+                                            container.Height = (CLPSnapTile.TILE_HEIGHT) * otherTile.Tiles.Count;
+
+                                            CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                                         }
+                                        else if (deltaYTopSnap < 40)
+                                        {
+                                            foreach (var tileColor in otherTile.Tiles)
+                                            {
+                                                tile.Tiles.Add(tileColor);
+                                            }
+                                            pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
 
-                                        container.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
-
-                                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                                            CLPService.RemovePageObjectFromPage(container);
+                                        }
+                                        
 	                                    break;
 	                                }
 	                            }
