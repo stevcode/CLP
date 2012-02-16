@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.Model
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void SaveNotebookDB(CLPNotebook notebookVM, string userName);
-        void SavePageDB(CLPPage pageVM);
+        void SavePageDB(CLPPage pageVM, string userName);
         void SaveNotebooksFromDBToHD(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
@@ -192,7 +192,7 @@ namespace Classroom_Learning_Partner.Model
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
                 MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
-                var query = Query.EQ("ID", notebook.MetaData.GetValue("UniqueID"));
+                var query = Query.And(Query.EQ("ID", notebook.MetaData.GetValue("UniqueID")), Query.EQ("User", userName));
                 BsonDocument currentNotebook = nbCollection.FindOne(query);
                 if (currentNotebook != null)
                 {
@@ -220,7 +220,7 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-        public void SavePageDB(CLPPage page)
+        public void SavePageDB(CLPPage page, string userName)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
@@ -230,6 +230,8 @@ namespace Classroom_Learning_Partner.Model
                 BsonDocument currentPage = new BsonDocument {
                     { "ID", page.MetaData.GetValue("UniqueID") },
                     { "CreationDate", page.MetaData.GetValue("CreationDate") },
+                    {"SaveDate", DateTime.Now.ToString() },
+                    {"User", userName},
                         { "PageContent", ObjectSerializer.ToString(page) }
                     };
                 pageCollection.Insert(currentPage);

@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPMeshNetworkContract
     {
         [OperationContract(IsOneWay = true)]
-        void Connect(string userName);
+        void Connect(string machineName, string userName);
 
         [OperationContract(IsOneWay = true)]
         void Disconnect(string userName);
@@ -33,6 +33,9 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
+
+        [OperationContract(IsOneWay=true)]
+        void RetrieveNotebooks(string userName);
 
         [OperationContract(IsOneWay = true)]
         void ReceiveNotebook(string page, string userName);
@@ -71,14 +74,11 @@ namespace Classroom_Learning_Partner.Model
         int pagecount = 0;
 
 
-        public void Connect(string userName)
+        public void Connect(string machineName, string userName)
         {
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Instructor/Student Machine Connected: " + userName);
-                //Users Notebooks to user machine
-                //Currently username is the machine name -> CHANGE when using actual names
-                CLPService.RetrieveNotebooks(userName);
             }
           
         }
@@ -114,7 +114,7 @@ namespace Classroom_Learning_Partner.Model
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPService.SavePageDB(page);
+                            CLPService.SavePageDB(page, userName);
                         }
                     }
              return null;
@@ -143,6 +143,17 @@ namespace Classroom_Learning_Partner.Model
             {
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPService.DistributeNotebookServer(notebook, author);
+            }
+        }
+
+        public void RetrieveNotebooks(string userName)
+        {
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                Console.WriteLine("Instructor/Student Machine requests notebooks: " + userName);
+                //Users Notebooks to user machine
+                CLPService.RetrieveNotebooks(userName);
+                
             }
         }
         public void ReceiveNotebook(string s_notebook, string userName)
