@@ -230,5 +230,27 @@ namespace Classroom_Learning_Partner.Views
             isDragging = false;
         }
 
+        private void removeTileButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+
+            bool isStampedObject = false;
+
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                isStampedObject = true;
+            }
+
+            if (App.IsAuthoring || isStampedObject)
+            {
+
+                if ((pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).Tiles.Count > 1)
+                {
+                    (pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).Tiles.RemoveAt((pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).Tiles.Count - 1);
+                    pageObjectContainerViewModel.Height = CLPSnapTile.TILE_HEIGHT * (pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).Tiles.Count;
+                }
+            }
+        }
+
     }
 }
