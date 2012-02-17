@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged("Visible");
             }
         }
-
+        */
         private Visibility _isTile;
         public Visibility IsTile
         {
@@ -189,7 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
                        RaisePropertyChanged("Visible");
                    }
                }
-           }
-         * */
+           
+
     }
 }

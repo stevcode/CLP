@@ -190,21 +190,22 @@ namespace Classroom_Learning_Partner.Views
 	                            CLPSnapTileViewModel otherTile = container.PageObjectViewModel as CLPSnapTileViewModel;
 	                            if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
 	                            {
-                                    int oldCount = otherTile.Tiles.Count;
+                                    
 
 	                                double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
 	                                double deltaYBottomSnap = Math.Abs(pageObjectContainerViewModel.Position.Y - (container.Position.Y + container.Height));
                                     double deltaYTopSnap = Math.Abs(container.Position.Y - (pageObjectContainerViewModel.Position.Y + pageObjectContainerViewModel.Height));
 	                                if (deltaX < 50)
 	                                {
-                                        if (deltaYBottomSnap < 40)
+                                        if (deltaYBottomSnap < 55)
                                         {
+                                            int oldCount = otherTile.Tiles.Count;
                                             foreach (var tileColor in tile.Tiles)
                                             {
                                                 otherTile.Tiles.Add(tileColor);
                                             }
 
-                                            container.Height = (CLPSnapTile.TILE_HEIGHT) * otherTile.Tiles.Count;
+                                        container.Height = (CLPSnapTile.TILE_HEIGHT) * otherTile.Tiles.Count;
                                         CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                         container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
                                         item.OldValue = oldCount.ToString();
@@ -216,14 +217,24 @@ namespace Classroom_Learning_Partner.Views
                                         }
                                             CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                                         }
-                                        else if (deltaYTopSnap < 40)
+                                        else if (deltaYTopSnap < 55)
                                         {
+                                            int oldCount = tile.Tiles.Count;
                                             foreach (var tileColor in otherTile.Tiles)
                                             {
                                                 tile.Tiles.Add(tileColor);
                                             }
                                             pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
-
+                                            container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
+                                            CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
+                                            container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);
+                                            item.OldValue = oldCount.ToString();
+                                            item.NewValue = tile.Tiles.Count.ToString();
+                                            CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
+                                            foreach (var tileColor in otherTile.Tiles)
+                                            {
+                                                t.Tiles.Add("SpringGreen");
+                                            }
                                             CLPService.RemovePageObjectFromPage(container);
                                         }
                                         
