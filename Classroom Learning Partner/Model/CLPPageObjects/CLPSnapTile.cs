@@ -49,6 +49,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return _tiles; }
         }
 
+        public override CLPPageObjectBase Copy()
+        {
+            CLPSnapTile newTile = new CLPSnapTile(this.Position, "springGreen");
+            newTile.Tiles.Clear();
+            foreach (string color in this.Tiles)
+            {
+                newTile.Tiles.Add(color);
+            }
+            newTile.Height = (TILE_HEIGHT) * newTile.Tiles.Count;
+
+            return newTile;
+        }
+
         
 
         #endregion

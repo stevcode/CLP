@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
             Visible = Visibility.Visible;
+            IsTile = Visibility.Collapsed;
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
             {
@@ -44,6 +45,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
+                IsTile = Visibility.Visible;
             }
             else if (pageObjectBaseViewModel is CLPSquareViewModel)
             {
@@ -180,6 +182,20 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 _visible = value;
+                RaisePropertyChanged("Visible");
+            }
+        }
+
+        private Visibility _isTile;
+        public Visibility IsTile
+        {
+            get
+            {
+                return _isTile;
+            }
+            set
+            {
+                _isTile = value;
                 RaisePropertyChanged("Visible");
             }
         }

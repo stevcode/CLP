@@ -252,5 +252,24 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
+        private void duplicateTileButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+
+            bool isStampedObject = false;
+
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
+            {
+                isStampedObject = true;
+            }
+
+            if (App.IsAuthoring || isStampedObject)
+            {
+                CLPSnapTile newSnapTile = ((pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).PageObject as CLPSnapTile).Copy() as CLPSnapTile;
+                newSnapTile.Position = new Point(newSnapTile.Position.X + 80, newSnapTile.Position.Y);
+                CLPService.AddPageObjectToPage(newSnapTile);
+            }
+        }
+
     }
 }
