@@ -47,8 +47,8 @@
                         x:Name="closeButton"
                         Width="40"
                         Height="40"
-                        Canvas.Right="-50"
-                        Canvas.Top="-50"
+                        Canvas.Left="-50"
+                        Canvas.Top="-25"
                         Click="closeButton_Click"
                         Cursor="Hand"
                         >
@@ -79,7 +79,7 @@
                 <!--Drag Thumb-->
                 <Grid
                         x:Name="dragButton"
-                        Canvas.Left="-50"
+                        Canvas.Right="-50"
                         Canvas.Top="-50"
                         Width="40"
                         Height="40"
@@ -143,6 +143,77 @@
                         </Thumb.Template>
                     </Thumb>
                 </Grid>
+                <!--Remove Tile Button-->
+                <Button
+                        x:Name="removeTileButton"
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-50"
+                        Canvas.Bottom="-25"
+                        Click="removeTileButton_Click"
+                        Cursor="Hand"
+                        Visibility="{Binding IsTile}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid
+                                    x:Name="grid"
+                                    >
+                                <Rectangle
+                                        Stroke="Black"
+                                        StrokeThickness="2"
+                                        Margin="5"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Fill="SpringGreen"
+                                        />
+                                <Path 
+                                        Data="M0,0 L1,1 M0,1 L1,0" 
+                                        Stretch="Fill" 
+                                        Stroke="Black" 
+                                        StrokeThickness="3" 
+                                        Margin="8" 
+                                        />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <!--Duplicate Tile Button-->
+                <Button
+                        x:Name="duplicateTileButton"
+                        Width="40"
+                        Height="40"
+                        Canvas.Right="-50"
+                        Canvas.Bottom="-25"
+                        Click="duplicateTileButton_Click"
+                        Cursor="Hand"
+                         Visibility="{Binding IsTile}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid
+                                    x:Name="grid"
+                                    >
+                                <Rectangle
+                                        Stroke="Black"
+                                        StrokeThickness="2"
+                                        Margin="5"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Fill="SpringGreen"
+                                        />
+                                <Path
+                                        Stroke="Black"
+                                        StrokeThickness="3"
+                                        Data="M 20,10 L 20,30"
+                                        />
+                                <Path
+                                        Stroke="Black"
+                                        StrokeThickness="3"
+                                        Data="M 10,20 L 30,20"
+                                        />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
                 <!--Resize Thumb-->
                 <Grid
                         x:Name="resizeButton"

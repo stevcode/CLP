@@ -26,7 +26,22 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Height = CLPSnapTile.TILE_HEIGHT * Tiles.Count;
+            Height = (CLPSnapTile.TILE_HEIGHT) * Tiles.Count;
+            if (e.NewItems != null)
+            {
+                foreach (var color in e.NewItems)
+                {
+                    (PageObject as CLPSnapTile).Tiles.Add(color as string);
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (var color in e.OldItems)
+                {
+                    (PageObject as CLPSnapTile).Tiles.RemoveAt((PageObject as CLPSnapTile).Tiles.Count - 1);
+                }
+            }
+
         }
 
         private ObservableCollection<string> _tiles = new ObservableCollection<string>();

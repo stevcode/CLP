@@ -230,14 +230,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
             }
+<<<<<<< HEAD
             else if (pageObject is CLPSnapTile)
-                       {
+            {
                 pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
-            }
-
+=======
             else if (pageObject is CLPSquare)
-                        {
+            {
                 pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+>>>>>>> 0f7cee36df1ca31df6b3b4475fff606703e95856
             }
             else
             {
