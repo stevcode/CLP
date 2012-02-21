@@ -36,17 +36,9 @@ namespace Classroom_Learning_Partner.Views
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
 
             bool isStampedObject = false;
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPStampViewModel)
             {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-                {
-                    isStampedObject = true;
-                }
-            }
-
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
+                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPStampViewModel).IsAnchored)
                 {
                     isStampedObject = true;
                 }
@@ -70,17 +62,9 @@ namespace Classroom_Learning_Partner.Views
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
 
             bool isStampedObject = false;
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPStampViewModel)
             {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-                {
-                    isStampedObject = true;
-                }
-            }
-
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
+                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPStampViewModel).IsAnchored)
                 {
                     isStampedObject = true;
                 }
@@ -153,17 +137,9 @@ namespace Classroom_Learning_Partner.Views
             PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
 
             bool isStampedObject = false;
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
+            if (pageObjectContainerViewModel.PageObjectViewModel is CLPStampViewModel)
             {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-                {
-                    isStampedObject = true;
-                }
-            }
-
-            if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            {
-                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
+                if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPStampViewModel).IsAnchored)
                 {
                     isStampedObject = true;
                 }

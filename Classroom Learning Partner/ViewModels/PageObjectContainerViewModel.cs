@@ -29,13 +29,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPImageViewModel;
             }
-            else if (pageObjectBaseViewModel is CLPImageStampViewModel)
+            else if (pageObjectBaseViewModel is CLPStampViewModel)
             {
-                _pageObjectViewModel = pageObjectBaseViewModel as CLPImageStampViewModel;
-            }
-            else if (pageObjectBaseViewModel is CLPBlankStampViewModel)
-            {
-                _pageObjectViewModel = pageObjectBaseViewModel as CLPBlankStampViewModel;
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPStampViewModel;
             }
             else if (pageObjectBaseViewModel is CLPTextBoxViewModel)
             {

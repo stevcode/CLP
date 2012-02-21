@@ -87,26 +87,10 @@ namespace Classroom_Learning_Partner.Model
         {
             CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
             CLPPage copyPage = new CLPPage();
-            CLPPageObjectBase pageObject = new CLPBlankStamp();
+            CLPPageObjectBase pageObject = new CLPStamp();
             foreach (CLPPageObjectBase obj in originalPage.PageObjects)
             {
-                if (obj is CLPBlankStamp)
-                {
-                    CLPBlankStamp copyStamp = new CLPBlankStamp();
-                    CLPBlankStamp originalStamp = obj as CLPBlankStamp;
-                    copyStamp.Height = originalStamp.Height;
-                    copyStamp.IsAnchored = originalStamp.IsAnchored;
-                    copyStamp.Parts = originalStamp.Parts;
-                    copyStamp.Position = originalStamp.Position;
-                    copyStamp.Width = originalStamp.Width;
-                    copyStamp.ZIndex = originalStamp.ZIndex;
-                    foreach (var stroke in originalStamp.PageObjectStrokes)
-                    {
-                        copyStamp.PageObjectStrokes.Add(stroke);
-                    }
-                    pageObject = copyStamp;
-                }
-                else if (obj is CLPImage)
+                if (obj is CLPImage)
                 {
                     CLPImage originalImage = obj as CLPImage;
                     CLPImage copyImage = new CLPImage(originalImage.ByteSource);
@@ -120,21 +104,26 @@ namespace Classroom_Learning_Partner.Model
                     }
                     pageObject = copyImage;
                 }
-                else if (obj is CLPImageStamp)
+                else if (obj is CLPStamp)
                 {
-                    CLPImageStamp originalImage = obj as CLPImageStamp;
-                    CLPImageStamp copyImage = new CLPImageStamp(originalImage.ByteSource);
-                    copyImage.Height = originalImage.Height;
-                    copyImage.IsAnchored = originalImage.IsAnchored;
-                    copyImage.Parts = originalImage.Parts;
-                    copyImage.Position = originalImage.Position;
-                    copyImage.Width = copyImage.Width;
-                    copyImage.ZIndex = originalImage.ZIndex;
-                    foreach (var stroke in originalImage.PageObjectStrokes)
-                    {
-                        copyImage.PageObjectStrokes.Add(stroke);
+                    CLPStamp originalStamp = obj as CLPStamp;
+                    CLPStamp copyStamp;
+                    if (originalStamp.ByteSource == null) { 
+                        copyStamp = new CLPStamp();
+                    } else {
+                        copyStamp = new CLPStamp(originalStamp.ByteSource);
                     }
-                    pageObject = copyImage;
+                    copyStamp.Height = originalStamp.Height;
+                    copyStamp.IsAnchored = originalStamp.IsAnchored;
+                    copyStamp.Parts = originalStamp.Parts;
+                    copyStamp.Position = originalStamp.Position;
+                    copyStamp.Width = originalStamp.Width;
+                    copyStamp.ZIndex = originalStamp.ZIndex;
+                    foreach (var stroke in originalStamp.PageObjectStrokes)
+                    {
+                        copyStamp.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyStamp;
                 }
                 else if (obj is CLPSnapTile)
                 {
@@ -409,13 +398,9 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
                 }
-                else if (pageObject is CLPImageStamp)
+                else if (pageObject is CLPStamp)
                 {
-                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-                }
-                else if (pageObject is CLPBlankStamp)
-                {
-                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
+                    pageObjectViewModel = new CLPStampViewModel(pageObject as CLPStamp, pageViewModel);
                 }
                 else if (pageObject is CLPTextBox)
                 {

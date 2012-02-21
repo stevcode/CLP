@@ -118,13 +118,9 @@ namespace Classroom_Learning_Partner.Views
                     bool isOverStampedObject = false;
 
                     var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
-                    if (gridChild is CLPImageStampViewModel)
+                    if (gridChild is CLPStampViewModel)
                     {
-                        isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
-                    }
-                    else if (gridChild is CLPBlankStampViewModel)
-                    {
-                        isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
+                        isOverStampedObject = !(gridChild as CLPStampViewModel).IsAnchored;
                     }
                     else if (gridChild is CLPSnapTileViewModel)
                     {

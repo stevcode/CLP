@@ -940,7 +940,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               {
                                                   // Open document
                                                   string filename = dlg.FileName;
-                                                  CLPImageStamp image = new CLPImageStamp(filename);
+                                                  CLPStamp image = new CLPStamp(filename);
                                                   CLPService.AddPageObjectToPage(image);
                                               }
                                           }));
@@ -960,7 +960,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_insertBlankStampCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPBlankStamp stamp = new CLPBlankStamp();
+                                              CLPStamp stamp = new CLPStamp();
                                               CLPService.AddPageObjectToPage(stamp);
                                           }));
             }

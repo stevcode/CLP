@@ -1,16 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Classroom_Learning_Partner.Model.CLPPageObjects
+namespace Classroom_Learning_Partner.Model
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
-    public class CLPImageStamp : CLPStampBase
+    public class  CLPStamp : CLPPageObjectBase
     {
-        public CLPImageStamp(string path) : base()
+        public CLPStamp() : base()
         {
+            StampConstruct();
+            Height = 150;
+        }
+
+        public CLPStamp(string path) : base()
+        {
+            StampConstruct();
             if (File.Exists(path))
             {
                 ByteSource = File.ReadAllBytes(path);
@@ -19,11 +30,22 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             InitializeBase();
         }
 
-        public CLPImageStamp(byte[] imgSource)
+        public CLPStamp(byte[] imgSource)
         {
+            StampConstruct();
             ByteSource = imgSource;
             LoadImageFromByteSource();
             InitializeBase();
+        }
+
+        #region Methods
+
+        private void StampConstruct(){
+            MetaData.SetValue("IsAnchored", "True");
+            MetaData.SetValue("Parts", "0");
+            base.Position = new Point(10, 10);
+            Width = 150;
+            IsAnchored = true;
         }
 
         private void InitializeBase()
@@ -61,7 +83,15 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public override CLPPageObjectBase Copy()
         {
-            CLPImageStamp newStamp = new CLPImageStamp(_byteSource);
+            CLPStamp newStamp;
+            if (ByteSource == null)
+            {
+                newStamp = new CLPStamp();
+            }
+            else
+            {
+                newStamp = new CLPStamp(ByteSource);
+            }
             //copy all metadata and create new unique ID/creation date for the moved stamp
             newStamp.IsAnchored = IsAnchored;
             newStamp.Parts = Parts;
@@ -77,19 +107,68 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             return newStamp;
         }
 
+        #endregion Methods
+
         #region Properties
+
+        //returns true if stamp is anchor/placed by teacher
+        //returns false if stamp is a copy of the anchor; moved by the student
+        public bool IsAnchored
+        {
+            get
+            {
+                if (MetaData.GetValue("IsAnchored") == "True")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                if (value)
+                {
+                    MetaData.SetValue("IsAnchored", "True");
+                }
+                else
+                {
+                    MetaData.SetValue("IsAnchored", "False");
+                }
+            }
+        }
+
+        public int Parts
+        {
+            get
+            {
+                if (MetaData.GetValue("Parts") == "")
+                {
+                    return 0;
+                }
+                else
+                {
+                    return Int32.Parse(MetaData.GetValue("Parts"));
+                }
+            }
+            set
+            {
+                MetaData.SetValue("Parts", value.ToString());
+            }
+        }
 
         //Non-Serialized
         [NonSerialized]
-        private ImageSource _sourceImage;
+        private ImageSource _sourceImage = null;
         public ImageSource SourceImage
         {
             get
             {
-                if (_sourceImage == null)
-                {
-                    LoadImageFromByteSource();
-                }
+//                if (_sourceImage == null)
+//                {
+//                    LoadImageFromByteSource();
+//                }
                 return _sourceImage;
             }
             set
@@ -98,7 +177,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
-        private byte[] _byteSource;
+        private byte[] _byteSource = null;
         public byte[] ByteSource
         {
             get

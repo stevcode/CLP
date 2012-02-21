@@ -1,20 +1,18 @@
-﻿using Classroom_Learning_Partner.Model;
-using GalaSoft.MvvmLight;
-using System.Windows.Shapes;
-using System.Windows.Media;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows;
-using System.Collections.ObjectModel;
+using System.Windows.Media;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    abstract public class CLPStampBaseViewModel : CLPPageObjectBaseViewModel
+    public class CLPStampViewModel : CLPPageObjectBaseViewModel
     {
 
         #region Constructors
 
-        public CLPStampBaseViewModel(CLPStampBase stamp, CLPPageViewModel pageViewModel)
+        public CLPStampViewModel(CLPStamp stamp, CLPPageViewModel pageViewModel)
             : base(pageViewModel)
         {
             PageObject = stamp;
@@ -26,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             {
                 ScribblesToStrokePaths();
             }
+            SourceImage = stamp.SourceImage;
         }
 
         #endregion //Constructors
@@ -89,7 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
                 _parts = value;
                 //bad, quick hack, update to set database values
-                (PageObject as CLPStampBase).Parts = value;
+                (PageObject as CLPStamp).Parts = value;
                 RaisePropertyChanged(PartsPropertyName);
             }
         }
@@ -100,6 +99,23 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             get
             {
                 return _strokePathViewModels;
+            }
+        }
+
+        private ImageSource _sourceImage;
+
+        /// <summary>
+        /// Sets and gets the SourceImage property.
+        /// </summary>
+        public ImageSource SourceImage
+        {
+            get
+            {
+                return _sourceImage;
+            }
+            set
+            {
+                _sourceImage = value;
             }
         }
 

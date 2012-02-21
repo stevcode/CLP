@@ -23,14 +23,14 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     /// <summary>
     /// Interaction logic for CLPImageStampView.xaml
     /// </summary>
-    public partial class CLPImageStampView : UserControl
+    public partial class CLPStampView : UserControl
     {
-        public CLPImageStampView()
+        public CLPStampView()
         {
             InitializeComponent();
 
             CLPService = new CLPServiceAgent();
-            
+
             adornedControl.IsMouseOverShowEnabled = false;
 
             this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);
@@ -38,10 +38,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private bool isOnPreview = false;
 
-        private CLPImageStampViewModel stampViewModel;
+        private CLPStampViewModel stampViewModel;
         void CLPStampView_Loaded(object sender, RoutedEventArgs e)
         {
-            stampViewModel = this.DataContext as CLPImageStampViewModel;
+            stampViewModel = this.DataContext as CLPStampViewModel;
             if (stampViewModel.IsAnchored)
             {
                 adornedControl.ShowAdorner();
@@ -57,41 +57,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private ICLPServiceAgent CLPService { get; set; }
 
-        //datacontext from model to assign initial
-        private bool isPartsAssignedByTeacher = false;
-
-        private void PartsButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!isOnPreview)
-            {
-                if (!isPartsAssignedByTeacher || App.IsAuthoring)
-                {
-                    KeypadWindowView keyPad = new KeypadWindowView();
-                    keyPad.ShowDialog();
-                    if (keyPad.DialogResult == true)
-                    {
-                        Button partsBtn = sender as Button;
-                        partsBtn.Content = keyPad.Parts;
-
-                        //unecessary because of binding?
-                        //View pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                        //PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                        //(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).Parts = Int32.Parse(keyPad.Parts);
-                    }
-
-                    if (App.IsAuthoring)
-                    {
-                        isPartsAssignedByTeacher = true;
-                    }
-                } 
-            } 
-        }
-
         private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
                     PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
@@ -125,7 +95,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Green);
                 }
@@ -136,7 +106,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Black);
                 }
@@ -148,7 +118,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Green);
 
@@ -156,22 +126,22 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
                     oldPosition = pageObjectContainerViewModel.Position;
 
-                    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+                    CLPStamp stamp = stampViewModel.PageObject.Copy() as CLPStamp;
                     CLPService.AddPageObjectToPage(stamp);
 
                     stampViewModel.IsAnchored = false;
                     //make serviceagent call here to change model and database
-                    (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                    (stampViewModel.PageObject as CLPStamp).IsAnchored = false;
                     stampViewModel.ScribblesToStrokePaths();
-                } 
-            } 
+                }
+            }
         }
 
         private void Thumb_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Black);
 
@@ -186,7 +156,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     {
                         stampViewModel.IsAnchored = false;
                         //make serviceagent call here to change model and database
-                        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                        (stampViewModel.PageObject as CLPStamp).IsAnchored = false;
 
                         adornedControl.HideAdorner();
 
@@ -194,7 +164,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         {
                             string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
                             App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
-                        } 
+                        }
                     }
                     else
                     {
@@ -202,6 +172,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     }
                 }
             }
-        }  
+        }
     }
 }
