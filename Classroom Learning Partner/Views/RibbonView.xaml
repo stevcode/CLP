@@ -195,7 +195,7 @@
 
             <ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
                 <ribbon:RibbonButton
-                    LargeImageSource="..\Images\video.png"
+                    LargeImageSource="..\Images\play2.png"
                     Label="Enable Playback"
                     Command="{Binding Path=EnablePlaybackCommand}" />
                 <ribbon:RibbonButton
