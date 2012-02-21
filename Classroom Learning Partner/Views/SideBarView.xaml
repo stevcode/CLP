@@ -29,7 +29,7 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
-                        <ComboBox ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
+                        <ComboBox x:Name="comboBox"  ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
                     </DockPanel>
 
                     <ListBox x:Name="NotebookPageListBox" Grid.Row="1"

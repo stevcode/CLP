@@ -105,7 +105,7 @@
                     Visibility="{Binding Path=InstructorVisibility}"/>-->
                 <ribbon:RibbonButton
                     Label="Snap Tile"
-                    LargeImageSource="..\Images\LargeIcon.png"
+                    LargeImageSource="..\Images\SnapTileIcon.png"
                     Command="{Binding Path=SetSnapTileCommand}"/>
             </ribbon:RibbonGroup>
 
@@ -385,6 +385,10 @@
                     Label="Insert Blank Stamp"
                     LargeImageSource="..\Images\AddPathStamp.png"
                     Command="{Binding Path=InsertBlankStampCommand}" />
+                <ribbon:RibbonButton
+                    Label="Insert Square"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=InsertSquareCommand}" />
             </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Page">
