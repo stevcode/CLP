@@ -9,62 +9,10 @@
                     xmlns:dvw="clr-namespace:Classroom_Learning_Partner.Views.Displays"
                     >
 
-    <!--DataTemplates for WorkspaceViewModels-->
-    
-    <DataTemplate DataType="{x:Type wvm:BlankWorkspaceViewModel}">
-        <wvw:BlankWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:NotebookChooserWorkspaceViewModel}">
-        <wvw:NotebookChooserWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:AuthoringWorkspaceViewModel}">
-        <wvw:AuthoringWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:InstructorWorkspaceViewModel}">
-        <wvw:InstructorWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:StudentWorkspaceViewModel}">
-        <wvw:StudentWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:ProjectorWorkspaceViewModel}">
-        <wvw:ProjectorWorkspaceView />
-    </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type wvm:ServerWorkspaceViewModel}">
-        <wvw:ServerWorkspaceView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type wvm:UserLoginWorkspaceViewModel}">
-        <wvw:UserLoginWorkspaceView />
-    </DataTemplate>
-
-    <!--DataTemplates for DisplayViewModels-->
-
-    <DataTemplate DataType="{x:Type dvm:LinkedDisplayViewModel}">
-        <dvw:LinkedDisplayView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type dvm:GridDisplayViewModel}">
-        <dvw:GridDisplayView />
-    </DataTemplate>
-
     <!--DataTemplates for Other ViewModels-->
 
     <DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">
         <vw:NotebookSelectorView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:CLPPageViewModel}">
-        <vw:CLPPageView/>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
-        <vw:CLPHistoryView/>
     </DataTemplate>
 
     <!--Visual Datatemplates-->

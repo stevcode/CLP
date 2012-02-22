@@ -16,13 +16,15 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         #region Constructors
 
-        public CLPStampBaseViewModel(CLPStampBase stamp, CLPPageViewModel pageViewModel)
-            : base(pageViewModel)
+        public CLPStampBaseViewModel(CLPStampBase stamp)
+            : base()
         {
             PageObject = stamp;
             IsAnchored = stamp.IsAnchored;
             Parts = stamp.Parts;
         }
+
+        public override string Title { get { return "AStampBaseVM"; } }
 
         #endregion //Constructors
 

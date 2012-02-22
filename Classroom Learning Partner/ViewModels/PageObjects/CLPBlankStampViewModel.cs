@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Catel.MVVM;
+using Catel.Data;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Shapes;
 using System.Windows.Media;
@@ -6,6 +7,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -18,16 +20,18 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPBlankStampViewModel class.
         /// </summary>
-        public CLPBlankStampViewModel(CLPBlankStamp stamp, CLPPageViewModel pageViewModel)
-            : base(stamp, pageViewModel)
+        public CLPBlankStampViewModel(CLPBlankStamp stamp)
+            : base(stamp)
         {
-            PageObjectStrokes = CLPPageViewModel.StringsToStrokes(stamp.PageObjectStrokes);
+            PageObjectStrokes = CLPPage.StringsToStrokes(stamp.PageObjectStrokes);
 
             if (!IsAnchored)
             {
                 ScribblesToStrokePaths();
             }
         }
+
+        public override string Title { get { return "BlankStampVM"; } }
 
         #endregion //Constructors
 
@@ -62,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     }
                     geometry.Freeze();
 
-                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width, PageViewModel);
+                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
                     StrokePathViewModels.Add(strokePathViewModel);
                 }
             }

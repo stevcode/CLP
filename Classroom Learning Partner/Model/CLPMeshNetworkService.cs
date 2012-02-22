@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -67,7 +67,6 @@ namespace Classroom_Learning_Partner.Model
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
     {
-        private ICLPServiceAgent CLPService = new CLPServiceAgent();
         int pagecount = 0;
 
 
@@ -78,7 +77,7 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Instructor/Student Machine Connected: " + userName);
                 //Users Notebooks to user machine
                 //Currently username is the machine name -> CHANGE when using actual names
-                CLPService.RetrieveNotebooks(userName);
+                CLPServiceAgent.Instance.RetrieveNotebooks(userName);
             }
           
         }
@@ -104,7 +103,7 @@ namespace Classroom_Learning_Partner.Model
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
-                        CLPService.AddSubmission(page);
+                        CLPServiceAgent.Instance.AddSubmission(page);
                     }
                     else if (App.CurrentUserMode == App.UserMode.Server)
                     {
@@ -114,7 +113,7 @@ namespace Classroom_Learning_Partner.Model
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPService.SavePageDB(page);
+                            CLPServiceAgent.Instance.SavePageDB(page);
                         }
                     }
              return null;
@@ -133,7 +132,7 @@ namespace Classroom_Learning_Partner.Model
                 //Console.WriteLine(s_notebook);
                 //DB call
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.SaveNotebookDB(notebook, userName);
+                CLPServiceAgent.Instance.SaveNotebookDB(notebook, userName);
                
             }
         }
@@ -142,7 +141,7 @@ namespace Classroom_Learning_Partner.Model
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.DistributeNotebookServer(notebook, author);
+                CLPServiceAgent.Instance.DistributeNotebookServer(notebook, author);
             }
         }
         public void ReceiveNotebook(string s_notebook, string userName)
@@ -154,7 +153,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 Console.WriteLine("ReceiveNotebooks - recieved one notebook");
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
-                CLPService.SaveNotebooksFromDBToHD(notebook);
+                CLPServiceAgent.Instance.SaveNotebooksFromDBToHD(notebook);
                 //reload notebook chooser window if already open
                 //if (App.MainWindowViewModel.Workspace.GetType().Equals(new NotebookChooserWorkspaceViewModel().GetType()))
                 //{
@@ -200,31 +199,31 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        {
-                            if (pageViewModel.Page.UniqueID == pageUniqueID)
-                            {
-                                foreach (var stringStroke in strokesAdded)
-                                {
-                                    Stroke stroke = CLPPageViewModel.StringToStroke(stringStroke);
-                                    pageViewModel.OtherStrokes.Add(stroke);
-                                }
-                                foreach (var stringStroke in strokesRemoved)
-                                {
-                                    Stroke sentStroke = CLPPageViewModel.StringToStroke(stringStroke);
-                                    foreach (var stroke in pageViewModel.OtherStrokes.ToList())
-                                    {
-                                        string a = sentStroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                                        string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                                        if (a == b)
-                                        {
-                                            pageViewModel.OtherStrokes.Remove(stroke);
-                                        }
-                                    }
-                                    pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
-                                }
-                            }
-                        }
+                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                        //{
+                        //    if (pageViewModel.Page.UniqueID == pageUniqueID)
+                        //    {
+                        //        foreach (var stringStroke in strokesAdded)
+                        //        {
+                        //            Stroke stroke = CLPPageViewModel.StringToStroke(stringStroke);
+                        //            pageViewModel.OtherStrokes.Add(stroke);
+                        //        }
+                        //        foreach (var stringStroke in strokesRemoved)
+                        //        {
+                        //            Stroke sentStroke = CLPPageViewModel.StringToStroke(stringStroke);
+                        //            foreach (var stroke in pageViewModel.OtherStrokes.ToList())
+                        //            {
+                        //                string a = sentStroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                        //                string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                        //                if (a == b)
+                        //                {
+                        //                    pageViewModel.OtherStrokes.Remove(stroke);
+                        //                }
+                        //            }
+                        //            pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
+                        //        }
+                        //    }
+                        //}
 
                     }
 
@@ -242,44 +241,44 @@ namespace Classroom_Learning_Partner.Model
                     {
                         if (displayType == "LinkedDisplay")
                         {
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
                         }
                         else
                         {
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
 
-                            (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Clear();
-                            foreach (var stringPage in gridDisplayPages)
-                            {
-                                CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                                bool isAlreadyInCurrentNotebook = false;
-                                foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                                {
-                                    if (pageViewModel.Page.UniqueID == page.UniqueID)
-                                    {
-                                        isAlreadyInCurrentNotebook = true;
-                                    }
-                                }
+                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
+                            //foreach (var stringPage in gridDisplayPages)
+                            //{
+                                //CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
+                                //bool isAlreadyInCurrentNotebook = false;
+                                //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                                //{
+                                //    if (pageViewModel.Page.UniqueID == page.UniqueID)
+                                //    {
+                                //        isAlreadyInCurrentNotebook = true;
+                                //    }
+                                //}
 
-                                if (isAlreadyInCurrentNotebook)
-                                {
-                                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
-                                }
-                                else
-                                {
-                                    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                                    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                                    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
-                                }
-                            }
+                                //if (isAlreadyInCurrentNotebook)
+                                //{
+                                //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+                                //}
+                                //else
+                                //{
+                                //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+                                //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+                                //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
+                                //}
+                            //}
                         }
 
                     }
@@ -296,29 +295,29 @@ namespace Classroom_Learning_Partner.Model
                     {
                         CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
                         bool isAlreadyInCurrentNotebook = false;
-                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        {
-                            if (page.IsSubmission)
-                            {
-                                page.UniqueID = page.SubmissionID;
-                            }
-                            if (pageViewModel.Page.UniqueID == page.UniqueID)
-                            {
-                                isAlreadyInCurrentNotebook = true;
-                            }
+                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                        //{
+                        //    if (page.IsSubmission)
+                        //    {
+                        //        page.UniqueID = page.SubmissionID;
+                        //    }
+                        //    if (pageViewModel.Page.UniqueID == page.UniqueID)
+                        //    {
+                        //        isAlreadyInCurrentNotebook = true;
+                        //    }
                             
-                        }
+                        //}
 
-                        if (isAlreadyInCurrentNotebook)
-                        {
-                            AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
-                        }
-                        else
-                        {
-                            CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                            App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                            AppMessages.AddPageToDisplay.Send(newPageViewModel);
-                        }
+                        //if (isAlreadyInCurrentNotebook)
+                        //{
+                        //    AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
+                        //}
+                        //else
+                        //{
+                        //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+                        //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+                        //    AppMessages.AddPageToDisplay.Send(newPageViewModel);
+                        //}
                     }
                     return null;
                 }, null);
@@ -359,48 +358,44 @@ namespace Classroom_Learning_Partner.Model
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
                         
-                        foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        {
-                            if (pageViewModel.Page.UniqueID == pageID)
-                            {
-                                object pageObject = ObjectSerializer.ToObject(stringPageObject);
+                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                        //{
+                        //    if (pageViewModel.Page.UniqueID == pageID)
+                        //    {
+                        //        object pageObject = ObjectSerializer.ToObject(stringPageObject);
 
 
-                                CLPPageObjectBaseViewModel pageObjectViewModel;
-                                if (pageObject is CLPImage)
-                                {
-                                    pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
-                                }
-                                else if (pageObject is CLPImageStamp)
-                                {
-                                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-                                }
-                                else if (pageObject is CLPBlankStamp)
-                                {
-                                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-                                }
-                                else if (pageObject is CLPTextBox)
-                                {
-                                    pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
-                                }
-                                else if (pageObject is CLPSnapTile)
-                                {
-                                    pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
-                                }
-                                else if (pageObject is CLPSquare)
-                                {
-                                    pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
-                                }
-                                else
-                                {
-                                    pageObjectViewModel = null;
-                                }
+                        //        CLPPageObjectBaseViewModel pageObjectViewModel;
+                        //        if (pageObject is CLPImage)
+                        //        {
+                        //            pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
+                        //        }
+                        //        else if (pageObject is CLPImageStamp)
+                        //        {
+                        //            pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
+                        //        }
+                        //        else if (pageObject is CLPBlankStamp)
+                        //        {
+                        //            pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
+                        //        }
+                        //        else if (pageObject is CLPTextBox)
+                        //        {
+                        //            pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
+                        //        }
+                        //        else if (pageObject is CLPSnapTileContainer)
+                        //        {
+                        //            pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
+                        //        }
+                        //        else
+                        //        {
+                        //            pageObjectViewModel = null;
+                        //        }
 
-                                pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
-                                pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
-                                break;
-                            }
-                        }
+                        //        pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
+                        //        pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
+                        //        break;
+                        //    }
+                        //}
                     }
                                 
 

@@ -1,77 +1,40 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using Catel.Data;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
-    public class ProjectorWorkspaceViewModel : ViewModelBase
+    public class ProjectorWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the ProjectorWorkspaceViewModel class.
         /// </summary>
         public ProjectorWorkspaceViewModel()
+            : base()
         {
-            Display = LinkedDisplay;
-            LinkedDisplay.IsActive = true;
-            LinkedDisplay.IsOnProjector = true;
-            GridDisplay.IsActive = false;
-            GridDisplay.IsOnProjector = false;
+            Console.WriteLine(Title + " created");
         }
 
-        private LinkedDisplayViewModel _linkedDisplay = new LinkedDisplayViewModel();
-        public LinkedDisplayViewModel LinkedDisplay
-        {
-            get
-            {
-                return _linkedDisplay;
-            }
-        }
+        public override string Title { get { return "ProjectorWorkspaceVM"; } }
 
-        private GridDisplayViewModel _gridDisplay = new GridDisplayViewModel();
-        public GridDisplayViewModel GridDisplay
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public IDisplayViewModel SelectedDisplay
         {
-            get
-            {
-                return _gridDisplay;
-            }
+            get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
+            set { SetValue(SelectedDisplayProperty, value); }
         }
 
         /// <summary>
-        /// The <see cref="Display" /> property's name.
+        /// Register the SelectedDisplay property so it is known in the class.
         /// </summary>
-        public const string DisplayPropertyName = "Display";
+        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
 
-        private ViewModelBase _display = null;
-
-        /// <summary>
-        /// Sets and gets the Display property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public ViewModelBase Display
+        public string WorkspaceName
         {
-            get
-            {
-                return _display;
-            }
-
-            set
-            {
-                if (_display == value)
-                {
-                    return;
-                }
-
-                _display = value;
-                RaisePropertyChanged(DisplayPropertyName);
-            }
+            get { return "ProjectorWorkspace"; }
         }
     }
 }

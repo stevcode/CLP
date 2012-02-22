@@ -10,12 +10,15 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
     {
         #region Constructor
 
-        public StrokePathViewModel(Geometry pathData, SolidColorBrush pathColor, double width, CLPPageViewModel pageViewModel) : base(pageViewModel)
+        public StrokePathViewModel(Geometry pathData, SolidColorBrush pathColor, double width)
+            : base()
         {
             _pathData = pathData;
             _pathColor = pathColor;
             _pathWidth = width;
         }
+
+        public override string Title { get { return "StrokePathVM"; } }
 
         #endregion //Constructor
 

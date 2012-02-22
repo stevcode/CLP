@@ -1,60 +1,40 @@
-﻿using GalaSoft.MvvmLight;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Media;
+using System.IO;
+using System.Windows.Media.Imaging;
+using Catel.Data;
+using Catel.MVVM;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     public class CLPImageViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image, CLPPageViewModel pageViewModel) : base(pageViewModel)
+        public CLPImageViewModel(CLPImage image) : base()
         {
             PageObject = image;
-            _sourceImage = image.SourceImage;
         }
+
+        public override string Title { get { return "ImageVM"; } }
 
         #region Binding
 
         /// <summary>
-        /// The <see cref="SourceImage" /> property's name.
+        /// Gets or sets the property value.
         /// </summary>
-        public const string SourceImagePropertyName = "SourceImage";
-
-        private ImageSource _sourceImage;
-
-        /// <summary>
-        /// Sets and gets the SourceImage property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
+        [ViewModelToModel("PageObject")]
         public ImageSource SourceImage
         {
-            get
-            {
-                return _sourceImage;
-            }
-
-            set
-            {
-                if (_sourceImage == value)
-                {
-                    return;
-                }
-
-                _sourceImage = value;
-                RaisePropertyChanged(SourceImagePropertyName);
-            }
+            get { return GetValue<ImageSource>(SourceImageProperty); }
+            set { SetValue(SourceImageProperty, value); }
         }
+
+        /// <summary>
+        /// Register the SourceImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
 
         #endregion //Binding
     }

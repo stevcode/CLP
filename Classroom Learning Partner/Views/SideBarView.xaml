@@ -1,12 +1,18 @@
-﻿<UserControl x:Class="Classroom_Learning_Partner.Views.SideBarView"
+<catel:UserControl x:Class="Classroom_Learning_Partner.Views.SideBarView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">    
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
+             x:TypeArguments="vm:SideBarViewModel"
+             Loaded="UserControl_Loaded">   
+
     <Grid Name="MainGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -22,18 +28,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" Background="LightBlue">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <DockPanel Grid.Row="0" Height="40" HorizontalAlignment="Stretch" Width="{Binding ElementName=NotebookPageListBox,Path=Width}" LastChildFill="True">
-                        <ComboBox x:Name="comboBox"  ItemsSource="{Binding Path=OpenNotebookNames}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" />
-                    </DockPanel>
-
-                    <ListBox x:Name="NotebookPageListBox" Grid.Row="1"
-                     ItemsSource="{Binding Path=PageViewModels}"
+                <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
+                     VirtualizingStackPanel.IsVirtualizing="True"
+                     ItemsSource="{Binding Path=Pages}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
@@ -44,8 +41,8 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                    <vw:CLPPagePreviewView  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" />
-                                    <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
+                                    <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" />
+                                    <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}" >
                                         <Grid.RowDefinitions>
                                                 <RowDefinition />
                                                 <RowDefinition />
@@ -60,21 +57,22 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>             
                     </ListBox>
-                </Grid>
+
 
                 <!--TODO Make this Rectangle into selection buttons to choose submissions-->
-                <Rectangle Visibility="{Binding Path=SubmissionsSideBarVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+                <Rectangle Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
-                     ItemsSource="{Binding Path=SubmissionViewModels}"
+                     VirtualizingStackPanel.IsVirtualizing="True"
+                     ItemsSource="{Binding Path=SubmissionPages}"
                      SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True"
-                     Visibility="{Binding Path=SubmissionsSideBarVisibility}">
+                     Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border >
                                 <Grid Margin="5,10" Name="grid" PreviewMouseDown="preview_PreviewMouseDown">
-                                    <vw:CLPPagePreviewView Background="White" x:Name="preview" MaxWidth="150" />
+                                    <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" x:Name="preview" MaxWidth="150" />
 
                                     <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
                                             HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
@@ -88,7 +86,5 @@
 
         </Border>
 
-        <Button Name="SideBarToggle" Grid.Column="1" Height="55" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Content="&lt;" PreviewMouseUp="SideBarToggle_PreviewMouseUp" />
-
     </Grid>
-</UserControl>
+</catel:UserControl>

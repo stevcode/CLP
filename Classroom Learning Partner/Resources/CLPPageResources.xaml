@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
                     xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
@@ -18,11 +18,11 @@
 
 
 
-    <DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
+    <!--<DataTemplate DataType="{x:Type vm:PageObjectContainerViewModel}">
         <vw:PageObjectContainerView />
-    </DataTemplate>
+    </DataTemplate>-->
 
-    <DataTemplate DataType="{x:Type vmpo:CLPTextBoxViewModel}">
+    <!--<DataTemplate DataType="{x:Type vmpo:CLPTextBoxViewModel}">
         <vwpo:CLPTextBoxView />
     </DataTemplate>
 
@@ -38,18 +38,8 @@
         <vwpo:CLPBlankStampView />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
-        <vwpo:CLPSnapTileView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
-        <vw:CLPHistoryView />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vmpo:CLPSquareViewModel}">
-        <vwpo:CLPSquareView />
-    </DataTemplate>
-
-
+    <DataTemplate DataType="{x:Type vmpo:CLPSnapTileContainerViewModel}">
+        <vwpo:CLPSnapTileContainerView />
+    </DataTemplate>-->   
 
 </ResourceDictionary>

@@ -8,7 +8,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
 
     [Serializable]
-    public class CLPBlankStamp : CLPStampBase
+    public class CLPBlankStamp : CLPStampBase, ICLPPageObject
     {
         public CLPBlankStamp() : base()
         {
@@ -31,6 +31,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
 
             return newStamp;
+        }
+
+        public ICLPPageObject Duplicate()
+        {
+            CLPBlankStamp newStamp = this.Clone() as CLPBlankStamp;
+            newStamp.UniqueID = Guid.NewGuid().ToString();
+
+            return newStamp;
+        }
+
+        public string PageObjectType
+        {
+            get { return "CLPBlankStamp"; }
         }
     }
 }

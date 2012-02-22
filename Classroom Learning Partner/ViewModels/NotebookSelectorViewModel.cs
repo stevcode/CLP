@@ -1,62 +1,51 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using Classroom_Learning_Partner.Model;
+﻿using Classroom_Learning_Partner.Model;
+using Catel.MVVM;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
-    /// </summary>
     public class NotebookSelectorViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the NotebookSelectorViewModel class.
         /// </summary>
-        public NotebookSelectorViewModel(string notebookName)
+        public NotebookSelectorViewModel(string notebookName) : base()
         {
-            CLPService = new CLPServiceAgent();
-            _notebookName = notebookName;
+            NotebookName = notebookName;
+            SelectNotebookCommand = new Command(OnSelectNotebookCommandExecute);
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
+        public override string Title { get { return "NotebookSelectorVM"; } }
 
         #region Bindings
 
-        private string _notebookName = "";
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public string NotebookName
         {
-            get
-            {
-                return _notebookName;
-            }
+            get { return GetValue<string>(NotebookNameProperty); }
+            set { SetValue(NotebookNameProperty, value); }
         }
+
+        /// <summary>
+        /// Register the NotebookName property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
 
         #endregion //Bindings
 
-        private RelayCommand _selectNotebook;
+        /// <summary>
+        /// Gets the SelectNotebookCommand command.
+        /// </summary>
+        public Command SelectNotebookCommand { get; private set; }
 
         /// <summary>
-        /// Gets the SelectNotebookCommand.
+        /// Method to invoke when the SelectNotebookCommand command is executed.
         /// </summary>
-        public RelayCommand SelectNotebookCommand
+        private void OnSelectNotebookCommandExecute()
         {
-            get
-            {
-                return _selectNotebook
-                    ?? (_selectNotebook = new RelayCommand(
-                                          () =>
-                                          {
-                                              CLPService.OpenNotebook(NotebookName);
-                                          }));
-            }
+            CLPServiceAgent.Instance.OpenNotebook(NotebookName);
         }
-
     }
 }

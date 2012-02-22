@@ -1,34 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Resources;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
     /// Interaction logic for CLPImageStampView.xaml
     /// </summary>
-    public partial class CLPImageStampView : UserControl
+    public partial class CLPImageStampView : UserControl<CLPImageStampViewModel>
     {
         public CLPImageStampView()
         {
             InitializeComponent();
-            CLPService = new CLPServiceAgent();
             
             adornedControl.IsMouseOverShowEnabled = false;
 
@@ -56,8 +48,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
-        private ICLPServiceAgent CLPService { get; set; }
-
         //datacontext from model to assign initial
         private bool isPartsAssignedByTeacher = false;
 
@@ -65,7 +55,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!isPartsAssignedByTeacher || App.IsAuthoring)
+                if (!isPartsAssignedByTeacher || App.MainWindowViewModel.IsAuthoring)
                 {
                     KeypadWindowView keyPad = new KeypadWindowView();
                     keyPad.ShowDialog();
@@ -80,7 +70,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         //(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).Parts = Int32.Parse(keyPad.Parts);
                     }
 
-                    if (App.IsAuthoring)
+                    if (App.MainWindowViewModel.IsAuthoring)
                     {
                         isPartsAssignedByTeacher = true;
                     }
@@ -92,33 +82,33 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
 
-                    double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-                    double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-                    if (x < 0)
-                    {
-                        x = 0;
-                    }
-                    if (y < 0)
-                    {
-                        y = 0;
-                    }
-                    if (x > 1056 - pageObjectContainerViewModel.Width)
-                    {
-                        x = 1056 - pageObjectContainerViewModel.Width;
-                    }
-                    if (y > 816 - pageObjectContainerViewModel.Height)
-                    {
-                        y = 816 - pageObjectContainerViewModel.Height;
-                    }
+                //    double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
+                //    double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
+                //    if (x < 0)
+                //    {
+                //        x = 0;
+                //    }
+                //    if (y < 0)
+                //    {
+                //        y = 0;
+                //    }
+                //    if (x > 1056 - pageObjectContainerViewModel.Width)
+                //    {
+                //        x = 1056 - pageObjectContainerViewModel.Width;
+                //    }
+                //    if (y > 816 - pageObjectContainerViewModel.Height)
+                //    {
+                //        y = 816 - pageObjectContainerViewModel.Height;
+                //    }
 
-                    Point pt = new Point(x, y);
-                    CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
-                }
+                //    Point pt = new Point(x, y);
+                //    //CLPService.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                //}
             }
         }
 
@@ -126,10 +116,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Green);
-                }
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Green);
+                //}
             }
         }
 
@@ -137,10 +127,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (!isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Black);
-                }
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Black);
+                //}
             }
         }
 
@@ -149,17 +139,17 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Green);
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Green);
 
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                    oldPosition = pageObjectContainerViewModel.Position;
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //    oldPosition = pageObjectContainerViewModel.Position;
 
-                    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
-                    CLPService.AddPageObjectToPage(stamp);
-                } 
+                //    CLPImageStamp stamp = stampViewModel.PageObject.Copy() as CLPImageStamp;
+                //    //CLPService.AddPageObjectToPage(stamp);
+                //} 
             } 
         }
 
@@ -167,37 +157,37 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
-                {
-                    poly.Fill = new SolidColorBrush(Colors.Black);
+                //if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
+                //{
+                //    poly.Fill = new SolidColorBrush(Colors.Black);
 
-                    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
-                    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
-                    Point newPosition = pageObjectContainerViewModel.Position;
+                //    PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
+                //    PageObjectContainerViewModel pageObjectContainerViewModel = pageObjectContainerView.DataContext as PageObjectContainerViewModel;
+                //    Point newPosition = pageObjectContainerViewModel.Position;
 
-                    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
-                    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
-                    //change these to be past the height/width of the container
-                    if (deltaX > 50 || deltaY > 50)
-                    {
+                //    double deltaX = Math.Abs(newPosition.X - oldPosition.X);
+                //    double deltaY = Math.Abs(newPosition.Y - oldPosition.Y);
+                //    //change these to be past the height/width of the container
+                //    if (deltaX > 50 || deltaY > 50)
+                //    {
 
-                        stampViewModel.IsAnchored = false;
-                        //make serviceagent call here to change model and database
-                        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
+                //        stampViewModel.IsAnchored = false;
+                //        //make serviceagent call here to change model and database
+                //        (stampViewModel.PageObject as CLPImageStamp).IsAnchored = false;
 
-                        adornedControl.HideAdorner();
+                //        adornedControl.HideAdorner();
 
-                        if (App.Peer.Channel != null && App.CurrentUserMode == App.UserMode.Instructor)
-                        {
-                            string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-                            App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
-                        } 
-                    }
-                    else
-                    {
-                        CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-                    }
-                }
+                //        if (App.Peer.Channel != null && App.CurrentUserMode == App.UserMode.Instructor)
+                //        {
+                //            string stringPageObject = ObjectSerializer.ToString(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
+                //            App.Peer.Channel.AddPageObjectToPage(pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.UniqueID, stringPageObject);
+                //        } 
+                //    }
+                //    else
+                //    {
+                //        //CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
+                //    }
+                //}
             }
         }  
     }

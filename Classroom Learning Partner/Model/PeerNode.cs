@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.Model
         {
             MachineName = Environment.MachineName;
             UserName = MachineName;
-            App.MainWindowViewModel.TitleBarText = "Connecting...";
+            App.MainWindowViewModel.SetTitleBarText("Connecting...");
         }
 
         public void Run()
@@ -88,7 +88,7 @@ namespace Classroom_Learning_Partner.Model
                 //Writing line to log is down below
                 //This caused a race condition where two threads tried to write at the same time
                 //Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
-                App.MainWindowViewModel.TitleBarText = "Connected";
+                App.MainWindowViewModel.SetTitleBarText("");
                 if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
                 {
                     Channel.Connect(MachineName);  
@@ -99,13 +99,13 @@ namespace Classroom_Learning_Partner.Model
         void OnlineStatusHandler_Offline(object sender, EventArgs e)
         {
             Logger.Instance.WriteToLog("Disconnected from Mesh: " + DateTime.Now.ToLongTimeString());
-            App.MainWindowViewModel.TitleBarText = "Disconnected";
+            App.MainWindowViewModel.SetTitleBarText("");
         }
 
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
             Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
-            App.MainWindowViewModel.TitleBarText = "Connected";
+            App.MainWindowViewModel.SetTitleBarText("");
             if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
             {
                 Channel.Connect(MachineName);

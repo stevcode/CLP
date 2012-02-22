@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Catel.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels.Displays;
+using System;
 
 namespace Classroom_Learning_Partner.Views.Displays
 {
     /// <summary>
     /// Interaction logic for LinkedDisplayView.xaml
     /// </summary>
-    public partial class LinkedDisplayView : UserControl
+    public partial class LinkedDisplayView : UserControl<LinkedDisplayViewModel>
     {
         public LinkedDisplayView()
         {
             InitializeComponent();
+            //CloseViewModelOnUnloaded = false;
+        }
+
+        private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Console.WriteLine("DisplayView unloaded");
         }
     }
 }
