@@ -275,8 +275,15 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
+                Logger.Instance.WriteToLog("------------------------------------------------");
+                Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
+                Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+                Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
             }
            
         }

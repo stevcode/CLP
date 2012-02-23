@@ -98,10 +98,13 @@ namespace Classroom_Learning_Partner.Model
              {
                     if (App.CurrentUserMode == App.UserMode.Instructor)
                     {
-                        Console.WriteLine("page received");
-                        Console.WriteLine(s_page);
+                        Console.WriteLine("Instructor received page at " + DateTime.Now.ToString());
+                        Logger.Instance.WriteToLog("Instructor received page at " + DateTime.Now.ToString());
+                        //Console.WriteLine(s_page);
 
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        Console.WriteLine("Instructor done desiralizing page at " + DateTime.Now.ToString());
+                        Logger.Instance.WriteToLog("Instructor done desiralizing page at " + DateTime.Now.ToString());
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
                         CLPService.AddSubmission(page);
