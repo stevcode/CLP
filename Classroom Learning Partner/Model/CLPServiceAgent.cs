@@ -19,14 +19,16 @@ using Classroom_Learning_Partner.ViewModels.Displays;
 
 namespace Classroom_Learning_Partner.Model
 {
-    
-    public class CLPServiceAgent
+    //Sealed to allow the compiler to perform special optimizations during JIT
+    public sealed class CLPServiceAgent
     {
         private CLPServiceAgent()
         {
         }
 
-        private static CLPServiceAgent _instance = new CLPServiceAgent();
+
+        //readonly allows thread-safety and means it can only be allocated once.
+        private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
         public static CLPServiceAgent Instance { get { return _instance; } }
 
         public void AddSubmission(CLPPage page)

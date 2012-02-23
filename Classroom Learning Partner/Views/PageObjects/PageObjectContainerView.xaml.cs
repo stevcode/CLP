@@ -206,5 +206,15 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             isDragging = false;
         }
 
+        private void removeTileButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void duplicateTileButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }
