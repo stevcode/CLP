@@ -24,14 +24,28 @@ namespace Classroom_Learning_Partner
             Student
         }
 
+        public enum DatabaseMode
+        {
+            Using,
+            NotUsing
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
             CLPService = new CLPServiceAgent();
-
-            CurrentUserMode = UserMode.Projector;
-
+            //#############################
+<<<<<<< HEAD
+            CurrentUserMode = UserMode.Server;
+            _databaseUse = DatabaseMode.Using;
+=======
+            CurrentUserMode = UserMode.Instructor;
+            _databaseUse = DatabaseMode.NotUsing;
+>>>>>>> 2e9446b91586bfec5303cc448e88e7bb2ed30854
+            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
+            {
+                ConnectToDB();
+            }
             MainWindow window = new MainWindow();
             _mainWindowViewModel = new MainViewModel();
             window.DataContext = MainWindowViewModel;
@@ -39,8 +53,8 @@ namespace Classroom_Learning_Partner
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
             Logger.Instance.InitializeLog();
-            
 
+           
             if (App.CurrentUserMode == App.UserMode.Projector)
             {
                 App.CurrentNotebookViewModel = new CLPNotebookViewModel();
@@ -51,26 +65,26 @@ namespace Classroom_Learning_Partner
             {
                 MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
             }
+            else if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                CLPService.SetWorkspace();
+            }
             else
-	        {
-                MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
-	        }
-
+            {
+                 MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();  
+            }
             DispatcherHelper.Initialize();
-
             JoinMeshNetwork();
+            
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
         protected void ConnectToDB()
         {
-<<<<<<< HEAD
-            string ConnectionString = "mongodb://18.111.92.56";
-=======
-            string ConnectionString = "mongodb://18.28.5.202";
->>>>>>> 4774d74fbbb16aa276534052d00efdda8fa55cc1
+            string ConnectionString = "mongodb://localhost";
             _databaseServer = MongoServer.Create(ConnectionString);
+            Console.WriteLine("Conencted to DB");
         }
 
         #region Methods
@@ -174,6 +188,15 @@ namespace Classroom_Learning_Partner
             get
             {
                 return _peerThread;
+            }
+        }
+
+        private static DatabaseMode _databaseUse;
+        public static DatabaseMode DatabaseUse
+        {
+            get
+            {
+                return _databaseUse;
             }
         }
 

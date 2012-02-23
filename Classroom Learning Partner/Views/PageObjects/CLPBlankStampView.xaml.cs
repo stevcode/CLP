@@ -139,12 +139,14 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         }
 
         private Point oldPosition;
+        private bool thumbDown = false;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
                 if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
                 {
+                    thumbDown = true;
                     poly.Fill = new SolidColorBrush(Colors.Green);
 
                     PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
@@ -166,7 +168,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
-                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission)
+                if (!(this.DataContext as CLPBlankStampViewModel).PageViewModel.Page.IsSubmission && thumbDown)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Black);
 

@@ -446,6 +446,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               }
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
+                                              AppMessages.SetSnapTileMode.Send(false);
                                           }));
             }
         }
@@ -467,6 +468,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               DrawingAttributes.Width = MARKER_RADIUS;
                                               EditingMode = InkCanvasEditingMode.Ink;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.Ink);
+                                              AppMessages.SetSnapTileMode.Send(false);
                                           }));
             }
         }
@@ -488,6 +490,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               DrawingAttributes.Width = ERASER_RADIUS;
                                               EditingMode = InkCanvasEditingMode.EraseByPoint;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByPoint);
+                                              AppMessages.SetSnapTileMode.Send(false);
                                           }));
             }
         }
@@ -507,6 +510,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               EditingMode = InkCanvasEditingMode.EraseByStroke;
                                               AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.EraseByStroke);
+                                              AppMessages.SetSnapTileMode.Send(false);
                                           }));
             }
         }
@@ -527,6 +531,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               CurrentColorButton = button as RibbonButton;
                                               DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
                                               _editingMode = InkCanvasEditingMode.Ink;
+                                              AppMessages.SetSnapTileMode.Send(false);
                                           }));
             }
         }
@@ -941,6 +946,25 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPBlankStamp stamp = new CLPBlankStamp();
                                               CLPService.AddPageObjectToPage(stamp);
+                                          }));
+            }
+        }
+
+        private RelayCommand _insertSquareCommand;
+
+        /// <summary>
+        /// Gets the InsertBlankStampCommand.
+        /// </summary>
+        public RelayCommand InsertSquareCommand
+        {
+            get
+            {
+                return _insertSquareCommand
+                    ?? (_insertSquareCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPSquare square = new CLPSquare();
+                                              CLPService.AddPageObjectToPage(square);
                                           }));
             }
         }

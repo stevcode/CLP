@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
             CLPService = new CLPServiceAgent();
             //#############################
-            CurrentUserMode = UserMode.Server;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
             {
