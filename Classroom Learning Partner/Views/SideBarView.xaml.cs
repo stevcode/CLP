@@ -32,7 +32,6 @@ namespace Classroom_Learning_Partner.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-
             if (!NotebookPageListBox.Items.IsEmpty)
             {
                 NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];

@@ -173,24 +173,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel SelectedSubmissionPage
-        {
-            get { return GetValue<CLPPageViewModel>(SelectedSubmissionPageProperty); }
-            set
-            {
-                SetValue(SelectedSubmissionPageProperty, value);
-                CurrentPage = SelectedSubmissionPage;
-            }
-        }
-
-        /// <summary>
-        /// Register the SelectedSubmissionPage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SelectedSubmissionPageProperty = RegisterProperty("SelectedSubmissionPage", typeof(CLPPageViewModel));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public CLPPageViewModel CurrentPage
         {
             get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }

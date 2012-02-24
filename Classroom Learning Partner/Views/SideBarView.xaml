@@ -31,9 +31,7 @@
 
                 <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
                      ItemsSource="{Binding Path=NotebookPages, UpdateSourceTrigger=PropertyChanged}"
-                     SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
-                     SelectionMode="Single"
-                     IsSynchronizedWithCurrentItem="False">
+                     SelectionMode="Single">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border>
@@ -70,8 +68,6 @@
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
                      ItemsSource="{Binding Path=SubmissionPages}"
-                     SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
-                     IsSynchronizedWithCurrentItem="True"
                      Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
