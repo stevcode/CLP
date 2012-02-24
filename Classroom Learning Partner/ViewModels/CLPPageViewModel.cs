@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            set { SetValue(PageObjectsProperty, value); }
+            private set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>

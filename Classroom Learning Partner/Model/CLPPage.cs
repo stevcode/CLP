@@ -34,6 +34,7 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             InkStrokes = new StrokeCollection();
             Strokes = new ObservableCollection<string>();
+            PageObjects = new ObservableCollection<ICLPPageObject>();
         }
 
         /// <summary>
