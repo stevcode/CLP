@@ -9,8 +9,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
-             xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
-             x:TypeArguments="vm:SideBarViewModel"
+             xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
+             x:TypeArguments="vmw:NotebookWorkspaceViewModel"
              Loaded="UserControl_Loaded">   
 
     <Grid Name="MainGrid" Background="Transparent">
@@ -29,8 +29,7 @@
                 </Grid.ColumnDefinitions>
 
                 <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
-                     VirtualizingStackPanel.IsVirtualizing="True"
-                     ItemsSource="{Binding Path=Pages}"
+                     ItemsSource="{Binding Path=NotebookPages}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True">
                         <ListBox.ItemTemplate>
@@ -63,7 +62,6 @@
                 <Rectangle Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
 
                 <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
-                     VirtualizingStackPanel.IsVirtualizing="True"
                      ItemsSource="{Binding Path=SubmissionPages}"
                      SelectedItem="{Binding Path=SelectedSubmissionPage, Mode=TwoWay}"
                      IsSynchronizedWithCurrentItem="True"

@@ -4,13 +4,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for SideBarView.xaml
     /// </summary>
-    public partial class SideBarView : UserControl<SideBarViewModel>
+    public partial class SideBarView : UserControl<NotebookWorkspaceViewModel>
     {
         public SideBarView()
         {
@@ -22,7 +23,6 @@ namespace Classroom_Learning_Partner.Views
             CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
             CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
             string pageID = pageViewModel.Page.UniqueID;
-            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
             //if (sideBarViewModel.Submissions.ContainsKey(pageID))
             //{
 
@@ -35,26 +35,25 @@ namespace Classroom_Learning_Partner.Views
             Grid grid = sender as Grid;
             CLPPagePreviewView preview = grid.Children[0] as CLPPagePreviewView;
             CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
-            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
 
-            if (pageViewModel.IsSubmission)
-            {
-                sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
-            }
-            else
-            {
-                Console.WriteLine("SelectedNotebookPage set");
-                sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
-            }
+            //if (pageViewModel.IsSubmission)
+            //{
+            //    sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
+            //}
+            //else
+            //{
+            //    Console.WriteLine("SelectedNotebookPage set");
+            //    sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
+            //}
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
 
-            if (!NotebookPageListBox.Items.IsEmpty)
-            {
-            	NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
-            }
+            //if (!NotebookPageListBox.Items.IsEmpty)
+            //{
+            //    NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
+            //}
         }
     }
 }

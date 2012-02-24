@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (otherNotebook.UniqueID == notebook.UniqueID)
                     {
-                        App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.IndexOf(otherNotebook);
+                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
                         count++;
                         break;
                     }
@@ -59,10 +59,10 @@ namespace Classroom_Learning_Partner.Model
                 if (count == 0)
                 {
                     App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                    App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
                 }
 
-                App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
+                
             }
             else //else doesn't exist, error checking
             {
@@ -89,8 +89,7 @@ namespace Classroom_Learning_Partner.Model
                         CLPNotebook newNotebook = new CLPNotebook();
                         newNotebook.NotebookName = notebookName;
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                        App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
+                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
                         

@@ -33,7 +33,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
-            CurrentNotebookIndex = -1;
 
             //MainWindow Commands
             SetInstructorCommand = new Command(OnSetInstructorCommandExecute);
@@ -157,27 +156,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<CLPNotebook> OpenNotebooks
         {
             get { return GetValue<ObservableCollection<CLPNotebook>>(OpenNotebooksProperty); }
-            set { SetValue(OpenNotebooksProperty, value); }
+            private set { SetValue(OpenNotebooksProperty, value); }
         }
 
         /// <summary>
         /// Register the OpenNotebooks property so it is known in the class.
         /// </summary>
         public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<CLPNotebook>));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public int CurrentNotebookIndex
-        {
-            get { return GetValue<int>(CurrentNotebookIndexProperty); }
-            set { SetValue(CurrentNotebookIndexProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CurrentNotebook property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CurrentNotebookIndexProperty = RegisterProperty("CurrentNotebookIndex", typeof(int));
 
         /// <summary>
         /// Gets or sets the Authoring flag.
@@ -201,7 +186,25 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetTitleBarText(string endText)
         {
             string isOnline = "Disconnected";
-            string userName = "none";
+            string userName = "";
+            switch (App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    userName = "ServerMode";
+                    break;
+                case App.UserMode.Instructor:
+                    userName = "InstructorMode";
+                    break;
+                case App.UserMode.Projector:
+                    userName = "ProjectorMode";
+                    break;
+                case App.UserMode.Student:
+                    userName = "No One";
+                    break;
+                default:
+                    break;
+            }
+            
             if (App.Peer != null)
             {
                 if (App.Peer.OnlineStatusHandler != null)
@@ -215,7 +218,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 userName = App.Peer.UserName;
             }
 
-            TitleBarText = clpText + "Logged In As: " + userName + " Connection Status: " + isOnline + " " + endText;
+            TitleBarText = clpText + "Logged In As: " + userName + ", Connection Status: " + isOnline + " | " + endText;
         }
 
         public void SetWorkspace()
@@ -682,7 +685,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.SaveNotebook(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
+            CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
         }
 
         /// <summary>
@@ -806,11 +809,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddNewPageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             index++;
             CLPPage page = new CLPPage();
-            OpenNotebooks[CurrentNotebookIndex].InsertPageAt(index, page);
-            //(SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Pages.Insert(index, page);
+            (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+            (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
 
         /// <summary>
@@ -824,12 +827,12 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDeletePageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = OpenNotebooks[CurrentNotebookIndex].Pages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             if (index != -1)
             {
                 
-                OpenNotebooks[CurrentNotebookIndex].RemovePageAt(index);
-                //(SelectedWorkspace as NotebookWorkspaceViewModel).SideBar.Pages.RemoveAt(index);
+                (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
+                (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
             }
         }
 
