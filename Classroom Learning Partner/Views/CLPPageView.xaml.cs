@@ -42,8 +42,9 @@ namespace Classroom_Learning_Partner.Views
             timer.Tick += new EventHandler(timer_Tick);
             this.CLPService = new CLPServiceAgent();
             //We need the inkCanvas in HistoryVM to start a new thread to enable playback - claire
-            this.CLPService.SendInkCanvas(MainInkCanvas);
-            
+            //trying by just sending the inkCanvas to the whole notebook
+            //this.CLPService.SendInkCanvas(MainInkCanvas);
+            AppMessages.GetInkCanvas.Send(MainInkCanvas);
             AppMessages.SetSnapTileMode.Register(this, (setSnapTileEnabled) =>
                 {
                     isSnapTileEnabled = setSnapTileEnabled;

@@ -263,7 +263,7 @@
         <Grid x:Name="HitBox" Background="Transparent">
             <Rectangle   Fill="Transparent" />
             <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-            <!-- Visibility="{Binding Path=Visible}"-->
+            
         </Grid>
     </ac:AdornedControl>
 

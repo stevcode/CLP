@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPAnimationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="100">
+    <StackPanel  Height="40" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" >
+        <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}">
+            <Image Source="{Binding Path=PlaybackImage}"></Image>
+        </Button>
+        <Button Name="Record" HorizontalAlignment="Right" Command="{Binding Path=StartRecordCommand}">
+            <Image Source="{Binding Path=RecordImage}"></Image>
+        </Button>
+    </StackPanel>
+</UserControl>

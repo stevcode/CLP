@@ -41,7 +41,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
-            NotebookViewModel = notebookViewModel; 
+            NotebookViewModel = notebookViewModel;
+            
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -110,7 +111,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageObjectContainerViewModels.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_pageObjectContainerViewModels_CollectionChanged);
 
             _historyVM = new CLPHistoryViewModel(this, page.PageHistory);
-            AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
+             this.Avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
         void _pageObjectContainerViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -245,7 +246,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
-        
+        private AudioViewModel _avm;
+        public AudioViewModel Avm
+        {
+            get
+            {
+                return _avm;
+            }
+            set
+            {
+                _avm = value;
+            }
+        }
         public string SubmitterName
         {
             get
@@ -455,6 +467,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               //Console.WriteLine("PageVM startplayback");
                                               // Start fetching the playback items asynchronously.
+                                          /*    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    HistoryVM.start_pausePlayback();
+                    return null;
+                }, null);
+                                              */
                                               NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.start_pausePlayback);
                                               fetcher.BeginInvoke(null, null);
                                               

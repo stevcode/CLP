@@ -51,6 +51,7 @@ namespace Classroom_Learning_Partner.Model
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
 
         void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
+        void AudioMessage(Tuple<string, string> tup);
         //Calls made on Server to DB
         void RetrieveNotebooks(string username);
         void DistributeNotebookServer(CLPNotebook notebookVM, string author);
@@ -87,9 +88,10 @@ namespace Classroom_Learning_Partner.Model
         {
             CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
             CLPPage copyPage = new CLPPage();
-            CLPPageObjectBase pageObject = new CLPBlankStamp();
+            
             foreach (CLPPageObjectBase obj in originalPage.PageObjects)
             {
+                CLPPageObjectBase pageObject;
                 if (obj is CLPBlankStamp)
                 {
                     CLPBlankStamp copyStamp = new CLPBlankStamp();
@@ -105,6 +107,21 @@ namespace Classroom_Learning_Partner.Model
                         copyStamp.PageObjectStrokes.Add(stroke);
                     }
                     pageObject = copyStamp;
+                }
+                else if (obj is CLPSquare)
+                {
+                    CLPSquare copySquare = new CLPSquare();
+                    CLPSquare originalSquare = obj as CLPSquare;
+                    copySquare.Height = originalSquare.Height;
+                    copySquare.Position = originalSquare.Position;
+                    copySquare.Width = originalSquare.Width;
+                    copySquare.ZIndex = originalSquare.ZIndex;
+                    foreach (var stroke in originalSquare.PageObjectStrokes)
+                    {
+                        copySquare.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copySquare;
+
                 }
                 else if (obj is CLPImage)
                 {
@@ -168,7 +185,19 @@ namespace Classroom_Learning_Partner.Model
                     }
                     pageObject = copyTextBox;
                 }
-                copyPage.PageObjects.Add(pageObject);
+                else
+                {
+                    MessageBoxResult result =  MessageBox.Show("No duplicate method for this type.", "Confirmation");
+                    pageObject = null;
+                }
+                try
+                {
+                    copyPage.PageObjects.Add(pageObject);
+                }
+                catch(Exception e)
+                {
+                    Logger.Instance.WriteToLog(e.ToString());
+                }
 
             }
             foreach (var stroke in originalPage.Strokes)
@@ -429,6 +458,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
                 }
+                else if (pageObject is CLPAnimation)
+                {
+                    pageObjectViewModel = new CLPAnimationViewModel(pageObject as CLPAnimation, pageViewModel);
+                }
                 else
                 {
                     pageObjectViewModel = null;
@@ -606,7 +639,23 @@ namespace Classroom_Learning_Partner.Model
                 pageViewModel.HistoryVM.InkCanvas = ink;
             });
         }
-       
+
+        public void AudioMessage(Tuple<string, string> tup)
+        {
+            CLPPageViewModel pageVM = null;
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageVM = pageViewModel;
+            });
+            pageVM.Avm.AudioButtonPressed(tup.Item1, tup.Item2);
+        }
+        public void NewHistoryItem(CLPHistoryItem item)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.HistoryVM.AddHistoryItem(item);
+            });
+        }
         
         public void SetWorkspace()
         {

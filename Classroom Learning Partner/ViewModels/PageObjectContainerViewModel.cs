@@ -23,7 +23,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
-            //Visible = Visibility.Visible;
             IsTile = Visibility.Collapsed;
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
@@ -51,11 +50,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPAnimationViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPAnimationViewModel;
+            }
 
-            // playbackOn = false;
 
         }
-        // private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel
         {
@@ -162,20 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
-        /*       private Visibility _visible;
-               public Visibility Visible
-               {
-                   get
-                   {
-                       return _visible;
-                   }
-                   set
-                   {
-                       _visible = value;
-                RaisePropertyChanged("Visible");
-            }
-        }
-        */
+        
         private Visibility _isTile;
         public Visibility IsTile
         {
