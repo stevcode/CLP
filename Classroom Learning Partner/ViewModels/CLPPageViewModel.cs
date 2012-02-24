@@ -1,4 +1,4 @@
-﻿using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model;
 using System.Windows.Ink;
 using System.Windows;
 using System.Collections.ObjectModel;

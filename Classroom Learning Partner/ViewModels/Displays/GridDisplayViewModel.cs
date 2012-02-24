@@ -2,10 +2,11 @@
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using Catel.Data;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    [InterestedIn(typeof(SideBarViewModel))]
+    [InterestedIn(typeof(NotebookWorkspaceViewModel))]
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -14,9 +15,9 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public GridDisplayViewModel()
             : base()
         {
-            DisplayedPages = new ObservableCollection<CLPPage>();
+            DisplayedPages = new ObservableCollection<CLPPageViewModel>();
 
-            RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+            RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
@@ -24,26 +25,26 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<CLPPage> DisplayedPages
+        public ObservableCollection<CLPPageViewModel> DisplayedPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPageViewModel>>(DisplayedPagesProperty); }
             set { SetValue(DisplayedPagesProperty, value); }
         }
 
         /// <summary>
         /// Register the DisplayedPages property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPageViewModel>));
 
         /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.
         /// </summary>
-        public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
+        public Command<CLPPageViewModel> RemovePageFromGridDisplayCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>
-        private void OnRemovePageFromGridDisplayCommandExecute(CLPPage page)
+        private void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
         {
             DisplayedPages.Remove(page);
 
@@ -69,7 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public bool IsOnProjector { get; set; }
 
 
-        public void AddPageToDisplay(CLPPage page)
+        public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPages.Add(page);
         }
@@ -78,7 +79,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             if (propertyName == "CurrentPage" && IsActive)
             {
-                AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
+                AddPageToDisplay((viewModel as NotebookWorkspaceViewModel).CurrentPage);
                 //Steve - send to projector
                 //App.Peer.Channel.AddPageToDisplay? if IsOnProjector
                 // if (this.IsActive)

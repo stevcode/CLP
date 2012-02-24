@@ -36,7 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Inkwell.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core, Version=2.5.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL">
@@ -130,7 +131,6 @@
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
-    <Compile Include="ViewModels\SideBarViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
@@ -403,8 +403,9 @@
     <Resource Include="External Libraries\Catel.Windows.xml" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
+    <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="External Libraries\System.Windows.Interactivity.xml" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
-    <Resource Include="Inkwell.ico" />
     <Resource Include="Images\Inkwell.ico" />
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />

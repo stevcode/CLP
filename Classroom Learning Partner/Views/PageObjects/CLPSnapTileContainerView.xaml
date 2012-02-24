@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPSnapTileContainerView"
+<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPSnapTileContainerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

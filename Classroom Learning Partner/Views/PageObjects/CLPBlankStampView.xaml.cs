@@ -1,4 +1,4 @@
-﻿using Catel.Windows.Controls;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Resources;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
