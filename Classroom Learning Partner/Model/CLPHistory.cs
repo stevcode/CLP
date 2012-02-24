@@ -24,7 +24,12 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPHistory() { }
+        public CLPHistory()
+        {
+            ObjectReferences = new Dictionary<string, object>();
+            HistoryItems = new ObservableCollection<CLPHistoryItem>();
+            UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
+        }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.

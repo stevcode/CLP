@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.Model
             InkStrokes = new StrokeCollection();
             Strokes = new ObservableCollection<string>();
             PageObjects = new ObservableCollection<ICLPPageObject>();
+            PageHistory = new CLPHistory();
         }
 
         /// <summary>
@@ -95,12 +96,6 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
-
-        public void test(ICLPPageObject pageObject)
-        {
-
-            PageObjects.Add(pageObject);
-        }
 
         /// <summary>
         /// Gets the CLPPage history.

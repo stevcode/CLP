@@ -7,12 +7,26 @@ using System.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model
 {
+    public interface ICLPPageObject
+    {
+        DateTime CreationDate { get; set; }
+        string UniqueID { get; set; }
+        ObservableCollection<string> PageObjectStrokes { get; }
+        Point Position { get; set; }
+        double Height { get; set; }
+        double Width { get; set; }
+
+        string PageObjectType { get; }
+
+        CLPPageObjectBase Duplicate();
+    }
+
     /// <summary>
     /// CLPPageObjectBase Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
-    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>
+    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
     {
         #region Variables
         #endregion
@@ -24,6 +38,7 @@ namespace Classroom_Learning_Partner.Model
         public CLPPageObjectBase()
         {
             CreationDate = DateTime.Now;
+            PageObjectStrokes = new ObservableCollection<string>();
         }
 
         /// <summary>
@@ -140,10 +155,9 @@ namespace Classroom_Learning_Partner.Model
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
         }
 
-        public virtual CLPPageObjectBase Copy()
-        {
-            return null;
-        }
+        public abstract string PageObjectType { get; }
+
+        public abstract CLPPageObjectBase Duplicate();
 
         #endregion
     }

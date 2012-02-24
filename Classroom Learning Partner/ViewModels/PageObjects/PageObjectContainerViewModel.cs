@@ -2,6 +2,7 @@
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {

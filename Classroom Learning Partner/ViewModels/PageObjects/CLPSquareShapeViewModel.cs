@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPSquareShapeViewModel(CLPSquareShape square)
+        public CLPSquareShapeViewModel(CLPShape square)
             : base()
         {
             PageObject = square;

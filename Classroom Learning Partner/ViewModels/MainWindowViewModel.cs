@@ -956,7 +956,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertSquareShapeCommandExecute()
         {
-            CLPSquareShape square = new CLPSquareShape();
+            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
             ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
         }
 

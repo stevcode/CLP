@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPSnapTileContainer : CLPPageObjectBase, ICLPPageObject
+    public class CLPSnapTileContainer : CLPPageObjectBase
     {
         #region Variables
 
@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             : base()
         {
             Position = pt;
+            Tiles = new ObservableCollection<string>();
             Tiles.Add(color);
         }
 
@@ -75,12 +76,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
         }
 
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPSnapTileContainer"; }
         }
 
-        public ICLPPageObject Duplicate()
+        public override CLPPageObjectBase Duplicate()
         {
             CLPSnapTileContainer newSnapTile = this.Clone() as CLPSnapTileContainer;
             newSnapTile.UniqueID = Guid.NewGuid().ToString();

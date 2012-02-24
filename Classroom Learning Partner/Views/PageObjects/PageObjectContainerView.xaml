@@ -299,7 +299,7 @@
                                 <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
                             </DataTrigger>
 
-                            <!-- CLPSquareShape trigger -->
+                            <!-- CLPShape trigger -->
                             <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSquareShape">
                                 <Setter Property="Template" Value="{StaticResource CLPSquareShapeTemplate}" />
                             </DataTrigger>

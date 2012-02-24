@@ -101,15 +101,14 @@
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
-    <Compile Include="Model\CLPPageObjectBase.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPSquareShape.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPShape.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
-    <Compile Include="Model\CLPPageObjects\ICLPPageObject.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
