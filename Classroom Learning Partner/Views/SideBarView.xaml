@@ -6,9 +6,10 @@
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
              x:TypeArguments="vmw:NotebookWorkspaceViewModel"
              Loaded="UserControl_Loaded">   
@@ -29,17 +30,23 @@
                 </Grid.ColumnDefinitions>
 
                 <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
-                     ItemsSource="{Binding Path=NotebookPages}"
+                     ItemsSource="{Binding Path=NotebookPages, UpdateSourceTrigger=PropertyChanged}"
                      SelectedItem="{Binding Path=SelectedNotebookPage, Mode=TwoWay}"
-                     IsSynchronizedWithCurrentItem="True">
+                     SelectionMode="Single"
+                     IsSynchronizedWithCurrentItem="False">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border>
-                                    <Grid Margin="5,10" Name="grid" MouseDown="preview_PreviewMouseDown">
+                                    <Grid Margin="5,10" Name="grid">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="150" />
                                     <Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}" >
                                         <Grid.RowDefinitions>
@@ -69,7 +76,12 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border >
-                                <Grid Margin="5,10" Name="grid" PreviewMouseDown="preview_PreviewMouseDown">
+                                <Grid Margin="5,10" Name="grid">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" x:Name="preview" MaxWidth="150" />
 
                                     <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"

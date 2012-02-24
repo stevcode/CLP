@@ -30,30 +30,13 @@ namespace Classroom_Learning_Partner.Views
             //}
         }
 
-        private void preview_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Grid grid = sender as Grid;
-            CLPPagePreviewView preview = grid.Children[0] as CLPPagePreviewView;
-            CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
-
-            //if (pageViewModel.IsSubmission)
-            //{
-            //    sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
-            //}
-            //else
-            //{
-            //    Console.WriteLine("SelectedNotebookPage set");
-            //    sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
-            //}
-        }
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
 
-            //if (!NotebookPageListBox.Items.IsEmpty)
-            //{
-            //    NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
-            //}
+            if (!NotebookPageListBox.Items.IsEmpty)
+            {
+                NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ using Classroom_Learning_Partner.Model;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Windows.Input;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -22,6 +24,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public NotebookWorkspaceViewModel(CLPNotebook notebook)
             : base()
         {
+            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
+
             Console.WriteLine(Title + " created");
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
@@ -33,12 +37,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 NotebookPages.Add(new CLPPageViewModel(page));
             }
 
-            SelectedNotebookPage = NotebookPages[0];
+            
 
-            LinkedDisplay = new LinkedDisplayViewModel(CurrentPage);
+            LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
 
             SelectedDisplay = LinkedDisplay;
             SelectedDisplay.IsActive = true;
+            //SelectedNotebookPage = NotebookPages[0];
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -200,6 +205,19 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Register the CurrentPage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+        {
+            CurrentPage = (e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel;
+        }
 
         public string WorkspaceName
         {

@@ -403,6 +403,8 @@
     <Resource Include="External Libraries\Catel.Windows.xml" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
+    <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="External Libraries\System.Windows.Interactivity.xml" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\Inkwell.ico" />
     <Resource Include="Images\mic_stop.png" />
