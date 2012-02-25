@@ -112,7 +112,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            private set { SetValue(PageObjectsProperty, value); }
+            set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            private set { SetValue(InkStrokesProperty, value); }
+            set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>

@@ -9,14 +9,7 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              x:TypeArguments="vmd:LinkedDisplayViewModel" Unloaded="UserControl_Unloaded">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Grid>
-        <ContentControl DataContext="{Binding Path=DisplayedPage, Mode=OneWay}" />
+        <vw:CLPPageView DataContext="{Binding Path=DisplayedPage, Mode=OneWay}" />
     </Grid>
 </catel:UserControl>

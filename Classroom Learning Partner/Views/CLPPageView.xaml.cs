@@ -28,7 +28,9 @@ namespace Classroom_Learning_Partner.Views
 
         public CLPPageView()
         {
-            CloseViewModelOnUnloaded = false;
+            //This causes the View to not change on linked display when switching pages
+            // however, i think the pageObjects have to be re-rendered each time the large
+            // page is displayed when this is set. - steve
             //CloseViewModelOnUnloaded = false;
             InitializeComponent();
             timer = new DispatcherTimer();
