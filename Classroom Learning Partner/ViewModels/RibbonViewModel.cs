@@ -656,7 +656,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                               App.IsAuthoring = false;
                                               CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
                                               CLPService.SetWorkspace();
-                                             
+                                              /*AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+                                              {
+                                                  pageViewModel.HistoryVM.ClearHistory();
+                                              });
+                                             */
+                                              foreach(var page in App.CurrentNotebookViewModel.PageViewModels)
+                                              {
+                                                  page.HistoryVM.ClearHistory();
+                                              }
                                           }));
             }
         }
@@ -887,7 +895,24 @@ namespace Classroom_Learning_Partner.ViewModels
                                           }));
             }
         }
+        private RelayCommand _insertAnimationCommand;
 
+        /// <summary>
+        /// Gets the InsertAnimationCommand.
+        /// </summary>
+        public RelayCommand InsertAnimationCommand
+        {
+            get
+            {
+                return _insertAnimationCommand
+                    ?? (_insertAnimationCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPAnimation animation = new CLPAnimation();
+                                              CLPService.AddPageObjectToPage(animation);
+                                          }));
+            }
+        }
         private RelayCommand _insertImageCommand;
 
         /// <summary>
@@ -1219,7 +1244,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_audioCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.Audio.Send("start");
+                                              string file = "";
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  file = clpPageViewModel.Page.MetaData.GetValue("UniqueID");
+                                              });
+                                              string path = "C:\\Audio_Files\\" + file + ".wav";
+                                              Tuple<string, string> tup = Tuple.Create<string, string>("start", path);
+                                              CLPService.AudioMessage(tup);
+                                              //AppMessages.Audio.Send("start", path);
                                               recording = !recording;
                                               if (recording)
                                               {
@@ -1241,8 +1274,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_playAudioCommand = new RelayCommand(
                                           () =>
                                           {
-                                              AppMessages.Audio.Send("play");
-
+                                              string file = "";
+                                              AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                                              {
+                                                  file = clpPageViewModel.Page.MetaData.GetValue("UniqueID");
+                                              });
+                                              string path = "C:\\Audio_Files\\" + file + ".wav";
+                                              //AppMessages.Audio.Send("play", path);
+                                              Tuple<string, string> tup = Tuple.Create<string, string>("play", path);
+                                              CLPService.AudioMessage(tup);
 
                                           }));
             }

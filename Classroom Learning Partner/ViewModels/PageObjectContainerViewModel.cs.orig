@@ -23,7 +23,12 @@ namespace Classroom_Learning_Partner.ViewModels
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
+<<<<<<< HEAD
+            //Visible = Visibility.Visible;
+=======
             Visible = Visibility.Visible;
+            IsTile = Visibility.Collapsed;
+>>>>>>> 0f7cee36df1ca31df6b3b4475fff606703e95856
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
             {
@@ -41,30 +46,20 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPTextBoxViewModel;
             }
-<<<<<<< HEAD
             else if (pageObjectBaseViewModel is CLPSnapTileViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSnapTileViewModel;
+                IsTile = Visibility.Visible;
             }
-            
-        }
-=======
->>>>>>> 4569ebb4432c401016703c987f18035c039c21ca
-
-            //Register with messages to turn invisible to start playback
-            playbackOn = false;
-           /* AppMessages.ChangePlayback.Register(this, (playback) =>
+            else if (pageObjectBaseViewModel is CLPSquareViewModel)
             {
-                playbackOn = !playbackOn;
-                if (!playbackOn)
-                    this.Visible = Visibility.Visible;
-                else
-                    this.Visible = Visibility.Collapsed;
-               //RaisePropertyChanged("Visible");
-                
-            }); */
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
+            }
+
+            // playbackOn = false;
+
         }
-        private bool playbackOn;
+        // private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel
         {
@@ -79,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string PositionPropertyName = "Position";
 
-        private Point _position = new Point(0,0);
+        private Point _position = new Point(0, 0);
 
         /// <summary>
         /// Sets and gets the Position property.
@@ -134,7 +129,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (PageObjectViewModel != null)
                 {
                     PageObjectViewModel.Width = _width;
-                }     
+                }
             }
         }
 
@@ -171,6 +166,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
+<<<<<<< HEAD
+        /*       private Visibility _visible;
+               public Visibility Visible
+               {
+                   get
+                   {
+                       return _visible;
+                   }
+                   set
+                   {
+                       _visible = value;
+                       RaisePropertyChanged("Visible");
+                   }
+               }
+           }
+         * */
+=======
         private Visibility _visible;
         public Visibility Visible
         {
@@ -184,5 +196,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged("Visible");
             }
         }
+
+        private Visibility _isTile;
+        public Visibility IsTile
+        {
+            get
+            {
+                return _isTile;
+            }
+            set
+            {
+                _isTile = value;
+                RaisePropertyChanged("Visible");
+            }
+        }
+>>>>>>> 0f7cee36df1ca31df6b3b4475fff606703e95856
     }
 }

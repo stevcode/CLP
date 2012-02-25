@@ -389,6 +389,10 @@
                     Label="Insert Square"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=InsertSquareCommand}" />
+                <ribbon:RibbonButton
+                    Label="Insert Animation"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=InsertAnimationCommand}" />
             </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Page">

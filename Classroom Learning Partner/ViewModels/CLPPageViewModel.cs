@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System;
 using System.Windows.Threading;
 using System.Threading;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -40,7 +41,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPPageViewModel(CLPPage page, CLPNotebookViewModel notebookViewModel)
         {
-            NotebookViewModel = notebookViewModel; 
+            NotebookViewModel = notebookViewModel;
+            
             AppMessages.ChangeInkMode.Register(this, (newInkMode) =>
                                                                     {
                                                                         this.EditingMode = newInkMode;
@@ -105,7 +107,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageObjectContainerViewModels.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(_pageObjectContainerViewModels_CollectionChanged);
 
             _historyVM = new CLPHistoryViewModel(this, page.PageHistory);
-            AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
+             this.Avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
         void _pageObjectContainerViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -238,7 +240,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 _historyVM = value;
             }
         }
-        
+        private AudioViewModel _avm;
+        public AudioViewModel Avm
+        {
+            get
+            {
+                return _avm;
+            }
+            set
+            {
+                _avm = value;
+            }
+        }
         public string SubmitterName
         {
             get
@@ -292,7 +305,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _pageObjectContainerViewModels;
             }
         }
-        
+        public const string PlaybackImagePropertyName = "PlaybackImage";
+        private Uri _playbackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+        public Uri PlaybackImage
+        {
+            get
+            {
+                return _playbackImage;
+            }
+            set
+            {
+                _playbackImage = value;
+
+                RaisePropertyChanged("PlaybackImage");
+            }
+        }
         /// <summary>
         /// The <see cref="EditingMode" /> property's name.
         /// </summary>
@@ -432,9 +459,16 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_startPlaybackCommand = new RelayCommand(
                                           () =>
                                           {
-                                              Console.WriteLine("PageVM startplayback");
+                                              //Console.WriteLine("PageVM startplayback");
                                               // Start fetching the playback items asynchronously.
-                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+                                          /*    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    HistoryVM.start_pausePlayback();
+                    return null;
+                }, null);
+                                              */
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.start_pausePlayback);
                                               fetcher.BeginInvoke(null, null);
                                               
 
@@ -460,6 +494,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                               NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
                                               fetcher.BeginInvoke(null, null);
                                             
+                                          }));
+            }
+        }
+        private RelayCommand _pausePlaybackCommand;
+        public RelayCommand PausePlaybackCommand
+        {
+            get
+            {
+                return _pausePlaybackCommand
+                    ?? (_pausePlaybackCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.pausePlayback);
+                                              fetcher.BeginInvoke(null, null);
+
                                           }));
             }
         }

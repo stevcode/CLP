@@ -23,7 +23,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Position = pageObjectBaseViewModel.Position;
             Width = pageObjectBaseViewModel.Width;
             Height = pageObjectBaseViewModel.Height;
-            Visible = Visibility.Visible;
             IsTile = Visibility.Collapsed;
 
             if (pageObjectBaseViewModel is CLPImageViewModel)
@@ -47,21 +46,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
             }
-
-            //Register with messages to turn invisible to start playback
-            playbackOn = false;
-           /* AppMessages.ChangePlayback.Register(this, (playback) =>
+            else if (pageObjectBaseViewModel is CLPAnimationViewModel)
             {
-                playbackOn = !playbackOn;
-                if (!playbackOn)
-                    this.Visible = Visibility.Visible;
-                else
-                    this.Visible = Visibility.Collapsed;
-               //RaisePropertyChanged("Visible");
-                
-            }); */
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPAnimationViewModel;
+            }
+
+
         }
-        private bool playbackOn;
         private CLPPageObjectBaseViewModel _pageObjectViewModel;
         public CLPPageObjectBaseViewModel PageObjectViewModel
         {
@@ -76,7 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public const string PositionPropertyName = "Position";
 
-        private Point _position = new Point(0,0);
+        private Point _position = new Point(0, 0);
 
         /// <summary>
         /// Sets and gets the Position property.
@@ -131,7 +122,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (PageObjectViewModel != null)
                 {
                     PageObjectViewModel.Width = _width;
-                }     
+                }
             }
         }
 
@@ -168,20 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
-        private Visibility _visible;
-        public Visibility Visible
-        {
-            get
-            {
-                return _visible;
-            }
-            set
-            {
-                _visible = value;
-                RaisePropertyChanged("Visible");
-            }
-        }
-
+        
         private Visibility _isTile;
         public Visibility IsTile
         {
@@ -192,8 +170,10 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 _isTile = value;
-                RaisePropertyChanged("Visible");
-            }
-        }
+                       RaisePropertyChanged("Visible");
+                   }
+               }
+           
+
     }
 }
