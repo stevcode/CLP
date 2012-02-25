@@ -7,7 +7,7 @@ using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
 
-namespace Classroom_Learning_Partner.ViewModels
+namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
     {

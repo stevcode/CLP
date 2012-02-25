@@ -11,7 +11,7 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
              xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
-             x:TypeArguments="vmpo:PageObjectContainerViewModel">
+             x:TypeArguments="vmpo:CLPPageObjectBaseViewModel">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -272,15 +272,15 @@
                 <Control.Resources>
 
                     <ControlTemplate x:Key="CLPImageTemplate">
-                        <vwpo:CLPImageView DataContext="{Binding PageObject}" />
+                        <vwpo:CLPImageView DataContext="{Binding}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="CLPTextBoxTemplate">
                         <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
                     </ControlTemplate>
 
-                    <ControlTemplate x:Key="CLPSquareShapeTemplate">
-                        <vwpo:CLPSquareShapeView DataContext="{Binding PageObject}" />
+                    <ControlTemplate x:Key="CLPShapeTemplate">
+                        <vwpo:CLPShapeView DataContext="{Binding PageObject}" />
                     </ControlTemplate>
 
                 </Control.Resources>
@@ -290,18 +290,18 @@
                         <Style.Triggers>
 
                             <!-- CLPImage trigger -->
-                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
+                            <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
                                 <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
                             </DataTrigger>
 
                             <!-- CLPTextBox trigger -->
-                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
+                            <DataTrigger Binding="{Binding PageObjectType}" Value="CLPTextBox">
                                 <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
                             </DataTrigger>
 
                             <!-- CLPShape trigger -->
-                            <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSquareShape">
-                                <Setter Property="Template" Value="{StaticResource CLPSquareShapeTemplate}" />
+                            <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
+                                <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
                             </DataTrigger>
 
                         </Style.Triggers>

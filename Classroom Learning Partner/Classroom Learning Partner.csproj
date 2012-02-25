@@ -122,7 +122,6 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSquareShapeViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
