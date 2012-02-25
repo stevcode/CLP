@@ -3,6 +3,7 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
 using Classroom_Learning_Partner.Model;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -14,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         public PageObjectContainerViewModel(ICLPPageObject pageObject) : base()
         {
             PageObject = pageObject;
+            Console.WriteLine("POContainerViewModel created");
         }
 
         public override string Title { get { return "PageObjectContainerVM"; } }

@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public PageObjectContainerView()
         {
             InitializeComponent();
+            Console.WriteLine("POContainerView created");
             
         }
 
