@@ -6,12 +6,12 @@
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.
     /// </summary>
-    public partial class CLPSquareShapeView : UserControl<CLPSquareShapeViewModel>
+    public partial class CLPShapeView : UserControl<CLPShapeViewModel>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPSquareShapeView"/> class.
         /// </summary>
-        public CLPSquareShapeView()
+        public CLPShapeView()
         {
             InitializeComponent();
         }
