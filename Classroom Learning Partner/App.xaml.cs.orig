@@ -36,12 +36,11 @@ namespace Classroom_Learning_Partner
             CLPService = new CLPServiceAgent();
             //#############################
 <<<<<<< HEAD
-            CurrentUserMode = UserMode.Server;
-            _databaseUse = DatabaseMode.Using;
+            CurrentUserMode = UserMode.Student;
 =======
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Projector;
+>>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
             _databaseUse = DatabaseMode.NotUsing;
->>>>>>> 2e9446b91586bfec5303cc448e88e7bb2ed30854
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server)
             {
                 ConnectToDB();

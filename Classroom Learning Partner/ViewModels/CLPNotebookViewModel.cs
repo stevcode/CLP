@@ -32,12 +32,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
+            //claire
+            AppMessages.GetInkCanvas.Register(this, (inkCanvas) =>
+            {
+                this.InkCanvas = inkCanvas;
+                foreach(CLPPageViewModel page in PageViewModels)
+                {
+                    page.HistoryVM.InkCanvas = this.InkCanvas;
+                }
+            });
+             //end claire
             _currentPageViewModel = new CLPPageViewModel(this);
 
             _notebook = notebook;
             foreach (CLPPage page in Notebook.Pages)
             {
+
                 CLPPageViewModel pageVM = new CLPPageViewModel(page, this);
+                
                 PageViewModels.Add(pageVM);
 
                 //create blank submissions key/value pairs
@@ -52,8 +64,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     SubmissionViewModels[submissionUniqueID].Add(submissionVM);
                 }
             }
-        }
 
+            
+        }
         #endregion //Constructors
 
         #region Properties
@@ -63,7 +76,18 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get { return _notebook; }
         }
-
+        private System.Windows.Controls.InkCanvas _inkCanvas;
+        public System.Windows.Controls.InkCanvas InkCanvas
+        {
+            get 
+            {
+                return _inkCanvas;
+            }
+            set
+            {
+                _inkCanvas = value;
+            }
+        }
         #endregion //Properties
 
         #region Bindings
@@ -123,6 +147,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PageViewModels.Insert(index, pageViewModel);
 
             GenerateSubmissionViews(pageViewModel.Page.UniqueID);
+
+            pageViewModel.HistoryVM.InkCanvas = this.InkCanvas;
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
@@ -146,7 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
-
+        
         public CLPPageViewModel GetPage(int pageIndex, int submissionIndex)
         {
             if (submissionIndex < -1) return null;

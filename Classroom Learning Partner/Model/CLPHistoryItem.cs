@@ -17,6 +17,8 @@ namespace Classroom_Learning_Partner.Model
               * MOVE
               * ERASE
               * COPY
+              * START_RECORD
+              * STOP_RECORD
               */
 
             MetaData.SetValue("CreationDate", DateTime.Now.ToString());

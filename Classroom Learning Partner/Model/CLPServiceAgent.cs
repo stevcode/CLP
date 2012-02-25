@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Model
 
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
+        void DuplicatePageAt(int pageIndex);
 
         void AddSubmission(CLPPage page);
         void DistributeNotebook(CLPNotebookViewModel notebookVM, string author);
@@ -50,6 +51,7 @@ namespace Classroom_Learning_Partner.Model
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
 
         void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
+        void AudioMessage(Tuple<string, string> tup);
         //Calls made on Server to DB
         void RetrieveNotebooks(string username);
         void DistributeNotebookServer(CLPNotebook notebookVM, string author);
@@ -80,6 +82,129 @@ namespace Classroom_Learning_Partner.Model
             App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
             //DATABASE remove. make sure to add new blank page if
             //you remove last page in notebook.
+        }
+
+        public void DuplicatePageAt(int pageIndex)
+        {
+            CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
+            CLPPage copyPage = new CLPPage();
+            
+            foreach (CLPPageObjectBase obj in originalPage.PageObjects)
+            {
+                CLPPageObjectBase pageObject;
+                if (obj is CLPBlankStamp)
+                {
+                    CLPBlankStamp copyStamp = new CLPBlankStamp();
+                    CLPBlankStamp originalStamp = obj as CLPBlankStamp;
+                    copyStamp.Height = originalStamp.Height;
+                    copyStamp.IsAnchored = originalStamp.IsAnchored;
+                    copyStamp.Parts = originalStamp.Parts;
+                    copyStamp.Position = originalStamp.Position;
+                    copyStamp.Width = originalStamp.Width;
+                    copyStamp.ZIndex = originalStamp.ZIndex;
+                    foreach (var stroke in originalStamp.PageObjectStrokes)
+                    {
+                        copyStamp.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyStamp;
+                }
+                else if (obj is CLPSquare)
+                {
+                    CLPSquare copySquare = new CLPSquare();
+                    CLPSquare originalSquare = obj as CLPSquare;
+                    copySquare.Height = originalSquare.Height;
+                    copySquare.Position = originalSquare.Position;
+                    copySquare.Width = originalSquare.Width;
+                    copySquare.ZIndex = originalSquare.ZIndex;
+                    foreach (var stroke in originalSquare.PageObjectStrokes)
+                    {
+                        copySquare.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copySquare;
+
+                }
+                else if (obj is CLPImage)
+                {
+                    CLPImage originalImage = obj as CLPImage;
+                    CLPImage copyImage = new CLPImage(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = originalImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPImageStamp)
+                {
+                    CLPImageStamp originalImage = obj as CLPImageStamp;
+                    CLPImageStamp copyImage = new CLPImageStamp(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.IsAnchored = originalImage.IsAnchored;
+                    copyImage.Parts = originalImage.Parts;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = copyImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPSnapTile)
+                {
+                    CLPSnapTile originalTile = obj as CLPSnapTile;
+                    CLPSnapTile copyTile = new CLPSnapTile(originalTile.Position, "SpringGreen");
+                    copyTile.Height = originalTile.Height;
+                    copyTile.Width = originalTile.Width;
+                    copyTile.ZIndex = originalTile.ZIndex;
+                    foreach (var t in originalTile.Tiles)
+                    {
+                        copyTile.Tiles.Add(t);
+                    }
+                    foreach (var stroke in originalTile.PageObjectStrokes)
+                    {
+                        copyTile.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTile;
+                }
+                else if (obj is CLPTextBox)
+                {
+                    CLPTextBox originalTextBox = obj as CLPTextBox;
+                    CLPTextBox copyTextBox = new CLPTextBox();
+                    copyTextBox.Height = originalTextBox.Height;
+                    copyTextBox.Position = originalTextBox.Position;
+                    copyTextBox.Text = originalTextBox.Text;
+                    copyTextBox.Width = originalTextBox.Width;
+                    copyTextBox.ZIndex = originalTextBox.ZIndex;
+                    foreach (var stroke in originalTextBox.PageObjectStrokes)
+                    {
+                        copyTextBox.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTextBox;
+                }
+                else
+                {
+                    MessageBoxResult result =  MessageBox.Show("No duplicate method for this type.", "Confirmation");
+                    pageObject = null;
+                }
+                try
+                {
+                    copyPage.PageObjects.Add(pageObject);
+                }
+                catch(Exception e)
+                {
+                    Logger.Instance.WriteToLog(e.ToString());
+                }
+
+            }
+            foreach (var stroke in originalPage.Strokes)
+            {
+                copyPage.Strokes.Add(stroke);
+            }
+            AddPageAt(copyPage, App.CurrentNotebookViewModel.PageViewModels.Count, -1);
         }
 
         public void AddSubmission(CLPPage page)
@@ -278,12 +403,77 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("------------------------------------------------");
                 Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
+                //Save the page's history in a temp VM
+                CLPHistory tempHistory = new CLPHistory();
+                CLPHistory pageHistory = pageVM.HistoryVM.History;
+                foreach (var key in pageHistory.ObjectReferences.Keys)
+                {
+                    tempHistory.ObjectReferences.Add(key, pageHistory.ObjectReferences[key]);
+                }
+                foreach (var item in pageHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in pageHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddUndoneHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
+                //Clear the page's real history so it doesn't get sent
+                pageVM.HistoryVM.History.HistoryItems.Clear();
+                pageVM.HistoryVM.History.ObjectReferences.Clear();
+                pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
+
+                //Send the page 
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
                 Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
                 Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
+
+                //Put the temp history back into the page
+                foreach (var key in tempHistory.ObjectReferences.Keys)
+                {
+                    pageHistory.ObjectReferences.Add(key, tempHistory.ObjectReferences[key]);
+                }
+                foreach (var item in tempHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in tempHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
             }
            
         }
@@ -341,6 +531,10 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPSquare)
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+                }
+                else if (pageObject is CLPAnimation)
+                {
+                    pageObjectViewModel = new CLPAnimationViewModel(pageObject as CLPAnimation, pageViewModel);
                 }
                 else
                 {
@@ -519,7 +713,23 @@ namespace Classroom_Learning_Partner.Model
                 pageViewModel.HistoryVM.InkCanvas = ink;
             });
         }
-       
+
+        public void AudioMessage(Tuple<string, string> tup)
+        {
+            CLPPageViewModel pageVM = null;
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageVM = pageViewModel;
+            });
+            pageVM.Avm.AudioButtonPressed(tup.Item1, tup.Item2);
+        }
+        public void NewHistoryItem(CLPHistoryItem item)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.HistoryVM.AddHistoryItem(item);
+            });
+        }
         
         public void SetWorkspace()
         {
