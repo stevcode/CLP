@@ -43,8 +43,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
-    <Reference Include="IACore">
-      <HintPath>..\..\..\..\..\Dropbox\Shared\CLP\HandwritingSamplerReader\HandwritingSamplerReader\bin\Debug\IACore.dll</HintPath>
+    <Reference Include="IACore, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IACore.dll</HintPath>
+    </Reference>
+    <Reference Include="IALoader, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IALoader.dll</HintPath>
+    </Reference>
+    <Reference Include="IAWinFX, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IAWinFX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
@@ -460,6 +469,9 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="External Libraries\IACore.dll" />
+    <Content Include="External Libraries\IALoader.dll" />
+    <Content Include="External Libraries\IAWinFX.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />

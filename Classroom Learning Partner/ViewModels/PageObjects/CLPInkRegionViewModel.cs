@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         public void InterpretStrokes()
         {
-            
+            InkAnalyzer analyzer = new InkAnalyzer();
         }
     }
 }
