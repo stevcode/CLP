@@ -43,6 +43,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
+    <Reference Include="IACore">
+      <HintPath>..\..\..\..\..\Dropbox\Shared\CLP\HandwritingSamplerReader\HandwritingSamplerReader\bin\Debug\IACore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Ink.resources, Version=1.7.2600.2180, Culture=en-US, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.resources.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -98,6 +109,7 @@
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSquare.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
@@ -121,6 +133,7 @@
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSquareViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
@@ -142,8 +155,14 @@
     <Compile Include="Views\CLPHistoryView.xaml.cs">
       <DependentUpon>CLPHistoryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
+      <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
+      <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPSquareView.xaml.cs">
       <DependentUpon>CLPSquareView.xaml</DependentUpon>
@@ -245,9 +264,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPInkRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPSquareView.xaml">
       <SubType>Designer</SubType>
@@ -446,7 +473,17 @@
     <Resource Include="Images\Italic16.png" />
     <Resource Include="Images\Underline16.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

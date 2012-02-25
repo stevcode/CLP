@@ -389,6 +389,10 @@
                     Label="Insert Square"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=InsertSquareCommand}" />
+                <ribbon:RibbonButton
+                    Label="Insert Ink Region"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=InsertInkRegion}" />
             </ribbon:RibbonGroup>
             
             <ribbon:RibbonGroup Header="Page">

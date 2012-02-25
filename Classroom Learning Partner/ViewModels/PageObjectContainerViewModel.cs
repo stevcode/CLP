@@ -51,6 +51,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPInkRegionViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPInkRegionViewModel;
+            }
 
             //Register with messages to turn invisible to start playback
             playbackOn = false;
