@@ -303,11 +303,39 @@ namespace Classroom_Learning_Partner.Model
             Console.WriteLine("Notebook saved locally");
             if (App.DatabaseUse == App.DatabaseMode.Using)
             {
-                string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
-                Console.WriteLine("Notebook seralized");
-                App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
-                Console.WriteLine("Notebook saving called on mesh");
+
+                //string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
+                //double size = s_notebook.Length / 1024.0;
+                //Console.WriteLine("Notebook seralized, size " + size.ToString());
+                //App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
+                //Console.WriteLine("Notebook saving called on mesh");
             }
+
+            //int start = 1000;
+            //int mult = 3000;
+            //int currentSize;
+            //DateTime currentTime;
+            //string content = generateRandomString(start);
+            //string increment = generateRandomString(mult);
+
+            //for (int i = 0; i < 71; i++)
+            //{
+            //    currentSize = start + i * mult;
+            //    if (i != 0)
+            //    {
+            //        content = content + increment;
+            //    }
+            //    for (int t = 0; t < 5; t++)
+            //    {
+            //        currentTime = DateTime.Now;
+            //        App.Peer.Channel.TestNetworkSending(content, currentTime, i, currentSize, App.Peer.UserName);
+            //        Logger.Instance.WriteToLog("-------------------------------------");
+            //        Logger.Instance.WriteToLog("Item sent: " + i.ToString());
+            //        Console.WriteLine("Item sent: " + i.ToString() + " trial " + t.ToString());
+            //        Logger.Instance.WriteToLog("Size sent: " + currentSize.ToString());
+            //        System.Threading.Thread.Sleep(5000);
+            //    }
+            //}
         }
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
@@ -395,9 +423,31 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
+        //for network testing only
+        public String generateRandomString(int length)
+        {
+            //Initiate objects & vars
+            Random random = new Random();
+            String randomString = "";
+            int randNumber;
 
+            //Loop ‘length’ times to generate a random number or character
+            for (int i = 0; i < length; i++)
+            {
+                if (random.Next(1, 3) == 1)
+                    randNumber = random.Next(97, 123); //char {a-z}
+                else
+                    randNumber = random.Next(48, 58); //int {0-9}
+
+                //append random char or digit to random string
+                randomString = randomString + (char)randNumber;
+            }
+            //return the random string
+            return randomString;
+        }
         public void SubmitPage(CLPPageViewModel pageVM)
         {
+
             if (App.Peer.Channel != null)
             {
                 Logger.Instance.WriteToLog("------------------------------------------------");
@@ -442,7 +492,7 @@ namespace Classroom_Learning_Partner.Model
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
                 Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
-                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName, DateTime.Now);
                 Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
 

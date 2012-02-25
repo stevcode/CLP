@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.Model
         void Disconnect(string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SubmitPage(string page, string userName);
+        void SubmitPage(string page, string userName, DateTime submitTime);
 
         [OperationContract(IsOneWay = true)]
         void SaveNotebookDB(string s_notebook, string userName);
@@ -61,6 +61,10 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void AddPageObjectToPage(string pageID, string stringPageObject);
+
+        [OperationContract(IsOneWay = true)]
+        void TestNetworkSending(string content, DateTime sentTime, int id, int size, string username);
+
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -73,6 +77,22 @@ namespace Classroom_Learning_Partner.Model
         private ICLPServiceAgent CLPService = new CLPServiceAgent();
         int pagecount = 0;
 
+
+        public void TestNetworkSending(string content, DateTime sentTime, int id, int size, string username)
+        {
+            if (App.UserMode.Instructor == App.CurrentUserMode)
+            {
+                TimeSpan difference = DateTime.Now.Subtract(sentTime);
+                //Print results
+                double kbSize = size / 1024.0;
+                Logger.Instance.WriteToLog(kbSize.ToString() + " " + difference.ToString() + " " + username);
+                //Logger.Instance.WriteToLog("-------------------------------------");
+                //Logger.Instance.WriteToLog("Item sent: " + id.ToString());
+                //Logger.Instance.WriteToLog("Size sent: " + kbSize.ToString());
+                //Logger.Instance.WriteToLog("From     : " + username);
+                //Logger.Instance.WriteToLog("Took     : " + difference.ToString());
+            }
+        }
 
         public void Connect(string machineName, string userName)
         {
@@ -91,20 +111,24 @@ namespace Classroom_Learning_Partner.Model
             }
         }
      
-        public void SubmitPage(string s_page, string userName)
+        public void SubmitPage(string s_page, string userName, DateTime submitTime)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
              {
                     if (App.CurrentUserMode == App.UserMode.Instructor)
                     {
+                        TimeSpan difference = DateTime.Now.Subtract(submitTime);
+                        double kbSize = s_page.Length / 1024.0;
+                        Logger.Instance.WriteToLog("-------------------------------------");
                         Console.WriteLine("Instructor received page at " + DateTime.Now.ToString());
                         Logger.Instance.WriteToLog("Instructor received page at " + DateTime.Now.ToString());
+                        Logger.Instance.WriteToLog("RecvSubmission " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                        //Logger.Instance.WriteToLog("Instructor received page at " + DateTime.Now.ToString());
                         //Console.WriteLine(s_page);
 
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                        Console.WriteLine("Instructor done desiralizing page at " + DateTime.Now.ToString());
-                        Logger.Instance.WriteToLog("Instructor done desiralizing page at " + DateTime.Now.ToString());
+                        //Logger.Instance.WriteToLog("Instructor done desiralizing page at " + DateTime.Now.ToString());
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
                         CLPService.AddSubmission(page);
