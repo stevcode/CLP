@@ -398,8 +398,73 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
+                //Save the page's history in a temp VM
+                CLPHistory tempHistory = new CLPHistory();
+                CLPHistory pageHistory = pageVM.HistoryVM.History;
+                foreach (var key in pageHistory.ObjectReferences.Keys)
+                {
+                    tempHistory.ObjectReferences.Add(key, pageHistory.ObjectReferences[key]);
+                }
+                foreach (var item in pageHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in pageHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddUndoneHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
+                //Clear the page's real history so it doesn't get sent
+                pageVM.HistoryVM.History.HistoryItems.Clear();
+                pageVM.HistoryVM.History.ObjectReferences.Clear();
+                pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
+
+                //Send the page 
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+
+                //Put the temp history back into the page
+                foreach (var key in tempHistory.ObjectReferences.Keys)
+                {
+                    pageHistory.ObjectReferences.Add(key, tempHistory.ObjectReferences[key]);
+                }
+                foreach (var item in tempHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in tempHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
             }
            
         }
