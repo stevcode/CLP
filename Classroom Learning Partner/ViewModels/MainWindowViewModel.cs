@@ -813,7 +813,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
             CLPPage page = new CLPPage();
             (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-            (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
+            //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
 
         /// <summary>
@@ -832,7 +832,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 
                 (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
-                (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
+                //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
             }
         }
 

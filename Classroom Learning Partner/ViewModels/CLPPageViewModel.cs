@@ -254,6 +254,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             App.MainWindowViewModel.CanSendToTeacher = true;
 
             foreach (var stroke in e.Removed)
@@ -291,7 +292,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in addedStrokes)
             {
                 stroke.AddPropertyData(CLPPage.Immutable, "false");
-                Page.Strokes.Add(CLPPage.StrokeToString(stroke));
+                StringStrokes.Add(CLPPage.StrokeToString(stroke));
                 //if (!undoFlag)
                 //{
                 //    CLPHistoryItem item = new CLPHistoryItem("ADD");
@@ -347,6 +348,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Steve - account for removal of pageObjectContainers
                 //pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
+
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -357,6 +360,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
+
+        protected override void Close()
+        {
+            Console.WriteLine("VM closed");
+            base.Close();
         }
 
         #endregion //Methods

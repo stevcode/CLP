@@ -392,19 +392,9 @@ namespace Classroom_Learning_Partner.Model
         //    //send change to projector and students?
         //    //DATABASE change page object's position
         //}
-        public void ChangePageObjectPosition(CLPPageObjectBaseViewModel pageObject, Point pt, bool isUndo)
+        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
-            //undoRedo = isUndo;
-            //foreach (var container in pageObject.PageViewModel.PageObjectContainerViewModels)
-            //{
-            //    if (container.PageObjectViewModel.PageObject.UniqueID == pageObject.PageObject.UniqueID)
-            //    {
-            //        ChangePageObjectPosition(container, pt);
-            //        break;
-            //    }
-            //}
-            //undoRedo = false;
-
+            pageObject.Position = pt;
         }
        
         //public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)

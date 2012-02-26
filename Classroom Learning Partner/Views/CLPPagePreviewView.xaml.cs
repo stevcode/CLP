@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Views
         public CLPPagePreviewView()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
     }
 }

@@ -31,8 +31,9 @@ namespace Classroom_Learning_Partner.Views
             //This causes the View to not change on linked display when switching pages
             // however, i think the pageObjects have to be re-rendered each time the large
             // page is displayed when this is set. - steve
-            //CloseViewModelOnUnloaded = false;
+            
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
@@ -78,7 +79,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown && !(this.DataContext as CLPPageViewModel).Page.IsSubmission)
+            if (!isMouseDown)
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
             }
@@ -110,25 +111,9 @@ namespace Classroom_Learning_Partner.Views
                 //Console.WriteLine("over any grid");
                 if ((result.VisualHit as Grid).Name == "HitBox")
                 {
-                    bool isOverStampedObject = false;
 
-                    var gridChild = ((result.VisualHit as Grid).Children[1] as ContentControl).Content;
-                    //Steve - if gridChild is IAdorned
-                    if (gridChild is CLPImageStampViewModel)
-                    {
-                        isOverStampedObject = !(gridChild as CLPImageStampViewModel).IsAnchored;
-                    }
-                    else if (gridChild is CLPBlankStampViewModel)
-                    {
-                        isOverStampedObject = !(gridChild as CLPBlankStampViewModel).IsAnchored;
-                    }
-                    else if (gridChild is CLPSnapTileContainerViewModel)
-                    {
-                        isOverStampedObject = true;                      
-                        //refactor name to encompass all objects that need to have adorner layer shown - steve
-                    }
 
-                    if (App.MainWindowViewModel.IsAuthoring || isOverStampedObject)
+                    if (App.MainWindowViewModel.IsAuthoring)
                     {
                         //Add timer to delay appearance of adorner
                         if (DirtyHitbox > 3)

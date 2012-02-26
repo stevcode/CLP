@@ -16,8 +16,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public PageObjectContainerView()
         {
             InitializeComponent();
-            Console.WriteLine("POContainerView created");
-            
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
@@ -55,57 +53,34 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         private bool isDragging = false;
         private void MoveThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            
-            //PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
 
-            bool isStampedObject = false;
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
-            //{
-            //    isStampedObject = true;
-            //}
+            ICLPPageObject pageObject = (this.DataContext as ICLPPageObject);
 
 
-            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
+            if (App.MainWindowViewModel.IsAuthoring)
             {
-                App.MainWindowViewModel.CanSendToTeacher = true;
-                //double x = pageObjectContainerViewModel.Position.X + e.HorizontalChange;
-                //double y = pageObjectContainerViewModel.Position.Y + e.VerticalChange;
-                //if (x < 0)
-                //{
-                //    x = 0;
-                //}
-                //if (y < 0)
-                //{
-                //    y = 0;
-                //}
-                //if (x > 1056 - pageObjectContainerViewModel.Width)
-                //{
-                //    x = 1056 - pageObjectContainerViewModel.Width;
-                //}
-                //if (y > 816 - pageObjectContainerViewModel.Height)
-                //{
-                //    y = 816 - pageObjectContainerViewModel.Height;
-                //}
+                double x = pageObject.Position.X + e.HorizontalChange;
+                double y = pageObject.Position.Y + e.VerticalChange;
+                if (x < 0)
+                {
+                    x = 0;
+                }
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                if (x > 1056 - pageObject.Width)
+                {
+                    x = 1056 - pageObject.Width;
+                }
+                if (y > 816 - pageObject.Height)
+                {
+                    y = 816 - pageObject.Height;
+                }
 
-                //Point pt = new Point(x, y);
-                //isDragging = true;
-                //CLPServiceAgent.Instance.ChangePageObjectPosition(pageObjectContainerViewModel, pt);
+                Point pt = new Point(x, y);
+                isDragging = true;
+                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
             }
         }
 

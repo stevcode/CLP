@@ -26,11 +26,11 @@
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
-                        <!--<ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <vwpo:PageObjectContainerView DataContext="{Binding}" />
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>-->
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
