@@ -123,6 +123,21 @@ namespace Classroom_Learning_Partner.Model
                     pageObject = copySquare;
 
                 }
+                else if (obj is CLPCircle)
+                {
+                    CLPCircle copySquare = new CLPCircle();
+                    CLPCircle originalSquare = obj as CLPCircle;
+                    copySquare.Height = originalSquare.Height;
+                    copySquare.Position = originalSquare.Position;
+                    copySquare.Width = originalSquare.Width;
+                    copySquare.ZIndex = originalSquare.ZIndex;
+                    foreach (var stroke in originalSquare.PageObjectStrokes)
+                    {
+                        copySquare.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copySquare;
+
+                }
                 else if (obj is CLPImage)
                 {
                     CLPImage originalImage = obj as CLPImage;
@@ -581,6 +596,10 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPSquare)
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+                }
+                else if (pageObject is CLPCircle)
+                {
+                    pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
                 }
                 else if (pageObject is CLPAnimation)
                 {

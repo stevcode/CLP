@@ -4,9 +4,9 @@ using System;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPSquare : CLPPageObjectBase
+    public class CLPCircle : CLPPageObjectBase
     {
-        public CLPSquare()
+        public CLPCircle()
         {
             Position = new Point(100, 100);
             Height = 100;

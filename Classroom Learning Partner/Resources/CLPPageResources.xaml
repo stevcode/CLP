@@ -50,6 +50,10 @@
         <vwpo:CLPSquareView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vmpo:CLPCircleViewModel}">
+        <vwpo:CLPCircleView />
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type vmpo:CLPAnimationViewModel}">
         <vwpo:CLPAnimationView />
     </DataTemplate>

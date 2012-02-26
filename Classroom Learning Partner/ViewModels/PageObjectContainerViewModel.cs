@@ -50,6 +50,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPCircleViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPCircleViewModel;
+            }
             else if (pageObjectBaseViewModel is CLPAnimationViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPAnimationViewModel;

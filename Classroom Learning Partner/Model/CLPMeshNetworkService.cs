@@ -429,6 +429,10 @@ namespace Classroom_Learning_Partner.Model
                                 {
                                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
                                 }
+                                else if (pageObject is CLPCircle)
+                                {
+                                    pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
+                                }
                                 else
                                 {
                                     pageObjectViewModel = null;

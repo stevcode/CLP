@@ -80,7 +80,7 @@
                 <Grid
                         x:Name="dragButton"
                         Canvas.Right="-50"
-                        Canvas.Top="-50"
+                        Canvas.Top="-25"
                         Width="40"
                         Height="40"
                         Cursor="ScrollAll"

@@ -97,6 +97,7 @@
     <Compile Include="Model\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPAnimation.cs" />
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPCircle.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="ViewModels\PageObjectContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAnimationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPCircleViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
@@ -149,6 +151,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPAnimationView.xaml.cs">
       <DependentUpon>CLPAnimationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPCircleView.xaml.cs">
+      <DependentUpon>CLPCircleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPSquareView.xaml.cs">
       <DependentUpon>CLPSquareView.xaml</DependentUpon>
@@ -255,6 +260,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\CLPAnimationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPCircleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
