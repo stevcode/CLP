@@ -71,7 +71,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                                           (userName) =>
                                           {
                                               App.Peer.UserName = userName;
-                                              
+                                              //App.Peer.Channel.RetrieveNotebooks(userName);
+                                              //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+                                              //change to notebook chooser when getting message back. 
+
                                               App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
                                           }));
             }
