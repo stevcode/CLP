@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
-    /// Interaction logic for CLPSquare.xaml
+    /// Interaction logic for CLPInkRegion.xaml
     /// </summary>
     public partial class CLPInkRegionView : UserControl
     {

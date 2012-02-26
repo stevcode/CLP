@@ -231,6 +231,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
             }
+            else if (pageObject is CLPInkRegion)
+            {
+                pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
+            }
             else
             {
                 pageObjectViewModel = null;

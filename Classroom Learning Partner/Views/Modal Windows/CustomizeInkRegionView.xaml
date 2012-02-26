@@ -16,8 +16,9 @@
             <Label VerticalContentAlignment="Center" Width="115" Height="40" FontSize="15">Expected Type:</Label>
             <ComboBox x:Name="ExpectedType" Width="200" Height="25" VerticalContentAlignment="Center" SelectedIndex="0">
                 <ComboBoxItem Name="cbi1">Default</ComboBoxItem>
-                <ComboBoxItem Name="cbi2">Number Sentence</ComboBoxItem>
-                <ComboBoxItem Name="cbi3">Word</ComboBoxItem>
+                <ComboBoxItem Name="cbi3">Number or Number Sentence</ComboBoxItem>
+                <ComboBoxItem Name="cbi4">Single Digit</ComboBoxItem>
+                <ComboBoxItem Name="cbi5">Word</ComboBoxItem>
             </ComboBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,2,5,10">

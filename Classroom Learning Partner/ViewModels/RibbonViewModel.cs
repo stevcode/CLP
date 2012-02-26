@@ -987,10 +987,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                 {
                                                     string correct_answer = optionChooser.CorrectAnswer.Text;
                                                     int selected_type = optionChooser.ExpectedType.SelectedIndex;
-                                                    Console.WriteLine(correct_answer);
-                                                    Console.WriteLine(selected_type);
 
-                                                    CLPInkRegion region = new CLPInkRegion();
+                                                    CLPInkRegion region = new CLPInkRegion(correct_answer,selected_type);
                                                     CLPService.AddPageObjectToPage(region);
                                                     
                                                 }

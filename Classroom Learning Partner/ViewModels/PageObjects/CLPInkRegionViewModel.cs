@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Microsoft.Ink;
 using System.Windows.Ink;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
@@ -15,9 +14,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             PageObject = inkRegion;
         }
 
-        public void InterpretStrokes()
+        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            InkAnalyzer analyzer = new InkAnalyzer();
+            this.ProcessStrokes(addedStrokes, removedStrokes);
         }
+
     }
 }
