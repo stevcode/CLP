@@ -504,6 +504,7 @@ namespace Classroom_Learning_Partner.Model
                 pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
 
                 //Send the page 
+                pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
                 Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
