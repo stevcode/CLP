@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                                 this.PageViewModel = pageViewModel;
                                                                                 this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                                                                                 this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
-                                                                                if (App.CurrentUserMode == App.UserMode.Instructor)
+                                                                                if (App.CurrentUserMode == App.UserMode.Instructor && !App.IsAuthoring)
                                                                                 {
                                                                                     if (App.Peer.Channel != null)
                                                                                     {
