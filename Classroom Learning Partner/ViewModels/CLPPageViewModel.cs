@@ -93,6 +93,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, this);
                 }
+                else if (pageObject is CLPCircle)
+                {
+                    pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, this);
+                }
                 else if (pageObject is CLPSnapTile)
                 {
                     pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, this);

@@ -20,19 +20,22 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPMeshNetworkContract
     {
         [OperationContract(IsOneWay = true)]
-        void Connect(string userName);
+        void Connect(string machineName, string userName);
 
         [OperationContract(IsOneWay = true)]
         void Disconnect(string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SubmitPage(string page, string userName);
+        void SubmitPage(string page, string userName, DateTime submitTime);
 
         [OperationContract(IsOneWay = true)]
         void SaveNotebookDB(string s_notebook, string userName);
 
         [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
+
+        [OperationContract(IsOneWay=true)]
+        void RetrieveNotebooks(string userName);
 
         [OperationContract(IsOneWay = true)]
         void ReceiveNotebook(string page, string userName);
@@ -58,6 +61,10 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void AddPageObjectToPage(string pageID, string stringPageObject);
+
+        [OperationContract(IsOneWay = true)]
+        void TestNetworkSending(string content, DateTime sentTime, int id, int size, string username);
+
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -71,14 +78,27 @@ namespace Classroom_Learning_Partner.Model
         int pagecount = 0;
 
 
-        public void Connect(string userName)
+        public void TestNetworkSending(string content, DateTime sentTime, int id, int size, string username)
+        {
+            if (App.UserMode.Instructor == App.CurrentUserMode)
+            {
+                TimeSpan difference = DateTime.Now.Subtract(sentTime);
+                //Print results
+                double kbSize = size / 1024.0;
+                Logger.Instance.WriteToLog(kbSize.ToString() + " " + difference.ToString() + " " + username);
+                //Logger.Instance.WriteToLog("-------------------------------------");
+                //Logger.Instance.WriteToLog("Item sent: " + id.ToString());
+                //Logger.Instance.WriteToLog("Size sent: " + kbSize.ToString());
+                //Logger.Instance.WriteToLog("From     : " + username);
+                //Logger.Instance.WriteToLog("Took     : " + difference.ToString());
+            }
+        }
+
+        public void Connect(string machineName, string userName)
         {
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Instructor/Student Machine Connected: " + userName);
-                //Users Notebooks to user machine
-                //Currently username is the machine name -> CHANGE when using actual names
-                CLPService.RetrieveNotebooks(userName);
             }
           
         }
@@ -91,17 +111,24 @@ namespace Classroom_Learning_Partner.Model
             }
         }
      
-        public void SubmitPage(string s_page, string userName)
+        public void SubmitPage(string s_page, string userName, DateTime submitTime)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
              {
                     if (App.CurrentUserMode == App.UserMode.Instructor)
                     {
-                        Console.WriteLine("page received");
-                        Console.WriteLine(s_page);
+                        TimeSpan difference = DateTime.Now.Subtract(submitTime);
+                        double kbSize = s_page.Length / 1024.0;
+                        Logger.Instance.WriteToLog("-------------------------------------");
+                        Console.WriteLine("Instructor received page at " + DateTime.Now.ToString());
+                        Logger.Instance.WriteToLog("Instructor received page at " + DateTime.Now.ToString());
+                        Logger.Instance.WriteToLog("RecvSubmission " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                        //Logger.Instance.WriteToLog("Instructor received page at " + DateTime.Now.ToString());
+                        //Console.WriteLine(s_page);
 
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        //Logger.Instance.WriteToLog("Instructor done desiralizing page at " + DateTime.Now.ToString());
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
                         CLPService.AddSubmission(page);
@@ -114,7 +141,7 @@ namespace Classroom_Learning_Partner.Model
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPService.SavePageDB(page);
+                            CLPService.SavePageDB(page, userName);
                         }
                     }
              return null;
@@ -143,6 +170,17 @@ namespace Classroom_Learning_Partner.Model
             {
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPService.DistributeNotebookServer(notebook, author);
+            }
+        }
+
+        public void RetrieveNotebooks(string userName)
+        {
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                Console.WriteLine("Instructor/Student Machine requests notebooks: " + userName);
+                //Users Notebooks to user machine
+                CLPService.RetrieveNotebooks(userName);
+                
             }
         }
         public void ReceiveNotebook(string s_notebook, string userName)
@@ -386,6 +424,10 @@ namespace Classroom_Learning_Partner.Model
                                 else if (pageObject is CLPSquare)
                                 {
                                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+                                }
+                                else if (pageObject is CLPCircle)
+                                {
+                                    pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
                                 }
                                 else
                                 {

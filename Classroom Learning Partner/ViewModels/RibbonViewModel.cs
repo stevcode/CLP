@@ -1015,6 +1015,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private RelayCommand _insertCircleCommand;
+
+        /// <summary>
+        /// Gets the InsertBlankStampCommand.
+        /// </summary>
+        public RelayCommand InsertCircleCommand
+        {
+            get
+            {
+                return _insertCircleCommand
+                    ?? (_insertCircleCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPCircle circle = new CLPCircle();
+                                              CLPService.AddPageObjectToPage(circle);
+                                          }));
+            }
+        }
+
         #endregion //Insert Commands
 
         #region Display Commands

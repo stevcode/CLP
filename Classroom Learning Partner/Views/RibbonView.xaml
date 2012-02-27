@@ -390,6 +390,10 @@
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=InsertSquareCommand}" />
                 <ribbon:RibbonButton
+                    Label="Insert Circle"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=InsertCircleCommand}" />
+                <ribbon:RibbonButton
                     Label="Insert Animation"
                     LargeImageSource="..\Images\LargeIcon.png"
                     Command="{Binding Path=InsertAnimationCommand}" />

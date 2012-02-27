@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.Model
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void SaveNotebookDB(CLPNotebook notebookVM, string userName);
-        void SavePageDB(CLPPage pageVM);
+        void SavePageDB(CLPPage pageVM, string userName);
         void SaveNotebooksFromDBToHD(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
@@ -88,12 +88,6 @@ namespace Classroom_Learning_Partner.Model
         {
             CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
             CLPPage copyPage = new CLPPage();
-<<<<<<< HEAD
-            CLPPageObjectBase pageObject = new CLPStamp();
-            foreach (CLPPageObjectBase obj in originalPage.PageObjects)
-            {
-                if (obj is CLPImage)
-=======
             
             foreach (CLPPageObjectBase obj in originalPage.PageObjects)
             {
@@ -130,7 +124,6 @@ namespace Classroom_Learning_Partner.Model
 
                 }
                 else if (obj is CLPImage)
->>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
                 {
                     CLPImage originalImage = obj as CLPImage;
                     CLPImage copyImage = new CLPImage(originalImage.ByteSource);
@@ -144,26 +137,21 @@ namespace Classroom_Learning_Partner.Model
                     }
                     pageObject = copyImage;
                 }
-                else if (obj is CLPStamp)
+                else if (obj is CLPImageStamp)
                 {
-                    CLPStamp originalStamp = obj as CLPStamp;
-                    CLPStamp copyStamp;
-                    if (originalStamp.ByteSource == null) { 
-                        copyStamp = new CLPStamp();
-                    } else {
-                        copyStamp = new CLPStamp(originalStamp.ByteSource);
-                    }
-                    copyStamp.Height = originalStamp.Height;
-                    copyStamp.IsAnchored = originalStamp.IsAnchored;
-                    copyStamp.Parts = originalStamp.Parts;
-                    copyStamp.Position = originalStamp.Position;
-                    copyStamp.Width = originalStamp.Width;
-                    copyStamp.ZIndex = originalStamp.ZIndex;
-                    foreach (var stroke in originalStamp.PageObjectStrokes)
+                    CLPImageStamp originalImage = obj as CLPImageStamp;
+                    CLPImageStamp copyImage = new CLPImageStamp(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.IsAnchored = originalImage.IsAnchored;
+                    copyImage.Parts = originalImage.Parts;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = copyImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
                     {
-                        copyStamp.PageObjectStrokes.Add(stroke);
+                        copyImage.PageObjectStrokes.Add(stroke);
                     }
-                    pageObject = copyStamp;
+                    pageObject = copyImage;
                 }
                 else if (obj is CLPSnapTile)
                 {
@@ -329,7 +317,7 @@ namespace Classroom_Learning_Partner.Model
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
                 MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
-                var query = Query.EQ("ID", notebook.MetaData.GetValue("UniqueID"));
+                var query = Query.And(Query.EQ("ID", notebook.MetaData.GetValue("UniqueID")), Query.EQ("User", userName));
                 BsonDocument currentNotebook = nbCollection.FindOne(query);
                 if (currentNotebook != null)
                 {
@@ -357,7 +345,7 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-        public void SavePageDB(CLPPage page)
+        public void SavePageDB(CLPPage page, string userName)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
@@ -367,6 +355,8 @@ namespace Classroom_Learning_Partner.Model
                 BsonDocument currentPage = new BsonDocument {
                     { "ID", page.MetaData.GetValue("UniqueID") },
                     { "CreationDate", page.MetaData.GetValue("CreationDate") },
+                    {"SaveDate", DateTime.Now.ToString() },
+                    {"User", userName},
                         { "PageContent", ObjectSerializer.ToString(page) }
                     };
                 pageCollection.Insert(currentPage);
@@ -410,6 +400,11 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
+<<<<<<< HEAD
+                Logger.Instance.WriteToLog("------------------------------------------------");
+                Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
+=======
                 //Save the page's history in a temp VM
                 CLPHistory tempHistory = new CLPHistory();
                 CLPHistory pageHistory = pageVM.HistoryVM.History;
@@ -446,8 +441,15 @@ namespace Classroom_Learning_Partner.Model
                 pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
 
                 //Send the page 
+>>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
+                Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+<<<<<<< HEAD
+                Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
+=======
 
                 //Put the temp history back into the page
                 foreach (var key in tempHistory.ObjectReferences.Keys)
@@ -477,6 +479,7 @@ namespace Classroom_Learning_Partner.Model
                     }
                 }
                 
+>>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
             }
            
         }
@@ -515,9 +518,13 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
                 }
-                else if (pageObject is CLPStamp)
+                else if (pageObject is CLPImageStamp)
                 {
-                    pageObjectViewModel = new CLPStampViewModel(pageObject as CLPStamp, pageViewModel);
+                    pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
+                }
+                else if (pageObject is CLPBlankStamp)
+                {
+                    pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
                 }
                 else if (pageObject is CLPTextBox)
                 {
