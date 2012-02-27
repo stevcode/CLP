@@ -656,194 +656,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                               App.IsAuthoring = false;
                                               CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
                                               CLPService.SetWorkspace();
-<<<<<<< HEAD
-                                             
-                                          }));
-            }
-        }
-
-        private RelayCommand _saveNotebookCommand;
-
-        /// <summary>
-        /// Gets the SaveNotebookCommand.
-        /// </summary>
-        public RelayCommand SaveNotebookCommand
-        {
-            get
-            {
-                return _saveNotebookCommand
-                    ?? (_saveNotebookCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              CLPService.SaveNotebook(App.CurrentNotebookViewModel);
-                                          }));
-            }
-        }
-
-        private RelayCommand _saveAllNotebooksCommand;
-
-        /// <summary>
-        /// Gets the SaveAllNotebooksCommand.
-        /// </summary>
-        public RelayCommand SaveAllNotebooksCommand
-        {
-            get
-            {
-                return _saveAllNotebooksCommand
-                    ?? (_saveAllNotebooksCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              foreach (CLPNotebookViewModel notebookVM in App.NotebookViewModels)
-                                              {
-                                                  CLPService.SaveNotebook(notebookVM);
-                                              }
-                                          }));
-            }
-        }
-
-        private RelayCommand _convertToXPSCommand;
-
-        /// <summary>
-        /// Gets the ConvertToXPSCommand.
-        /// </summary>
-        public RelayCommand ConvertToXPSCommand
-        {
-            get
-            {
-                return _convertToXPSCommand
-                    ?? (_convertToXPSCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              FixedDocument doc = new FixedDocument();
-                                              doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-
-                                              if (App.CurrentUserMode == App.UserMode.Instructor)
-                                              {
-                                                  
-                                              }
-                                              //foreach page here
-                                              //foreach (var pageView in A)
-                                              //{
-
-                                              //}
-                                              int i = 0;
-                                              foreach (CLPPageViewModel pageVM in App.CurrentNotebookViewModel.PageViewModels)
-                                              {
-                                                  PageContent pageContent = new PageContent();
-                                                  FixedPage fixedPage = new FixedPage();
-
-                                                  CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                                                  currentPage.DataContext = pageVM;
-                                                  currentPage.UpdateLayout();
-                                                  //currentPage.Visibility = Visibility.Hidden;
-
-                                                  RenderTargetBitmap bmp = new RenderTargetBitmap((int)(96 * 8.5), 96 * 11, 96d, 96d, PixelFormats.Pbgra32); //new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                                                  bmp.Render(currentPage.MainInkCanvas);
-                                                  PngBitmapEncoder encoder = new PngBitmapEncoder();
-                                                  encoder.Frames.Add(BitmapFrame.Create(bmp));
-                                                  using (Stream s = File.Create(@"C:\" + i.ToString() + ".png"))
-                                                  {
-                                                      encoder.Save(s);
-                                                  }
-                                                  i++;
-
-                                                  //Create first page of document
-                                                  RotateTransform rotate = new RotateTransform(90.0);
-                                                  TranslateTransform translate = new TranslateTransform(816+2, -2);
-                                                  TransformGroup transform = new TransformGroup();
-                                                  transform.Children.Add(rotate);
-                                                  transform.Children.Add(translate);
-                                                  currentPage.RenderTransform = transform;
-
-                                                  
-
-                                                  
-
-                                                  fixedPage.Children.Add(currentPage);
-                                                  ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                                                  doc.Pages.Add(pageContent);
-                                              }
-
-                                              //Save the document
-                                              string filename = App.CurrentNotebookViewModel.Notebook.NotebookName + ".xps";
-                                              string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
-                                              if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
-                                              {
-                                                  Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-                                              }
-                                              if (File.Exists(path))
-                                              {
-                                                  File.Delete(path);
-                                              }
-                              
-
-                                              XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
-                                              
-                                              XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
-                                              xw.Write(doc);
-                                              xpsd.Close();
-                                          }));
-            }
-        }
-
-        #endregion //Notebook Commands
-
-        #region Page Commands
-
-        private RelayCommand _addNewPageCommand;
-
-        /// <summary>
-        /// Gets the AddPageCommand.
-        /// </summary>
-        public RelayCommand AddNewPageCommand
-        {
-            get
-            {
-                return _addNewPageCommand
-                    ?? (_addNewPageCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              int currentPageIndex = -1;
-                                              AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-                                              {
-                                                  currentPageIndex = App.CurrentNotebookViewModel.GetNotebookPageIndex(pageViewModel);
-                                              });
-                                              if (currentPageIndex != -1)
-                                              {
-                                                  currentPageIndex++;
-                                                  CLPService.AddPageAt(new CLPPage(), currentPageIndex, -1);
-                                              }
-                                              else
-                                              {
-                                                  Console.WriteLine("[Error] Requested page is a submission, not a notebookpage");
-                                              }     
-                                          }));
-            }
-        }
-
-        private RelayCommand _deletePageCommand;
-
-        /// <summary>
-        /// Gets the DeletePageCommand.
-        /// </summary>
-        public RelayCommand DeletePageCommand
-        {
-            get
-            {
-                return _deletePageCommand
-                    ?? (_deletePageCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              int currentPageIndex = -1;
-                                              AppMessages.RequestCurrentDisplayedPage.Send((callbackMessage) =>
-                                              {
-                                                  currentPageIndex = App.CurrentNotebookViewModel.PageViewModels.IndexOf(callbackMessage);
-                                              });
-                                              CLPService.RemovePageAt(currentPageIndex);
-                                          }));
-            }
-=======
                                               /*AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
                                               {
                                                   pageViewModel.HistoryVM.ClearHistory();
@@ -1038,7 +850,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                               CLPService.RemovePageAt(currentPageIndex);
                                           }));
             }
->>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
         }
         private RelayCommand _duplicatePageCommand;
 
@@ -1061,113 +872,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                               CLPService.DuplicatePageAt(currentPageIndex);
                                           }));
             }
-<<<<<<< HEAD
-        }
-        #endregion //Page Commands
-
-        #region Insert Commands
-
-        private RelayCommand _insertTextBoxCommand;
-
-        /// <summary>
-        /// Gets the InsertTextBoxCommand.
-        /// </summary>
-        public RelayCommand InsertTextBoxCommand
-        {
-            get
-            {
-                return _insertTextBoxCommand
-                    ?? (_insertTextBoxCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              CLPTextBox textBox = new CLPTextBox();
-                                              CLPService.AddPageObjectToPage(textBox);
-                                          }));
-            }
-        }
-
-        private RelayCommand _insertImageCommand;
-
-        /// <summary>
-        /// Gets the InsertImageCommand.
-        /// </summary>
-        public RelayCommand InsertImageCommand
-        {
-            get
-            {
-                return _insertImageCommand
-                    ?? (_insertImageCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              // Configure open file dialog box
-                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
-
-                                              // Show open file dialog box
-                                              Nullable<bool> result = dlg.ShowDialog();
-
-                                              // Process open file dialog box results
-                                              if (result == true)
-                                              {
-                                                  // Open document
-                                                  string filename = dlg.FileName;
-                                                  CLPImage image = new CLPImage(filename);
-                                                  CLPService.AddPageObjectToPage(image);
-                                              }
-                                          }));
-            }
-        }
-
-        private RelayCommand _insertImageStampCommand;
-
-        /// <summary>
-        /// Gets the InsertImageStampCommand.
-        /// </summary>
-        public RelayCommand InsertImageStampCommand
-        {
-            get
-            {
-                return _insertImageStampCommand
-                    ?? (_insertImageStampCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              // Configure open file dialog box
-                                              Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                                              dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
-
-                                              // Show open file dialog box
-                                              Nullable<bool> result = dlg.ShowDialog();
-
-                                              // Process open file dialog box results
-                                              if (result == true)
-                                              {
-                                                  // Open document
-                                                  string filename = dlg.FileName;
-                                                  CLPStamp image = new CLPStamp(filename);
-                                                  CLPService.AddPageObjectToPage(image);
-                                              }
-                                          }));
-            }
-        }
-
-        private RelayCommand _insertBlankStampCommand;
-
-        /// <summary>
-        /// Gets the InsertBlankStampCommand.
-        /// </summary>
-        public RelayCommand InsertBlankStampCommand
-        {
-            get
-            {
-                return _insertBlankStampCommand
-                    ?? (_insertBlankStampCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              CLPStamp stamp = new CLPStamp();
-                                              CLPService.AddPageObjectToPage(stamp);
-                                          }));
-            }
-=======
         }
         #endregion //Page Commands
 
@@ -1266,7 +970,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                               {
                                                   // Open document
                                                   string filename = dlg.FileName;
-                                                  CLPImageStamp image = new CLPImageStamp(filename);
+                                                  CLPStamp image = new CLPStamp(filename);
                                                   CLPService.AddPageObjectToPage(image);
                                               }
                                           }));
@@ -1286,11 +990,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ?? (_insertBlankStampCommand = new RelayCommand(
                                           () =>
                                           {
-                                              CLPBlankStamp stamp = new CLPBlankStamp();
+                                              CLPStamp stamp = new CLPStamp();
                                               CLPService.AddPageObjectToPage(stamp);
                                           }));
             }
->>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86
         }
 
         private RelayCommand _insertSquareCommand;
@@ -1310,9 +1013,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                               CLPService.AddPageObjectToPage(square);
                                           }));
             }
+        }
+
 <<<<<<< HEAD
-        }
-
         #endregion //Insert Commands
 
         #region Display Commands
@@ -1541,54 +1244,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _audioCommand
                     ?? (_audioCommand = new RelayCommand(
                                           () =>
-                                          {
-                                              AppMessages.Audio.Send("start");
-                                              recording = !recording;
-                                              if (recording)
-                                              {
-                                                  RecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
-                                              }
-                                              else
-                                              {
-                                                  RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
-                                              }
-                                          }));
-            }
-        }
-        private RelayCommand _playAudioCommand;
-        public RelayCommand PlayAudioCommand
-        {
-            get
-            {
-                return _playAudioCommand
-                    ?? (_playAudioCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              AppMessages.Audio.Send("play");
-
-
-                                          }));
-            }
-        }
-        private RelayCommand _enablePlaybackCommand;
-        public RelayCommand EnablePlaybackCommand
-        {
-            get
-            {
-                return _enablePlaybackCommand
-                    ?? (_enablePlaybackCommand = new RelayCommand(
-                                          () =>
-                                          {
-                                              AppMessages.ChangePlayback.Send(true);
-
-                                          }));
-            }
-        }
-        #endregion //History Commands
-        #endregion //Commands
-    }
-}
 =======
+        private RelayCommand _insertCircleCommand;
+
+        /// <summary>
+        /// Gets the InsertBlankStampCommand.
+        /// </summary>
+        public RelayCommand InsertCircleCommand
+        {
+            get
+            {
+                return _insertCircleCommand
+                    ?? (_insertCircleCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                              CLPCircle circle = new CLPCircle();
+                                              CLPService.AddPageObjectToPage(circle);
+                                          }));
+            }
         }
 
         #endregion //Insert Commands
@@ -1819,6 +1492,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _audioCommand
                     ?? (_audioCommand = new RelayCommand(
                                           () =>
+>>>>>>> 71c1538b8cfb2e5f9da77caeb3f61703edb1b800
                                           {
                                               string file = "";
                                               AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
@@ -1881,4 +1555,3 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
     }
 }
->>>>>>> 551cdac2d333fbb1beef49d75ba9e855d6110e86

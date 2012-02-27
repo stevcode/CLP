@@ -147,12 +147,12 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\CLPAnimationView.xaml.cs">
       <DependentUpon>CLPAnimationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPCircleView.xaml.cs">
       <DependentUpon>CLPCircleView.xaml</DependentUpon>
-    </Compile>
     </Compile>
     <Compile Include="Views\Workspaces\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>

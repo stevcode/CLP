@@ -92,7 +92,7 @@ namespace Classroom_Learning_Partner.Model
             foreach (CLPPageObjectBase obj in originalPage.PageObjects)
             {
                 CLPPageObjectBase pageObject;
-                else if (obj is CLPSquare)
+                if (obj is CLPSquare)
                 {
                     CLPSquare copySquare = new CLPSquare();
                     CLPSquare originalSquare = obj as CLPSquare;
@@ -122,6 +122,7 @@ namespace Classroom_Learning_Partner.Model
                     pageObject = copySquare;
 
                 }
+                else if (obj is CLPImage)
                 {
                     CLPImage originalImage = obj as CLPImage;
                     CLPImage copyImage = new CLPImage(originalImage.ByteSource);
@@ -450,7 +451,6 @@ namespace Classroom_Learning_Partner.Model
         }
         public void SubmitPage(CLPPageViewModel pageVM)
         {
-
             if (App.Peer.Channel != null)
             {
                 Logger.Instance.WriteToLog("------------------------------------------------");
@@ -528,9 +528,51 @@ namespace Classroom_Learning_Partner.Model
                 }
                 
             }
+            
+            // Stamp and Tile log information
+
+           /* System.IO.StreamWriter file = new System.IO.StreamWriter("C:&#92;Users&#92;eryndm&#92;Desktop&#92;ErynLog.txt");
+
+            CLPPage originalPage = pageVM.Page;
+            foreach (CLPPageObjectBase obj in originalPage.PageObjects)
+            {
+                CLPPageObjectBase pageObject;
+                if (obj is CLPStamp)
+                {
+                    CLPStamp stamp = obj as CLPStamp;
+                    if (stamp.ByteSource == null) { 
+                        Console.WriteLine("<Type>Image_Stamp");
+                    } else {
+                       Console.WriteLine("<Type>Blank_Stamp");
+                    }
+                    Console.WriteLine("<Height>" + stamp.Height);
+                    Console.WriteLine("<Anchored>" + stamp.IsAnchored);
+                    Console.WriteLine("<Parts>" + stamp.Parts);
+                    Console.WriteLine("<Position>" + stamp.Position);
+                    Console.WriteLine("<Width>" + stamp.Width);
+                    Console.WriteLine("<Zindex>" + stamp.ZIndex);
+                    /*foreach (var stroke in originalStamp.PageObjectStrokes)
+                    {
+                        Console.WriteLine("<Stroke>" +stroke.);
+                    }
+                }
+                else if (obj is CLPSnapTile)
+                {
+                    CLPSnapTile tile = obj as CLPSnapTile;
+                    Console.WriteLine("<Type>SnapTile");
+                    Console.WriteLine("<Height>" + tile.Height);
+                    Console.WriteLine("<Width>" + tile.Width);
+                    Console.WriteLine("<Zindex>" + tile.ZIndex);
+                    /*foreach (var stroke in originalTile.PageObjectStrokes)
+                    {
+                        copyTile.PageObjectStrokes.Add(stroke);
+                    }
+                }
+            }
+
+            file.Close();*/
            
         }
-
 
         public void SendLaserPosition(Point pt)
         {
