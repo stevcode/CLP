@@ -1057,16 +1057,26 @@ namespace Classroom_Learning_Partner.ViewModels
                                                   {
                                                       (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
                                                       (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-                                                      App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+                                                      App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<Tuple<bool,string,string>>());
                                                   }
                                                   else
                                                   {
                                                       (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                                                       (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                                                      List<string> pageList = new List<string>();
-                                                      foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+                                                      List<Tuple<bool, string, string>> pageList = new List<Tuple<bool, string, string>>();
+                                                      foreach (var pageVM in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
                                                       {
-                                                          pageList.Add(ObjectSerializer.ToString(page.Page));
+                                                          Tuple<bool, string, string> pageID;
+                                                          if (pageVM.Page.IsSubmission)
+                                                          {
+                                                              pageID = new Tuple<bool, string, string>(true, pageVM.Page.UniqueID, pageVM.Page.SubmissionID);
+                                                          }
+                                                          else
+                                                          {
+                                                              pageID = new Tuple<bool, string, string>(false, pageVM.Page.UniqueID, "");
+                                                          }
+                                                          pageList.Add(pageID);
+                                                          
                                                       }
 
                                                       App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);

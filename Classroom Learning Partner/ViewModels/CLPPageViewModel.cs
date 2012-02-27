@@ -179,14 +179,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if (App.Peer.Channel != null)
                     {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID);
+                        App.Peer.Channel.BroadcastInk(add, remove, new Tuple<bool,string,string>(true,Page.UniqueID, Page.SubmissionID));
                     }
                 }
                 else
                 {
                     if (App.Peer.Channel != null)
                     {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+                        App.Peer.Channel.BroadcastInk(add, remove, new Tuple<bool, string, string>(false, Page.UniqueID, ""));
                     }
                 }
                 

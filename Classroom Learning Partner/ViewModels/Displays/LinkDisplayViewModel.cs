@@ -33,72 +33,17 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                                     {
                                                                                         if (this.IsOnProjector)
                                                                                         {
-                                                                                            //Save the page's history in a temp VM
-                                                                                            CLPHistory tempHistory = new CLPHistory();
-                                                                                            CLPHistory pageHistory = pageViewModel.HistoryVM.History;
-                                                                                            foreach (var key in pageHistory.ObjectReferences.Keys)
+                                                                                            Tuple<bool,string,string> pageID;
+                                                                                            if (PageViewModel.Page.IsSubmission)
                                                                                             {
-                                                                                                tempHistory.ObjectReferences.Add(key, pageHistory.ObjectReferences[key]);
+                                                                                                pageID = new Tuple<bool, string, string>(true, PageViewModel.Page.UniqueID, PageViewModel.Page.SubmissionID);
                                                                                             }
-                                                                                            foreach (var item in pageHistory.HistoryItems)
+                                                                                            else
                                                                                             {
-                                                                                                if (item.ObjectID == null)
-                                                                                                {
-                                                                                                    tempHistory.AddHistoryItem(item);
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    tempHistory.AddHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
-                                                                                                }
-                                                                                            }
-                                                                                            foreach (var item in pageHistory.UndoneHistoryItems)
-                                                                                            {
-                                                                                                if (item.ObjectID == null)
-                                                                                                {
-                                                                                                    tempHistory.AddUndoneHistoryItem(item);
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    tempHistory.AddUndoneHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
-                                                                                                }
+                                                                                                pageID = new Tuple<bool, string, string>(false, PageViewModel.Page.UniqueID, "");
                                                                                             }
 
-                                                                                            //Clear the page's real history so it doesn't get sent
-                                                                                            pageViewModel.HistoryVM.History.HistoryItems.Clear();
-                                                                                            pageViewModel.HistoryVM.History.ObjectReferences.Clear();
-                                                                                            pageViewModel.HistoryVM.History.UndoneHistoryItems.Clear();
-
-                                                                                            //send the page to the projector
-                                                                                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                                                                            App.Peer.Channel.AddPageToDisplay(pageString);
-
-                                                                                            //Put the temp history back into the page
-                                                                                            foreach (var key in tempHistory.ObjectReferences.Keys)
-                                                                                            {
-                                                                                                pageHistory.ObjectReferences.Add(key, tempHistory.ObjectReferences[key]);
-                                                                                            }
-                                                                                            foreach (var item in tempHistory.HistoryItems)
-                                                                                            {
-                                                                                                if (item.ObjectID == null)
-                                                                                                {
-                                                                                                    pageViewModel.HistoryVM.AddHistoryItem(item);
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    pageHistory.AddHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
-                                                                                                }
-                                                                                            }
-                                                                                            foreach (var item in tempHistory.UndoneHistoryItems)
-                                                                                            {
-                                                                                                if (item.ObjectID == null)
-                                                                                                {
-                                                                                                    pageViewModel.HistoryVM.AddUndoneHistoryItem(item);
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
-                                                                                                }
-                                                                                            }
+                                                                                            App.Peer.Channel.AddPageToDisplay(pageID); 
                                                                                         }
                                                                                     }
                                                                                 }

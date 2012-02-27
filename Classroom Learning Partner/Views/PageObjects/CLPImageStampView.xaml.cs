@@ -140,17 +140,20 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Black);
+                    thumbDown = false;
                 }
             }
         }
 
         private Point oldPosition;
+        private bool thumbDown = false;
         private void Thumb_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Right && !isOnPreview)
             {
                 if (!(this.DataContext as CLPImageStampViewModel).PageViewModel.Page.IsSubmission)
                 {
+                    thumbDown = true;
                     poly.Fill = new SolidColorBrush(Colors.Green);
 
                     PageObjectContainerView pageObjectContainerView = UIHelper.TryFindParent<PageObjectContainerView>(adornedControl);
@@ -197,6 +200,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     {
                         CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                     }
+                    thumbDown = false;
                 }
             }
         }  
