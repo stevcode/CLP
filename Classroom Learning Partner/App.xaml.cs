@@ -50,13 +50,7 @@ namespace Classroom_Learning_Partner
             Logger.Instance.InitializeLog();
 
            
-            if (App.CurrentUserMode == App.UserMode.Projector)
-            {
-                App.CurrentNotebookViewModel = new CLPNotebookViewModel();
-                App.NotebookViewModels.Add(App.CurrentNotebookViewModel);
-                CLPService.SetWorkspace();
-            }
-            else if (App.CurrentUserMode == UserMode.Student)
+            if (App.CurrentUserMode == UserMode.Student)
             {
                 MainWindowViewModel.Workspace = new UserLoginWorkspaceViewModel();
             }

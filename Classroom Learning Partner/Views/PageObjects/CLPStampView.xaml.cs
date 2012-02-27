@@ -109,6 +109,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 if (!(this.DataContext as CLPStampViewModel).PageViewModel.Page.IsSubmission)
                 {
                     poly.Fill = new SolidColorBrush(Colors.Black);
+                    thumbDown = false;
                 }
             }
         }
@@ -172,6 +173,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     {
                         CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                     }
+                    thumbDown = false;
                 }
             }
         }
