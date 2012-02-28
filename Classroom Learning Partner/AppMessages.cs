@@ -26,7 +26,8 @@ namespace Classroom_Learning_Partner
             ChangePlayback,
             SendPlaybackItem,
             Audio,
-            SetSnapTileMode
+            SetSnapTileMode,
+            GetInkCanvas
         }
 
         public static class UpdateFont
@@ -108,14 +109,28 @@ namespace Classroom_Learning_Partner
                 Messenger.Default.Register(recipient, MessageTypes.ChangePlayback, action);
             }
         }
-        public static class Audio
+
+        public static class GetInkCanvas
         {
-            public static void Send(String item)
+            public static void Send(System.Windows.Controls.InkCanvas inkCanvas)
             {
-                Messenger.Default.Send(item, MessageTypes.Audio);
+                Messenger.Default.Send<System.Windows.Controls.InkCanvas>(inkCanvas);
             }
 
-            public static void Register(object recipient, Action<String> action)
+            public static void Register(object recipient, Action<System.Windows.Controls.InkCanvas> action)
+            {
+                Messenger.Default.Register<System.Windows.Controls.InkCanvas>(recipient, action);
+            }
+        }
+        public static class Audio
+        {
+            public static void Send(String item, String pathfile)
+            {
+                var tup = Tuple.Create<String, String>(item, pathfile);
+                Messenger.Default.Send(tup, MessageTypes.Audio);
+            }
+
+            public static void Register(object recipient, Action<Tuple<String, String>> action)
             {
                 Messenger.Default.Register(recipient, MessageTypes.Audio, action);
             }

@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Model
 
         void AddPageAt(CLPPage page, int notebookIndex, int submissionIndex);
         void RemovePageAt(int pageIndex);
+        void DuplicatePageAt(int pageIndex);
 
         void AddSubmission(CLPPage page);
         void DistributeNotebook(CLPNotebookViewModel notebookVM, string author);
@@ -32,7 +33,7 @@ namespace Classroom_Learning_Partner.Model
         void OpenNewNotebook();
         void SaveNotebook(CLPNotebookViewModel notebookVM);
         void SaveNotebookDB(CLPNotebook notebookVM, string userName);
-        void SavePageDB(CLPPage pageVM);
+        void SavePageDB(CLPPage pageVM, string userName);
         void SaveNotebooksFromDBToHD(CLPNotebook notebookVM);
         void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM);
         void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM);
@@ -50,6 +51,7 @@ namespace Classroom_Learning_Partner.Model
         void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width);
 
         void SendInkCanvas(System.Windows.Controls.InkCanvas ink);
+        void AudioMessage(Tuple<string, string> tup);
         //Calls made on Server to DB
         void RetrieveNotebooks(string username);
         void DistributeNotebookServer(CLPNotebook notebookVM, string author);
@@ -80,6 +82,144 @@ namespace Classroom_Learning_Partner.Model
             App.CurrentNotebookViewModel.Notebook.RemovePageAt(pageIndex);
             //DATABASE remove. make sure to add new blank page if
             //you remove last page in notebook.
+        }
+
+        public void DuplicatePageAt(int pageIndex)
+        {
+            CLPPage originalPage = App.CurrentNotebookViewModel.PageViewModels[pageIndex].Page;
+            CLPPage copyPage = new CLPPage();
+            
+            foreach (CLPPageObjectBase obj in originalPage.PageObjects)
+            {
+                CLPPageObjectBase pageObject;
+                if (obj is CLPBlankStamp)
+                {
+                    CLPBlankStamp copyStamp = new CLPBlankStamp();
+                    CLPBlankStamp originalStamp = obj as CLPBlankStamp;
+                    copyStamp.Height = originalStamp.Height;
+                    copyStamp.IsAnchored = originalStamp.IsAnchored;
+                    copyStamp.Parts = originalStamp.Parts;
+                    copyStamp.Position = originalStamp.Position;
+                    copyStamp.Width = originalStamp.Width;
+                    copyStamp.ZIndex = originalStamp.ZIndex;
+                    foreach (var stroke in originalStamp.PageObjectStrokes)
+                    {
+                        copyStamp.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyStamp;
+                }
+                else if (obj is CLPSquare)
+                {
+                    CLPSquare copySquare = new CLPSquare();
+                    CLPSquare originalSquare = obj as CLPSquare;
+                    copySquare.Height = originalSquare.Height;
+                    copySquare.Position = originalSquare.Position;
+                    copySquare.Width = originalSquare.Width;
+                    copySquare.ZIndex = originalSquare.ZIndex;
+                    foreach (var stroke in originalSquare.PageObjectStrokes)
+                    {
+                        copySquare.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copySquare;
+
+                }
+                else if (obj is CLPCircle)
+                {
+                    CLPCircle copySquare = new CLPCircle();
+                    CLPCircle originalSquare = obj as CLPCircle;
+                    copySquare.Height = originalSquare.Height;
+                    copySquare.Position = originalSquare.Position;
+                    copySquare.Width = originalSquare.Width;
+                    copySquare.ZIndex = originalSquare.ZIndex;
+                    foreach (var stroke in originalSquare.PageObjectStrokes)
+                    {
+                        copySquare.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copySquare;
+
+                }
+                else if (obj is CLPImage)
+                {
+                    CLPImage originalImage = obj as CLPImage;
+                    CLPImage copyImage = new CLPImage(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = originalImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPImageStamp)
+                {
+                    CLPImageStamp originalImage = obj as CLPImageStamp;
+                    CLPImageStamp copyImage = new CLPImageStamp(originalImage.ByteSource);
+                    copyImage.Height = originalImage.Height;
+                    copyImage.IsAnchored = originalImage.IsAnchored;
+                    copyImage.Parts = originalImage.Parts;
+                    copyImage.Position = originalImage.Position;
+                    copyImage.Width = copyImage.Width;
+                    copyImage.ZIndex = originalImage.ZIndex;
+                    foreach (var stroke in originalImage.PageObjectStrokes)
+                    {
+                        copyImage.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyImage;
+                }
+                else if (obj is CLPSnapTile)
+                {
+                    CLPSnapTile originalTile = obj as CLPSnapTile;
+                    CLPSnapTile copyTile = new CLPSnapTile(originalTile.Position, "SpringGreen");
+                    copyTile.Height = originalTile.Height;
+                    copyTile.Width = originalTile.Width;
+                    copyTile.ZIndex = originalTile.ZIndex;
+                    foreach (var t in originalTile.Tiles)
+                    {
+                        copyTile.Tiles.Add(t);
+                    }
+                    foreach (var stroke in originalTile.PageObjectStrokes)
+                    {
+                        copyTile.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTile;
+                }
+                else if (obj is CLPTextBox)
+                {
+                    CLPTextBox originalTextBox = obj as CLPTextBox;
+                    CLPTextBox copyTextBox = new CLPTextBox();
+                    copyTextBox.Height = originalTextBox.Height;
+                    copyTextBox.Position = originalTextBox.Position;
+                    copyTextBox.Text = originalTextBox.Text;
+                    copyTextBox.Width = originalTextBox.Width;
+                    copyTextBox.ZIndex = originalTextBox.ZIndex;
+                    foreach (var stroke in originalTextBox.PageObjectStrokes)
+                    {
+                        copyTextBox.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyTextBox;
+                }
+                else
+                {
+                    MessageBoxResult result =  MessageBox.Show("No duplicate method for this type.", "Confirmation");
+                    pageObject = null;
+                }
+                try
+                {
+                    copyPage.PageObjects.Add(pageObject);
+                }
+                catch(Exception e)
+                {
+                    Logger.Instance.WriteToLog(e.ToString());
+                }
+
+            }
+            foreach (var stroke in originalPage.Strokes)
+            {
+                copyPage.Strokes.Add(stroke);
+            }
+            AddPageAt(copyPage, App.CurrentNotebookViewModel.PageViewModels.Count, -1);
         }
 
         public void AddSubmission(CLPPage page)
@@ -178,11 +318,39 @@ namespace Classroom_Learning_Partner.Model
             Console.WriteLine("Notebook saved locally");
             if (App.DatabaseUse == App.DatabaseMode.Using)
             {
-                string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
-                Console.WriteLine("Notebook seralized");
-                App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
-                Console.WriteLine("Notebook saving called on mesh");
+
+                //string s_notebook = ObjectSerializer.ToString(notebookVM.Notebook);
+                //double size = s_notebook.Length / 1024.0;
+                //Console.WriteLine("Notebook seralized, size " + size.ToString());
+                //App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
+                //Console.WriteLine("Notebook saving called on mesh");
             }
+
+            //int start = 1000;
+            //int mult = 3000;
+            //int currentSize;
+            //DateTime currentTime;
+            //string content = generateRandomString(start);
+            //string increment = generateRandomString(mult);
+
+            //for (int i = 0; i < 71; i++)
+            //{
+            //    currentSize = start + i * mult;
+            //    if (i != 0)
+            //    {
+            //        content = content + increment;
+            //    }
+            //    for (int t = 0; t < 5; t++)
+            //    {
+            //        currentTime = DateTime.Now;
+            //        App.Peer.Channel.TestNetworkSending(content, currentTime, i, currentSize, App.Peer.UserName);
+            //        Logger.Instance.WriteToLog("-------------------------------------");
+            //        Logger.Instance.WriteToLog("Item sent: " + i.ToString());
+            //        Console.WriteLine("Item sent: " + i.ToString() + " trial " + t.ToString());
+            //        Logger.Instance.WriteToLog("Size sent: " + currentSize.ToString());
+            //        System.Threading.Thread.Sleep(5000);
+            //    }
+            //}
         }
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
@@ -192,7 +360,7 @@ namespace Classroom_Learning_Partner.Model
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
                 MongoCollection<BsonDocument> nbCollection = nb.GetCollection<BsonDocument>("Notebooks");
-                var query = Query.EQ("ID", notebook.MetaData.GetValue("UniqueID"));
+                var query = Query.And(Query.EQ("ID", notebook.MetaData.GetValue("UniqueID")), Query.EQ("User", userName));
                 BsonDocument currentNotebook = nbCollection.FindOne(query);
                 if (currentNotebook != null)
                 {
@@ -220,7 +388,7 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-        public void SavePageDB(CLPPage page)
+        public void SavePageDB(CLPPage page, string userName)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
@@ -230,6 +398,8 @@ namespace Classroom_Learning_Partner.Model
                 BsonDocument currentPage = new BsonDocument {
                     { "ID", page.MetaData.GetValue("UniqueID") },
                     { "CreationDate", page.MetaData.GetValue("CreationDate") },
+                    {"SaveDate", DateTime.Now.ToString() },
+                    {"User", userName},
                         { "PageContent", ObjectSerializer.ToString(page) }
                     };
                 pageCollection.Insert(currentPage);
@@ -268,13 +438,108 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
+        //for network testing only
+        public String generateRandomString(int length)
+        {
+            //Initiate objects & vars
+            Random random = new Random();
+            String randomString = "";
+            int randNumber;
 
+            //Loop ‘length’ times to generate a random number or character
+            for (int i = 0; i < length; i++)
+            {
+                if (random.Next(1, 3) == 1)
+                    randNumber = random.Next(97, 123); //char {a-z}
+                else
+                    randNumber = random.Next(48, 58); //int {0-9}
+
+                //append random char or digit to random string
+                randomString = randomString + (char)randNumber;
+            }
+            //return the random string
+            return randomString;
+        }
         public void SubmitPage(CLPPageViewModel pageVM)
         {
+
             if (App.Peer.Channel != null)
             {
+                Logger.Instance.WriteToLog("------------------------------------------------");
+                Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
+                //Save the page's history in a temp VM
+                CLPHistory tempHistory = new CLPHistory();
+                CLPHistory pageHistory = pageVM.HistoryVM.History;
+                foreach (var key in pageHistory.ObjectReferences.Keys)
+                {
+                    tempHistory.ObjectReferences.Add(key, pageHistory.ObjectReferences[key]);
+                }
+                foreach (var item in pageHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in pageHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        tempHistory.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        tempHistory.AddUndoneHistoryItem(pageHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
+                //Clear the page's real history so it doesn't get sent
+                pageVM.HistoryVM.History.HistoryItems.Clear();
+                pageVM.HistoryVM.History.ObjectReferences.Clear();
+                pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
+
+                //Send the page 
+                pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
-                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+                Console.WriteLine("After student Serialize, sending " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
+                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName, DateTime.Now);
+                Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
+                Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
+
+                //Put the temp history back into the page
+                foreach (var key in tempHistory.ObjectReferences.Keys)
+                {
+                    pageHistory.ObjectReferences.Add(key, tempHistory.ObjectReferences[key]);
+                }
+                foreach (var item in tempHistory.HistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                foreach (var item in tempHistory.UndoneHistoryItems)
+                {
+                    if (item.ObjectID == null)
+                    {
+                        pageVM.HistoryVM.AddUndoneHistoryItem(item);
+                    }
+                    else
+                    {
+                        pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                    }
+                }
+                
             }
            
         }
@@ -336,6 +601,14 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPInkRegion)
                 {
                     pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
+                }
+                else if (pageObject is CLPCircle)
+                {
+                    pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
+                }
+                else if (pageObject is CLPAnimation)
+                {
+                    pageObjectViewModel = new CLPAnimationViewModel(pageObject as CLPAnimation, pageViewModel);
                 }
                 else
                 {
@@ -514,7 +787,23 @@ namespace Classroom_Learning_Partner.Model
                 pageViewModel.HistoryVM.InkCanvas = ink;
             });
         }
-       
+
+        public void AudioMessage(Tuple<string, string> tup)
+        {
+            CLPPageViewModel pageVM = null;
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageVM = pageViewModel;
+            });
+            pageVM.Avm.AudioButtonPressed(tup.Item1, tup.Item2);
+        }
+        public void NewHistoryItem(CLPHistoryItem item)
+        {
+            AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
+            {
+                pageViewModel.HistoryVM.AddHistoryItem(item);
+            });
+        }
         
         public void SetWorkspace()
         {

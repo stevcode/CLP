@@ -72,7 +72,10 @@ namespace Classroom_Learning_Partner.Model
             {
                 uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
-
+            else if (obj is String)
+            {
+                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
             if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
             {
                 AddObjectToReferences(uniqueID, obj);
@@ -83,6 +86,10 @@ namespace Classroom_Learning_Partner.Model
 
             System.Console.WriteLine("AddHistoryItem: HistoryItems.Count: " + HistoryItems.Count());
             System.Console.WriteLine("ObjectRefIds: " + ObjectReferences.Count());
+        }
+        public void AddHistoryItem(CLPHistoryItem item)
+        {
+            _historyItems.Add(item);
         }
         public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
         {
@@ -95,7 +102,10 @@ namespace Classroom_Learning_Partner.Model
             {
                 uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
-
+            else if (obj is String)
+            {
+                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
             if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
             {
                 AddObjectToReferences(uniqueID, obj);
@@ -104,7 +114,10 @@ namespace Classroom_Learning_Partner.Model
             historyItem.ObjectID = uniqueID;
             _undoneHistoryItems.Add(historyItem);
         }
-
+        public void AddUndoneHistoryItem(CLPHistoryItem item)
+        {
+            _undoneHistoryItems.Add(item);
+        }
         private void AddObjectToReferences(string key, object obj)
         {
             if (obj is Stroke)

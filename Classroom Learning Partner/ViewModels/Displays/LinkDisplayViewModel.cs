@@ -27,14 +27,23 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
                                                                                 this.PageViewModel = pageViewModel;
                                                                                 this.PageViewModel.DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
                                                                                 this.PageViewModel.EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
-                                                                                if (App.CurrentUserMode == App.UserMode.Instructor)
+                                                                                if (App.CurrentUserMode == App.UserMode.Instructor && !App.IsAuthoring)
                                                                                 {
                                                                                     if (App.Peer.Channel != null)
                                                                                     {
                                                                                         if (this.IsOnProjector)
                                                                                         {
-                                                                                            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                                                                                            App.Peer.Channel.AddPageToDisplay(pageString);
+                                                                                            Tuple<bool,string,string> pageID;
+                                                                                            if (PageViewModel.Page.IsSubmission)
+                                                                                            {
+                                                                                                pageID = new Tuple<bool, string, string>(true, PageViewModel.Page.UniqueID, PageViewModel.Page.SubmissionID);
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                pageID = new Tuple<bool, string, string>(false, PageViewModel.Page.UniqueID, "");
+                                                                                            }
+
+                                                                                            App.Peer.Channel.AddPageToDisplay(pageID); 
                                                                                         }
                                                                                     }
                                                                                 }

@@ -1016,6 +1016,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+<<<<<<< HEAD
         private RelayCommand _insertInkRegionCommand;
 
         public RelayCommand InsertInkRegion
@@ -1038,10 +1039,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                     CLPService.AddPageObjectToPage(region);
                                                     
                                                 }
-                                          }));
-            }
-        }
-
+=======
         private RelayCommand _insertCircleCommand;
 
         /// <summary>
@@ -1057,6 +1055,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPCircle circle = new CLPCircle();
                                               CLPService.AddPageObjectToPage(circle);
+>>>>>>> origin/master
                                           }));
             }
         }

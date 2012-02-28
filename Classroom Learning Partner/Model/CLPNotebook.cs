@@ -157,6 +157,9 @@ namespace Classroom_Learning_Partner.Model
         }
 
         #endregion //Public Interface
+        #region properties
+
+        #endregion
     }
 }
 

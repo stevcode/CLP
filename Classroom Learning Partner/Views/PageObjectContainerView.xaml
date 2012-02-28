@@ -25,7 +25,7 @@
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
             VerticalAdornerPlacement="Outside"
-            Visibility="{Binding Path=Visible}"
+            Visibility="Visible"
         >
         <ac:AdornedControl.AdornerContent>
              <!--This is the adorner-->
@@ -80,7 +80,7 @@
                 <Grid
                         x:Name="dragButton"
                         Canvas.Right="-50"
-                        Canvas.Top="-50"
+                        Canvas.Top="-25"
                         Width="40"
                         Height="40"
                         Cursor="ScrollAll"
@@ -263,7 +263,7 @@
         <Grid x:Name="HitBox" Background="Transparent">
             <Rectangle   Fill="Transparent" />
             <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding Path=PageObjectViewModel}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-            <!-- Visibility="{Binding Path=Visible}"-->
+            
         </Grid>
     </ac:AdornedControl>
 
