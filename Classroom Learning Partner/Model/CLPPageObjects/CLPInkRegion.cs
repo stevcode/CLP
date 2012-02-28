@@ -113,11 +113,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                         numberOfResponses++;
                         storedAnswer = result;
 
-                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\analysis_log.txt";
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs\analysis_log.txt";
                         if (!File.Exists(path))
                         {
                             TextWriter tw = new StreamWriter(path);
-                            tw.WriteLine("Position,Try_Number,Answer,Result,Type");
+                            tw.WriteLine("PositionX,PositionY,Try_Number,Answer,Result,Type");
                             tw.WriteLine(this.Position + "," + this.numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
                             tw.Close();
                         }
