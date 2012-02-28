@@ -15,13 +15,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     public class CLPInkRegion : CLPPageObjectBase
     {
 
-        #region Variables
-
-        private string storedAnswer;
-        private int numberOfResponses;
-
-        #endregion
-
         #region Constructors
 
         public CLPInkRegion() : base()
@@ -29,8 +22,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _correctAnswer = "";
             _anaylsisType = 0;
 
-            storedAnswer = "";
-            numberOfResponses = 0;
+            _storedAnswer = "";
+            _numberOfResponses = 0;
 
             Position = new Point(100, 100);
             Height = 100;
@@ -42,8 +35,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _correctAnswer = correct_answer;
             _anaylsisType = analysis_type;
 
-            storedAnswer = "";
-            numberOfResponses = 0;
+            _storedAnswer = "";
+            _numberOfResponses = 0;
 
             Position = new Point(100, 100);
             Height = 100;
@@ -70,6 +63,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             set { _anaylsisType = value; }
         }
 
+        // Stored interpreted answer
+        private string _storedAnswer;
+        public string StoredAnswer
+        {
+            get { return _storedAnswer; }
+        }
+
+        // Number of different stored answers for this problem
+        private int _numberOfResponses;
+        public int NumberOfResponses
+        {
+            get { return _numberOfResponses; }
+        }
+
         #endregion
 
         #region Methods
@@ -87,12 +94,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                         // Number sentence or number
                         hint.Factoid = Factoid.Number;
                         break;
-                    case 3:
+                    case 2:
                         // Digit
                         hint.Factoid = Factoid.Digit;
                         break;
-                    case 4:
-                        // Word
+                    case 3:
+                        // Words
                         hint.Factoid = Factoid.SystemDictionary;
                         break;
                     default:
@@ -108,25 +115,25 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 if (analyzer.Analyze().Successful)
                 {
                     string result = analyzer.GetRecognizedString();
-                    if (result != storedAnswer)
+                    if (result != _storedAnswer)
                     {
-                        numberOfResponses++;
-                        storedAnswer = result;
+                        _numberOfResponses++;
+                        _storedAnswer = result;
 
-                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs\analysis_log.txt";
+                        /*string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs\analysis_log.csv";
                         if (!File.Exists(path))
                         {
                             TextWriter tw = new StreamWriter(path);
                             tw.WriteLine("PositionX,PositionY,Try_Number,Answer,Result,Type");
-                            tw.WriteLine(this.Position + "," + this.numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
+                            tw.WriteLine(this.Position + "," + this._numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
                             tw.Close();
                         }
                         else
                         {
                             TextWriter tw = File.AppendText(path);
-                            tw.WriteLine(this.Position + "," + this.numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
+                            tw.WriteLine(this.Position + "," + this._numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
                             tw.Close();
-                        }
+                        }*/
                     }
                 }
             }
