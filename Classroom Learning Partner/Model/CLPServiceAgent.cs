@@ -527,51 +527,49 @@ namespace Classroom_Learning_Partner.Model
                         pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
                     }
                 }
-                
             }
             
             // Stamp and Tile log information
-
-           /* System.IO.StreamWriter file = new System.IO.StreamWriter("C:&#92;Users&#92;eryndm&#92;Desktop&#92;ErynLog.txt");
+            //TODO: Fix the naming of the log path. This is really messy.
+            string filePath = App.NotebookDirectory + @"\.." + @"\Logs" + @"\StampTileLog" + pageVM.Page.SubmissionID.ToString() + @".log";
+            System.IO.StreamWriter file = new System.IO.StreamWriter(filePath);
+            file.WriteLine("<Page>" + pageVM.Page.UniqueID + "</Page>");
 
             CLPPage originalPage = pageVM.Page;
             foreach (CLPPageObjectBase obj in originalPage.PageObjects)
             {
-                CLPPageObjectBase pageObject;
                 if (obj is CLPStamp)
                 {
                     CLPStamp stamp = obj as CLPStamp;
-                    if (stamp.ByteSource == null) { 
-                        Console.WriteLine("<Type>Image_Stamp");
+                    file.WriteLine("<Stamp>");
+                    if (stamp.ByteSource == null) {
+                        file.WriteLine("<Type>Image_Stamp</Type>");
                     } else {
-                       Console.WriteLine("<Type>Blank_Stamp");
+                       file.WriteLine("<Type>Blank_Stamp</Type>");
                     }
-                    Console.WriteLine("<Height>" + stamp.Height);
-                    Console.WriteLine("<Anchored>" + stamp.IsAnchored);
-                    Console.WriteLine("<Parts>" + stamp.Parts);
-                    Console.WriteLine("<Position>" + stamp.Position);
-                    Console.WriteLine("<Width>" + stamp.Width);
-                    Console.WriteLine("<Zindex>" + stamp.ZIndex);
-                    /*foreach (var stroke in originalStamp.PageObjectStrokes)
-                    {
-                        Console.WriteLine("<Stroke>" +stroke.);
-                    }
+                    file.WriteLine("<Anchored>" + stamp.IsAnchored + "</Anchored>");
+                    file.WriteLine("<Height>" + stamp.Height + "</Height>");
+                    file.WriteLine("<Width>" + stamp.Width + "</Width>");
+                    file.WriteLine("<Parts>" + stamp.Parts + "</Parts>");
+                    file.WriteLine("<Position>" + stamp.Position + "</Position>");
+                    file.WriteLine("<Zindex>" + stamp.ZIndex + "</Zindex>");
+                    file.WriteLine("<UniqueId>" + stamp.UniqueID + "</UniqueId>");
+                    file.WriteLine("</Stamp>");
                 }
                 else if (obj is CLPSnapTile)
                 {
                     CLPSnapTile tile = obj as CLPSnapTile;
-                    Console.WriteLine("<Type>SnapTile");
-                    Console.WriteLine("<Height>" + tile.Height);
-                    Console.WriteLine("<Width>" + tile.Width);
-                    Console.WriteLine("<Zindex>" + tile.ZIndex);
-                    /*foreach (var stroke in originalTile.PageObjectStrokes)
-                    {
-                        copyTile.PageObjectStrokes.Add(stroke);
-                    }
+                    file.WriteLine("<SnapTile>");
+                    file.WriteLine("<Height>" + tile.Height);
+                    file.WriteLine("<Width>" + tile.Width + "</Width>");
+                    file.WriteLine("<Zindex>" + tile.ZIndex + "</Zindex>");
+                    file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
+                    file.WriteLine("<Number>" + tile.Tiles.Count + "</Number>");
+                    file.WriteLine("</SnapTile>");
                 }
             }
 
-            file.Close();*/
+            file.Close();
            
         }
 

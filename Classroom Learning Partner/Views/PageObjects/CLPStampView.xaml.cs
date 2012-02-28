@@ -91,6 +91,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
+        // Highlight handle when mouse is hovering over it
         private void Thumb_MouseOver(object sender, MouseEventArgs e)
         {
             if (!isOnPreview)
@@ -102,6 +103,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
+        // Turn handle back to normal state when mouse leaves the bounds
         private void Thumb_MouseLeave(object sender, MouseEventArgs e)
         {
             if (!isOnPreview)
