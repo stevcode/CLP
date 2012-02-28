@@ -23,24 +23,12 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         public string StoredAnswer
         {
-            get 
-            {
-                if (SHOW_RESULTS)
-                    return (PageObject as CLPInkRegion).StoredAnswer;
-                else
-                    return "";
-            }
+            get { return (PageObject as CLPInkRegion).StoredAnswer; }
         }
 
         public string AnalysisType
         {
-            get
-            {
-                if (SHOW_RESULTS)
-                    return (PageObject as CLPInkRegion).AnalysisType.ToString();
-                else
-                    return "";
-            }
+            get { return (PageObject as CLPInkRegion).AnalysisType.ToString(); }
         }
     }
 }
