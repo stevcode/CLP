@@ -46,6 +46,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPSquareViewModel;
             }
+            else if (pageObjectBaseViewModel is CLPInkRegionViewModel)
+            {
+                _pageObjectViewModel = pageObjectBaseViewModel as CLPInkRegionViewModel;
+            }
             else if (pageObjectBaseViewModel is CLPCircleViewModel)
             {
                 _pageObjectViewModel = pageObjectBaseViewModel as CLPCircleViewModel;
