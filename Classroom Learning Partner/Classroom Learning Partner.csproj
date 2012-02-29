@@ -65,11 +65,11 @@
     </Reference>
     <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.dll</HintPath>
+      <HintPath>External Libraries\Microsoft.Ink.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Ink.resources, Version=1.7.2600.2180, Culture=en-US, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.resources.dll</HintPath>
+      <HintPath>External Libraries\Microsoft.Ink.resources.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <SpecificVersion>False</SpecificVersion>
@@ -184,7 +184,7 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
       <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="Views\PageObjects\CLPAnimationView.xaml.cs">
       <DependentUpon>CLPAnimationView.xaml</DependentUpon>
     </Compile>
@@ -499,6 +499,8 @@
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
     <Content Include="External Libraries\IAWinFX.dll" />
+    <Content Include="External Libraries\Microsoft.Ink.dll" />
+    <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
