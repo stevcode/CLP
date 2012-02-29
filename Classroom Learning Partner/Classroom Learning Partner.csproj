@@ -34,6 +34,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight.WPF4">
       <SpecificVersion>False</SpecificVersion>
@@ -42,6 +50,26 @@
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF4\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+    </Reference>
+    <Reference Include="IACore, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IACore.dll</HintPath>
+    </Reference>
+    <Reference Include="IALoader, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IALoader.dll</HintPath>
+    </Reference>
+    <Reference Include="IAWinFX, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\IAWinFX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Ink.resources, Version=1.7.2600.2180, Culture=en-US, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Tablet PC Platform SDK\Include\Microsoft.Ink.resources.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <SpecificVersion>False</SpecificVersion>
@@ -100,6 +128,7 @@
     <Compile Include="Model\CLPPageObjects\CLPCircle.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTile.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSquare.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
@@ -125,6 +154,7 @@
     <Compile Include="ViewModels\PageObjects\CLPCircleViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSquareViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
@@ -146,9 +176,15 @@
     <Compile Include="Views\CLPHistoryView.xaml.cs">
       <DependentUpon>CLPHistoryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
+      <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
+      <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
+	</Compile>
     <Compile Include="Views\PageObjects\CLPAnimationView.xaml.cs">
       <DependentUpon>CLPAnimationView.xaml</DependentUpon>
     </Compile>
@@ -255,9 +291,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPInkRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPAnimationView.xaml">
       <SubType>Designer</SubType>
@@ -382,6 +426,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -451,6 +496,9 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="External Libraries\IACore.dll" />
+    <Content Include="External Libraries\IALoader.dll" />
+    <Content Include="External Libraries\IAWinFX.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
@@ -470,7 +518,17 @@
     <Resource Include="Images\Italic16.png" />
     <Resource Include="Images\Underline16.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

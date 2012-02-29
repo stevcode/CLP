@@ -38,13 +38,29 @@
         <vwpo:CLPBlankStampView />
     </DataTemplate>
 
-<<<<<<< HEAD
-    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
-        <vw:CLPHistoryView />
-=======
     <DataTemplate DataType="{x:Type vmpo:CLPSnapTileViewModel}">
         <vwpo:CLPSnapTileView />
->>>>>>> 7a93d1ae57a55f7769f35a320483e6e666e1b0e4
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:CLPHistoryViewModel}">
+        <vw:CLPHistoryView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vmpo:CLPSquareViewModel}">
+        <vwpo:CLPSquareView />
+    </DataTemplate>
+
+<<<<<<< HEAD
+    <DataTemplate DataType="{x:Type vmpo:CLPInkRegionViewModel}">
+        <vwpo:CLPInkRegionView />
+=======
+    <DataTemplate DataType="{x:Type vmpo:CLPCircleViewModel}">
+        <vwpo:CLPCircleView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vmpo:CLPAnimationViewModel}">
+        <vwpo:CLPAnimationView />
+>>>>>>> origin/master
     </DataTemplate>
 
 </ResourceDictionary>
