@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             PageObject = stamp;
             IsAnchored = stamp.IsAnchored;
             Parts = stamp.Parts;
+            ParentStamp = stamp.Parent;
             PageObjectStrokes = CLPPageViewModel.StringsToStrokes(stamp.PageObjectStrokes);
 
             if (!IsAnchored)
@@ -116,6 +117,23 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             set
             {
                 _sourceImage = value;
+            }
+        }
+
+        private string _parentStamp;
+
+        /// <summary>
+        /// Sets and gets the SourceImage property.
+        /// </summary>
+        public string ParentStamp
+        {
+            get
+            {
+                return _parentStamp;
+            }
+            set
+            {
+                _parentStamp = value;
             }
         }
 

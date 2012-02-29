@@ -554,6 +554,7 @@ namespace Classroom_Learning_Partner.Model
                     file.WriteLine("<Position>" + stamp.Position + "</Position>");
                     file.WriteLine("<Zindex>" + stamp.ZIndex + "</Zindex>");
                     file.WriteLine("<UniqueId>" + stamp.UniqueID + "</UniqueId>");
+                    file.WriteLine("<ParentId>" + stamp.Parent + "</ParentId>");
                     file.WriteLine("</Stamp>");
                 }
                 else if (obj is CLPSnapTile)

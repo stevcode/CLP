@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Model
         {
             StampConstruct();
             Height = 150;
+            Parent = "None";
         }
 
         public CLPStamp(string path) : base()
@@ -98,6 +99,7 @@ namespace Classroom_Learning_Partner.Model
             newStamp.Position = Position;
             newStamp.Height = Height;
             newStamp.Width = Width;
+            newStamp.Parent = UniqueID;
 
             foreach (var stringStroke in PageObjectStrokes)
             {
@@ -155,6 +157,19 @@ namespace Classroom_Learning_Partner.Model
             set
             {
                 MetaData.SetValue("Parts", value.ToString());
+            }
+        }
+
+        //UID of the stamp that this stamp is cloned from - None if stamp is the original
+        public string Parent
+        {
+            get
+            {
+                return MetaData.GetValue("Parent");
+            }
+            set
+            {
+                MetaData.SetValue("Parent", value.ToString());
             }
         }
 
