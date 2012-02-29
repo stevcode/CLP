@@ -710,6 +710,9 @@ namespace Classroom_Learning_Partner.Model
             AddStrokeToPage(stroke, page);
             page.undoFlag = false;
         }
+        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(500);
+        private double MIN_SAMPLING_DIST = 5.0;
+        private DateTime lastMove;
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {
             Point oldLocation = pageObjectContainerViewModel.Position;
@@ -717,14 +720,17 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             
+            if ((DateTime.Now - lastMove) > REPLAY_SAMPLING_FREQ || Point.Subtract(pt, oldLocation).Length < MIN_SAMPLING_DIST)
+            {
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("MOVE");
+                lastMove = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
                 item.OldValue = oldLocation.ToString();
                 item.NewValue = pt.ToString();
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
             }
-
+            }
 
             //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
             //{
@@ -763,7 +769,7 @@ namespace Classroom_Learning_Partner.Model
             undoRedo = false;
 
         }
-       
+       private DateTime lastDimChange;
         public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
         {
             double oldHeight = pageObjectContainerViewModel.Height;
@@ -775,12 +781,15 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
             //DATABASE change page object's dimensions
-            if (!undoRedo)
+            if((DateTime.Now - lastDimChange) > REPLAY_SAMPLING_FREQ || (Math.Abs(oldWidth - width) < MIN_SAMPLING_DIST && Math.Abs(oldHeight - height) < MIN_SAMPLING_DIST))
             {
-                CLPHistoryItem item = new CLPHistoryItem("RESIZE");
-                item.OldValue = oldValue.ToString();
-                item.NewValue = newValue.ToString();
-                pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+                if (!undoRedo)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem("RESIZE");
+                    item.OldValue = oldValue.ToString();
+                    item.NewValue = newValue.ToString();
+                    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+                }
             }
         }
         public void ChangePageObjectDimensions(CLPPageObjectBaseViewModel pageObject, double height, double width, bool isUndo)

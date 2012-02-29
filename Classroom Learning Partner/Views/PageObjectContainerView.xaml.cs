@@ -215,11 +215,12 @@ namespace Classroom_Learning_Partner.Views
                                             //Claire - this adds tile to the actual page object, essentially  doubling the amount of tiles we add
                                             // to this tile, once above, to do the official add, and once again here. I've commented it out for now.
                                             // same for the identical action during the top snap action
-                                            //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-                                            //foreach (var tileColor in tile.Tiles)
-                                            //{
+                                            CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
+                                            foreach (var tileColor in tile.Tiles)
+                                            {
                                             //    t.Tiles.Add("SpringGreen");
-                                            //}
+                                            }
+                                         
                                             CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
                                             break;
                                         }
@@ -236,11 +237,13 @@ namespace Classroom_Learning_Partner.Views
                                             container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);
                                             item.OldValue = oldCount.ToString();
                                             item.NewValue = tile.Tiles.Count.ToString();
-                                            //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-                                            //foreach (var tileColor in otherTile.Tiles)
-                                            //{
-                                            //    t.Tiles.Add("SpringGreen");
-                                            //}
+                                            CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
+                                            
+                                            foreach (var tileColor in otherTile.Tiles)
+                                            {
+                                             //   t.Tiles.Add("SpringGreen");
+                                            }
+                                             
                                             CLPService.RemovePageObjectFromPage(container);
                                             break;
                                         }

@@ -24,7 +24,6 @@ namespace Classroom_Learning_Partner
             TurnOffLaser,
             UpdateFont,
             ChangePlayback,
-            SendPlaybackItem,
             Audio,
             SetSnapTileMode,
             GetInkCanvas

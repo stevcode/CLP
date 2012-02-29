@@ -684,6 +684,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.SaveNotebook(App.CurrentNotebookViewModel);
+                                              foreach(var page in App.CurrentNotebookViewModel.PageViewModels )
+                                              {
+                                                  page.HistoryVM.AddHistoryItem(new CLPHistoryItem("SAVE"));
+                                              }
                                           }));
             }
         }

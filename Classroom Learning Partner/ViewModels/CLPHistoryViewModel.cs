@@ -113,7 +113,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             }
         }
-
+        
+        
         //List to enable undo/redo functionality
         private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
@@ -275,11 +276,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //StartRecordNotReached = false; 
             }
-            if(item.ItemType == "STOP_RECORD")
+            else if(item.ItemType == "STOP_RECORD")
             {
                 Console.WriteLine("STOP_RECORD found");
             }
-            if (item.ItemType == "ADD")
+            else if (item.ItemType == "SAVE")
+            {
+                
+            }
+            else if (item.ItemType == "ADD")
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
@@ -331,11 +336,11 @@ namespace Classroom_Learning_Partner.ViewModels
                             int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
                             for (int i = 0; i < diff; i++)
                             {
-                                tile.Tiles.Remove("SpringGreen");
                                 tileVM.Tiles.Remove("SpringGreen");
                             }
                             
                             container.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
+
                         }
                     }
 
@@ -381,7 +386,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     StopRecordReached = true;
                 }
             }
-            if (item.ItemType == "ERASE")
+            else if (item.ItemType == "SAVE")
+            {
+                //do nothing
+            }
+            else if (item.ItemType == "ERASE")
             {
                 if (ObjectReferences[item.ObjectID] is String)
                 {
@@ -410,28 +419,27 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else if (item.ItemType == "STACK_TILE")
             {
-                    
-                    if (ObjectReferences[item.ObjectID] is CLPSnapTile)
-                    {
-                        CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
-                        
-                        foreach (var container in PageVM.PageObjectContainerViewModels)
-                        {
-                            if (container.PageObjectViewModel.PageObject == tile)
-                            {
-                                CLPSnapTileViewModel tileVM = container.PageObjectViewModel as CLPSnapTileViewModel;
-                                int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
-                                for (int i = 0; i < diff; i++)
-                                {
-                                    tileVM.Tiles.Add("SpringGreen");
-                                    tile.Tiles.Add("SpringGreen");
-                                }
-                                container.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
-                            }
-                        }
 
+                if (ObjectReferences[item.ObjectID] is CLPSnapTile)
+                {
+                    CLPSnapTile tile = ObjectReferences[item.ObjectID] as CLPSnapTile;
+
+                    foreach (var container in PageVM.PageObjectContainerViewModels)
+                    {
+                        if (container.PageObjectViewModel.PageObject == ObjectReferences[item.ObjectID] as CLPSnapTile)
+                        {
+                            CLPSnapTileViewModel tileVM = container.PageObjectViewModel as CLPSnapTileViewModel;
+                            int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
+                            for (int i = 0; i < diff; i++)
+                            {
+                                (container.PageObjectViewModel as CLPSnapTileViewModel).Tiles.Add("SpringGreen");
+                            }
+                            container.Height = CLPSnapTile.TILE_HEIGHT * tile.Tiles.Count;
+                        }
                     }
-                
+
+                }
+
 
             }
             else if (item.ItemType == "MOVE")
@@ -516,7 +524,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PlaybackStarted = true;
             PausePlayback = false;
             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-            
+            if (inkCanvas == null)
+            {
+                inkCanvas = this.PageVM.NotebookViewModel.InkCanvas;
+            }
             this.AbortPlayback = false;
             int size;
             int start;
@@ -759,6 +770,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         #endregion //playback
+        //IsSaved == true means that the history has not been updated since the last save
+        //(to be used by Jessie- DB stuff)
+        public bool IsSaved()
+        {
+            return HistoryItems[HistoryItems.Count - 1].ItemType == "SAVE";
+        }
         #region relayCommands
         /*
          * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
