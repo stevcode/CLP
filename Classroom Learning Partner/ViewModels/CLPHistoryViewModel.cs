@@ -359,7 +359,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             HistoryItems.Remove(item);
-            if (item.ItemType == "START_RECORD" || item.ItemType == "STOP_RECORD")
+            if (item.ItemType == "START_RECORD" || item.ItemType == "STOP_RECORD" || item.ItemType == "SAVE")
             {
                 AddUndoneHistoryItem(item);
             }

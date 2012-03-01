@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -24,7 +25,7 @@ namespace Classroom_Learning_Partner.Model
                 return _metaData;
             }
         }
-
+        //ignore this dictionary for serialization
         private Dictionary<string, object> _objectReferences = new Dictionary<string, object>();
         public Dictionary<string, object> ObjectReferences
         {
@@ -37,7 +38,96 @@ namespace Classroom_Learning_Partner.Model
                 _objectReferences = value;
             }
         }
+        //Run this method after serialization please! :-)
+        public void TuplesToDict()
+        {
+            foreach (var tup in ObjTuples.Keys)
+            {
+                if (tup.Item1) //this is a CLPObjectBase
+                {
+                    ObjectReferences.Add(tup.Item2, ObjTuples[tup].Item1);
+                }
+                else
+                {
+                    ObjectReferences.Add(tup.Item2, ObjTuples[tup].Item2);
+                }
+            }
+        }
+        //Run this method before serialization thank you! :-)
+        public void DictToTuples()
+        {
+            foreach (var key in ObjectReferences.Keys)
+            {
+                if (ObjectReferences[key] is CLPPageObjectBase)
+                {
+                    CLPPageObjectBase obj = ObjectReferences[key] as CLPPageObjectBase;
+                    if (obj is CLPAnimation)
+                    {
+                        CLPAnimation pageObj = obj as CLPAnimation;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPBlankStamp)
+                    {
+                        CLPBlankStamp pageObj = obj as CLPBlankStamp;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPCircle)
+                    {
+                        CLPCircle pageObj = obj as CLPCircle;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPImage)
+                    {
+                        CLPImage pageObj = obj as CLPImage;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPImageStamp)
+                    {
+                        CLPImageStamp pageObj = obj as CLPImageStamp;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPSnapTile)
+                    {
+                        CLPSnapTile pageObj = obj as CLPSnapTile;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPSquare)
+                    {
+                        CLPSquare pageObj = obj as CLPSquare;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPStampBase)
+                    {
+                        CLPStampBase pageObj = obj as CLPStampBase;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
+                    else if (obj is CLPTextBox)
+                    {
+                        CLPTextBox pageObj = obj as CLPTextBox;
+                        ObjTuples.Add(Tuple.Create<bool, string>(true, key), Tuple.Create<CLPPageObjectBase, string>(pageObj, "null"));
+                    }
 
+                     }
+                else
+                {
+                    ObjTuples.Add(Tuple.Create<bool, string>(false, key), Tuple.Create<CLPPageObjectBase, string>(null, ObjectReferences[key] as string));
+              
+                }
+            }
+        }
+        //for serialiazation
+        private Dictionary<Tuple<bool, String>,Tuple<CLPPageObjectBase, String>> _objTuples = new Dictionary<Tuple<bool,string>,Tuple<CLPPageObjectBase,string>>();
+        public Dictionary<Tuple<bool, String>,Tuple<CLPPageObjectBase, String>> ObjTuples
+        {
+            get
+            {
+                return _objTuples;
+            }
+            set
+            {
+                _objTuples = value;
+            }
+        }
         private ObservableCollection<CLPHistoryItem> _historyItems = new ObservableCollection<CLPHistoryItem>();
         public ObservableCollection<CLPHistoryItem> HistoryItems
         {
