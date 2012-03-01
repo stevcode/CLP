@@ -201,9 +201,25 @@ namespace Classroom_Learning_Partner.Model
                     }
                     pageObject = copyTextBox;
                 }
+                else if (obj is CLPInkRegion)
+                {
+                    CLPInkRegion originalInkRegion = obj as CLPInkRegion;
+                    CLPInkRegion copyInkRegion = new CLPInkRegion();
+                    copyInkRegion.Height = originalInkRegion.Height;
+                    copyInkRegion.Width = originalInkRegion.Width;
+                    copyInkRegion.Position = originalInkRegion.Position;
+                    copyInkRegion.ZIndex = originalInkRegion.ZIndex;
+                    copyInkRegion.AnalysisType = originalInkRegion.AnalysisType;
+                    
+                    foreach (var stroke in originalInkRegion.PageObjectStrokes)
+                    {
+                        copyInkRegion.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyInkRegion;
+                }
                 else
                 {
-                    MessageBoxResult result =  MessageBox.Show("No duplicate method for this type.", "Confirmation");
+                    MessageBoxResult result = MessageBox.Show("No duplicate method for this type.", "Confirmation");
                     pageObject = null;
                 }
                 try
@@ -604,6 +620,10 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPSquare)
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
+                }
+                else if (pageObject is CLPInkRegion)
+                {
+                    pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
                 }
                 else if (pageObject is CLPCircle)
                 {

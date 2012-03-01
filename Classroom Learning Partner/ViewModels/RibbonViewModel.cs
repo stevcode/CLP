@@ -19,6 +19,7 @@ using System.Windows.Documents;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.Views.Workspaces;
 using System.Windows.Media.Imaging;
 
@@ -1015,6 +1016,32 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPSquare square = new CLPSquare();
                                               CLPService.AddPageObjectToPage(square);
+                                          }));
+            }
+        }
+
+        private RelayCommand _insertInkRegionCommand;
+
+        public RelayCommand InsertInkRegion
+        {
+            get
+            {
+                return _insertInkRegionCommand
+                    ?? (_insertInkRegionCommand = new RelayCommand(
+                                          () =>
+                                          {
+                                                CustomizeInkRegionView optionChooser = new CustomizeInkRegionView();
+                                                optionChooser.Owner = Application.Current.MainWindow;
+                                                optionChooser.ShowDialog();
+                                                if (optionChooser.DialogResult == true)
+                                                {
+                                                    string correct_answer = optionChooser.CorrectAnswer.Text;
+                                                    int selected_type = optionChooser.ExpectedType.SelectedIndex;
+
+                                                    CLPInkRegion region = new CLPInkRegion(correct_answer,selected_type);
+                                                    CLPService.AddPageObjectToPage(region);
+                                                    
+                                                }
                                           }));
             }
         }

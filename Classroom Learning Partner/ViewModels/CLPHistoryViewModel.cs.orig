@@ -41,6 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _undoneHistoryItems = history.UndoneHistoryItems;
             _objectReferences = history.ObjectReferences;
             _history = history;
+            StartRecordNotReached = true;
             CLPService = new CLPServiceAgent();
                    
             AppMessages.ChangePlayback.Register(this, (playback) =>
@@ -162,6 +163,10 @@ namespace Classroom_Learning_Partner.ViewModels
             historyItem.ObjectID = uniqueID;
             _historyItems.Add(historyItem);
         }
+        public void AddHistoryItem(CLPHistoryItem item)
+        {
+            _historyItems.Add(item);
+        }
         public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
         {
             string uniqueID = null;
@@ -185,7 +190,10 @@ namespace Classroom_Learning_Partner.ViewModels
             historyItem.ObjectID = uniqueID;
             _undoneHistoryItems.Add(historyItem);
         }
-
+        public void AddUndoneHistoryItem(CLPHistoryItem historyItem)
+        {
+            _undoneHistoryItems.Add(historyItem);
+        }
         private void AddObjectToReferences(string key, object obj)
         {
             if (obj is Stroke)
@@ -230,15 +238,28 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
             }
-<<<<<<< HEAD
             else if (pageObject is CLPSnapTile)
-            {
+                       {
                 pageObjectViewModel = new CLPSnapTileViewModel(pageObject as CLPSnapTile, pageViewModel);
-=======
+            }
+
             else if (pageObject is CLPSquare)
-            {
+                        {
                 pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
->>>>>>> 0f7cee36df1ca31df6b3b4475fff606703e95856
+            }
+<<<<<<< HEAD
+            else if (pageObject is CLPInkRegion)
+            {
+                pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
+=======
+            else if (pageObject is CLPCircle)
+            {
+                pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
+            }
+            else if (pageObject is CLPAnimation)
+            {
+                pageObjectViewModel = new CLPAnimationViewModel(pageObject as CLPAnimation, pageViewModel);
+>>>>>>> origin/master
             }
             else
             {
@@ -246,11 +267,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             return pageObjectViewModel;
         }
+        #region undo_redo
         public void undo()
         {
             
             if (HistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
+            if (item.ItemType == "START_RECORD")
+            {
+                //StartRecordNotReached = false; 
+            }
+            if(item.ItemType == "STOP_RECORD")
+            {
+                Console.WriteLine("STOP_RECORD found");
+            }
             if (item.ItemType == "ADD")
             {
                 if (ObjectReferences[item.ObjectID] is String)
@@ -330,7 +360,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             HistoryItems.Remove(item);
-            AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
+            if (item.ItemType == "START_RECORD" || item.ItemType == "STOP_RECORD")
+            {
+                AddUndoneHistoryItem(item);
+            }
+            else
+            {
+                AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
+            }
             return;
         }
          
@@ -338,8 +375,14 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (UndoneHistoryItems.Count <= 0) { return; }
             CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
-            
-           
+
+            if (item.ItemType == "STOP_RECORD")
+            {
+                if (Recording)
+                {
+                    StopRecordReached = true;
+                }
+            }
             if (item.ItemType == "ERASE")
             {
                 if (ObjectReferences[item.ObjectID] is String)
@@ -418,13 +461,58 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             UndoneHistoryItems.Remove(item);
-            AddHistoryItem(ObjectReferences[item.ObjectID], item);
+            if (item.ItemType == "STOP_RECORD" || item.ItemType == "START_RECORD")
+            {
+                AddHistoryItem(item);
+            }
+            else
+            {
+                AddHistoryItem(ObjectReferences[item.ObjectID], item);
+            }
             return;
         }
+        #endregion //undo_redo
         #region playback
         //For the interaction history playback feature
         //invokes another thread to make the UI update at the correct times
         private delegate void NoArgDelegate();
+        private bool _recording = false;
+        public bool Recording
+        {
+            get
+            {
+                return _recording;
+            }
+            set
+            {
+                _recording = value;
+            }
+        }
+        private bool _startRecordNotReached = true;
+        private bool StartRecordNotReached
+        {
+            get
+            {
+                return _startRecordNotReached;
+            }
+            set
+            {
+                _startRecordNotReached = value;
+            }
+        }
+        private bool _stopRecordReached = false;
+        private bool StopRecordReached
+        {
+            get
+            {
+                return _stopRecordReached;
+            }
+            set
+            {
+                _stopRecordReached = value;
+            }
+        }
+
         public void startPlayback()
         {
             PlaybackStarted = true;
@@ -432,28 +520,75 @@ namespace Classroom_Learning_Partner.ViewModels
             System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
             
             this.AbortPlayback = false;
-            int size = HistoryItems.Count;
-                 for(int i = 0; i < size; i++)
+            int size;
+            int start;
+            if (Recording)
+            {
+                CLPHistoryItem item = HistoryItems.Last(i => i.ItemType == "START_RECORD");
+                start = HistoryItems.IndexOf(item);
+                CLPHistoryItem endItem = HistoryItems.Last(i => i.ItemType == "STOP_RECORD");
+                size = HistoryItems.IndexOf(endItem);
+            }
+            else
+            {
+                size = HistoryItems.Count;
+                start = 0;
+            }
+                 for(int i = start; i < size; i++)
                  {
                      try
                      {
+                   /*      Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    undo();
+                    return null;
+                }, null);
+                    */
                          inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
                      }
+
                      catch (NullReferenceException n)
                      {
-                         Logger.Instance.WriteToLog("InkCanvas Null in HistoryVM.");
+                         Logger.Instance.WriteToLog("InkCanvas Null in HistoryVM: " + n.ToString());
                      }
                  }
                  System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+                 StartRecordNotReached = true;
                  for(int i = 0; i < size; i++)
                  {
                      TimeSpan waittime = new TimeSpan(0, 0, 2);
                      try
                      {
-                         if (UndoneHistoryItems.Count >= 2)
+                         if (UndoneHistoryItems.Count >= 2 )
                          {
+                             
                              int len = UndoneHistoryItems.Count;
-                             waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len - 2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len - 1).MetaData.GetValue("CreationDate"));
+                             if (UndoneHistoryItems.ElementAt(len - 2).ItemType == "STOP_RECORD" || UndoneHistoryItems.ElementAt(len - 1).ItemType == "STOP_RECORD" || UndoneHistoryItems.ElementAt(len - 1).ItemType == "START_RECORD" || UndoneHistoryItems.ElementAt(len - 2).ItemType == "START_RECORD")
+                             {
+                                 
+                             }
+                             else
+                             {
+                                 waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len - 2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len - 1).MetaData.GetValue("CreationDate"));
+                             }
+                         }
+                         if (UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1).ItemType == "STOP_RECORD")
+                         {
+                             PlaybackStarted = false;
+                             if (Recording)
+                             {
+                                 foreach (var container in PageVM.PageObjectContainerViewModels)
+                                 {
+                                     if (container.PageObjectViewModel is CLPAnimationViewModel)
+                                     {
+                                         CLPAnimationViewModel animation = container.PageObjectViewModel as CLPAnimationViewModel;
+                                         animation.PlaybackImage = new Uri("..\\..\\Images\\play_green.png", UriKind.Relative);
+                                     }
+                                 }
+                             }
+                             abortPlayback();
+                             return;
                          }
                      }
                      catch (ArgumentOutOfRangeException e)
@@ -462,6 +597,14 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      try
                      {
+                         /*
+                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    redo();
+                    return null;
+                }, null);
+                         */
                          inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
                      }
                      catch (NullReferenceException n)
@@ -470,9 +613,9 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      if (waittime > new TimeSpan(0, 0, 0))
                      {
-                         if(waittime > new TimeSpan(0, 0, 15))
+                         if(waittime > new TimeSpan(0, 0, 3))
                          {
-                             waittime = new TimeSpan(0, 0, 15);
+                             waittime = new TimeSpan(0, 0, 3);
                          }
                          DateTime wait = DateTime.Now + waittime;
                          while(DateTime.Now < wait || PausePlayback == true)
@@ -490,7 +633,7 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      else
                      {
-                         DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
+                         DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,50);
                          while (DateTime.Now < wait || PausePlayback == true)
                          {
                              if (AbortPlayback == true)
@@ -504,7 +647,22 @@ namespace Classroom_Learning_Partner.ViewModels
                      }
                      
                  }
-                 PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+
+                 if (Recording)
+                 {
+                     foreach (var container in PageVM.PageObjectContainerViewModels)
+                     {
+                         if (container.PageObjectViewModel is CLPAnimationViewModel)
+                         {
+                             CLPAnimationViewModel animation = container.PageObjectViewModel as CLPAnimationViewModel;
+                             animation.PlaybackImage = new Uri("..\\..\\Images\\play_green.png", UriKind.Relative);
+                         }
+                     }
+                 }
+                 else
+                 {
+                     PageVM.PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                 }
                  PlaybackStarted = false;
            
         }
@@ -578,7 +736,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
                    
         }
-      
+        public void ClearHistory()
+        {
+            HistoryItems.Clear();
+            History.HistoryItems.Clear();
+            UndoneHistoryItems.Clear();
+            History.UndoneHistoryItems.Clear();
+        }
         public void stopPlayback()
         {
             //stops and resets playback history

@@ -463,6 +463,10 @@ namespace Classroom_Learning_Partner.Model
                                 {
                                     pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
                                 }
+                                else if (pageObject is CLPInkRegion)
+                                {
+                                    pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
+                                }
                                 else
                                 {
                                     pageObjectViewModel = null;
