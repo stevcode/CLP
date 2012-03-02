@@ -236,7 +236,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 copyPage.Strokes.Add(stroke);
             }
-            AddPageAt(copyPage, App.CurrentNotebookViewModel.PageViewModels.Count, -1);
+            AddPageAt(copyPage, pageIndex+1, -1);
         }
 
         public void AddSubmission(CLPPage page)
@@ -486,9 +486,14 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
 
+
+                
                 //Serialize the page with the history to compare sizes
                 pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
                 string s_page_History = ObjectSerializer.ToString(pageVM.Page);
+
+                //Downsample the history
+                CLPHistory smallerHistory = pageVM.HistoryVM.Downsample(s_page_History.Length / 1024.0);
 
                 //Save the page's history in a temp VM
                 CLPHistory tempHistory = new CLPHistory();
@@ -533,7 +538,8 @@ namespace Classroom_Learning_Partner.Model
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName, DateTime.Now);
                 Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Size of page string without history " + s_page.Length / 1024.0 + "kB");
-                Logger.Instance.WriteToLog("Size of page string with history" + s_page_History.Length / 1024.0 + "kB");
+                Logger.Instance.WriteToLog("Size of page string with history " + s_page_History.Length / 1024.0 + "kB");
+
                 //Put the temp history back into the page
                 foreach (var key in tempHistory.ObjectReferences.Keys)
                 {
@@ -718,9 +724,9 @@ namespace Classroom_Learning_Partner.Model
             AddStrokeToPage(stroke, page);
             page.undoFlag = false;
         }
-        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(1000);
-        private double MIN_SAMPLING_DIST = 25.0;
-        private double MIN_RESIZE_PERCENT = .05;
+        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(500);
+        private double MIN_SAMPLING_DIST = 20;
+        private double MIN_RESIZE_PERCENT = 0;
         private DateTime lastMove = DateTime.MinValue;
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {

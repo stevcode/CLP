@@ -216,7 +216,37 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-        
+        public CLPHistory Downsample(double size)
+        {
+            bool resizing = false;
+            bool even = true;
+            bool moving = false;
+            int total = HistoryItems.Count;
+            CLPHistory smallerHistory = new CLPHistory();
+            smallerHistory.ObjectReferences = History.ObjectReferences;
+            foreach (var item in History.HistoryItems)
+            {
+                if (item.ItemType == "RESIZE")
+                {
+                    if (resizing == true)
+                    {
+                        if (!even)
+                        {
+                            smallerHistory.HistoryItems.Add(item);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        resizing = true;
+                    }
+                }
+            }
+            return smallerHistory;
+        }
         private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
         {
             CLPPageObjectBaseViewModel pageObjectViewModel;
@@ -467,7 +497,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             UndoneHistoryItems.Remove(item);
-            if (item.ItemType == "STOP_RECORD" || item.ItemType == "START_RECORD")
+            if (item.ItemType == "STOP_RECORD" || item.ItemType == "START_RECORD" || item.ItemType == "SAVE")
             {
                 AddHistoryItem(item);
             }
