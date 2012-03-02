@@ -179,6 +179,7 @@ namespace Classroom_Learning_Partner.Model
                     {
                         copyTile.Tiles.Add(t);
                     }
+                    copyTile.Tiles.Remove("SpringGreen");
                     foreach (var stroke in originalTile.PageObjectStrokes)
                     {
                         copyTile.PageObjectStrokes.Add(stroke);
@@ -200,9 +201,25 @@ namespace Classroom_Learning_Partner.Model
                     }
                     pageObject = copyTextBox;
                 }
+                else if (obj is CLPInkRegion)
+                {
+                    CLPInkRegion originalInkRegion = obj as CLPInkRegion;
+                    CLPInkRegion copyInkRegion = new CLPInkRegion();
+                    copyInkRegion.Height = originalInkRegion.Height;
+                    copyInkRegion.Width = originalInkRegion.Width;
+                    copyInkRegion.Position = originalInkRegion.Position;
+                    copyInkRegion.ZIndex = originalInkRegion.ZIndex;
+                    copyInkRegion.AnalysisType = originalInkRegion.AnalysisType;
+                    
+                    foreach (var stroke in originalInkRegion.PageObjectStrokes)
+                    {
+                        copyInkRegion.PageObjectStrokes.Add(stroke);
+                    }
+                    pageObject = copyInkRegion;
+                }
                 else
                 {
-                    MessageBoxResult result =  MessageBox.Show("No duplicate method for this type.", "Confirmation");
+                    MessageBoxResult result = MessageBox.Show("No duplicate method for this type.", "Confirmation");
                     pageObject = null;
                 }
                 try
@@ -468,6 +485,11 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("------------------------------------------------");
                 Console.WriteLine("Before student Serialize " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Before student Serialize " + DateTime.Now.ToString());
+
+                //Serialize the page with the history to compare sizes
+                pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
+                string s_page_History = ObjectSerializer.ToString(pageVM.Page);
+
                 //Save the page's history in a temp VM
                 CLPHistory tempHistory = new CLPHistory();
                 CLPHistory pageHistory = pageVM.HistoryVM.History;
@@ -477,7 +499,7 @@ namespace Classroom_Learning_Partner.Model
                 }
                 foreach (var item in pageHistory.HistoryItems)
                 {
-                    if (item.ObjectID == null)
+                    if (item.ObjectID == null || item.ObjectID == "NULL_KEY")
                     {
                         tempHistory.AddHistoryItem(item);
                     }
@@ -502,7 +524,7 @@ namespace Classroom_Learning_Partner.Model
                 pageVM.HistoryVM.History.HistoryItems.Clear();
                 pageVM.HistoryVM.History.ObjectReferences.Clear();
                 pageVM.HistoryVM.History.UndoneHistoryItems.Clear();
-
+                
                 //Send the page 
                 pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
                 string s_page = ObjectSerializer.ToString(pageVM.Page);
@@ -510,8 +532,8 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("After student Serialize" + DateTime.Now.ToString());
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName, DateTime.Now);
                 Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
-                Logger.Instance.WriteToLog("Size of page string " + s_page.Length);
-
+                Logger.Instance.WriteToLog("Size of page string without history " + s_page.Length / 1024.0 + "kB");
+                Logger.Instance.WriteToLog("Size of page string with history" + s_page_History.Length / 1024.0 + "kB");
                 //Put the temp history back into the page
                 foreach (var key in tempHistory.ObjectReferences.Keys)
                 {
@@ -519,7 +541,7 @@ namespace Classroom_Learning_Partner.Model
                 }
                 foreach (var item in tempHistory.HistoryItems)
                 {
-                    if (item.ObjectID == null)
+                    if (item.ObjectID == null || item.ObjectID == "NULL_KEY")
                     {
                         pageVM.HistoryVM.AddHistoryItem(item);
                     }
@@ -539,6 +561,7 @@ namespace Classroom_Learning_Partner.Model
                         pageHistory.AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
                     }
                 }
+                 
                 
             }
            
@@ -598,11 +621,10 @@ namespace Classroom_Learning_Partner.Model
                 {
                     pageObjectViewModel = new CLPSquareViewModel(pageObject as CLPSquare, pageViewModel);
                 }
-<<<<<<< HEAD
                 else if (pageObject is CLPInkRegion)
                 {
                     pageObjectViewModel = new CLPInkRegionViewModel(pageObject as CLPInkRegion, pageViewModel);
-=======
+                }
                 else if (pageObject is CLPCircle)
                 {
                     pageObjectViewModel = new CLPCircleViewModel(pageObject as CLPCircle, pageViewModel);
@@ -610,7 +632,6 @@ namespace Classroom_Learning_Partner.Model
                 else if (pageObject is CLPAnimation)
                 {
                     pageObjectViewModel = new CLPAnimationViewModel(pageObject as CLPAnimation, pageViewModel);
->>>>>>> origin/master
                 }
                 else
                 {
@@ -619,6 +640,7 @@ namespace Classroom_Learning_Partner.Model
 
                 pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
                 pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
+                
                 
                 if (!undoRedo)
                 {
@@ -696,6 +718,16 @@ namespace Classroom_Learning_Partner.Model
             AddStrokeToPage(stroke, page);
             page.undoFlag = false;
         }
+<<<<<<< HEAD
+        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(1000);
+        private double MIN_SAMPLING_DIST = 25.0;
+        private double MIN_RESIZE_PERCENT = .05;
+        private DateTime lastMove = DateTime.MinValue;
+=======
+        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(500);
+        private double MIN_SAMPLING_DIST = 5.0;
+        private DateTime lastMove;
+>>>>>>> 1f4d4e594d2e2a539feb644e6c6338589457feb7
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
         {
             Point oldLocation = pageObjectContainerViewModel.Position;
@@ -703,14 +735,17 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.Position = pt; //may cause trouble?
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Position = pt;
             
+            if ((DateTime.Now - lastMove) > REPLAY_SAMPLING_FREQ || Point.Subtract(pt, oldLocation).Length < MIN_SAMPLING_DIST)
+            {
             if (!undoRedo)
             {
                 CLPHistoryItem item = new CLPHistoryItem("MOVE");
+                lastMove = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
                 item.OldValue = oldLocation.ToString();
                 item.NewValue = pt.ToString();
                 pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
             }
-
+            }
 
             //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileViewModel)
             //{
@@ -749,7 +784,11 @@ namespace Classroom_Learning_Partner.Model
             undoRedo = false;
 
         }
-       
+<<<<<<< HEAD
+       private DateTime lastDimChange = DateTime.MinValue;
+=======
+       private DateTime lastDimChange;
+>>>>>>> 1f4d4e594d2e2a539feb644e6c6338589457feb7
         public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
         {
             double oldHeight = pageObjectContainerViewModel.Height;
@@ -761,12 +800,24 @@ namespace Classroom_Learning_Partner.Model
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
             pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
             //DATABASE change page object's dimensions
-            if (!undoRedo)
+<<<<<<< HEAD
+            //if ((DateTime.Now - lastDimChange) > REPLAY_SAMPLING_FREQ || (Math.Abs(oldWidth - width) > (Math.Abs(MIN_RESIZE_PERCENT * oldWidth)) && Math.Abs(oldHeight - height) > (Math.Abs(MIN_RESIZE_PERCENT * oldHeight))))
+            if ((DateTime.Now - lastDimChange) > REPLAY_SAMPLING_FREQ || (Math.Abs(oldWidth - width) > MIN_SAMPLING_DIST && Math.Abs(oldHeight - height) > MIN_SAMPLING_DIST))
+=======
+            if((DateTime.Now - lastDimChange) > REPLAY_SAMPLING_FREQ || (Math.Abs(oldWidth - width) < MIN_SAMPLING_DIST && Math.Abs(oldHeight - height) < MIN_SAMPLING_DIST))
+>>>>>>> 1f4d4e594d2e2a539feb644e6c6338589457feb7
             {
-                CLPHistoryItem item = new CLPHistoryItem("RESIZE");
-                item.OldValue = oldValue.ToString();
-                item.NewValue = newValue.ToString();
-                pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+                if (!undoRedo)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem("RESIZE");
+<<<<<<< HEAD
+                    lastDimChange = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
+=======
+>>>>>>> 1f4d4e594d2e2a539feb644e6c6338589457feb7
+                    item.OldValue = oldValue.ToString();
+                    item.NewValue = newValue.ToString();
+                    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+                }
             }
         }
         public void ChangePageObjectDimensions(CLPPageObjectBaseViewModel pageObject, double height, double width, bool isUndo)

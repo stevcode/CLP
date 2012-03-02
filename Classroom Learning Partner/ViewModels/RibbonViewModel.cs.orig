@@ -684,6 +684,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                           () =>
                                           {
                                               CLPService.SaveNotebook(App.CurrentNotebookViewModel);
+                                              foreach(var page in App.CurrentNotebookViewModel.PageViewModels )
+<<<<<<< HEAD
+                                              {
+=======
+                                              {
+>>>>>>> 1f4d4e594d2e2a539feb644e6c6338589457feb7
+                                                  page.HistoryVM.AddHistoryItem(new CLPHistoryItem("SAVE"));
+                                              }
                                           }));
             }
         }
@@ -1016,7 +1024,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-<<<<<<< HEAD
         private RelayCommand _insertInkRegionCommand;
 
         public RelayCommand InsertInkRegion
@@ -1039,7 +1046,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                     CLPService.AddPageObjectToPage(region);
                                                     
                                                 }
-=======
+                                          }));
+            }
+        }
+
         private RelayCommand _insertCircleCommand;
 
         /// <summary>
@@ -1055,7 +1065,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                           {
                                               CLPCircle circle = new CLPCircle();
                                               CLPService.AddPageObjectToPage(circle);
->>>>>>> origin/master
                                           }));
             }
         }
