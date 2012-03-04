@@ -26,24 +26,34 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPNotebookViewModel() : this(new CLPNotebook())
         {
             CLPService = new CLPServiceAgent();
+            //claire
+            AppMessages.GetInkCanvas.Register(this, (inkCanvas) =>
+            {
+                this.InkCanvas = inkCanvas;
+                foreach (CLPPageViewModel page in PageViewModels)
+                {
+                    page.HistoryVM.InkCanvas = this.InkCanvas;
+                }
+            });
+            //end claire
         }
 
         private ICLPServiceAgent CLPService { get; set; }
 
         public CLPNotebookViewModel(CLPNotebook notebook)
         {
+            
+            _currentPageViewModel = new CLPPageViewModel(this);
             //claire
             AppMessages.GetInkCanvas.Register(this, (inkCanvas) =>
             {
                 this.InkCanvas = inkCanvas;
-                foreach(CLPPageViewModel page in PageViewModels)
+                foreach (CLPPageViewModel page in PageViewModels)
                 {
                     page.HistoryVM.InkCanvas = this.InkCanvas;
                 }
             });
-             //end claire
-            _currentPageViewModel = new CLPPageViewModel(this);
-
+            //end claire
             _notebook = notebook;
             foreach (CLPPage page in Notebook.Pages)
             {

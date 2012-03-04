@@ -228,21 +228,64 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (item.ItemType == "RESIZE")
                 {
+                    moving = false;
                     if (resizing == true)
                     {
                         if (!even)
                         {
                             smallerHistory.HistoryItems.Add(item);
+                            even = true;
                         }
                         else
                         {
-
+                            int index = History.HistoryItems.IndexOf(item);
+                            even = false;
+                            if (History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != "RESIZE")
+                            {
+                                smallerHistory.HistoryItems.Add(item);
+                                resizing = false;
+                            }
                         }
                     }
                     else
                     {
                         resizing = true;
                     }
+                }
+                else if (item.ItemType == "MOVE")
+                {
+                    resizing = false;
+                    if (moving == true)
+                    {
+                        if (!even)
+                        {
+                            smallerHistory.HistoryItems.Add(item);
+                            even = true;
+                        }
+                        else
+                        {
+                            int index = History.HistoryItems.IndexOf(item);
+                            even = false;
+                            if (HistoryItems.Count > index + 1)
+                            {
+                                if (History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != "MOVE")
+                                {
+                                    smallerHistory.HistoryItems.Add(item);
+                                    moving = false;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        moving = true;
+                    }
+                }
+                else
+                {
+                    resizing = false;
+                    moving = false;
+                    smallerHistory.AddHistoryItem(item);
                 }
             }
             return smallerHistory;
@@ -774,6 +817,33 @@ namespace Classroom_Learning_Partner.ViewModels
                 inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
             }
                    
+        }
+        //to replace the page's history with a smaller subset of its original history
+        public void ReplaceHistory(CLPHistory tempHistory)
+        {
+            this.ClearHistory();
+            foreach (var item in tempHistory.HistoryItems)
+            {
+                if (item.ObjectID == null || item.ObjectID == "NULL_KEY")
+                {
+                    AddHistoryItem(item);
+                }
+                else
+                {
+                    AddHistoryItem(History.ObjectReferences[item.ObjectID], item);
+                }
+            }
+            foreach (var item in tempHistory.UndoneHistoryItems)
+            {
+                if (item.ObjectID == null)
+                {
+                    AddUndoneHistoryItem(item);
+                }
+                else
+                {
+                    AddUndoneHistoryItem(tempHistory.ObjectReferences[item.ObjectID], item);
+                }
+            }
         }
         public void ClearHistory()
         {
