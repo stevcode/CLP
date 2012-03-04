@@ -512,6 +512,8 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="External Libraries\GalaSoft.MvvmLight.Extras.WPF4.dll" />
+    <Content Include="External Libraries\GalaSoft.MvvmLight.WPF4.dll" />
     <Content Include="External Libraries\IACore.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -527,8 +529,10 @@
     <Content Include="External Libraries\Microsoft.Ink.resources.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="External Libraries\Microsoft.Practices.ServiceLocation.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
+    <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\stop_record.png" />
     <Resource Include="Images\record.png" />
