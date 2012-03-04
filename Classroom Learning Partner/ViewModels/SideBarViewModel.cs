@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -20,11 +22,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public SideBarViewModel()
         {
-            
-            PageViewModels = App.CurrentNotebookViewModel.PageViewModels;
-            //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
-            OpenNotebookNames.Add(App.CurrentNotebookViewModel.Notebook.NotebookName);
-            SelectedNotebookPage = PageViewModels[0];
+            try
+            {
+
+                PageViewModels = App.CurrentNotebookViewModel.PageViewModels;
+                //SubmissionViewModels = App.CurrentNotebookViewModel.SubmissionViewModels[
+                OpenNotebookNames.Add(App.CurrentNotebookViewModel.Notebook.NotebookName);
+                SelectedNotebookPage = PageViewModels[0];
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.WriteToLog("NullReference trying to switch modes while a notebook not open.");
+            }
         }
 
         #region Bindings

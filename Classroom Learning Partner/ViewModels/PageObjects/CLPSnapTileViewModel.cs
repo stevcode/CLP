@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -27,19 +28,26 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         void _tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Height = (CLPSnapTile.TILE_HEIGHT) * Tiles.Count;
-            if (e.NewItems != null)
+            try
             {
-                foreach (var color in e.NewItems)
+                if (e.NewItems != null)
                 {
-                    (PageObject as CLPSnapTile).Tiles.Add(color as string);
+                    foreach (var color in e.NewItems)
+                    {
+                        (PageObject as CLPSnapTile).Tiles.Add(color as string);
+                    }
+                }
+                if (e.OldItems != null)
+                {
+                    foreach (var color in e.OldItems)
+                    {
+                        (PageObject as CLPSnapTile).Tiles.RemoveAt((PageObject as CLPSnapTile).Tiles.Count - 1);
+                    }
                 }
             }
-            if (e.OldItems != null)
+            catch (ArgumentOutOfRangeException arg)
             {
-                foreach (var color in e.OldItems)
-                {
-                    (PageObject as CLPSnapTile).Tiles.RemoveAt((PageObject as CLPSnapTile).Tiles.Count - 1);
-                }
+                Logger.Instance.WriteToLog("Argument out of range when snapping tiles.");
             }
 
         }
