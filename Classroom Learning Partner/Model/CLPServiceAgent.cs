@@ -489,12 +489,13 @@ namespace Classroom_Learning_Partner.Model
 
                 
                 //Serialize the page with the history to compare sizes
-                pageVM.Page.SubmissionID = Guid.NewGuid().ToString();
-                string s_page_History = ObjectSerializer.ToString(pageVM.Page);
+                //string s_page_History = ObjectSerializer.ToString(pageVM.Page);
 
                 //Downsample the history
-                CLPHistory smallerHistory = pageVM.HistoryVM.Downsample(s_page_History.Length / 1024.0);
-
+               /* CLPHistory smallerHistory = pageVM.HistoryVM.Downsample(s_page_History.Length / 1024.0);
+                pageVM.HistoryVM.ReplaceHistory(smallerHistory);
+                string downsampled_page_History = ObjectSerializer.ToString(pageVM.Page);
+                */
                 //Save the page's history in a temp VM
                 CLPHistory tempHistory = new CLPHistory();
                 CLPHistory pageHistory = pageVM.HistoryVM.History;
@@ -538,7 +539,8 @@ namespace Classroom_Learning_Partner.Model
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName, DateTime.Now);
                 Logger.Instance.WriteToLog("Send Called+Returned " + DateTime.Now.ToString());
                 Logger.Instance.WriteToLog("Size of page string without history " + s_page.Length / 1024.0 + "kB");
-                Logger.Instance.WriteToLog("Size of page string with history " + s_page_History.Length / 1024.0 + "kB");
+                //Logger.Instance.WriteToLog("Size of page string with history " + s_page_History.Length / 1024.0 + "kB");
+                //Logger.Instance.WriteToLog("Size of page string with downsampled history " + downsampled_page_History.Length / 1024.0 + "kB");
 
                 //Put the temp history back into the page
                 foreach (var key in tempHistory.ObjectReferences.Keys)
@@ -647,12 +649,13 @@ namespace Classroom_Learning_Partner.Model
                 pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
                 pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
                 
-                
+                /* remove history to see if this is causing the double adding of pageobjects
                 if (!undoRedo)
                 {
                     CLPHistoryItem item = new CLPHistoryItem("ADD");
                     pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
                 }
+                 * */
                 //DATABASE add pageobject to current page
             });
         }
@@ -724,8 +727,8 @@ namespace Classroom_Learning_Partner.Model
             AddStrokeToPage(stroke, page);
             page.undoFlag = false;
         }
-        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(500);
-        private double MIN_SAMPLING_DIST = 20;
+        private TimeSpan REPLAY_SAMPLING_FREQ = TimeSpan.FromMilliseconds(0);
+        private double MIN_SAMPLING_DIST = 0;
         private double MIN_RESIZE_PERCENT = 0;
         private DateTime lastMove = DateTime.MinValue;
         public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
