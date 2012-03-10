@@ -107,6 +107,11 @@
                     Label="Snap Tile"
                     LargeImageSource="..\Images\SnapTileIcon.png"
                     Command="{Binding Path=SetSnapTileCommand}"/>
+                <ribbon:RibbonButton
+                    Label="Insert Blank Stamp"
+                    LargeImageSource="..\Images\AddPathStamp.png"
+                    Command="{Binding Path=InsertBlankStampCommand}"
+                    Visibility="{Binding Path=BlankStampStudentVisibility}"/>
             </ribbon:RibbonGroup>
 
             <ribbon:RibbonGroup

@@ -149,6 +149,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _authoringTabVisibility = value;
                 RaisePropertyChanged(AuthoringTabVisibilityPropertyName);
+
+                if (_authoringTabVisibility.Equals(Visibility.Hidden))
+                {
+                    BlankStampStudentVisibility = Visibility.Visible;
+                } else {
+                    BlankStampStudentVisibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -252,6 +259,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 _ribbonVisibility = value;
                 RaisePropertyChanged(RibbonVisibilityPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="ProjectorVisibility" /> property's name.
+        /// </summary>
+        public const string BlankStampStudentVisibilityPropertyName = "BlankStampStudentVisibility";
+
+        private Visibility _blankStampStudentVisibility = Visibility.Visible;
+
+        /// <summary>
+        /// Sets and gets the ProjectorVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public Visibility BlankStampStudentVisibility
+        {
+            get
+            {
+                return _blankStampStudentVisibility;
+            }
+
+            set
+            {
+                if (_blankStampStudentVisibility == value)
+                {
+                    return;
+                }
+
+                _blankStampStudentVisibility = value;
+                RaisePropertyChanged(BlankStampStudentVisibilityPropertyName);
             }
         }
 
