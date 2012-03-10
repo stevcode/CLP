@@ -262,7 +262,25 @@ namespace Classroom_Learning_Partner.Views
             if (App.IsAuthoring || isStampedObject)
             {
                 CLPSnapTile newSnapTile = ((pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileViewModel).PageObject as CLPSnapTile).Copy() as CLPSnapTile;
-                newSnapTile.Position = new Point(newSnapTile.Position.X + 80, newSnapTile.Position.Y);
+                double x = newSnapTile.Position.X + 80;
+                double y = newSnapTile.Position.Y;
+                if (x > 1056 - pageObjectContainerViewModel.Width)
+                {
+                    /* Want some distinguishable change in location. 
+                     * Check to see if on the edge already or near the edge.
+                     * If on the edge, also move down if possible.
+                     */
+                    if (newSnapTile.Position.X == 1056 - pageObjectContainerViewModel.Width)
+                    {
+                        y = newSnapTile.Position.Y + 20;
+                        if (y > 816 - pageObjectContainerViewModel.Height)
+                        {
+                            y = 816 - pageObjectContainerViewModel.Height;
+                        }
+                    }
+                    x = 1056 - pageObjectContainerViewModel.Width;
+                }
+                newSnapTile.Position = new Point(x, y);
                 CLPService.AddPageObjectToPage(newSnapTile);
             }
         }
