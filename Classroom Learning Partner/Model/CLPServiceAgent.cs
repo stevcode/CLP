@@ -253,6 +253,51 @@ namespace Classroom_Learning_Partner.Model
                 //alternatively, pull from database and build
                 CLPNotebook notebook = CLPNotebook.LoadNotebookFromFile(filePath);
                 notebook.NotebookName = notebookName;
+
+                //Convert Machine Names to Student Names
+
+                foreach (var submissionID in notebook.Submissions.Keys)
+                {
+                    foreach (var page in notebook.Submissions[submissionID])
+                    {
+                        if (page.SubmitterName == "CLP6")
+                        {
+                            page.SubmitterName = "Nael";
+                        }
+                        else if (page.SubmitterName == "CLP7")
+                        {
+                            page.SubmitterName = "Kelvin";
+                        }
+                        else if (page.SubmitterName == "CLP8")
+                        {
+                            page.SubmitterName = "Michael";
+                        }
+                        else if (page.SubmitterName == "CLP10")
+                        {
+                            page.SubmitterName = "Alex";
+                        }
+                        else if (page.SubmitterName == "CLP11")
+                        {
+                            page.SubmitterName = "Kaelin";
+                        }
+                        else if (page.SubmitterName == "CLP12")
+                        {
+                            page.SubmitterName = "Nick";
+                        }
+                        else if (page.SubmitterName == "CLP13")
+                        {
+                            page.SubmitterName = "Elyse";
+                        }
+                        else if (page.SubmitterName == "CLP14")
+                        {
+                            page.SubmitterName = "Henry";
+                        }
+                    }
+                }
+
+
+
+
                 newNotebookViewModel = new CLPNotebookViewModel(notebook);
 
 
