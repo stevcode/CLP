@@ -21,20 +21,13 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             }
         }
 
-        public LinkedDisplayViewModel()
-            : this(new CLPPageViewModel(new CLPPage()))
-        {
-
-            
-        }
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public CLPPageViewModel DisplayedPage
         {
             get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
-            private set { SetValue(DisplayedPageProperty, value); }
+            set { SetValue(DisplayedPageProperty, value); }
         }
 
         /// <summary>

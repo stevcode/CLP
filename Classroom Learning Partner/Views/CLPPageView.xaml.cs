@@ -27,6 +27,8 @@ namespace Classroom_Learning_Partner.Views
 
         public CLPPageView()
         {
+
+            this.DataContextChanged += new DependencyPropertyChangedEventHandler(CLPPageView_DataContextChanged);
             //This causes the View to not change on linked display when switching pages
             // however, i think the pageObjects have to be re-rendered each time the large
             // page is displayed when this is set. - steve
@@ -74,6 +76,11 @@ namespace Classroom_Learning_Partner.Views
             //});
 
             
+        }
+
+        void CLPPageView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            Console.WriteLine("datacontext changed");
         }
 
         protected override System.Type GetViewModelType()

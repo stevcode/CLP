@@ -11,12 +11,6 @@ namespace Classroom_Learning_Partner.Views.Displays
         public LinkedDisplayView()
         {
             InitializeComponent();
-            //CloseViewModelOnUnloaded = false;
-        }
-
-        private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            Console.WriteLine("DisplayView unloaded");
         }
 
         protected override System.Type GetViewModelType()

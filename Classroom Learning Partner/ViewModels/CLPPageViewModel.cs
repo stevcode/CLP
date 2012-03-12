@@ -254,6 +254,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
+            Console.WriteLine("inking on pageVM: " + Page.UniqueID);
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             App.MainWindowViewModel.CanSendToTeacher = true;
 
