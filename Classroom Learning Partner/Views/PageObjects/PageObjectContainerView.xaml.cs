@@ -4,18 +4,22 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows;
 using System.Windows.Input;
 using System;
-using Catel.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
     /// <summary>
     /// Interaction logic for PageObjectContainerView.xaml
     /// </summary>
-    public partial class PageObjectContainerView : UserControl<CLPPageObjectBaseViewModel>
+    public partial class PageObjectContainerView : Catel.Windows.Controls.UserControl
     {
         public PageObjectContainerView()
         {
             InitializeComponent();
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(CLPPageObjectBaseViewModel);
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)

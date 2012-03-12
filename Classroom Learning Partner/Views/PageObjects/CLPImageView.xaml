@@ -6,7 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
-             xmlns:vmo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
-             x:TypeArguments="vmo:CLPImageViewModel">
+             xmlns:vmo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
     <Image Source="{Binding Path=SourceImage,Mode=OneWay}" Height="{Binding Path=Height}" Width="{Binding Path=Width}" />
 </catel:UserControl >

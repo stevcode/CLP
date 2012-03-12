@@ -8,8 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
-             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
-             x:TypeArguments="vm:CLPPageViewModel">
+             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -4,8 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
                    xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
-                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
-                   x:TypeArguments="vmw:NotebookWorkspaceViewModel">
+                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
 
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">

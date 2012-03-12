@@ -1,5 +1,4 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
+﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
@@ -7,7 +6,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
     /// <summary>
     /// Interaction logic for NotebookWorkspaceView.xaml.
     /// </summary>
-    public partial class NotebookWorkspaceView : UserControl<NotebookWorkspaceViewModel>
+    public partial class NotebookWorkspaceView : Catel.Windows.Controls.UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceView"/> class.
@@ -15,6 +14,11 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         public NotebookWorkspaceView()
         {
             InitializeComponent();
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(NotebookWorkspaceViewModel);
         }
     }
 }

@@ -809,7 +809,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddNewPageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
             index++;
             CLPPage page = new CLPPage();
             (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
@@ -827,7 +827,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDeletePageCommandExecute()
         {
             //Steve - clpserviceagent
-            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            int index = (SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
             if (index != -1)
             {
                 

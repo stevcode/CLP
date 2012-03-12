@@ -1,5 +1,4 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.Views.Modal_Windows;
+﻿using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
@@ -16,7 +15,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     /// <summary>
     /// Interaction logic for CLPImageStampView.xaml
     /// </summary>
-    public partial class CLPImageStampView : UserControl<CLPImageStampViewModel>
+    public partial class CLPImageStampView : Catel.Windows.Controls.UserControl
     {
         public CLPImageStampView()
         {

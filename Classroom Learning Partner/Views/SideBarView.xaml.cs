@@ -1,5 +1,4 @@
 ﻿using Classroom_Learning_Partner.ViewModels;
-using Catel.Windows.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,7 +10,7 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for SideBarView.xaml
     /// </summary>
-    public partial class SideBarView : UserControl<NotebookWorkspaceViewModel>
+    public partial class SideBarView : Catel.Windows.Controls.UserControl
     {
         public SideBarView()
         {
@@ -28,6 +27,11 @@ namespace Classroom_Learning_Partner.Views
 
             //    sideBarViewModel.SubmissionPages = sideBarViewModel.Submissions[pageID];
             //}
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(IWorkspaceViewModel);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

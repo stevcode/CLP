@@ -5,7 +5,6 @@ using Classroom_Learning_Partner.Model;
 using System.Threading;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Catel.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
 using System;
@@ -17,7 +16,7 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for CLPPageView.xaml
     /// </summary>
-    public partial class CLPPageView : UserControl<CLPPageViewModel>
+    public partial class CLPPageView : Catel.Windows.Controls.UserControl
     {
         private const double ADORNER_DELAY = 800; //time to wait until adorner appears
 
@@ -33,7 +32,7 @@ namespace Classroom_Learning_Partner.Views
             // page is displayed when this is set. - steve
             
             InitializeComponent();
-            CloseViewModelOnUnloaded = false;
+            //CloseViewModelOnUnloaded = false;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
@@ -75,6 +74,11 @@ namespace Classroom_Learning_Partner.Views
             //});
 
             
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(CLPPageViewModel);
         }
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)

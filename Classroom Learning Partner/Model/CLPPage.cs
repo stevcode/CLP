@@ -198,21 +198,6 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
 
         public static Stroke StringToStroke(string stroke)
         {

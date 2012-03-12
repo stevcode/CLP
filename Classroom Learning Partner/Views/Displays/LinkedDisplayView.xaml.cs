@@ -1,5 +1,4 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels.Displays;
+﻿using Classroom_Learning_Partner.ViewModels.Displays;
 using System;
 
 namespace Classroom_Learning_Partner.Views.Displays
@@ -7,7 +6,7 @@ namespace Classroom_Learning_Partner.Views.Displays
     /// <summary>
     /// Interaction logic for LinkedDisplayView.xaml
     /// </summary>
-    public partial class LinkedDisplayView : UserControl<LinkedDisplayViewModel>
+    public partial class LinkedDisplayView : Catel.Windows.Controls.UserControl
     {
         public LinkedDisplayView()
         {
@@ -18,6 +17,11 @@ namespace Classroom_Learning_Partner.Views.Displays
         private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
         {
             Console.WriteLine("DisplayView unloaded");
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(LinkedDisplayViewModel);
         }
     }
 }

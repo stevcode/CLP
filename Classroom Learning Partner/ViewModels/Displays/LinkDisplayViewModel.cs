@@ -11,30 +11,36 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel(CLPPage page)
+        public LinkedDisplayViewModel(CLPPageViewModel page)
             : base()
         {
             DisplayedPage = page;
             if (DisplayedPage != null)
             {
-                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.UniqueID);
+                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
             }
+        }
+
+        public LinkedDisplayViewModel()
+            : this(new CLPPageViewModel(new CLPPage()))
+        {
+
+            
         }
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model]
-        public CLPPage DisplayedPage
+        public CLPPageViewModel DisplayedPage
         {
-            get { return GetValue<CLPPage>(DisplayedPageProperty); }
+            get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
             private set { SetValue(DisplayedPageProperty, value); }
         }
 
         /// <summary>
         /// Register the DisplayedPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPageViewModel));
 
         public string DisplayName
         {
@@ -76,7 +82,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public override string Title { get { return "LinkDisplayVM"; } }
 
 
-        public void AddPageToDisplay(CLPPage page)
+        public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPage = page;
         }

@@ -8,8 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
-             xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
-             x:TypeArguments="vmw:ProjectorWorkspaceViewModel">
+             xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays">
 
     <!-- Control that dynamically determines what Display to show -->
     <Control Margin="5">

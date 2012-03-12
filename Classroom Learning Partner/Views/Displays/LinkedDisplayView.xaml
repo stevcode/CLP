@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
-             x:TypeArguments="vmd:LinkedDisplayViewModel" Unloaded="UserControl_Unloaded">
+             Unloaded="UserControl_Unloaded">
     <Grid>
         <vw:CLPPageView DataContext="{Binding Path=DisplayedPage, Mode=OneWay}" />
     </Grid>

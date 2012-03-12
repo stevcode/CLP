@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:catel="http://catel.codeplex.com"
-             xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
-             x:TypeArguments="vmw:BlankWorkspaceViewModel">
+             xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces">
     <Grid Background="BlanchedAlmond">
             
     </Grid>

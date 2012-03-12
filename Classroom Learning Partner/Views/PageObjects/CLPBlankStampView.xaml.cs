@@ -1,4 +1,3 @@
-using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Resources;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
@@ -16,7 +15,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     /// <summary>
     /// Interaction logic for CLPBlankStampView.xaml
     /// </summary>
-    public partial class CLPBlankStampView : UserControl<CLPBlankStampViewModel>
+    public partial class CLPBlankStampView : Catel.Windows.Controls.UserControl
     {
         public CLPBlankStampView()
         {

@@ -6,8 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
-             xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
-             x:TypeArguments="vmw:NotebookChooserWorkspaceViewModel">
+             xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces">
     <ItemsControl ItemsSource="{Binding Path=NotebookSelectorViewModels}" >
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

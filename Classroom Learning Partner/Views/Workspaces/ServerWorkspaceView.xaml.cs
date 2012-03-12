@@ -1,16 +1,20 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
+﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
     /// <summary>
     /// Interaction logic for ServerWorkspaceView.xaml
     /// </summary>
-    public partial class ServerWorkspaceView : UserControl<ServerWorkspaceViewModel>
+    public partial class ServerWorkspaceView : Catel.Windows.Controls.UserControl
     {
         public ServerWorkspaceView()
         {
             InitializeComponent();
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(ServerWorkspaceViewModel);
         }
     }
 }
