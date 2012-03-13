@@ -322,71 +322,7 @@
             <!--Editing Tab-->
             <ribbon:RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
 
-                <ribbon:RibbonGroup x:Name="AuthoringToolsGroup" Header="Pen Type">
-
-                    <ribbon:RibbonToggleButton
-                        Label="Pen"
-                        LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}" Checked="ToolsGroup_Checked" />
-
-                    <ribbon:RibbonToggleButton
-                        Label="Marker"
-                        LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}" Checked="ToolsGroup_Checked" />
-
-                    <ribbon:RibbonToggleButton
-                        Label="Eraser"
-                        LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}" Checked="ToolsGroup_Checked" />
-
-                    <ribbon:RibbonToggleButton
-                        Label="Stroke Eraser"
-                        LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked" />
-                    
-                </ribbon:RibbonGroup>
-
-                <ribbon:RibbonGroup Header="Pen Color">
-                    <ribbon:RibbonGroup.Resources>
-                        <Style x:Name="ColorButtonStyleEditing" TargetType="{x:Type ribbon:RibbonButton}">
-                            <Setter Property="Width" Value="25"/>
-                            <Setter Property="Height" Value="25"/>
-                            <Setter Property="Command">
-                                <Setter.Value>
-                                    <Binding Path="SetPenColorCommand"/>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="CommandParameter">
-                                <Setter.Value>
-                                    <Binding RelativeSource="{RelativeSource Self}"/>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Margin" Value="1"/>
-                            <Setter Property="BorderBrush" Value="White"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                        </Style>
-                    </ribbon:RibbonGroup.Resources>
-                    <ribbon:RibbonButton Background="Black"/>
-                    <ribbon:RibbonButton Background="White"/>
-                    <ribbon:RibbonButton Background="Red"/>
-                    <ribbon:RibbonButton Background="Bisque"/>
-                    <ribbon:RibbonButton Background="DarkOrange"/>
-                    <ribbon:RibbonButton Background="Tan"/>
-                    <ribbon:RibbonButton Background="Gold"/>
-                    <ribbon:RibbonButton Background="SaddleBrown"/>
-                    <ribbon:RibbonButton Background="DarkGreen"/>
-                    <ribbon:RibbonButton Background="MediumSeaGreen"/>
-                    <ribbon:RibbonButton Background="Blue"/>
-                    <ribbon:RibbonButton Background="HotPink"/>
-                    <ribbon:RibbonButton Background="BlueViolet"/>
-                    <ribbon:RibbonButton Background="Aquamarine"/>
-                    <ribbon:RibbonButton Background="SlateGray"/>
-                    <ribbon:RibbonButton Background="SkyBlue"/>
-                    <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
-                        <ribbon:RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
-                    </Border>
-
-                </ribbon:RibbonGroup>
+                
 
                 <ribbon:RibbonGroup Header="Text">
                     
