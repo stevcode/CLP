@@ -14,6 +14,11 @@ using System.Collections.Generic;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Timers;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Windows.Xps;
+using System.Windows.Xps.Packaging;
+using System.IO;
+using System.Windows.Documents;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -97,6 +102,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
+            ConvertToXPS = new Command(OnConvertToXPSExecute);
 
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -693,10 +699,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveAllNotebooksCommand { get; private set; }
 
-        // TODO: Move code below to constructor
-
-        // TODO: Move code above to constructor
-
         /// <summary>
         /// Method to invoke when the SaveAllNotebooksCommand command is executed.
         /// </summary>
@@ -708,91 +710,128 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        //private RelayCommand _convertToXPSCommand;
+        /// <summary>
+        /// Gets the ConvertToXPS command.
+        /// </summary>
+        public Command ConvertToXPS { get; private set; }
 
-        ///// <summary>
-        ///// Gets the ConvertToXPSCommand.
-        ///// </summary>
-        //public RelayCommand ConvertToXPSCommand
-        //{
-        //    get
-        //    {
-        //        return _convertToXPSCommand
-        //            ?? (_convertToXPSCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      FixedDocument doc = new FixedDocument();
-        //                                      doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-
-        //                                      if (App.CurrentUserMode == App.UserMode.Instructor)
-        //                                      {
-
-        //                                      }
-        //                                      //foreach page here
-        //                                      //foreach (var pageView in A)
-        //                                      //{
-
-        //                                      //}
-        //                                      int i = 0;
-        //                                      foreach (CLPPageViewModel pageVM in App.CurrentNotebookViewModel.PageViewModels)
-        //                                      {
-        //                                          PageContent pageContent = new PageContent();
-        //                                          FixedPage fixedPage = new FixedPage();
-
-        //                                          CLPPagePreviewView currentPage = new CLPPagePreviewView();
-        //                                          currentPage.DataContext = pageVM;
-        //                                          currentPage.UpdateLayout();
-        //                                          //currentPage.Visibility = Visibility.Hidden;
-
-        //                                          RenderTargetBitmap bmp = new RenderTargetBitmap((int)(96 * 8.5), 96 * 11, 96d, 96d, PixelFormats.Pbgra32); //new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-        //                                          bmp.Render(currentPage.MainInkCanvas);
-        //                                          PngBitmapEncoder encoder = new PngBitmapEncoder();
-        //                                          encoder.Frames.Add(BitmapFrame.Create(bmp));
-        //                                          using (Stream s = File.Create(@"C:\" + i.ToString() + ".png"))
-        //                                          {
-        //                                              encoder.Save(s);
-        //                                          }
-        //                                          i++;
-
-        //                                          //Create first page of document
-        //                                          RotateTransform rotate = new RotateTransform(90.0);
-        //                                          TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-        //                                          TransformGroup transform = new TransformGroup();
-        //                                          transform.Children.Add(rotate);
-        //                                          transform.Children.Add(translate);
-        //                                          currentPage.RenderTransform = transform;
+        /// <summary>
+        /// Method to invoke when the ConvertToXPS command is executed.
+        /// </summary>
+        private void OnConvertToXPSExecute()
+        {
+            foreach (var notebook in OpenNotebooks)
+            {
+                if (App.CurrentUserMode == App.UserMode.Instructor)
+                {
+                    FixedDocument docSubmissions = new FixedDocument();
+                    docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
 
+                    foreach (var pageID in notebook.Submissions.Keys)
+                    {
+                        foreach (CLPPage page in notebook.Submissions[pageID])
+                        {
+                            PageContent pageContent = new PageContent();
+                            FixedPage fixedPage = new FixedPage();
+
+                            CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                            CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                            currentPage.DataContext = pageVM;
+                            currentPage.UpdateLayout();
+
+                            Grid grid = new Grid();
+                            grid.Children.Add(currentPage);
+                            Label label = new Label();
+                            label.FontSize = 20;
+                            label.FontWeight = FontWeights.Bold;
+                            label.FontStyle = FontStyles.Oblique;
+                            label.HorizontalAlignment = HorizontalAlignment.Left;
+                            label.VerticalAlignment = VerticalAlignment.Top;
+                            label.Content = pageVM.SubmitterName;
+                            grid.Children.Add(label);
+
+                            //Create first page of document
+                            RotateTransform rotate = new RotateTransform(90.0);
+                            TranslateTransform translate = new TranslateTransform(816 + 2, -2);
+                            TransformGroup transform = new TransformGroup();
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate);
+                            grid.RenderTransform = transform;
+
+                            fixedPage.Children.Add(grid);
+                            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                            docSubmissions.Pages.Add(pageContent);
+                        }
+                    }
+
+                    //Save the submissions
+                    string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
+                    string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
+                    if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                    {
+                        Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+                    }
+                    if (File.Exists(pathSubs))
+                    {
+                        File.Delete(pathSubs);
+                    }
 
 
-
-        //                                          fixedPage.Children.Add(currentPage);
-        //                                          ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-        //                                          doc.Pages.Add(pageContent);
-        //                                      }
-
-        //                                      //Save the document
-        //                                      string filename = App.CurrentNotebookViewModel.Notebook.NotebookName + ".xps";
-        //                                      string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
-        //                                      if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
-        //                                      {
-        //                                          Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-        //                                      }
-        //                                      if (File.Exists(path))
-        //                                      {
-        //                                          File.Delete(path);
-        //                                      }
+                    XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
+                    XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
+                    xwSubs.Write(docSubmissions);
+                    xpsdSubs.Close();
+                }
 
 
-        //                                      XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
+                FixedDocument doc = new FixedDocument();
+                doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-        //                                      XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
-        //                                      xw.Write(doc);
-        //                                      xpsd.Close();
-        //                                  }));
-        //    }
-        //}
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    PageContent pageContent = new PageContent();
+                    FixedPage fixedPage = new FixedPage();
+
+                    CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                    CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                    currentPage.DataContext = pageVM;
+                    currentPage.UpdateLayout();
+
+                    //Create first page of document
+                    RotateTransform rotate = new RotateTransform(90.0);
+                    TranslateTransform translate = new TranslateTransform(816 + 2, -2);
+                    TransformGroup transform = new TransformGroup();
+                    transform.Children.Add(rotate);
+                    transform.Children.Add(translate);
+                    currentPage.RenderTransform = transform;
+
+                    fixedPage.Children.Add(currentPage);
+                    ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                    doc.Pages.Add(pageContent);
+                }
+
+                //Save the document
+                string filename = notebook.NotebookName + ".xps";
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
+                if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                {
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+                }
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
+                XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
+                xw.Write(doc);
+                xpsd.Close();
+            }
+
+        }
+
+
 
         #endregion //Notebook Commands
 
