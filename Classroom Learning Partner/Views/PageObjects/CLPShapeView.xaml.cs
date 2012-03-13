@@ -13,6 +13,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPShapeView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

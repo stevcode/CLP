@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public PageObjectContainerView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

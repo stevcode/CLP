@@ -10,6 +10,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         public UserLoginWorkspaceView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

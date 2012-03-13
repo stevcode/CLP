@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Views.Displays
         public GridDisplayView()
         {
             InitializeComponent();
-            CloseViewModelOnUnloaded = false;
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

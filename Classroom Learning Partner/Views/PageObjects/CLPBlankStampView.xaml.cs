@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPBlankStampView()
         {
             InitializeComponent();
-
+            SkipSearchingForInfoBarMessageControl = true;
             adornedControl.IsMouseOverShowEnabled = false;
 
             this.Loaded += new RoutedEventHandler(CLPStampView_Loaded);  

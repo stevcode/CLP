@@ -26,15 +26,10 @@ namespace Classroom_Learning_Partner.Views
         private bool isSnapTileEnabled = false;
 
         public CLPPageView()
-        {
-
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(CLPPageView_DataContextChanged);
-            //This causes the View to not change on linked display when switching pages
-            // however, i think the pageObjects have to be re-rendered each time the large
-            // page is displayed when this is set. - steve
-            
+        {           
             InitializeComponent();
-            //CloseViewModelOnUnloaded = false;
+            SkipSearchingForInfoBarMessageControl = true;
+
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
@@ -76,11 +71,6 @@ namespace Classroom_Learning_Partner.Views
             //});
 
             
-        }
-
-        void CLPPageView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            Console.WriteLine("datacontext changed");
         }
 
         protected override System.Type GetViewModelType()

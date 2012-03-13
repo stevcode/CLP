@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Views
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

@@ -10,6 +10,7 @@ namespace Classroom_Learning_Partner.Views
         public NotebookSelectorView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

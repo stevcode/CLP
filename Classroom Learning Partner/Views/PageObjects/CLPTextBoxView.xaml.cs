@@ -21,7 +21,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPTextBoxView()
         {
             InitializeComponent();
-
+            SkipSearchingForInfoBarMessageControl = true;
             ribbonView = Application.Current.MainWindow as MainWindowView;
 
             AppMessages.UpdateFont.Register(this, (t) =>
