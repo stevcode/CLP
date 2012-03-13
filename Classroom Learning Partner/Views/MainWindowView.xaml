@@ -322,7 +322,24 @@
             <!--Editing Tab-->
             <ribbon:RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
 
-                
+                <ribbon:RibbonGroup Header="Page">
+
+                    <ribbon:RibbonButton
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=AddNewPageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
+
+                </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Text">
                     
@@ -412,25 +429,6 @@
 
                 </ribbon:RibbonGroup>
 
-                <ribbon:RibbonGroup Header="Page">
-                    
-                    <ribbon:RibbonButton
-                        Label="Add Page Here"
-                        LargeImageSource="..\Images\AddPage.png"
-                        Command="{Binding Path=AddNewPageCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        Label="Delete This Page"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=DeletePageCommand}" />
-
-                    <ribbon:RibbonButton
-                        Label="Copy This Page"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />
-
-                </ribbon:RibbonGroup>
-                
             </ribbon:RibbonTab>
             
         </ribbon:Ribbon>
