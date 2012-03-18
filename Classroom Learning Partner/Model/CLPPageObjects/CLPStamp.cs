@@ -28,10 +28,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
             else
             {
-                Height = InternalPageObject.Height;
+                Height = InternalPageObject.Height + 50;
                 Width = InternalPageObject.Width;
             }
-            
         }
 
         /// <summary>

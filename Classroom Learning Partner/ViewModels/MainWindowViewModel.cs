@@ -111,7 +111,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
-
+            InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
@@ -936,6 +936,34 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPImage image = new CLPImage(filename);
                 //CLPServiceAgent.Instance.AddPageObjectToPage(image);
                 ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
+            }
+        }
+
+        /// <summary>
+        /// Gets the InsertImageStampCommand command.
+        /// </summary>
+        public Command InsertImageStampCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertImageStampCommand command is executed.
+        /// </summary>
+        private void OnInsertImageStampCommandExecute()
+        {
+            // Configure open file dialog box
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                // Open document
+                string filename = dlg.FileName;
+                CLPImage image = new CLPImage(filename);
+                CLPStamp stamp = new CLPStamp(image);
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(stamp);
             }
         }
 

@@ -21,11 +21,11 @@
         
     </UserControl.Resources>
 
-    
 
-    <Grid x:Name="HitBox" Background="Transparent">
+
+    <Grid x:Name="ContainerHitBox" Background="Transparent">
         
-        <!-- Control that dynamically determines what Display to show -->
+        <!-- Control that dynamically determines what PageObject to show -->
         <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
 
             <Control.Resources>
@@ -92,7 +92,8 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
-            VerticalAdornerPlacement="Outside">
+            VerticalAdornerPlacement="Outside"
+            Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}">
             <ac:AdornedControl.AdornerContent>
                 <!--This is the adorner-->
                 <Canvas

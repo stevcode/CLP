@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -90,7 +91,18 @@ namespace Classroom_Learning_Partner.Views
         {
             if (o.GetType() == typeof(Grid))
             {
-                if ((o as Grid).Name == "HitBox")
+                if ((o as Grid).Name == "ContainerHitBox" && App.MainWindowViewModel.IsAuthoring)
+                {
+                    return HitTestFilterBehavior.ContinueSkipChildren;
+                }
+                else
+                {
+                    return HitTestFilterBehavior.Continue;
+                }
+            }
+            else if (o.GetType().BaseType == typeof(Shape))
+            {
+                if ((o as Shape).Name == "PageObjectHitBox")
                 {
                     return HitTestFilterBehavior.ContinueSkipChildren;
                 }
@@ -109,25 +121,34 @@ namespace Classroom_Learning_Partner.Views
         {
             if (result.VisualHit.GetType() == typeof(Grid))
             {
-                //Console.WriteLine("over any grid");
-                if ((result.VisualHit as Grid).Name == "HitBox")
+                if ((result.VisualHit as Grid).Name == "ContainerHitBox")
                 {
-
-
                     if (App.MainWindowViewModel.IsAuthoring)
                     {
-                        //Add timer to delay appearance of adorner
                         if (DirtyHitbox > 3)
                         {
-                            timer.Start();
+                            //timer.Start();
+                            MainInkCanvas.IsHitTestVisible = false;
                         }
                         DirtyHitbox = 0;
+                        return HitTestResultBehavior.Stop;
                     }
-                    
-                    
                 }
-                return HitTestResultBehavior.Stop;
-                
+                return HitTestResultBehavior.Continue; 
+            }
+            else if (result.VisualHit.GetType().BaseType == typeof(Shape))
+            {
+                if ((result.VisualHit as Shape).Name == "PageObjectHitBox")
+                {
+                    if (DirtyHitbox > 3)
+                    {
+                        //timer.Start();
+                        MainInkCanvas.IsHitTestVisible = false;
+                    }
+                    DirtyHitbox = 0;
+                    return HitTestResultBehavior.Stop;
+                }
+                return HitTestResultBehavior.Continue;
             }
             else
             {
@@ -138,7 +159,7 @@ namespace Classroom_Learning_Partner.Views
                 DirtyHitbox++;
                 if (DirtyHitbox > 3 || isMouseDown)
                 {
-                    timer.Stop();
+                    //timer.Stop();
                     MainInkCanvas.IsHitTestVisible = true;
                 }
                 

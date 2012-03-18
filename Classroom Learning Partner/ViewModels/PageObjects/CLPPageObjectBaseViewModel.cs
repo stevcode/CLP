@@ -6,9 +6,11 @@ using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
+
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
     {
         protected CLPPageObjectBaseViewModel() : base()
