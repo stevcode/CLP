@@ -92,13 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Ribbon Commands
-            SetPenCommand = new Command(OnSetPenCommandExecute);
-            SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
-            SetEraserCommand = new Command(OnSetEraserCommandExecute);
-            SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
-            SetSnapTileCommand = new Command(OnSetSnapTileCommandExecute);
-            SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
-
+            //App Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
             EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
@@ -106,24 +100,36 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
+            ExitCommand = new Command(OnExitCommandExecute);
 
+            //Tools
+            SetPenCommand = new Command(OnSetPenCommandExecute);
+            SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
+            SetEraserCommand = new Command(OnSetEraserCommandExecute);
+            SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
+            SetSnapTileCommand = new Command(OnSetSnapTileCommandExecute);
+            SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
+
+            //History
+            EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
+            UndoCommand = new Command(OnUndoCommandExecute);
+            RedoCommand = new Command(OnRedoCommandExecute);
+
+            //Submit
+            SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
+
+            //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
 
+            //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
-
-
-            SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
-            ExitCommand = new Command(OnExitCommandExecute);
-
-            UndoCommand = new Command(OnUndoCommandExecute);
-            RedoCommand = new Command(OnRedoCommandExecute);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -551,100 +557,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        #region Pen Commands
-
-        /// <summary>
-        /// Gets the SetPenCommand command.
-        /// </summary>
-        public Command SetPenCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetPenCommand command is executed.
-        /// </summary>
-        private void OnSetPenCommandExecute()
-        {
-            DrawingAttributes.Height = PEN_RADIUS;
-            DrawingAttributes.Width = PEN_RADIUS;
-            EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
-        }
-
-        /// <summary>
-        /// Gets the SetMarkerCommand command.
-        /// </summary>
-        public Command SetMarkerCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetMarkerCommand command is executed.
-        /// </summary>
-        private void OnSetMarkerCommandExecute()
-        {
-            DrawingAttributes.Height = MARKER_RADIUS;
-            DrawingAttributes.Width = MARKER_RADIUS;
-            EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
-        }
-
-        /// <summary>
-        /// Gets the SetEraserCommand command.
-        /// </summary>
-        public Command SetEraserCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetEraserCommand command is executed.
-        /// </summary>
-        private void OnSetEraserCommandExecute()
-        {
-            DrawingAttributes.Height = ERASER_RADIUS;
-            DrawingAttributes.Width = ERASER_RADIUS;
-            EditingMode = InkCanvasEditingMode.EraseByPoint;
-            PageObjectAddMode = PageObjectAddMode.None;
-        }
-
-                /// <summary>
-        /// Gets the SetStrokeEraserCommand command.
-        /// </summary>
-        public Command SetStrokeEraserCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetStrokeEraserCommand command is executed.
-        /// </summary>
-        private void OnSetStrokeEraserCommandExecute()
-        {
-            EditingMode = InkCanvasEditingMode.EraseByStroke;
-            PageObjectAddMode = PageObjectAddMode.None;
-        }
-
-        /// <summary>
-        /// Gets the SetPenColorCommand command.
-        /// </summary>
-        public Command<RibbonButton> SetPenColorCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetPenColorCommand command is executed.
-        /// </summary>
-        private void OnSetPenColorCommandExecute(RibbonButton button)
-        {
-            CurrentColorButton = button as RibbonButton;
-            DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
-        }
-
-        /// <summary>
-        /// Gets the SetSnapTileCommand command.
-        /// </summary>
-        public Command SetSnapTileCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetSnapTileCommand command is executed.
-        /// </summary>
-        private void OnSetSnapTileCommandExecute()
-        {
-            EditingMode = InkCanvasEditingMode.None;
-            PageObjectAddMode = PageObjectAddMode.SnapTile;
-        }
-
-        #endregion //Pen Commands
-
         #region Notebook Commands
 
         /// <summary>
@@ -686,7 +598,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = true;
         }
 
-                /// <summary>
+        /// <summary>
         /// Gets the DoneEditingNotebookCommand command.
         /// </summary>
         public Command DoneEditingNotebookCommand { get; private set; }
@@ -799,7 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
                     XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
-                    if (docSubmissions.Pages.Count >0)
+                    if (docSubmissions.Pages.Count > 0)
                     {
                         xwSubs.Write(docSubmissions);
                     }
@@ -853,9 +765,412 @@ namespace Classroom_Learning_Partner.ViewModels
 
         }
 
+        /// <summary>
+        /// Gets the ExitCommand command.
+        /// </summary>
+        public Command ExitCommand { get; private set; }
 
+        /// <summary>
+        /// Method to invoke when the ExitCommand command is executed.
+        /// </summary>
+        private void OnExitCommandExecute()
+        {
+            if (MessageBox.Show("Are you sure you want to exit?",
+                                        "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                CLPServiceAgent.Instance.Exit();
+            }
+        }
 
         #endregion //Notebook Commands
+
+        #region Pen Commands
+
+        /// <summary>
+        /// Gets the SetPenCommand command.
+        /// </summary>
+        public Command SetPenCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetPenCommand command is executed.
+        /// </summary>
+        private void OnSetPenCommandExecute()
+        {
+            DrawingAttributes.Height = PEN_RADIUS;
+            DrawingAttributes.Width = PEN_RADIUS;
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageObjectAddMode = PageObjectAddMode.None;
+        }
+
+        /// <summary>
+        /// Gets the SetMarkerCommand command.
+        /// </summary>
+        public Command SetMarkerCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetMarkerCommand command is executed.
+        /// </summary>
+        private void OnSetMarkerCommandExecute()
+        {
+            DrawingAttributes.Height = MARKER_RADIUS;
+            DrawingAttributes.Width = MARKER_RADIUS;
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageObjectAddMode = PageObjectAddMode.None;
+        }
+
+        /// <summary>
+        /// Gets the SetEraserCommand command.
+        /// </summary>
+        public Command SetEraserCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetEraserCommand command is executed.
+        /// </summary>
+        private void OnSetEraserCommandExecute()
+        {
+            DrawingAttributes.Height = ERASER_RADIUS;
+            DrawingAttributes.Width = ERASER_RADIUS;
+            EditingMode = InkCanvasEditingMode.EraseByPoint;
+            PageObjectAddMode = PageObjectAddMode.None;
+        }
+
+                /// <summary>
+        /// Gets the SetStrokeEraserCommand command.
+        /// </summary>
+        public Command SetStrokeEraserCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetStrokeEraserCommand command is executed.
+        /// </summary>
+        private void OnSetStrokeEraserCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.EraseByStroke;
+            PageObjectAddMode = PageObjectAddMode.None;
+        }
+
+        /// <summary>
+        /// Gets the SetPenColorCommand command.
+        /// </summary>
+        public Command<RibbonButton> SetPenColorCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetPenColorCommand command is executed.
+        /// </summary>
+        private void OnSetPenColorCommandExecute(RibbonButton button)
+        {
+            CurrentColorButton = button as RibbonButton;
+            DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+        }
+
+        /// <summary>
+        /// Gets the SetSnapTileCommand command.
+        /// </summary>
+        public Command SetSnapTileCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetSnapTileCommand command is executed.
+        /// </summary>
+        private void OnSetSnapTileCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.None;
+            PageObjectAddMode = PageObjectAddMode.SnapTile;
+        }
+
+        #endregion //Pen Commands
+
+        #region HistoryCommands
+
+        /// <summary>
+        /// Gets the EnablePlaybackCommand command.
+        /// </summary>
+        public Command EnablePlaybackCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the EnablePlaybackCommand command is executed.
+        /// </summary>
+        private void OnEnablePlaybackCommandExecute()
+        {
+            // TODO: Handle command logic here
+        }
+
+        /// <summary>
+        /// Gets the UndoCommand command.
+        /// </summary>
+        public Command UndoCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the UndoCommand command is executed.
+        /// </summary>
+        private void OnUndoCommandExecute()
+        {
+            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
+            {
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Undo();
+            }
+        }
+
+        /// <summary>
+        /// Gets the RedoCommand command.
+        /// </summary>
+        public Command RedoCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RedoCommand command is executed.
+        /// </summary>
+        private void OnRedoCommandExecute()
+        {
+            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
+            {
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Redo();
+            }
+        }
+
+        //private RelayCommand _audioCommand;
+        //private bool recording = false;
+        //public RelayCommand AudioCommand
+        //{
+        //    get
+        //    {
+        //        return _audioCommand
+        //            ?? (_audioCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      AppMessages.Audio.Send("start");
+        //                                      recording = !recording;
+        //                                      if (recording)
+        //                                      {
+        //                                          RecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+        //                                      }
+        //                                      else
+        //                                      {
+        //                                          RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+        //                                      }
+        //                                  }));
+        //    }
+        //}
+        //private RelayCommand _playAudioCommand;
+        //public RelayCommand PlayAudioCommand
+        //{
+        //    get
+        //    {
+        //        return _playAudioCommand
+        //            ?? (_playAudioCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      AppMessages.Audio.Send("play");
+
+
+        //                                  }));
+        //    }
+        //}
+        //private RelayCommand _enablePlaybackCommand;
+        //public RelayCommand EnablePlaybackCommand
+        //{
+        //    get
+        //    {
+        //        return _enablePlaybackCommand
+        //            ?? (_enablePlaybackCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      AppMessages.ChangePlayback.Send(true);
+
+        //                                  }));
+        //    }
+        //}
+        #endregion //History Commands
+
+        #region Submission Command
+
+        /// <summary>
+        /// Gets the SubmitPageCommand command.
+        /// </summary>
+        public Command SubmitPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SubmitPageCommand command is executed.
+        /// </summary>
+        private void OnSubmitPageCommandExecute()
+        {
+            //Steve - change to different thread and do callback to make sure sent page has arrived
+            IsSending = true;
+            Timer timer = new Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Enabled = true;
+
+            if (CanSendToTeacher)
+            {
+                Console.WriteLine("actual send");
+                AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                {
+                    //CLPService.SubmitPage(clpPageViewModel);
+                });
+            }
+            CanSendToTeacher = false;
+            timer.Dispose();
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanSendToTeacher
+        {
+            get { return GetValue<bool>(CanSendToTeacherProperty); }
+            set { SetValue(CanSendToTeacherProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanSendToTeacher property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
+
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Timer timer = sender as Timer;
+            timer.Stop();
+            timer.Elapsed -= timer_Elapsed;
+            IsSending = false;
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsSending
+        {
+            get { return GetValue<bool>(IsSendingProperty); }
+            set
+            {
+                SetValue(IsSendingProperty, value);
+                if (IsSending)
+                {
+                    SendButtonVisibility = Visibility.Collapsed;
+                    IsSentInfoVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    SendButtonVisibility = Visibility.Visible;
+                    IsSentInfoVisibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Register the IsSending property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsSendingProperty = RegisterProperty("IsSending", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility SendButtonVisibility
+        {
+            get { return GetValue<Visibility>(SendButtonVisibilityProperty); }
+            set { SetValue(SendButtonVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SendButtonVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SendButtonVisibilityProperty = RegisterProperty("SendButtonVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility IsSentInfoVisibility
+        {
+            get { return GetValue<Visibility>(IsSentInfoVisibilityProperty); }
+            set { SetValue(IsSentInfoVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsSentInfoVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
+
+        #endregion //Submission Command
+
+        #region Display Commands
+
+        //private RelayCommand _sendDisplayToProjectorCommand;
+
+        ///// <summary>
+        ///// Gets the SendDisplayToProjectorCommand.
+        ///// </summary>
+        //public RelayCommand SendDisplayToProjectorCommand
+        //{
+        //    get
+        //    {
+        //        return _sendDisplayToProjectorCommand
+        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      if (App.Peer.Channel != null)
+        //                                      {
+        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+        //                                          {
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+        //                                          }
+        //                                          else
+        //                                          {
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+        //                                              List<string> pageList = new List<string>();
+        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+        //                                              {
+        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
+        //                                              }
+
+        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
+        //                                          }
+        //                                      }
+        //                                  }));
+        //    }
+        //}
+
+        //private RelayCommand _switchToLinkedDisplayCommand;
+
+        ///// <summary>
+        ///// Gets the SwitchToLinkedDisplayCommand.
+        ///// </summary>
+        //public RelayCommand SwitchToLinkedDisplayCommand
+        //{
+        //    get
+        //    {
+        //        return _switchToLinkedDisplayCommand
+        //            ?? (_switchToLinkedDisplayCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
+        //                                  }));
+        //    }
+        //}
+
+        //private RelayCommand _createNewGridDisplayCommand;
+
+        ///// <summary>
+        ///// Gets the CreateNewGridDisplayCommand.
+        ///// </summary>
+        //public RelayCommand CreateNewGridDisplayCommand
+        //{
+        //    get
+        //    {
+        //        return _createNewGridDisplayCommand
+        //            ?? (_createNewGridDisplayCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
+        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
+        //                                  }));
+        //    }
+        //}
+
+        #endregion //Display Commands
 
         #region Page Commands
 
@@ -1036,304 +1351,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
         #endregion //Insert Commands
-
-        #region Display Commands
-
-        //private RelayCommand _sendDisplayToProjectorCommand;
-
-        ///// <summary>
-        ///// Gets the SendDisplayToProjectorCommand.
-        ///// </summary>
-        //public RelayCommand SendDisplayToProjectorCommand
-        //{
-        //    get
-        //    {
-        //        return _sendDisplayToProjectorCommand
-        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      if (App.Peer.Channel != null)
-        //                                      {
-        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
-        //                                          }
-        //                                          else
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-        //                                              List<string> pageList = new List<string>();
-        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
-        //                                              {
-        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
-        //                                              }
-
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
-        //                                          }
-        //                                      }
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _switchToLinkedDisplayCommand;
-
-        ///// <summary>
-        ///// Gets the SwitchToLinkedDisplayCommand.
-        ///// </summary>
-        //public RelayCommand SwitchToLinkedDisplayCommand
-        //{
-        //    get
-        //    {
-        //        return _switchToLinkedDisplayCommand
-        //            ?? (_switchToLinkedDisplayCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _createNewGridDisplayCommand;
-
-        ///// <summary>
-        ///// Gets the CreateNewGridDisplayCommand.
-        ///// </summary>
-        //public RelayCommand CreateNewGridDisplayCommand
-        //{
-        //    get
-        //    {
-        //        return _createNewGridDisplayCommand
-        //            ?? (_createNewGridDisplayCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
-        //                                  }));
-        //    }
-        //}
-
-        #endregion //Display Commands
-
-        #region Submission Command
-
-        /// <summary>
-        /// Gets the SubmitPageCommand command.
-        /// </summary>
-        public Command SubmitPageCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SubmitPageCommand command is executed.
-        /// </summary>
-        private void OnSubmitPageCommandExecute()
-        {
-            //Steve - change to different thread and do callback to make sure sent page has arrived
-            IsSending = true;
-            Timer timer = new Timer();
-            timer.Interval = 1000;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-            timer.Enabled = true;
-
-            if (CanSendToTeacher)
-            {
-                Console.WriteLine("actual send");
-                AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
-                {
-                    //CLPService.SubmitPage(clpPageViewModel);
-                });
-            }
-            CanSendToTeacher = false;
-            timer.Dispose();
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool CanSendToTeacher
-        {
-            get { return GetValue<bool>(CanSendToTeacherProperty); }
-            set { SetValue(CanSendToTeacherProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CanSendToTeacher property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
-
-
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Timer timer = sender as Timer;
-            timer.Stop();
-            timer.Elapsed -= timer_Elapsed;
-            IsSending = false;
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsSending
-        {
-            get { return GetValue<bool>(IsSendingProperty); }
-            set
-            {
-                SetValue(IsSendingProperty, value);
-                if (IsSending)
-                {
-                    SendButtonVisibility = Visibility.Collapsed;
-                    IsSentInfoVisibility = Visibility.Visible;
-                }
-                else
-                {
-                    SendButtonVisibility = Visibility.Visible;
-                    IsSentInfoVisibility = Visibility.Collapsed;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Register the IsSending property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsSendingProperty = RegisterProperty("IsSending", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Visibility SendButtonVisibility
-        {
-            get { return GetValue<Visibility>(SendButtonVisibilityProperty); }
-            set { SetValue(SendButtonVisibilityProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the SendButtonVisibility property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SendButtonVisibilityProperty = RegisterProperty("SendButtonVisibility", typeof(Visibility));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Visibility IsSentInfoVisibility
-        {
-            get { return GetValue<Visibility>(IsSentInfoVisibilityProperty); }
-            set { SetValue(IsSentInfoVisibilityProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsSentInfoVisibility property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
-
-        #endregion //Submission Command
-
-        /// <summary>
-        /// Gets the ExitCommand command.
-        /// </summary>
-        public Command ExitCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the ExitCommand command is executed.
-        /// </summary>
-        private void OnExitCommandExecute()
-        {
-            if (MessageBox.Show("Are you sure you want to exit?",
-                                        "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                                      {
-                                                          CLPServiceAgent.Instance.Exit();
-                                                      }
-        }
-
-        #region HistoryCommands
-        
-        /// <summary>
-        /// Gets the UndoCommand command.
-        /// </summary>
-        public Command UndoCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the UndoCommand command is executed.
-        /// </summary>
-        private void OnUndoCommandExecute()
-        {
-            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
-            {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Undo();
-            }
-        }
-
-                /// <summary>
-        /// Gets the RedoCommand command.
-        /// </summary>
-        public Command RedoCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the RedoCommand command is executed.
-        /// </summary>
-        private void OnRedoCommandExecute()
-        {
-            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
-            {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Redo();
-            }
-        }
-
-        //private RelayCommand _audioCommand;
-        //private bool recording = false;
-        //public RelayCommand AudioCommand
-        //{
-        //    get
-        //    {
-        //        return _audioCommand
-        //            ?? (_audioCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      AppMessages.Audio.Send("start");
-        //                                      recording = !recording;
-        //                                      if (recording)
-        //                                      {
-        //                                          RecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
-        //                                      }
-        //                                      else
-        //                                      {
-        //                                          RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
-        //                                      }
-        //                                  }));
-        //    }
-        //}
-        //private RelayCommand _playAudioCommand;
-        //public RelayCommand PlayAudioCommand
-        //{
-        //    get
-        //    {
-        //        return _playAudioCommand
-        //            ?? (_playAudioCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      AppMessages.Audio.Send("play");
-
-
-        //                                  }));
-        //    }
-        //}
-        //private RelayCommand _enablePlaybackCommand;
-        //public RelayCommand EnablePlaybackCommand
-        //{
-        //    get
-        //    {
-        //        return _enablePlaybackCommand
-        //            ?? (_enablePlaybackCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      AppMessages.ChangePlayback.Send(true);
-
-        //                                  }));
-        //    }
-        //}
-        #endregion //History Commands
 
         #endregion //Commands
 

@@ -207,7 +207,12 @@
                 </ribbon:RibbonGroup>
                 
                 <ribbon:RibbonGroup Header="History">
-                    
+
+                    <ribbon:RibbonButton Visibility="{Binding Path=InstructorVisibility}"
+                        LargeImageSource="..\Images\video.png"
+                        Label="Enable Playback"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+
                     <ribbon:RibbonButton
                         Label="Undo"
                         LargeImageSource="..\Images\Undo.png"
@@ -218,6 +223,20 @@
                         Command="{Binding Path=RedoCommand}" />
                 
                 </ribbon:RibbonGroup>
+
+                <!--<ribbon:RibbonGroup Header="Audio" Visibility="{Binding Path=InstructorVisibility}">
+
+                    <ribbon:RibbonButton
+                        LargeImageSource="{Binding Path=RecordImage}"
+                        Label="Record Audio"
+                        Command="{Binding Path=AudioCommand}" />
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\play.png"
+                        Label="Play Audio"
+                        Command="{Binding Path=PlayAudioCommand}" />
+                    
+                </ribbon:RibbonGroup>-->
 
                 <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                     
@@ -255,25 +274,6 @@
                         Command="{Binding Path=CreateNewGridDisplayCommand}" />
                     
                 </ribbon:RibbonGroup>
-
-                <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play2.png"
-                        Label="Enable Playback"
-                        Command="{Binding Path=EnablePlaybackCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=RecordImage}"
-                        Label="Record"
-                        Command="{Binding Path=AudioCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play.png"
-                        Label="Play Audio"
-                        Command="{Binding Path=PlayAudioCommand}" />
-                    
-                </ribbon:RibbonGroup>-->
                 
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
