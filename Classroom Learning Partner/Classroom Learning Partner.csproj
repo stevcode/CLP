@@ -150,6 +150,7 @@
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
