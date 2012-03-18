@@ -23,7 +23,8 @@ namespace Classroom_Learning_Partner.Model
             Erase,
             Copy,
             Remove,
-            Duplicate
+            Duplicate,
+            Save
         }
 
         #endregion

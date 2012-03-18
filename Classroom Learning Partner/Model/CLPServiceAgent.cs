@@ -115,13 +115,32 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             notebook.Save(filePath);
             Console.WriteLine("Notebook saved locally");
-            if (App.DatabaseUse == App.DatabaseMode.Using)
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
-                string s_notebook = ObjectSerializer.ToString(notebook);
-                Console.WriteLine("Notebook serialized");
-                App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
-                Console.WriteLine("Notebook saving called on mesh");
+
+                int i = 1;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    if (!page.PageHistory.IsSaved())
+                    {
+                        //submit page, removing history first
+                        //CLPHistory tempHistory = removeHistoryFromPageVM(page);
+
+                        //Serialize using protobuf
+                        string s_page = ObjectSerializer.ToString(notebook);
+
+                        //Actual send
+                        DateTime now = DateTime.Now;
+                        App.Peer.Channel.SavePage(s_page, App.Peer.UserName, now);
+                        Logger.Instance.WriteToLog("Page " + i.ToString() + " sent to server(save), size: " + (s_page.Length / 1024.0).ToString() + " kB");
+                        //replace history:
+                        //replacePageHistory(tempHistory, page);
+
+                    }
+                    i++;
+                }
             }
+
         }
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
@@ -136,7 +155,7 @@ namespace Classroom_Learning_Partner.Model
                 if (currentNotebook != null)
                 {
                     //update with newer notebook version
-                    currentNotebook["SaveDate"] = DateTime.Now.ToString();
+                    currentNotebook["SaveDate"] = BsonDateTime.Create(DateTime.UtcNow);
                     currentNotebook["NotebookContent"] = ObjectSerializer.ToString(notebook);
                     nbCollection.Save(currentNotebook);
                 }
@@ -157,22 +176,54 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-
-        public void SavePageDB(CLPPage page)
+        public void SavePageDB(CLPPage page, string s_page, string userName, bool isSubmission)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
-                MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
-                BsonDocument currentPage = new BsonDocument {
-                    { "ID", page.UniqueID },
-                    { "CreationDate", page.CreationDate },
-                        { "PageContent", ObjectSerializer.ToString(page) }
-                    };
-                pageCollection.Insert(currentPage);
+                MongoCollection<BsonDocument> pageCollection;
+                if (isSubmission)
+                {
+                    pageCollection = nb.GetCollection<BsonDocument>("Pages");
+                    pageCollection.Insert(createBsonPage(page, s_page, userName));
+                }
+                else
+                {
+                    pageCollection = nb.GetCollection<BsonDocument>("SavedPages");
+                    var query = Query.And(Query.EQ("ID", page.UniqueID), Query.EQ("User", userName));
+                    BsonDocument currentPage = pageCollection.FindOne(query);
+                    if (currentPage != null)
+                    {
+                        //update with newer notebook version
+                        currentPage["SaveDate"] = BsonDateTime.Create(DateTime.UtcNow);
+                        currentPage["PageContent"] = s_page;
+                        pageCollection.Save(currentPage);
+                    }
+                    else
+                    {
+                        //create new page- page for this student has never been saved before 
+                        pageCollection.Insert(createBsonPage(page, s_page, userName));
+                    }
+                }
+
             }
         }
+        //public void SavePageDB(CLPPage page)
+        //{
+        //    if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
+        //    {
+        //        //save to database
+        //        MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+        //        MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
+        //        BsonDocument currentPage = new BsonDocument {
+        //            { "ID", page.UniqueID },
+        //            { "CreationDate", page.CreationDate },
+        //                { "PageContent", ObjectSerializer.ToString(page) }
+        //            };
+        //        pageCollection.Insert(currentPage);
+        //    }
+        //}
 
         public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
@@ -214,6 +265,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 string s_page = ObjectSerializer.ToString(page);
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+                Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length/1024.0).ToString() + " kB");
             }
            
         }
@@ -510,12 +562,31 @@ namespace Classroom_Learning_Partner.Model
             BsonDocument currentNotebook = new BsonDocument {
                     { "ID", notebook.UniqueID },
                     {"User", userName}, 
-                    { "CreationDate", notebook.CreationDate.ToString() },
-                    {"SaveDate", DateTime.Now.ToString()},
+                    { "CreationDate", BsonDateTime.Create(notebook.CreationDate.ToUniversalTime()) },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow)},
                     { "NotebookName", notebook.NotebookName },
                     { "NotebookContent", ObjectSerializer.ToString(notebook) }
                     };
             return currentNotebook;
+        }
+        private BsonDocument createBsonHistory(string s_history, string pageID, string userName)
+        {
+            return new BsonDocument {
+                    { "ID", pageID },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"User", userName},
+                        { "HistoryContent", s_history }
+                    };
+        }
+        private BsonDocument createBsonPage(CLPPage page, string s_page, string userName)
+        {
+            return new BsonDocument {
+                    { "ID", page.UniqueID },
+                    { "CreationDate", BsonDateTime.Create(page.CreationDate.ToUniversalTime()) },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"User", userName},
+                        { "PageContent", s_page }
+                    };
         }
 
         public void Initialize()

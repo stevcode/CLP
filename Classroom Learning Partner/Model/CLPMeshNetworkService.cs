@@ -32,6 +32,9 @@ namespace Classroom_Learning_Partner.Model
         void SaveNotebookDB(string s_notebook, string userName);
 
         [OperationContract(IsOneWay = true)]
+        void SavePage(string page, string userName, DateTime submitTime);
+
+        [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
 
         [OperationContract(IsOneWay = true)]
@@ -113,12 +116,33 @@ namespace Classroom_Learning_Partner.Model
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPServiceAgent.Instance.SavePageDB(page);
+                            CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
                         }
                     }
              return null;
              }, null);   
 
+        }
+        public void SavePage(string s_page, string userName, DateTime submitTime)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            (DispatcherOperationCallback)delegate(object arg)
+            {
+                if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+                {
+
+                    //Database call
+                    TimeSpan difference = DateTime.Now.Subtract(submitTime);
+                    double kbSize = s_page.Length / 1024.0;
+                    Logger.Instance.WriteToLog("RecvSave " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                    if (App.DatabaseUse == App.DatabaseMode.Using)
+                    {
+                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, false);
+                    }
+                }
+                return null;
+            }, null);
         }
 
         public void SaveNotebookDB(string s_notebook, string userName)
