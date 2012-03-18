@@ -44,6 +44,9 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
+            Height = 10;
+            Width = 10;
+            Position = new Point(10, 10);
         }
 
         /// <summary>
