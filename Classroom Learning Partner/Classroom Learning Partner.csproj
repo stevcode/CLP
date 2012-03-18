@@ -219,6 +219,9 @@
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
       <DependentUpon>CLPShapeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
+      <DependentUpon>CLPStampView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
     </Compile>
@@ -315,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPShapeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

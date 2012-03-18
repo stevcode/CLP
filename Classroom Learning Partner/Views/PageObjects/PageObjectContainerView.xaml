@@ -46,6 +46,10 @@
                     <vwpo:CLPInkRegionView DataContext="{Binding}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="CLPStampTemplate">
+                    <vwpo:CLPStampView DataContext="{Binding}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -70,6 +74,11 @@
                         <!-- CLPInkRegion trigger -->
                         <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
                             <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPStamp trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
+                            <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
