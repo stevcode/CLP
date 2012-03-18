@@ -179,6 +179,7 @@
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
