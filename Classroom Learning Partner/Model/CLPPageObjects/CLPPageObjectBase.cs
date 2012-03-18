@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.Model
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
         ObservableCollection<string> PageObjectStrokes { get; }
+        bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
         double Height { get; set; }
         double Width { get; set; }
@@ -44,6 +45,7 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
+            CanAcceptStrokes = false;
             Height = 10;
             Width = 10;
             Position = new Point(10, 10);
@@ -115,6 +117,20 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjectStrokes property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectStrokesProperty = RegisterProperty("PageObjectStrokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAcceptStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
 
         /// <summary>
         /// Position of pageObject on page.

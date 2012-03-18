@@ -19,6 +19,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public CLPInkRegion()
             : base()
         {
+            CanAcceptStrokes = true;
+
             CorrectAnswer = "";
             AnalysisType = 0;
 
@@ -33,6 +35,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public CLPInkRegion(string correct_answer, int analysis_type)
             : base()
         {
+            CanAcceptStrokes = true;
+
             CorrectAnswer = correct_answer;
             AnalysisType = analysis_type;
 
@@ -174,6 +178,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 }
             }
 
+            //Steve/Kelsey - I added this at the recommendation of a Warning in the Error List, if it appears to cause problems, remove it.
+            analyzer.Dispose();
         }
 
 

@@ -15,10 +15,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
-            if (DisplayedPage != null)
-            {
-                Console.WriteLine(Title + " created with pageVM" + DisplayedPage.Page.UniqueID);
-            }
         }
 
         /// <summary>

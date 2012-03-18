@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page) : base()
         {
-            Console.WriteLine(Title + " created");
+            //Console.WriteLine(Title + " created");
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
@@ -325,29 +325,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (CLPPageObjectBase pageObject in PageObjects)
             {
-                //add bool to pageObjectBase for accept strokes, that way you don't need to check if it's over if it's not going to accept
-
-                Rect rect = new Rect(pageObject.Position.X, pageObject.Position.Y, pageObject.Width, pageObject.Height);
-
-                StrokeCollection addedStrokesOverObject = new StrokeCollection();
-                foreach (Stroke stroke in addedStrokes)
+                if (pageObject.CanAcceptStrokes)
                 {
-                    if (stroke.HitTest(rect, 3))
-                    {
-                        addedStrokesOverObject.Add(stroke);
-                    }
-                }
+                    Rect rect = new Rect(pageObject.Position.X, pageObject.Position.Y, pageObject.Width, pageObject.Height);
 
-                StrokeCollection removedStrokesOverObject = new StrokeCollection();
-                foreach (Stroke stroke in e.Removed)
-                {
-                    if (stroke.HitTest(rect, 3))
+                    StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                    foreach (Stroke stroke in addedStrokes)
                     {
-                        removedStrokesOverObject.Add(stroke);
+                        if (stroke.HitTest(rect, 3))
+                        {
+                            addedStrokesOverObject.Add(stroke);
+                        }
                     }
-                }
 
-                pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
+                    StrokeCollection removedStrokesOverObject = new StrokeCollection();
+                    foreach (Stroke stroke in e.Removed)
+                    {
+                        if (stroke.HitTest(rect, 3))
+                        {
+                            removedStrokesOverObject.Add(stroke);
+                        }
+                    }
+
+                    pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
+                }
             }
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;

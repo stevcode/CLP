@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             : base()
         {
             InternalPageObject = internalPageObject;
+            CanAcceptStrokes = true;
 
             Position = new Point(100, 100);
             if (InternalPageObject == null)

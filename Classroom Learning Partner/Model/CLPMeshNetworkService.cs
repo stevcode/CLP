@@ -294,7 +294,7 @@ namespace Classroom_Learning_Partner.Model
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
                         CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                        bool isAlreadyInCurrentNotebook = false;
+                        //bool isAlreadyInCurrentNotebook = false;
                         //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
                         //{
                         //    if (page.IsSubmission)

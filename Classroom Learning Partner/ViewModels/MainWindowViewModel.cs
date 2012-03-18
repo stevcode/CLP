@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public MainWindowViewModel()
             : base()
         {
-            Console.WriteLine(Title + " created");
+            //Console.WriteLine(Title + " created");
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
@@ -1141,6 +1141,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 });
             }
             CanSendToTeacher = false;
+            timer.Dispose();
         }
 
         /// <summary>
