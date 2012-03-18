@@ -72,13 +72,13 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             }
         }
 
-        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
-        {
-            if (IsAnchored)
-            {
-                this.ProcessStrokes(addedStrokes, removedStrokes);
-            }
-        }
+        //public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        //{
+        //    if (IsAnchored)
+        //    {
+        //        this.ProcessStrokes(addedStrokes, removedStrokes);
+        //    }
+        //}
 
         #endregion //Methods
     }

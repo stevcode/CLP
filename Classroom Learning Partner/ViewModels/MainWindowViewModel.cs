@@ -19,6 +19,7 @@ using System.Windows.Xps.Packaging;
 using System.IO;
 using System.Windows.Documents;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -112,6 +113,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
 
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
+            InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
@@ -997,6 +999,30 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
             ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
+        }
+
+        /// <summary>
+        /// Gets the InsertInkRegionCommand command.
+        /// </summary>
+        public Command InsertInkRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertInkRegionCommandExecute()
+        {
+            CustomizeInkRegionView optionChooser = new CustomizeInkRegionView();
+            optionChooser.Owner = Application.Current.MainWindow;
+            optionChooser.ShowDialog();
+            if (optionChooser.DialogResult == true)
+            {
+                string correct_answer = optionChooser.CorrectAnswer.Text;
+                int selected_type = optionChooser.ExpectedType.SelectedIndex;
+
+                CLPInkRegion region = new CLPInkRegion(correct_answer, selected_type);
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(region);
+
+            }
         }
 
 

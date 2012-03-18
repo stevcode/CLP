@@ -346,8 +346,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         removedStrokesOverObject.Add(stroke);
                     }
                 }
-                //Steve - account for removal of pageObjectContainers
-                //pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
+
+                pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;

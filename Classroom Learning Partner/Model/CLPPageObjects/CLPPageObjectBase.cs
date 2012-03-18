@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Catel.Data;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -139,25 +141,51 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
 
         public abstract string PageObjectType { get; }
 
         public abstract CLPPageObjectBase Duplicate();
+
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedScribbles)
+        {
+
+        }
+
+        protected virtual void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            StrokeCollection strokesToRemove = new StrokeCollection();
+            StrokeCollection PageObjectActualStrokes = CLPPage.StringsToStrokes(PageObjectStrokes);
+            foreach (Stroke objectStroke in PageObjectActualStrokes)
+            {
+
+                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
+                foreach (Stroke pageStroke in removedStrokes)
+                {
+                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
+                    if (objectStrokeUniqueID == pageStrokeUniqueID)
+                    {
+                        strokesToRemove.Add(objectStroke);
+                    }
+                }
+            }
+
+            foreach (Stroke stroke in strokesToRemove)
+            {
+                string stringStroke = CLPPage.StrokeToString(stroke);
+                PageObjectStrokes.Remove(stringStroke);
+            }
+
+
+            foreach (Stroke stroke in addedStrokes)
+            {
+                Stroke newStroke = stroke.Clone();
+                Matrix transform = new Matrix();
+                transform.Translate(-Position.X, -Position.Y);
+                newStroke.Transform(transform, true);
+
+                PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
+            }
+        }
 
         #endregion
     }

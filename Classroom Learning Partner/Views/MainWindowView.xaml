@@ -341,70 +341,6 @@
 
                 </ribbon:RibbonGroup>
 
-                <ribbon:RibbonGroup Header="Text">
-                    
-                    <ribbon:RibbonButton
-                        Label="Insert Text Box"
-                        LargeImageSource="..\Images\AddText.png"
-                        Command="{Binding Path=InsertTextBoxCommand}" />
-                    
-                    <ribbon:RibbonControlGroup>
-                        <ComboBox x:Name="FontFamilyComboBox"
-                            ItemsSource="{Binding Path=Fonts}"
-                            SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
-                            Width="130"/>
-                        <ComboBox x:Name="FontSizeComboBox"
-                            ItemsSource="{Binding Path=FontSizes}"
-                            SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
-                            Width="45"/>
-                    </ribbon:RibbonControlGroup>
-
-                    <ribbon:RibbonControlGroup>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="BoldButton"
-                            SmallImageSource="..\Images\Bold16.png"
-                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="ItalicButton"
-                            SmallImageSource="..\Images\Italic16.png"
-                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="UnderlineButton"
-                            SmallImageSource="..\Images\Underline16.png"
-                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
-
-                        <Label Content="Font Color" />
-
-                        <ComboBox x:Name="FontColorComboBox"
-                            ItemsSource="{Binding Path=FontColors}"
-                            SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
-                            Width="45">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        
-                    </ribbon:RibbonControlGroup>
-                    
-                </ribbon:RibbonGroup>
-
                 <ribbon:RibbonGroup Header="Insert">
                     
                     <ribbon:RibbonButton
@@ -426,6 +362,75 @@
                         Label="Insert Square"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Ink Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkRegionCommand}" />
+
+                </ribbon:RibbonGroup>
+
+                <ribbon:RibbonGroup Header="Text">
+
+                    <ribbon:RibbonButton
+                        Label="Insert Text Box"
+                        LargeImageSource="..\Images\AddText.png"
+                        Command="{Binding Path=InsertTextBoxCommand}" />
+
+                    <ribbon:RibbonControlGroup>
+                        <ComboBox x:Name="FontFamilyComboBox"
+                            ItemsSource="{Binding Path=Fonts}"
+                            SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
+                            Width="130"/>
+                        <ComboBox x:Name="FontSizeComboBox"
+                            ItemsSource="{Binding Path=FontSizes}"
+                            SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
+                            Width="45"/>
+                    </ribbon:RibbonControlGroup>
+
+                    <ribbon:RibbonControlGroup>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="BoldButton"
+                            SmallImageSource="..\Images\Bold16.png"
+                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="ItalicButton"
+                            SmallImageSource="..\Images\Italic16.png"
+                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="UnderlineButton"
+                            SmallImageSource="..\Images\Underline16.png"
+                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <Label Content="Font Color" />
+
+                        <ComboBox x:Name="FontColorComboBox"
+                            ItemsSource="{Binding Path=FontColors}"
+                            SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
+                            Width="45">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                    </ribbon:RibbonControlGroup>
 
                 </ribbon:RibbonGroup>
 

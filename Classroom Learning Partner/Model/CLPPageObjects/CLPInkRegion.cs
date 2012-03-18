@@ -10,6 +10,7 @@ using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
+    [Serializable]
     public class CLPInkRegion : CLPPageObjectBase
     {
 
@@ -175,6 +176,14 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         }
 
+
+
+        protected override void OnDeserialized()
+        {
+            InterpretStrokes();
+            base.OnDeserialized();
+        }
+
         [OnSerializing]
         void InterpretStrokes(StreamingContext sc)
         {
@@ -192,6 +201,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             newInkRegion.UniqueID = Guid.NewGuid().ToString();
 
             return newInkRegion;
+        }
+
+        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            this.ProcessStrokes(addedStrokes, removedStrokes);
         }
 
         #endregion

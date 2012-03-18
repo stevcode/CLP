@@ -42,6 +42,10 @@
                     <vwpo:CLPShapeView DataContext="{Binding}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="CLPInkRegionTemplate">
+                    <vwpo:CLPInkRegionView DataContext="{Binding}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -61,6 +65,11 @@
                         <!-- CLPShape trigger -->
                         <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
                             <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPInkRegion trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
+                            <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

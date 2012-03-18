@@ -3,6 +3,7 @@
     using Catel.Windows.Controls;
     using System.Windows;
     using Classroom_Learning_Partner.Views.Modal_Windows;
+    using Classroom_Learning_Partner.ViewModels.PageObjects;
 
     /// <summary>
     /// Interaction logic for CLPInkRegionView.xaml.
@@ -15,6 +16,7 @@
         public CLPInkRegionView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

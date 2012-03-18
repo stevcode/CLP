@@ -164,6 +164,7 @@
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
