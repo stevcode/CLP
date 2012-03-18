@@ -52,7 +52,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         protected CLPInkRegion(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        #endregion
+        #endregion //Constructors
 
         #region Properties
 

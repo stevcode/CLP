@@ -157,6 +157,7 @@
     <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPShape.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />

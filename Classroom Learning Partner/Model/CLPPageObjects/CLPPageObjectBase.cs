@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPPageObject
     {
+        string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
         ObservableCollection<string> PageObjectStrokes { get; }
@@ -40,6 +41,8 @@ namespace Classroom_Learning_Partner.Model
         public CLPPageObjectBase()
         {
             CreationDate = DateTime.Now;
+            UniqueID = Guid.NewGuid().ToString();
+            ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
         }
 
@@ -53,6 +56,20 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string ParentID
+        {
+            get { return GetValue<string>(ParentIDProperty); }
+            set { SetValue(ParentIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ParentID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
 
         /// <summary>
         /// Creation date of pageObject.
@@ -146,7 +163,7 @@ namespace Classroom_Learning_Partner.Model
 
         public abstract CLPPageObjectBase Duplicate();
 
-        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedScribbles)
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
 
         }
