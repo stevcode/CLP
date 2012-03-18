@@ -11,6 +11,7 @@ namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPPageObject
     {
+        string PageID { get; set; }
         string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
@@ -61,6 +62,20 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string PageID
+        {
+            get { return GetValue<string>(PageIDProperty); }
+            set { SetValue(PageIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageIDProperty = RegisterProperty("PageID", typeof(string), "");
 
         /// <summary>
         /// Gets or sets the property value.

@@ -15,8 +15,8 @@
         </Grid.RowDefinitions>
         <Polygon x:Name="PageObjectHitBox" Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="50" Stretch="Fill"
                               Stroke="Black" StrokeThickness="0" Fill="Black"
-                              Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" Margin="0" />
-        <Border Grid.Row="1"  Width="{Binding Width}" Height="{Binding InternalPageObject.Height}" BorderBrush="Black" BorderThickness="2" Margin="0">
+                              Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0" />
+        <Border Grid.Row="1" Width="{Binding Width, Mode=TwoWay}" Height="{Binding InternalPageObject.Height, Mode=TwoWay}" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Margin="0">
             <!-- Control that dynamically determines what PageObject to show -->
             <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=InternalPageObject.Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
 
@@ -28,6 +28,10 @@
 
                     <ControlTemplate x:Key="CLPShapeTemplate">
                         <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="BlankTemplate">
+                        
                     </ControlTemplate>
 
                 </Control.Resources>
@@ -44,6 +48,11 @@
                             <!-- CLPShape trigger -->
                             <DataTrigger Binding="{Binding InternalPageObject.PageObjectType}" Value="CLPShape">
                                 <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Blank trigger -->
+                            <DataTrigger Binding="{Binding InternalPageObject}" Value="null">
+                                <Setter Property="Template" Value="{StaticResource BlankTemplate}" />
                             </DataTrigger>
 
                         </Style.Triggers>

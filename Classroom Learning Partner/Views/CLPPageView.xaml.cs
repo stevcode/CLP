@@ -174,41 +174,6 @@ namespace Classroom_Learning_Partner.Views
 
         }
 
-        //private LaserPoint _laserPoint = new LaserPoint();
-        //private Thickness _laserPointMargins = new Thickness();
-
-        //// Does the actual updating of the LaserPoint
-        //private void updateLaserPointerPosition(Point pt)
-        //{
-        //    //if (RootGrid.Children.Contains(_laserPoint)) RootGrid.Children.Remove(_laserPoint);
-        //    _laserPoint.Visibility = Visibility.Visible;
-        //    _laserPointMargins.Left = pt.X;
-        //    _laserPointMargins.Top = pt.Y;
-        //    _laserPoint.RootGrid.Margin = _laserPointMargins;
-        //}
-
-        //// use this variable so we're not sending redundant info over the network for TurnOffLaser()
-        //private bool _isLaserOn;
-        //private void sendLaserPointerPosition(object sender, MouseEventArgs e)
-        //{
-        //    if (isMouseDown)
-        //    {
-        //        Point pt = e.GetPosition(this.TopCanvas);
-        //        if (pt.X > 1056) pt.X = 1056;
-        //        if (pt.Y > 816) pt.Y = 816;
-        //        CLPService.SendLaserPosition(pt);
-        //        _isLaserOn = true;
-        //    }
-        //    else
-        //    {
-        //        if (_isLaserOn)
-        //        {
-        //            CLPService.TurnOffLaser();
-        //            _isLaserOn = false;
-        //        }
-        //    }
-        //}
-
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 
@@ -221,15 +186,21 @@ namespace Classroom_Learning_Partner.Views
         {
             isMouseDown = false;
 
-            //STeve - if inDownMode clpservice.down(pos)
-            if (isSnapTileEnabled)
+            Point pt = e.GetPosition(this.TopCanvas);
+            if (pt.X > 1056) pt.X = 1056;
+            if (pt.Y > 816) pt.Y = 816;
+
+            switch (App.MainWindowViewModel.PageObjectAddMode)
             {
-                Point pt = e.GetPosition(this.TopCanvas);
-                if (pt.X > 1056) pt.X = 1056;
-                if (pt.Y > 816) pt.Y = 816;
-                CLPServiceAgent.Instance.AddPageObjectToPage(new CLPSnapTileContainer(pt, "SpringGreen"));
+                case PageObjectAddMode.None:
+                    break;
+                case PageObjectAddMode.SnapTile:
+                    CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt, "SpringGreen");
+                    CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
+                    break;
+                default:
+                    break;
             }
         }
-
     }
 }

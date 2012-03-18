@@ -7,12 +7,32 @@
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
-    <ListView ItemsSource="{Binding Path=Tiles}" Height="{Binding Path=Height}" Width="54" Background="Azure" BorderThickness="0" Margin="0" Padding="0">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="ListViewNewTemplate" TargetType="{x:Type ListBox}">
+            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="0" SnapsToDevicePixels="True">
+                <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}">
+                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </ScrollViewer>
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="3" BlurRadius="4" />
+                </Border.Effect>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsGrouping" Value="True">
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <ListView ItemsSource="{Binding Path=Tiles}" Height="{Binding Height}" Width="{Binding Width}" Template="{DynamicResource ListViewNewTemplate}" Background="Transparent" BorderThickness="0" Margin="0" Padding="0">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <Rectangle Fill="SpringGreen" Stroke="Black" StrokeThickness="2" Margin="0" Height="46" Width="46" />
+                <Rectangle Fill="SpringGreen" Stroke="CornflowerBlue" StrokeThickness="4" Margin="0" Height="45" Width="43" />
             </DataTemplate>
         </ListView.ItemTemplate>
-
     </ListView>
 </catel:UserControl>

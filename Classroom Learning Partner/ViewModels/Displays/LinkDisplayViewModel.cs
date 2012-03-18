@@ -78,8 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            DisplayedPage.PageObjects.Add(pageObject);
-
+            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
         }
 
     }

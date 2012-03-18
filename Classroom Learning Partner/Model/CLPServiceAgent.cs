@@ -191,13 +191,6 @@ namespace Classroom_Learning_Partner.Model
             //Jessie - grab notebookNames from database if using DB
         }
 
-
-        //public void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
         public void Exit()
         {
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
@@ -205,7 +198,6 @@ namespace Classroom_Learning_Partner.Model
             //run network disconnect
 
             Environment.Exit(0);
-
         }
 
 
@@ -216,110 +208,55 @@ namespace Classroom_Learning_Partner.Model
                 string s_page = ObjectSerializer.ToString(page);
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
             }
-           
         }
 
-
-        //public void SendLaserPosition(Point pt)
-        //{
-        //    //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
-        //    if (App.Peer.Channel != null)
-        //    {
-        //        App.Peer.Channel.LaserUpdate(pt);
-        //    }
-        //}
-
-        //public void TurnOffLaser()
-        //{
-        //    if (App.Peer.Channel != null)
-        //    {
-        //        App.Peer.Channel.TurnOffLaser();
-        //    }
-        //}
         private bool undoRedo = false;
-        public void AddPageObjectToPage(CLPPageObjectBase pageObject, bool undo)
-        {
-            undoRedo = undo;
-            Point p = pageObject.Position;
-            AddPageObjectToPage(pageObject);
-            undoRedo = false;
-        }
-        public void AddPageObjectToPage(CLPPageObjectBase pageObject)
-        {
-            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            //{
-            //    CLPPageObjectBaseViewModel pageObjectViewModel;
-            //    if (pageObject is CLPImage)
-            //    {
-            //        pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPImageStamp)
-            //    {
-            //        pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPBlankStamp)
-            //    {
-            //        pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPTextBox)
-            //    {
-            //        pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPSnapTileContainer)
-            //    {
-            //        pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
-            //    }
-            //    else
-            //    {
-            //        pageObjectViewModel = null;
-            //    }
-
-            //    pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
-            //    pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
-                
-            //    if (!undoRedo)
-            //    {
-            //        CLPHistoryItem item = new CLPHistoryItem("ADD");
-            //        pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
-            //    }
-                //DATABASE add pageobject to current page
-            //});
-        }
         
-        public void RemovePageObjectFromPage(CLPPageObjectBaseViewModel pageObject, bool undo)
+        public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {
-            undoRedo = undo;
-            RemovePageObjectFromPage(pageObject);
-            undoRedo = false;
+            CLPPage page = GetPageFromID(pageID);
+            AddPageObjectToPage(page, pageObject);
         }
+
+        public void AddPageObjectToPage(CLPPage page, ICLPPageObject pageObject)
+        {
+            if (page != null)
+            {
+                pageObject.PageID = page.UniqueID;
+                page.PageObjects.Add(pageObject);
+            }
+        }
+
         public void RemovePageObjectFromPage(ICLPPageObject pageObject)
         {
-            //Steve - will not work with grid display
-            ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Remove(pageObject);
-            //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-            //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-            ////AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            ////{
-            ////    pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-            ////    pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-            ////    //DATABASE remove page object from current page
-            ////});
-            //if (!undoRedo)
-            //{
-            //    CLPHistoryItem item = new CLPHistoryItem("ERASE");
-            //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
-            //}
+            RemovePageObjectFromPage(pageObject.PageID, pageObject);
         }
-        public void RemovePageObjectFromPage(CLPPageObjectBaseViewModel pageObject)
+
+        public void RemovePageObjectFromPage(string pageID, ICLPPageObject pageObject)
         {
-            //foreach (var container in pageObject.PageViewModel.PageObjectContainerViewModels)
-            //{
-            //    if (container.PageObjectViewModel.PageObject.UniqueID == pageObject.PageObject.UniqueID)
-            //    {
-            //        RemovePageObjectFromPage(container);
-            //        break;
-            //    }
-            //}
+            CLPPage page = GetPageFromID(pageID);
+            RemovePageObjectFromPage(page, pageObject);
+        }
+
+        public void RemovePageObjectFromPage(CLPPage page, ICLPPageObject pageObject)
+        {
+            if (page != null)
+            {
+                page.PageObjects.Remove(pageObject);
+            }
+        }
+
+        public CLPPage GetPageFromID(string pageID)
+        {
+            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                CLPPage page = notebook.GetNotebookPageByID(pageID);
+                if (page != null)
+                {
+                    return page;
+                }
+            }
+            return null;
         }
         
         public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page)
@@ -396,26 +333,27 @@ namespace Classroom_Learning_Partner.Model
         {
             pageObject.Position = pt;
         }
-       
-        //public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
-        //{
-        //    double oldHeight = pageObjectContainerViewModel.Height;
-        //    double oldWidth = pageObjectContainerViewModel.Width;
-        //    Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
-        //    Tuple<double, double> newValue = new Tuple<double, double>(height, width);
-        //    pageObjectContainerViewModel.Height = height;
-        //    pageObjectContainerViewModel.Width = width;
-        //    //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
-        //    //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
-        //    //DATABASE change page object's dimensions
-        //    //if (!undoRedo)
-        //    //{
-        //    //    CLPHistoryItem item = new CLPHistoryItem("RESIZE");
-        //    //    item.OldValue = oldValue.ToString();
-        //    //    item.NewValue = newValue.ToString();
-        //    //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
-        //    //}
-        //}
+
+        public void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
+        {
+            double oldHeight = pageObject.Height;
+            double oldWidth = pageObject.Width;
+            Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
+            Tuple<double, double> newValue = new Tuple<double, double>(height, width);
+            pageObject.Height = height;
+            pageObject.Width = width;
+            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
+            //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
+            //DATABASE change page object's dimensions
+            //if (!undoRedo)
+            //{
+            //    CLPHistoryItem item = new CLPHistoryItem("RESIZE");
+            //    item.OldValue = oldValue.ToString();
+            //    item.NewValue = newValue.ToString();
+            //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+            //}
+        }
+        
         public void ChangePageObjectDimensions(CLPPageObjectBaseViewModel pageObject, double height, double width, bool isUndo)
         {
             //undoRedo = isUndo;

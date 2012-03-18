@@ -38,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+            PageObjectAddMode = PageObjectAddMode.None;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
 
             //MainWindow Commands
@@ -95,6 +96,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
             SetEraserCommand = new Command(OnSetEraserCommandExecute);
             SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
+            SetSnapTileCommand = new Command(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
@@ -112,6 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
@@ -353,6 +356,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public PageObjectAddMode PageObjectAddMode
+        {
+            get { return GetValue<PageObjectAddMode>(PageObjectAddModeProperty); }
+            set { SetValue(PageObjectAddModeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageObjectAddMode property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectAddModeProperty = RegisterProperty("PageObjectAddMode", typeof(PageObjectAddMode));
+
         #endregion //Properties
 
         #region Bindings
@@ -546,6 +563,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
+            PageObjectAddMode = PageObjectAddMode.None;
         }
 
         /// <summary>
@@ -561,6 +579,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Height = MARKER_RADIUS;
             DrawingAttributes.Width = MARKER_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
+            PageObjectAddMode = PageObjectAddMode.None;
         }
 
         /// <summary>
@@ -576,6 +595,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Height = ERASER_RADIUS;
             DrawingAttributes.Width = ERASER_RADIUS;
             EditingMode = InkCanvasEditingMode.EraseByPoint;
+            PageObjectAddMode = PageObjectAddMode.None;
         }
 
                 /// <summary>
@@ -589,6 +609,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetStrokeEraserCommandExecute()
         {
             EditingMode = InkCanvasEditingMode.EraseByStroke;
+            PageObjectAddMode = PageObjectAddMode.None;
         }
 
         /// <summary>
@@ -605,26 +626,19 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
         }
 
-        //private RelayCommand _SetSnapTileCommand;
+        /// <summary>
+        /// Gets the SetSnapTileCommand command.
+        /// </summary>
+        public Command SetSnapTileCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SetSnapTileCommand.
-        ///// </summary>
-        //public RelayCommand SetSnapTileCommand
-        //{
-        //    get
-        //    {
-        //        return _SetSnapTileCommand
-        //            ?? (_SetSnapTileCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-
-        //                                      EditingMode = InkCanvasEditingMode.None;
-        //                                      AppMessages.ChangeInkMode.Send(InkCanvasEditingMode.None);
-        //                                      AppMessages.SetSnapTileMode.Send(true);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the SetSnapTileCommand command is executed.
+        /// </summary>
+        private void OnSetSnapTileCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.None;
+            PageObjectAddMode = PageObjectAddMode.SnapTile;
+        }
 
         #endregion //Pen Commands
 
@@ -908,7 +922,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertTextBoxCommandExecute()
         {
             CLPTextBox textBox = new CLPTextBox();
-            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(textBox);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, textBox);
         }
 
         /// <summary>
@@ -934,8 +948,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 // Open document
                 string filename = dlg.FileName;
                 CLPImage image = new CLPImage(filename);
-                //CLPServiceAgent.Instance.AddPageObjectToPage(image);
-                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(image);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, image);
             }
         }
 
@@ -963,60 +976,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 string filename = dlg.FileName;
                 CLPImage image = new CLPImage(filename);
                 CLPStamp stamp = new CLPStamp(image);
-                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(stamp);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
             }
         }
 
-        //private RelayCommand _insertImageStampCommand;
+        /// <summary>
+        /// Gets the InsertBlankStampCommand command.
+        /// </summary>
+        public Command InsertBlankStampCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the InsertImageStampCommand.
-        ///// </summary>
-        //public RelayCommand InsertImageStampCommand
-        //{
-        //    get
-        //    {
-        //        return _insertImageStampCommand
-        //            ?? (_insertImageStampCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      // Configure open file dialog box
-        //                                      Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-        //                                      dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
-
-        //                                      // Show open file dialog box
-        //                                      Nullable<bool> result = dlg.ShowDialog();
-
-        //                                      // Process open file dialog box results
-        //                                      if (result == true)
-        //                                      {
-        //                                          // Open document
-        //                                          string filename = dlg.FileName;
-        //                                          CLPImageStamp image = new CLPImageStamp(filename);
-        //                                          CLPService.AddPageObjectToPage(image);
-        //                                      }
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _insertBlankStampCommand;
-
-        ///// <summary>
-        ///// Gets the InsertBlankStampCommand.
-        ///// </summary>
-        //public RelayCommand InsertBlankStampCommand
-        //{
-        //    get
-        //    {
-        //        return _insertBlankStampCommand
-        //            ?? (_insertBlankStampCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      CLPBlankStamp stamp = new CLPBlankStamp();
-        //                                      CLPService.AddPageObjectToPage(stamp);
-        //                                  }));
-        //    }
-        //}
+        /// <summary>
+        /// Method to invoke when the InsertBlankStampCommand command is executed.
+        /// </summary>
+        private void OnInsertBlankStampCommandExecute()
+        {
+            CLPStamp stamp = new CLPStamp(null);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
+        }
 
         /// <summary>
         /// Gets the InsertSquareShapeCommand command.
@@ -1029,7 +1005,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertSquareShapeCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
-            ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(square);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, square);
         }
 
         /// <summary>
@@ -1051,8 +1027,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 int selected_type = optionChooser.ExpectedType.SelectedIndex;
 
                 CLPInkRegion region = new CLPInkRegion(correct_answer, selected_type);
-                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Add(region);
-
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
         }
 

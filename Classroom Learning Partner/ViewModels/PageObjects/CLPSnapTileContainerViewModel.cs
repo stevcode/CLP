@@ -2,6 +2,9 @@
 using System.Collections.ObjectModel;
 using Catel.MVVM;
 using Catel.Data;
+using System.Collections.Specialized;
+using System;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -15,12 +18,12 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         {
             PageObject = tile;
 
-            Tiles.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Tiles_CollectionChanged);
+            Tiles.CollectionChanged += new NotifyCollectionChangedEventHandler(Tiles_CollectionChanged);
         }
 
         public override string Title { get { return "SnapTileContainerVM"; } }
 
-        void Tiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void Tiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Height = CLPSnapTileContainer.TILE_HEIGHT * Tiles.Count;
         }

@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Variables
 
-        public const int TILE_HEIGHT = 50;
+        public const int TILE_HEIGHT = 45;
 
         #endregion
 
@@ -28,6 +28,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Position = pt;
             Tiles = new ObservableCollection<string>();
             Tiles.Add(color);
+            Height = (TILE_HEIGHT) * Tiles.Count;
+            Width = TILE_HEIGHT;
         }
 
         /// <summary>

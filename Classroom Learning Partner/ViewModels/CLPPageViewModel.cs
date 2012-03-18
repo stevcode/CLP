@@ -16,6 +16,12 @@ using Catel.Data;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum PageObjectAddMode
+    {
+        None,
+        SnapTile
+    }
+
     [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {

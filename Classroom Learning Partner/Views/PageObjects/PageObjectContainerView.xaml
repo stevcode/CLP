@@ -9,6 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="PageObjectContainerRoot"
              xmlns:catel="http://catel.codeplex.com"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
              xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
     <UserControl.Resources>
@@ -50,6 +51,10 @@
                     <vwpo:CLPStampView DataContext="{Binding}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
+                    <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -79,6 +84,11 @@
                         <!-- CLPStamp trigger -->
                         <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
                             <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPSnapTileContainer trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
+                            <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
@@ -141,6 +151,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
+                    
                     <!--Drag Thumb-->
                     <Grid
                         x:Name="dragButton"
@@ -149,7 +160,6 @@
                         Width="40"
                         Height="40"
                         Cursor="ScrollAll"
-                        PreviewMouseUp="dragButton_PreviewMouseUp"
                         >
                         <Ellipse
                             Stroke="Black"
@@ -196,9 +206,7 @@
                               />
 
                         </Grid>
-                        <Thumb
-                            DragDelta="MoveThumb_DragDelta"
-                            >
+                        <Thumb DragDelta="MoveThumb_DragDelta">
                             <Thumb.Template>
                                 <ControlTemplate>
                                     <Rectangle
@@ -208,7 +216,8 @@
                             </Thumb.Template>
                         </Thumb>
                     </Grid>
-                    <!--Remove Tile Button-->
+                    
+                    <!--Remove Tile Button
                     <Button
                         x:Name="removeTileButton"
                         Width="40"
@@ -241,8 +250,9 @@
                                 </Grid>
                             </ControlTemplate>
                         </Button.Template>
-                    </Button>
-                    <!--Duplicate Tile Button-->
+                    </Button>-->
+                    
+                    <!--Duplicate Tile Button
                     <Button
                         x:Name="duplicateTileButton"
                         Width="40"
@@ -278,7 +288,8 @@
                                 </Grid>
                             </ControlTemplate>
                         </Button.Template>
-                    </Button>
+                    </Button>-->
+                    
                     <!--Resize Thumb-->
                     <Grid
                         x:Name="resizeButton"
@@ -286,9 +297,7 @@
                         Canvas.Bottom="-50"
                         Width="40"
                         Height="40"
-                        Cursor="SizeNWSE"
-                        Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}"
-                        >
+                        Cursor="SizeNWSE">
                         <Ellipse
                             Stroke="Black"
                             StrokeThickness="3"
@@ -296,8 +305,7 @@
                             HorizontalAlignment="Stretch"
                             Fill="White"
                             />
-                        <Grid
-                            >
+                        <Grid>
 
                             <Path
                               Stroke="Black"
@@ -311,9 +319,7 @@
                               />
 
                         </Grid>
-                        <Thumb
-                            DragDelta="ResizeThumb_DragDelta"
-                            >
+                        <Thumb DragDelta="ResizeThumb_DragDelta">
                             <Thumb.Template>
                                 <ControlTemplate>
                                     <Rectangle
