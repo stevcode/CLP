@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
-            ConvertToXPS = new Command(OnConvertToXPSExecute);
+            ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
 
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -713,14 +713,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the ConvertToXPS command.
+        /// Gets the ConvertToXPSCommand command.
         /// </summary>
-        public Command ConvertToXPS { get; private set; }
+        public Command ConvertToXPSCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the ConvertToXPS command is executed.
         /// </summary>
-        private void OnConvertToXPSExecute()
+        private void OnConvertToXPSCommandExecute()
         {
             foreach (var notebook in OpenNotebooks)
             {
@@ -782,7 +782,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
                     XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
-                    xwSubs.Write(docSubmissions);
+                    if (docSubmissions.Pages.Count >0)
+                    {
+                        xwSubs.Write(docSubmissions);
+                    }
                     xpsdSubs.Close();
                 }
 
