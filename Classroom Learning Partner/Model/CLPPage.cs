@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.Model
             InkStrokes = new StrokeCollection();
             Strokes = new ObservableCollection<string>();
             PageObjects = new ObservableCollection<ICLPPageObject>();
-            PageHistory = new CLPHistory(this);
+            PageHistory = new CLPHistory();
         }
 
         /// <summary>

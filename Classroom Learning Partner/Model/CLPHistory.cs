@@ -24,9 +24,8 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPHistory(CLPPage page)
+        public CLPHistory()
         {
-            ParentPage = page;
             HistoryItems = new ObservableCollection<CLPHistoryItem>();
             UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
             TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
@@ -44,20 +43,6 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public CLPPage ParentPage
-        {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the ParentPage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -133,116 +118,6 @@ namespace Classroom_Learning_Partner.Model
 
         #region Methods
 
-        public ICLPPageObject GetPageObjectByID(string uniqueID)
-        {
-            if (TrashedPageObjects.ContainsKey(uniqueID))
-            {
-                return TrashedPageObjects[uniqueID];
-            }
-            foreach (var pageObject in ParentPage.PageObjects)
-            {
-                if (pageObject.UniqueID == uniqueID)
-                {
-                    return pageObject;
-                }
-            }
-
-            return null;
-        }
-
-        public void Undo()
-        {
-            IgnoreHistory = true;
-            if (HistoryItems.Count > 0)
-            {
-                CLPHistoryItem item = HistoryItems.Last();
-                HistoryItems.Remove(item);
-                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
-
-                switch (item.ItemType)
-                {
-                    case HistoryItemType.AddPageObject:
-                        if (pageObject != null)
-                        {
-                            TrashedPageObjects.Add(item.ObjectID, pageObject);
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage(ParentPage, pageObject);
-                        }
-                        break;
-                    case HistoryItemType.RemovePageObject:
-                        CLPServiceAgent.Instance.AddPageObjectToPage(ParentPage, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-                        break;
-                    case HistoryItemType.MovePageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
-                        }
-                        break;
-                    case HistoryItemType.ResizePageObject:
-                        break;
-                    case HistoryItemType.AddInk:
-                        break;
-                    case HistoryItemType.EraseInk:
-                        break;
-                    case HistoryItemType.SnapTileSnap:
-                        break;
-                    case HistoryItemType.SnapTileRemoveTile:
-                        break;
-                    default:
-                        break;
-                }
-
-                UndoneHistoryItems.Add(item);
-            }
-            IgnoreHistory = false;
-        }
-
-        public void Redo()
-        {
-            IgnoreHistory = true;
-            if (UndoneHistoryItems.Count > 0)
-            {
-                CLPHistoryItem item = UndoneHistoryItems.Last();
-                UndoneHistoryItems.Remove(item);
-                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
-
-                switch (item.ItemType)
-                {
-                    case HistoryItemType.AddPageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.AddPageObjectToPage(ParentPage, pageObject);
-                            TrashedPageObjects.Remove(item.ObjectID);
-                        }
-                        break;
-                    case HistoryItemType.RemovePageObject:
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-                        break;
-                    case HistoryItemType.MovePageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
-                        }
-                        break;
-                    case HistoryItemType.ResizePageObject:
-                        break;
-                    case HistoryItemType.AddInk:
-                        break;
-                    case HistoryItemType.EraseInk:
-                        break;
-                    case HistoryItemType.SnapTileSnap:
-                        break;
-                    case HistoryItemType.SnapTileRemoveTile:
-                        break;
-                    default:
-                        break;
-                }
-
-                HistoryItems.Add(item);
-            }
-            IgnoreHistory = false;
-
-        }
-
         public void ClearHistory()
         {
             HistoryItems.Clear();
@@ -252,7 +127,7 @@ namespace Classroom_Learning_Partner.Model
 
         public static CLPHistory InterpolateHistory(CLPHistory history)
         {
-            CLPHistory newHistory = new CLPHistory(history.ParentPage);
+            CLPHistory newHistory = new CLPHistory();
             for (int i = 0; i < history.HistoryItems.Count; i++)
             {
                 CLPHistoryItem item = history.HistoryItems[i];

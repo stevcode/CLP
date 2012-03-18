@@ -38,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+            IsPlaybackEnabled = false;
             PageObjectAddMode = PageObjectAddMode.None;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
 
@@ -890,8 +891,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEnablePlaybackCommandExecute()
         {
-            // TODO: Handle command logic here
+            IsPlaybackEnabled = !IsPlaybackEnabled;
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsPlaybackEnabled
+        {
+            get { return GetValue<bool>(IsPlaybackEnabledProperty); }
+            set { SetValue(IsPlaybackEnabledProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsPlaybackEnabled property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsPlaybackEnabledProperty = RegisterProperty("IsPlaybackEnabled", typeof(bool));
 
         /// <summary>
         /// Gets the UndoCommand command.
@@ -905,7 +920,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Undo();
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
             }
         }
 
@@ -921,7 +936,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Redo();
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
             }
         }
 
