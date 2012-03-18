@@ -7,6 +7,18 @@ using System.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model
 {
+    public enum HistoryItemType
+    {
+        AddPageObject,
+        RemovePageObject,
+        MovePageObject,
+        ResizePageObject,
+        AddInk, 
+        EraseInk,
+        Copy,
+        Duplicate,  
+    }
+
     /// <summary>
     /// CLPHistoryItem Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
@@ -14,28 +26,18 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
-        #region Variables
-
-        public enum HistoryItemType
-        {
-            Add,
-            Move,
-            Erase,
-            Copy,
-            Remove,
-            Duplicate
-        }
-
-        #endregion
-
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPHistoryItem(HistoryItemType itemType)
+        public CLPHistoryItem(HistoryItemType itemType, string objectID, string oldValue, string newValue)
         {
             CreationDate = DateTime.Now;
+            UniqueID = Guid.NewGuid().ToString();
             ItemType = itemType;
+            ObjectID = objectID;
+            OldValue = oldValue;
+            NewValue = newValue;
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace Classroom_Learning_Partner.Model
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
         /// <summary>
@@ -133,90 +135,6 @@ namespace Classroom_Learning_Partner.Model
         /// </summary>
         public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(string), null);
 
-        #endregion
-
-        #region Methods
-
-        #endregion
+        #endregion //Properties
     }
-
-    //[Serializable]
-    //public class CLPHistoryItem
-    //{
-    //     public CLPHistoryItem(string itemType)
-    //    {
-    //         /*CLPHistoryItem Types:
-    //          * UNDO
-    //          * REDO
-    //          * ADD
-    //          * MOVE
-    //          * ERASE
-    //          * COPY
-    //          */
-
-    //        MetaData.SetValue("CreationDate", DateTime.Now.ToString());
-    //        MetaData.SetValue("UniqueID", Guid.NewGuid().ToString());
-    //        MetaData.SetValue("ItemType", itemType);
-
-    //    }
-    //     private MetaDataContainer _metaData = new MetaDataContainer();
-    //     public MetaDataContainer MetaData
-    //     {
-    //         get
-    //         {
-    //             return _metaData;
-    //         }
-    //     }
-       
-    //    #region MetaData
-
-    //    public string ItemType
-    //    {
-    //        get
-    //        {
-    //            return MetaData.GetValue("ItemType");
-    //        }
-
-    //    }
-
-    //    public string ObjectID
-    //    {
-    //        get
-    //        {
-    //            return MetaData.GetValue("ObjectID");
-    //        }
-    //        set
-    //        {
-    //            MetaData.SetValue("ObjectID", value);
-    //        }
-    //    }
-
-    //    public string OldValue
-    //    {
-    //        get
-    //        {
-    //            return MetaData.GetValue("OldValue");
-    //        }
-    //        set
-    //        {
-    //            MetaData.SetValue("OldValue", value);
-    //        }
-    //    }
-
-    //    public string NewValue
-    //    {
-    //        get
-    //        {
-    //            return MetaData.GetValue("NewValue");
-    //        }
-    //        set
-    //        {
-    //            MetaData.SetValue("NewValue", value);
-    //        }
-    //    }
-
-    //    #endregion //MetaData
-        
-       
-    //}
 }

@@ -121,6 +121,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
+
+            UndoCommand = new Command(OnUndoCommandExecute);
+            RedoCommand = new Command(OnRedoCommandExecute);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -1245,46 +1248,38 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #region HistoryCommands
-        //private RelayCommand _undoCommand;
+        
+        /// <summary>
+        /// Gets the UndoCommand command.
+        /// </summary>
+        public Command UndoCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the UndoCommand.
-        ///// </summary>
-        //public RelayCommand UndoCommand
-        //{
-        //    get
-        //    {
-        //        return _undoCommand
-        //            ?? (_undoCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
-        //                                      {
-        //                                          clpPageViewModel.HistoryVM.undo();
-        //                                      });
-        //                                  }));
-        //    }
-        //}
-        //private RelayCommand _redoCommand;
+        /// <summary>
+        /// Method to invoke when the UndoCommand command is executed.
+        /// </summary>
+        private void OnUndoCommandExecute()
+        {
+            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
+            {
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Undo();
+            }
+        }
 
-        ///// <summary>
-        ///// Gets the RedoCommand.
-        ///// </summary>
-        //public RelayCommand RedoCommand
-        //{
-        //    get
-        //    {
-        //        return _redoCommand
-        //            ?? (_redoCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
-        //                                      {
-        //                                          clpPageViewModel.HistoryVM.redo();
-        //                                      });
-        //                                  }));
-        //    }
-        //}
+                /// <summary>
+        /// Gets the RedoCommand command.
+        /// </summary>
+        public Command RedoCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RedoCommand command is executed.
+        /// </summary>
+        private void OnRedoCommandExecute()
+        {
+            if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
+            {
+                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.Redo();
+            }
+        }
 
         //private RelayCommand _audioCommand;
         //private bool recording = false;

@@ -113,6 +113,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\MongoDB.Driver.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.480, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Printing" />
@@ -477,6 +481,8 @@
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
+    <Content Include="External Libraries\protobuf-net.dll" />
+    <Resource Include="External Libraries\protobuf-net.dll.VisualState.xml" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\Inkwell.ico" />

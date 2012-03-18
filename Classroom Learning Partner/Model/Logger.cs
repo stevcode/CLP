@@ -18,7 +18,6 @@ namespace Classroom_Learning_Partner.Model
 
         private string fileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs";
         private string fileName = "CLPLog" + App.CurrentUserMode.ToString() + ".log";
-        //When testing on one machine: need to differentiate different programs
         
         private string filePath;
 

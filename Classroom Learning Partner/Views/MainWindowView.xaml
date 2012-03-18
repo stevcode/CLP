@@ -206,7 +206,7 @@
 
                 </ribbon:RibbonGroup>
                 
-                <!--<ribbon:RibbonGroup Header="History">
+                <ribbon:RibbonGroup Header="History">
                     
                     <ribbon:RibbonButton
                         Label="Undo"
@@ -217,7 +217,7 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" />
                 
-                </ribbon:RibbonGroup>-->
+                </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                     
