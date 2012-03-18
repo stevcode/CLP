@@ -29,7 +29,8 @@ namespace Classroom_Learning_Partner.Model
             ParentPage = page;
             HistoryItems = new ObservableCollection<CLPHistoryItem>();
             UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
-            TrashedObjects = new Dictionary<string,object>();
+            TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
+            TrashedInkStrokes = new Dictionary<string, string>();
             IgnoreHistory = false;
         }
 
@@ -103,16 +104,30 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public Dictionary<string,object> TrashedObjects
+        public Dictionary<string,ICLPPageObject> TrashedPageObjects
         {
-            get { return GetValue<Dictionary<string,object>>(TrashedObjectsProperty); }
+            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedObjectsProperty); }
             set { SetValue(TrashedObjectsProperty, value); }
         }
 
         /// <summary>
         /// Register the TrashedObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TrashedObjectsProperty = RegisterProperty("TrashedObjects", typeof(Dictionary<string,object>), new Dictionary<string,object>());
+        public static readonly PropertyData TrashedObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), new Dictionary<string, ICLPPageObject>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Dictionary<string, string> TrashedInkStrokes
+        {
+            get { return GetValue<Dictionary<string, string>>(TrashedInkStrokesProperty); }
+            set { SetValue(TrashedInkStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the TrashedInkStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, string>), new Dictionary<string, string>());
 
         #endregion
 
@@ -120,6 +135,10 @@ namespace Classroom_Learning_Partner.Model
 
         public ICLPPageObject GetPageObjectByID(string uniqueID)
         {
+            if (TrashedPageObjects.ContainsKey(uniqueID))
+            {
+                return TrashedPageObjects[uniqueID];
+            }
             foreach (var pageObject in ParentPage.PageObjects)
             {
                 if (pageObject.UniqueID == uniqueID)
@@ -138,20 +157,25 @@ namespace Classroom_Learning_Partner.Model
             {
                 CLPHistoryItem item = HistoryItems.Last();
                 HistoryItems.Remove(item);
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
 
                 switch (item.ItemType)
                 {
                     case HistoryItemType.AddPageObject:
-                        ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
                         if (pageObject != null)
                         {
-                            TrashedObjects.Add(item.ObjectID, pageObject);
+                            TrashedPageObjects.Add(item.ObjectID, pageObject);
                             CLPServiceAgent.Instance.RemovePageObjectFromPage(ParentPage, pageObject);
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
+                        CLPServiceAgent.Instance.AddPageObjectToPage(ParentPage, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+                        }
                         break;
                     case HistoryItemType.ResizePageObject:
                         break;
@@ -159,9 +183,9 @@ namespace Classroom_Learning_Partner.Model
                         break;
                     case HistoryItemType.EraseInk:
                         break;
-                    case HistoryItemType.Copy:
+                    case HistoryItemType.SnapTileSnap:
                         break;
-                    case HistoryItemType.Duplicate:
+                    case HistoryItemType.SnapTileRemoveTile:
                         break;
                     default:
                         break;
@@ -179,14 +203,25 @@ namespace Classroom_Learning_Partner.Model
             {
                 CLPHistoryItem item = UndoneHistoryItems.Last();
                 UndoneHistoryItems.Remove(item);
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
 
                 switch (item.ItemType)
                 {
                     case HistoryItemType.AddPageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.AddPageObjectToPage(ParentPage, pageObject);
+                            TrashedPageObjects.Remove(item.ObjectID);
+                        }
                         break;
                     case HistoryItemType.RemovePageObject:
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+                        }
                         break;
                     case HistoryItemType.ResizePageObject:
                         break;
@@ -194,9 +229,9 @@ namespace Classroom_Learning_Partner.Model
                         break;
                     case HistoryItemType.EraseInk:
                         break;
-                    case HistoryItemType.Copy:
+                    case HistoryItemType.SnapTileSnap:
                         break;
-                    case HistoryItemType.Duplicate:
+                    case HistoryItemType.SnapTileRemoveTile:
                         break;
                     default:
                         break;
@@ -212,7 +247,7 @@ namespace Classroom_Learning_Partner.Model
         {
             HistoryItems.Clear();
             UndoneHistoryItems.Clear();
-            TrashedObjects.Clear();
+            TrashedPageObjects.Clear();
         }
 
         public static CLPHistory InterpolateHistory(CLPHistory history)

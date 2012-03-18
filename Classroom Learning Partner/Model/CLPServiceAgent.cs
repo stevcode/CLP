@@ -246,7 +246,16 @@ namespace Classroom_Learning_Partner.Model
         {
             if (page != null)
             {
-                page.PageObjects.Remove(pageObject);
+                foreach (ICLPPageObject po in page.PageObjects)
+                {
+                    if (po.UniqueID == pageObject.UniqueID)
+                    {
+                        page.PageObjects.Remove(po);
+                        break;
+                    }
+                }
+
+                
 
                 if (!page.PageHistory.IgnoreHistory)
                 {

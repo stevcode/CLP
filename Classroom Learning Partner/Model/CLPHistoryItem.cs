@@ -15,8 +15,8 @@ namespace Classroom_Learning_Partner.Model
         ResizePageObject,
         AddInk, 
         EraseInk,
-        Copy,
-        Duplicate,  
+        SnapTileSnap,
+        SnapTileRemoveTile
     }
 
     /// <summary>
