@@ -601,6 +601,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.SnapTileSnap:
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
+                        CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+                        tile.Tiles.RemoveAt(tile.Tiles.Count - 1);
                         break;
                     default:
                         break;
