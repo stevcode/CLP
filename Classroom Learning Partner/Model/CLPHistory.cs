@@ -173,6 +173,24 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        //IsSaved == true means that the history has not been updated since the last save
+        //(to be used by Jessie- DB stuff)
+        //dirty data returns false, pages 
+        public bool IsSaved()
+        {
+            if (HistoryItems.Count > 0)
+            {
+                return HistoryItems[HistoryItems.Count - 1].ItemType == CLPHistoryItem.HistoryItemType.Save;
+                
+            }
+            else
+            {
+                //Logger.Instance.WriteToLog("Zero history items");
+                return true;
+            }
+        }
+
+
         public void ClearHistory()
         {
             HistoryItems.Clear();
