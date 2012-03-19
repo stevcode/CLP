@@ -34,14 +34,5 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(IWorkspaceViewModel);
         }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            (DataContext as NotebookWorkspaceViewModel).CurrentPage = NotebookPageListBox.Items[0] as CLPPageViewModel;
-            //if (!NotebookPageListBox.Items.IsEmpty)
-            //{
-            //    NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
-            //}
-        }
     }
 }

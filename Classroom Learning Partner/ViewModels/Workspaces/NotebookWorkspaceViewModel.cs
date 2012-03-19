@@ -26,19 +26,17 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
 
-            Console.WriteLine(Title + " created");
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPageViewModel>();
 
-
-
-            InitializeLinkedDisplay();
-
+            //InitializeLinkedDisplay();
         }
 
         private void InitializeLinkedDisplay()
         {
+            Console.WriteLine("LinkedDisplay Initialization Started");
+
             LinkedDisplay = new LinkedDisplayViewModel(CurrentPage);
 
             SelectedDisplay = LinkedDisplay;
@@ -52,6 +50,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             {
                 SelectedDisplay.IsOnProjector = false;
             }
+
+            Console.WriteLine("LinkedDisplay Initialization Ended");
         }
 
         protected override void Close()
@@ -167,6 +167,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
                 
                 SelectedDisplay.AddPageToDisplay(value);
+                Console.WriteLine("CurrentPage Set");
             }
         }
 
@@ -197,6 +198,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             if (propertyName == "IsAuthoring")
             {
+                if (LinkedDisplay == null)
+                {
+                    InitializeLinkedDisplay();
+                }
                 SelectedDisplay = LinkedDisplay;
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {

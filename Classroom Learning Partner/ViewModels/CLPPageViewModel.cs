@@ -13,11 +13,15 @@ using System.Windows.Threading;
 using System.Threading;
 using Catel.MVVM;
 using Catel.Data;
-using Classroom_Learning_Partner.ViewModels.Displays;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum PageObjectAddMode
+    {
+        None,
+        SnapTile
+    }
+
     [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
@@ -28,26 +32,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page) : base()
         {
-            Console.WriteLine(Title + " created");
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
-
-
-            
-            //History Stuff
-            //AppMessages.ChangePlayback.Register(this, (playback) =>
-            //{
-            //    if (this.PlaybackControlsVisibility == Visibility.Collapsed)
-            //        this.PlaybackControlsVisibility = Visibility.Visible;
-            //    else
-            //        this.PlaybackControlsVisibility = Visibility.Collapsed;
-
-
-            //});
-            //Commands
-            StartPlaybackCommand = new Command(OnStartPlaybackCommandExecute);
-            StopPlaybackCommand = new Command(OnStopPlaybackCommandExecute);
+            PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
              
             Page = page;
 
@@ -72,12 +60,14 @@ namespace Classroom_Learning_Partner.ViewModels
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
 
+            StartPlaybackCommand = new Command(OnStartPlaybackCommandExecute);
+            StopPlaybackCommand = new Command(OnStopPlaybackCommandExecute);
+
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
         public override string Title { get { return "PageVM"; } }
 
-        public bool undoFlag;
         #endregion //Constructors
 
         #region Properties
@@ -249,6 +239,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri PlaybackImage
+        {
+            get { return GetValue<Uri>(PlaybackImageProperty); }
+            set { SetValue(PlaybackImageProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PlaybackImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlaybackImageProperty = RegisterProperty("PlaybackImage", typeof(Uri));
+
         #endregion //Bindings
 
         #region Methods
@@ -301,11 +305,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 stroke.AddPropertyData(CLPPage.Immutable, "false");
                 StringStrokes.Add(CLPPage.StrokeToString(stroke));
-                if (!undoFlag)
-                {
-                    CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Add);
-                    AddHistoryItem(stroke, item);
-                }
+                //if (!undoFlag)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem("ADD");
+                //    HistoryVM.AddHistoryItem(stroke, item);
+                //}
             }
 
 
@@ -332,29 +336,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (CLPPageObjectBase pageObject in PageObjects)
             {
-                //add bool to pageObjectBase for accept strokes, that way you don't need to check if it's over if it's not going to accept
-
-                Rect rect = new Rect(pageObject.Position.X, pageObject.Position.Y, pageObject.Width, pageObject.Height);
-
-                StrokeCollection addedStrokesOverObject = new StrokeCollection();
-                foreach (Stroke stroke in addedStrokes)
+                if (pageObject.CanAcceptStrokes)
                 {
-                    if (stroke.HitTest(rect, 3))
-                    {
-                        addedStrokesOverObject.Add(stroke);
-                    }
-                }
+                    Rect rect = new Rect(pageObject.Position.X, pageObject.Position.Y, pageObject.Width, pageObject.Height);
 
-                StrokeCollection removedStrokesOverObject = new StrokeCollection();
-                foreach (Stroke stroke in e.Removed)
-                {
-                    if (stroke.HitTest(rect, 3))
+                    StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                    foreach (Stroke stroke in addedStrokes)
                     {
-                        removedStrokesOverObject.Add(stroke);
+                        if (stroke.HitTest(rect, 3))
+                        {
+                            addedStrokesOverObject.Add(stroke);
+                        }
                     }
+
+                    StrokeCollection removedStrokesOverObject = new StrokeCollection();
+                    foreach (Stroke stroke in e.Removed)
+                    {
+                        if (stroke.HitTest(rect, 3))
+                        {
+                            removedStrokesOverObject.Add(stroke);
+                        }
+                    }
+
+                    pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
                 }
-                //Steve - account for removal of pageObjectContainers
-                //pageObjectContainerViewModel.PageObjectViewModel.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
             }
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
@@ -367,6 +372,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 EditingMode = (viewModel as MainWindowViewModel).EditingMode;
             }
 
+            if (propertyName == "IsPlaybackEnabled")
+            {
+                if ((viewModel as MainWindowViewModel).IsPlaybackEnabled)
+                {
+                    PlaybackControlsVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    PlaybackControlsVisibility = Visibility.Collapsed;
+                }
+            }
+
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
@@ -376,11 +393,181 @@ namespace Classroom_Learning_Partner.ViewModels
             base.Close();
         }
 
+        public ICLPPageObject GetPageObjectByID(string uniqueID)
+        {
+            if (PageHistory.TrashedPageObjects.ContainsKey(uniqueID))
+            {
+                return PageHistory.TrashedPageObjects[uniqueID];
+            }
+            foreach (var pageObject in PageObjects)
+            {
+                if (pageObject.UniqueID == uniqueID)
+                {
+                    return pageObject;
+                }
+            }
+
+            return null;
+        }
+
+        int i = 0;
+        DispatcherTimer timer;
+        public void StartPlayBack()
+        {
+            
+            while (PageHistory.HistoryItems.Count > 0)
+            {
+                Undo();
+                i++;
+            }
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Tick += new EventHandler(timer_Tick);
+
+                timer.Start();
+                
+            
+
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            if (i <= 0)
+            {
+                timer.Stop();
+            }
+            else
+	        {
+                Redo();
+                i--;
+            }
+            
+        }
+
+        public void Undo()
+        {
+            PageHistory.IgnoreHistory = true;
+            if (PageHistory.HistoryItems.Count > 0)
+            {
+                CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count -1];
+                PageHistory.HistoryItems.Remove(item);
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
+
+                switch (item.ItemType)
+                {
+                    case HistoryItemType.AddPageObject:
+                        if (pageObject != null)
+                        {
+                            PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
+                        }
+                        break;
+                    case HistoryItemType.RemovePageObject:
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        break;
+                    case HistoryItemType.MovePageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+                        }
+                        break;
+                    case HistoryItemType.ResizePageObject:
+                        break;
+                    case HistoryItemType.AddInk:
+                        break;
+                    case HistoryItemType.EraseInk:
+                        break;
+                    case HistoryItemType.SnapTileSnap:
+                        break;
+                    case HistoryItemType.SnapTileRemoveTile:
+                        break;
+                    default:
+                        break;
+                }
+
+                PageHistory.UndoneHistoryItems.Add(item);
+            }
+            PageHistory.IgnoreHistory = false;
+        }
+
+        public void Redo()
+        {
+            PageHistory.IgnoreHistory = true;
+            if (PageHistory.UndoneHistoryItems.Count > 0)
+            {
+                CLPHistoryItem item = PageHistory.UndoneHistoryItems[PageHistory.UndoneHistoryItems.Count - 1];
+                PageHistory.UndoneHistoryItems.Remove(item);
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
+
+                switch (item.ItemType)
+                {
+                    case HistoryItemType.AddPageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
+                            PageHistory.TrashedPageObjects.Remove(item.ObjectID);
+                        }
+                        break;
+                    case HistoryItemType.RemovePageObject:
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        break;
+                    case HistoryItemType.MovePageObject:
+                        if (pageObject != null)
+                        {
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+                        }
+                        break;
+                    case HistoryItemType.ResizePageObject:
+                        break;
+                    case HistoryItemType.AddInk:
+                        break;
+                    case HistoryItemType.EraseInk:
+                        break;
+                    case HistoryItemType.SnapTileSnap:
+                        break;
+                    case HistoryItemType.SnapTileRemoveTile:
+                        break;
+                    default:
+                        break;
+                }
+
+                PageHistory.HistoryItems.Add(item);
+            }
+
+            PageHistory.IgnoreHistory = false;
+        }
+
         #endregion //Methods
 
-        
-
         #region Commands
+
+        /// <summary>
+        /// Gets the StartPlaybackCommand command.
+        /// </summary>
+        public Command StartPlaybackCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the StartPlaybackCommand command is executed.
+        /// </summary>
+        private void OnStartPlaybackCommandExecute()
+        {
+            StartPlayBack();
+            
+        }
+
+        /// <summary>
+        /// Gets the StopPlaybackCommand command.
+        /// </summary>
+        public Command StopPlaybackCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the StopPlaybackCommand command is executed.
+        /// </summary>
+        private void OnStopPlaybackCommandExecute()
+        {
+            // TODO: Handle command logic here
+        }
 
        //private RelayCommand _startPlaybackCommand;
 
@@ -427,458 +614,8 @@ namespace Classroom_Learning_Partner.ViewModels
        //                                   }));
        //     }
        // }
-        private delegate void NoArgDelegate();
-        public Command StartPlaybackCommand { get; private set; }
 
-        private void OnStartPlaybackCommandExecute()
-        {
-           
-            NoArgDelegate fetcher = new NoArgDelegate(startPlayback);
-            fetcher.BeginInvoke(null, null);
-                                              
-        }
-        public Command StopPlaybackCommand { get; private set; }
-
-        private void OnStopPlaybackCommandExecute()
-        {
-            NoArgDelegate fetcher = new NoArgDelegate(stopPlayback);
-            fetcher.BeginInvoke(null, null);   
-        }
         #endregion //Commands
 
-        #region CLPHistoryVM Import
-
-                public void CLPHistoryViewModel(CLPPageViewModel page, CLPHistory history)
-                {
-                    PageVM = page;
-                    _historyItems = history.HistoryItems;
-                    _undoneHistoryItems = history.UndoneHistoryItems;
-                    _objectReferences = history.ObjectReferences;
-                    _history = history;
-                    CLPService = CLPServiceAgent.Instance;
-
-                    //AppMessages.ChangePlayback.Register(this, (playback) =>
-                    //{
-                    //    if (this.PlaybackControlsVisibility == Visibility.Collapsed)
-                    //        this.PlaybackControlsVisibility = Visibility.Visible;
-                    //    else
-                    //        this.PlaybackControlsVisibility = Visibility.Collapsed;
-
-
-                    //});
-                }
-                #region properties
-                private CLPPageViewModel _pageVM;
-                public CLPPageViewModel PageVM
-                {
-                    get
-                    {
-                        return _pageVM;
-                    }
-                    set
-                    {
-                        _pageVM = value;
-                    }
-                }
-                private CLPHistory _history;
-                public CLPHistory History
-                {
-                    get
-                    {
-                        return _history;
-                    }
-                    set
-                    {
-                        _history = value;
-                    }
-                }
-
-                private Dictionary<string, object> _objectReferences;
-                public Dictionary<string, object> ObjectReferences
-                {
-                    get
-                    {
-                        return _objectReferences;
-                    }
-                }
-
-                private ObservableCollection<CLPHistoryItem> _historyItems;
-                public ObservableCollection<CLPHistoryItem> HistoryItems
-                {
-                    get
-                    {
-                        return _historyItems;
-                    }
-
-                }
-               
-                //List to enable undo/redo functionality
-                private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
-                public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
-                {
-                    get
-                    {
-                        return _undoneHistoryItems;
-                    }
-
-                }
-                private object _inkCanvas;
-                public object InkCanvas
-                {
-                    get
-                    {
-                        return _inkCanvas as System.Windows.Controls.InkCanvas;
-                    }
-                    set
-                    {
-                        _inkCanvas = value;
-                    }
-
-                }
-        #endregion //properties
-                #region addhistoryitems
-                public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
-                {
-                    string uniqueID = null;
-                    if (obj is CLPPageObjectBase)
-                    {
-                        uniqueID = (obj as CLPPageObjectBase).UniqueID;
-                    }
-                    else if (obj is Stroke)
-                    {
-                        uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    }
-                    else if (obj is String)
-                    {
-                        uniqueID = (CLPPage.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    }
-
-                    if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
-                    {
-                        AddObjectToReferences(uniqueID, obj);
-                    }
-
-                    historyItem.ObjectID = uniqueID;
-                    _historyItems.Add(historyItem);
-                }
-                public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
-                {
-                    string uniqueID = null;
-                    if (obj is CLPPageObjectBase)
-                    {
-                        uniqueID = (obj as CLPPageObjectBase).UniqueID;
-                    }
-                    else if (obj is Stroke)
-                    {
-                        uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    }
-                    else if (obj is String)
-                    {
-                        uniqueID = (CLPPage.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    }
-                    if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
-                    {
-                        AddObjectToReferences(uniqueID, obj);
-                    }
-
-                    historyItem.ObjectID = uniqueID;
-                    _undoneHistoryItems.Add(historyItem);
-                }
-
-                private void AddObjectToReferences(string key, object obj)
-                {
-                    if (obj is Stroke)
-                    {
-                        ObjectReferences.Add(key, CLPPage.StrokeToString(obj as Stroke));
-                    }
-                    else if (obj is String)
-                    {
-                        ObjectReferences.Add(key, obj as string);
-                    }
-                    else if (obj is CLPPageObjectBase)
-                    {
-                        ObjectReferences.Add(key, obj);
-                    }
-                    else
-                    {
-                        Logger.Instance.WriteToLog("Unknown Object attempted to write to History");
-                    }
-                }
-
-                #endregion
-                //private ICLPPageObject GetPageObject(CLPHistoryItem item)
-                //{
-
-                //}
-                private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
-                {
-                    CLPPageObjectBaseViewModel pageObjectViewModel;
-                    CLPPageObjectBase pageObject = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
-                    CLPPageViewModel pageViewModel = PageVM;
-
-                    if (pageObject is CLPImage)
-                    {
-                        pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
-                    }
-                    else if (pageObject is CLPImageStamp)
-                    {
-                        pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
-                    }
-                    else if (pageObject is CLPBlankStamp)
-                    {
-                        pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
-                    }
-                    else if (pageObject is CLPTextBox)
-                    {
-                        pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
-                    }
-                    else
-                    {
-                        pageObjectViewModel = null;
-                    }
-                    return pageObjectViewModel;
-                }
-                public void undo()
-                {
-
-                    if (HistoryItems.Count <= 0) { return; }
-                    CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
-                    if (item.ItemType == CLPHistoryItem.HistoryItemType.Add)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                            String strokeString = ObjectReferences[item.ObjectID] as String;
-                            Stroke stroke = CLPPage.StringToStroke(strokeString);
-                            CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
-                        }
-                        else
-                        {
-                            CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
-                        }
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Erase)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                            String strokeString = ObjectReferences[item.ObjectID] as String;
-                            Stroke stroke = CLPPage.StringToStroke(strokeString);
-                            CLPService.AddStrokeToPage(stroke, PageVM, true);
-                        }
-                        else
-                        {
-                            CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true); 
-                        }
-
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Move)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                        }
-                        else
-                        {
-                            CLPService.ChangePageObjectPosition(ObjectReferences[item.ObjectID] as CLPPageObjectBase, Point.Parse(item.OldValue), true);
-                            
-                        }
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Resize)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                        }
-                        else
-                        {
-                            string h = item.OldValue.Split(',')[0].Trim('(');
-                            string w = item.OldValue.Split(',')[1].Trim(')'); ;
-                            double height = Double.Parse(h);
-                            double width = Double.Parse(w);
-                            CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
-                        }
-                    }
-                    HistoryItems.Remove(item);
-                    AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
-                    return;
-                }
-
-                public void redo()
-                {
-                    if (UndoneHistoryItems.Count <= 0) { return; }
-                    CLPHistoryItem item = UndoneHistoryItems[UndoneHistoryItems.Count - 1];
-
-
-                    if (item.ItemType == CLPHistoryItem.HistoryItemType.Erase)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                            String strokeString = ObjectReferences[item.ObjectID] as String;
-                            Stroke stroke = CLPPage.StringToStroke(strokeString);
-                            CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
-                        }
-                        else
-                        {
-                            CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
-                        }
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Add)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                            String strokeString = ObjectReferences[item.ObjectID] as String;
-                            Stroke stroke = CLPPage.StringToStroke(strokeString);
-                            CLPService.AddStrokeToPage(stroke, PageVM, true);
-                        }
-                        else
-                        {
-                            CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true);
-                        }
-
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Move)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                        }
-                        else
-                        {
-                            CLPService.ChangePageObjectPosition(ObjectReferences[item.ObjectID] as CLPPageObjectBase, Point.Parse(item.NewValue), true);
-                        }
-                    }
-                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Resize)
-                    {
-                        if (ObjectReferences[item.ObjectID] is String)
-                        {
-                        }
-                        else
-                        {
-                            string h = item.NewValue.Split(',')[0].Trim('(');
-                            string w = item.NewValue.Split(',')[1].Trim(')');
-                            double height = Double.Parse(h);
-                            double width = Double.Parse(w);
-                            CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
-                        }
-                    }
-                    UndoneHistoryItems.Remove(item);
-                    AddHistoryItem(ObjectReferences[item.ObjectID], item);
-                    return;
-                }
-                #region playback
-                //For the interaction history playback feature
-                //invokes another thread to make the UI update at the correct times
-                //private delegate void NoArgDelegate(); //already has a def for this delegate
-                public void startPlayback()
-                {
-                    System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-
-                    this.AbortPlayback = false;
-                    int size = HistoryItems.Count;
-                         for(int i = 0; i < size; i++)
-                         {
-                            inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
-                         }
-                         System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
-                         for(int i = 0; i < size; i++)
-                         {
-                             TimeSpan waittime = new TimeSpan(0, 0, 2);
-                             try
-                             {
-                                 if (UndoneHistoryItems.Count >= 2)
-                                 {
-                                     int len = UndoneHistoryItems.Count;
-                                     waittime = UndoneHistoryItems[len - 2].CreationDate - UndoneHistoryItems[len - 1].CreationDate;
-                                 }
-                             }
-                             catch (ArgumentOutOfRangeException e)
-                             {
-                                 Logger.Instance.WriteToLog(e.ToString());
-                             }
-                             inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
-
-                             if (waittime > new TimeSpan(0, 0, 0))
-                             {
-                                 if(waittime > new TimeSpan(0, 0, 15))
-                                 {
-                                     waittime = new TimeSpan(0, 0, 15);
-                                 }
-                                 DateTime wait = DateTime.Now + waittime;
-                                 while(DateTime.Now < wait)
-                                 {
-                                     if(AbortPlayback == true)
-                                     {
-                                         abortPlayback();
-                                         return;
-                                     }
-                                 }
-
-                             }
-                             else
-                             {
-                                 DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
-                                 while (DateTime.Now < wait)
-                                 {
-                                     if (AbortPlayback == true)
-                                     {
-                                         abortPlayback();
-                                         return;
-                                     }
-                                 }
-                             }
-
-                         }
-
-                }
-                private bool _abortPlayback;
-                private bool AbortPlayback
-                {
-                    get
-                    {
-                        return _abortPlayback;
-                    }
-                    set
-                    {
-                        _abortPlayback = value;
-                    }
-
-                }
-                private void abortPlayback()
-                {
-                    System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
-
-                    foreach (var i in UndoneHistoryItems)
-                    {
-                        inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
-                    }
-
-                }
-
-                public void stopPlayback()
-                {
-                    //stops and resets playback history
-                    this.AbortPlayback = true;
-                }
-
-                #endregion //playback
-                #region relayCommands
-                /*
-                 * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
-                private RelayCommand _startPlaybackCommand;
-                public RelayCommand StartPlaybackCommand
-                {
-                    get
-                    {
-                        return _startPlaybackCommand
-                            ?? (_startPlaybackCommand = new RelayCommand(
-                                                  () =>
-                                                  {
-                                                      Console.WriteLine("START PLAYBACK COMMAND");
-                                                      startPlayback();
-                                                  }));
-                    }
-                }
-            */
-                #endregion //relayCommands
-
-        #endregion
-
-                public CLPServiceAgent CLPService { get; set; }
     }
 }

@@ -206,8 +206,14 @@
 
                 </ribbon:RibbonGroup>
                 
-                <!--<ribbon:RibbonGroup Header="History">
-                    
+                <ribbon:RibbonGroup Header="History">
+
+                    <ribbon:RibbonToggleButton Visibility="{Binding Path=InstructorVisibility}"
+                        IsChecked="False"
+                        LargeImageSource="..\Images\video.png"
+                        Label="Enable Playback"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+
                     <ribbon:RibbonButton
                         Label="Undo"
                         LargeImageSource="..\Images\Undo.png"
@@ -217,6 +223,20 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" />
                 
+                </ribbon:RibbonGroup>
+
+                <!--<ribbon:RibbonGroup Header="Audio" Visibility="{Binding Path=InstructorVisibility}">
+
+                    <ribbon:RibbonButton
+                        LargeImageSource="{Binding Path=RecordImage}"
+                        Label="Record Audio"
+                        Command="{Binding Path=AudioCommand}" />
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\play.png"
+                        Label="Play Audio"
+                        Command="{Binding Path=PlayAudioCommand}" />
+                    
                 </ribbon:RibbonGroup>-->
 
                 <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
@@ -255,30 +275,6 @@
                         Command="{Binding Path=CreateNewGridDisplayCommand}" />
                     
                 </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="Replay" Visibility="{Binding Path=InstructorVisibility}">
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\video.png"
-                        Label="Enable"
-                        Command="{Binding Path=EnablePlaybackCommand}" />
-                </ribbon:RibbonGroup>
-                <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play2.png"
-                        Label="Enable Playback"
-                        Command="{Binding Path=EnablePlaybackCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=RecordImage}"
-                        Label="Record"
-                        Command="{Binding Path=AudioCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play.png"
-                        Label="Play Audio"
-                        Command="{Binding Path=PlayAudioCommand}" />
-                    
-                </ribbon:RibbonGroup>-->
                 
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
@@ -327,70 +323,23 @@
             <!--Editing Tab-->
             <ribbon:RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
 
-                
+                <ribbon:RibbonGroup Header="Page">
 
-                <ribbon:RibbonGroup Header="Text">
-                    
                     <ribbon:RibbonButton
-                        Label="Insert Text Box"
-                        LargeImageSource="..\Images\AddText.png"
-                        Command="{Binding Path=InsertTextBoxCommand}" />
-                    
-                    <ribbon:RibbonControlGroup>
-                        <ComboBox x:Name="FontFamilyComboBox"
-                            ItemsSource="{Binding Path=Fonts}"
-                            SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
-                            Width="130"/>
-                        <ComboBox x:Name="FontSizeComboBox"
-                            ItemsSource="{Binding Path=FontSizes}"
-                            SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
-                            Width="45"/>
-                    </ribbon:RibbonControlGroup>
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=AddNewPageCommand}" />
 
-                    <ribbon:RibbonControlGroup>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="BoldButton"
-                            SmallImageSource="..\Images\Bold16.png"
-                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="ItalicButton"
-                            SmallImageSource="..\Images\Italic16.png"
-                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
-                        
-                        <ribbon:RibbonToggleButton
-                            x:Name="UnderlineButton"
-                            SmallImageSource="..\Images\Underline16.png"
-                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
-                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
-                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
-                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
-                        </ribbon:RibbonToggleButton>
+                    <ribbon:RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
 
-                        <Label Content="Font Color" />
+                    <ribbon:RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
 
-                        <ComboBox x:Name="FontColorComboBox"
-                            ItemsSource="{Binding Path=FontColors}"
-                            SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
-                            Width="45">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        
-                    </ribbon:RibbonControlGroup>
-                    
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Insert">
@@ -415,27 +364,77 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertSquareShapeCommand}" />
 
+                    <ribbon:RibbonButton
+                        Label="Insert Ink Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkRegionCommand}" />
+
                 </ribbon:RibbonGroup>
 
-                <ribbon:RibbonGroup Header="Page">
-                    
-                    <ribbon:RibbonButton
-                        Label="Add Page Here"
-                        LargeImageSource="..\Images\AddPage.png"
-                        Command="{Binding Path=AddNewPageCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        Label="Delete This Page"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=DeletePageCommand}" />
+                <ribbon:RibbonGroup Header="Text">
 
                     <ribbon:RibbonButton
-                        Label="Copy This Page"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />
+                        Label="Insert Text Box"
+                        LargeImageSource="..\Images\AddText.png"
+                        Command="{Binding Path=InsertTextBoxCommand}" />
+
+                    <ribbon:RibbonControlGroup>
+                        <ComboBox x:Name="FontFamilyComboBox"
+                            ItemsSource="{Binding Path=Fonts}"
+                            SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
+                            Width="130"/>
+                        <ComboBox x:Name="FontSizeComboBox"
+                            ItemsSource="{Binding Path=FontSizes}"
+                            SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
+                            Width="45"/>
+                    </ribbon:RibbonControlGroup>
+
+                    <ribbon:RibbonControlGroup>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="BoldButton"
+                            SmallImageSource="..\Images\Bold16.png"
+                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="ItalicButton"
+                            SmallImageSource="..\Images\Italic16.png"
+                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <ribbon:RibbonToggleButton
+                            x:Name="UnderlineButton"
+                            SmallImageSource="..\Images\Underline16.png"
+                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            <ribbon:RibbonToggleButton.ControlSizeDefinition>
+                                <ribbon:RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            </ribbon:RibbonToggleButton.ControlSizeDefinition>
+                        </ribbon:RibbonToggleButton>
+
+                        <Label Content="Font Color" />
+
+                        <ComboBox x:Name="FontColorComboBox"
+                            ItemsSource="{Binding Path=FontColors}"
+                            SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
+                            Width="45">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                    </ribbon:RibbonControlGroup>
 
                 </ribbon:RibbonGroup>
-                
+
             </ribbon:RibbonTab>
             
         </ribbon:Ribbon>

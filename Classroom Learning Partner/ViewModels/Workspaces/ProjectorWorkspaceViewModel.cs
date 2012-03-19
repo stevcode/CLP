@@ -13,7 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ProjectorWorkspaceViewModel()
             : base()
         {
-            Console.WriteLine(Title + " created");
         }
 
         public override string Title { get { return "ProjectorWorkspaceVM"; } }

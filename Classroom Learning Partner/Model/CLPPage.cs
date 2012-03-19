@@ -109,7 +109,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageHistory property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), null);
 
         /// <summary>
         /// Gets or sets the property value.

@@ -98,7 +98,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             genBmpImage.EndInit();
             genBmpImage.Freeze();
 
-            memoryStream.Close();
+            //memoryStream.Close();
             memoryStream.Dispose();
             memoryStream = null;
 

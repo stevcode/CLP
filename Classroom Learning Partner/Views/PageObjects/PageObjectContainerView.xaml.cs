@@ -4,6 +4,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows;
 using System.Windows.Input;
 using System;
+using System.Windows.Controls.Primitives;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -25,42 +26,17 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            //PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
+            ICLPPageObject pageObject = (this.DataContext as ICLPPageObject);
 
-            bool isStampedObject = false;
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
-            //{
-            //    isStampedObject = true;
-            //}
-
-            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
+            if (App.MainWindowViewModel.IsAuthoring)
             {
-                //CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObjectContainerViewModel.PageObject);
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
             }
         }
 
-        private bool isDragging = false;
-        private void MoveThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-
             ICLPPageObject pageObject = (this.DataContext as ICLPPageObject);
-
 
             if (App.MainWindowViewModel.IsAuthoring)
             {
@@ -84,117 +60,37 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 }
 
                 Point pt = new Point(x, y);
-                isDragging = true;
                 CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
             }
         }
 
-        private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            ICLPPageObject pageObject = (this.DataContext as ICLPPageObject);
+
             if (App.MainWindowViewModel.IsAuthoring)
             {
-                ////PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
-                //double newHeight = pageObjectContainerViewModel.Height + e.VerticalChange;
-                //double newWidth = pageObjectContainerViewModel.Width + e.HorizontalChange;
-                //if (newHeight < 10)
-                //{
-                //    newHeight = 10;
-                //}
-                //if (newWidth < 10)
-                //{
-                //    newWidth = 10;
-                //}
-                //if (newHeight + pageObjectContainerViewModel.Position.Y > 816)
-                //{
-                //    newHeight = pageObjectContainerViewModel.Height;
-                //}
-                //if (newWidth + pageObjectContainerViewModel.Position.X > 1056)
-                //{
-                //    newWidth = pageObjectContainerViewModel.Width;
-                //}
+                double newHeight = pageObject.Height + e.VerticalChange;
+                double newWidth = pageObject.Width + e.HorizontalChange;
+                if (newHeight < 10)
+                {
+                    newHeight = 10;
+                }
+                if (newWidth < 10)
+                {
+                    newWidth = 10;
+                }
+                if (newHeight + pageObject.Position.Y > 816)
+                {
+                    newHeight = pageObject.Height;
+                }
+                if (newWidth + pageObject.Position.X > 1056)
+                {
+                    newWidth = pageObject.Width;
+                }
 
-                //CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObjectContainerViewModel, newHeight, newWidth);
+                CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObject, newHeight, newWidth);
             }
         }
-
-        private void dragButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            //PageObjectContainerViewModel pageObjectContainerViewModel = (this.DataContext as PageObjectContainerViewModel);
-
-            bool isStampedObject = false;
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPBlankStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPBlankStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPImageStampViewModel)
-            //{
-            //    if (!(pageObjectContainerViewModel.PageObjectViewModel as CLPImageStampViewModel).IsAnchored)
-            //    {
-            //        isStampedObject = true;
-            //    }
-            //}
-
-            //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
-            //{
-            //    isStampedObject = true;
-            //}
-
-
-            if (isDragging)
-            {
-	            if (App.MainWindowViewModel.IsAuthoring || isStampedObject)
-	            {
-                    //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
-                    //{
-                    //    CLPSnapTileContainerViewModel tile = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileContainerViewModel;
-                    //    //Steve - re-write for pageObjectContainer revamp
-                    //    //foreach (var pageObject in pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjects)
-                    //    //{
-                    //    //    if (pageObject.PageObjectViewModel is CLPSnapTileViewModel)
-                    //    //    {
-
-                    //    //        CLPSnapTileViewModel otherTile = pageObject.PageObjectViewModel as CLPSnapTileViewModel;
-                    //    //        if (tile.PageObject.UniqueID != otherTile.PageObject.UniqueID)
-                    //    //        {
-                    //    //            Console.WriteLine("x: " + otherTile.PageObject.Position.X.ToString());
-                    //    //            Console.WriteLine("y: " + otherTile.PageObject.Position.Y.ToString());
-                    //    //            double deltaX = Math.Abs(pageObjectContainerViewModel.Position.X - otherTile.PageObject.Position.X);
-                    //    //            double deltaY = Math.Abs(pageObjectContainerViewModel.Position.Y - otherTile.PageObject.Position.Y);
-                    //    //            if (deltaX < 50 && deltaY < 60)
-                    //    //            {
-                    //    //                foreach (var tileColor in tile.Tiles)
-                    //    //                {
-                    //    //                    otherTile.Tiles.Add(tileColor);
-                    //    //                }
-
-                    //    //                pageObject.Height = CLPSnapTile.TILE_HEIGHT * otherTile.Tiles.Count;
-
-                    //    //                CLPService.RemovePageObjectFromPage(pageObjectContainerViewModel);
-                    //    //                break;
-                    //    //            }
-                    //    //        }
-                    //    //    }
-                    //    //}
-                    //}
-	            }
-            }
-
-            isDragging = false;
-        }
-
-        private void removeTileButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void duplicateTileButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
     }
 }

@@ -244,13 +244,6 @@ namespace Classroom_Learning_Partner.Model
             //Jessie - grab notebookNames from database if using DB
         }
 
-
-        //public void ConvertNotebookToXPS(CLPNotebookViewModel notebookVM)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
         public void Exit()
         {
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
@@ -258,7 +251,6 @@ namespace Classroom_Learning_Partner.Model
             //run network disconnect
 
             Environment.Exit(0);
-
         }
 
 
@@ -270,237 +262,107 @@ namespace Classroom_Learning_Partner.Model
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
                 Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length/1024.0).ToString() + " kB");
             }
-           
-        }
-
-
-        //public void SendLaserPosition(Point pt)
-        //{
-        //    //want to wrap this to check if Channel is null, will throw an exception if the "projector" isn't on. 
-        //    if (App.Peer.Channel != null)
-        //    {
-        //        App.Peer.Channel.LaserUpdate(pt);
-        //    }
-        //}
-
-        //public void TurnOffLaser()
-        //{
-        //    if (App.Peer.Channel != null)
-        //    {
-        //        App.Peer.Channel.TurnOffLaser();
-        //    }
-        //}
-        private bool undoRedo = false;
-        public void AddPageObjectToPage(CLPPageObjectBase pageObject, bool undo)
-        {
-            undoRedo = undo;
-            Point p = pageObject.Position;
-            AddPageObjectToPage(pageObject);
-            undoRedo = false;
-        }
-        public void AddPageObjectToPage(CLPPageObjectBase pageObject)
-        {
-            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            //{
-            //    CLPPageObjectBaseViewModel pageObjectViewModel;
-            //    if (pageObject is CLPImage)
-            //    {
-            //        pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPImageStamp)
-            //    {
-            //        pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPBlankStamp)
-            //    {
-            //        pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPTextBox)
-            //    {
-            //        pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
-            //    }
-            //    else if (pageObject is CLPSnapTileContainer)
-            //    {
-            //        pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
-            //    }
-            //    else
-            //    {
-            //        pageObjectViewModel = null;
-            //    }
-
-            //    pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
-            //    pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
-
-            if (!undoRedo)
-            {
-                CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Add);
-                //need to access the pageVM somehow
-                //pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
-            }
-                //DATABASE add pageobject to current page
-            //});
         }
         
-        public void RemovePageObjectFromPage(CLPPageObjectBaseViewModel pageObject, bool undo)
+        public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {
-            undoRedo = undo;
-            RemovePageObjectFromPage(pageObject);
-            undoRedo = false;
+            CLPPage page = GetPageFromID(pageID);
+            AddPageObjectToPage(page, pageObject);
         }
+
+        public void AddPageObjectToPage(CLPPage page, ICLPPageObject pageObject)
+        {
+            if (page != null)
+            {
+                pageObject.PageID = page.UniqueID;
+                page.PageObjects.Add(pageObject);
+
+                if (!page.PageHistory.IgnoreHistory)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
+                    page.PageHistory.HistoryItems.Add(item);
+                }
+            }
+        }
+
         public void RemovePageObjectFromPage(ICLPPageObject pageObject)
         {
-            //Steve - will not work with grid display
-            ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PageObjects.Remove(pageObject);
-            //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-            //pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-            ////AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            ////{
-            ////    pageViewModel.PageObjectContainerViewModels.Remove(pageObjectContainerViewModel);
-            ////    pageViewModel.Page.PageObjects.Remove(pageObjectContainerViewModel.PageObjectViewModel.PageObject);
-            ////    //DATABASE remove page object from current page
-            ////});
-            //if (!undoRedo)
-            //{
-            //    CLPHistoryItem item = new CLPHistoryItem("ERASE");
-            //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
-            //}
+            RemovePageObjectFromPage(pageObject.PageID, pageObject);
         }
-        public void RemovePageObjectFromPage(CLPPageObjectBaseViewModel pageObject)
+
+        public void RemovePageObjectFromPage(string pageID, ICLPPageObject pageObject)
         {
-            //foreach (var container in pageObject.PageViewModel.PageObjectContainerViewModels)
-            //{
-            //    if (container.PageObjectViewModel.PageObject.UniqueID == pageObject.PageObject.UniqueID)
-            //    {
-            //        RemovePageObjectFromPage(container);
-            //        break;
-            //    }
-            //}
+            CLPPage page = GetPageFromID(pageID);
+            RemovePageObjectFromPage(page, pageObject);
         }
-        
-        public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page)
+
+        public void RemovePageObjectFromPage(CLPPage page, ICLPPageObject pageObject)
         {
-            Stroke s = null;
-            foreach (var v in page.InkStrokes)
+            if (page != null)
             {
-                
-                if(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString().Equals(v.GetPropertyData(CLPPage.StrokeIDKey).ToString()) )
+                foreach (ICLPPageObject po in page.PageObjects)
+                {
+                    if (po.UniqueID == pageObject.UniqueID)
                     {
-                        s = v;
+                        page.PageObjects.Remove(po);
                         break;
                     }
+                }
+
+                
+
+                if (!page.PageHistory.IgnoreHistory)
+                {
+                	CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
+                    page.PageHistory.HistoryItems.Add(item);
+                }
             }
-            if(s != null)
-                page.InkStrokes.Remove(s);
+        }
 
-        }
-        public void RemoveStrokeFromPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
+        public CLPPage GetPageFromID(string pageID)
         {
-            page.undoFlag = isUndo;
-            RemoveStrokeFromPage(stroke, page);
-            page.undoFlag = false;
-        }
-        public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page)
-        {
-            page.InkStrokes.Add(stroke);
-            
-        }
-        public void AddStrokeToPage(Stroke stroke, CLPPageViewModel page, bool isUndo)
-        {
-            page.undoFlag = isUndo;
-            AddStrokeToPage(stroke, page);
-            page.undoFlag = false;
-        }
-        //public void ChangePageObjectPosition(PageObjectContainerViewModel pageObjectContainerViewModel, Point pt)
-        //{
-        //    Point oldLocation = pageObjectContainerViewModel.Position;
-        //    pageObjectContainerViewModel.Position = pt;
-            
-        //    //if (!undoRedo)
-        //    //{
-        //    //    CLPHistoryItem item = new CLPHistoryItem("MOVE");
-        //    //    item.OldValue = oldLocation.ToString();
-        //    //    item.NewValue = pt.ToString();
-        //    //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
-        //    //}
-
-
-        //    //if (pageObjectContainerViewModel.PageObjectViewModel is CLPSnapTileContainerViewModel)
-        //    //{
-        //    //    CLPSnapTileContainerViewModel snapTileVM = pageObjectContainerViewModel.PageObjectViewModel as CLPSnapTileContainerViewModel;
-        //    //    if (snapTileVM.NextTile != null)
-        //    //    {
-        //    //        foreach (var container in snapTileVM.PageViewModel.PageObjectContainerViewModels)
-        //    //        {
-        //    //            if (container.PageObjectViewModel is CLPSnapTileContainerViewModel)
-        //    //            {
-        //    //                if ((container.PageObjectViewModel as CLPSnapTileContainerViewModel).PageObject.UniqueID == snapTileVM.NextTile.PageObject.UniqueID)
-        //    //                {
-        //    //                    container.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
-        //    //                    container.PageObjectViewModel.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
-        //    //                    container.PageObjectViewModel.PageObject.Position = new Point(pageObjectContainerViewModel.Position.X, pageObjectContainerViewModel.Position.Y + CLPSnapTileContainer.TILE_HEIGHT);
-        //    //                }
-        //    //            }
-                        
-        //    //        }
-        //    //    }
-        //    //}
-        //    //send change to projector and students?
-        //    //DATABASE change page object's position
-        //}
+            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                CLPPage page = notebook.GetNotebookPageByID(pageID);
+                if (page != null)
+                {
+                    return page;
+                }
+            }
+            return null;
+        }     
+        
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
-            Point oldLocation = pageObject.Position;
-            CLPPageViewModel page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
-            
-            pageObject.Position = pt;
-
-            if (!undoRedo)
+            CLPPage page = GetPageFromID(pageObject.PageID);
+            if (!page.PageHistory.IgnoreHistory)
             {
-                CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Move);
-                item.OldValue = oldLocation.ToString();
-                item.NewValue = pt.ToString();
-                //how do we get the page this object is on to ultimately add a historyItem to the History?? -claire
-                //pageObject.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+                CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
+                page.PageHistory.HistoryItems.Add(item);
             }
+
+            pageObject.Position = pt;
         }
-        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, bool undo)
+
+        public void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
         {
-            undoRedo = undo;
-            ChangePageObjectPosition(pageObject, pt);
-        }
-       
-        //public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)
-        //{
-        //    double oldHeight = pageObjectContainerViewModel.Height;
-        //    double oldWidth = pageObjectContainerViewModel.Width;
-        //    Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
-        //    Tuple<double, double> newValue = new Tuple<double, double>(height, width);
-        //    pageObjectContainerViewModel.Height = height;
-        //    pageObjectContainerViewModel.Width = width;
-        //    //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Height = height;
-        //    //pageObjectContainerViewModel.PageObjectViewModel.PageObject.Width = width;
-        //    //DATABASE change page object's dimensions
-        //    //if (!undoRedo)
-        //    //{
-        //    //    CLPHistoryItem item = new CLPHistoryItem("RESIZE");
-        //    //    item.OldValue = oldValue.ToString();
-        //    //    item.NewValue = newValue.ToString();
-        //    //    pageObjectContainerViewModel.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
-        //    //}
-        //}
-        public void ChangePageObjectDimensions(CLPPageObjectBaseViewModel pageObject, double height, double width, bool isUndo)
-        {
-            //undoRedo = isUndo;
-            //foreach (var container in pageObject.PageViewModel.PageObjectContainerViewModels)
+            //Commented out for now because not useful at all. Just uncomment to start using.
+            //CLPPage page = GetPageFromID(pageObject.PageID);
+            //if (!page.PageHistory.IgnoreHistory)
             //{
-            //    if (container.PageObjectViewModel.PageObject.UniqueID == pageObject.PageObject.UniqueID)
-            //    {
-            //        ChangePageObjectDimensions(container, height, width);
-            //        break;
-            //    }
+            //    double oldHeight = pageObject.Height;
+            //    double oldWidth = pageObject.Width;
+            //    Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
+            //    Tuple<double, double> newValue = new Tuple<double, double>(height, width);
+
+            //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.ResizePageObject, pageObject.UniqueID, oldValue.ToString(), newValue.ToString());
+            //    page.PageHistory.HistoryItems.Add(item);
             //}
-            //undoRedo = false;
+
+            pageObject.Height = height;
+            pageObject.Width = width;
         }
+
         public void SendInkCanvas(System.Windows.Controls.InkCanvas ink)
         {
             //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
@@ -508,9 +370,6 @@ namespace Classroom_Learning_Partner.Model
             //    pageViewModel.HistoryVM.InkCanvas = ink;
             //});
         }
-       
-        
-
 
         public void RetrieveNotebooks(string username)
         {
@@ -603,6 +462,59 @@ namespace Classroom_Learning_Partner.Model
         public void Initialize()
         {
         }
+
+        //DONT REMOVE
+        private void testNetworkBandwidth()
+        {
+            //int start = 1000;
+            //int mult = 3000;
+            //int currentSize;
+            //DateTime currentTime;
+            //string content = generateRandomString(start);
+            //string increment = generateRandomString(mult);
+
+            //for (int i = 0; i < 71; i++)
+            //{
+            //    currentSize = start + i * mult;
+            //    if (i != 0)
+            //    {
+            //        content = content + increment;
+            //    }
+            //    for (int t = 0; t < 5; t++)
+            //    {
+            //        currentTime = DateTime.Now;
+            //        App.Peer.Channel.TestNetworkSending(content, currentTime, i, currentSize, App.Peer.UserName);
+            //        Logger.Instance.WriteToLog("-------------------------------------");
+            //        Logger.Instance.WriteToLog("Item sent: " + i.ToString());
+            //        Console.WriteLine("Item sent: " + i.ToString() + " trial " + t.ToString());
+            //        Logger.Instance.WriteToLog("Size sent: " + currentSize.ToString());
+            //        System.Threading.Thread.Sleep(5000);
+            //    }
+            //}
+        }
+
+        //for network testing only
+        private String generateRandomString(int length)
+        {
+            //Initiate objects & vars
+            Random random = new Random();
+            String randomString = "";
+            int randNumber;
+
+            //Loop ‘length’ times to generate a random number or character
+            for (int i = 0; i < length; i++)
+            {
+                if (random.Next(1, 3) == 1)
+                    randNumber = random.Next(97, 123); //char {a-z}
+                else
+                    randNumber = random.Next(48, 58); //int {0-9}
+
+                //append random char or digit to random string
+                randomString = randomString + (char)randNumber;
+            }
+            //return the random string
+            return randomString;
+        }
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

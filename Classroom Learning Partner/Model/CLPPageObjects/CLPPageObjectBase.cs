@@ -4,14 +4,19 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Catel.Data;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.Model
 {
     public interface ICLPPageObject
     {
+        string PageID { get; set; }
+        string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
         ObservableCollection<string> PageObjectStrokes { get; }
+        bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
         double Height { get; set; }
         double Width { get; set; }
@@ -38,7 +43,13 @@ namespace Classroom_Learning_Partner.Model
         public CLPPageObjectBase()
         {
             CreationDate = DateTime.Now;
+            UniqueID = Guid.NewGuid().ToString();
+            ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
+            CanAcceptStrokes = false;
+            Height = 10;
+            Width = 10;
+            Position = new Point(10, 10);
         }
 
         /// <summary>
@@ -51,6 +62,34 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string PageID
+        {
+            get { return GetValue<string>(PageIDProperty); }
+            set { SetValue(PageIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageIDProperty = RegisterProperty("PageID", typeof(string), "");
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string ParentID
+        {
+            get { return GetValue<string>(ParentIDProperty); }
+            set { SetValue(ParentIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ParentID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
 
         /// <summary>
         /// Creation date of pageObject.
@@ -93,6 +132,20 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjectStrokes property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectStrokesProperty = RegisterProperty("PageObjectStrokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAcceptStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
 
         /// <summary>
         /// Position of pageObject on page.
@@ -139,25 +192,51 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
 
         public abstract string PageObjectType { get; }
 
         public abstract CLPPageObjectBase Duplicate();
+
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+
+        }
+
+        protected virtual void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            StrokeCollection strokesToRemove = new StrokeCollection();
+            StrokeCollection PageObjectActualStrokes = CLPPage.StringsToStrokes(PageObjectStrokes);
+            foreach (Stroke objectStroke in PageObjectActualStrokes)
+            {
+
+                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
+                foreach (Stroke pageStroke in removedStrokes)
+                {
+                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
+                    if (objectStrokeUniqueID == pageStrokeUniqueID)
+                    {
+                        strokesToRemove.Add(objectStroke);
+                    }
+                }
+            }
+
+            foreach (Stroke stroke in strokesToRemove)
+            {
+                string stringStroke = CLPPage.StrokeToString(stroke);
+                PageObjectStrokes.Remove(stringStroke);
+            }
+
+
+            foreach (Stroke stroke in addedStrokes)
+            {
+                Stroke newStroke = stroke.Clone();
+                Matrix transform = new Matrix();
+                transform.Translate(-Position.X, -Position.Y);
+                newStroke.Transform(transform, true);
+
+                PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
+            }
+        }
 
         #endregion
     }
