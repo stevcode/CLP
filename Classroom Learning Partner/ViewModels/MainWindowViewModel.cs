@@ -1015,11 +1015,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (CanSendToTeacher)
             {
-                Console.WriteLine("actual send");
-                AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
-                {
-                    //CLPService.SubmitPage(clpPageViewModel);
-                });
+                CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
+                CLPServiceAgent.Instance.SubmitPage(page);
             }
             CanSendToTeacher = false;
             timer.Dispose();
