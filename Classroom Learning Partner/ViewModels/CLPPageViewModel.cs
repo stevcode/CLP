@@ -410,15 +410,39 @@ namespace Classroom_Learning_Partner.ViewModels
             return null;
         }
 
+        int i = 0;
+        DispatcherTimer timer;
         public void StartPlayBack()
         {
-            int i = 0;
+            
             while (PageHistory.HistoryItems.Count > 0)
             {
                 Undo();
                 i++;
             }
 
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Tick += new EventHandler(timer_Tick);
+
+                timer.Start();
+                
+            
+
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            if (i <= 0)
+            {
+                timer.Stop();
+            }
+            else
+	        {
+                Redo();
+                i--;
+            }
+            
         }
 
         public void Undo()
@@ -529,6 +553,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStartPlaybackCommandExecute()
         {
             StartPlayBack();
+            
         }
 
         /// <summary>
