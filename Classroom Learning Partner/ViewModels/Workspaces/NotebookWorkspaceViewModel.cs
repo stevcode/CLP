@@ -30,6 +30,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPageViewModel>();
 
+            Notebook.GeneratePageIndexes();
+
             //InitializeLinkedDisplay();
         }
 

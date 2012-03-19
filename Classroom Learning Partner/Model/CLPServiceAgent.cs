@@ -206,15 +206,13 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
-                Console.WriteLine("Submitting Page " + page.PageIndex + ": " + page.UniqueID);
-
                 //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
                 //string s_history = ObjectSerializer.ToString(history);
 
                 //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
                 //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
 
-                //ObservableCollection<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
+                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
                 string oldSubmissionID = page.SubmissionID;
                 page.SubmissionID = Guid.NewGuid().ToString();
@@ -225,6 +223,7 @@ namespace Classroom_Learning_Partner.Model
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
 
                 double size_standard = s_page.Length / 1024.0;
+                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
                 Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
 
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));

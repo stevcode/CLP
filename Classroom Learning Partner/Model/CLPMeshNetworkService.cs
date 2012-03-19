@@ -29,6 +29,9 @@ namespace Classroom_Learning_Partner.Model
         void SubmitPage(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
+        void SubmitPage(string userName, string submissionID, string submissionTime, string s_history, string s_pageObjects, List<string> inkStrokes);
+
+        [OperationContract(IsOneWay = true)]
         void SaveNotebookDB(string s_notebook, string userName);
 
         [OperationContract(IsOneWay = true)]
@@ -95,7 +98,7 @@ namespace Classroom_Learning_Partner.Model
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
              {
-                    if (App.CurrentUserMode == App.UserMode.Instructor)
+                 if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
                         Console.WriteLine("page received");
                         Console.WriteLine(s_page);
@@ -105,20 +108,31 @@ namespace Classroom_Learning_Partner.Model
                         page.SubmitterName = userName;
                         CLPServiceAgent.Instance.AddSubmission(page);
                     }
-                    else if (App.CurrentUserMode == App.UserMode.Server)
-                    {
-                        pagecount++;
-                        Console.WriteLine("Page Recieved, Current Count: " + pagecount.ToString());
-                        //Database call
-                        if (App.DatabaseUse == App.DatabaseMode.Using)
-                        {
-                            CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPServiceAgent.Instance.SavePageDB(page);
-                        }
-                    }
+                 else if (App.CurrentUserMode == App.UserMode.Server)
+                 {
+                     pagecount++;
+                     Console.WriteLine("Page Recieved, Current Count: " + pagecount.ToString());
+                     //Database call
+                     if (App.DatabaseUse == App.DatabaseMode.Using)
+                     {
+                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                         CLPServiceAgent.Instance.SavePageDB(page);
+                     }
+                 }
              return null;
              }, null);   
 
+        }
+
+        public void SubmitPage(string userName, string submissionID, string submissionTime, string s_history, string s_pageObjects, List<string> inkStrokes)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+             {
+
+
+                 return null;
+             }, null);
         }
 
         public void SaveNotebookDB(string s_notebook, string userName)
