@@ -127,6 +127,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPage(CLPPage page)
         {
+            page.ParentNotebookID = UniqueID;
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();

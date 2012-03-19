@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
-            SubmissionPages = new ObservableCollection<CLPPageViewModel>();
+            SubmissionPages = new ObservableCollection<CLPPage>();
 
             Notebook.GeneratePageIndexes();
 
@@ -143,16 +143,16 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<CLPPageViewModel> SubmissionPages
+        public ObservableCollection<CLPPage> SubmissionPages
         {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(SubmissionPagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
             set { SetValue(SubmissionPagesProperty, value); }
         }
 
         /// <summary>
         /// Register the SubmissionPages property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPageViewModel>));
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
         /// <summary>
         /// Gets or sets the property value.

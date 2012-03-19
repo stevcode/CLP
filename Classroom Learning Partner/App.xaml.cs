@@ -44,7 +44,6 @@ namespace Classroom_Learning_Partner
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
-
             
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {

@@ -99,15 +99,23 @@ namespace Classroom_Learning_Partner.Model
                 (DispatcherOperationCallback)delegate(object arg)
              {
                  if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
-                    {
-                        Console.WriteLine("page received");
-                        Console.WriteLine(s_page);
+                 {
+                     Console.WriteLine("page received");
+                     Console.WriteLine(s_page);
 
-                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                        page.IsSubmission = true;
-                        page.SubmitterName = userName;
-                        CLPServiceAgent.Instance.AddSubmission(page);
-                    }
+                     CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                     page.IsSubmission = true;
+                     page.SubmitterName = userName;
+
+                     foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                     {
+                         if (page.ParentNotebookID == notebook.UniqueID)
+                         {
+                             CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                             break;
+                         }
+                     }
+                 }
                  else if (App.CurrentUserMode == App.UserMode.Server)
                  {
                      pagecount++;
@@ -130,6 +138,15 @@ namespace Classroom_Learning_Partner.Model
                 (DispatcherOperationCallback)delegate(object arg)
              {
 
+
+                 //foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                 //{
+                 //    if (page.ParentNotebookID == notebook.UniqueID)
+                 //    {
+                 //        CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                 //        break;
+                 //    }
+                 //}
 
                  return null;
              }, null);

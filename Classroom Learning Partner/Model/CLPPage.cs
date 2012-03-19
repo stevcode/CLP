@@ -60,6 +60,20 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        public string ParentNotebookID
+        {
+            get { return GetValue<string>(ParentNotebookIDProperty); }
+            set { SetValue(ParentNotebookIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ParentNotebookID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }

@@ -32,9 +32,9 @@ namespace Classroom_Learning_Partner.Model
         private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
         public static CLPServiceAgent Instance { get { return _instance; } }
 
-        public void AddSubmission(CLPPage page)
+        public void AddSubmission(CLPNotebook notebook, CLPPage page)
         {
-            //App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+            notebook.AddStudentSubmission(page.UniqueID, page);
         }
 
         public void OpenNotebook(string notebookName)
