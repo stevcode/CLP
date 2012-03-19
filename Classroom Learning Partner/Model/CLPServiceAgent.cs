@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.Model
                         CLPNotebook newNotebook = new CLPNotebook();
                         newNotebook.NotebookName = notebookName;
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                        App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
+                        //App.MainWindowViewModel.CurrentNotebookIndex = App.MainWindowViewModel.OpenNotebooks.Count - 1;
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel();
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
