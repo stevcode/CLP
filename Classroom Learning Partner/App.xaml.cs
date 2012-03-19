@@ -39,11 +39,13 @@ namespace Classroom_Learning_Partner
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
 
+            CurrentUserMode = UserMode.Student;
+            _databaseUse = DatabaseMode.NotUsing;
+
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
-            CurrentUserMode = UserMode.Student;
-            _databaseUse = DatabaseMode.NotUsing;
+            
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
                 ConnectToDB();
