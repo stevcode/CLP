@@ -38,7 +38,8 @@ namespace Classroom_Learning_Partner
 
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
-            
+
+            Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
             CurrentUserMode = UserMode.Instructor;
