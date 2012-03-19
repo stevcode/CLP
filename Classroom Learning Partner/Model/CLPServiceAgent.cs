@@ -205,8 +205,13 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
+                Console.WriteLine("Submitting page: " + page.UniqueID);
+
+
+
                 string s_page = ObjectSerializer.ToString(page);
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, null, null));
             }
         }
         
@@ -307,14 +312,6 @@ namespace Classroom_Learning_Partner.Model
 
             pageObject.Height = height;
             pageObject.Width = width;
-        }
-
-        public void SendInkCanvas(System.Windows.Controls.InkCanvas ink)
-        {
-            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            //{
-            //    pageViewModel.HistoryVM.InkCanvas = ink;
-            //});
         }
 
         public void RetrieveNotebooks(string username)
