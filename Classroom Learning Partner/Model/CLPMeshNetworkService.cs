@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.Model
         void Disconnect(string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SubmitPage(string page, string userName);
+        void SubmitFullPage(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
         void SubmitPage(string userName, string submissionID, string submissionTime, string s_history, string s_pageObjects, List<string> inkStrokes);
@@ -93,7 +93,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
      
-        public void SubmitPage(string s_page, string userName)
+        public void SubmitFullPage(string s_page, string userName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)

@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.NotUsing;
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {

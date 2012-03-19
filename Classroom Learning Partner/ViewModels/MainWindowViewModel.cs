@@ -1019,7 +1019,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPServiceAgent.Instance.SubmitPage(page);
             }
             CanSendToTeacher = false;
-            timer.Dispose();
+            
         }
 
         /// <summary>
@@ -1043,6 +1043,7 @@ namespace Classroom_Learning_Partner.ViewModels
             timer.Stop();
             timer.Elapsed -= timer_Elapsed;
             IsSending = false;
+            timer.Dispose();
         }
 
         /// <summary>
