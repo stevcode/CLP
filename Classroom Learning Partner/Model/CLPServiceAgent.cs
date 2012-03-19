@@ -15,6 +15,7 @@ using MongoDB.Driver.Builders;
 using System.Windows.Input;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Collections.ObjectModel;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -205,13 +206,28 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
-                Console.WriteLine("Submitting page: " + page.UniqueID);
+                Console.WriteLine("Submitting Page " + page.PageIndex + ": " + page.UniqueID);
 
+                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                //string s_history = ObjectSerializer.ToString(history);
 
+                //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
+                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+
+                //ObservableCollection<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
+
+                string oldSubmissionID = page.SubmissionID;
+                page.SubmissionID = Guid.NewGuid().ToString();
+                page.SubmissionTime = DateTime.Now;
+                //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
 
                 string s_page = ObjectSerializer.ToString(page);
                 App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, null, null));
+
+                double size_standard = s_page.Length / 1024.0;
+                Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
+
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
             }
         }
         
