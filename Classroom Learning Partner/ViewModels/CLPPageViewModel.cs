@@ -13,6 +13,8 @@ using System.Windows.Threading;
 using System.Threading;
 using Catel.MVVM;
 using Catel.Data;
+using Classroom_Learning_Partner.ViewModels.Displays;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -31,6 +33,8 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
 
+
+            
             //History Stuff
             //AppMessages.ChangePlayback.Register(this, (playback) =>
             //{
@@ -41,6 +45,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
             //});
+            //Commands
+            StartPlaybackCommand = new Command(OnStartPlaybackCommandExecute);
+            StopPlaybackCommand = new Command(OnStopPlaybackCommandExecute);
              
             Page = page;
 
@@ -294,11 +301,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 stroke.AddPropertyData(CLPPage.Immutable, "false");
                 StringStrokes.Add(CLPPage.StrokeToString(stroke));
-                //if (!undoFlag)
-                //{
-                //    CLPHistoryItem item = new CLPHistoryItem("ADD");
-                //    HistoryVM.AddHistoryItem(stroke, item);
-                //}
+                if (!undoFlag)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Add);
+                    AddHistoryItem(stroke, item);
+                }
             }
 
 
@@ -420,450 +427,458 @@ namespace Classroom_Learning_Partner.ViewModels
        //                                   }));
        //     }
        // }
+        private delegate void NoArgDelegate();
+        public Command StartPlaybackCommand { get; private set; }
 
+        private void OnStartPlaybackCommandExecute()
+        {
+           
+            NoArgDelegate fetcher = new NoArgDelegate(startPlayback);
+            fetcher.BeginInvoke(null, null);
+                                              
+        }
+        public Command StopPlaybackCommand { get; private set; }
+
+        private void OnStopPlaybackCommandExecute()
+        {
+            NoArgDelegate fetcher = new NoArgDelegate(stopPlayback);
+            fetcher.BeginInvoke(null, null);   
+        }
         #endregion //Commands
 
         #region CLPHistoryVM Import
 
-        //        public CLPHistoryViewModel(CLPPageViewModel page, CLPHistory history)
-        //        {
-        //            PageVM = page;
-        //            _historyItems = history.HistoryItems;
-        //            _undoneHistoryItems = history.UndoneHistoryItems;
-        //            _objectReferences = history.ObjectReferences;
-        //            _history = history;
-        //            CLPService = new CLPServiceAgent();
+                public void CLPHistoryViewModel(CLPPageViewModel page, CLPHistory history)
+                {
+                    PageVM = page;
+                    _historyItems = history.HistoryItems;
+                    _undoneHistoryItems = history.UndoneHistoryItems;
+                    _objectReferences = history.ObjectReferences;
+                    _history = history;
+                    CLPService = CLPServiceAgent.Instance;
 
-        //            AppMessages.ChangePlayback.Register(this, (playback) =>
-        //            {
-        //                if (this.PlaybackControlsVisibility == Visibility.Collapsed)
-        //                    this.PlaybackControlsVisibility = Visibility.Visible;
-        //                else
-        //                    this.PlaybackControlsVisibility = Visibility.Collapsed;
-
-
-        //            });
-        //        }
-        //        #region properties
-        //        private CLPPageViewModel _pageVM;
-        //        public CLPPageViewModel PageVM
-        //        {
-        //            get
-        //            {
-        //                return _pageVM;
-        //            }
-        //            set
-        //            {
-        //                _pageVM = value;
-        //            }
-        //        }
-        //        private CLPHistory _history;
-        //        public CLPHistory History
-        //        {
-        //            get
-        //            {
-        //                return _history;
-        //            }
-        //            set
-        //            {
-        //                _history = value;
-        //            }
-        //        }
-
-        //        private Dictionary<string, object> _objectReferences;
-        //        public Dictionary<string, object> ObjectReferences
-        //        {
-        //            get
-        //            {
-        //                return _objectReferences;
-        //            }
-        //        }
-
-        //        private ObservableCollection<CLPHistoryItem> _historyItems;
-        //        public ObservableCollection<CLPHistoryItem> HistoryItems
-        //        {
-        //            get
-        //            {
-        //                return _historyItems;
-        //            }
-
-        //        }
-        //        private Visibility _playbackControlsVisibility = Visibility.Collapsed;
-        //        public Visibility PlaybackControlsVisibility
-        //        {
-        //            get
-        //            {
-        //                return _playbackControlsVisibility;
-        //            }
-        //            set
-        //            {
-        //                _playbackControlsVisibility = value;
-        //                RaisePropertyChanged("PlaybackControlsVisibility");
+                    //AppMessages.ChangePlayback.Register(this, (playback) =>
+                    //{
+                    //    if (this.PlaybackControlsVisibility == Visibility.Collapsed)
+                    //        this.PlaybackControlsVisibility = Visibility.Visible;
+                    //    else
+                    //        this.PlaybackControlsVisibility = Visibility.Collapsed;
 
 
-        //            }
-        //        }
-        //        //List to enable undo/redo functionality
-        //        private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
-        //        public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
-        //        {
-        //            get
-        //            {
-        //                return _undoneHistoryItems;
-        //            }
+                    //});
+                }
+                #region properties
+                private CLPPageViewModel _pageVM;
+                public CLPPageViewModel PageVM
+                {
+                    get
+                    {
+                        return _pageVM;
+                    }
+                    set
+                    {
+                        _pageVM = value;
+                    }
+                }
+                private CLPHistory _history;
+                public CLPHistory History
+                {
+                    get
+                    {
+                        return _history;
+                    }
+                    set
+                    {
+                        _history = value;
+                    }
+                }
 
-        //        }
-        //        private object _inkCanvas;
-        //        public object InkCanvas
-        //        {
-        //            get
-        //            {
-        //                return _inkCanvas as System.Windows.Controls.InkCanvas;
-        //            }
-        //            set
-        //            {
-        //                _inkCanvas = value;
-        //            }
+                private Dictionary<string, object> _objectReferences;
+                public Dictionary<string, object> ObjectReferences
+                {
+                    get
+                    {
+                        return _objectReferences;
+                    }
+                }
 
-        //        }
-        //#endregion //properties
-        //        #region addhistoryitems
-        //        public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
-        //        {
-        //            string uniqueID = null;
-        //            if (obj is CLPPageObjectBase)
-        //            {
-        //                uniqueID = (obj as CLPPageObjectBase).UniqueID;
-        //            }
-        //            else if (obj is Stroke)
-        //            {
-        //                uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-        //            }
-        //            else if (obj is String)
-        //            {
-        //                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-        //            }
+                private ObservableCollection<CLPHistoryItem> _historyItems;
+                public ObservableCollection<CLPHistoryItem> HistoryItems
+                {
+                    get
+                    {
+                        return _historyItems;
+                    }
 
-        //            if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
-        //            {
-        //                AddObjectToReferences(uniqueID, obj);
-        //            }
+                }
+               
+                //List to enable undo/redo functionality
+                private ObservableCollection<CLPHistoryItem> _undoneHistoryItems;
+                public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
+                {
+                    get
+                    {
+                        return _undoneHistoryItems;
+                    }
 
-        //            historyItem.ObjectID = uniqueID;
-        //            _historyItems.Add(historyItem);
-        //        }
-        //        public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
-        //        {
-        //            string uniqueID = null;
-        //            if (obj is CLPPageObjectBase)
-        //            {
-        //                uniqueID = (obj as CLPPageObjectBase).UniqueID;
-        //            }
-        //            else if (obj is Stroke)
-        //            {
-        //                uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-        //            }
-        //            else if (obj is String)
-        //            {
-        //                uniqueID = (CLPPageViewModel.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-        //            }
-        //            if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
-        //            {
-        //                AddObjectToReferences(uniqueID, obj);
-        //            }
+                }
+                private object _inkCanvas;
+                public object InkCanvas
+                {
+                    get
+                    {
+                        return _inkCanvas as System.Windows.Controls.InkCanvas;
+                    }
+                    set
+                    {
+                        _inkCanvas = value;
+                    }
 
-        //            historyItem.ObjectID = uniqueID;
-        //            _undoneHistoryItems.Add(historyItem);
-        //        }
+                }
+        #endregion //properties
+                #region addhistoryitems
+                public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
+                {
+                    string uniqueID = null;
+                    if (obj is CLPPageObjectBase)
+                    {
+                        uniqueID = (obj as CLPPageObjectBase).UniqueID;
+                    }
+                    else if (obj is Stroke)
+                    {
+                        uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    }
+                    else if (obj is String)
+                    {
+                        uniqueID = (CLPPage.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    }
 
-        //        private void AddObjectToReferences(string key, object obj)
-        //        {
-        //            if (obj is Stroke)
-        //            {
-        //                ObjectReferences.Add(key, CLPPageViewModel.StrokeToString(obj as Stroke));
-        //            }
-        //            else if (obj is String)
-        //            {
-        //                ObjectReferences.Add(key, obj as string);
-        //            }
-        //            else if (obj is CLPPageObjectBase)
-        //            {
-        //                ObjectReferences.Add(key, obj);
-        //            }
-        //            else
-        //            {
-        //                Logger.Instance.WriteToLog("Unknown Object attempted to write to History");
-        //            }
-        //        }
+                    if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
+                    {
+                        AddObjectToReferences(uniqueID, obj);
+                    }
 
-        //        #endregion
+                    historyItem.ObjectID = uniqueID;
+                    _historyItems.Add(historyItem);
+                }
+                public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
+                {
+                    string uniqueID = null;
+                    if (obj is CLPPageObjectBase)
+                    {
+                        uniqueID = (obj as CLPPageObjectBase).UniqueID;
+                    }
+                    else if (obj is Stroke)
+                    {
+                        uniqueID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    }
+                    else if (obj is String)
+                    {
+                        uniqueID = (CLPPage.StringToStroke(obj as string) as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    }
+                    if (uniqueID != null && !ObjectReferences.ContainsKey(uniqueID))
+                    {
+                        AddObjectToReferences(uniqueID, obj);
+                    }
 
-        //        private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
-        //        {
-        //            CLPPageObjectBaseViewModel pageObjectViewModel;
-        //            CLPPageObjectBase pageObject = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
-        //            CLPPageViewModel pageViewModel = PageVM;
+                    historyItem.ObjectID = uniqueID;
+                    _undoneHistoryItems.Add(historyItem);
+                }
 
-        //            if (pageObject is CLPImage)
-        //            {
-        //                pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
-        //            }
-        //            else if (pageObject is CLPImageStamp)
-        //            {
-        //                pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-        //            }
-        //            else if (pageObject is CLPBlankStamp)
-        //            {
-        //                pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-        //            }
-        //            else if (pageObject is CLPTextBox)
-        //            {
-        //                pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
-        //            }
-        //            else
-        //            {
-        //                pageObjectViewModel = null;
-        //            }
-        //            return pageObjectViewModel;
-        //        }
-        //        public void undo()
-        //        {
+                private void AddObjectToReferences(string key, object obj)
+                {
+                    if (obj is Stroke)
+                    {
+                        ObjectReferences.Add(key, CLPPage.StrokeToString(obj as Stroke));
+                    }
+                    else if (obj is String)
+                    {
+                        ObjectReferences.Add(key, obj as string);
+                    }
+                    else if (obj is CLPPageObjectBase)
+                    {
+                        ObjectReferences.Add(key, obj);
+                    }
+                    else
+                    {
+                        Logger.Instance.WriteToLog("Unknown Object attempted to write to History");
+                    }
+                }
 
-        //            if (HistoryItems.Count <= 0) { return; }
-        //            CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
-        //            if (item.ItemType == "ADD")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                    String strokeString = ObjectReferences[item.ObjectID] as String;
-        //                    Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
-        //                    CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
-        //                }
-        //                else
-        //                {
-        //                    CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
-        //                }
-        //            }
-        //            else if (item.ItemType == "ERASE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                    String strokeString = ObjectReferences[item.ObjectID] as String;
-        //                    Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
-        //                    CLPService.AddStrokeToPage(stroke, PageVM, true);
-        //                }
-        //                else
-        //                {
-        //                    CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true); 
-        //                }
+                #endregion
+                //private ICLPPageObject GetPageObject(CLPHistoryItem item)
+                //{
 
-        //            }
-        //            else if (item.ItemType == "MOVE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                }
-        //                else
-        //                {
-        //                    CLPService.ChangePageObjectPosition(GetPageObject(item), Point.Parse(item.OldValue), true);
-        //                }
-        //            }
-        //            else if (item.ItemType == "RESIZE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                }
-        //                else
-        //                {
-        //                    string h = item.OldValue.Split(',').ElementAt(0).Trim('(');
-        //                    string w = item.OldValue.Split(',').ElementAt(1).Trim(')'); ;
-        //                    double height = Double.Parse(h);
-        //                    double width = Double.Parse(w);
-        //                    CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
-        //                }
-        //            }
-        //            HistoryItems.Remove(item);
-        //            AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
-        //            return;
-        //        }
+                //}
+                private CLPPageObjectBaseViewModel GetPageObject(CLPHistoryItem item)
+                {
+                    CLPPageObjectBaseViewModel pageObjectViewModel;
+                    CLPPageObjectBase pageObject = ObjectReferences[item.ObjectID] as CLPPageObjectBase;
+                    CLPPageViewModel pageViewModel = PageVM;
 
-        //        public void redo()
-        //        {
-        //            if (UndoneHistoryItems.Count <= 0) { return; }
-        //            CLPHistoryItem item = UndoneHistoryItems.ElementAt(UndoneHistoryItems.Count - 1);
+                    if (pageObject is CLPImage)
+                    {
+                        pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage);
+                    }
+                    else if (pageObject is CLPImageStamp)
+                    {
+                        pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp);
+                    }
+                    else if (pageObject is CLPBlankStamp)
+                    {
+                        pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp);
+                    }
+                    else if (pageObject is CLPTextBox)
+                    {
+                        pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox);
+                    }
+                    else
+                    {
+                        pageObjectViewModel = null;
+                    }
+                    return pageObjectViewModel;
+                }
+                public void undo()
+                {
+
+                    if (HistoryItems.Count <= 0) { return; }
+                    CLPHistoryItem item = HistoryItems[HistoryItems.Count - 1];
+                    if (item.ItemType == CLPHistoryItem.HistoryItemType.Add)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                            String strokeString = ObjectReferences[item.ObjectID] as String;
+                            Stroke stroke = CLPPage.StringToStroke(strokeString);
+                            CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
+                        }
+                        else
+                        {
+                            CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
+                        }
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Erase)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                            String strokeString = ObjectReferences[item.ObjectID] as String;
+                            Stroke stroke = CLPPage.StringToStroke(strokeString);
+                            CLPService.AddStrokeToPage(stroke, PageVM, true);
+                        }
+                        else
+                        {
+                            CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true); 
+                        }
+
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Move)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                        }
+                        else
+                        {
+                            CLPService.ChangePageObjectPosition(ObjectReferences[item.ObjectID] as CLPPageObjectBase, Point.Parse(item.OldValue), true);
+                            
+                        }
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Resize)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                        }
+                        else
+                        {
+                            string h = item.OldValue.Split(',')[0].Trim('(');
+                            string w = item.OldValue.Split(',')[1].Trim(')'); ;
+                            double height = Double.Parse(h);
+                            double width = Double.Parse(w);
+                            CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
+                        }
+                    }
+                    HistoryItems.Remove(item);
+                    AddUndoneHistoryItem(ObjectReferences[item.ObjectID], item);
+                    return;
+                }
+
+                public void redo()
+                {
+                    if (UndoneHistoryItems.Count <= 0) { return; }
+                    CLPHistoryItem item = UndoneHistoryItems[UndoneHistoryItems.Count - 1];
 
 
-        //            if (item.ItemType == "ERASE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                    String strokeString = ObjectReferences[item.ObjectID] as String;
-        //                    Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
-        //                    CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
-        //                }
-        //                else
-        //                {
-        //                    CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
-        //                }
-        //            }
-        //            else if (item.ItemType == "ADD")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                    String strokeString = ObjectReferences[item.ObjectID] as String;
-        //                    Stroke stroke = CLPPageViewModel.StringToStroke(strokeString);
-        //                    CLPService.AddStrokeToPage(stroke, PageVM, true);
-        //                }
-        //                else
-        //                {
-        //                    CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true);
-        //                }
+                    if (item.ItemType == CLPHistoryItem.HistoryItemType.Erase)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                            String strokeString = ObjectReferences[item.ObjectID] as String;
+                            Stroke stroke = CLPPage.StringToStroke(strokeString);
+                            CLPService.RemoveStrokeFromPage(stroke, PageVM, true);
+                        }
+                        else
+                        {
+                            CLPService.RemovePageObjectFromPage(GetPageObject(item), true);
+                        }
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Add)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                            String strokeString = ObjectReferences[item.ObjectID] as String;
+                            Stroke stroke = CLPPage.StringToStroke(strokeString);
+                            CLPService.AddStrokeToPage(stroke, PageVM, true);
+                        }
+                        else
+                        {
+                            CLPService.AddPageObjectToPage(GetPageObject(item).PageObject, true);
+                        }
 
-        //            }
-        //            else if (item.ItemType == "MOVE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                }
-        //                else
-        //                {
-        //                    CLPService.ChangePageObjectPosition(GetPageObject(item), Point.Parse(item.NewValue), true);
-        //                }
-        //            }
-        //            else if (item.ItemType == "RESIZE")
-        //            {
-        //                if (ObjectReferences[item.ObjectID] is String)
-        //                {
-        //                }
-        //                else
-        //                {
-        //                    string h = item.NewValue.Split(',').ElementAt(0).Trim('(');
-        //                    string w = item.NewValue.Split(',').ElementAt(1).Trim(')');
-        //                    double height = Double.Parse(h);
-        //                    double width = Double.Parse(w);
-        //                    CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
-        //                }
-        //            }
-        //            UndoneHistoryItems.Remove(item);
-        //            AddHistoryItem(ObjectReferences[item.ObjectID], item);
-        //            return;
-        //        }
-        //        #region playback
-        //        //For the interaction history playback feature
-        //        //invokes another thread to make the UI update at the correct times
-        //        private delegate void NoArgDelegate();
-        //        public void startPlayback()
-        //        {
-        //            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Move)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                        }
+                        else
+                        {
+                            CLPService.ChangePageObjectPosition(ObjectReferences[item.ObjectID] as CLPPageObjectBase, Point.Parse(item.NewValue), true);
+                        }
+                    }
+                    else if (item.ItemType == CLPHistoryItem.HistoryItemType.Resize)
+                    {
+                        if (ObjectReferences[item.ObjectID] is String)
+                        {
+                        }
+                        else
+                        {
+                            string h = item.NewValue.Split(',')[0].Trim('(');
+                            string w = item.NewValue.Split(',')[1].Trim(')');
+                            double height = Double.Parse(h);
+                            double width = Double.Parse(w);
+                            CLPService.ChangePageObjectDimensions(GetPageObject(item), height, width, true);
+                        }
+                    }
+                    UndoneHistoryItems.Remove(item);
+                    AddHistoryItem(ObjectReferences[item.ObjectID], item);
+                    return;
+                }
+                #region playback
+                //For the interaction history playback feature
+                //invokes another thread to make the UI update at the correct times
+                //private delegate void NoArgDelegate(); //already has a def for this delegate
+                public void startPlayback()
+                {
+                    System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
 
-        //            this.AbortPlayback = false;
-        //            int size = HistoryItems.Count;
-        //                 for(int i = 0; i < size; i++)
-        //                 {
-        //                    inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
-        //                 }
-        //                 System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
-        //                 for(int i = 0; i < size; i++)
-        //                 {
-        //                     TimeSpan waittime = new TimeSpan(0, 0, 2);
-        //                     try
-        //                     {
-        //                         if (UndoneHistoryItems.Count >= 2)
-        //                         {
-        //                             int len = UndoneHistoryItems.Count;
-        //                             waittime = DateTime.Parse(UndoneHistoryItems.ElementAt(len - 2).MetaData.GetValue("CreationDate")) - DateTime.Parse(UndoneHistoryItems.ElementAt(len - 1).MetaData.GetValue("CreationDate"));
-        //                         }
-        //                     }
-        //                     catch (ArgumentOutOfRangeException e)
-        //                     {
-        //                         Logger.Instance.WriteToLog(e.ToString());
-        //                     }
-        //                     inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
+                    this.AbortPlayback = false;
+                    int size = HistoryItems.Count;
+                         for(int i = 0; i < size; i++)
+                         {
+                            inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(undo));
+                         }
+                         System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+                         for(int i = 0; i < size; i++)
+                         {
+                             TimeSpan waittime = new TimeSpan(0, 0, 2);
+                             try
+                             {
+                                 if (UndoneHistoryItems.Count >= 2)
+                                 {
+                                     int len = UndoneHistoryItems.Count;
+                                     waittime = UndoneHistoryItems[len - 2].CreationDate - UndoneHistoryItems[len - 1].CreationDate;
+                                 }
+                             }
+                             catch (ArgumentOutOfRangeException e)
+                             {
+                                 Logger.Instance.WriteToLog(e.ToString());
+                             }
+                             inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));
 
-        //                     if (waittime > new TimeSpan(0, 0, 0))
-        //                     {
-        //                         if(waittime > new TimeSpan(0, 0, 15))
-        //                         {
-        //                             waittime = new TimeSpan(0, 0, 15);
-        //                         }
-        //                         DateTime wait = DateTime.Now + waittime;
-        //                         while(DateTime.Now < wait)
-        //                         {
-        //                             if(AbortPlayback == true)
-        //                             {
-        //                                 abortPlayback();
-        //                                 return;
-        //                             }
-        //                         }
+                             if (waittime > new TimeSpan(0, 0, 0))
+                             {
+                                 if(waittime > new TimeSpan(0, 0, 15))
+                                 {
+                                     waittime = new TimeSpan(0, 0, 15);
+                                 }
+                                 DateTime wait = DateTime.Now + waittime;
+                                 while(DateTime.Now < wait)
+                                 {
+                                     if(AbortPlayback == true)
+                                     {
+                                         abortPlayback();
+                                         return;
+                                     }
+                                 }
 
-        //                     }
-        //                     else
-        //                     {
-        //                         DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
-        //                         while (DateTime.Now < wait)
-        //                         {
-        //                             if (AbortPlayback == true)
-        //                             {
-        //                                 abortPlayback();
-        //                                 return;
-        //                             }
-        //                         }
-        //                     }
+                             }
+                             else
+                             {
+                                 DateTime wait = DateTime.Now + new TimeSpan(0,0,0,0,100);
+                                 while (DateTime.Now < wait)
+                                 {
+                                     if (AbortPlayback == true)
+                                     {
+                                         abortPlayback();
+                                         return;
+                                     }
+                                 }
+                             }
 
-        //                 }
+                         }
 
-        //        }
-        //        private bool _abortPlayback;
-        //        private bool AbortPlayback
-        //        {
-        //            get
-        //            {
-        //                return _abortPlayback;
-        //            }
-        //            set
-        //            {
-        //                _abortPlayback = value;
-        //            }
+                }
+                private bool _abortPlayback;
+                private bool AbortPlayback
+                {
+                    get
+                    {
+                        return _abortPlayback;
+                    }
+                    set
+                    {
+                        _abortPlayback = value;
+                    }
 
-        //        }
-        //        private void abortPlayback()
-        //        {
-        //            System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
+                }
+                private void abortPlayback()
+                {
+                    System.Windows.Controls.InkCanvas inkCanvas = this.InkCanvas as System.Windows.Controls.InkCanvas;
 
-        //            foreach (var i in UndoneHistoryItems)
-        //            {
-        //                inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
-        //            }
+                    foreach (var i in UndoneHistoryItems)
+                    {
+                        inkCanvas.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new NoArgDelegate(redo));   
+                    }
 
-        //        }
+                }
 
-        //        public void stopPlayback()
-        //        {
-        //            //stops and resets playback history
-        //            this.AbortPlayback = true;
-        //        }
+                public void stopPlayback()
+                {
+                    //stops and resets playback history
+                    this.AbortPlayback = true;
+                }
 
-        //        #endregion //playback
-        //        #region relayCommands
-        //        /*
-        //         * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
-        //        private RelayCommand _startPlaybackCommand;
-        //        public RelayCommand StartPlaybackCommand
-        //        {
-        //            get
-        //            {
-        //                return _startPlaybackCommand
-        //                    ?? (_startPlaybackCommand = new RelayCommand(
-        //                                          () =>
-        //                                          {
-        //                                              Console.WriteLine("START PLAYBACK COMMAND");
-        //                                              startPlayback();
-        //                                          }));
-        //            }
-        //        }
-        //    */
-        //        #endregion //relayCommands
+                #endregion //playback
+                #region relayCommands
+                /*
+                 * Doesn't work for unknown reasons, it calls the relayCommand in PageViewModel
+                private RelayCommand _startPlaybackCommand;
+                public RelayCommand StartPlaybackCommand
+                {
+                    get
+                    {
+                        return _startPlaybackCommand
+                            ?? (_startPlaybackCommand = new RelayCommand(
+                                                  () =>
+                                                  {
+                                                      Console.WriteLine("START PLAYBACK COMMAND");
+                                                      startPlayback();
+                                                  }));
+                    }
+                }
+            */
+                #endregion //relayCommands
 
         #endregion
+
+                public CLPServiceAgent CLPService { get; set; }
     }
 }

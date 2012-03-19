@@ -23,7 +23,10 @@ namespace Classroom_Learning_Partner.Model
             Erase,
             Copy,
             Remove,
-            Duplicate
+            Duplicate,
+            Resize,
+            Save,
+            Submit
         }
 
         #endregion
@@ -55,7 +58,7 @@ namespace Classroom_Learning_Partner.Model
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
         /// <summary>

@@ -255,7 +255,12 @@
                         Command="{Binding Path=CreateNewGridDisplayCommand}" />
                     
                 </ribbon:RibbonGroup>
-
+                <ribbon:RibbonGroup Header="Replay" Visibility="{Binding Path=InstructorVisibility}">
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\video.png"
+                        Label="Enable"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+                </ribbon:RibbonGroup>
                 <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
                     
                     <ribbon:RibbonButton

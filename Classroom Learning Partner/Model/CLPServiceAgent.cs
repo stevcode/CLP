@@ -240,7 +240,7 @@ namespace Classroom_Learning_Partner.Model
         public void AddPageObjectToPage(CLPPageObjectBase pageObject, bool undo)
         {
             undoRedo = undo;
-            Point p = pageObject.Position;
+            //?Point p = pageObject.Position;
             AddPageObjectToPage(pageObject);
             undoRedo = false;
         }
@@ -276,12 +276,13 @@ namespace Classroom_Learning_Partner.Model
 
             //    pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
             //    pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
-                
-            //    if (!undoRedo)
-            //    {
-            //        CLPHistoryItem item = new CLPHistoryItem("ADD");
-            //        pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
-            //    }
+
+            if (!undoRedo)
+            {
+                CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Add);
+                //need to access the pageVM somehow
+                //pageViewModel.HistoryVM.AddHistoryItem(pageObject, item);
+            }
                 //DATABASE add pageobject to current page
             //});
         }
@@ -394,7 +395,24 @@ namespace Classroom_Learning_Partner.Model
         //}
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
+            Point oldLocation = pageObject.Position;
+            CLPPageViewModel page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            
             pageObject.Position = pt;
+
+            if (!undoRedo)
+            {
+                CLPHistoryItem item = new CLPHistoryItem(CLPHistoryItem.HistoryItemType.Move);
+                item.OldValue = oldLocation.ToString();
+                item.NewValue = pt.ToString();
+                //how do we get the page this object is on to ultimately add a historyItem to the History?? -claire
+                //pageObject.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(pageObjectContainerViewModel.PageObjectViewModel.PageObject, item);
+            }
+        }
+        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, bool undo)
+        {
+            undoRedo = undo;
+            ChangePageObjectPosition(pageObject, pt);
         }
        
         //public void ChangePageObjectDimensions(PageObjectContainerViewModel pageObjectContainerViewModel, double height, double width)

@@ -40,6 +40,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
             SetServerCommand = new Command(OnSetServerCommandExecute);
 
+            //History Commands
+            EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
             //Ribbon Content
             CanSendToTeacher = true;
             IsSending = false;
@@ -1266,6 +1268,29 @@ namespace Classroom_Learning_Partner.ViewModels
         //                                  }));
         //    }
         //}
+
+        /// <summary>
+        /// Gets the DeletePageCommand command.
+        /// </summary>
+        public Command EnablePlaybackCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the DeletePageCommand command is executed.
+        /// </summary>
+        private void OnEnablePlaybackCommandExecute()
+        {
+           // AppMessages.ChangePlayback.Send(true);
+            Visibility currentState = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility;
+            if (currentState == Visibility.Collapsed)
+            {
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility = Visibility.Visible;
+            }
+            else
+            {
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility = Visibility.Collapsed;
+            }
+
+        }
         #endregion //History Commands
 
         #endregion //Commands

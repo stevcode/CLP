@@ -388,6 +388,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\video.png" />
     <Resource Include="Images\SnapTileIcon.png" />
     <Content Include="External Libraries\Catel.Core.dll" />
     <Content Include="External Libraries\Catel.Extensions.Controls.dll" />
