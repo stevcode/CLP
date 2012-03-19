@@ -15,6 +15,7 @@ using MongoDB.Driver.Builders;
 using System.Windows.Input;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Collections.ObjectModel;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -31,9 +32,9 @@ namespace Classroom_Learning_Partner.Model
         private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
         public static CLPServiceAgent Instance { get { return _instance; } }
 
-        public void AddSubmission(CLPPage page)
+        public void AddSubmission(CLPNotebook notebook, CLPPage page)
         {
-            //App.CurrentNotebookViewModel.AddStudentSubmission(page.UniqueID, new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+            notebook.AddStudentSubmission(page.UniqueID, page);
         }
 
         public void OpenNotebook(string notebookName)
@@ -255,9 +256,27 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
+                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                //string s_history = ObjectSerializer.ToString(history);
+
+                //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
+                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+
+                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
+
+                string oldSubmissionID = page.SubmissionID;
+                page.SubmissionID = Guid.NewGuid().ToString();
+                page.SubmissionTime = DateTime.Now;
+                //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
+
                 string s_page = ObjectSerializer.ToString(page);
-                App.Peer.Channel.SubmitPage(s_page, App.Peer.UserName);
-                Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length / 1024.0).ToString() + " kB");
+                App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
+
+                double size_standard = s_page.Length / 1024.0;
+                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
+                Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
+
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
             }
         }
 
@@ -356,14 +375,6 @@ namespace Classroom_Learning_Partner.Model
 
             pageObject.Height = height;
             pageObject.Width = width;
-        }
-
-        public void SendInkCanvas(System.Windows.Controls.InkCanvas ink)
-        {
-            //AppMessages.RequestCurrentDisplayedPage.Send((pageViewModel) =>
-            //{
-            //    pageViewModel.HistoryVM.InkCanvas = ink;
-            //});
         }
 
         public void RetrieveNotebooks(string username)

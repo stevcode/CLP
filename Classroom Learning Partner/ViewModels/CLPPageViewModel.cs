@@ -37,6 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            NumberOfSubmissions = 0;
 
             Page = page;
 
@@ -198,7 +199,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int NumberOfSubmissions
+        {
+            get { return GetValue<int>(NumberOfSubmissionsProperty); }
+            set { SetValue(NumberOfSubmissionsProperty, value); }
+        }
 
+        /// <summary>
+        /// Register the NumberOfSubmissions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
 
         /// <summary>
         /// Gets or sets the property value.

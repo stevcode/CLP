@@ -23,11 +23,12 @@ namespace Classroom_Learning_Partner.Views
             CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
             CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
             string pageID = pageViewModel.Page.UniqueID;
-            //if (sideBarViewModel.Submissions.ContainsKey(pageID))
-            //{
+            var viewModel = (this.DataContext as NotebookWorkspaceViewModel);
+            if (viewModel.Notebook.Submissions.ContainsKey(pageID))
+            {
 
-            //    sideBarViewModel.SubmissionPages = sideBarViewModel.Submissions[pageID];
-            //}
+                viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
+            }
         }
 
         protected override System.Type GetViewModelType()

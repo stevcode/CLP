@@ -34,44 +34,6 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
-            //We need the inkCanvas in HistoryVM to start a new thread to enable playback
-            CLPServiceAgent.Instance.SendInkCanvas(MainInkCanvas);
-            
-            AppMessages.SetSnapTileMode.Register(this, (setSnapTileEnabled) =>
-                {
-                    isSnapTileEnabled = setSnapTileEnabled;
-                });
-
-            // Register so that we send mouse coordinates for the laser to the projector
-            // When the laser is enabled, add a listener to MouseMove so that sendLaserPointerPosition is called
-            //AppMessages.SetLaserPointerMode.Register(this, (isLaserEnabled) =>
-            //{
-            //    if (isLaserEnabled) RootGrid.MouseMove += sendLaserPointerPosition;
-            //    else
-            //    {
-            //        RootGrid.MouseMove -= sendLaserPointerPosition;
-            //        CLPService.TurnOffLaser();  
-            //    }
-            //});
-
-            //if (App.CurrentUserMode == App.UserMode.Projector)
-            //{
-            //    TopCanvas.Children.Add(_laserPoint);
-            //    _laserPoint.Visibility = Visibility.Collapsed;
-
-            //    AppMessages.TurnOffLaser.Register(this, (action) =>
-            //    {
-            //        _laserPoint.Visibility = Visibility.Collapsed;
-            //    });
-            //}
-
-            ////Register so we receive mouse coordinates for the laser on the projector
-            //AppMessages.UpdateLaserPointerPosition.Register(this, (pt) =>
-            //{
-            //    updateLaserPointerPosition(pt);
-            //});
-
-            
         }
 
         protected override System.Type GetViewModelType()
