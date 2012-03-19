@@ -1,4 +1,4 @@
-using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +39,7 @@ namespace Classroom_Learning_Partner.Model
 
         [OperationContract(IsOneWay = true)]
         void ReceiveNotebook(string page, string userName);
-        
+
 
         [OperationContract(IsOneWay = true)]
         void LaserUpdate(Point pt);
@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner.Model
                 //Currently username is the machine name -> CHANGE when using actual names
                 CLPServiceAgent.Instance.RetrieveNotebooks(userName);
             }
-          
+
         }
 
         public void Disconnect(string userName)
@@ -92,12 +92,12 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
-     
+
         public void SubmitPage(string s_page, string userName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
-             {
+                {
                     if (App.CurrentUserMode == App.UserMode.Instructor)
                     {
                         Console.WriteLine("page received");
@@ -119,8 +119,8 @@ namespace Classroom_Learning_Partner.Model
                             CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
                         }
                     }
-             return null;
-             }, null);   
+                    return null;
+                }, null);
 
         }
         public void SavePage(string s_page, string userName, DateTime submitTime)
@@ -157,7 +157,7 @@ namespace Classroom_Learning_Partner.Model
                 //DB call
                 CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
                 CLPServiceAgent.Instance.SaveNotebookDB(notebook, userName);
-               
+
             }
         }
         public void DistributeNotebook(string s_notebook, string author)
@@ -183,8 +183,8 @@ namespace Classroom_Learning_Partner.Model
                 //{
                 //    App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
                 //}
-                
-               
+
+
             }
         }
 
@@ -282,26 +282,26 @@ namespace Classroom_Learning_Partner.Model
                             //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
                             //foreach (var stringPage in gridDisplayPages)
                             //{
-                                //CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                                //bool isAlreadyInCurrentNotebook = false;
-                                //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                                //{
-                                //    if (pageViewModel.Page.UniqueID == page.UniqueID)
-                                //    {
-                                //        isAlreadyInCurrentNotebook = true;
-                                //    }
-                                //}
+                            //CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
+                            //bool isAlreadyInCurrentNotebook = false;
+                            //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
+                            //{
+                            //    if (pageViewModel.Page.UniqueID == page.UniqueID)
+                            //    {
+                            //        isAlreadyInCurrentNotebook = true;
+                            //    }
+                            //}
 
-                                //if (isAlreadyInCurrentNotebook)
-                                //{
-                                //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
-                                //}
-                                //else
-                                //{
-                                //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                                //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                                //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
-                                //}
+                            //if (isAlreadyInCurrentNotebook)
+                            //{
+                            //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
+                            //}
+                            //else
+                            //{
+                            //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
+                            //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
+                            //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
+                            //}
                             //}
                         }
 
@@ -318,7 +318,7 @@ namespace Classroom_Learning_Partner.Model
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
                         CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                        //bool isAlreadyInCurrentNotebook = false;
+                        bool isAlreadyInCurrentNotebook = false;
                         //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
                         //{
                         //    if (page.IsSubmission)
@@ -329,7 +329,7 @@ namespace Classroom_Learning_Partner.Model
                         //    {
                         //        isAlreadyInCurrentNotebook = true;
                         //    }
-                            
+
                         //}
 
                         //if (isAlreadyInCurrentNotebook)
@@ -381,7 +381,7 @@ namespace Classroom_Learning_Partner.Model
 
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        
+
                         //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
                         //{
                         //    if (pageViewModel.Page.UniqueID == pageID)
@@ -421,7 +421,7 @@ namespace Classroom_Learning_Partner.Model
                         //    }
                         //}
                     }
-                                
+
 
                     return null;
                 }, null);

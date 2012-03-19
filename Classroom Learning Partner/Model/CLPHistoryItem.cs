@@ -16,7 +16,10 @@ namespace Classroom_Learning_Partner.Model
         AddInk, 
         EraseInk,
         SnapTileSnap,
-        SnapTileRemoveTile
+        SnapTileRemoveTile,
+        Copy,
+        Duplicate,
+        Save
     }
 
     /// <summary>
@@ -26,13 +29,6 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
-            Duplicate,
-            Resize,
-            Save,
-            Submit
-        }
-
-        #endregion
 
         #region Constructor & destructor
         /// <summary>

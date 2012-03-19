@@ -65,6 +65,13 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             if (snapTileContainer.Tiles.Count > 1)
             {
                 snapTileContainer.Tiles.RemoveAt(snapTileContainer.Tiles.Count - 1);
+                //add the snapTileRemoveTile history item here
+                CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID(snapTileContainer.PageID).PageHistory;
+                if (!pageHistory.IgnoreHistory)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, snapTileContainer.UniqueID, null, null);
+                    pageHistory.HistoryItems.Add(item);
+                }
             }
         }
 
@@ -123,11 +130,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                                     otherTile.Tiles.Add(tileColor);
                                 }
 
-                                //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count;
+                                //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count; -> don't do this
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
-                                //item.OldValue = oldCount.ToString();
-                                //item.NewValue = otherTile.Tiles.Count.ToString();
+                                //item.OldValue = oldCount.ToString(); -> old num of tiles
+                                //item.NewValue = otherTile.Tiles.Count.ToString(); -> current num of tiles
 
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
 
@@ -142,11 +149,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                                 {
                                     currentTile.Tiles.Add(tileColor);
                                 }
-                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
+                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count; -> ignore
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);
-                                //item.OldValue = oldCount.ToString();
+                                //item.OldValue = oldCount.ToString(); 
                                 //item.NewValue = tile.Tiles.Count.ToString();
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
 

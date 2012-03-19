@@ -30,13 +30,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
-        public CLPPageViewModel(CLPPage page) : base()
+        public CLPPageViewModel(CLPPage page)
+            : base()
         {
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-             
+
             Page = page;
 
             OtherStrokes = new StrokeCollection();
@@ -56,7 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
             //    }
             //}
-            
+
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
 
@@ -75,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model(SupportIEditableObject=false)]
+        [Model(SupportIEditableObject = false)]
         public CLPPage Page
         {
             get { return GetValue<CLPPage>(PageProperty); }
@@ -90,7 +91,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Page","Strokes")]
+        [ViewModelToModel("Page", "Strokes")]
         public ObservableCollection<string> StringStrokes
         {
             get { return GetValue<ObservableCollection<string>>(StringStrokesProperty); }
@@ -190,12 +191,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PlaybackControlsVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PlaybackControlsVisibilityProperty = RegisterProperty("PlaybackControlsVisibility", typeof(Visibility));
-        
+
+        //lock for the playback
+        private static readonly object _locker = new object();
         #endregion //Properties
 
         #region Bindings
 
-        
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -277,6 +280,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    //CLPHistoryItem item = new CLPHistoryItem("ERASE");
                 //    //HistoryVM.AddHistoryItem(stroke, item);
                 //}
+                if (!PageHistory.IgnoreHistory)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
+                    PageHistory.HistoryItems.Add(item);
+                    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
+                }
             }
 
             StrokeCollection addedStrokes = new StrokeCollection();
@@ -286,6 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     string newUniqueID = Guid.NewGuid().ToString();
                     stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    stroke.AddPropertyData(CLPPage.ParentPageID, Page.UniqueID);
                 }
                 foreach (var strokeRemoved in e.Removed)
                 {
@@ -310,6 +320,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    CLPHistoryItem item = new CLPHistoryItem("ADD");
                 //    HistoryVM.AddHistoryItem(stroke, item);
                 //}
+                if (!PageHistory.IgnoreHistory)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
+                    PageHistory.HistoryItems.Add(item);
+                }
             }
 
 
@@ -414,35 +429,51 @@ namespace Classroom_Learning_Partner.ViewModels
         DispatcherTimer timer;
         public void StartPlayBack()
         {
-            
+            PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
             while (PageHistory.HistoryItems.Count > 0)
             {
                 Undo();
                 i++;
             }
-
+            System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Interval = TimeSpan.FromMilliseconds(0);
             timer.Tick += new EventHandler(timer_Tick);
 
-                timer.Start();
-                
-            
+            timer.Start();
+
+
 
         }
 
         void timer_Tick(object sender, EventArgs e)
         {
-            if (i <= 0)
+            
+            if (i == 1)
             {
+                Redo();
+                i = 0;
+                PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
             }
-            else
-	        {
-                Redo();
-                i--;
-            }
-            
+            lock(_locker)
+            {
+                if(this.PageHistory.UndoneHistoryItems.Count >= 2 && i > 0)
+                {
+               
+                    int len = this.PageHistory.UndoneHistoryItems.Count;
+                    TimeSpan interval = this.PageHistory.UndoneHistoryItems[len - 2].CreationDate - this.PageHistory.UndoneHistoryItems[len - 1].CreationDate;
+                    //if there's more than two seconds between the actions just wait for two seconds
+                    if(interval > new TimeSpan(0, 0, 2))
+                    {
+                        interval = new TimeSpan(0, 0, 2);
+                    }
+                    timer.Interval = interval;
+                    i--;
+                }
+           }
+           Redo();
+
         }
 
         public void Undo()
@@ -450,7 +481,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageHistory.IgnoreHistory = true;
             if (PageHistory.HistoryItems.Count > 0)
             {
-                CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count -1];
+                CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
                 PageHistory.HistoryItems.Remove(item);
                 ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
 
@@ -475,12 +506,33 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.ResizePageObject:
                         break;
                     case HistoryItemType.AddInk:
+                        foreach (Stroke s in Page.InkStrokes )
+                        {
+                            if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                            {
+                                Page.InkStrokes.Remove(s);
+                                PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+                                break;
+                            }
+                        }
                         break;
                     case HistoryItemType.EraseInk:
+                        foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                        {
+                            Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+                            if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                            {
+                                PageHistory.TrashedInkStrokes.Remove(s);
+                                Page.InkStrokes.Add(inkStroke);
+                                break;
+                            }
+                        }
                         break;
                     case HistoryItemType.SnapTileSnap:
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
+                        CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+                        tile.Tiles.Add("SpringGreen");
                         break;
                     default:
                         break;
@@ -497,7 +549,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if (PageHistory.UndoneHistoryItems.Count > 0)
             {
                 CLPHistoryItem item = PageHistory.UndoneHistoryItems[PageHistory.UndoneHistoryItems.Count - 1];
-                PageHistory.UndoneHistoryItems.Remove(item);
+                lock (_locker)
+                {
+                    PageHistory.UndoneHistoryItems.Remove(item);
+                }
                 ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
 
                 switch (item.ItemType)
@@ -521,8 +576,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.ResizePageObject:
                         break;
                     case HistoryItemType.AddInk:
+                        foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                        {
+                            Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+                            if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                            {
+                                Page.InkStrokes.Add(inkStroke);
+                                PageHistory.TrashedInkStrokes.Remove(s);
+                                break;
+                            }
+                        }
                         break;
                     case HistoryItemType.EraseInk:
+                        foreach (Stroke s in Page.InkStrokes)
+                        {
+                            if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                            {
+                                Page.InkStrokes.Remove(s);
+                                PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+                                break;
+                            }
+                        }
                         break;
                     case HistoryItemType.SnapTileSnap:
                         break;
@@ -552,8 +626,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnStartPlaybackCommandExecute()
         {
-            StartPlayBack();
-            
+            if (timer != null && timer.IsEnabled)
+            {
+                timer.IsEnabled = false;
+                PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            }
+            else if (Page.PageHistory.UndoneHistoryItems.Count > 0)
+            {
+                timer.IsEnabled = true;
+                PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
+            }
+            else
+            {
+                StartPlayBack();
+            }
+
         }
 
         /// <summary>
@@ -567,53 +654,61 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStopPlaybackCommandExecute()
         {
             // TODO: Handle command logic here
+            while (this.PageHistory.UndoneHistoryItems.Count > 0)
+            {
+                Redo();
+                i--;
+            }
+            timer.Stop();
+            PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
         }
+       
 
-       //private RelayCommand _startPlaybackCommand;
+        //private RelayCommand _startPlaybackCommand;
 
-       // /// <summary>
-       // /// Gets the StartPlaybackCommand.
-       // /// </summary>
-       //private delegate void NoArgDelegate();
-       // public RelayCommand StartPlaybackCommand
-       // {
-       //     get
-       //     {
-       //         return _startPlaybackCommand
-       //             ?? (_startPlaybackCommand = new RelayCommand(
-       //                                   () =>
-       //                                   {
-       //                                       Console.WriteLine("PageVM startplayback");
-       //                                       // Start fetching the playback items asynchronously.
-       //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
-       //                                       fetcher.BeginInvoke(null, null);
-                                              
+        // /// <summary>
+        // /// Gets the StartPlaybackCommand.
+        // /// </summary>
+        //private delegate void NoArgDelegate();
+        // public RelayCommand StartPlaybackCommand
+        // {
+        //     get
+        //     {
+        //         return _startPlaybackCommand
+        //             ?? (_startPlaybackCommand = new RelayCommand(
+        //                                   () =>
+        //                                   {
+        //                                       Console.WriteLine("PageVM startplayback");
+        //                                       // Start fetching the playback items asynchronously.
+        //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
+        //                                       fetcher.BeginInvoke(null, null);
 
-       //                                   }));
-       //     }
-       // }
-        
-  
-        
-       // private RelayCommand _stopPlaybackCommand;
 
-       // /// <summary>
-       // /// Gets the StartPlaybackCommand.
-       // /// </summary>
-       // public RelayCommand StopPlaybackCommand
-       // {
-       //     get
-       //     {
-       //         return _stopPlaybackCommand
-       //             ?? (_stopPlaybackCommand = new RelayCommand(
-       //                                   () =>
-       //                                   {
-       //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
-       //                                       fetcher.BeginInvoke(null, null);
-                                            
-       //                                   }));
-       //     }
-       // }
+        //                                   }));
+        //     }
+        // }
+
+
+
+        // private RelayCommand _stopPlaybackCommand;
+
+        // /// <summary>
+        // /// Gets the StartPlaybackCommand.
+        // /// </summary>
+        // public RelayCommand StopPlaybackCommand
+        // {
+        //     get
+        //     {
+        //         return _stopPlaybackCommand
+        //             ?? (_stopPlaybackCommand = new RelayCommand(
+        //                                   () =>
+        //                                   {
+        //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
+        //                                       fetcher.BeginInvoke(null, null);
+
+        //                                   }));
+        //     }
+        // }
 
         #endregion //Commands
 

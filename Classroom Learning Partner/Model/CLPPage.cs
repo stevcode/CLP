@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.Model
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
+        public static Guid ParentPageID = new Guid("00000000-0000-0000-0000-000000000003");
 
         #endregion
 
@@ -255,7 +256,7 @@ namespace Classroom_Learning_Partner.Model
 
     //    public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
     //    public static Guid Mutable = new Guid("00000000-0000-0000-0000-000000000002");
-        
+
     //    #endregion //StrokeKeys
 
     //    #region Constructors
