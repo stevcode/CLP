@@ -11,8 +11,7 @@ using System.Windows.Controls.Primitives;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
-
-    abstract public class CLPPageObjectBaseViewModel : ViewModelBase 
+    abstract public class CLPPageObjectBaseViewModel : ViewModelBase
     {
         protected CLPPageObjectBaseViewModel() : base()
         {

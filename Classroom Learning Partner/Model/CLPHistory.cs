@@ -91,14 +91,14 @@ namespace Classroom_Learning_Partner.Model
         /// </summary>
         public Dictionary<string,ICLPPageObject> TrashedPageObjects
         {
-            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedObjectsProperty); }
-            set { SetValue(TrashedObjectsProperty, value); }
+            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedPageObjectsProperty); }
+            set { SetValue(TrashedPageObjectsProperty, value); }
         }
 
         /// <summary>
         /// Register the TrashedObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TrashedObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), new Dictionary<string, ICLPPageObject>());
+        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), new Dictionary<string, ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
