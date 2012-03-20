@@ -20,7 +20,9 @@ namespace Classroom_Learning_Partner.Model
         Submit,
         Copy,
         Duplicate,
-        Save
+        Save,
+        StartRecord,
+        StopRecord
     }
 
     /// <summary>

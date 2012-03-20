@@ -70,8 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
             CurrentFontSize = 24;
-            //Steve - Can this be done in XAML? And switched to toggle button?
-            RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+            
 
             AuthoringTabVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
@@ -131,6 +130,18 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
+
+            //Student Record and Playback 
+            RecordVisualCommand = new Command(OnRecordVisualCommand);
+            PlayPauseVisualCommand = new Command(OnPlayPauseVisualCommand);
+            StopVisualCommand = new Command(OnStopVisualCommand);
+            RecordAudioCommand = new Command(OnRecordAudioCommand);
+            PlayAudioCommand = new Command(OnPlayAudioCommand);
+            RecordBothCommand = new Command(OnRecordBothCommand);
+            PlayStopBothCommand = new Command(OnPlayStopBothCommand);
+
+            //Steve - Can this be done in XAML? And switched to toggle button?
+            RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -1367,6 +1378,96 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the RecordVisualCommand command.
+        /// </summary>
+        public Command RecordVisualCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RecordVisualCommand command is executed.
+        /// </summary>
+        private void OnRecordVisualCommandExecute()
+        {
+            CLPServiceAgent.Instance.StartRecordingVisual();
+        }
+
+        /// <summary>
+        /// Gets the PlayPauseVisualCommand command.
+        /// </summary>
+        public Command PlayPauseVisualCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the PlayPauseVisualCommand command is executed.
+        /// </summary>
+        private void OnPlayPauseVisualCommandExecute()
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the StopVisualCommand command.
+        /// </summary>
+        public Command StopVisualCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the StopVisualCommand command is executed.
+        /// </summary>
+        private void OnStopVisualCommandExecute()
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the RecordAudioCommand command.
+        /// </summary>
+        public Command RecordAudioCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RecordAudioCommand command is executed.
+        /// </summary>
+        private void OnRecordAudioCommandExecute()
+        {
+            
+        }
+
+        /// <summary>
+        /// Gets the PlayAudioCommand command.
+        /// </summary>
+        public Command PlayAudioCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the PlayAudioCommand command is executed.
+        /// </summary>
+        private void OnPlayAudioCommandExecute()
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the RecordBothCommand command.
+        /// </summary>
+        public Command RecordBothCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RecordBothCommand command is executed.
+        /// </summary>
+        private void OnRecordBothCommandExecute()
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the PlayStopBothCommand command.
+        /// </summary>
+        public Command PlayStopBothCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the PlayStopBothCommand command is executed.
+        /// </summary>
+        private void OnPlayStopBothCommandExecute()
+        {
+
+        }
 
         #endregion //Insert Commands
 
