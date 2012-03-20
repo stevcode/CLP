@@ -610,6 +610,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
+            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            foreach (CLPPage page in notebook.Pages)
+            {
+                page.PageHistory.ClearHistory();
+            }
             //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 

@@ -16,7 +16,14 @@ namespace Classroom_Learning_Partner.Model
         AddInk, 
         EraseInk,
         SnapTileSnap,
-        SnapTileRemoveTile
+        SnapTileRemoveTile,
+<<<<<<< HEAD
+        Copy,
+        Duplicate,
+        Save
+=======
+        Send
+>>>>>>> origin/experimental
     }
 
     /// <summary>
@@ -26,26 +33,7 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
-<<<<<<< HEAD
-        #region Variables
 
-        public enum HistoryItemType
-        {
-            Add,
-            Move,
-            Erase,
-            Copy,
-            Remove,
-            Duplicate,
-            Resize,
-            Save,
-            Submit
-        }
-
-        #endregion
-
-=======
->>>>>>> 34ed4a102259c84b9111a3b63ff60a88129f9f28
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.

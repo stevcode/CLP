@@ -137,6 +137,8 @@ namespace Classroom_Learning_Partner.Model
                         Logger.Instance.WriteToLog("Page " + i.ToString() + " sent to server(save), size: " + (s_page.Length / 1024.0).ToString() + " kB");
                         //replace history:
                         //replacePageHistory(tempHistory, page);
+                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                        page.PageHistory.HistoryItems.Add(item);
 
                     }
                     i++;
@@ -256,11 +258,11 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
-                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                //string s_history = ObjectSerializer.ToString(history);
+                CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                string s_history = ObjectSerializer.ToString(history);
 
-                //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+                ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
+                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);  //hangs in this method -claire
 
                 //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
@@ -276,7 +278,7 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
                 Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
 
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
             }
         }
 

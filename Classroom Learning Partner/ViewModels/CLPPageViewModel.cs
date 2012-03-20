@@ -65,6 +65,19 @@ namespace Classroom_Learning_Partner.ViewModels
             StartPlaybackCommand = new Command(OnStartPlaybackCommandExecute);
             StopPlaybackCommand = new Command(OnStopPlaybackCommandExecute);
 
+           /* CLPSnapTileContainer tile1 = new CLPSnapTileContainer(new Point(10, 10), "green");
+            tile1.Tiles.Add("green");
+            tile1.Height = tile1.Tiles.Count * CLPSnapTileContainer.TILE_HEIGHT;
+            CLPServiceAgent.Instance.AddPageObjectToPage(Page, tile1);
+
+            CLPSnapTileContainer tile2 = new CLPSnapTileContainer(new Point(200, 400), "green");
+            tile2.Tiles.Add("green");
+            tile2.Tiles.Add("green");
+            tile2.Tiles.Add("green");
+            tile2.Tiles.Add("green");
+            tile2.Height = tile2.Tiles.Count * CLPSnapTileContainer.TILE_HEIGHT;
+            CLPServiceAgent.Instance.AddPageObjectToPage(Page, tile2);
+            */
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 

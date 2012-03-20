@@ -107,6 +107,10 @@ namespace Classroom_Learning_Partner.Model
                      Console.WriteLine(s_page);
 
                      CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                     //interpolate the history to make it bigger again - claire
+                     CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(page.PageHistory);
+                     CLPHistory.ReplaceHistoryItems(page.PageHistory, interpolatedHistory);
+                     
                      page.IsSubmission = true;
                      page.SubmitterName = userName;
 
@@ -127,8 +131,8 @@ namespace Classroom_Learning_Partner.Model
                      if (App.DatabaseUse == App.DatabaseMode.Using)
                      {
                          CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
-                         CLPServiceAgent.Instance.SavePageDB(page);
+                         CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
+                         //CLPServiceAgent.Instance.SavePageDB(page);
                      }
                  }
                     return null;
