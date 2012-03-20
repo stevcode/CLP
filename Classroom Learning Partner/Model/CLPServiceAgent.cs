@@ -262,7 +262,7 @@ namespace Classroom_Learning_Partner.Model
                 string s_history = ObjectSerializer.ToString(history);
 
                 ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);  //hangs in this method -claire
+                string s_pageObjects = ObjectSerializer.ToString(pageObjects);
 
                 //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
