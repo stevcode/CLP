@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     /// </summary>
     [Serializable]
     [AllowNonSerializableMembers]
-    public class CLPImage : CLPPageObjectBase, ICLPPageObject
+    public class CLPImage : CLPPageObjectBase
     {
         #region Variables
         #endregion
@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Register the SourceImage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null); //, true, false
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null);
 
         #endregion
 
@@ -98,19 +98,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             genBmpImage.EndInit();
             genBmpImage.Freeze();
 
+            //memoryStream.Close();
             memoryStream.Dispose();
-            memoryStream.Close();
             memoryStream = null;
 
             SourceImage = genBmpImage;
         }
 
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPImage"; }
         }
 
-        public ICLPPageObject Duplicate()
+        public override CLPPageObjectBase Duplicate()
         {
             CLPImage newImage = this.Clone() as CLPImage;
             newImage.UniqueID = Guid.NewGuid().ToString();

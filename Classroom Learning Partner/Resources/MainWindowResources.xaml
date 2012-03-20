@@ -11,6 +11,10 @@
 
     <!--DataTemplates for Other ViewModels-->
 
+    <DataTemplate DataType="{x:Type vm:CLPPageViewModel}">
+        <vw:CLPPageView />
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">
         <vw:NotebookSelectorView />
     </DataTemplate>

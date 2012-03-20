@@ -6,6 +6,9 @@ using System;
 using Classroom_Learning_Partner.Model;
 using System.Windows;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Windows.Input;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -13,30 +16,30 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
-    [InterestedIn(typeof(SideBarViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
-        public NotebookWorkspaceViewModel()
+        public NotebookWorkspaceViewModel(CLPNotebook notebook)
             : base()
         {
-            Console.WriteLine(Title + " created");
+            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
+
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-            //NotebookPages = new ObservableCollection<CLPPageViewModel>();
-            //foreach (var page in Notebook.Pages)
-            //{
-            //    NotebookPages.Add(new CLPPageViewModel(page));
-            //}
+            Notebook = notebook;
+            SubmissionPages = new ObservableCollection<CLPPage>();
 
-            //SideBar = new SideBarViewModel(NotebookPages);
+            Notebook.GeneratePageIndexes();
 
-            //LinkedDisplay = new LinkedDisplayViewModel(NotebookPages[0]);
+            //InitializeLinkedDisplay();
+        }
 
-            SideBar = new SideBarViewModel(App.MainWindowViewModel.OpenNotebooks[App.MainWindowViewModel.CurrentNotebookIndex]);
-            SideBar.SelectedNotebookPage = SideBar.Pages[0];
-            LinkedDisplay = new LinkedDisplayViewModel(SideBar.CurrentPage);
+        private void InitializeLinkedDisplay()
+        {
+            Console.WriteLine("LinkedDisplay Initialization Started");
+
+            LinkedDisplay = new LinkedDisplayViewModel(CurrentPage);
 
             SelectedDisplay = LinkedDisplay;
             SelectedDisplay.IsActive = true;
@@ -49,6 +52,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             {
                 SelectedDisplay.IsOnProjector = false;
             }
+
+            Console.WriteLine("LinkedDisplay Initialization Ended");
         }
 
         protected override void Close()
@@ -59,33 +64,39 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
         public override string Title { get { return "NotebookWorkspaceVM"; } }
 
-        ///// <summary>
-        ///// Gets or sets the property value.
-        ///// </summary>
-        //public ObservableCollection<CLPPageViewModel> NotebookPages
-        //{
-        //    get { return GetValue<ObservableCollection<CLPPageViewModel>>(NotebookPagesProperty); }
-        //    set { SetValue(NotebookPagesProperty, value); }
-        //}
-
-        ///// <summary>
-        ///// Register the NotebookPages property so it is known in the class.
-        ///// </summary>
-        //public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPageViewModel>));
+        #region Model
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public SideBarViewModel SideBar
+        [Model(SupportIEditableObject = false)]
+        public CLPNotebook Notebook
         {
-            get { return GetValue<SideBarViewModel>(SideBarProperty); }
-            private set { SetValue(SideBarProperty, value); }
+            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
         }
 
         /// <summary>
-        /// Register the SideBar property so it is known in the class.
+        /// Register the Notebook property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SideBarProperty = RegisterProperty("SideBar", typeof(SideBarViewModel));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Notebook","Pages")]
+        public ObservableCollection<CLPPage> NotebookPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(NotebookPagesProperty); }
+            set { SetValue(NotebookPagesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the NotebookPages property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
+
+        #endregion //Model
 
         /// <summary>
         /// Gets or sets the property value.
@@ -129,6 +140,57 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<CLPPage> SubmissionPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
+            set { SetValue(SubmissionPagesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SubmissionPages property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CLPPageViewModel CurrentPage
+        {
+            get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
+            set
+            {
+                SetValue(CurrentPageProperty, value);
+                if (LinkedDisplay == null)
+                {
+                    InitializeLinkedDisplay();
+                }
+                
+                SelectedDisplay.AddPageToDisplay(value);
+                Console.WriteLine("CurrentPage Set");
+            }
+        }
+
+        /// <summary>
+        /// Register the CurrentPage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+        {
+            CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
+        }
+
         public string WorkspaceName
         {
             get { return "NotebookWorkspace"; }
@@ -138,6 +200,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             if (propertyName == "IsAuthoring")
             {
+                if (LinkedDisplay == null)
+                {
+                    InitializeLinkedDisplay();
+                }
                 SelectedDisplay = LinkedDisplay;
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {
@@ -149,34 +215,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 {
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
                     App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
-                    if (App.CurrentUserMode == App.UserMode.Instructor)
-                    {
-                        SelectedDisplay.IsOnProjector = true;
-                    }
                 }
             }
-
-            if (propertyName == "CurrentPage")
-            {
-                if (SelectedDisplay != null)
-                {
-                	SelectedDisplay.AddPageToDisplay((viewModel as SideBarViewModel).CurrentPage);
-                }
-            }
-
-            //if (propertyName == "CurrentNotebookIndex")
-            //{
-            //    int index = (viewModel as MainWindowViewModel).CurrentNotebookIndex;
-            //    Notebook = App.MainWindowViewModel.OpenNotebooks[index];
-            //    //NotebookPages.Clear();
-            //    //foreach (var page in Notebook.Pages)
-            //    //{
-            //    //    NotebookPages.Add(new CLPPageViewModel(page));
-            //    //}
-            //}
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

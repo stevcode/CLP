@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
@@ -8,6 +8,8 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using MongoDB.Driver;
 using System.Threading;
 using Classroom_Learning_Partner.Views;
+using Catel.Logging;
+
 
 namespace Classroom_Learning_Partner
 {
@@ -33,10 +35,16 @@ namespace Classroom_Learning_Partner
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            CLPServiceAgent.Instance.Initialize();
-            //#############################
-            CurrentUserMode = UserMode.Instructor;
+
+            //Uncomment this to enable Catel Logging
+            //LogManager.RegisterDebugListener();
+
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.NotUsing;
+
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
+            
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
                 ConnectToDB();

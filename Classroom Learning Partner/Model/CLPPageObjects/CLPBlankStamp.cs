@@ -8,7 +8,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
 
     [Serializable]
-    public class CLPBlankStamp : CLPStampBase, ICLPPageObject
+    public class CLPBlankStamp : CLPStampBase
     {
         public CLPBlankStamp() : base()
         {
@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             IsAnchored = true;
         }
 
-        public override CLPPageObjectBase Copy()
+        public CLPPageObjectBase Copy()
         {
             CLPBlankStamp newStamp = new CLPBlankStamp();
             //copy all metadata and create new unique ID/creation date for the moved stamp
@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             return newStamp;
         }
 
-        public ICLPPageObject Duplicate()
+        public override CLPPageObjectBase Duplicate()
         {
             CLPBlankStamp newStamp = this.Clone() as CLPBlankStamp;
             newStamp.UniqueID = Guid.NewGuid().ToString();
@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             return newStamp;
         }
 
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPBlankStamp"; }
         }

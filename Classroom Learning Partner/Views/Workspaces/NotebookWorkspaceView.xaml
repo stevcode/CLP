@@ -1,11 +1,10 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.Workspaces.NotebookWorkspaceView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
                    xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
-                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
-                   x:TypeArguments="vmw:NotebookWorkspaceViewModel">
+                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
 
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
@@ -14,7 +13,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         
-        <vw:SideBarView DataContext="{Binding SideBar}"  Grid.Column="0" />
+        <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" />
 
         <!-- Control that dynamically determines what Display to show -->
         <Control Grid.Column="1">

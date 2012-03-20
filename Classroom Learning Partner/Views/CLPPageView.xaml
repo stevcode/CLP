@@ -6,10 +6,9 @@
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
-             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
-             x:TypeArguments="vm:CLPPageViewModel">
+             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -48,13 +47,14 @@
             </Border>
         </Viewbox>
 
-        <StackPanel  Height="50" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Visibility="{Binding Path=PlaybackControlsVisibility}">
+        <StackPanel  Height="40" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Visibility="{Binding Path=PlaybackControlsVisibility}">
             <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}">
-                <Image Source="..\Images\play2.png"></Image>
+                <Image Source="{Binding Path=PlaybackImage}"></Image>
             </Button>
             <Button Name="Stop" HorizontalAlignment="Right" Command="{Binding Path=StopPlaybackCommand}">
-                <Image Source="..\Images\pause.png"></Image>
+                <Image Source="..\Images\stop.png"></Image>
             </Button>
         </StackPanel>
+
     </Grid>
 </catel:UserControl>

@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPImageStamp : CLPStampBase, ICLPPageObject
+    public class CLPImageStamp : CLPStampBase
     {
         public CLPImageStamp(string path) : base()
         {
@@ -63,17 +63,22 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             _sourceImage = genBmpImage;
         }
 
-        public override CLPPageObjectBase Copy()
+        public override CLPPageObjectBase Duplicate()
         {
-            CLPImageStamp newStamp = new CLPImageStamp(_byteSource);
-            //copy all metadata and create new unique ID/creation date for the moved stamp
-            newStamp.IsAnchored = IsAnchored;
-            newStamp.Parts = Parts;
-            newStamp.Position = Position;
-            newStamp.Height = Height;
-            newStamp.Width = Width;
+            //CLPImageStamp newStamp = new CLPImageStamp(_byteSource);
+            ////copy all metadata and create new unique ID/creation date for the moved stamp
+            //newStamp.IsAnchored = IsAnchored;
+            //newStamp.Parts = Parts;
+            //newStamp.Position = Position;
+            //newStamp.Height = Height;
+            //newStamp.Width = Width;
 
-            return newStamp;
+            //return newStamp;
+
+            CLPImageStamp newImageStamp = this.Clone() as CLPImageStamp;
+            newImageStamp.UniqueID = Guid.NewGuid().ToString();
+
+            return newImageStamp;
         }
 
         #region Properties
@@ -106,17 +111,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPImageStamp"; }
-        }
-
-        public ICLPPageObject Duplicate()
-        {
-            CLPImageStamp newImageStamp = this.Clone() as CLPImageStamp;
-            newImageStamp.UniqueID = Guid.NewGuid().ToString();
-
-            return newImageStamp;
         }
 
         #endregion //Methods

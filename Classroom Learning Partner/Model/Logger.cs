@@ -18,7 +18,6 @@ namespace Classroom_Learning_Partner.Model
 
         private string fileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs";
         private string fileName = "CLPLog" + App.CurrentUserMode.ToString() + ".log";
-        //When testing on one machine: need to differentiate different programs
         
         private string filePath;
 
@@ -40,12 +39,13 @@ namespace Classroom_Learning_Partner.Model
         public void InitializeLog()
         {
             string initializeString = "*** New Log Instance - " + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " ***";
-            File.AppendAllText(filePath, Environment.NewLine + initializeString);
+            WriteToLog(initializeString);
         }
 
         public void WriteToLog(string s)
         {
             File.AppendAllText(filePath, Environment.NewLine + s);
+            Console.WriteLine("[CLP Logger]: " + s);
         }
     }
 }

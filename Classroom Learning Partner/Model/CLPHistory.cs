@@ -7,6 +7,7 @@ using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels;
 using Catel.Data;
 using System.Runtime.Serialization;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -17,14 +18,20 @@ namespace Classroom_Learning_Partner.Model
     [Serializable]
     public class CLPHistory : DataObjectBase<CLPHistory>
     {
-        #region Variables
-        #endregion
+        public const double SAMPLE_TIME = 100.0;
 
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPHistory() { }
+        public CLPHistory()
+        {
+            HistoryItems = new ObservableCollection<CLPHistoryItem>();
+            UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
+            TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
+            TrashedInkStrokes = new Dictionary<string, string>();
+            IgnoreHistory = false;
+        }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -38,18 +45,18 @@ namespace Classroom_Learning_Partner.Model
         #region Properties
 
         /// <summary>
-        /// Dictionary mapping UniqueID of an object to a reference of the object.
+        /// Gets or sets the property value.
         /// </summary>
-        public Dictionary<string, object> ObjectReferences
+        public bool IgnoreHistory
         {
-            get { return GetValue<Dictionary<string, object>>(ObjectReferencesProperty); }
-            private set { SetValue(ObjectReferencesProperty, value); }
+            get { return GetValue<bool>(IgnoreHistoryProperty); }
+            set { SetValue(IgnoreHistoryProperty, value); }
         }
 
         /// <summary>
-        /// Register the ObjectReferences property so it is known in the class.
+        /// Register the IgnoreHistory property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ObjectReferencesProperty = RegisterProperty("ObjectReferences", typeof(Dictionary<string, object>), new Dictionary<string, object>());
+        public static readonly PropertyData IgnoreHistoryProperty = RegisterProperty("IgnoreHistory", typeof(bool), false);
 
         /// <summary>
         /// List of history items.
@@ -79,84 +86,381 @@ namespace Classroom_Learning_Partner.Model
         /// </summary>
         public static readonly PropertyData UndoneHistoryItemsProperty = RegisterProperty("UndoneHistoryItems", typeof(ObservableCollection<CLPHistoryItem>), new ObservableCollection<CLPHistoryItem>());
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Dictionary<string,ICLPPageObject> TrashedPageObjects
+        {
+            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedPageObjectsProperty); }
+            set { SetValue(TrashedPageObjectsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the TrashedObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), new Dictionary<string, ICLPPageObject>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Dictionary<string, string> TrashedInkStrokes
+        {
+            get { return GetValue<Dictionary<string, string>>(TrashedInkStrokesProperty); }
+            set { SetValue(TrashedInkStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the TrashedInkStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, string>), new Dictionary<string, string>());
+
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
+
+        public void ClearHistory()
         {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
+            HistoryItems.Clear();
+            UndoneHistoryItems.Clear();
+            TrashedPageObjects.Clear();
         }
 
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
+        public static CLPHistory InterpolateHistory(CLPHistory history)
         {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
+            CLPHistory newHistory = new CLPHistory();
+            for (int i = 0; i < history.HistoryItems.Count; i++)
+            {
+                CLPHistoryItem item = history.HistoryItems[i];
+                if (((item.ItemType == HistoryItemType.MovePageObject && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == HistoryItemType.MovePageObject) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)) //|| (item.ItemType == "RESIZE" && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == "RESIZE")) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)
+                {
+                    newHistory.HistoryItems.Add(item);
+                    //get dx and dy
+                    //Logger.Instance.WriteToLog("Interpolated Endpt: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
+                    double dx = Point.Parse(history.HistoryItems[i + 1].NewValue).X - Point.Parse(item.NewValue).X;
+                    double dy = Point.Parse(history.HistoryItems[i + 1].NewValue).Y - Point.Parse(item.NewValue).Y;
+                    //dist is the distance between 2 points 
+                    double dist = Math.Sqrt((dx * dx) + (dy * dy));
+                    DateTime t0 = item.CreationDate;
+                    DateTime t1 = history.HistoryItems[i + 1].CreationDate;
+                    double timeDiff = (t1 - t0).TotalMilliseconds;
+
+                    if (timeDiff > SAMPLE_TIME)
+                    {
+                        int numNewPoints = (int)Math.Floor(timeDiff / SAMPLE_TIME);
+                        double[,] values = new double[2, 2];
+                        values[0, 0] = Point.Parse(item.NewValue).X;
+                        values[0, 1] = Point.Parse(item.NewValue).Y;
+                        values[1, 0] = Point.Parse(history.HistoryItems[i + 1].NewValue).X;
+                        values[1, 1] = Point.Parse(history.HistoryItems[i + 1].NewValue).Y;
+                        Tuple<double, double> fitLine = regress(values);
+                        double slope = fitLine.Item1;
+                        double intercept = fitLine.Item2;
+                        double section = dist / numNewPoints;
+
+                        //use quadratic eqn to get x displacement
+                        /* double a = 1 + slope * slope;
+                         double b = 2 * slope * intercept;
+                         double c = intercept * intercept - section * section;
+                         double d = b * b - 4 * a * c;
+                         double x1 = 0;
+                         double x2 = 0;
+                         if (d == 0) // If the discriminant is 0, both solutions are equal.
+                         {
+                             x1 = x2 = -b / (2 * a);
+                         }
+                         else if (d < 0) // If the discriminant is negative, there are no solutions.
+                         {
+                             Logger.Instance.WriteToLog("No solutions for the equation to add history points.");
+                            
+                         }
+                         else // In other cases the discriminant is positive, so there are two different solutions.
+                         {
+                             x1 = (-b - Math.Sqrt(d)) / (2 * a);
+                             x2 = (-b + Math.Sqrt(d)) / (2 * a);
+                         }*/
+                        double theta = Math.Atan2(dy, dx);
+
+                        for (int j = 1; j < numNewPoints; j++)
+                        {
+                            //double newX = Point.Parse(item.NewValue).X + x1;
+                            //double newY = slope * newX + intercept;
+                            double newdx = Math.Cos(theta) * (section * j);
+                            double newdy = Math.Sin(theta) * (section * j);
+                            double newX = Point.Parse(item.NewValue).X + newdx;
+                            double newY = Point.Parse(item.NewValue).Y + newdy;
+                            CLPHistoryItem newItem = new CLPHistoryItem(item.ItemType, item.ObjectID, newHistory.HistoryItems[newHistory.HistoryItems.Count - 1].NewValue, new Point(newX, newY).ToString());
+                            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)((SAMPLE_TIME) * j));
+                            newItem.CreationDate = item.CreationDate.Add(time);
+                            newHistory.HistoryItems.Add(newItem);
+                            //Logger.Instance.WriteToLog("Interpolated: " + Point.Parse(newItem.NewValue).X + ", " + Point.Parse(newItem.NewValue).Y + " " + newItem.MetaData.GetValue("CreationDate"));
+
+                        }
+                    }
+                }
+                else
+                {
+                    newHistory.HistoryItems.Add(item);
+                }
+            }
+
+            return newHistory;
         }
 
-        public void AddHistoryItem(object obj, CLPHistoryItem historyItem)
+        public int[] segmentPath(double[] xpoints, double[] ypoints, DateTime[] times)
         {
-            string objectID = null;
-            if (obj is CLPPageObjectBase)
+            int numPoints = 0;
+            for (int i = 0; i < times.Length; i++)
             {
-                objectID = (obj as CLPPageObjectBase).UniqueID;
+                if (times[i] != DateTime.MinValue)
+                {
+                    numPoints++;
+                }
             }
-            else if (obj is Stroke)
+            double[] dx = new double[numPoints - 1];
+            double[] dy = new double[numPoints - 1];
+            double[] p = new double[numPoints - 1];
+            double[,] segPoints = new double[numPoints, 2];
+            double[] distance = new double[numPoints];
+            double[] speed = new double[numPoints];
+            double[] linTan = new double[numPoints];
+            double[] arcTan = new double[numPoints];
+            double[] bSlope = new double[numPoints];
+            double d0, d1;
+            DateTime t0, t1;
+
+            double currentDist = 0;
+            for (int i = 0; i < numPoints - 1; i++)
             {
-                objectID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
+                //populate the dx and dy arrays
+                dx[i] = xpoints[i + 1] - xpoints[i];
+                dy[i] = ypoints[i + 1] - ypoints[i];
+                //p[i] is the distance between 2 points 
+                p[i] = (dx[i] * dx[i]) + (dy[i] * dy[i]);
+                //distance is the total distance of the path so far
+                currentDist += p[i];
+                distance[i] = currentDist;
+                int k;
+                if (i < 2)
+                {
+                    k = 2;
+                }
+                else
+                {
+                    k = i;
+                }
+                if (distance.Length > 2)
+                {
+                    d0 = distance[k - 2];
+                    d1 = distance[k];
+                    t0 = times[k - 2];
+                    t1 = times[k];
+
+                    double timeDiff = (t1 - t0).TotalMilliseconds;
+                    speed[i] = Math.Abs((d1 - d0) / timeDiff);
+
+                }
+                else
+                {
+                    speed[i] = 0;
+                }
+            } // now the arrays are populated and we can calculate slope, curvature
+
+            double[,] values;
+            for (int i = 1; i < numPoints; i++)
+            {
+                int k = 0;
+                int windowSize = 11;
+                if (i <= Math.Floor(windowSize / 2.0))
+                {
+                    if (i == 1)
+                    {
+                        k = 1;
+                    }
+                    else
+                    {
+                        k = i;
+                    }
+                    windowSize = 2 * k - 1;
+                }
+                else if (i >= numPoints + Math.Floor(windowSize / 2.0))
+                {
+                    if (i == numPoints)
+                    {
+                        k = numPoints - 1;
+                    }
+                    else
+                    {
+                        k = i;
+                    }
+                    windowSize = 2 * (numPoints - k) - 1;
+                }
+                values = new double[windowSize, 2];
+                double winMin = i - Math.Floor(windowSize / 2.0);
+                double winMax = i + Math.Floor(windowSize / 2.0);
+                if (winMin == 0)
+                {
+                    winMin = 1;
+                }
+                int valCount = 0;
+                for (int w = (int)winMin + i; w < winMax + i; w++)
+                {
+                    if (w < numPoints - 1)
+                    {
+                        //do a least squares regression to get the slope of the best fit line for this segment
+                        values[valCount, 0] = xpoints[w];
+                        values[valCount, 1] = ypoints[w];
+                        valCount++;
+                    }
+                }
+
+                linTan[i] = regress(values).Item1;
+                arcTan[i] = Math.Atan(linTan[i]);
             }
 
-            if (objectID != null && !ObjectReferences.ContainsKey(objectID))
+            double[] correctedAngles = correctAngles(arcTan);
+            double[] dAngles = new double[numPoints];
+            double[] dDistance = new double[numPoints];
+            double[] curvature = new double[numPoints];
+            double curveSum = 0, speedSum = 0;
+            for (int i = 0; i < numPoints; i++)
             {
-                AddObjectToReferences(objectID, obj);
+                int k = i;
+                if (i == 0)
+                {
+                    k = 1;
+                }
+                dAngles[i] = arcTan[k] - arcTan[k - 1];
+                dDistance[i] = distance[k] - distance[k - 1];
+                if (i == 0 || i == numPoints - 1)
+                {
+                    curvature[i] = 0;
+                }
+                else
+                {
+                    curvature[i] = dAngles[i] / dDistance[i];
+                }
+                curveSum += curvature[i];
+                speedSum += speed[i];
+            }
+            double avgCurve = curveSum / numPoints;
+            double curveThreshold = .6 * avgCurve;
+            double avgSpeed = speedSum / numPoints;
+            double speedThreshHigh = .8 * avgSpeed;
+            double speedThreshLow = .25 * avgSpeed;
+            double[] speedCorners = new double[numPoints];
+            double[] curveCorners = new double[numPoints];
+            int numSegPoints = 0;
+            for (int i = 1; i < numPoints - 2; i++)
+            {
+                //find local speed minima to detect corners
+                if (speed[i] < speedThreshHigh && speed[i] < speed[i + 1] && speed[i] < speed[i - 1])
+                {
+                    speedCorners[i] = 1;
+                }
+                //find local curvature maxima to detect corners
+                else if (curvature[i] > curveThreshold && curvature[i] > curvature[i + 1] && curvature[i] > curvature[i - 1])
+                {
+                    if (speed[i] < speedThreshLow)
+                    {
+                        curveCorners[i] = 1;
+                    }
+                }
+                //check if the corner points are too close together
+                //or too close to the ends
+                double pauseThreshold = 750; //double milliseconds
+                int y = 20;
+                if (speedCorners[i] == 1 || curveCorners[i] == 1)
+                {
+                    if (i > y && i < numPoints - y)
+                    {
+                        for (int k = i - y; k < i; k++)
+                        {
+                            DateTime time0 = times[k];
+                            DateTime time1 = times[i];
+                            double timeDiff = (time1 - time0).TotalMilliseconds;
+                            if (curveCorners[k] == 1)
+                            {
+                                curveCorners[k] = 0;
+                            }
+                            else if (speedCorners[k] == 1 && timeDiff < pauseThreshold)
+                            {
+                                speedCorners[k] = 0;
+                            }
+                        }
+                    }
+                }
+
+                //create segments from the corner points 
+                if (speedCorners[i] == 1 || curveCorners[i] == 1)
+                {
+                    segPoints[i, 0] = xpoints[i];
+                    segPoints[i, 1] = ypoints[i];
+                    numSegPoints += 1;
+                }
             }
 
-            historyItem.ObjectID = objectID;
-            HistoryItems.Add(historyItem);
+            int[] indices = new int[numSegPoints + 2];
+            int count = 0;
+            for (int i = 0; i < numPoints; i++)
+            {
+                if (segPoints[i, 0] != 0 || i == numPoints - 1 || i == 0)
+                {
+                    indices[count] = i;
+                    count++;
+                }
+            }
+            double[] segTypes = new double[numSegPoints];
 
-            System.Console.WriteLine("AddHistoryItem: HistoryItems.Count: " + HistoryItems.Count());
-            System.Console.WriteLine("ObjectRefIds: " + ObjectReferences.Count());
+            return indices;
         }
 
-        public void AddUndoneHistoryItem(object obj, CLPHistoryItem historyItem)
+        private double[] correctAngles(double[] angles)
         {
-            string objectID = null;
-            if (obj is CLPPageObjectBase)
+            double b = 0;
+            double[] corrected = new double[angles.Length];
+            for (int i = 1; i < angles.Length; i++)
             {
-                objectID = (obj as CLPPageObjectBase).UniqueID;
+                double dif = angles[i - 1] - angles[i];
+                if (Math.Abs(dif) > 2.5)
+                {
+                    b = b + dif;
+                }
+                corrected[i] = b + angles[i];
             }
-            else if (obj is Stroke)
-            {
-                objectID = (obj as Stroke).GetPropertyData(CLPPage.StrokeIDKey) as string;
-            }
-
-            if (objectID != null && !ObjectReferences.ContainsKey(objectID))
-            {
-                AddObjectToReferences(objectID, obj);
-            }
-
-            historyItem.ObjectID = objectID;
-            UndoneHistoryItems.Add(historyItem);
+            return corrected;
         }
 
-        private void AddObjectToReferences(string key, object obj)
+        private static Tuple<double, double> regress(double[,] values)
         {
-            if (obj is Stroke)
+            double xAvg = 0;
+            double yAvg = 0;
+
+            for (int x = 0; x < values.GetLength(0); x++)
             {
-                ObjectReferences.Add(key, CLPPage.StrokeToString(obj as Stroke));
+                xAvg += values[x, 0];
+                yAvg += values[x, 1];
             }
-            else if (obj is CLPPageObjectBase)
+
+            xAvg = xAvg / values.Length;
+            yAvg = yAvg / values.Length;
+
+            double v1 = 0;
+            double v2 = 0;
+
+            for (int x = 0; x < values.GetLength(0); x++)
             {
-                ObjectReferences.Add(key, obj);
+                v1 += (values[x, 0] - xAvg) * (values[x, 1] - yAvg);
+                v2 += Math.Pow(values[x, 0] - xAvg, 2);
             }
-            else
-            {
-                Logger.Instance.WriteToLog("Unknown Object attempted to write to History");
-            }
+
+            double a = v1 / v2;
+            double b = yAvg - a * xAvg;
+            return Tuple.Create<double, double>(a, b);
+            //Console.WriteLine("y = ax + b");
+            //Console.WriteLine("a = {0}, the slope of the trend line.", Math.Round(a, 2));
+            //Console.WriteLine("b = {0}, the intercept of the trend line.", Math.Round(b, 2));
+
+            //Console.ReadLine();
         }
 
         //IsSaved == true means that the history has not been updated since the last save

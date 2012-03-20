@@ -13,7 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public NotebookChooserWorkspaceViewModel() : base()
         {
-            Console.WriteLine(Title + " created");
             NotebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
             CLPServiceAgent.Instance.ChooseNotebook(this);
         }

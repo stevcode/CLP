@@ -44,15 +44,6 @@ namespace Classroom_Learning_Partner.Views
                 (button as RibbonToggleButton).IsChecked = false;
                 (button as RibbonToggleButton).Checked += ToolsGroup_Checked;
             }
-            if (AuthoringToolsGroup != null)
-            {
-                foreach (var button in AuthoringToolsGroup.Items)
-                {
-                    (button as RibbonToggleButton).Checked -= ToolsGroup_Checked;
-                    (button as RibbonToggleButton).IsChecked = false;
-                    (button as RibbonToggleButton).Checked += ToolsGroup_Checked;
-                }
-            }
 
             (sender as RibbonToggleButton).Checked -= ToolsGroup_Checked;
             (sender as RibbonToggleButton).IsChecked = true;

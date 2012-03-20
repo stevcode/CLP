@@ -10,7 +10,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public BlankWorkspaceViewModel() : base()
         {
-            Console.WriteLine(Title + " created");
         }
 
         public override string Title { get { return "BlankWorkspaceVM"; } }

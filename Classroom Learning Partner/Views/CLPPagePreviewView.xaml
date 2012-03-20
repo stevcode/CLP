@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" x:Name="CLPPagePreview"
-             xmlns:catel="clr-namespace:Catel.Windows.Controls;assembly=Catel.Windows"
+             xmlns:catel="http://catel.codeplex.com"
              xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
-             x:TypeArguments="vm:CLPPageViewModel">
+             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,6 +25,11 @@
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <vwpo:PageObjectContainerView DataContext="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"

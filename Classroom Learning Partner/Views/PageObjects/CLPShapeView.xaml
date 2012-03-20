@@ -1,0 +1,9 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPShapeView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
+    
+
+    <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+</catel:UserControl>

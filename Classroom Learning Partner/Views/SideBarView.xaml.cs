@@ -1,20 +1,21 @@
 ﻿using Classroom_Learning_Partner.ViewModels;
-using Catel.Windows.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for SideBarView.xaml
     /// </summary>
-    public partial class SideBarView : UserControl<SideBarViewModel>
+    public partial class SideBarView : Catel.Windows.Controls.UserControl
     {
         public SideBarView()
         {
             InitializeComponent();
+            SkipSearchingForInfoBarMessageControl = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -22,39 +23,17 @@ namespace Classroom_Learning_Partner.Views
             CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
             CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
             string pageID = pageViewModel.Page.UniqueID;
-            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
-            //if (sideBarViewModel.Submissions.ContainsKey(pageID))
-            //{
-
-            //    sideBarViewModel.SubmissionPages = sideBarViewModel.Submissions[pageID];
-            //}
-        }
-
-        private void preview_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Grid grid = sender as Grid;
-            CLPPagePreviewView preview = grid.Children[0] as CLPPagePreviewView;
-            CLPPageViewModel pageViewModel = preview.DataContext as CLPPageViewModel;
-            SideBarViewModel sideBarViewModel = this.DataContext as SideBarViewModel;
-
-            if (pageViewModel.IsSubmission)
+            var viewModel = (this.DataContext as NotebookWorkspaceViewModel);
+            if (viewModel.Notebook.Submissions.ContainsKey(pageID))
             {
-                sideBarViewModel.SelectedSubmissionPage = pageViewModel.Page;
-            }
-            else
-            {
-                Console.WriteLine("SelectedNotebookPage set");
-                sideBarViewModel.SelectedNotebookPage = pageViewModel.Page;
+
+                viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
             }
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        protected override System.Type GetViewModelType()
         {
-
-            if (!NotebookPageListBox.Items.IsEmpty)
-            {
-            	NotebookPageListBox.SelectedItem = NotebookPageListBox.Items[0];
-            }
+            return typeof(IWorkspaceViewModel);
         }
     }
 }

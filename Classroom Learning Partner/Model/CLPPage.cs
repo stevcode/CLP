@@ -34,6 +34,10 @@ namespace Classroom_Learning_Partner.Model
             UniqueID = Guid.NewGuid().ToString();
             InkStrokes = new StrokeCollection();
             Strokes = new ObservableCollection<string>();
+            PageObjects = new ObservableCollection<ICLPPageObject>();
+            PageHistory = new CLPHistory();
+            PageIndex = -1;
+            PageTopics = new ObservableCollection<string>();
         }
 
         /// <summary>
@@ -56,10 +60,24 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        public string ParentNotebookID
+        {
+            get { return GetValue<string>(ParentNotebookIDProperty); }
+            set { SetValue(ParentNotebookIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ParentNotebookID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
+            private set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>
@@ -138,6 +156,34 @@ namespace Classroom_Learning_Partner.Model
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int PageIndex
+        {
+            get { return GetValue<int>(PageIndexProperty); }
+            set { SetValue(PageIndexProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageIndex property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageIndexProperty = RegisterProperty("PageIndex", typeof(int), -1);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<string> PageTopics
+        {
+            get { return GetValue<ObservableCollection<string>>(PageTopicsProperty); }
+            set { SetValue(PageTopicsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageTopics property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+
+        /// <summary>
         /// Exact time and date the page was created.
         /// </summary>
         public DateTime CreationDate
@@ -196,21 +242,6 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
 
         public static Stroke StringToStroke(string stroke)
         {

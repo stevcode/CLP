@@ -14,7 +14,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public UserLoginWorkspaceViewModel()
             : base()
         {
-            Console.WriteLine(Title + " created");
             LogInCommand = new Command<string>(OnLogInCommandExecute);
 
             UserNames = new ObservableCollection<string>();
@@ -29,6 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 {
                     UserNames.Add(name);
                 }
+                reader.Dispose();
             }
         }
 

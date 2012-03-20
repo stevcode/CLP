@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace Classroom_Learning_Partner.Model
 {
-    public class PeerNode
+    public sealed class PeerNode : IDisposable
     {
         public string MachineName { get; private set; }
         public string UserName { get; set; }
@@ -125,6 +125,14 @@ namespace Classroom_Learning_Partner.Model
             {
                 _factory.Close();
             }
+        }
+
+        public void Dispose()
+        {
+            //steve - both of these added b/c of warning. remove if causes problems
+            _stopFlag.Dispose();
+            Channel.Dispose();
+            _factory.Close();
         }
     }
 }

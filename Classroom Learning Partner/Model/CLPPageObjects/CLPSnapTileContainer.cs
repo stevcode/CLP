@@ -10,11 +10,11 @@ using System.Collections.ObjectModel;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPSnapTileContainer : CLPPageObjectBase, ICLPPageObject
+    public class CLPSnapTileContainer : CLPPageObjectBase
     {
         #region Variables
 
-        public const int TILE_HEIGHT = 50;
+        public const int TILE_HEIGHT = 45;
 
         #endregion
 
@@ -26,7 +26,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             : base()
         {
             Position = pt;
+            Tiles = new ObservableCollection<string>();
             Tiles.Add(color);
+            Height = (TILE_HEIGHT) * Tiles.Count;
+            Width = TILE_HEIGHT;
         }
 
         /// <summary>
@@ -59,28 +62,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
-
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPSnapTileContainer"; }
         }
 
-        public ICLPPageObject Duplicate()
+        public override CLPPageObjectBase Duplicate()
         {
             CLPSnapTileContainer newSnapTile = this.Clone() as CLPSnapTileContainer;
             newSnapTile.UniqueID = Guid.NewGuid().ToString();

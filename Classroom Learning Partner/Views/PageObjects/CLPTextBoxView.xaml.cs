@@ -1,5 +1,4 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Windows;
 using System.Windows.Media;
@@ -14,7 +13,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     /// <summary>
     /// Interaction logic for CLPTextBoxView.xaml
     /// </summary>
-    public partial class CLPTextBoxView : UserControl<CLPTextBoxViewModel>
+    public partial class CLPTextBoxView : Catel.Windows.Controls.UserControl
     {
         private MainWindowView ribbonView;
 
@@ -22,7 +21,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPTextBoxView()
         {
             InitializeComponent();
-
+            SkipSearchingForInfoBarMessageControl = true;
             ribbonView = Application.Current.MainWindow as MainWindowView;
 
             AppMessages.UpdateFont.Register(this, (t) =>
@@ -41,6 +40,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             App.MainWindowViewModel.LastFocusedTextBox = this;
             
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(CLPTextBoxViewModel);
         }
 
         private void SetFont(double fontSize, FontFamily font, Brush fontColor)

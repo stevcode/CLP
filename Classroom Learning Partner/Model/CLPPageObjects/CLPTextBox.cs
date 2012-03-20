@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPTextBox : CLPPageObjectBase, ICLPPageObject
+    public class CLPTextBox : CLPPageObjectBase
     {
         #region Variables
         #endregion
@@ -60,28 +60,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        /// <summary>
-        /// Validates the fields.
-        /// </summary>
-        protected override void ValidateFields()
-        {
-            // TODO: Implement any field validation of this object. Simply set any error by using the SetFieldError method
-        }
-
-        /// <summary>
-        /// Validates the business rules.
-        /// </summary>
-        protected override void ValidateBusinessRules()
-        {
-            // TODO: Implement any business rules of this object. Simply set any error by using the SetBusinessRuleError method
-        }
-
-        public string PageObjectType
+        public override string PageObjectType
         {
             get { return "CLPTextBox"; }
         }
 
-        public ICLPPageObject Duplicate()
+        public override CLPPageObjectBase Duplicate()
         {
             CLPTextBox newTextBox = this.Clone() as CLPTextBox;
             newTextBox.UniqueID = Guid.NewGuid().ToString();
