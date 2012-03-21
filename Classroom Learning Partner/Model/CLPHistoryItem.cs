@@ -18,7 +18,12 @@ namespace Classroom_Learning_Partner.Model
         SnapTileSnap,
         SnapTileRemoveTile,
         Send,
-        Save
+        Submit,
+        Copy,
+        Duplicate,
+        Save,
+        StartRecord,
+        StopRecord
     }
 
     /// <summary>

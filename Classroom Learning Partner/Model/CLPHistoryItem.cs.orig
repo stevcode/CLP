@@ -17,7 +17,17 @@ namespace Classroom_Learning_Partner.Model
         EraseInk,
         SnapTileSnap,
         SnapTileRemoveTile,
-        Send
+<<<<<<< HEAD
+        Send,
+        Save
+=======
+        Submit,
+        Copy,
+        Duplicate,
+        Save,
+        StartRecord,
+        StopRecord
+>>>>>>> 97a79717b41cb86186f75bbdfc05981db9e09e5e
     }
 
     /// <summary>
@@ -28,23 +38,9 @@ namespace Classroom_Learning_Partner.Model
     public class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
 <<<<<<< HEAD
-        #region Variables
-
-        public enum HistoryItemType
-        {
-            Add,
-            Move,
-            Erase,
-            Copy,
-            Remove,
-            Duplicate,
-            Save
-        }
-
-        #endregion
-
 =======
->>>>>>> 351eb348bf7fb8622673a52c0a6e677bf928176e
+
+>>>>>>> 97a79717b41cb86186f75bbdfc05981db9e09e5e
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
@@ -58,6 +54,9 @@ namespace Classroom_Learning_Partner.Model
             OldValue = oldValue;
             NewValue = newValue;
         }
+
+        //Parameterless contructor for protobuf
+        private CLPHistoryItem() { }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -104,7 +103,7 @@ namespace Classroom_Learning_Partner.Model
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace Classroom_Learning_Partner.Model
         public HistoryItemType ItemType
         {
             get { return GetValue<HistoryItemType>(ItemTypeProperty); }
-            private set { SetValue(ItemTypeProperty, value); }
+            set { SetValue(ItemTypeProperty, value); }
         }
 
         /// <summary>

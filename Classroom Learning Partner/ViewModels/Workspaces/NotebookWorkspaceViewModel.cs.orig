@@ -169,6 +169,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
                 
                 SelectedDisplay.AddPageToDisplay(value);
+<<<<<<< HEAD
                 Console.WriteLine("CurrentPage Set");
             }
         }
@@ -187,6 +188,26 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Method to invoke when the SetCurrentPageCommand command is executed.
         /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+=======
+                Console.WriteLine("CurrentPage Set");
+            }
+        }
+
+        /// <summary>
+        /// Register the CurrentPage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+>>>>>>> origin/ClaireExperimental
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
         }

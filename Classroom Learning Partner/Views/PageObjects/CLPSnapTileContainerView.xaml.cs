@@ -63,6 +63,13 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             if ((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count > 1)
             {
                 (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
+                //add the snapTileRemoveTile history item here
+                CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
+                if (!pageHistory.IgnoreHistory)
+                {
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
+                    pageHistory.HistoryItems.Add(item);
+                }
             }
         }
 
@@ -92,76 +99,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             newSnapTile.Position = new Point(x, y);
             CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.PageID, newSnapTile);
-        }
-
-        private void dragButton_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            CLPSnapTileContainer currentTile = (this.DataContext as CLPSnapTileContainerViewModel).PageObject as CLPSnapTileContainer;
-
-            CLPPage currentPage = CLPServiceAgent.Instance.GetPageFromID(currentTile.PageID);
-
-            foreach (var pageObject in currentPage.PageObjects)
-            {
-                if (pageObject is CLPSnapTileContainer)
-                {
-
-                    CLPSnapTileContainer otherTile = pageObject as CLPSnapTileContainer;
-                    if (currentTile.UniqueID != otherTile.UniqueID)
-                    {
-                        double deltaX = Math.Abs(currentTile.Position.X - otherTile.Position.X);
-                        double deltaYBottomSnap = Math.Abs(currentTile.Position.Y - (otherTile.Position.Y + otherTile.Height));
-                        double deltaYTopSnap = Math.Abs(otherTile.Position.Y - (currentTile.Position.Y + currentTile.Height));
-                        if (deltaX < 50)
-                        {
-                            if (deltaYBottomSnap < 55)
-                            {
-                                //int oldCount = otherTile.Tiles.Count;
-                                foreach (var tileColor in (this.DataContext as CLPSnapTileContainerViewModel).Tiles)
-                                {
-                                    otherTile.NumberOfTiles++;
-                                }
-
-                                //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count;
-                                //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
-                                //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
-                                //item.OldValue = oldCount.ToString();
-                                //item.NewValue = otherTile.Tiles.Count.ToString();
-
-                                //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-
-
-                                CLPServiceAgent.Instance.RemovePageObjectFromPage(currentTile);
-                                break;
-                            }
-                            else if (deltaYTopSnap < 55)
-                            {
-                                //int oldCount = tile.Tiles.Count;
-
-                                for (int i = otherTile.NumberOfTiles - 1; i >= 0; i--)
-                                {
-                                    (this.DataContext as CLPSnapTileContainerViewModel).Tiles.Add("SpringGreen");
-                                }
-
-
-                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
-                                //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
-                                //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
-                                //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);
-                                //item.OldValue = oldCount.ToString();
-                                //item.NewValue = tile.Tiles.Count.ToString();
-                                //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-
-
-
-                                CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
-                                break;
-                            }
-
-
-                        }
-                    }
-                }
-            }
         }
     }
 }

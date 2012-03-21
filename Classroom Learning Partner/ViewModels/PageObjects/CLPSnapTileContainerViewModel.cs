@@ -58,6 +58,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         private void OnNumberOfTilesChanged()
         {
+            //Claire, HistoryItems stuff here
+
             int diff = NumberOfTiles - Tiles.Count;
 
             if (diff > 0)

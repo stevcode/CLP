@@ -1,3 +1,4 @@
+﻿
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -89,7 +90,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public Dictionary<string,ICLPPageObject> TrashedPageObjects
+        public Dictionary<string, ICLPPageObject> TrashedPageObjects
         {
             get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedPageObjectsProperty); }
             set { SetValue(TrashedPageObjectsProperty, value); }
@@ -117,13 +118,112 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
+        //because the historyItems collection has a private set accessor
+        public static void ReplaceHistoryItems(CLPHistory oldHistory, CLPHistory newHistory)
+        {
+            oldHistory.HistoryItems = newHistory.HistoryItems;
+            return;
+        }
+        public static CLPHistory GenerateHistorySinceLastSubmission(CLPPage page)
+        {
+            CLPHistory historySubset = GetSegmentedHistory(page);
+            bool start = true;
+            foreach (CLPHistoryItem item in page.PageHistory.HistoryItems)
+            {
+                if (item.ItemType == HistoryItemType.Submit)
+                {
+                    start = true;
+                }
+                if (start)
+                {
+                    historySubset.HistoryItems.Clear();
+                    historySubset.UndoneHistoryItems.Clear();
+                    historySubset.TrashedPageObjects.Clear();
+                    historySubset.TrashedInkStrokes.Clear();
+                    start = false;
+                }
+                historySubset.HistoryItems.Add(item);
+                if (item.ItemType == HistoryItemType.EraseInk) 
+                {
+                    if(page.PageHistory.TrashedInkStrokes.ContainsKey(item.ObjectID))
+                    {
+                        historySubset.TrashedInkStrokes.Add(item.ObjectID, page.PageHistory.TrashedInkStrokes[item.ObjectID]);
+                    }
+                    foreach (Stroke s in page.InkStrokes)
+                    {
+                        if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                        {
+                            page.InkStrokes.Remove(s);
+                            historySubset.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+                            break;
+                        }
+                    }
+                }
+                else if (item.ItemType == HistoryItemType.RemovePageObject)
+                {
+                    if (page.PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
+                    {
+                       historySubset.TrashedPageObjects.Add(item.ObjectID, page.PageHistory.TrashedPageObjects[item.ObjectID]);
+                        break;
+                    }
+                    foreach (var pageObject in page.PageObjects)
+                    {
+                        if (pageObject.UniqueID == item.ObjectID)
+                        {
+                            historySubset.TrashedPageObjects.Add(item.ObjectID, pageObject);
+                            break;
+                        }
+                    }
+                
+                }
+            }
+            return historySubset;
+        }
 
+        public static ObservableCollection<ICLPPageObject> PageObjectsSinceLastSubmission(CLPPage page, CLPHistory history)
+        {
+            ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
+            foreach (CLPHistoryItem item in history.HistoryItems)
+            {
+                if (item.ItemType == HistoryItemType.AddPageObject)
+                {
+                    foreach (var pageObject in page.PageObjects)
+                    {
+                        if (pageObject.UniqueID == item.ObjectID)
+                        {
+                            pageObjects.Add(pageObject);
+                            break;
+                        }
+                    }
+                }
+            }
+            return pageObjects;
+        }
         public void ClearHistory()
         {
             HistoryItems.Clear();
             UndoneHistoryItems.Clear();
             TrashedPageObjects.Clear();
+            //should we clear the trashed inkstrokes too? -claire
+            TrashedInkStrokes.Clear();
         }
+        //IsSaved == true means that the history has not been updated since the last save
+        //(to be used by Jessie- DB stuff)
+        //dirty data returns false, pages 
+        public bool IsSaved()
+        {
+            if (HistoryItems.Count > 0)
+            {
+                return HistoryItems[HistoryItems.Count - 1].ItemType == HistoryItemType.Save;  
+
+            }
+            else
+            {
+                //Logger.Instance.WriteToLog("Zero history items");
+                return true;
+            }
+        }
+
 
         public static CLPHistory InterpolateHistory(CLPHistory history)
         {
@@ -205,8 +305,132 @@ namespace Classroom_Learning_Partner.Model
 
             return newHistory;
         }
+        public static CLPHistory GetSegmentedHistory(CLPPage page)
+        {
+            bool resizing = false;
+            bool moving = false;
+            //int total = HistoryItems.Count;
+            CLPHistory smallerHistory = new CLPHistory();
+            //smallerHistory.ObjectReferences = History.ObjectReferences;
+            smallerHistory.TrashedInkStrokes = page.PageHistory.TrashedInkStrokes;
+            smallerHistory.TrashedPageObjects = page.PageHistory.TrashedPageObjects;
+            int resizeCount = 0;
+            int fullNumHistoryItems = page.PageHistory.HistoryItems.Count;
+            double[] resizeX = new double[fullNumHistoryItems];
+            double[] resizeY = new double[fullNumHistoryItems];
+            DateTime[] resizeT = new DateTime[fullNumHistoryItems];
+            CLPHistoryItem[] resizeItems = new CLPHistoryItem[fullNumHistoryItems];
+            foreach (var item in page.PageHistory.HistoryItems)
+            {
 
-        public int[] segmentPath(double[] xpoints, double[] ypoints, DateTime[] times)
+
+                /* if (item.ItemType == "RESIZE")
+                 {
+                     //not supporting this right now, the kids aren't doing it in lessons
+                    
+                     moving = false;
+                     resizing = true;
+                     resizeT[resizeCount] = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
+                     int indexOfComma = item.NewValue.IndexOf(',');
+                     resizeY[resizeCount] = double.Parse(item.NewValue.Substring(indexOfComma + 2));
+                     resizeX[resizeCount] = double.Parse(item.NewValue.Substring(0, item.NewValue.Length - indexOfComma));
+                    // Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " +Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
+                     resizeItems[resizeCount] = item;
+                    if(resizing == true)
+                    {
+                             int index = History.HistoryItems.IndexOf(item);
+                             resizeCount++;
+                            
+                                 if (index == History.HistoryItems.Count-1 || (item.ObjectID != History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (HistoryItems.Count > index + 1 && History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != "MOVE"))
+                                 {
+                                     moving = false;
+                                    
+                                     int[] indices = History.segmentPath(resizeX, resizeY, resizeT);
+                                     for (int i = 0; i < indices.Length; i++)
+                                     {
+                                         smallerHistory.AddHistoryItem(resizeItems[indices[i]]);
+                                         CLPHistoryItem add = resizeItems[indices[i]];
+                                         //Logger.Instance.WriteToLog("Resize Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
+                    
+                                        /* CLPHistoryItem it = new CLPHistoryItem("ADD");
+                                         it.ObjectID = resizeItems[indices[i]].ObjectID;
+                                         it.NewValue = resizeItems[indices[i]].NewValue;
+                                         //item.MetaData = resizeItems[indices[i]].MetaData;
+                                         smallerHistory.AddHistoryItem(it);
+                                         */
+                /*
+                                    }
+                                    resizeCount = 0;
+                                    Array.Clear(resizeT, 0, resizeT.Length);
+                                    Array.Clear(resizeX, 0, resizeX.Length);
+                                    Array.Clear(resizeY, 0, resizeY.Length);
+                                }
+                            
+                        
+                    }
+                    else
+                    {
+                        
+                        resizing = true;
+                        resizeCount++;
+                    }
+                }
+                else */
+                if (item.ItemType == HistoryItemType.MovePageObject)
+                {
+                    resizing = false;
+                    resizeT[resizeCount] = item.CreationDate;
+                    resizeY[resizeCount] = Point.Parse(item.NewValue).Y;
+                    resizeX[resizeCount] = Point.Parse(item.NewValue).X;
+                    //Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.CreationDate);
+                    resizeItems[resizeCount] = item;
+                    if (moving == true)
+                    {
+                        int index = page.PageHistory.HistoryItems.IndexOf(item);
+                        resizeCount++;
+
+                        if (index == page.PageHistory.HistoryItems.Count - 1 || (item.ObjectID != page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (page.PageHistory.HistoryItems.Count > index + 1 && page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != HistoryItemType.MovePageObject))
+                        {
+                            moving = false;
+
+                            int[] indices = segmentPath(resizeX, resizeY, resizeT);
+                            for (int i = 0; i < indices.Length; i++)
+                            {
+                                smallerHistory.HistoryItems.Add(resizeItems[indices[i]]);
+                                //CLPHistoryItem add = resizeItems[indices[i]];
+                                //Logger.Instance.WriteToLog("Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
+
+                                /* CLPHistoryItem it = new CLPHistoryItem("ADD");
+                                 it.ObjectID = resizeItems[indices[i]].ObjectID;
+                                 it.NewValue = resizeItems[indices[i]].NewValue;
+                                 //item.MetaData = resizeItems[indices[i]].MetaData;
+                                 smallerHistory.AddHistoryItem(it);
+                                 */
+                            }
+                            resizeCount = 0;
+                            Array.Clear(resizeT, 0, resizeT.Length);
+                            Array.Clear(resizeX, 0, resizeX.Length);
+                            Array.Clear(resizeY, 0, resizeY.Length);
+                        }
+
+
+                    }
+                    else
+                    {
+                        moving = true;
+                        resizeCount++;
+                    }
+                }
+                else
+                {
+                    resizing = false;
+                    moving = false;
+                    smallerHistory.HistoryItems.Add(item);
+                }
+            }
+            return smallerHistory;
+        }
+        public static int[] segmentPath(double[] xpoints, double[] ypoints, DateTime[] times)
         {
             int numPoints = 0;
             for (int i = 0; i < times.Length; i++)
@@ -414,7 +638,7 @@ namespace Classroom_Learning_Partner.Model
             return indices;
         }
 
-        private double[] correctAngles(double[] angles)
+        private static double[] correctAngles(double[] angles)
         {
             double b = 0;
             double[] corrected = new double[angles.Length];
@@ -463,24 +687,6 @@ namespace Classroom_Learning_Partner.Model
             //Console.ReadLine();
         }
 
-        //IsSaved == true means that the history has not been updated since the last save
-        //(to be used by Jessie- DB stuff)
-        //dirty data returns false, pages 
-        public bool IsSaved()
-        {
-            if (HistoryItems.Count > 0)
-            {
-                return HistoryItems[HistoryItems.Count - 1].ItemType == HistoryItemType.Save;
-                
-            }
-            else
-            {
-                //Logger.Instance.WriteToLog("Zero history items");
-                return true;
-            }
-        }
-
-
         #endregion
     }
 
@@ -489,7 +695,7 @@ namespace Classroom_Learning_Partner.Model
     //{
     //    public CLPHistory()
     //    {
-            
+
     //    }
 
     //    private MetaDataContainer _metaData = new MetaDataContainer();
@@ -521,7 +727,7 @@ namespace Classroom_Learning_Partner.Model
     //        {
     //            return _historyItems;
     //        }
-            
+
     //    }
 
     //    //List to enable undo/redo functionality
@@ -532,7 +738,7 @@ namespace Classroom_Learning_Partner.Model
     //        {
     //            return _undoneHistoryItems;
     //        }
-            
+
     //    }
 
     //    #region Public Methods
@@ -587,7 +793,7 @@ namespace Classroom_Learning_Partner.Model
     //        {
     //            ObjectReferences.Add(key, CLPPageViewModel.StrokeToString(obj as Stroke));
     //        }
-            
+
     //        else if (obj is CLPPageObjectBase)
     //        {
     //            ObjectReferences.Add(key, obj);
@@ -634,7 +840,7 @@ namespace Classroom_Learning_Partner.Model
     //        }
     //        CLPHistoryItem item = new CLPHistoryItem(itemID);
     //        return item;
-            
+
     //    }
     //    public void undo(DateTime time)
     //    {

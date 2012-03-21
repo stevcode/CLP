@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System.Windows;
 using System;
 using Classroom_Learning_Partner.ViewModels;
@@ -83,7 +84,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?conenct=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
@@ -125,8 +126,7 @@ namespace Classroom_Learning_Partner
                 .AddSubType(10, typeof(CLPSnapTileContainer))
                 .AddSubType(11, typeof(CLPStrokePathContainer))
                 .AddSubType(12, typeof(CLPTextBox));
-            model[typeof(CLPStamp)]
-                .Add(1, "StrokePathContainer");
+            model[typeof(CLPStamp)].Add(1, "InternalPageObject");
             model[typeof(CLPImage)].Add(1, "ByteSource");
             model[typeof(CLPInkRegion)]
                 .Add(1, "CorrectAnswer")
@@ -240,4 +240,165 @@ namespace Classroom_Learning_Partner
         #endregion //Properties
     }
 }
+=======
+using System.Windows;
+using System;
+using Classroom_Learning_Partner.ViewModels;
+using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Model;
+using System.IO;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
+using MongoDB.Driver;
+using System.Threading;
+using Classroom_Learning_Partner.Views;
+using Catel.Logging;
 
+
+namespace Classroom_Learning_Partner
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        public enum UserMode
+        {
+            Server,
+            Instructor,
+            Projector,
+            Student
+        }
+
+        public enum DatabaseMode
+        {
+            Using,
+            NotUsing
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            //Uncomment this to enable Catel Logging
+            //LogManager.RegisterDebugListener();
+
+            CurrentUserMode = UserMode.Instructor;
+            _databaseUse = DatabaseMode.NotUsing;
+
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
+            
+            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
+            {
+                ConnectToDB();
+            }
+
+            MainWindowView window = new MainWindowView();
+            _mainWindowViewModel = new MainWindowViewModel();
+            window.DataContext = MainWindowViewModel;
+            window.Show();
+            MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
+
+            _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
+           
+            JoinMeshNetwork();
+            MainWindowViewModel.SetWorkspace();
+        }
+
+        #region Methods
+
+        public void JoinMeshNetwork()
+        {
+            _peer = new PeerNode();
+            _peerThread = new Thread(_peer.Run) { IsBackground = true };
+            PeerThread.Start();
+        }
+
+        public void LeaveMeshNetwork()
+        {
+            Peer.Stop();
+            PeerThread.Join();
+        }
+
+        protected void ConnectToDB()
+        {
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
+            _databaseServer = MongoServer.Create(ConnectionString);
+            Console.WriteLine("Connected to DB");
+        }
+
+        #endregion //Methods
+
+        #region Properties
+
+        private static MainWindowViewModel _mainWindowViewModel;
+        public static MainWindowViewModel MainWindowViewModel
+        {
+            get
+            {
+                return _mainWindowViewModel;
+            }
+        }
+
+        private static string _notebookDirectory;
+        public static string NotebookDirectory
+        {
+            get
+            {
+                return _notebookDirectory;
+            }
+        }
+
+        private static UserMode _currentUserMode;
+        public static UserMode CurrentUserMode
+        {
+            get
+            {
+                return _currentUserMode;
+            }
+            set
+            {
+                _currentUserMode = value;
+            }
+        }
+
+        private static PeerNode _peer;
+        public static PeerNode Peer
+        {
+            get
+            {
+                return _peer;
+            }
+        }
+
+        private static Thread _peerThread;
+        public static Thread PeerThread
+        {
+            get
+            {
+                return _peerThread;
+            }
+        }
+
+        private static DatabaseMode _databaseUse;
+        public static DatabaseMode DatabaseUse
+        {
+            get
+            {
+                return _databaseUse;
+            }
+        }
+
+        private static MongoServer _databaseServer;
+        public static MongoServer DatabaseServer
+        {
+            get
+            {
+                return _databaseServer;
+            }
+        }
+
+        #endregion //Properties
+    }
+}
+>>>>>>> 97a79717b41cb86186f75bbdfc05981db9e09e5e
