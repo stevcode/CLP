@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.Model
                     App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
                 }
 
-                
+
             }
             else //else doesn't exist, error checking
             {
@@ -93,7 +93,7 @@ namespace Classroom_Learning_Partner.Model
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
-                        
+
                         NameChooserLoop = false;
                         //Send empty notebook to db
                         //ObjectSerializer.ToString(newNotebookViewModel)
@@ -117,15 +117,35 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             notebook.Save(filePath);
             Console.WriteLine("Notebook saved locally");
-            if (App.DatabaseUse == App.DatabaseMode.Using)
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
-                string s_notebook = ObjectSerializer.ToString(notebook);
-                Console.WriteLine("Notebook serialized");
-                App.Peer.Channel.SaveNotebookDB(s_notebook, App.Peer.UserName);//Server call
-                Console.WriteLine("Notebook saving called on mesh");
-            }
-        }
 
+                int i = 1;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    if (!page.PageHistory.IsSaved())
+                    {
+                        //submit page, removing history first
+                        //CLPHistory tempHistory = removeHistoryFromPageVM(page);
+
+                        //Serialize using protobuf
+                        string s_page = ObjectSerializer.ToString(notebook);
+
+                        //Actual send
+                        DateTime now = DateTime.Now;
+                        App.Peer.Channel.SavePage(s_page, App.Peer.UserName, now);
+                        Logger.Instance.WriteToLog("Page " + i.ToString() + " sent to server(save), size: " + (s_page.Length / 1024.0).ToString() + " kB");
+                        //replace history:
+                        //replacePageHistory(tempHistory, page);
+                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                        page.PageHistory.HistoryItems.Add(item);
+
+                    }
+                    i++;
+                }
+            }
+
+        }
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -138,7 +158,7 @@ namespace Classroom_Learning_Partner.Model
                 if (currentNotebook != null)
                 {
                     //update with newer notebook version
-                    currentNotebook["SaveDate"] = DateTime.Now.ToString();
+                    currentNotebook["SaveDate"] = BsonDateTime.Create(DateTime.UtcNow);
                     currentNotebook["NotebookContent"] = ObjectSerializer.ToString(notebook);
                     nbCollection.Save(currentNotebook);
                 }
@@ -159,22 +179,54 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
-
-        public void SavePageDB(CLPPage page)
+        public void SavePageDB(CLPPage page, string s_page, string userName, bool isSubmission)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
-                MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
-                BsonDocument currentPage = new BsonDocument {
-                    { "ID", page.UniqueID },
-                    { "CreationDate", page.CreationDate },
-                        { "PageContent", ObjectSerializer.ToString(page) }
-                    };
-                pageCollection.Insert(currentPage);
+                MongoCollection<BsonDocument> pageCollection;
+                if (isSubmission)
+                {
+                    pageCollection = nb.GetCollection<BsonDocument>("Pages");
+                    pageCollection.Insert(createBsonPage(page, s_page, userName));
+                }
+                else
+                {
+                    pageCollection = nb.GetCollection<BsonDocument>("SavedPages");
+                    var query = Query.And(Query.EQ("ID", page.UniqueID), Query.EQ("User", userName));
+                    BsonDocument currentPage = pageCollection.FindOne(query);
+                    if (currentPage != null)
+                    {
+                        //update with newer notebook version
+                        currentPage["SaveDate"] = BsonDateTime.Create(DateTime.UtcNow);
+                        currentPage["PageContent"] = s_page;
+                        pageCollection.Save(currentPage);
+                    }
+                    else
+                    {
+                        //create new page- page for this student has never been saved before 
+                        pageCollection.Insert(createBsonPage(page, s_page, userName));
+                    }
+                }
+
             }
         }
+        //public void SavePageDB(CLPPage page)
+        //{
+        //    if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
+        //    {
+        //        //save to database
+        //        MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+        //        MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
+        //        BsonDocument currentPage = new BsonDocument {
+        //            { "ID", page.UniqueID },
+        //            { "CreationDate", page.CreationDate },
+        //                { "PageContent", ObjectSerializer.ToString(page) }
+        //            };
+        //        pageCollection.Insert(currentPage);
+        //    }
+        //}
 
         public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
@@ -206,11 +258,11 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
-                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                //string s_history = ObjectSerializer.ToString(history);
+                CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                string s_history = ObjectSerializer.ToString(history);
 
-                //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+                ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
+                string s_pageObjects = ObjectSerializer.ToString(pageObjects);
 
                 //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
@@ -226,10 +278,37 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
                 Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
 
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
             }
         }
-        
+        //Record Visual button pressed
+        public void StartRecordingVisual(CLPPage page)
+        {
+            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StartRecord, null, null, null);
+            page.PageHistory.HistoryItems.Add(item);
+        }
+        public void StopRecordingVisual(CLPPage page)
+        {
+            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StopRecord, null, null, null);
+            page.PageHistory.HistoryItems.Add(item);
+        }
+
+        public void PlaybackRecording(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.StartRecordedPlayback();
+        }
+        public void PauseRecording(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.PausePlayback();
+        }
+        public void StopPlayback(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.StopPlayback();
+        }
+
         public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {
             CLPPage page = GetPageFromID(pageID);
@@ -266,6 +345,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (page != null)
             {
+                //page.PageObjects.Remove(pageObject);
                 foreach (ICLPPageObject po in page.PageObjects)
                 {
                     if (po.UniqueID == pageObject.UniqueID)
@@ -274,12 +354,9 @@ namespace Classroom_Learning_Partner.Model
                         break;
                     }
                 }
-
-                
-
                 if (!page.PageHistory.IgnoreHistory)
                 {
-                	CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
                     page.PageHistory.HistoryItems.Add(item);
                 }
             }
@@ -296,8 +373,8 @@ namespace Classroom_Learning_Partner.Model
                 }
             }
             return null;
-        }     
-        
+        }
+
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
             CLPPage page = GetPageFromID(pageObject.PageID);
@@ -382,7 +459,7 @@ namespace Classroom_Learning_Partner.Model
                 studentNotebookCopies.Add(createBsonNotebook(notebook, singleStudent));
             }
             nbCollection.InsertBatch(studentNotebookCopies.ToArray());
-            
+
         }
 
         private BsonDocument createBsonNotebook(CLPNotebook notebook, string userName)
@@ -397,7 +474,25 @@ namespace Classroom_Learning_Partner.Model
                     };
             return currentNotebook;
         }
-
+        private BsonDocument createBsonHistory(string s_history, string pageID, string userName)
+        {
+            return new BsonDocument {
+                    { "ID", pageID },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"User", userName},
+                        { "HistoryContent", s_history }
+                    };
+        }
+        private BsonDocument createBsonPage(CLPPage page, string s_page, string userName)
+        {
+            return new BsonDocument {
+                    { "ID", page.UniqueID },
+                    { "CreationDate", BsonDateTime.Create(page.CreationDate.ToUniversalTime()) },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"User", userName},
+                        { "PageContent", s_page }
+                    };
+        }
         public void Initialize()
         {
         }
@@ -440,7 +535,7 @@ namespace Classroom_Learning_Partner.Model
             String randomString = "";
             int randNumber;
 
-            //Loop ‘length’ times to generate a random number or character
+            //Loop Â‘lengthÂ’ times to generate a random number or character
             for (int i = 0; i < length; i++)
             {
                 if (random.Next(1, 3) == 1)
@@ -456,4 +551,3 @@ namespace Classroom_Learning_Partner.Model
         }
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

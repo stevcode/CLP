@@ -48,8 +48,9 @@ namespace Classroom_Learning_Partner.ViewModels
             SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
             SetServerCommand = new Command(OnSetServerCommandExecute);
 
+            //History Commands
+            EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
             //Ribbon Content
-            SideBarVisibility = true;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -71,7 +72,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
             CurrentFontSize = 24;
-            
+            //Steve - Can this be done in XAML? And switched to toggle button?
+            RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
 
             AuthoringTabVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
@@ -131,22 +133,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
-
-            //Student Record and Playback 
-            RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
-            PlayPauseVisualCommand = new Command(OnPlayPauseVisualCommandExecute);
-            StopVisualCommand = new Command(OnStopVisualCommandExecute);
-            RecordAudioCommand = new Command(OnRecordAudioCommandExecute);
-            PlayAudioCommand = new Command(OnPlayAudioCommandExecute);
-            RecordBothCommand = new Command(OnRecordBothCommandExecute);
-            PlayStopBothCommand = new Command(OnPlayStopBothCommandExecute);
-
-            //Steve - Can this be done in XAML? And switched to toggle button?
-            VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
-            AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
-            PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-
-            currentlyPlayingVisual = false;
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -377,12 +363,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        private bool _currentlyPlayingVisual;
-        public bool currentlyPlayingVisual
-        {
-            get { return _currentlyPlayingVisual; }
-            set { _currentlyPlayingVisual = value; }
-        }
         /// <summary>
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
@@ -405,21 +385,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Bindings
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool SideBarVisibility
-        {
-            get { return GetValue<bool>(SideBarVisibilityProperty); }
-            set { SetValue(SideBarVisibilityProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the SideBarVisibility property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
-
 
         #region Convert to XAMLS?
 
@@ -469,42 +434,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public Uri AudioRecordImage
+        public Uri RecordImage
         {
-            get { return GetValue<Uri>(AudioRecordImageProperty); }
-            set { SetValue(AudioRecordImageProperty, value); }
+            get { return GetValue<Uri>(RecordImageProperty); }
+            set { SetValue(RecordImageProperty, value); }
         }
+
         /// <summary>
         /// Register the RecordImage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData AudioRecordImageProperty = RegisterProperty("AudioRecordImage", typeof(Uri));
+        public static readonly PropertyData RecordImageProperty = RegisterProperty("RecordImage", typeof(Uri));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Uri VisualRecordImage
-        {
-            get { return GetValue<Uri>(VisualRecordImageProperty); }
-            set { SetValue(VisualRecordImageProperty, value); }
-        }
-        /// <summary>
-        /// Register the VisualRecordImage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData VisualRecordImageProperty = RegisterProperty("VisualRecordImage", typeof(Uri));
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Uri PlayPauseVisualImage
-        {
-            get { return GetValue<Uri>(PlayPauseVisualImageProperty); }
-            set { SetValue(PlayPauseVisualImageProperty, value); }
-        }
-        /// <summary>
-        /// Register the PlayPauseVisualImage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PlayPauseVisualImageProperty = RegisterProperty("PlayPauseVisualImage", typeof(Uri));
-        
-        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -672,11 +612,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach (CLPPage page in notebook.Pages)
-            {
-                page.PageHistory.ClearHistory();
-            }
             //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 
@@ -1082,11 +1017,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (CanSendToTeacher)
             {
-                CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
-                CLPServiceAgent.Instance.SubmitPage(page);
+                Console.WriteLine("actual send");
+                AppMessages.RequestCurrentDisplayedPage.Send((clpPageViewModel) =>
+                {
+                    //CLPService.SubmitPage(clpPageViewModel);
+                });
             }
             CanSendToTeacher = false;
-            
+            timer.Dispose();
         }
 
         /// <summary>
@@ -1110,7 +1048,6 @@ namespace Classroom_Learning_Partner.ViewModels
             timer.Stop();
             timer.Elapsed -= timer_Elapsed;
             IsSending = false;
-            timer.Dispose();
         }
 
         /// <summary>
@@ -1254,6 +1191,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Commands
 
+<<<<<<< HEAD
+        //                                  }));
+        //    }
+        //}
+=======
         /// <summary>
         /// Gets the AddPageCommand command.
         /// </summary>
@@ -1271,15 +1213,37 @@ namespace Classroom_Learning_Partner.ViewModels
             (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
             //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
+>>>>>>> 34ed4a102259c84b9111a3b63ff60a88129f9f28
 
         /// <summary>
         /// Gets the DeletePageCommand command.
         /// </summary>
+<<<<<<< HEAD
+        public Command EnablePlaybackCommand { get; private set; }
+=======
         public Command DeletePageCommand { get; private set; }
+>>>>>>> 34ed4a102259c84b9111a3b63ff60a88129f9f28
 
         /// <summary>
         /// Method to invoke when the DeletePageCommand command is executed.
         /// </summary>
+<<<<<<< HEAD
+        private void OnEnablePlaybackCommandExecute()
+        {
+           // AppMessages.ChangePlayback.Send(true);
+            Visibility currentState = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility;
+            if (currentState == Visibility.Collapsed)
+            {
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility = Visibility.Visible;
+            }
+            else
+            {
+                ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.PlaybackControlsVisibility = Visibility.Collapsed;
+            }
+
+        }
+        #endregion //History Commands
+=======
         private void OnDeletePageCommandExecute()
         {
             //Steve - clpserviceagent
@@ -1429,128 +1393,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the RecordVisualCommand command.
-        /// </summary>
-        public Command RecordVisualCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the RecordVisualCommand command is executed.
-        /// </summary>
-        bool currentlyRecording = false;
-        private void OnRecordVisualCommandExecute()
-        {
-            if (!currentlyRecording)
-            {
-                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-                CLPServiceAgent.Instance.StartRecordingVisual(page);
-                VisualRecordImage = new Uri("..\\Images\\recording.png", UriKind.Relative);
-                currentlyRecording = true;
-            }
-            else
-            {
-                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-                CLPServiceAgent.Instance.StopRecordingVisual(page);
-                VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
-                currentlyRecording = false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the PlayPauseVisualCommand command.
-        /// </summary>
-        public Command PlayPauseVisualCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the PlayPauseVisualCommand command is executed.
-        /// </summary>
-        
-        private void OnPlayPauseVisualCommandExecute()
-        {
-            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;   
-            if (!currentlyPlayingVisual)
-            {
-                CLPServiceAgent.Instance.PlaybackRecording(page);
-                PlayPauseVisualImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
-                currentlyPlayingVisual = true;
-            }
-            else
-            {
-                CLPServiceAgent.Instance.PlaybackRecording(page);
-                PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                currentlyPlayingVisual = false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the StopVisualCommand command.
-        /// </summary>
-        public Command StopVisualCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the StopVisualCommand command is executed.
-        /// </summary>
-        private void OnStopVisualCommandExecute()
-        {
-            
-                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-                CLPServiceAgent.Instance.StopPlayback(page);
-            
-        }
-
-        /// <summary>
-        /// Gets the RecordAudioCommand command.
-        /// </summary>
-        public Command RecordAudioCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the RecordAudioCommand command is executed.
-        /// </summary>
-        private void OnRecordAudioCommandExecute()
-        {
-            
-        }
-
-        /// <summary>
-        /// Gets the PlayAudioCommand command.
-        /// </summary>
-        public Command PlayAudioCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the PlayAudioCommand command is executed.
-        /// </summary>
-        private void OnPlayAudioCommandExecute()
-        {
-
-        }
-
-        /// <summary>
-        /// Gets the RecordBothCommand command.
-        /// </summary>
-        public Command RecordBothCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the RecordBothCommand command is executed.
-        /// </summary>
-        private void OnRecordBothCommandExecute()
-        {
-
-        }
-
-        /// <summary>
-        /// Gets the PlayStopBothCommand command.
-        /// </summary>
-        public Command PlayStopBothCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the PlayStopBothCommand command is executed.
-        /// </summary>
-        private void OnPlayStopBothCommandExecute()
-        {
-
-        }
 
         #endregion //Insert Commands
+>>>>>>> 34ed4a102259c84b9111a3b63ff60a88129f9f28
 
         #endregion //Commands
 

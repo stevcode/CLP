@@ -125,7 +125,7 @@
                     <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
                         Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="{Binding SideBarVisibility}" />
+                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="True" />
                     
                 </ribbon:RibbonGroup>
                 
@@ -239,7 +239,7 @@
                     
                 </ribbon:RibbonGroup>-->
 
-                <ribbon:RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
+                <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
                     
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\Send.png" 
@@ -275,40 +275,34 @@
                         Command="{Binding Path=CreateNewGridDisplayCommand}" />
                     
                 </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="Visual" >
+<<<<<<< HEAD
+                <ribbon:RibbonGroup Header="Replay" Visibility="{Binding Path=InstructorVisibility}">
                     <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=VisualRecordImage}"
-                        Label="Record"
-                        Command="{Binding Path=RecordVisualCommand}" />
-                    <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=PlayPauseVisualImage}"
-                        Label="Play"
-                        Command="{Binding Path=PlayPauseVisualCommand}" />
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\stop.png"
-                        Label="Stop"
-                        Command="{Binding Path=StopVisualCommand}" />
+                        LargeImageSource="..\Images\video.png"
+                        Label="Enable"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
                 </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="Audio" >
-                    <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=AudioRecordImage}"
-                        Label="Record"
-                        Command="{Binding Path=RecordAudioCommand}" />
+                <!--<ribbon:RibbonGroup Header="Playback Page" Visibility="{Binding Path=InstructorVisibility}">
+                    
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\play2.png"
-                        Label="Play"
-                        Command="{Binding Path=PlayAudioCommand}" />
-                </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="Visual and Audio" >
+                        Label="Enable Playback"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+                    
+                    <ribbon:RibbonButton
+                        LargeImageSource="{Binding Path=RecordImage}"
+                        Label="Record"
+                        Command="{Binding Path=AudioCommand}" />
+                    
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\play.png"
-                        Label="Record"
-                        Command="{Binding Path=RecordBothCommand}" />
-                    <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play2.png"
-                        Label="Play"
-                        Command="{Binding Path=PlayStopBothCommand}" />
-                </ribbon:RibbonGroup>
+                        Label="Play Audio"
+                        Command="{Binding Path=PlayAudioCommand}" />
+                    
+                </ribbon:RibbonGroup>-->
+=======
+>>>>>>> 34ed4a102259c84b9111a3b63ff60a88129f9f28
+                
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>

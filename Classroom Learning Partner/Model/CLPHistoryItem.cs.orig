@@ -17,12 +17,13 @@ namespace Classroom_Learning_Partner.Model
         EraseInk,
         SnapTileSnap,
         SnapTileRemoveTile,
-        Submit,
+<<<<<<< HEAD
         Copy,
         Duplicate,
-        Save,
-        StartRecord,
-        StopRecord
+        Save
+=======
+        Send
+>>>>>>> origin/experimental
     }
 
     /// <summary>

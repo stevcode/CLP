@@ -37,8 +37,12 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-            NumberOfSubmissions = 0;
+<<<<<<< HEAD
 
+=======
+            NumberOfSubmissions = 0;
+             
+>>>>>>> origin/experimental
             Page = page;
 
             OtherStrokes = new StrokeCollection();
@@ -65,19 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             StartPlaybackCommand = new Command(OnStartPlaybackCommandExecute);
             StopPlaybackCommand = new Command(OnStopPlaybackCommandExecute);
 
-           /* CLPSnapTileContainer tile1 = new CLPSnapTileContainer(new Point(10, 10), "green");
-            tile1.Tiles.Add("green");
-            tile1.Height = tile1.Tiles.Count * CLPSnapTileContainer.TILE_HEIGHT;
-            CLPServiceAgent.Instance.AddPageObjectToPage(Page, tile1);
-
-            CLPSnapTileContainer tile2 = new CLPSnapTileContainer(new Point(200, 400), "green");
-            tile2.Tiles.Add("green");
-            tile2.Tiles.Add("green");
-            tile2.Tiles.Add("green");
-            tile2.Tiles.Add("green");
-            tile2.Height = tile2.Tiles.Count * CLPSnapTileContainer.TILE_HEIGHT;
-            CLPServiceAgent.Instance.AddPageObjectToPage(Page, tile2);
-            */
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
         }
 
@@ -212,6 +203,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+<<<<<<< HEAD
+
+=======
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -225,6 +219,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the NumberOfSubmissions property so it is known in the class.
         /// </summary>
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
+>>>>>>> origin/experimental
 
         /// <summary>
         /// Gets or sets the property value.
@@ -375,7 +370,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            foreach (ICLPPageObject pageObject in PageObjects)
+            foreach (CLPPageObjectBase pageObject in PageObjects)
             {
                 if (pageObject.CanAcceptStrokes)
                 {
@@ -453,8 +448,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         int i = 0;
         DispatcherTimer timer;
-        bool hasReachedStart = false;
-        bool hasReachedStop = false;
         public void StartPlayBack()
         {
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
@@ -483,14 +476,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 i = 0;
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
-                if (PlayingRecorded)
-                {
-                    hasReachedStart = false;
-                    hasReachedStop = false;
-                    PlayingRecorded = false;
-                    App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                    App.MainWindowViewModel.currentlyPlayingVisual = false;
-                }
             }
             lock(_locker)
             {
@@ -508,12 +493,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     i--;
                 }
            }
-           if ((PlayingRecorded && !hasReachedStart) || (PlayingRecorded && hasReachedStop))
-           {
-               timer.Interval = new TimeSpan(0);
-           }
-           
            Redo();
+
         }
 
         public void Undo()
@@ -523,11 +504,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
                 PageHistory.HistoryItems.Remove(item);
-                ICLPPageObject pageObject = null;
-                if (item.ObjectID != null)
-                {
-                    pageObject = GetPageObjectByID(item.ObjectID);
-                }
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
+
                 switch (item.ItemType)
                 {
                     case HistoryItemType.AddPageObject:
@@ -596,19 +574,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     PageHistory.UndoneHistoryItems.Remove(item);
                 }
-                 ICLPPageObject pageObject = null;
-                 if (item.ObjectID != null)
-                 {
-                     pageObject = GetPageObjectByID(item.ObjectID);
-                 }
+                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
+
                 switch (item.ItemType)
                 {
-                    case HistoryItemType.StartRecord:
-                        hasReachedStart = true;
-                        break;
-                    case HistoryItemType.StopRecord:
-                        hasReachedStop = true;
-                        break;
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
@@ -665,21 +634,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageHistory.IgnoreHistory = false;
         }
-        bool PlayingRecorded = false;
-        public void StartRecordedPlayback()
-        {
-            PlayingRecorded = true;
-            OnStartPlaybackCommandExecute();
-            
-        }
-        public void PausePlayback()
-        {
-            OnStartPlaybackCommandExecute();
-        }
-        public void StopPlayback()
-        {
-            OnStopPlaybackCommandExecute();
-        }
+
         #endregion //Methods
 
         #region Commands
@@ -728,14 +683,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 i--;
             }
             timer.Stop();
-            if (PlayingRecorded)
-            {
-                hasReachedStart = false;
-                hasReachedStop = false;
-                PlayingRecorded = false;
-                App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                App.MainWindowViewModel.currentlyPlayingVisual = false;
-            }
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
         }
        
