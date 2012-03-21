@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Classroom_Learning_Partner.Views;
 using System.Windows.Data;
+using System.ComponentModel;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -163,7 +164,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ObservableCollection<CLPPage> SubmissionPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value); }
+            set { SetValue(SubmissionPagesProperty, value);
+            FilteredSubmissions = new CollectionViewSource();
+            FilteredSubmissions.Source = SubmissionPages;
+            FilteredSubmissions.SortDescriptions.Add(new SortDescription("SubmitterName", ListSortDirection.Ascending));
+            }
         }
 
         /// <summary>
