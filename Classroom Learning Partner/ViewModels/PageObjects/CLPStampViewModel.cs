@@ -83,7 +83,6 @@
             CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
             leftBehindStamp.UniqueID = PageObject.UniqueID;
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, leftBehindStamp);
-            Console.WriteLine("stampdown");
         }
 
                 /// <summary>
@@ -96,13 +95,12 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            CLPShape tempSquare = new CLPShape(CLPShape.CLPShapeType.Rectangle);
-            tempSquare.Height = Height - 50;
-            tempSquare.Width = Width;
-            tempSquare.Position = new Point(Position.X, Position.Y + 50);
-            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, tempSquare);
+            CLPStrokePathContainer tempContainer = new CLPStrokePathContainer(InternalPageObject);
+            tempContainer.Height = Height - 50;
+            tempContainer.Width = Width;
+            tempContainer.Position = new Point(Position.X, Position.Y + 50);
+            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, tempContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-            Console.WriteLine("stampup");
         }
 
         /// <summary>

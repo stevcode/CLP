@@ -1,0 +1,54 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPStrokePathContainerView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
+                   xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
+    
+    
+
+    <ContentControl IsHitTestVisible="True" Content="{Binding InternalPageObject}"  x:Name="PageObjectView" Height="{Binding Path=Height}" Width="{Binding Path=Width}">
+
+        <Control.Resources>
+
+            <ControlTemplate x:Key="CLPImageTemplate">
+                <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CLPShapeTemplate">
+                <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="BlankTemplate">
+                <Rectangle Width="{Binding Width}" Fill="Transparent" Height="{Binding Height}"  />
+            </ControlTemplate>
+
+        </Control.Resources>
+
+        <Control.Style>
+            <Style TargetType="{x:Type ContentControl}">
+                <Style.Triggers>
+
+                    <!-- CLPImage trigger -->
+                    <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
+                        <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPShape trigger -->
+                    <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
+                        <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                    </DataTrigger>
+
+                    <!-- Blank trigger -->
+                    <DataTrigger Binding="{Binding InternalType}" Value="Blank">
+                        <Setter Property="Template" Value="{StaticResource BlankTemplate}" />
+                    </DataTrigger>
+
+                </Style.Triggers>
+            </Style>
+        </Control.Style>
+
+    </ContentControl>
+
+</catel:UserControl>

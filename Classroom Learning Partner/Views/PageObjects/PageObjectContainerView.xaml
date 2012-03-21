@@ -146,79 +146,6 @@
                         </Thumb>
                     </Grid>
 
-                    <!--Remove Tile Button
-                    <Button
-                        x:Name="removeTileButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-50"
-                        Canvas.Bottom="-25"
-                        Click="removeTileButton_Click"
-                        Cursor="Hand"
-                        Visibility="Hidden">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Rectangle
-                                        Stroke="Black"
-                                        StrokeThickness="2"
-                                        Margin="5"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="SpringGreen"
-                                        />
-                                    <Path 
-                                        Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" 
-                                        Stroke="Black" 
-                                        StrokeThickness="3" 
-                                        Margin="8" 
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>-->
-
-                    <!--Duplicate Tile Button
-                    <Button
-                        x:Name="duplicateTileButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Right="-50"
-                        Canvas.Bottom="-25"
-                        Click="duplicateTileButton_Click"
-                        Cursor="Hand"
-                        Visibility="Hidden">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Rectangle
-                                        Stroke="Black"
-                                        StrokeThickness="2"
-                                        Margin="5"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="SpringGreen"
-                                        />
-                                    <Path
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        Data="M 20,10 L 20,30"
-                                        />
-                                    <Path
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        Data="M 10,20 L 30,20"
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>-->
-
                     <!--Resize Thumb-->
                     <Grid
                         x:Name="resizeButton"
@@ -292,6 +219,10 @@
                     <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
+                    <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -326,6 +257,11 @@
                         <!-- CLPSnapTileContainer trigger -->
                         <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
                             <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPStrokePathContainer trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStrokePathContainer">
+                            <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
