@@ -239,7 +239,7 @@
                     
                 </ribbon:RibbonGroup>-->
 
-                <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
+                <ribbon:RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
                     
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\Send.png" 

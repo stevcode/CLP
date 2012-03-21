@@ -1,0 +1,64 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPStrokePathContainerView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
+                   xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ContentControl}" x:Key="InternalStyle">
+            <Style.Triggers>
+
+                <!-- CLPImage trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!-- CLPShape trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!-- Blank trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="Blank">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Rectangle Width="{Binding Width}" Fill="Transparent" Height="{Binding Height}"  />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <ContentControl IsHitTestVisible="True" Style="{StaticResource InternalStyle}"  x:Name="InternalView" Height="{Binding Path=Height}" Width="{Binding Path=Width}" />
+
+        <ItemsControl
+                                  ItemsSource="{Binding Path=StrokePathViewModels}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Height="{Binding Path=Height}" Width="{Binding Path=Width}" Background="Transparent" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Path Data="{Binding Path=PathData}" StrokeThickness="{Binding Path=PathWidth}" Stroke="{Binding Path=PathColor}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+
+</catel:UserControl>

@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPTextBox"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPTextBox newTextBox = this.Clone() as CLPTextBox;
             newTextBox.UniqueID = Guid.NewGuid().ToString();
