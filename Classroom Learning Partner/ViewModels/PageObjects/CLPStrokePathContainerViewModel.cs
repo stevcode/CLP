@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 InternalType = container.InternalPageObject.PageObjectType;
             }
 
-            ScribblesToStrokePaths();
+            //ScribblesToStrokePaths();
         }
 
         /// <summary>
@@ -54,6 +54,33 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// Register the InternalPageObject property so it is known in the class.
         /// </summary>
         public static readonly PropertyData InternalPageObjectProperty = RegisterProperty("InternalPageObject", typeof(ICLPPageObject));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsStrokePathsVisible
+        {
+            get { return GetValue<bool>(IsStrokePathsVisibleProperty); }
+            set { SetValue(IsStrokePathsVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsStrokePathsVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false, (sender, e) => ((CLPStrokePathContainerViewModel)sender).OnStrokePathsVisibilityChanged());
+
+        private void OnStrokePathsVisibilityChanged()
+        {
+            if (IsStrokePathsVisible)
+            {
+                ScribblesToStrokePaths();
+            }
+            else
+            {
+                StrokePathViewModels.Clear();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the property value.

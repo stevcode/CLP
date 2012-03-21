@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.Model
         string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
-        ObservableCollection<string> PageObjectStrokes { get; }
+        ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
         double Height { get; set; }
@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<string> PageObjectStrokes
         {
             get { return GetValue<ObservableCollection<string>>(PageObjectStrokesProperty); }
-            protected set { SetValue(PageObjectStrokesProperty, value); }
+            set { SetValue(PageObjectStrokesProperty, value); }
         }
 
         /// <summary>

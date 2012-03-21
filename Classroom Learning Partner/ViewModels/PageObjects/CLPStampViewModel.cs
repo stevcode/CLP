@@ -21,15 +21,6 @@
         {
             PageObject = stamp;
 
-            if (stamp.InternalPageObject == null)
-            {
-                InternalType = "Blank";
-            }
-            else
-            {
-                InternalType = stamp.InternalPageObject.PageObjectType;
-            }
-
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
@@ -45,30 +36,16 @@
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ICLPPageObject InternalPageObject
+        public CLPStrokePathContainer StrokePathContainer
         {
-            get { return GetValue<ICLPPageObject>(InternalPageObjectProperty); }
-            set { SetValue(InternalPageObjectProperty, value); }
+            get { return GetValue<CLPStrokePathContainer>(StrokePathContainerProperty); }
+            set { SetValue(StrokePathContainerProperty, value); }
         }
 
         /// <summary>
-        /// Register the InternalPageObject property so it is known in the class.
+        /// Register the StrokePathContainer property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InternalPageObjectProperty = RegisterProperty("InternalPageObject", typeof(ICLPPageObject));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string InternalType
-        {
-            get { return GetValue<string>(InternalTypeProperty); }
-            set { SetValue(InternalTypeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the InternalType property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData InternalTypeProperty = RegisterProperty("InternalType", typeof(string));
+        public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer));
 
         /// <summary>
         /// Gets the CopyStampCommand command.
@@ -83,6 +60,7 @@
             CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
             leftBehindStamp.UniqueID = PageObject.UniqueID;
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, leftBehindStamp);
+            StrokePathContainer.IsStrokePathsVisible = true;
         }
 
                 /// <summary>
@@ -95,12 +73,8 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            CLPStrokePathContainer tempContainer = new CLPStrokePathContainer(InternalPageObject, PageObject.PageObjectStrokes);
-            tempContainer.Height = Height - 50;
-            tempContainer.Width = Width;
-            tempContainer.Position = new Point(Position.X, Position.Y + 50);
-
-            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, tempContainer);
+            StrokePathContainer.Position = PageObject.Position;
+            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, StrokePathContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 

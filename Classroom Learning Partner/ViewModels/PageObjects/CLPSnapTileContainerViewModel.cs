@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Register the NumberOfTiles property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int),0,(sender, e) => ((CLPSnapTileContainerViewModel)sender).OnNumberOfTilesChanged());
+        public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int), 0, (sender, e) => ((CLPSnapTileContainerViewModel)sender).OnNumberOfTilesChanged());
 
         /// <summary>
         /// Called when the name property has changed.

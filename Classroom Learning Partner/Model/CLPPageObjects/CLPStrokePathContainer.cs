@@ -10,11 +10,22 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
-        public CLPStrokePathContainer(ICLPPageObject internalPageObject, ObservableCollection<string> pageObjectStrokes)
+        public CLPStrokePathContainer(ICLPPageObject internalPageObject)
             : base()
         {
             InternalPageObject = internalPageObject;
-            PageObjectStrokes = pageObjectStrokes;
+            IsStrokePathsVisible = false;
+
+            if (internalPageObject == null)
+            {
+                Height = 100;
+                Width = 100;
+            }
+            else
+            {
+                Height = InternalPageObject.Height;
+                Width = InternalPageObject.Width;
+            }
         }
 
         /// <summary>
@@ -40,6 +51,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// Register the InternalPageObject property so it is known in the class.
         /// </summary>
         public static readonly PropertyData InternalPageObjectProperty = RegisterProperty("InternalPageObject", typeof(ICLPPageObject), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsStrokePathsVisible
+        {
+            get { return GetValue<bool>(IsStrokePathsVisibleProperty); }
+            set { SetValue(IsStrokePathsVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsStrokePathsVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false);
 
         public override string PageObjectType
         {
