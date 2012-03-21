@@ -259,7 +259,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
                 //string s_history = ObjectSerializer.ToString(history);
-                Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length/1024.0).ToString() + " kB");
+                //Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length/1024.0).ToString() + " kB");
 
                 //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
                 //string s_pageObjects = ObjectSerializer.ToString(pageObjects);

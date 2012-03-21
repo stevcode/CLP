@@ -17,7 +17,8 @@ namespace Classroom_Learning_Partner.Model
         EraseInk,
         SnapTileSnap,
         SnapTileRemoveTile,
-        Send
+        Send,
+        Save
     }
 
     /// <summary>

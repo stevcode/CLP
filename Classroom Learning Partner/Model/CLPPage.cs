@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<string> Strokes
         {
             get { return GetValue<ObservableCollection<string>>(StrokesProperty); }
-            private set { SetValue(StrokesProperty, value); }
+            set { SetValue(StrokesProperty, value); }
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            private set { SetValue(PageObjectsProperty, value); }
+            set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Classroom_Learning_Partner.Model
         public CLPHistory PageHistory
         {
             get { return GetValue<CLPHistory>(PageHistoryProperty); }
-            private set { SetValue(PageHistoryProperty, value); }
+            set { SetValue(PageHistoryProperty, value); }
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.Model
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Classroom_Learning_Partner.Model
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
         /// <summary>

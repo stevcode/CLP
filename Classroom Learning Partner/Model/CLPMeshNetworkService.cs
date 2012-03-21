@@ -127,7 +127,7 @@ namespace Classroom_Learning_Partner.Model
                      if (App.DatabaseUse == App.DatabaseMode.Using)
                      {
                          CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
+                         CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
                      }
                  }
              return null;

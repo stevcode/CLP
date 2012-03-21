@@ -470,7 +470,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (HistoryItems.Count > 0)
             {
-                return HistoryItems[HistoryItems.Count - 1].ItemType == CLPHistoryItem.HistoryItemType.Save;
+                return HistoryItems[HistoryItems.Count - 1].ItemType == HistoryItemType.Save;
                 
             }
             else

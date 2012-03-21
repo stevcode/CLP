@@ -15,13 +15,13 @@ namespace Classroom_Learning_Partner.Model
         string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
-        ObservableCollection<string> PageObjectStrokes { get; }
+        ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
         double Height { get; set; }
         double Width { get; set; }
 
-        string PageObjectType { get; }
+        string PageObjectType { get; set; }
 
         CLPPageObjectBase Duplicate();
     }
