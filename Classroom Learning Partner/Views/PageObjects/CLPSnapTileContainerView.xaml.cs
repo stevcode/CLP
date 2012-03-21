@@ -62,7 +62,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if ((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count > 1)
             {
-                (this.DataContext as CLPSnapTileContainerViewModel).Tiles.RemoveAt((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count - 1);
+                (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
             }
         }
 

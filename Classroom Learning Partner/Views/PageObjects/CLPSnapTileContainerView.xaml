@@ -35,7 +35,7 @@
         <ListView ItemsSource="{Binding Path=Tiles}" Height="{Binding Height}" Width="{Binding Width}" Template="{DynamicResource ListViewNewTemplate}" Background="Transparent" BorderThickness="0" Margin="0" Padding="0">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Rectangle Fill="SpringGreen" Stroke="CornflowerBlue" StrokeThickness="4" Margin="0" Height="45" Width="43" />
+                    <Rectangle Fill="SpringGreen" Stroke="Black" StrokeThickness="1" Margin="0" Height="45" Width="43" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

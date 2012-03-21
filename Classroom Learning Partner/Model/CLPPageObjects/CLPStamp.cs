@@ -19,19 +19,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public CLPStamp(ICLPPageObject internalPageObject)
             : base()
         {
-            InternalPageObject = internalPageObject;
+            StrokePathContainer = new CLPStrokePathContainer(internalPageObject);
 
             Position = new Point(100, 100);
-            if (InternalPageObject == null)
-            {
-                Height = 150;
-                Width = 150;
-            }
-            else
-            {
-                Height = InternalPageObject.Height + 50;
-                Width = InternalPageObject.Width;
-            }
+
+            Height = StrokePathContainer.Height;
+            Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
@@ -60,16 +53,16 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ICLPPageObject InternalPageObject
+        public CLPStrokePathContainer StrokePathContainer
         {
-            get { return GetValue<ICLPPageObject>(InternalPageObjectProperty); }
-            set { SetValue(InternalPageObjectProperty, value); }
+            get { return GetValue<CLPStrokePathContainer>(StrokePathContainerProperty); }
+            set { SetValue(StrokePathContainerProperty, value); }
         }
 
         /// <summary>
         /// Register the InternalPageObject property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InternalPageObjectProperty = RegisterProperty("InternalPageObject", typeof(ICLPPageObject), null);
+        public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer), null);
 
         #endregion //Properties
 
@@ -264,10 +257,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             get { return GetValue<double>(HeightProperty); }
             set { SetValue(HeightProperty, value);
-            if (InternalPageObject != null)
-            {
-                InternalPageObject.Height = value - 50;
-            }
+            StrokePathContainer.Height = Height - 50;
+            Console.WriteLine("height changed");
             }
         }
 
@@ -283,10 +274,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             get { return GetValue<double>(WidthProperty); }
             set { SetValue(WidthProperty, value);
-            if (InternalPageObject != null)
-            {
-                InternalPageObject.Width = value;
-            }
+            StrokePathContainer.Width = Width;
+            Console.WriteLine("width changed");
             }
         }
 

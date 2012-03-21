@@ -36,50 +36,8 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Thumb>
-        <Border Grid.Row="1" Width="{Binding Width, Mode=TwoWay}" Height="{Binding InternalPageObject.Height, Mode=TwoWay}" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Margin="0">
-            <!-- Control that dynamically determines what PageObject to show -->
-            <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Height="{Binding Path=InternalPageObject.Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
-
-                <Control.Resources>
-
-                    <ControlTemplate x:Key="CLPImageTemplate">
-                        <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" />
-                    </ControlTemplate>
-
-                    <ControlTemplate x:Key="CLPShapeTemplate">
-                        <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
-                    </ControlTemplate>
-
-                    <ControlTemplate x:Key="BlankTemplate">
-                        <Rectangle Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Height="{Binding Height, Mode=TwoWay}"  />
-                    </ControlTemplate>
-
-                </Control.Resources>
-
-                <Control.Style>
-                    <Style TargetType="{x:Type Control}">
-                        <Style.Triggers>
-
-                            <!-- CLPImage trigger -->
-                            <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
-                                <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                            </DataTrigger>
-
-                            <!-- CLPShape trigger -->
-                            <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
-                                <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                            </DataTrigger>
-
-                            <!-- Blank trigger -->
-                            <DataTrigger Binding="{Binding InternalType}" Value="Blank">
-                                <Setter Property="Template" Value="{StaticResource BlankTemplate}" />
-                            </DataTrigger>
-
-                        </Style.Triggers>
-                    </Style>
-                </Control.Style>
-
-            </ContentControl>
+        <Border Grid.Row="1" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Margin="0">
+            <vwpo:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" />
         </Border>
     </Grid>
 

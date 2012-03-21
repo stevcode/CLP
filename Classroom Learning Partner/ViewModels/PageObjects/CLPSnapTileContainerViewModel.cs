@@ -19,24 +19,10 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             Tiles = new ObservableCollection<string>();
             PageObject = tile;
 
-            
-            for (int i = tile.NumberOfTiles - 1; i >= 0; i--)
-            {
-                Tiles.Add("SpringGreen");
-            }
-            //Tiles.CollectionChanged += new NotifyCollectionChangedEventHandler(Tiles_CollectionChanged);
-            SnapCommand = new Command(OnSnapCommandExecute);
-
-            
+            SnapCommand = new Command(OnSnapCommandExecute);   
         }
 
         public override string Title { get { return "SnapTileContainerVM"; } }
-
-        void Tiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Height = CLPSnapTileContainer.TILE_HEIGHT * Tiles.Count;
-            (PageObject as CLPSnapTileContainer).NumberOfTiles = Tiles.Count;
-        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -65,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// <summary>
         /// Register the NumberOfTiles property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int),0,(sender, e) => ((CLPSnapTileContainerViewModel)sender).OnNumberOfTilesChanged());
+        public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int), 0, (sender, e) => ((CLPSnapTileContainerViewModel)sender).OnNumberOfTilesChanged());
 
         /// <summary>
         /// Called when the name property has changed.
@@ -90,7 +76,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 }
             }
 
-            Tiles.Add("SpringGreen");
             Height = CLPSnapTileContainer.TILE_HEIGHT * NumberOfTiles;
         }
 
