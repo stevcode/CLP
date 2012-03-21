@@ -23,7 +23,8 @@ namespace Classroom_Learning_Partner.Model
 
         string PageObjectType { get; }
 
-        CLPPageObjectBase Duplicate();
+        ICLPPageObject Duplicate();
+        void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
     }
 
     /// <summary>
@@ -195,7 +196,7 @@ namespace Classroom_Learning_Partner.Model
 
         public abstract string PageObjectType { get; }
 
-        public abstract CLPPageObjectBase Duplicate();
+        public abstract ICLPPageObject Duplicate();
 
         public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {

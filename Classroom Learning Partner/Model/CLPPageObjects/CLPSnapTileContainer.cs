@@ -67,7 +67,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPSnapTileContainer"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPSnapTileContainer newSnapTile = this.Clone() as CLPSnapTileContainer;
             newSnapTile.UniqueID = Guid.NewGuid().ToString();

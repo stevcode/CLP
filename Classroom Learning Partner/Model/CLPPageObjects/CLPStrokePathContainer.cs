@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { throw new NotImplementedException(); }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             throw new NotImplementedException();
         }

@@ -110,7 +110,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPImage"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPImage newImage = this.Clone() as CLPImage;
             newImage.UniqueID = Guid.NewGuid().ToString();
