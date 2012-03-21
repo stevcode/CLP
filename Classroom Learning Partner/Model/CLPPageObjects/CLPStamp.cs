@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 Stroke newStroke = stroke.Clone();
                 Matrix transform = new Matrix();
-                transform.Translate(-Position.X, -Position.Y);
+                transform.Translate(-Position.X, -Position.Y - 50);
                 newStroke.Transform(transform, true);
 
                 PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));

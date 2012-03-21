@@ -5,50 +5,60 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
                    xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
-    
-    
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ContentControl}" x:Key="InternalStyle">
+            <Style.Triggers>
 
-    <ContentControl IsHitTestVisible="True" Content="{Binding InternalPageObject}"  x:Name="PageObjectView" Height="{Binding Path=Height}" Width="{Binding Path=Width}">
+                <!-- CLPImage trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
 
-        <Control.Resources>
+                <!-- CLPShape trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
 
-            <ControlTemplate x:Key="CLPImageTemplate">
-                <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" />
-            </ControlTemplate>
+                <!-- Blank trigger -->
+                <DataTrigger Binding="{Binding InternalType}" Value="Blank">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Rectangle Width="{Binding Width}" Fill="Transparent" Height="{Binding Height}"  />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
 
-            <ControlTemplate x:Key="CLPShapeTemplate">
-                <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" />
-            </ControlTemplate>
+            </Style.Triggers>
+        </Style>
 
-            <ControlTemplate x:Key="BlankTemplate">
-                <Rectangle Width="{Binding Width}" Fill="Transparent" Height="{Binding Height}"  />
-            </ControlTemplate>
+    </UserControl.Resources>
 
-        </Control.Resources>
+    <Grid>
+        <ContentControl IsHitTestVisible="True" Style="{StaticResource InternalStyle}"  x:Name="InternalView" Height="{Binding Path=Height}" Width="{Binding Path=Width}" />
 
-        <Control.Style>
-            <Style TargetType="{x:Type ContentControl}">
-                <Style.Triggers>
-
-                    <!-- CLPImage trigger -->
-                    <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
-                        <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                    </DataTrigger>
-
-                    <!-- CLPShape trigger -->
-                    <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
-                        <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                    </DataTrigger>
-
-                    <!-- Blank trigger -->
-                    <DataTrigger Binding="{Binding InternalType}" Value="Blank">
-                        <Setter Property="Template" Value="{StaticResource BlankTemplate}" />
-                    </DataTrigger>
-
-                </Style.Triggers>
-            </Style>
-        </Control.Style>
-
-    </ContentControl>
+        <ItemsControl
+                                  ItemsSource="{Binding Path=StrokePathViewModels}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Height="{Binding Path=Height}" Width="{Binding Path=Width}" Background="Transparent" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Path Data="{Binding Path=PathData}" StrokeThickness="{Binding Path=PathWidth}" Stroke="{Binding Path=PathColor}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
 
 </catel:UserControl>

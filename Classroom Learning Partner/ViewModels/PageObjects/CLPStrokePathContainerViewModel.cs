@@ -1,9 +1,14 @@
-﻿namespace Classroom_Learning_Partner.ViewModels.PageObjects
+﻿using System.Collections.ObjectModel;
+namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
     using Catel.MVVM;
     using Classroom_Learning_Partner.Model.CLPPageObjects;
     using Classroom_Learning_Partner.Model;
     using Catel.Data;
+    using System.Windows.Media;
+    using System.Windows.Ink;
+    using System.Windows.Input;
+    using System.Windows;
 
     /// <summary>
     /// UserControl view model.
@@ -23,8 +28,10 @@
             }
             else
             {
-                InternalType = container.PageObjectType;
+                InternalType = container.InternalPageObject.PageObjectType;
             }
+
+            ScribblesToStrokePaths();
         }
 
         /// <summary>
@@ -66,33 +73,33 @@
 
 
         //put in VM
-        //private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
-        //public ObservableCollection<StrokePathViewModel> StrokePathViewModels
-        //{
-        //    get { return _strokePathViewModels; }
-        //}
+        private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
+        public ObservableCollection<StrokePathViewModel> StrokePathViewModels
+        {
+            get { return _strokePathViewModels; }
+        }
 
-        //public void ScribblesToStrokePaths()
-        //{
-        //    foreach (Stroke stroke in PageObjectStrokes)
-        //    {
-        //        StylusPoint firstPoint = stroke.StylusPoints[0];
+        public void ScribblesToStrokePaths()
+        {
+            foreach (Stroke stroke in PageObjectStrokes)
+            {
+                StylusPoint firstPoint = stroke.StylusPoints[0];
 
-        //        StreamGeometry geometry = new StreamGeometry();
-        //        using (StreamGeometryContext geometryContext = geometry.Open())
-        //        {
-        //            geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
-        //            foreach (StylusPoint point in stroke.StylusPoints)
-        //            {
-        //                geometryContext.LineTo(new Point(point.X, point.Y), true, true);
-        //            }
-        //        }
-        //        geometry.Freeze();
+                StreamGeometry geometry = new StreamGeometry();
+                using (StreamGeometryContext geometryContext = geometry.Open())
+                {
+                    geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
+                    foreach (StylusPoint point in stroke.StylusPoints)
+                    {
+                        geometryContext.LineTo(new Point(point.X, point.Y), true, true);
+                    }
+                }
+                geometry.Freeze();
 
-        //        StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
-        //        StrokePathViewModels.Add(strokePathViewModel);
-        //    }
-        //}
+                StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
+                StrokePathViewModels.Add(strokePathViewModel);
+            }
+        }
 
         #endregion //Methods
 

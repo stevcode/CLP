@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Catel.Data;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -9,10 +10,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
-        public CLPStrokePathContainer(ICLPPageObject internalPageObject)
+        public CLPStrokePathContainer(ICLPPageObject internalPageObject, ObservableCollection<string> pageObjectStrokes)
             : base()
         {
             InternalPageObject = internalPageObject;
+            PageObjectStrokes = pageObjectStrokes;
         }
 
         /// <summary>

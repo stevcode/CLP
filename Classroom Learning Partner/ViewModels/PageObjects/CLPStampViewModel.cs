@@ -95,10 +95,11 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            CLPStrokePathContainer tempContainer = new CLPStrokePathContainer(InternalPageObject);
+            CLPStrokePathContainer tempContainer = new CLPStrokePathContainer(InternalPageObject, PageObject.PageObjectStrokes);
             tempContainer.Height = Height - 50;
             tempContainer.Width = Width;
             tempContainer.Position = new Point(Position.X, Position.Y + 50);
+
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, tempContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }

@@ -84,10 +84,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {
-            get { return _pageObjectStrokes; }
-            protected set
-            {
-                _pageObjectStrokes = value;
+            get { _pageObjectStrokes = CLPPage.StringsToStrokes(PageObject.PageObjectStrokes);
+            return _pageObjectStrokes;
             }
         }
 
