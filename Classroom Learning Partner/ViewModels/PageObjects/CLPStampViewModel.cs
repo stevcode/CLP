@@ -7,6 +7,8 @@
     using System;
     using System.Windows.Controls.Primitives;
     using System.Windows;
+    using System.Threading;
+    using System.Windows.Threading;
 
     /// <summary>
     /// UserControl view model.
@@ -57,10 +59,58 @@
         /// </summary>
         private void OnCopyStampCommandExecute()
         {
-            CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-            leftBehindStamp.UniqueID = PageObject.UniqueID;
-            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, leftBehindStamp);
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+
+
+                    CopyStamp();
+
+                    return null;
+                }, null);
+            
+            StrokePathContainer.PageObjectStrokes = PageObject.PageObjectStrokes;
             StrokePathContainer.IsStrokePathsVisible = true;
+        }
+
+        private void CopyStamp()
+        {
+            try
+            {
+                CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
+                leftBehindStamp.UniqueID = PageObject.UniqueID;
+
+                CLPPage page = CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
+
+                if (page != null)
+                {
+                    leftBehindStamp.PageID = page.UniqueID;
+
+                    //foreach (var pageObject in page.PageObjects)
+                    //{
+                    //    if (pageObject.UniqueID == leftBehindStamp.UniqueID)
+                    //    {
+
+                    //    }
+                    //}
+
+                    int index = page.PageObjects.IndexOf(PageObject);
+                    Console.WriteLine(index.ToString());
+
+                    page.PageObjects.Add(leftBehindStamp);
+
+                    if (!page.PageHistory.IgnoreHistory)
+                    {
+                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
+                        page.PageHistory.HistoryItems.Add(item);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+            }
         }
 
                 /// <summary>
@@ -73,7 +123,8 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            StrokePathContainer.Position = PageObject.Position;
+            StrokePathContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
+            StrokePathContainer.ParentID = PageObject.UniqueID;
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, StrokePathContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
