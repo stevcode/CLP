@@ -91,17 +91,6 @@ namespace Classroom_Learning_Partner
         protected void ProtoBufferSetup()
         {
             var model = TypeModel.Create();
-            model[typeof(ICLPPageObject)]
-                .Add(1, "PageID")
-                .Add(2, "ParentID")
-                .Add(3, "CreationDate")
-                .Add(4, "UniqueID")
-                .Add(5, "PageObjectStrokes")
-                .Add(6, "CanAcceptStrokes")
-                .Add(7, "Height")
-                .Add(8, "Width")
-                .Add(11, "PageObjectType")
-                .AddSubType(15, typeof(CLPPageObjectBase));
             model[typeof(CLPPage)]
                 .Add(1, "ParentNotebookID")
                 .Add(2, "Strokes")
@@ -115,12 +104,55 @@ namespace Classroom_Learning_Partner
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
                 .Add(12, "SubmissionTime");
-               // .AddSubType(2, typeof(SomeDerived))
-               // .AddSubType(3, typeof(AnotherDerived));
-            model[typeof(CLPPageObjectBase)].AddSubType(1, typeof(CLPStamp));
+            //Page Object hierarchy 
+            model[typeof(ICLPPageObject)]
+                .Add(1, "PageID")
+                .Add(2, "ParentID")
+                .Add(3, "CreationDate")
+                .Add(4, "UniqueID")
+                .Add(5, "PageObjectStrokes")
+                .Add(6, "CanAcceptStrokes")
+                .Add(7, "Height")
+                .Add(8, "Width")
+                .Add(9, "XPosition")
+                .Add(10, "XPosition")
+                .AddSubType(15, typeof(CLPPageObjectBase))
+                .AddSubType(16, typeof(CLPStamp));
+            model[typeof(CLPPageObjectBase)]
+                .AddSubType(7, typeof(CLPImage))
+                .AddSubType(8, typeof(CLPInkRegion))
+                .AddSubType(9, typeof(CLPShape))
+                .AddSubType(10, typeof(CLPSnapTileContainer))
+                .AddSubType(11, typeof(CLPStrokePathContainer))
+                .AddSubType(12, typeof(CLPTextBox));
             model[typeof(CLPStamp)].Add(1, "InternalPageObject");
-           // model[typeof(AnotherDerived)].Add(1, "C");
-            //model[typeof(AlsoNotInvolved)].Add(1, "E");
+            model[typeof(CLPImage)].Add(1, "ByteSource");
+            model[typeof(CLPInkRegion)]
+                .Add(1, "CorrectAnswer")
+                .Add(2, "AnalysisType")
+                .Add(3, "StoredAnswer")
+                .Add(4, "NumberOfResponses");
+            model[typeof(CLPShape)].Add(1, "ShapeType");
+            model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
+            model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");
+            model[typeof(CLPTextBox)].Add(1, "Text");
+
+            //Page History
+            model[typeof(CLPHistory)]
+                .Add(1, "IgnoreHistory")
+                .Add(2, "HistoryItems")
+                .Add(3, "UndoneHistoryItems")
+                .Add(4, "TrashedPageObjects")
+                .Add(5, "TrashedInkStrokes");
+            model[typeof(CLPHistoryItem)]
+                .Add(1, "CreationDate")
+                .Add(2, "ObjectID")
+                .Add(3, "UniqueID")
+                .Add(4, "ItemType")
+                .Add(5, "OldValue")
+                .Add(6, "NewValue");
+
+            model.CompileInPlace();
             _pageTypeModel = model;
         }
 

@@ -44,6 +44,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         protected CLPImage(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
+        //Parameterless constructor for Protobuf
+        private CLPImage()
+            : base()
+        { }
+
         protected override void OnDeserialized()
         {
             LoadImageFromByteSource(ByteSource);
@@ -60,7 +65,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public byte[] ByteSource
         {
             get { return GetValue<byte[]>(ByteSourceProperty); }
-            private set { SetValue(ByteSourceProperty, value); }
+            set { SetValue(ByteSourceProperty, value); }
         }
 
         /// <summary>

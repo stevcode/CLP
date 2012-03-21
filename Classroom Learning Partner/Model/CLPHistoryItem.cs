@@ -42,6 +42,9 @@ namespace Classroom_Learning_Partner.Model
             NewValue = newValue;
         }
 
+        //Parameterless contructor for protobuf
+        private CLPHistoryItem() { }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
@@ -87,7 +90,7 @@ namespace Classroom_Learning_Partner.Model
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         /// <summary>
@@ -101,7 +104,7 @@ namespace Classroom_Learning_Partner.Model
         public HistoryItemType ItemType
         {
             get { return GetValue<HistoryItemType>(ItemTypeProperty); }
-            private set { SetValue(ItemTypeProperty, value); }
+            set { SetValue(ItemTypeProperty, value); }
         }
 
         /// <summary>

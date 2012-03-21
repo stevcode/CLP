@@ -40,6 +40,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             CanAcceptStrokes = true;
         }
 
+        //Parameterless constructor for Protobuf
+        private CLPStamp()
+            : base()
+        { }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
@@ -188,7 +193,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public ObservableCollection<string> PageObjectStrokes
         {
             get { return GetValue<ObservableCollection<string>>(PageObjectStrokesProperty); }
-            protected set { SetValue(PageObjectStrokesProperty, value); }
+            set { SetValue(PageObjectStrokesProperty, value); }
         }
 
         /// <summary>
@@ -223,6 +228,34 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// Register the Position property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point), new Point(10, 10));
+
+        /// <summary>
+        /// xPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double XPosition
+        {
+            get { return GetValue<double>(XPositionProperty); }
+            set { SetValue(XPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the XPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
+
+        /// <summary>
+        /// YPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double YPosition
+        {
+            get { return GetValue<double>(YPositionProperty); }
+            set { SetValue(YPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the YPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
 
         /// <summary>
         /// Height of pageObject.

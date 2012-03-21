@@ -18,10 +18,13 @@ namespace Classroom_Learning_Partner.Model
         ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
+        double XPosition { get; set; }
+        double YPosition { get; set; }
         double Height { get; set; }
         double Width { get; set; }
+        
 
-        string PageObjectType { get; set; }
+        string PageObjectType { get; }
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
@@ -126,7 +129,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<string> PageObjectStrokes
         {
             get { return GetValue<ObservableCollection<string>>(PageObjectStrokesProperty); }
-            protected set { SetValue(PageObjectStrokesProperty, value); }
+            set { SetValue(PageObjectStrokesProperty, value); }
         }
 
         /// <summary>
@@ -161,6 +164,35 @@ namespace Classroom_Learning_Partner.Model
         /// Register the Position property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point), new Point(10, 10));
+
+        /// <summary>
+        /// xPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double XPosition
+        {
+            get { return GetValue<double>(XPositionProperty); }
+            set { SetValue(XPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the XPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
+
+
+        /// <summary>
+        /// YPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double YPosition
+        {
+            get { return GetValue<double>(YPositionProperty); }
+            set { SetValue(YPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the YPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
 
         /// <summary>
         /// Height of pageObject.

@@ -26,6 +26,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Width = 300;
         }
 
+        //Parameterless constructor for Protobuf
+        private CLPShape()
+            : base()
+        { }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
@@ -40,7 +45,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public CLPShapeType ShapeType
         {
             get { return GetValue<CLPShapeType>(ShapeTypeProperty); }
-            private set { SetValue(ShapeTypeProperty, value); }
+            set { SetValue(ShapeTypeProperty, value); }
         }
 
         /// <summary>

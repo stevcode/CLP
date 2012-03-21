@@ -31,6 +31,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Width = TILE_HEIGHT;
         }
 
+        //Parameterless constructor for Protobuf
+        private CLPSnapTileContainer()
+            : base()
+        { }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>

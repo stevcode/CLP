@@ -77,7 +77,7 @@ namespace Classroom_Learning_Partner.Model
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            private set { SetValue(InkStrokesProperty, value); }
+            set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>

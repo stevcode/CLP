@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Collections.ObjectModel;
+using ProtoBuf;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -269,14 +270,32 @@ namespace Classroom_Learning_Partner.Model
                 string oldSubmissionID = page.SubmissionID;
                 page.SubmissionID = Guid.NewGuid().ToString();
                 page.SubmissionTime = DateTime.Now;
+                //SubmitPage sends only things not already submitted
                 //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
 
                 string s_page = ObjectSerializer.ToString(page);
+
+                //ProtoBufTest
+                //Serialize using protobuf
+                DateTime startSer = DateTime.Now;
+                MemoryStream stream = new MemoryStream();
+                App.PageTypeModel.Serialize(stream, page);
+                string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                Logger.Instance.WriteToLog("ProtoBuf serialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString() + " Size: "
+                    + (s_page_pb.Length / 1024.0).ToString() + " kB");
+
+                //Test deserialize 
+                startSer = DateTime.Now;
+                Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
+                CLPPage page2 = new CLPPage();
+                App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
+                Logger.Instance.WriteToLog("ProtoBuf deserialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString());
+
+
                 App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
 
                 double size_standard = s_page.Length / 1024.0;
-                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
-                Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
+                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString() + " Size: " + size_standard.ToString() + " kB");
 
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
             }
