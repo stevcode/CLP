@@ -402,7 +402,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            foreach (CLPPageObjectBase pageObject in PageObjects)
+            foreach (ICLPPageObject pageObject in PageObjects)
             {
                 if (pageObject.CanAcceptStrokes)
                 {

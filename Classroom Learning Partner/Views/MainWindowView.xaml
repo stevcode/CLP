@@ -125,7 +125,7 @@
                     <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
                         Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="True" />
+                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="{Binding SideBarVisibility}" />
                     
                 </ribbon:RibbonGroup>
                 
@@ -239,7 +239,7 @@
                     
                 </ribbon:RibbonGroup>-->
 
-                <ribbon:RibbonGroup Visibility="{Binding Path=StudentVisibility}">
+                <ribbon:RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
                     
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\Send.png" 

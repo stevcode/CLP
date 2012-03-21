@@ -201,7 +201,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPInkRegion"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
             newInkRegion.UniqueID = Guid.NewGuid().ToString();

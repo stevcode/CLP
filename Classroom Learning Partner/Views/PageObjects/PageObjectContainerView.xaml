@@ -25,77 +25,6 @@
 
 
     <Grid x:Name="ContainerHitBox" Background="Transparent">
-        
-        <!-- Control that dynamically determines what PageObject to show -->
-        <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
-
-            <Control.Resources>
-
-                <ControlTemplate x:Key="CLPImageTemplate">
-                    <vwpo:CLPImageView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPTextBoxTemplate">
-                    <vwpo:CLPTextBoxView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPShapeTemplate">
-                    <vwpo:CLPShapeView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPInkRegionTemplate">
-                    <vwpo:CLPInkRegionView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPStampTemplate">
-                    <vwpo:CLPStampView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                    <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!-- CLPImage trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
-                            <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPTextBox trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPTextBox">
-                            <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPShape trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
-                            <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPInkRegion trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
-                            <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPStamp trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
-                            <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPSnapTileContainer trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
-                            <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-
-        </ContentControl>
 
         <ac:AdornedControl
             x:Name="adornedControl"
@@ -112,13 +41,13 @@
                     VerticalAlignment="Center"
                     Width="{Binding Path=Width}"
                     Height="{Binding Path=Height}">
-                    
+
                     <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
                            Canvas.Top="-5" Canvas.Left="-5"
                            Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
                            Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}"
                            />
-                    
+
                     <!--Close Button-->
                     <Button
                         x:Name="closeButton"
@@ -151,7 +80,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    
+
                     <!--Drag Thumb-->
                     <Grid
                         x:Name="dragButton"
@@ -216,80 +145,7 @@
                             </Thumb.Template>
                         </Thumb>
                     </Grid>
-                    
-                    <!--Remove Tile Button
-                    <Button
-                        x:Name="removeTileButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-50"
-                        Canvas.Bottom="-25"
-                        Click="removeTileButton_Click"
-                        Cursor="Hand"
-                        Visibility="Hidden">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Rectangle
-                                        Stroke="Black"
-                                        StrokeThickness="2"
-                                        Margin="5"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="SpringGreen"
-                                        />
-                                    <Path 
-                                        Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" 
-                                        Stroke="Black" 
-                                        StrokeThickness="3" 
-                                        Margin="8" 
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>-->
-                    
-                    <!--Duplicate Tile Button
-                    <Button
-                        x:Name="duplicateTileButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Right="-50"
-                        Canvas.Bottom="-25"
-                        Click="duplicateTileButton_Click"
-                        Cursor="Hand"
-                        Visibility="Hidden">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Rectangle
-                                        Stroke="Black"
-                                        StrokeThickness="2"
-                                        Margin="5"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="SpringGreen"
-                                        />
-                                    <Path
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        Data="M 20,10 L 20,30"
-                                        />
-                                    <Path
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        Data="M 10,20 L 30,20"
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>-->
-                    
+
                     <!--Resize Thumb-->
                     <Grid
                         x:Name="resizeButton"
@@ -333,6 +189,88 @@
             </ac:AdornedControl.AdornerContent>
             <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
         </ac:AdornedControl>
+
+        <!-- Control that dynamically determines what PageObject to show -->
+        <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
+
+            <Control.Resources>
+
+                <ControlTemplate x:Key="CLPImageTemplate">
+                    <vwpo:CLPImageView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPTextBoxTemplate">
+                    <vwpo:CLPTextBoxView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPShapeTemplate">
+                    <vwpo:CLPShapeView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPInkRegionTemplate">
+                    <vwpo:CLPInkRegionView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPStampTemplate">
+                    <vwpo:CLPStampView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
+                    <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
+                    <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
+                </ControlTemplate>
+
+            </Control.Resources>
+
+            <Control.Style>
+                <Style TargetType="{x:Type Control}">
+                    <Style.Triggers>
+
+                        <!-- CLPImage trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
+                            <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPTextBox trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPTextBox">
+                            <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPShape trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
+                            <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPInkRegion trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
+                            <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPStamp trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
+                            <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPSnapTileContainer trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
+                            <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
+                        </DataTrigger>
+
+                        <!-- CLPStrokePathContainer trigger -->
+                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStrokePathContainer">
+                            <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Control.Style>
+
+        </ContentControl>
+
+        
     </Grid>
 
     

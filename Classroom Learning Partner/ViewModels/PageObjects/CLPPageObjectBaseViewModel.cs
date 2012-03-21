@@ -25,16 +25,16 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// Gets or sets the property value.
         /// </summary>
         [Model(SupportIEditableObject=false)]
-        public CLPPageObjectBase PageObject
+        public ICLPPageObject PageObject
         {
-            get { return GetValue<CLPPageObjectBase>(PageObjectProperty); }
+            get { return GetValue<ICLPPageObject>(PageObjectProperty); }
             protected set { SetValue(PageObjectProperty, value); }
         }
 
         /// <summary>
         /// Register the PageObject property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(CLPPageObjectBase));
+        public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -84,10 +84,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {
-            get { return _pageObjectStrokes; }
-            protected set
-            {
-                _pageObjectStrokes = value;
+            get { _pageObjectStrokes = CLPPage.StringsToStrokes(PageObject.PageObjectStrokes);
+            return _pageObjectStrokes;
             }
         }
 

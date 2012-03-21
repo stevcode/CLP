@@ -157,7 +157,7 @@ namespace Classroom_Learning_Partner.Views
                 case PageObjectAddMode.None:
                     break;
                 case PageObjectAddMode.SnapTile:
-                    CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt, "SpringGreen");
+                    CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt);
                     CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
                     break;
                 default:

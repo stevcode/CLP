@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:catel="http://catel.codeplex.com"
@@ -34,7 +35,7 @@
         <ListView ItemsSource="{Binding Path=Tiles}" Height="{Binding Height}" Width="{Binding Width}" Template="{DynamicResource ListViewNewTemplate}" Background="Transparent" BorderThickness="0" Margin="0" Padding="0">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Rectangle Fill="SpringGreen" Stroke="CornflowerBlue" StrokeThickness="4" Margin="0" Height="45" Width="43" />
+                    <Rectangle Fill="SpringGreen" Stroke="Black" StrokeThickness="1" Margin="0" Height="45" Width="43" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
@@ -101,7 +102,12 @@
                         Width="40"
                         Height="40"
                         Cursor="ScrollAll"
-                        PreviewMouseUp="dragButton_PreviewMouseUp">
+                        >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseUp">
+                                <catel:EventToCommand Command="{Binding Path=SnapCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <Ellipse
                             Stroke="Black"
                             StrokeThickness="3"

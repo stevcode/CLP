@@ -22,13 +22,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPSnapTileContainer(Point pt, string color)
+        public CLPSnapTileContainer(Point pt)
             : base()
         {
             Position = pt;
-            Tiles = new ObservableCollection<string>();
-            Tiles.Add(color);
-            Height = (TILE_HEIGHT) * Tiles.Count;
+            NumberOfTiles = 1;
+            Height = TILE_HEIGHT * NumberOfTiles;
             Width = TILE_HEIGHT;
         }
 
@@ -45,18 +44,18 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         #region Properties
 
         /// <summary>
-        /// List of color names, each list item being a tile in the tower.
+        /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<string> Tiles
+        public int NumberOfTiles
         {
-            get { return GetValue<ObservableCollection<string>>(TilesProperty); }
-            private set { SetValue(TilesProperty, value); }
+            get { return GetValue<int>(NumberOfTilesProperty); }
+            set { SetValue(NumberOfTilesProperty, value); }
         }
 
         /// <summary>
-        /// Register the Tiles property so it is known in the class.
+        /// Register the NumberOfTiles property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TilesProperty = RegisterProperty("Tiles", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int), 1);
 
         #endregion
 
@@ -67,7 +66,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPSnapTileContainer"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPSnapTileContainer newSnapTile = this.Clone() as CLPSnapTileContainer;
             newSnapTile.UniqueID = Guid.NewGuid().ToString();

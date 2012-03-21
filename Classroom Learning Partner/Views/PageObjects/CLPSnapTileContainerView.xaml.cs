@@ -60,11 +60,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         private void removeTileButton_Click(object sender, RoutedEventArgs e)
         {
-            CLPSnapTileContainer snapTileContainer = (this.DataContext as CLPSnapTileContainerViewModel).PageObject as CLPSnapTileContainer;
-
-            if (snapTileContainer.Tiles.Count > 1)
+            if ((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count > 1)
             {
-                snapTileContainer.Tiles.RemoveAt(snapTileContainer.Tiles.Count - 1);
+                (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
                 //add the snapTileRemoveTile history item here
                 CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID(snapTileContainer.PageID).PageHistory;
                 if (!pageHistory.IgnoreHistory)
@@ -125,9 +123,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                             if (deltaYBottomSnap < 55)
                             {
                                 //int oldCount = otherTile.Tiles.Count;
-                                foreach (var tileColor in currentTile.Tiles)
+                                foreach (var tileColor in (this.DataContext as CLPSnapTileContainerViewModel).Tiles)
                                 {
-                                    otherTile.Tiles.Add(tileColor);
+                                    otherTile.NumberOfTiles++;
                                 }
 
                                 //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count; -> don't do this
@@ -145,11 +143,13 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                             else if (deltaYTopSnap < 55)
                             {
                                 //int oldCount = tile.Tiles.Count;
-                                foreach (var tileColor in otherTile.Tiles)
+
+                                for (int i = otherTile.NumberOfTiles - 1; i >= 0; i--)
                                 {
-                                    currentTile.Tiles.Add(tileColor);
+                                    (this.DataContext as CLPSnapTileContainerViewModel).Tiles.Add("SpringGreen");
                                 }
-                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count; -> ignore
+
+
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);

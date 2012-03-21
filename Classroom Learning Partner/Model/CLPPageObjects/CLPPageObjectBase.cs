@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.Model
         string ParentID { get; set; }
         DateTime CreationDate { get; set; }
         string UniqueID { get; set; }
-        ObservableCollection<string> PageObjectStrokes { get; }
+        ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
         double Height { get; set; }
@@ -23,7 +23,8 @@ namespace Classroom_Learning_Partner.Model
 
         string PageObjectType { get; }
 
-        CLPPageObjectBase Duplicate();
+        ICLPPageObject Duplicate();
+        void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
     }
 
     /// <summary>
@@ -125,7 +126,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<string> PageObjectStrokes
         {
             get { return GetValue<ObservableCollection<string>>(PageObjectStrokesProperty); }
-            protected set { SetValue(PageObjectStrokesProperty, value); }
+            set { SetValue(PageObjectStrokesProperty, value); }
         }
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace Classroom_Learning_Partner.Model
 
         public abstract string PageObjectType { get; }
 
-        public abstract CLPPageObjectBase Duplicate();
+        public abstract ICLPPageObject Duplicate();
 
         public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {

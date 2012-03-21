@@ -53,7 +53,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return "CLPShape"; }
         }
 
-        public override CLPPageObjectBase Duplicate()
+        public override ICLPPageObject Duplicate()
         {
             CLPShape newShape = this.Clone() as CLPShape;
             newShape.UniqueID = Guid.NewGuid().ToString();
