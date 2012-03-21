@@ -132,16 +132,20 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
             //Student Record and Playback 
-            RecordVisualCommand = new Command(OnRecordVisualCommand);
-            PlayPauseVisualCommand = new Command(OnPlayPauseVisualCommand);
-            StopVisualCommand = new Command(OnStopVisualCommand);
-            RecordAudioCommand = new Command(OnRecordAudioCommand);
-            PlayAudioCommand = new Command(OnPlayAudioCommand);
-            RecordBothCommand = new Command(OnRecordBothCommand);
-            PlayStopBothCommand = new Command(OnPlayStopBothCommand);
+            RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
+            PlayPauseVisualCommand = new Command(OnPlayPauseVisualCommandExecute);
+            StopVisualCommand = new Command(OnStopVisualCommandExecute);
+            RecordAudioCommand = new Command(OnRecordAudioCommandExecute);
+            PlayAudioCommand = new Command(OnPlayAudioCommandExecute);
+            RecordBothCommand = new Command(OnRecordBothCommandExecute);
+            PlayStopBothCommand = new Command(OnPlayStopBothCommandExecute);
 
             //Steve - Can this be done in XAML? And switched to toggle button?
-            RecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+            VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
+            AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+            PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+
+            currentlyPlayingVisual = false;
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -372,6 +376,12 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
+        private bool _currentlyPlayingVisual;
+        public bool currentlyPlayingVisual
+        {
+            get { return _currentlyPlayingVisual; }
+            set { _currentlyPlayingVisual = value; }
+        }
         /// <summary>
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
@@ -443,17 +453,42 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public Uri RecordImage
+        public Uri AudioRecordImage
         {
-            get { return GetValue<Uri>(RecordImageProperty); }
-            set { SetValue(RecordImageProperty, value); }
+            get { return GetValue<Uri>(AudioRecordImageProperty); }
+            set { SetValue(AudioRecordImageProperty, value); }
         }
-
         /// <summary>
         /// Register the RecordImage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData RecordImageProperty = RegisterProperty("RecordImage", typeof(Uri));
+        public static readonly PropertyData AudioRecordImageProperty = RegisterProperty("AudioRecordImage", typeof(Uri));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri VisualRecordImage
+        {
+            get { return GetValue<Uri>(VisualRecordImageProperty); }
+            set { SetValue(VisualRecordImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the VisualRecordImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VisualRecordImageProperty = RegisterProperty("VisualRecordImage", typeof(Uri));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri PlayPauseVisualImage
+        {
+            get { return GetValue<Uri>(PlayPauseVisualImageProperty); }
+            set { SetValue(PlayPauseVisualImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the PlayPauseVisualImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlayPauseVisualImageProperty = RegisterProperty("PlayPauseVisualImage", typeof(Uri));
+        
+        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -1386,9 +1421,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the RecordVisualCommand command is executed.
         /// </summary>
+        bool currentlyRecording = false;
         private void OnRecordVisualCommandExecute()
         {
-            CLPServiceAgent.Instance.StartRecordingVisual();
+            if (!currentlyRecording)
+            {
+                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                CLPServiceAgent.Instance.StartRecordingVisual(page);
+                VisualRecordImage = new Uri("..\\Images\\recording.png", UriKind.Relative);
+                currentlyRecording = true;
+            }
+            else
+            {
+                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                CLPServiceAgent.Instance.StopRecordingVisual(page);
+                VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
+                currentlyRecording = false;
+            }
         }
 
         /// <summary>
@@ -1399,9 +1448,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the PlayPauseVisualCommand command is executed.
         /// </summary>
+        
         private void OnPlayPauseVisualCommandExecute()
         {
-
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;   
+            if (!currentlyPlayingVisual)
+            {
+                CLPServiceAgent.Instance.PlaybackRecording(page);
+                PlayPauseVisualImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
+                currentlyPlayingVisual = true;
+            }
+            else
+            {
+                CLPServiceAgent.Instance.PlaybackRecording(page);
+                PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                currentlyPlayingVisual = false;
+            }
         }
 
         /// <summary>
@@ -1414,7 +1476,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnStopVisualCommandExecute()
         {
-
+            
+                CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                CLPServiceAgent.Instance.StopPlayback(page);
+            
         }
 
         /// <summary>

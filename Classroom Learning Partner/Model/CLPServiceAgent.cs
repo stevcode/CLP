@@ -281,7 +281,33 @@ namespace Classroom_Learning_Partner.Model
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
             }
         }
-        //
+        //Record Visual button pressed
+        public void StartRecordingVisual(CLPPage page)
+        {
+            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StartRecord, null, null, null);
+            page.PageHistory.HistoryItems.Add(item);
+        }
+        public void StopRecordingVisual(CLPPage page)
+        {
+            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StopRecord, null, null, null);
+            page.PageHistory.HistoryItems.Add(item);
+        }
+
+        public void PlaybackRecording(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.StartRecordedPlayback();
+        }
+        public void PauseRecording(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.PausePlayback();
+        }
+        public void StopPlayback(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.StopPlayback();
+        }
 
         public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {

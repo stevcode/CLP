@@ -470,6 +470,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\recording.png" />
     <Resource Include="Images\pause_blue.png" />
     <Resource Include="Images\play_green.png" />
     <Resource Include="Images\record.png" />

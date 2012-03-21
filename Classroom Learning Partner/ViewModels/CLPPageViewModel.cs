@@ -453,6 +453,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         int i = 0;
         DispatcherTimer timer;
+        bool hasReachedStart = false;
+        bool hasReachedStop = false;
         public void StartPlayBack()
         {
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
@@ -481,6 +483,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 i = 0;
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
+                if (PlayingRecorded)
+                {
+                    hasReachedStart = false;
+                    hasReachedStop = false;
+                    PlayingRecorded = false;
+                    App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                    App.MainWindowViewModel.currentlyPlayingVisual = false;
+                }
             }
             lock(_locker)
             {
@@ -498,8 +508,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     i--;
                 }
            }
+           if ((PlayingRecorded && !hasReachedStart) || (PlayingRecorded && hasReachedStop))
+           {
+               timer.Interval = new TimeSpan(0);
+           }
+           
            Redo();
-
         }
 
         public void Undo()
@@ -509,8 +523,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
                 PageHistory.HistoryItems.Remove(item);
-                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
-
+                ICLPPageObject pageObject = null;
+                if (item.ObjectID != null)
+                {
+                    pageObject = GetPageObjectByID(item.ObjectID);
+                }
                 switch (item.ItemType)
                 {
                     case HistoryItemType.AddPageObject:
@@ -579,10 +596,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     PageHistory.UndoneHistoryItems.Remove(item);
                 }
-                ICLPPageObject pageObject = GetPageObjectByID(item.ObjectID);
-
+                 ICLPPageObject pageObject = null;
+                 if (item.ObjectID != null)
+                 {
+                     pageObject = GetPageObjectByID(item.ObjectID);
+                 }
                 switch (item.ItemType)
                 {
+                    case HistoryItemType.StartRecord:
+                        hasReachedStart = true;
+                        break;
+                    case HistoryItemType.StopRecord:
+                        hasReachedStop = true;
+                        break;
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
@@ -639,7 +665,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageHistory.IgnoreHistory = false;
         }
-
+        bool PlayingRecorded = false;
+        public void StartRecordedPlayback()
+        {
+            PlayingRecorded = true;
+            OnStartPlaybackCommandExecute();
+            
+        }
+        public void PausePlayback()
+        {
+            OnStartPlaybackCommandExecute();
+        }
+        public void StopPlayback()
+        {
+            OnStopPlaybackCommandExecute();
+        }
         #endregion //Methods
 
         #region Commands
@@ -688,6 +728,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 i--;
             }
             timer.Stop();
+            if (PlayingRecorded)
+            {
+                hasReachedStart = false;
+                hasReachedStop = false;
+                PlayingRecorded = false;
+                App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                App.MainWindowViewModel.currentlyPlayingVisual = false;
+            }
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
         }
        

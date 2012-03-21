@@ -277,11 +277,11 @@
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Visual" >
                     <ribbon:RibbonButton
-                        LargeImageSource="..\Images\record.png"
+                        LargeImageSource="{Binding Path=VisualRecordImage}"
                         Label="Record"
                         Command="{Binding Path=RecordVisualCommand}" />
                     <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play_green.png"
+                        LargeImageSource="{Binding Path=PlayPauseVisualImage}"
                         Label="Play"
                         Command="{Binding Path=PlayPauseVisualCommand}" />
                     <ribbon:RibbonButton
@@ -291,7 +291,7 @@
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Audio" >
                     <ribbon:RibbonButton
-                        LargeImageSource="{Binding Path=RecordImage}"
+                        LargeImageSource="{Binding Path=AudioRecordImage}"
                         Label="Record"
                         Command="{Binding Path=RecordAudioCommand}" />
                     <ribbon:RibbonButton
