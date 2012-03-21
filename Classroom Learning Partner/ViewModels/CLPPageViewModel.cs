@@ -16,6 +16,8 @@ using Catel.Data;
 using System.Runtime.InteropServices;
 using System.IO;
 
+//using System.Windows.Media.MediaPlayer;
+
 namespace Classroom_Learning_Partner.ViewModels
 {
     public enum PageObjectAddMode
@@ -86,6 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
 
             //Audio
+            MediaPlayer mediaPlayer = new MediaPlayer();
             path = "C:\\Audio_Files\\" + page.UniqueID + ".wav";
             if (!Directory.Exists("C:\\Audio_Files"))
             {
@@ -719,9 +722,9 @@ namespace Classroom_Learning_Partner.ViewModels
             string s;
            
             // access media file
-            //s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
+            s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
            
-            Console.WriteLine(mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0));
+            mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0);
 
             // play from start
             s = "play mysound from 0 wait";     // append "wait" if you want blocking
