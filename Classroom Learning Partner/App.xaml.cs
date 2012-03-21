@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.NotUsing;
 
             Logger.Instance.InitializeLog();
@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner
         protected void ProtoBufferSetup()
         {
             var model = TypeModel.Create();
-            model[typeof(CLPPageObjectBase)]
+            model[typeof(ICLPPageObject)]
                 .Add(1, "PageID")
                 .Add(2, "ParentID")
                 .Add(3, "CreationDate")
@@ -100,10 +100,8 @@ namespace Classroom_Learning_Partner
                 .Add(6, "CanAcceptStrokes")
                 .Add(7, "Height")
                 .Add(8, "Width")
-                .Add(9, "xPos")
-                .Add(10, "yPos")
                 .Add(11, "PageObjectType")
-                .AddSubType(15, typeof(CLPStamp));
+                .AddSubType(15, typeof(CLPPageObjectBase));
             model[typeof(CLPPage)]
                 .Add(1, "ParentNotebookID")
                 .Add(2, "Strokes")
@@ -119,6 +117,7 @@ namespace Classroom_Learning_Partner
                 .Add(12, "SubmissionTime");
                // .AddSubType(2, typeof(SomeDerived))
                // .AddSubType(3, typeof(AnotherDerived));
+            model[typeof(CLPPageObjectBase)].AddSubType(1, typeof(CLPStamp));
             model[typeof(CLPStamp)].Add(1, "InternalPageObject");
            // model[typeof(AnotherDerived)].Add(1, "C");
             //model[typeof(AlsoNotInvolved)].Add(1, "E");
