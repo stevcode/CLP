@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetServerCommand = new Command(OnSetServerCommandExecute);
 
             //Ribbon Content
+            SideBarVisibility = true;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -383,6 +384,21 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Bindings
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool SideBarVisibility
+        {
+            get { return GetValue<bool>(SideBarVisibilityProperty); }
+            set { SetValue(SideBarVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SideBarVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
+
 
         #region Convert to XAMLS?
 

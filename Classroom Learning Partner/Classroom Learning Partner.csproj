@@ -156,13 +156,11 @@
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPBlankStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPImageStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPShape.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPStampBase.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPStrokePathContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
@@ -178,11 +176,8 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPBlankStampViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPImageStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileContainerViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPStampBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
@@ -228,12 +223,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PageObjects\CLPBlankStampView.xaml.cs">
-      <DependentUpon>CLPBlankStampView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PageObjects\CLPImageStampView.xaml.cs">
-      <DependentUpon>CLPImageStampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
@@ -330,14 +319,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\CLPBlankStampView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\CLPImageStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

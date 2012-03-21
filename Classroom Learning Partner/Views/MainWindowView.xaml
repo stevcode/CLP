@@ -125,7 +125,7 @@
                     <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
                         Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="True" />
+                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="{Binding SideBarVisibility}" />
                     
                 </ribbon:RibbonGroup>
                 
