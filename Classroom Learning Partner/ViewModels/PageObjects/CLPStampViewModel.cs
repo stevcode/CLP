@@ -60,6 +60,7 @@
             CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
             leftBehindStamp.UniqueID = PageObject.UniqueID;
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, leftBehindStamp);
+            StrokePathContainer.PageObjectStrokes = PageObject.PageObjectStrokes;
             StrokePathContainer.IsStrokePathsVisible = true;
         }
 
@@ -73,7 +74,7 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            StrokePathContainer.Position = PageObject.Position;
+            StrokePathContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, StrokePathContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }

@@ -575,7 +575,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        tile.Tiles.Add("SpringGreen");
+                        tile.NumberOfTiles++;
                         break;
                     default:
                         break;
@@ -654,7 +654,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        tile.Tiles.RemoveAt(tile.Tiles.Count - 1);
+                        tile.NumberOfTiles--;
                         break;
                     default:
                         break;

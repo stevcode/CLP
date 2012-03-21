@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.ViewModels.Displays;
-using Catel.Data;
-using System.Windows.Media;
-using System;
-using Classroom_Learning_Partner.Model;
-using System.Windows;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Windows.Input;
-using Classroom_Learning_Partner.Views;
-
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
-{
-    /// <summary>
-    /// UserControl view model.
-    /// </summary>
-    [InterestedIn(typeof(MainWindowViewModel))]
-    public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
-        /// </summary>
-        public NotebookWorkspaceViewModel(CLPNotebook notebook)
-            : base()
-        {
-            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
-
-            WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-            Notebook = notebook;
-            SubmissionPages = new ObservableCollection<CLPPageViewModel>();
-=======
 ﻿using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using Catel.Data;
@@ -64,7 +31,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SubmissionPages = new ObservableCollection<CLPPage>();
 
             Notebook.GeneratePageIndexes();
->>>>>>> origin/experimental
 
             //InitializeLinkedDisplay();
         }
@@ -128,72 +94,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Register the NotebookPages property so it is known in the class.
         /// </summary>
-<<<<<<< HEAD
-        public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
-
-        #endregion //Model
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public LinkedDisplayViewModel LinkedDisplay
-        {
-            get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
-            private set { SetValue(LinkedDisplayProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the LinkedDisplay property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public IDisplayViewModel SelectedDisplay
-        {
-            get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
-            set { SetValue(SelectedDisplayProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the SelectedDisplay property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Brush WorkspaceBackgroundColor
-        {
-            get { return GetValue<Brush>(WorkspaceBackgroundColorProperty); }
-            set { SetValue(WorkspaceBackgroundColorProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the WorkspaceBackgroundColor property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> SubmissionPages
-        {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the SubmissionPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPageViewModel>));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public CLPPageViewModel CurrentPage
-=======
         public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
@@ -258,7 +158,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Gets or sets the property value.
         /// </summary>
         public CLPPageViewModel CurrentPage
->>>>>>> origin/experimental
         {
             get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
             set
@@ -270,6 +169,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
                 
                 SelectedDisplay.AddPageToDisplay(value);
+<<<<<<< HEAD
                 Console.WriteLine("CurrentPage Set");
             }
         }
@@ -288,6 +188,26 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Method to invoke when the SetCurrentPageCommand command is executed.
         /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+=======
+                Console.WriteLine("CurrentPage Set");
+            }
+        }
+
+        /// <summary>
+        /// Register the CurrentPage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
+>>>>>>> origin/ClaireExperimental
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
         }

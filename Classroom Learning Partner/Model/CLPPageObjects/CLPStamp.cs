@@ -225,6 +225,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return GetValue<double>(HeightProperty); }
             set { SetValue(HeightProperty, value);
             StrokePathContainer.Height = Height - 50;
+            if (StrokePathContainer.InternalPageObject != null)
+            {
+                StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
+            }
+            
             Console.WriteLine("height changed");
             }
         }
@@ -242,6 +247,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             get { return GetValue<double>(WidthProperty); }
             set { SetValue(WidthProperty, value);
             StrokePathContainer.Width = Width;
+            if (StrokePathContainer.InternalPageObject != null)
+            {
+                StrokePathContainer.InternalPageObject.Width = StrokePathContainer.Width;
+            }
             Console.WriteLine("width changed");
             }
         }
