@@ -308,7 +308,21 @@ namespace Classroom_Learning_Partner.Model
             CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             pageVM.StopPlayback();
         }
-
+        public void RecordAudio(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.recordAudio();
+        }
+        public void StopAudio(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.stopAudio();
+        }
+        public void PlayAudio(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.playAudio();
+        }
         public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {
             CLPPage page = GetPageFromID(pageID);

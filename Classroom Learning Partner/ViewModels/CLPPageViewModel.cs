@@ -13,6 +13,8 @@ using System.Windows.Threading;
 using System.Threading;
 using Catel.MVVM;
 using Catel.Data;
+using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -25,6 +27,9 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
+        [DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
+            
         #region Constructors
 
         /// <summary>
@@ -79,6 +84,13 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPServiceAgent.Instance.AddPageObjectToPage(Page, tile2);
             */
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
+
+            //Audio
+            path = "C:\\Audio_Files\\" + page.UniqueID + ".wav";
+            if (!Directory.Exists("C:\\Audio_Files"))
+            {
+                DirectoryInfo worked = Directory.CreateDirectory("C:\\Audio_Files");
+            }
         }
 
         public override string Title { get { return "PageVM"; } }
@@ -206,6 +218,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData PlaybackControlsVisibilityProperty = RegisterProperty("PlaybackControlsVisibility", typeof(Visibility));
 
+        private bool _recordingAudio = false;
+        public bool recordingAudio
+        {
+            get { return _recordingAudio; }
+            set { _recordingAudio = value; }
+        }
+        private string _path;
+        public string path
+        {
+            get { return _path; }
+            set { _path = value; }
+        }
         //lock for the playback
         private static readonly object _locker = new object();
         #endregion //Properties
@@ -680,6 +704,38 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             OnStopPlaybackCommandExecute();
         }
+        public void recordAudio()
+        {
+            mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
+            mciSendString("record recsound", "", 0, 0);
+        }
+        public void stopAudio()
+        {
+            mciSendString("save recsound " + path, "", 0, 0);
+            mciSendString("close recsound ", "", 0, 0);
+        }
+        public void playAudio()
+        {
+            string s;
+           
+            // access media file
+            //s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
+           
+            Console.WriteLine(mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0));
+
+            // play from start
+            s = "play mysound from 0 wait";     // append "wait" if you want blocking
+            mciSendString(s, null, 0, 0);
+            //System.Threading.Thread.Sleep(2000);
+            // stop playback
+            s = "stop mysound";         // if playing asynchronously
+            mciSendString(s, null, 0, 0);
+
+            // deallocate resources
+            s = "close mysound";
+            mciSendString(s, null, 0, 0);
+        
+        }
         #endregion //Methods
 
         #region Commands
@@ -740,52 +796,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
        
 
-        //private RelayCommand _startPlaybackCommand;
-
-        // /// <summary>
-        // /// Gets the StartPlaybackCommand.
-        // /// </summary>
-        //private delegate void NoArgDelegate();
-        // public RelayCommand StartPlaybackCommand
-        // {
-        //     get
-        //     {
-        //         return _startPlaybackCommand
-        //             ?? (_startPlaybackCommand = new RelayCommand(
-        //                                   () =>
-        //                                   {
-        //                                       Console.WriteLine("PageVM startplayback");
-        //                                       // Start fetching the playback items asynchronously.
-        //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.startPlayback);
-        //                                       fetcher.BeginInvoke(null, null);
-
-
-        //                                   }));
-        //     }
-        // }
-
-
-
-        // private RelayCommand _stopPlaybackCommand;
-
-        // /// <summary>
-        // /// Gets the StartPlaybackCommand.
-        // /// </summary>
-        // public RelayCommand StopPlaybackCommand
-        // {
-        //     get
-        //     {
-        //         return _stopPlaybackCommand
-        //             ?? (_stopPlaybackCommand = new RelayCommand(
-        //                                   () =>
-        //                                   {
-        //                                       NoArgDelegate fetcher = new NoArgDelegate(HistoryVM.stopPlayback);
-        //                                       fetcher.BeginInvoke(null, null);
-
-        //                                   }));
-        //     }
-        // }
-
+        
         #endregion //Commands
 
     }

@@ -1490,9 +1490,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the RecordAudioCommand command is executed.
         /// </summary>
+        bool isRecordingAudio = false;
         private void OnRecordAudioCommandExecute()
         {
-            
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if (!isRecordingAudio)
+            {
+                AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                CLPServiceAgent.Instance.RecordAudio(page);
+                isRecordingAudio = true;
+            }
+            else
+            {
+                AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+                CLPServiceAgent.Instance.StopAudio(page);
+                isRecordingAudio = false;
+            }
         }
 
         /// <summary>
@@ -1505,7 +1518,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnPlayAudioCommandExecute()
         {
-
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            CLPServiceAgent.Instance.PlayAudio(page);
         }
 
         /// <summary>
