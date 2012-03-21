@@ -32,10 +32,10 @@
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
             VerticalAdornerPlacement="Outside"
-            Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}">
-            <ac:AdornedControl.AdornerContent>
+            >
+            <ac:AdornedControl.AdornerContent >
                 <!--This is the adorner-->
-                <Canvas
+                <Canvas Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}"
                     x:Name="adornerCanvas"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -187,88 +187,91 @@
                     </Grid>
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
+            <Grid>
             <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
+                <!-- Control that dynamically determines what PageObject to show -->
+                <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
+
+                    <Control.Resources>
+
+                        <ControlTemplate x:Key="CLPImageTemplate">
+                            <vwpo:CLPImageView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPTextBoxTemplate">
+                            <vwpo:CLPTextBoxView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPShapeTemplate">
+                            <vwpo:CLPShapeView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPInkRegionTemplate">
+                            <vwpo:CLPInkRegionView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPStampTemplate">
+                            <vwpo:CLPStampView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
+                            <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
+                            <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                    </Control.Resources>
+
+                    <Control.Style>
+                        <Style TargetType="{x:Type Control}">
+                            <Style.Triggers>
+
+                                <!-- CLPImage trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
+                                    <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPTextBox trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPTextBox">
+                                    <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPShape trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
+                                    <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPInkRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPStamp trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
+                                    <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPSnapTileContainer trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
+                                    <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPStrokePathContainer trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStrokePathContainer">
+                                    <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </Control.Style>
+
+                </ContentControl>
+            </Grid>
         </ac:AdornedControl>
 
-        <!-- Control that dynamically determines what PageObject to show -->
-        <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">
-
-            <Control.Resources>
-
-                <ControlTemplate x:Key="CLPImageTemplate">
-                    <vwpo:CLPImageView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPTextBoxTemplate">
-                    <vwpo:CLPTextBoxView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPShapeTemplate">
-                    <vwpo:CLPShapeView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPInkRegionTemplate">
-                    <vwpo:CLPInkRegionView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPStampTemplate">
-                    <vwpo:CLPStampView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                    <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
-                    <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!-- CLPImage trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
-                            <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPTextBox trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPTextBox">
-                            <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPShape trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShape">
-                            <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPInkRegion trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
-                            <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPStamp trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStamp">
-                            <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPSnapTileContainer trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPSnapTileContainer">
-                            <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
-                        </DataTrigger>
-
-                        <!-- CLPStrokePathContainer trigger -->
-                        <DataTrigger Binding="{Binding PageObjectType}" Value="CLPStrokePathContainer">
-                            <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-
-        </ContentControl>
+        
 
         
     </Grid>

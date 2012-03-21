@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Classroom_Learning_Partner.Views;
+using System.Windows.Data;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -29,6 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
+            FilteredSubmissions = new CollectionViewSource();
 
             Notebook.GeneratePageIndexes();
 
@@ -139,6 +141,21 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Register the WorkspaceBackgroundColor property so it is known in the class.
         /// </summary>
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CollectionViewSource FilteredSubmissions
+        {
+            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
+            set { SetValue(FilteredSubmissionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the FilteredSubmissions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource));
 
         /// <summary>
         /// Gets or sets the property value.
