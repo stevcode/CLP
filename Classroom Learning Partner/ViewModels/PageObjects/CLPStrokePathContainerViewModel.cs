@@ -70,6 +70,21 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false, (sender, e) => ((CLPStrokePathContainerViewModel)sender).OnStrokePathsVisibilityChanged());
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsStamped
+        {
+            get { return GetValue<bool>(IsStampedProperty); }
+            set { SetValue(IsStampedProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsStamped property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool));
+
         private void OnStrokePathsVisibilityChanged()
         {
             if (IsStrokePathsVisible)

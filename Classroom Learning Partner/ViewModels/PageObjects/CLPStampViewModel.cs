@@ -125,6 +125,7 @@
         {
             StrokePathContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
             StrokePathContainer.ParentID = PageObject.UniqueID;
+            StrokePathContainer.IsStamped = true;
             CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, StrokePathContainer);
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
