@@ -19,12 +19,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPageView : Catel.Windows.Controls.UserControl
     {
-        private const double ADORNER_DELAY = 800; //time to wait until adorner appears
+        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner appears
 
         private bool isMouseDown = false;
         private DispatcherTimer timer = null;
         private int DirtyHitbox = 0;
-        private bool isSnapTileEnabled = false;
 
         public CLPPageView()
         {           
@@ -32,7 +31,7 @@ namespace Classroom_Learning_Partner.Views
             SkipSearchingForInfoBarMessageControl = true;
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(ADORNER_DELAY);
+            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
         }
 
@@ -89,8 +88,8 @@ namespace Classroom_Learning_Partner.Views
                     {
                         if (DirtyHitbox > 3)
                         {
-                            //timer.Start();
-                            MainInkCanvas.IsHitTestVisible = false;
+                            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
+                            timer.Start();
                         }
                         DirtyHitbox = 0;
                         return HitTestResultBehavior.Stop;
@@ -104,8 +103,13 @@ namespace Classroom_Learning_Partner.Views
                 {
                     if (DirtyHitbox > 3)
                     {
-                        //timer.Start();
-                        MainInkCanvas.IsHitTestVisible = false;
+                        double timer_delay = 0;
+                        if ((result.VisualHit as Shape).Tag != null)
+                        {
+                            timer_delay = double.Parse((result.VisualHit as Shape).Tag as string);
+                        }
+                        timer.Interval = TimeSpan.FromMilliseconds(timer_delay);
+                        timer.Start();
                     }
                     DirtyHitbox = 0;
                     return HitTestResultBehavior.Stop;
@@ -121,7 +125,7 @@ namespace Classroom_Learning_Partner.Views
                 DirtyHitbox++;
                 if (DirtyHitbox > 3 || isMouseDown)
                 {
-                    //timer.Stop();
+                    timer.Stop();
                     MainInkCanvas.IsHitTestVisible = true;
                 }
                 
