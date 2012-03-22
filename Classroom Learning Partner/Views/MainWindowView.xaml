@@ -161,7 +161,12 @@
                         Label="Snap Tile"
                         LargeImageSource="..\Images\SnapTileIcon.png"
                         Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
-                    
+
+                    <ribbon:RibbonToggleButton
+                        Label="Insert Blank Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Pen Color">
