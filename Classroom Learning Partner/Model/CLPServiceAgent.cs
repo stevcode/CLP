@@ -319,9 +319,21 @@ namespace Classroom_Learning_Partner.Model
                         file.WriteLine("<Tile>");
                         file.WriteLine("<Height>" + tile.Height);
                         file.WriteLine("<Width>" + tile.Width + "</Width>");
+                        file.WriteLine("<Position>" + tile.Position + "</Position>");
                         file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
                         file.WriteLine("<Number>" + tile.NumberOfTiles + "</Number>");
                         file.WriteLine("</Tile>");
+                    }
+                    else if (obj is CLPStrokePathContainer)
+                    {
+                        CLPStrokePathContainer stampObj = obj as CLPStrokePathContainer;
+                        file.WriteLine("<StampObj>");
+                        file.WriteLine("<Height>" + stampObj.Height);
+                        file.WriteLine("<Width>" + stampObj.Width + "</Width>");
+                        file.WriteLine("<Position>" + stampObj.Position + "</Position>");
+                        file.WriteLine("<UniqueId>" + stampObj.UniqueID + "</UniqueId>");
+                        file.WriteLine("<ParentId>" + stamp.ParentID + "</ParentId>");
+                        file.WriteLine("</StampObj>");
                     }
                 }
                 file.WriteLine("</Page>");
