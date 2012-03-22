@@ -720,12 +720,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach (CLPPage page in notebook.Pages)
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                page.PageHistory.ClearHistory();
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
             }
-            //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 
         /// <summary>
@@ -738,7 +741,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            }
         }
 
         /// <summary>
