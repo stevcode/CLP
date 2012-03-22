@@ -107,9 +107,20 @@ namespace Classroom_Learning_Partner.Views
                         if ((result.VisualHit as Shape).Tag != null)
                         {
                             timer_delay = double.Parse((result.VisualHit as Shape).Tag as string);
+                            
                         }
                         timer.Interval = TimeSpan.FromMilliseconds(timer_delay);
-                        timer.Start();
+                        if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
+                        {
+                            if (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).IsStamped)
+                            {
+                                timer.Start();
+                            }
+                        }
+                        else
+                        {
+                            timer.Start();
+                        }
                     }
                     DirtyHitbox = 0;
                     return HitTestResultBehavior.Stop;

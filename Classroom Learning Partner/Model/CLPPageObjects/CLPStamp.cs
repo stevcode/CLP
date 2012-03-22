@@ -229,8 +229,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
             }
-            
-            Console.WriteLine("height changed");
             }
         }
 
@@ -251,7 +249,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 StrokePathContainer.InternalPageObject.Width = StrokePathContainer.Width;
             }
-            Console.WriteLine("width changed");
             }
         }
 
