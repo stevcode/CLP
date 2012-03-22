@@ -1,13 +1,13 @@
 ﻿namespace Classroom_Learning_Partner.Views.PageObjects
 {
-    using Catel.Windows.Controls;
-    using Classroom_Learning_Partner.ViewModels.PageObjects;
-    using Classroom_Learning_Partner.Model;
-    using Classroom_Learning_Partner.Model.CLPPageObjects;
     using System.Windows;
-    using System.Windows.Input;
-    using System;
     using System.Windows.Controls.Primitives;
+    using System.Windows.Input;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
+    using Classroom_Learning_Partner.Model;
+    using Classroom_Learning_Partner.ViewModels.PageObjects;
+    using Catel.Windows.Controls;
 
     /// <summary>
     /// Interaction logic for CLPStampView.xaml.
@@ -84,6 +84,19 @@
                 }
 
                 CLPServiceAgent.Instance.ChangePageObjectDimensions(stamp.PageObject, newHeight, newWidth);
-            }
+       }
+
+        // Highlight handle when mouse is hovering over it
+        private void Thumb_MouseOver(object sender, MouseEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
+        }
+
+        // Turn handle back to normal state when mouse leaves the bounds
+        private void Thumb_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
+        }
+
     }
 }
