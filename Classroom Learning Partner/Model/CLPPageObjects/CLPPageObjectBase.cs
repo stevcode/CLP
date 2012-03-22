@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner.Model
         Point Position { get; set; }
         double Height { get; set; }
         double Width { get; set; }
+        bool IsBackground { get; set; }
 
         string PageObjectType { get; }
 
@@ -51,6 +52,7 @@ namespace Classroom_Learning_Partner.Model
             Height = 10;
             Width = 10;
             Position = new Point(10, 10);
+            IsBackground = false;
         }
 
         /// <summary>
@@ -189,6 +191,20 @@ namespace Classroom_Learning_Partner.Model
         /// Register the Width property so it is known in the class.
         /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 100);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsBackground
+        {
+            get { return GetValue<bool>(IsBackgroundProperty); }
+            set { SetValue(IsBackgroundProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsBackground property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
         #endregion
 

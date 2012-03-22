@@ -26,7 +26,6 @@ namespace Classroom_Learning_Partner.Views
             var viewModel = (this.DataContext as NotebookWorkspaceViewModel);
             if (viewModel.Notebook.Submissions.ContainsKey(pageID))
             {
-
                 viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
             }
         }

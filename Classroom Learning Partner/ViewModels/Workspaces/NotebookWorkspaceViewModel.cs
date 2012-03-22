@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Classroom_Learning_Partner.Views;
+using System.Windows.Data;
+using System.ComponentModel;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -16,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
+    [InterestedIn(typeof(IDisplayViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
@@ -29,6 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
+            FilteredSubmissions = new CollectionViewSource();
 
             Notebook.GeneratePageIndexes();
 
@@ -140,13 +144,32 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CollectionViewSource FilteredSubmissions
+        {
+            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
+            set { SetValue(FilteredSubmissionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the FilteredSubmissions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource));
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<CLPPage> SubmissionPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value); }
+            set { SetValue(SubmissionPagesProperty, value);
+            FilteredSubmissions = new CollectionViewSource();
+            FilteredSubmissions.Source = SubmissionPages;
+            FilteredSubmissions.SortDescriptions.Add(new SortDescription("SubmitterName", ListSortDirection.Ascending));
+            }
         }
 
         /// <summary>
@@ -228,6 +251,23 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
                     App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
                 }
+            }
+
+            if (propertyName == "IsOnProjector")
+            {
+                if ((viewModel as IDisplayViewModel).DisplayID == SelectedDisplay.DisplayID)
+                {
+                    if (SelectedDisplay.IsOnProjector)
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                    }
+                    else
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    }
+                }
+
+                
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);

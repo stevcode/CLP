@@ -2,6 +2,7 @@
 using Classroom_Learning_Partner.ViewModels.Displays;
 using Catel.Data;
 using System;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -13,6 +14,9 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ProjectorWorkspaceViewModel()
             : base()
         {
+            LinkedDisplay = new LinkedDisplayViewModel(new CLPPageViewModel(new CLPPage()));
+            GridDisplay = new GridDisplayViewModel();
+            SelectedDisplay = LinkedDisplay;
         }
 
         public override string Title { get { return "ProjectorWorkspaceVM"; } }
@@ -30,6 +34,34 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// Register the SelectedDisplay property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public LinkedDisplayViewModel LinkedDisplay
+        {
+            get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
+            set { SetValue(LinkedDisplayProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the LinkedDisplay property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public GridDisplayViewModel GridDisplay
+        {
+            get { return GetValue<GridDisplayViewModel>(GridDisplayProperty); }
+            set { SetValue(GridDisplayProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplay property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(GridDisplayViewModel));
 
         public string WorkspaceName
         {

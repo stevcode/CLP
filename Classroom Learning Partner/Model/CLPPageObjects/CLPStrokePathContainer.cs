@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             InternalPageObject = internalPageObject;
             IsStrokePathsVisible = false;
+            IsStamped = false;
 
             if (internalPageObject == null)
             {
@@ -65,6 +66,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// Register the IsStrokePathsVisible property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsStamped
+        {
+            get { return GetValue<bool>(IsStampedProperty); }
+            set { SetValue(IsStampedProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsStamped property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool), false);
 
         public override string PageObjectType
         {
