@@ -7,7 +7,6 @@ using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    [InterestedIn(typeof(NotebookWorkspaceViewModel))]
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -17,6 +16,8 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPages = new ObservableCollection<CLPPageViewModel>();
+            DisplayedPages.Add(new CLPPageViewModel(new CLPPage()));
+            DisplayedPages.Add(new CLPPageViewModel(new CLPPage()));
             DisplayID = Guid.NewGuid().ToString();
             IsOnProjector = false;
 

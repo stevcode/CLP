@@ -34,16 +34,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SubmissionPages = new ObservableCollection<CLPPage>();
             FilteredSubmissions = new CollectionViewSource();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
-            GridDisplays.Add(new GridDisplayViewModel());
-            GridDisplays.Add(new GridDisplayViewModel());
-            GridDisplays.Add(new GridDisplayViewModel());
 
             Notebook.GeneratePageIndexes();
 
             //InitializeLinkedDisplay();
         }
 
-        private void InitializeLinkedDisplay()
+        public void InitializeLinkedDisplay()
         {
             Console.WriteLine("LinkedDisplay Initialization Started");
 

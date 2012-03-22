@@ -122,6 +122,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Displays
             SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+            SwitchToLinkedDisplayCommand = new Command(OnSwitchToLinkedDisplayCommandExecute);
+            CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
@@ -1264,43 +1266,46 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        //private RelayCommand _sendDisplayToProjectorCommand;
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand command.
+        /// </summary>
+        public Command SwitchToLinkedDisplayCommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SendDisplayToProjectorCommand.
-        ///// </summary>
-        //public RelayCommand SendDisplayToProjectorCommand
-        //{
-        //    get
-        //    {
-        //        return _sendDisplayToProjectorCommand
-        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      if (App.Peer.Channel != null)
-        //                                      {
-        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
-        //                                          }
-        //                                          else
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-        //                                              List<string> pageList = new List<string>();
-        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
-        //                                              {
-        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
-        //                                              }
+        /// <summary>
+        /// Method to invoke when the SwitchToLinkedDisplayCommand command is executed.
+        /// </summary>
+        private void OnSwitchToLinkedDisplayCommandExecute()
+        {
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay == null)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).InitializeLinkedDisplay();
+            }
 
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
-        //                                          }
-        //                                      }
-        //                                  }));
-        //    }
-        //}
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+            }
+            else
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand command.
+        /// </summary>
+        public Command CreateNewGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CreateNewGridDisplayCommand command is executed.
+        /// </summary>
+        private void OnCreateNewGridDisplayCommandExecute()
+        {
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(new GridDisplayViewModel());
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+        }
 
         //private RelayCommand _switchToLinkedDisplayCommand;
 
