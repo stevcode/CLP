@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = new SolidColorBrush(Colors.Black);
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
-            CurrentFontSize = 24;
+            CurrentFontSize = 26;
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
@@ -134,6 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
+            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
             //Student Record and Playback 
@@ -1475,6 +1476,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, square);
+        }
+
+        /// <summary>
+        /// Gets the InsertCircleShapeCommand command.
+        /// </summary>
+        public Command InsertCircleShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertCircleShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertCircleShapeCommandExecute()
+        {
+            CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, circle);
         }
 
         /// <summary>

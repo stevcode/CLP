@@ -131,7 +131,14 @@
 
             if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
             {
-                CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                if (StrokePathContainer.InternalPageObject != null)
+                {
+                	CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                }
+                else if (PageObjectStrokes.Count > 0)
+                {
+                    CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                }
             }
 
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
