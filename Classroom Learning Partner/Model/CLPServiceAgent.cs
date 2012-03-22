@@ -287,8 +287,42 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
 
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+
+                // Stamp and Tile log information
+                //TODO: Fix the naming of the log path. This is really messy.
+                string filePath = App.NotebookDirectory + @"\.." + @"\Logs" + @"\StampTileLog" + page.SubmissionID.ToString() + @".log";
+                System.IO.StreamWriter file = new System.IO.StreamWriter(filePath);
+                file.WriteLine("<Page id=" + page.UniqueID + " />");
+
+                foreach (ICLPPageObject obj in page.PageObjects)
+                {
+                    if (obj is CLPStamp)
+                    {
+                        CLPStamp stamp = obj as CLPStamp;
+                        file.WriteLine("<Stamp>");
+                        file.WriteLine("<Height>" + stamp.Height + "</Height>");
+                        file.WriteLine("<Width>" + stamp.Width + "</Width>");
+                        file.WriteLine("<Position>" + stamp.Position + "</Position>");
+                        file.WriteLine("<UniqueId>" + stamp.UniqueID + "</UniqueId>");
+                        file.WriteLine("<ParentId>" + stamp.ParentID + "</ParentId>");
+                        file.WriteLine("</Stamp>");
+                    }
+                    else if (obj is CLPSnapTileContainer)
+                    {
+                        CLPSnapTileContainer tile = obj as CLPSnapTileContainer;
+                        file.WriteLine("<Tile>");
+                        file.WriteLine("<Height>" + tile.Height);
+                        file.WriteLine("<Width>" + tile.Width + "</Width>");
+                        file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
+                        file.WriteLine("<Number>" + tile.NumberOfTiles + "</Number>");
+                        file.WriteLine("</Tile>");
+                    }
+                }
+                file.WriteLine("</Page>");
+                file.Close();
             }
         }
+
         //Record Visual button pressed
         public void StartRecordingVisual(CLPPage page)
         {
@@ -328,6 +362,8 @@ namespace Classroom_Learning_Partner.Model
             if (page != null)
             {
                 pageObject.PageID = page.UniqueID;
+                Console.WriteLine("IsBackground: " + App.MainWindowViewModel.IsAuthoring.ToString());
+                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
                 if (!page.PageHistory.IgnoreHistory)
