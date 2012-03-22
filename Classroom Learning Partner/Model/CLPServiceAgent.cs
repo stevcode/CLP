@@ -258,13 +258,16 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.Peer.Channel != null)
             {
-                CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                string s_history = ObjectSerializer.ToString(history);
+                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                //string s_history = ObjectSerializer.ToString(history);
 
-                ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
-                string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+                //ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
+                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
 
                 //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
+
+                //remove history before sending
+                CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
 
                 string oldSubmissionID = page.SubmissionID;
                 page.SubmissionID = Guid.NewGuid().ToString();
@@ -278,7 +281,11 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
                 Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
 
+                //put the history back into the page
+                CLPHistory.replaceHistoryInPage(tempHistory, page);
+
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                
             }
         }
         //Record Visual button pressed
@@ -322,6 +329,11 @@ namespace Classroom_Learning_Partner.Model
         {
             CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             pageVM.playAudio();
+        }
+        public void StopAudioPlayback(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.stopAudioPlayback();
         }
         public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {

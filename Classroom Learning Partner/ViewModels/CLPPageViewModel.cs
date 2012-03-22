@@ -88,14 +88,20 @@ namespace Classroom_Learning_Partner.ViewModels
             //AudioViewModel avm = new AudioViewModel(page.MetaData.GetValue("UniqueID"));
 
             //Audio
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            path = "C:\\Audio_Files\\" + page.UniqueID + ".wav";
-            if (!Directory.Exists("C:\\Audio_Files"))
+           // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
+            
+            path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + page.UniqueID + ".wav";
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\"))
             {
-                DirectoryInfo worked = Directory.CreateDirectory("C:\\Audio_Files");
+                DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Audio_Files");
             }
-        }
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
 
+        }
+        
         public override string Title { get { return "PageVM"; } }
 
         #endregion //Constructors
@@ -480,8 +486,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         int i = 0;
         DispatcherTimer timer;
-        bool hasReachedStart = false;
-        bool hasReachedStop = false;
+        bool inRecorded = false;
         public void StartPlayBack()
         {
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
@@ -510,12 +515,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 i = 0;
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
+                numRecordedSessions = 0;
                 if (PlayingRecorded)
                 {
-                    hasReachedStart = false;
-                    hasReachedStop = false;
+                    inRecorded = false;
                     PlayingRecorded = false;
                     App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                    App.MainWindowViewModel.PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                     App.MainWindowViewModel.currentlyPlayingVisual = false;
                 }
             }
@@ -535,14 +541,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     i--;
                 }
            }
-           if ((PlayingRecorded && !hasReachedStart) || (PlayingRecorded && hasReachedStop))
+           if (PlayingRecorded && !inRecorded) 
            {
                timer.Interval = new TimeSpan(0);
            }
            
            Redo();
         }
-
+        int numRecordedSessions = 0;
         public void Undo()
         {
             PageHistory.IgnoreHistory = true;
@@ -557,6 +563,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 switch (item.ItemType)
                 {
+                    case HistoryItemType.StartRecord:
+                        numRecordedSessions++;
+                        item.NewValue = numRecordedSessions.ToString();
+                        break;
+                    case HistoryItemType.StopRecord:
+                        item.NewValue = numRecordedSessions.ToString();
+                        break;
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
@@ -599,6 +612,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.SnapTileSnap:
+                        CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
+                        for (int i = 0; i < diff; i++)
+                        {
+                            t.NumberOfTiles--;
+                        }
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -631,10 +650,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch (item.ItemType)
                 {
                     case HistoryItemType.StartRecord:
-                        hasReachedStart = true;
+                        if (Int32.Parse(item.NewValue) == 1)
+                        {
+                            inRecorded = true;
+                        }
                         break;
                     case HistoryItemType.StopRecord:
-                        hasReachedStop = true;
+                        inRecorded = false;
                         break;
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
@@ -678,6 +700,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.SnapTileSnap:
+                        CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
+                        for (int i = 0; i < diff; i++)
+                        {
+                            t.NumberOfTiles++;
+                        }
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -709,35 +737,79 @@ namespace Classroom_Learning_Partner.ViewModels
         }
         public void recordAudio()
         {
-            mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
-            mciSendString("record recsound", "", 0, 0);
+            try
+            {
+                if(File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
+                mciSendString("record recsound", "", 0, 0);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
         public void stopAudio()
         {
-            mciSendString("save recsound " + path, "", 0, 0);
-            mciSendString("close recsound ", "", 0, 0);
+            try
+            {
+                mciSendString("save recsound " + path, "", 0, 0);
+                mciSendString("close recsound ", "", 0, 0);
+            }
+            catch (Exception e)
+            {
+            }
         }
+        System.Media.SoundPlayer soundPlayer;
         public void playAudio()
         {
-            string s;
-           
-            // access media file
-            s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
-           
-            mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0);
+            try
+            {
+                soundPlayer = new System.Media.SoundPlayer(path);
+                soundPlayer.LoadAsync();
+                soundPlayer.Play();
+            }
+            catch (Exception e)
+            {
+            }
 
-            // play from start
-            s = "play mysound from 0 wait";     // append "wait" if you want blocking
-            mciSendString(s, null, 0, 0);
-            //System.Threading.Thread.Sleep(2000);
-            // stop playback
-            s = "stop mysound";         // if playing asynchronously
-            mciSendString(s, null, 0, 0);
+            ////\\\\ old way that works statically
+            //string s;
+           
+            //// access media file
+            //s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
+           
+            //mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0);
 
-            // deallocate resources
-            s = "close mysound";
-            mciSendString(s, null, 0, 0);
+            //// play from start
+            //s = "play mysound from 0 wait";     // append "wait" if you want blocking
+            //mciSendString(s, null, 0, 0);
+            ////System.Threading.Thread.Sleep(2000);
+            //// stop playback
+            //s = "stop mysound";         // if playing asynchronously
+            //mciSendString(s, null, 0, 0);
+
+            //// deallocate resources
+            //s = "close mysound";
+            //mciSendString(s, null, 0, 0);
         
+        }
+
+        public void stopAudioPlayback()
+        {
+            try
+            {
+                if (soundPlayer != null)
+                {
+                    soundPlayer.Stop();
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
         }
         #endregion //Methods
 
@@ -787,12 +859,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 i--;
             }
             timer.Stop();
+            numRecordedSessions = 0;
             if (PlayingRecorded)
             {
-                hasReachedStart = false;
-                hasReachedStop = false;
+                inRecorded = false;
                 PlayingRecorded = false;
                 App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                App.MainWindowViewModel.PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 App.MainWindowViewModel.currentlyPlayingVisual = false;
             }
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);

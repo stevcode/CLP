@@ -687,6 +687,51 @@ namespace Classroom_Learning_Partner.Model
             //Console.ReadLine();
         }
 
+        public static CLPHistory removeHistoryFromPage(CLPPage page)
+        {
+            CLPHistory tempHistory = new CLPHistory();
+            foreach (var key in page.PageHistory.TrashedPageObjects.Keys)
+            {
+                tempHistory.TrashedPageObjects.Add(key, page.PageHistory.TrashedPageObjects[key]);
+            }
+            foreach (var key in page.PageHistory.TrashedInkStrokes.Keys)
+            {
+                tempHistory.TrashedInkStrokes.Add(key, page.PageHistory.TrashedInkStrokes[key]);
+            }
+            foreach (CLPHistoryItem item in page.PageHistory.HistoryItems)
+            {
+                tempHistory.HistoryItems.Add(item);
+            }
+            foreach (CLPHistoryItem item in page.PageHistory.UndoneHistoryItems)
+            {
+                tempHistory.UndoneHistoryItems.Add(item);
+            }
+            page.PageHistory.ClearHistory();
+            return tempHistory;
+        }
+
+        public static void replaceHistoryInPage(CLPHistory tempHistory, CLPPage page)
+        {
+            //in case the page history wasn't already empty, clear it.
+            page.PageHistory.ClearHistory();
+
+            foreach (var key in tempHistory.TrashedPageObjects.Keys)
+            {
+                page.PageHistory.TrashedPageObjects.Add(key, tempHistory.TrashedPageObjects[key]);
+            }
+            foreach (var key in tempHistory.TrashedInkStrokes.Keys)
+            {
+                page.PageHistory.TrashedInkStrokes.Add(key, tempHistory.TrashedInkStrokes[key]);
+            }
+            foreach (CLPHistoryItem item in tempHistory.HistoryItems)
+            {
+                page.PageHistory.HistoryItems.Add(item);
+            }
+            foreach (CLPHistoryItem item in tempHistory.UndoneHistoryItems)
+            {
+                page.PageHistory.UndoneHistoryItems.Add(item);
+            }
+        }
         #endregion
     }
 

@@ -62,18 +62,14 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             if ((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count > 1)
             {
-<<<<<<< HEAD
                 (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
-=======
-                snapTileContainer.Tiles.RemoveAt(snapTileContainer.Tiles.Count - 1);
                 //add the snapTileRemoveTile history item here
-                CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID(snapTileContainer.PageID).PageHistory;
+                CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
                 if (!pageHistory.IgnoreHistory)
                 {
-                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, snapTileContainer.UniqueID, null, null);
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
                     pageHistory.HistoryItems.Add(item);
                 }
->>>>>>> origin/ClaireExperimental
             }
         }
 
@@ -104,6 +100,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             newSnapTile.Position = new Point(x, y);
             CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.PageID, newSnapTile);
         }
+<<<<<<< HEAD
 
         private void dragButton_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -152,13 +149,8 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                                 {
                                     (this.DataContext as CLPSnapTileContainerViewModel).Tiles.Add("SpringGreen");
                                 }
-<<<<<<< HEAD
 
 
-                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
-=======
-                                //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count; -> ignore
->>>>>>> origin/ClaireExperimental
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(tile.PageObject, item);
@@ -178,5 +170,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 }
             }
         }
+=======
+>>>>>>> origin/experimental
     }
 }

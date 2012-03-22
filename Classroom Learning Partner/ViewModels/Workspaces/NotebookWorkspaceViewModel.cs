@@ -160,8 +160,20 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public CLPPageViewModel CurrentPage
         {
             get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
+
             set
             {
+                if (CurrentPage != null)
+                {
+                    try
+                    {
+                        CurrentPage.stopAudioPlayback();
+                        CurrentPage.stopAudio();
+                        CurrentPage.StopPlayback();
+                    }
+                    catch (Exception e)
+                    { }
+                }
                 SetValue(CurrentPageProperty, value);
                 if (LinkedDisplay == null)
                 {

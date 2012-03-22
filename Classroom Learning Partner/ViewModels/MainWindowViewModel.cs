@@ -145,6 +145,8 @@ namespace Classroom_Learning_Partner.ViewModels
             VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
             AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
             PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
 
             currentlyPlayingVisual = false;
         }
@@ -487,7 +489,8 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<Uri>(VisualRecordImageProperty); }
             set { SetValue(VisualRecordImageProperty, value); }
         }
-        /// <summary>
+        
+        // <summary>
         /// Register the VisualRecordImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData VisualRecordImageProperty = RegisterProperty("VisualRecordImage", typeof(Uri));
@@ -503,8 +506,32 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PlayPauseVisualImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PlayPauseVisualImageProperty = RegisterProperty("PlayPauseVisualImage", typeof(Uri));
-        
-        
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri PlayPauseBothImage
+        {
+            get { return GetValue<Uri>(PlayPauseBothImageProperty); }
+            set { SetValue(PlayPauseBothImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the PlayPauseVisualImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlayPauseBothImageProperty = RegisterProperty("PlayPauseBothImage", typeof(Uri));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri RecordBothImage
+        {
+            get { return GetValue<Uri>(RecordBothImageProperty); }
+            set { SetValue(RecordBothImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the RecordBothImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RecordBothImageProperty = RegisterProperty("RecordBothImage", typeof(Uri));
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -1548,6 +1575,26 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnRecordBothCommandExecute()
         {
+            //audio
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if (!isRecordingAudio && !currentlyRecording)
+            {
+                
+                CLPServiceAgent.Instance.RecordAudio(page);
+                isRecordingAudio = true;
+                CLPServiceAgent.Instance.StartRecordingVisual(page);
+                RecordBothImage = new Uri("..\\Images\\recording.png", UriKind.Relative);
+                currentlyRecording = true;
+            }
+            else if(currentlyRecording && isRecordingAudio)
+            {
+                
+                CLPServiceAgent.Instance.StopAudio(page);
+                isRecordingAudio = false;
+                CLPServiceAgent.Instance.StopRecordingVisual(page);
+                RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
+                currentlyRecording = false;
+            }
 
         }
 
@@ -1561,7 +1608,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnPlayStopBothCommandExecute()
         {
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            
 
+            if (!currentlyPlayingVisual && !currentlyRecording)
+            {
+                CLPServiceAgent.Instance.PlayAudio(page);
+                CLPServiceAgent.Instance.PlaybackRecording(page);
+                PlayPauseBothImage = new Uri("..\\Images\\stop.png", UriKind.Relative);
+                currentlyPlayingVisual = true;
+            }
+            else if(!currentlyRecording)
+            {
+                CLPServiceAgent.Instance.StopAudioPlayback(page);
+                CLPServiceAgent.Instance.StopPlayback(page);
+                PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                currentlyPlayingVisual = false;
+            }
         }
 
         #endregion //Insert Commands

@@ -299,16 +299,16 @@
                         Label="Play"
                         Command="{Binding Path=PlayAudioCommand}" />
                 </ribbon:RibbonGroup>
-                <!--        <ribbon:RibbonGroup Header="Visual and Audio" >
+                        <ribbon:RibbonGroup Header="Visual and Audio" >
                     <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play.png"
+                        LargeImageSource="{Binding Path=RecordBothImage}"
                         Label="Record"
                         Command="{Binding Path=RecordBothCommand}" />
                     <ribbon:RibbonButton
-                        LargeImageSource="..\Images\play2.png"
+                        LargeImageSource="{Binding Path=PlayPauseBothImage}"
                         Label="Play"
                         Command="{Binding Path=PlayStopBothCommand}" /> 
-                </ribbon:RibbonGroup> -->
+                </ribbon:RibbonGroup> 
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
