@@ -74,12 +74,20 @@
             StrokePathContainer.IsStrokePathsVisible = true;
         }
 
+        double originalX;
+        double originalY;
+
         private void CopyStamp()
         {
             try
             {
+
+
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
                 leftBehindStamp.UniqueID = PageObject.UniqueID;
+
+                originalX = leftBehindStamp.Position.X;
+                originalY = leftBehindStamp.Position.Y;
 
                 CLPPage page = CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
 
@@ -112,11 +120,20 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
+
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
             droppedContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
-            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+            
+            double deltaX = Math.Abs(PageObject.Position.X - originalX);
+            double deltaY = Math.Abs(PageObject.Position.Y - originalY);
+
+            if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
+            {
+                CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+            }
+
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 
