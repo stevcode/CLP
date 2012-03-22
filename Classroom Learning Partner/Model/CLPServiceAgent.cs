@@ -332,7 +332,7 @@ namespace Classroom_Learning_Partner.Model
                         file.WriteLine("<Width>" + stampObj.Width + "</Width>");
                         file.WriteLine("<Position>" + stampObj.Position + "</Position>");
                         file.WriteLine("<UniqueId>" + stampObj.UniqueID + "</UniqueId>");
-                        file.WriteLine("<ParentId>" + stamp.ParentID + "</ParentId>");
+                        file.WriteLine("<ParentId>" + stampObj.ParentID + "</ParentId>");
                         file.WriteLine("</StampObj>");
                     }
                 }
