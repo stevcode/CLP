@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
             Position = new Point(100, 100);
 
-            Height = StrokePathContainer.Height;
+            Height = StrokePathContainer.Height + 50; ;
             Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;
@@ -31,6 +31,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
             CanAcceptStrokes = true;
+            IsBackground = false;
         }
 
         //Parameterless constructor for Protobuf
@@ -289,5 +290,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// Register the Width property so it is known in the class.
         /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 100);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsBackground
+        {
+            get { return GetValue<bool>(IsBackgroundProperty); }
+            set { SetValue(IsBackgroundProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsBackground property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
     }
 }

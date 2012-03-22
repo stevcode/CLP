@@ -38,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+            IsMinimized = false;
             IsPlaybackEnabled = false;
             PageObjectAddMode = PageObjectAddMode.None;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
@@ -70,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = new SolidColorBrush(Colors.Black);
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
-            CurrentFontSize = 24;
+            CurrentFontSize = 26;
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
@@ -119,6 +120,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
 
+            //Displays
+            SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -130,6 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
+            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
             //Student Record and Playback 
@@ -145,6 +150,8 @@ namespace Classroom_Learning_Partner.ViewModels
             VisualRecordImage = new Uri("..\\Images\\record.png", UriKind.Relative);
             AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
             PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+            RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
 
             currentlyPlayingVisual = false;
         }
@@ -261,7 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-
+            IsMinimized = false;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -272,6 +279,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+                    IsMinimized = true;
                     break;
                 case App.UserMode.Student:
                     SelectedWorkspace = new UserLoginWorkspaceViewModel();
@@ -350,6 +358,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double ERASER_RADIUS = 5;
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsMinimized
+        {
+            get { return GetValue<bool>(IsMinimizedProperty); }
+            set { SetValue(IsMinimizedProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsMinimized property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsMinimizedProperty = RegisterProperty("IsMinimized", typeof(bool));
 
         //Steve - Dont' want Views in ViewModels, can this be fixed?
         public CLPTextBoxView LastFocusedTextBox = null;
@@ -487,7 +509,8 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<Uri>(VisualRecordImageProperty); }
             set { SetValue(VisualRecordImageProperty, value); }
         }
-        /// <summary>
+        
+        // <summary>
         /// Register the VisualRecordImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData VisualRecordImageProperty = RegisterProperty("VisualRecordImage", typeof(Uri));
@@ -503,8 +526,32 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PlayPauseVisualImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PlayPauseVisualImageProperty = RegisterProperty("PlayPauseVisualImage", typeof(Uri));
-        
-        
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri PlayPauseBothImage
+        {
+            get { return GetValue<Uri>(PlayPauseBothImageProperty); }
+            set { SetValue(PlayPauseBothImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the PlayPauseVisualImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlayPauseBothImageProperty = RegisterProperty("PlayPauseBothImage", typeof(Uri));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri RecordBothImage
+        {
+            get { return GetValue<Uri>(RecordBothImageProperty); }
+            set { SetValue(RecordBothImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the RecordBothImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RecordBothImageProperty = RegisterProperty("RecordBothImage", typeof(Uri));
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -673,12 +720,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach (CLPPage page in notebook.Pages)
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                page.PageHistory.ClearHistory();
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
             }
-            //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 
         /// <summary>
@@ -691,7 +741,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            }
         }
 
         /// <summary>
@@ -1173,6 +1226,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Display Commands
 
+        /// <summary>
+        /// Gets the SendDisplayToProjectorcommand command.
+        /// </summary>
+        public Command SendDisplayToProjectorcommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SendDisplayToProjectorcommand command is executed.
+        /// </summary>
+        private void OnSendDisplayToProjectorcommandExecute()
+        {
+            if (App.Peer.Channel != null)
+            {
+                foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                {
+                    gridDisplay.IsOnProjector = false;
+                }
+
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+
+
+                List<string> pageIDs = new List<string>();
+                if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+                    pageIDs.Add(pageID);
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+                else
+                {
+                    foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    {
+                        pageIDs.Add(pageVM.Page.UniqueID);
+                    }
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+            }
+        }
+
         //private RelayCommand _sendDisplayToProjectorCommand;
 
         ///// <summary>
@@ -1409,6 +1500,20 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the InsertCircleShapeCommand command.
+        /// </summary>
+        public Command InsertCircleShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertCircleShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertCircleShapeCommandExecute()
+        {
+            CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, circle);
+        }
+
+        /// <summary>
         /// Gets the InsertInkRegionCommand command.
         /// </summary>
         public Command InsertInkRegionCommand { get; private set; }
@@ -1508,9 +1613,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the RecordAudioCommand command is executed.
         /// </summary>
+        bool isRecordingAudio = false;
         private void OnRecordAudioCommandExecute()
         {
-            
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if (!isRecordingAudio)
+            {
+                AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                CLPServiceAgent.Instance.RecordAudio(page);
+                isRecordingAudio = true;
+            }
+            else
+            {
+                AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+                CLPServiceAgent.Instance.StopAudio(page);
+                isRecordingAudio = false;
+            }
         }
 
         /// <summary>
@@ -1523,7 +1641,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnPlayAudioCommandExecute()
         {
-
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            CLPServiceAgent.Instance.PlayAudio(page);
         }
 
         /// <summary>
@@ -1536,6 +1655,26 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnRecordBothCommandExecute()
         {
+            //audio
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if (!isRecordingAudio && !currentlyRecording)
+            {
+                
+                CLPServiceAgent.Instance.RecordAudio(page);
+                isRecordingAudio = true;
+                CLPServiceAgent.Instance.StartRecordingVisual(page);
+                RecordBothImage = new Uri("..\\Images\\recording.png", UriKind.Relative);
+                currentlyRecording = true;
+            }
+            else if(currentlyRecording && isRecordingAudio)
+            {
+                
+                CLPServiceAgent.Instance.StopAudio(page);
+                isRecordingAudio = false;
+                CLPServiceAgent.Instance.StopRecordingVisual(page);
+                RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
+                currentlyRecording = false;
+            }
 
         }
 
@@ -1549,7 +1688,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnPlayStopBothCommandExecute()
         {
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            
 
+            if (!currentlyPlayingVisual && !currentlyRecording)
+            {
+                CLPServiceAgent.Instance.PlayAudio(page);
+                CLPServiceAgent.Instance.PlaybackRecording(page);
+                PlayPauseBothImage = new Uri("..\\Images\\stop.png", UriKind.Relative);
+                currentlyPlayingVisual = true;
+            }
+            else if(!currentlyRecording)
+            {
+                CLPServiceAgent.Instance.StopAudioPlayback(page);
+                CLPServiceAgent.Instance.StopPlayback(page);
+                PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                currentlyPlayingVisual = false;
+            }
         }
 
         #endregion //Insert Commands

@@ -114,6 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 //{
                                 //    count++;
                                 //}
+                                int oldCount = otherTile.NumberOfTiles;
 
                                 otherTile.NumberOfTiles += NumberOfTiles;
 
@@ -125,13 +126,17 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
 
-
+                                if (!currentPage.PageHistory.IgnoreHistory)
+                                {
+                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
+                                    currentPage.PageHistory.HistoryItems.Add(item);
+                                }
                                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                                 break;
                             }
                             else if (deltaYTopSnap < 55)
                             {
-                                //int oldCount = tile.Tiles.Count;
+                                int oldCount = NumberOfTiles;
 
                                 //for (int i = otherTile.NumberOfTiles - 1; i >= 0; i--)
                                 //{
@@ -147,7 +152,11 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 //item.OldValue = oldCount.ToString();
                                 //item.NewValue = tile.Tiles.Count.ToString();
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-
+                                if (!currentPage.PageHistory.IgnoreHistory )
+                                {
+                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, pageObject.UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
+                                    currentPage.PageHistory.HistoryItems.Add(item);
+                                }
 
 
                                 CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);

@@ -61,7 +61,15 @@ namespace Classroom_Learning_Partner.Model
                 if (count == 0)
                 {
                     App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                    if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student)
+                    {
+                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                    }
+                    else
+                    {
+                        App.MainWindowViewModel.SelectedWorkspace = new ProjectorWorkspaceViewModel();
+                    }
+                    
                 }
 
 
@@ -252,8 +260,92 @@ namespace Classroom_Learning_Partner.Model
             //run network disconnect
 
             Environment.Exit(0);
-           
         }
+
+
+        public void SubmitPage(CLPPage page)
+        {
+            if (App.Peer.Channel != null)
+            {
+                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
+                //string s_history = ObjectSerializer.ToString(history);
+                //ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
+                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
+
+                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
+
+                //remove history before sending
+                CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+
+                string oldSubmissionID = page.SubmissionID;
+                page.SubmissionID = Guid.NewGuid().ToString();
+                page.SubmissionTime = DateTime.Now;
+                //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
+
+                string s_page = ObjectSerializer.ToString(page);
+                App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
+
+                double size_standard = s_page.Length / 1024.0;
+                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
+                Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
+                
+                //ProtoBufTest
+                //Serialize using protobuf
+                DateTime startSer = DateTime.Now;
+                MemoryStream stream = new MemoryStream();
+                App.PageTypeModel.Serialize(stream, page);
+                string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                Logger.Instance.WriteToLog("ProtoBuf serialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString() + " Size: "
+                    + (s_page_pb.Length / 1024.0).ToString() + " kB");
+
+                //Test deserialize 
+                startSer = DateTime.Now;
+                Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
+                CLPPage page2 = new CLPPage();
+                App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
+                Logger.Instance.WriteToLog("ProtoBuf deserialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString());
+
+
+                //put the history back into the page
+                CLPHistory.replaceHistoryInPage(tempHistory, page);
+
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+
+                // Stamp and Tile log information
+                //TODO: Fix the naming of the log path. This is really messy.
+                string filePath = App.NotebookDirectory + @"\.." + @"\Logs" + @"\StampTileLog" + page.SubmissionID.ToString() + @".log";
+                System.IO.StreamWriter file = new System.IO.StreamWriter(filePath);
+                file.WriteLine("<Page id=" + page.UniqueID + " />");
+
+                foreach (ICLPPageObject obj in page.PageObjects)
+                {
+                    if (obj is CLPStamp)
+                    {
+                        CLPStamp stamp = obj as CLPStamp;
+                        file.WriteLine("<Stamp>");
+                        file.WriteLine("<Height>" + stamp.Height + "</Height>");
+                        file.WriteLine("<Width>" + stamp.Width + "</Width>");
+                        file.WriteLine("<Position>" + stamp.Position + "</Position>");
+                        file.WriteLine("<UniqueId>" + stamp.UniqueID + "</UniqueId>");
+                        file.WriteLine("<ParentId>" + stamp.ParentID + "</ParentId>");
+                        file.WriteLine("</Stamp>");
+                    }
+                    else if (obj is CLPSnapTileContainer)
+                    {
+                        CLPSnapTileContainer tile = obj as CLPSnapTileContainer;
+                        file.WriteLine("<Tile>");
+                        file.WriteLine("<Height>" + tile.Height);
+                        file.WriteLine("<Width>" + tile.Width + "</Width>");
+                        file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
+                        file.WriteLine("<Number>" + tile.NumberOfTiles + "</Number>");
+                        file.WriteLine("</Tile>");
+                    }
+                }
+                file.WriteLine("</Page>");
+                file.Close();
+            }
+        }
+
         //Record Visual button pressed
         public void StartRecordingVisual(CLPPage page)
         {
@@ -281,55 +373,26 @@ namespace Classroom_Learning_Partner.Model
             CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             pageVM.StopPlayback();
         }
-
-
-        public void SubmitPage(CLPPage page)
+        public void RecordAudio(CLPPage page)
         {
-            if (App.Peer.Channel != null)
-            {
-                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                //string s_history = ObjectSerializer.ToString(history);
-                //Logger.Instance.WriteToLog("Size of page BF string " + (s_page.Length/1024.0).ToString() + " kB");
-
-                //ObservableCollection<ICLPPageObject> pageObjects = CLPPage.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
-
-                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
-
-                string oldSubmissionID = page.SubmissionID;
-                page.SubmissionID = Guid.NewGuid().ToString();
-                page.SubmissionTime = DateTime.Now;
-                //SubmitPage sends only things not already submitted
-                //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
-
-                string s_page = ObjectSerializer.ToString(page);
-
-                //ProtoBufTest
-                //Serialize using protobuf
-                DateTime startSer = DateTime.Now;
-                MemoryStream stream = new MemoryStream();
-                App.PageTypeModel.Serialize(stream, page);
-                string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                Logger.Instance.WriteToLog("ProtoBuf serialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString() + " Size: "
-                    + (s_page_pb.Length / 1024.0).ToString() + " kB");
-
-                //Test deserialize 
-                startSer = DateTime.Now;
-                Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
-                CLPPage page2 = new CLPPage();
-                App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
-                Logger.Instance.WriteToLog("ProtoBuf deserialize page " + page.PageIndex.ToString() + " in " + DateTime.Now.Subtract(startSer).ToString());
-
-
-                App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
-
-                double size_standard = s_page.Length / 1024.0;
-                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString() + " Size: " + size_standard.ToString() + " kB");
-
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Send, null, oldSubmissionID, page.SubmissionID));
-            }
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.recordAudio();
         }
-
+        public void StopAudio(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.stopAudio();
+        }
+        public void PlayAudio(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.playAudio();
+        }
+        public void StopAudioPlayback(CLPPage page)
+        {
+            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            pageVM.stopAudioPlayback();
+        }
         public void AddPageObjectToPage(string pageID, ICLPPageObject pageObject)
         {
             CLPPage page = GetPageFromID(pageID);
@@ -341,6 +404,8 @@ namespace Classroom_Learning_Partner.Model
             if (page != null)
             {
                 pageObject.PageID = page.UniqueID;
+                Console.WriteLine("IsBackground: " + App.MainWindowViewModel.IsAuthoring.ToString());
+                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
                 if (!page.PageHistory.IgnoreHistory)

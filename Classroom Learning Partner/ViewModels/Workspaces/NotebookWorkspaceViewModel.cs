@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
+    [InterestedIn(typeof(IDisplayViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
@@ -32,6 +33,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
             FilteredSubmissions = new CollectionViewSource();
+            GridDisplays = new ObservableCollection<GridDisplayViewModel>();
+            GridDisplays.Add(new GridDisplayViewModel());
+            GridDisplays.Add(new GridDisplayViewModel());
+            GridDisplays.Add(new GridDisplayViewModel());
 
             Notebook.GeneratePageIndexes();
 
@@ -45,11 +50,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             LinkedDisplay = new LinkedDisplayViewModel(CurrentPage);
 
             SelectedDisplay = LinkedDisplay;
-            SelectedDisplay.IsActive = true;
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
                 SelectedDisplay.IsOnProjector = true;
+                WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
             }
             else
             {
@@ -100,6 +105,20 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<GridDisplayViewModel> GridDisplays
+        {
+            get { return GetValue<ObservableCollection<GridDisplayViewModel>>(GridDisplaysProperty); }
+            set { SetValue(GridDisplaysProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplays property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GridDisplaysProperty = RegisterProperty("GridDisplays", typeof(ObservableCollection<GridDisplayViewModel>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -182,8 +201,20 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public CLPPageViewModel CurrentPage
         {
             get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
+
             set
             {
+                if (CurrentPage != null)
+                {
+                    try
+                    {
+                        CurrentPage.stopAudioPlayback();
+                        CurrentPage.stopAudio();
+                        CurrentPage.StopPlayback();
+                    }
+                    catch (Exception e)
+                    { }
+                }
                 SetValue(CurrentPageProperty, value);
                 if (LinkedDisplay == null)
                 {
@@ -238,6 +269,21 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
                     App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
                 }
+            }
+
+            if (propertyName == "IsOnProjector")
+            {
+                if ((viewModel as IDisplayViewModel).DisplayID == SelectedDisplay.DisplayID)
+                {
+                    if (SelectedDisplay.IsOnProjector)
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                    }
+                    else
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    }
+                }   
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);

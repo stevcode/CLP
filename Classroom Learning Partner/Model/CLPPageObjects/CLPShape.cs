@@ -22,8 +22,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             ShapeType = shapeType;
             Position = new System.Windows.Point(10, 10);
-            Height = 300;
-            Width = 300;
+            Height = 100;
+            Width = 100;
         }
 
         //Parameterless constructor for Protobuf

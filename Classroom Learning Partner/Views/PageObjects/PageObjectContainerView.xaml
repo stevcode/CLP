@@ -19,10 +19,7 @@
             </ResourceDictionary.MergedDictionaries>
             <conv:LengthConverter x:Key="LengthConverter"/>
         </ResourceDictionary>
-        
     </UserControl.Resources>
-
-
 
     <Grid x:Name="ContainerHitBox" Background="Transparent">
 
@@ -269,13 +266,6 @@
 
                 </ContentControl>
             </Grid>
-        </ac:AdornedControl>
-
-        
-
-        
+        </ac:AdornedControl>      
     </Grid>
-
-    
-
 </catel:UserControl>

@@ -44,19 +44,13 @@ namespace Classroom_Learning_Partner.Model
         void ReceiveNotebook(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void LaserUpdate(Point pt);
-
-        [OperationContract(IsOneWay = true)]
-        void TurnOffLaser();
-
-        [OperationContract(IsOneWay = true)]
         void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
 
         [OperationContract(IsOneWay = true)]
-        void SwitchProjectorDisplay(string displayType, List<string> gridDisplayPages);
+        void SwitchProjectorDisplay(string displayType, List<string> displayPages);
 
         [OperationContract(IsOneWay = true)]
-        void AddPageToDisplay(string stringPage);
+        void AddPageToDisplay(string pageID);
 
         [OperationContract(IsOneWay = true)]
         void RemovePageFromGridDisplay(string pageID);
@@ -73,7 +67,6 @@ namespace Classroom_Learning_Partner.Model
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
     {
         int pagecount = 0;
-
 
         public void Connect(string userName)
         {
@@ -157,6 +150,7 @@ namespace Classroom_Learning_Partner.Model
                  return null;
              }, null);
         }
+
         public void SavePage(string s_page, string userName, DateTime submitTime)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -194,6 +188,7 @@ namespace Classroom_Learning_Partner.Model
 
             }
         }
+
         public void DistributeNotebook(string s_notebook, string author)
         {
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
@@ -202,6 +197,7 @@ namespace Classroom_Learning_Partner.Model
                 CLPServiceAgent.Instance.DistributeNotebookServer(notebook, author);
             }
         }
+
         public void ReceiveNotebook(string s_notebook, string userName)
         {
             Console.WriteLine("ReceiveNotebooks called");
@@ -217,39 +213,9 @@ namespace Classroom_Learning_Partner.Model
                 //{
                 //    App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
                 //}
-
-
             }
         }
 
-        public void LaserUpdate(Point pt)
-        {
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    if (App.CurrentUserMode == App.UserMode.Projector)
-                    {
-                        AppMessages.UpdateLaserPointerPosition.Send(pt);
-                    }
-                    return null;
-                }, null);
-
-        }
-
-        public void TurnOffLaser()
-        {
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    if (App.CurrentUserMode == App.UserMode.Projector)
-                    {
-                        AppMessages.TurnOffLaser.Send();
-                    }
-                    return null;
-                }, null);
-        }
         public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -284,13 +250,12 @@ namespace Classroom_Learning_Partner.Model
                         //}
 
                     }
-
                     return null;
                 }, null);
 
         }
 
-        public void SwitchProjectorDisplay(string displayType, List<string> gridDisplayPages)
+        public void SwitchProjectorDisplay(string displayType, List<string> displayPages)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
@@ -299,120 +264,70 @@ namespace Classroom_Learning_Partner.Model
                     {
                         if (displayType == "LinkedDisplay")
                         {
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = false;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                        
+                            AddPageToDisplay(displayPages[0]);
                         }
                         else
                         {
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsActive = true;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-
-                            //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
-                            //foreach (var stringPage in gridDisplayPages)
-                            //{
-                            //CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                            //bool isAlreadyInCurrentNotebook = false;
-                            //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                            //{
-                            //    if (pageViewModel.Page.UniqueID == page.UniqueID)
-                            //    {
-                            //        isAlreadyInCurrentNotebook = true;
-                            //    }
-                            //}
-
-                            //if (isAlreadyInCurrentNotebook)
-                            //{
-                            //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(new CLPPageViewModel(page, App.CurrentNotebookViewModel));
-                            //}
-                            //else
-                            //{
-                            //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                            //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                            //    (App.MainWindowViewModel.Workspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayPages.Add(newPageViewModel);
-                            //}
-                            //}
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
+                            foreach (var pageID in displayPages)
+                            {
+                                AddPageToDisplay(pageID);
+                            }  
                         }
-
                     }
                     return null;
                 }, null);
         }
 
-        public void AddPageToDisplay(string stringPage)
+        public void AddPageToDisplay(string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                        bool isAlreadyInCurrentNotebook = false;
-                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        //{
-                        //    if (page.IsSubmission)
-                        //    {
-                        //        page.UniqueID = page.SubmissionID;
-                        //    }
-                        //    if (pageViewModel.Page.UniqueID == page.UniqueID)
-                        //    {
-                        //        isAlreadyInCurrentNotebook = true;
-                        //    }
+                        foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            CLPPage page = notebook.GetNotebookPageByID(pageID);
 
-                        //}
-
-                        //if (isAlreadyInCurrentNotebook)
-                        //{
-                        //    AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
-                        //}
-                        //else
-                        //{
-                        //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                        //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                        //    AppMessages.AddPageToDisplay.Send(newPageViewModel);
-                        //}
+                            if (page != null)
+                            {
+                            	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(new CLPPageViewModel(page));
+                            }
+                            break;
+                        }
                     }
                     return null;
                 }, null);
         }
 
-
         public void RemovePageFromGridDisplay(string pageID)
         {
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //    (DispatcherOperationCallback)delegate(object arg)
-            //    {
-            //        if (App.CurrentUserMode == App.UserMode.Projector)
-            //        {
-
-
-            //            if (isAlreadyInCurrentNotebook)
-            //            {
-            //                AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
-            //            }
-            //            else
-            //            {
-            //                CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-            //                App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-            //                AppMessages.AddPageToDisplay.Send(newPageViewModel);
-            //            }
-            //        }
-            //        return null;
-            //    }, null);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        foreach (var pageVM in (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages)
+                        {
+                            if (pageVM.Page.UniqueID == pageID)
+                            {
+                                (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Remove(pageVM);
+                            }
+                        }
+                    }
+                    return null;
+                }, null);
         }
-
 
         public void AddPageObjectToPage(string pageID, string stringPageObject)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
 
@@ -455,8 +370,6 @@ namespace Classroom_Learning_Partner.Model
                         //    }
                         //}
                     }
-
-
                     return null;
                 }, null);
         }

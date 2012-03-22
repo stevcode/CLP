@@ -15,7 +15,23 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
+            DisplayID = "LinkedDisplay";
+            IsOnProjector = false;
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DisplayID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -39,24 +55,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool IsActive
-        {
-            get { return GetValue<bool>(IsActiveProperty); }
-            set
-            {
-                SetValue(IsActiveProperty, value);
-                Console.WriteLine("linkeddisplay IsActive set to: " + value.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Register the IsActive property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsActiveProperty = RegisterProperty("IsActive", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public bool IsOnProjector
         {
             get { return GetValue<bool>(IsOnProjectorProperty); }
@@ -74,6 +72,10 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPage = page;
+            if (IsOnProjector && App.Peer.Channel != null)
+            {
+            	App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+            }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
