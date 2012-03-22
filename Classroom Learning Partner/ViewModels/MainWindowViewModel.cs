@@ -120,6 +120,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
 
+            //Displays
+            SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -1215,6 +1218,29 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Submission Command
 
         #region Display Commands
+
+        /// <summary>
+        /// Gets the SendDisplayToProjectorcommand command.
+        /// </summary>
+        public Command SendDisplayToProjectorcommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SendDisplayToProjectorcommand command is executed.
+        /// </summary>
+        private void OnSendDisplayToProjectorcommandExecute()
+        {
+            if (App.Peer.Channel != null)
+            {
+                if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+                    foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                    {
+
+                    }
+                }
+            }
+        }
 
         //private RelayCommand _sendDisplayToProjectorCommand;
 

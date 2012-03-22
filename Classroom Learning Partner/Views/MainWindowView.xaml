@@ -273,12 +273,35 @@
                         LargeImageSource="..\Images\SingleDisplay.png"
                         Label="Linked Display"
                         Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
-                    
-                    <ribbon:RibbonButton
+
+                    <ribbon:RibbonSplitButton
+                        ItemsSource="{Binding SelectedWorkspace.GridDisplays}"
                         LargeImageSource="..\Images\GridDisplay.png"
                         Label="New Grid Display"
-                        Command="{Binding Path=CreateNewGridDisplayCommand}" />
-                    
+                        Command="{Binding Path=CreateNewGridDisplayCommand}">
+                        <ribbon:RibbonSplitButton.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" DataContext="{Binding}">
+                                    <UniformGrid>
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                    </UniformGrid>
+                                    <Label>
+                                        <Label.Content>
+                                            <!--<Binding Path="QuestionnaireName"/>-->
+                                            2
+                                        </Label.Content>
+                                        <Label.ContentStringFormat>
+                                            Grid Display #{0}
+                                        </Label.ContentStringFormat>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ribbon:RibbonSplitButton.ItemTemplate>
+                    </ribbon:RibbonSplitButton>
+
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Visual" >
                     <ribbon:RibbonButton

@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             DisplayedPage = page;
             DisplayID = Guid.NewGuid().ToString();
+            IsOnProjector = false;
         }
 
         /// <summary>
@@ -50,24 +51,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             get { return "LinkedDisplay"; }
         }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsActive
-        {
-            get { return GetValue<bool>(IsActiveProperty); }
-            set
-            {
-                SetValue(IsActiveProperty, value);
-                Console.WriteLine("linkeddisplay IsActive set to: " + value.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Register the IsActive property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsActiveProperty = RegisterProperty("IsActive", typeof(bool));
 
         /// <summary>
         /// Gets or sets the property value.

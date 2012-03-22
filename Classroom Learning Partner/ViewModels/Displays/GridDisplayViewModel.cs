@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             DisplayedPages = new ObservableCollection<CLPPageViewModel>();
             DisplayID = Guid.NewGuid().ToString();
+            IsOnProjector = false;
 
             RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
         }
@@ -82,50 +83,24 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             get { return "GridDisplay"; }
         }
 
-        public bool IsActive { get; set; }
-        public bool IsOnProjector { get; set; }
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsOnProjector
+        {
+            get { return GetValue<bool>(IsOnProjectorProperty); }
+            set { SetValue(IsOnProjectorProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsOnProjector property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
 
 
         public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPages.Add(page);
-        }
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if (propertyName == "CurrentPage" && IsActive)
-            {
-                AddPageToDisplay((viewModel as NotebookWorkspaceViewModel).CurrentPage);
-                //Steve - send to projector
-                //App.Peer.Channel.AddPageToDisplay? if IsOnProjector
-                // if (this.IsActive)
-                //{
-                //    if (App.CurrentUserMode == App.UserMode.Instructor)
-                //    {
-                //        if (App.Peer.Channel != null)
-                //        {
-                //            if (this.IsOnProjector)
-                //            {
-                //            //run this in background thread?
-                //                string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-                //                App.Peer.Channel.AddPageToDisplay(pageString);
-                //                
-                //                //alternative?
-                //                if (pageViewModel.Page.IsSubmission)
-                //            {
-                //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.SubmissionID);
-                //            }
-                //            else
-                //            {
-                //                App.Peer.Channel.AddPageToDisplay(pageViewModel.Page.UniqueID);
-                //            }
-                //            }
-                //        }
-                //    }
-                //}
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
     }
 }
