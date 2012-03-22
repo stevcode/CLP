@@ -236,7 +236,7 @@
                     </Button>
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
-            <Rectangle x:Name="PageObjectHitBox" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
+            <Rectangle x:Name="PageObjectHitBox" Tag="0"  Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
         </ac:AdornedControl>
     </Grid>
 </catel:UserControl>

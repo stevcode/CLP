@@ -633,6 +633,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnNewNotebookCommandExecute()
         {
             CLPServiceAgent.Instance.OpenNewNotebook();
+            (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = new CLPPageViewModel((SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[0]);
         }
 
         /// <summary>
