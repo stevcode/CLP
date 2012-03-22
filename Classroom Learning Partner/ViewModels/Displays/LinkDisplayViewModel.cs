@@ -15,7 +15,22 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
+            DisplayID = Guid.NewGuid().ToString();
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DisplayID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -74,6 +89,10 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPage = page;
+            if (IsOnProjector && App.Peer.Channel != null)
+            {
+            	App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+            }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)

@@ -38,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //MainWindow Content
             SetTitleBarText("Starting Up");
             IsAuthoring = false;
+            IsMinimized = false;
             IsPlaybackEnabled = false;
             PageObjectAddMode = PageObjectAddMode.None;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
@@ -261,7 +262,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-
+            IsMinimized = false;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -272,6 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+                    IsMinimized = true;
                     break;
                 case App.UserMode.Student:
                     SelectedWorkspace = new UserLoginWorkspaceViewModel();
@@ -350,6 +352,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public const double ERASER_RADIUS = 5;
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsMinimized
+        {
+            get { return GetValue<bool>(IsMinimizedProperty); }
+            set { SetValue(IsMinimizedProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsMinimized property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsMinimizedProperty = RegisterProperty("IsMinimized", typeof(bool));
 
         //Steve - Dont' want Views in ViewModels, can this be fixed?
         public CLPTextBoxView LastFocusedTextBox = null;

@@ -10,6 +10,8 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
     {
         string DisplayName { get; }
 
+        string DisplayID { get; }
+
         bool IsOnProjector { get; set; }
         bool IsActive { get; set; }
 

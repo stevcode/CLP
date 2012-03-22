@@ -57,7 +57,7 @@ namespace Classroom_Learning_Partner.Model
         void SwitchProjectorDisplay(string displayType, List<string> gridDisplayPages);
 
         [OperationContract(IsOneWay = true)]
-        void AddPageToDisplay(string stringPage);
+        void AddPageToDisplay(string pageID);
 
         [OperationContract(IsOneWay = true)]
         void RemovePageFromGridDisplay(string pageID);
@@ -346,38 +346,18 @@ namespace Classroom_Learning_Partner.Model
                 }, null);
         }
 
-        public void AddPageToDisplay(string stringPage)
+        public void AddPageToDisplay(string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        CLPPage page = ObjectSerializer.ToObject(stringPage) as CLPPage;
-                        bool isAlreadyInCurrentNotebook = false;
-                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        //{
-                        //    if (page.IsSubmission)
-                        //    {
-                        //        page.UniqueID = page.SubmissionID;
-                        //    }
-                        //    if (pageViewModel.Page.UniqueID == page.UniqueID)
-                        //    {
-                        //        isAlreadyInCurrentNotebook = true;
-                        //    }
-
-                        //}
-
-                        //if (isAlreadyInCurrentNotebook)
-                        //{
-                        //    AppMessages.AddPageToDisplay.Send(App.CurrentNotebookViewModel.GetPageByID(page.UniqueID));
-                        //}
-                        //else
-                        //{
-                        //    CLPPageViewModel newPageViewModel = new CLPPageViewModel(page, App.CurrentNotebookViewModel);
-                        //    App.CurrentNotebookViewModel.PageViewModels.Add(newPageViewModel);
-                        //    AppMessages.AddPageToDisplay.Send(newPageViewModel);
-                        //}
+                        foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            CLPPageViewModel pageVW = new CLPPageViewModel(notebook.GetNotebookPageByID(pageID));
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(pageVW);
+                        }
                     }
                     return null;
                 }, null);

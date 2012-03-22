@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
@@ -16,11 +17,26 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPages = new ObservableCollection<CLPPageViewModel>();
+            DisplayID = Guid.NewGuid().ToString();
 
             RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DisplayID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
 
         /// <summary>
         /// Gets or sets the property value.
