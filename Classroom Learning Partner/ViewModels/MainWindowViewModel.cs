@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = new SolidColorBrush(Colors.Black);
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
-            CurrentFontSize = 24;
+            CurrentFontSize = 26;
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
@@ -120,6 +120,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
 
+            //Displays
+            SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+            SwitchToLinkedDisplayCommand = new Command(OnSwitchToLinkedDisplayCommandExecute);
+            CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
+
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -131,6 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
+            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
             //Student Record and Playback 
@@ -716,12 +722,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach (CLPPage page in notebook.Pages)
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                page.PageHistory.ClearHistory();
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
             }
-            //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 
         /// <summary>
@@ -734,7 +743,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            }
         }
 
         /// <summary>
@@ -1216,43 +1228,84 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Display Commands
 
-        //private RelayCommand _sendDisplayToProjectorCommand;
+        /// <summary>
+        /// Gets the SendDisplayToProjectorcommand command.
+        /// </summary>
+        public Command SendDisplayToProjectorcommand { get; private set; }
 
-        ///// <summary>
-        ///// Gets the SendDisplayToProjectorCommand.
-        ///// </summary>
-        //public RelayCommand SendDisplayToProjectorCommand
-        //{
-        //    get
-        //    {
-        //        return _sendDisplayToProjectorCommand
-        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      if (App.Peer.Channel != null)
-        //                                      {
-        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
-        //                                          }
-        //                                          else
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-        //                                              List<string> pageList = new List<string>();
-        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
-        //                                              {
-        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
-        //                                              }
+        /// <summary>
+        /// Method to invoke when the SendDisplayToProjectorcommand command is executed.
+        /// </summary>
+        private void OnSendDisplayToProjectorcommandExecute()
+        {
+            if (App.Peer.Channel != null)
+            {
+                foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                {
+                    gridDisplay.IsOnProjector = false;
+                }
 
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
-        //                                          }
-        //                                      }
-        //                                  }));
-        //    }
-        //}
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+
+
+                List<string> pageIDs = new List<string>();
+                if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+                    pageIDs.Add(pageID);
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+                else
+                {
+                    foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    {
+                        pageIDs.Add(pageVM.Page.UniqueID);
+                    }
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand command.
+        /// </summary>
+        public Command SwitchToLinkedDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SwitchToLinkedDisplayCommand command is executed.
+        /// </summary>
+        private void OnSwitchToLinkedDisplayCommandExecute()
+        {
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay == null)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).InitializeLinkedDisplay();
+            }
+
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+            }
+            else
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand command.
+        /// </summary>
+        public Command CreateNewGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CreateNewGridDisplayCommand command is executed.
+        /// </summary>
+        private void OnCreateNewGridDisplayCommandExecute()
+        {
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(new GridDisplayViewModel());
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+        }
 
         //private RelayCommand _switchToLinkedDisplayCommand;
 
@@ -1449,6 +1502,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, square);
+        }
+
+        /// <summary>
+        /// Gets the InsertCircleShapeCommand command.
+        /// </summary>
+        public Command InsertCircleShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertCircleShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertCircleShapeCommandExecute()
+        {
+            CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, circle);
         }
 
         /// <summary>

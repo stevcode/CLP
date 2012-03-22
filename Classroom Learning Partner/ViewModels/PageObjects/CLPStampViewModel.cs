@@ -59,44 +59,41 @@
         /// </summary>
         private void OnCopyStampCommandExecute()
         {
+            CopyStamp();
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+            //    (DispatcherOperationCallback)delegate(object arg)
+            //    {
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
 
+            //        CopyStamp();
 
-                    CopyStamp();
-
-                    return null;
-                }, null);
+            //        return null;
+            //    }, null);
             
             StrokePathContainer.PageObjectStrokes = PageObject.PageObjectStrokes;
             StrokePathContainer.IsStrokePathsVisible = true;
         }
 
+        double originalX;
+        double originalY;
+
         private void CopyStamp()
         {
             try
             {
+
+
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
                 leftBehindStamp.UniqueID = PageObject.UniqueID;
+
+                originalX = leftBehindStamp.Position.X;
+                originalY = leftBehindStamp.Position.Y;
 
                 CLPPage page = CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
 
                 if (page != null)
                 {
                     leftBehindStamp.PageID = page.UniqueID;
-
-                    //foreach (var pageObject in page.PageObjects)
-                    //{
-                    //    if (pageObject.UniqueID == leftBehindStamp.UniqueID)
-                    //    {
-
-                    //    }
-                    //}
-
-                    int index = page.PageObjects.IndexOf(PageObject);
-                    Console.WriteLine(index.ToString());
 
                     page.PageObjects.Add(leftBehindStamp);
 
@@ -109,7 +106,7 @@
             }
             catch (System.Exception ex)
             {
-
+                Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
             }
         }
 
@@ -123,10 +120,27 @@
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            StrokePathContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
-            StrokePathContainer.ParentID = PageObject.UniqueID;
-            StrokePathContainer.IsStamped = true;
-            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, StrokePathContainer);
+
+            CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
+            droppedContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
+            droppedContainer.ParentID = PageObject.UniqueID;
+            droppedContainer.IsStamped = true;
+            
+            double deltaX = Math.Abs(PageObject.Position.X - originalX);
+            double deltaY = Math.Abs(PageObject.Position.Y - originalY);
+
+            if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
+            {
+                if (StrokePathContainer.InternalPageObject != null)
+                {
+                	CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                }
+                else if (PageObjectStrokes.Count > 0)
+                {
+                    CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                }
+            }
+
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 

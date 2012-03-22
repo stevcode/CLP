@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
             Position = new Point(100, 100);
 
-            Height = StrokePathContainer.Height;
+            Height = StrokePathContainer.Height + 50; ;
             Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;

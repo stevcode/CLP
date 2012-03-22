@@ -150,20 +150,14 @@
                         Label="Stroke Eraser"
                         LargeImageSource="..\Images\StrokeEraser2.jpg"
                         Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked"/>
-
-                    <!--<ribbon:RibbonToggleButton
-                        Label="Laser Pointer"
-                        LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetLaserPointerModeCommand}"
-                        Visibility="{Binding Path=InstructorVisibility}" Checked="ToolsGroup_Checked"/>-->
                     
                     <ribbon:RibbonToggleButton
-                        Label="Snap Tile"
+                        Label="Tile"
                         LargeImageSource="..\Images\SnapTileIcon.png"
                         Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
 
                     <ribbon:RibbonToggleButton
-                        Label="Insert Blank Stamp"
+                        Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}" />
 
@@ -211,7 +205,7 @@
 
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup Header="History">
+               <!-- <ribbon:RibbonGroup Header="History">
 
                     <ribbon:RibbonToggleButton Visibility="{Binding Path=InstructorVisibility}"
                         IsChecked="False"
@@ -226,9 +220,9 @@
                     <ribbon:RibbonButton
                         Label="Redo"
                         LargeImageSource="..\Images\Redo.png"
-                        Command="{Binding Path=RedoCommand}" />
+                        Command="{Binding Path=RedoCommand}" /> 
                 
-                </ribbon:RibbonGroup>
+                </ribbon:RibbonGroup> -->
 
                 <!--<ribbon:RibbonGroup Header="Audio" Visibility="{Binding Path=InstructorVisibility}">
 
@@ -273,14 +267,38 @@
                         LargeImageSource="..\Images\SingleDisplay.png"
                         Label="Linked Display"
                         Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
-                    
-                    <ribbon:RibbonButton
+
+                    <ribbon:RibbonSplitButton
+                        ItemsSource="{Binding SelectedWorkspace.GridDisplays}"
                         LargeImageSource="..\Images\GridDisplay.png"
                         Label="New Grid Display"
-                        Command="{Binding Path=CreateNewGridDisplayCommand}" />
-                    
+                        Command="{Binding Path=CreateNewGridDisplayCommand}">
+                        <ribbon:RibbonSplitButton.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" DataContext="{Binding}">
+                                    <UniformGrid>
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
+                                    </UniformGrid>
+                                    <Label>
+                                        <Label.Content>
+                                            <!--<Binding Path="QuestionnaireName"/>-->
+                                            2
+                                        </Label.Content>
+                                        <Label.ContentStringFormat>
+                                            Grid Display #{0}
+                                        </Label.ContentStringFormat>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ribbon:RibbonSplitButton.ItemTemplate>
+                    </ribbon:RibbonSplitButton>
+
                 </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="Visual" >
+                
+               <!-- <ribbon:RibbonGroup Header="Visual" >
                     <ribbon:RibbonButton
                         LargeImageSource="{Binding Path=VisualRecordImage}"
                         Label="Record"
@@ -293,7 +311,8 @@
                         LargeImageSource="..\Images\stop.png"
                         Label="Stop"
                         Command="{Binding Path=StopVisualCommand}" />
-                </ribbon:RibbonGroup>
+                </ribbon:RibbonGroup> -->
+                
                 <ribbon:RibbonGroup Header="Audio" >
                     <ribbon:RibbonButton
                         LargeImageSource="{Binding Path=AudioRecordImage}"
@@ -304,7 +323,8 @@
                         Label="Play"
                         Command="{Binding Path=PlayAudioCommand}" />
                 </ribbon:RibbonGroup>
-                        <ribbon:RibbonGroup Header="Visual and Audio" >
+
+               <!-- <ribbon:RibbonGroup Header="Visual and Audio" >
                     <ribbon:RibbonButton
                         LargeImageSource="{Binding Path=RecordBothImage}"
                         Label="Record"
@@ -313,7 +333,8 @@
                         LargeImageSource="{Binding Path=PlayPauseBothImage}"
                         Label="Play"
                         Command="{Binding Path=PlayStopBothCommand}" /> 
-                </ribbon:RibbonGroup> 
+                </ribbon:RibbonGroup> -->
+                
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>
                     <ribbon:RibbonContentPresenter.Content>
@@ -328,11 +349,6 @@
                     </ribbon:RibbonContentPresenter.Content>
                 </ribbon:RibbonContentPresenter>
 
-
-                <ribbon:RibbonButton
-                    Label="Send Display To Projector"
-                    LargeImageSource="..\Images\Projector.png"
-                    Command="{Binding Path=ProjectCurrentlyViewedDisplayCommand}"/>
             </ribbon:RibbonGroup>
             <ribbon:RibbonGroup Header="Displays" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonButton
@@ -349,13 +365,7 @@
                 <ribbon:RibbonGroup  ItemsSource="{Binding Path=Displays}" ItemTemplate="{StaticResource DisplayPreviewTemplate}" Background="White"/>
 
             </ribbon:RibbonGroup>-->
-                <!--
-            <ribbon:RibbonGroup Header="Modes" Style="{StaticResource TestingOnlyVisibility}">
-                <ribbon:RibbonButton Command="{Binding Path=SetInstructorModeCommand}" Label="Set Instructor" LargeImageSource="..\Images\LargeIcon.png"/>
-                <ribbon:RibbonButton Command="{Binding Path=SetStudentModeCommand}" LargeImageSource="..\Images\LargeIcon.png" Label="Set Student"/>
-                <ribbon:RibbonButton Command="{Binding Path=SetProjectorModeCommand}" LargeImageSource="..\Images\LargeIcon.png" Label="Set Projector"/>
-            </ribbon:RibbonGroup>
-             -->
+
             </ribbon:RibbonTab>
 
             <!--Editing Tab-->
@@ -386,21 +396,26 @@
                         Label="Insert Image"
                         LargeImageSource="..\Images\AddImage.png"
                         Command="{Binding Path=InsertImageCommand}" />
-                    
+
+                    <ribbon:RibbonButton
+                        Label="Insert Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
                     <ribbon:RibbonButton
                         Label="Insert Image Stamp"
                         LargeImageSource="..\Images\AddPictureStamp.jpg"
                         Command="{Binding Path=InsertImageStampCommand}" />
-                    
-                    <ribbon:RibbonButton
-                        Label="Insert Blank Stamp"
-                        LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}" />
 
                     <ribbon:RibbonButton
                         Label="Insert Square"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Circle"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertCircleShapeCommand}" />
 
                     <ribbon:RibbonButton
                         Label="Insert Ink Region"
