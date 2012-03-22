@@ -89,6 +89,21 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             }
         }
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsBackground
+        {
+            get { return GetValue<bool>(IsBackgroundProperty); }
+            set { SetValue(IsBackgroundProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsBackground property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
+
         #endregion //Model
 
     }

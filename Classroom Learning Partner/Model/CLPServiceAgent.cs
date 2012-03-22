@@ -354,6 +354,7 @@ namespace Classroom_Learning_Partner.Model
             if (page != null)
             {
                 pageObject.PageID = page.UniqueID;
+                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
                 if (!page.PageHistory.IgnoreHistory)
