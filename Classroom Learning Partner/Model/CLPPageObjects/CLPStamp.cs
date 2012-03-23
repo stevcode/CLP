@@ -14,6 +14,15 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [Serializable]
     public class CLPStamp : DataObjectBase<CLPStamp>, ICLPPageObject
     {
+        public static double HANDLE_HEIGHT
+        {
+            get
+            {
+                return 35;
+            }
+        }
+    
+
         #region Constructors
 
         public CLPStamp(ICLPPageObject internalPageObject)
@@ -23,7 +32,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
             Position = new Point(100, 100);
 
-            Height = StrokePathContainer.Height + 50; ;
+            Height = StrokePathContainer.Height + HANDLE_HEIGHT; ;
             Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;
@@ -111,7 +120,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 Stroke newStroke = stroke.Clone();
                 Matrix transform = new Matrix();
-                transform.Translate(-Position.X, -Position.Y - 50);
+                transform.Translate(-Position.X, -Position.Y - HANDLE_HEIGHT);
                 newStroke.Transform(transform, true);
 
                 PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
@@ -225,7 +234,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             get { return GetValue<double>(HeightProperty); }
             set { SetValue(HeightProperty, value);
-            StrokePathContainer.Height = Height - 50;
+            StrokePathContainer.Height = Height - HANDLE_HEIGHT;
             if (StrokePathContainer.InternalPageObject != null)
             {
                 StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
