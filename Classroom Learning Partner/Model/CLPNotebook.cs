@@ -218,7 +218,7 @@ namespace Classroom_Learning_Partner.Model
             {
                 foreach (var page in Submissions[pageKey])
                 {
-                    if (page.UniqueID == pageID)
+                    if (page.SubmissionID == pageID)
                     {
                         returnPage = page;
                         break;
