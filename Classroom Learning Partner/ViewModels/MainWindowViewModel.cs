@@ -1327,7 +1327,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
                     {
-                        pageIDs.Add(pageVM.Page.UniqueID);
+                        if (pageVM.IsSubmission)
+                        {
+                            pageIDs.Add(pageVM.Page.SubmissionID);
+                        }
+                        else
+                        {
+                            pageIDs.Add(pageVM.Page.UniqueID);
+                        }
                     }
                     App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                 }

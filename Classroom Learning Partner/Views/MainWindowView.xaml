@@ -259,7 +259,7 @@
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\Projector.png"
                         Label="Send To Projector"
-                        Command="{Binding Path=SendDisplayToProjectorCommand}" />
+                        Command="{Binding Path=SendDisplayToProjectorcommand}" />
                     
                     <ribbon:RibbonSeparator Height="65" Width="20" Background="Black" />
                     

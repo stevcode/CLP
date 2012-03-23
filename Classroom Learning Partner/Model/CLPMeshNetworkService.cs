@@ -329,12 +329,22 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
+                        int pageIndex = -1;
                         foreach (var pageVM in (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages)
                         {
                             if (pageVM.Page.UniqueID == pageID)
                             {
-                                (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Remove(pageVM);
+                                pageIndex = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.IndexOf(pageVM);
+                                break;
                             }
+                        }
+                        try
+                        {
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.RemoveAt(pageIndex);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("[ERROR] - Failed to remove page from GridDisplay. " + ex.Message);
                         }
                     }
                     return null;
