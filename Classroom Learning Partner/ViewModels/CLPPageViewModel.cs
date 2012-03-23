@@ -45,7 +45,6 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-            NumberOfSubmissions = 0;
             Page = page;
 
             OtherStrokes = new StrokeCollection();
@@ -249,6 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("Page")]
         public int NumberOfSubmissions
         {
             get { return GetValue<int>(NumberOfSubmissionsProperty); }

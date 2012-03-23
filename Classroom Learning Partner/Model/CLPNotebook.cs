@@ -260,9 +260,22 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddStudentSubmission(string pageID, CLPPage submission)
         {
-
+            CLPPage notebookPage = GetNotebookPageByID(pageID);
             if (Submissions.ContainsKey(pageID))
             {
+                int count = 0;
+                foreach (var page in Submissions[pageID])
+                {
+                    if (submission.SubmitterName == page.SubmitterName)
+                    {
+                        count++;
+                        break;
+                    }
+                }
+                if (count == 0)
+                {
+                    notebookPage.NumberOfSubmissions++;
+                }
                 Submissions[pageID].Add(submission);
             }
             else
@@ -270,6 +283,7 @@ namespace Classroom_Learning_Partner.Model
                 ObservableCollection<CLPPage> pages = new ObservableCollection<CLPPage>();
                 pages.Add(submission);
                 Submissions.Add(pageID, pages);
+                notebookPage.NumberOfSubmissions++;
             }
         }
 
