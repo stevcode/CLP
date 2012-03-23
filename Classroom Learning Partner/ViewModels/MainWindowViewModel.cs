@@ -1031,7 +1031,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
+                try
+                {
+                    (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
+                }
+                catch (Exception e)
+                { }
             }
         }
 
@@ -1047,7 +1052,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
+                try
+                {
+                    (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
+                }
+                catch (Exception e)
+                { }
             }
         }
 
@@ -1552,23 +1562,50 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Method to invoke when the RecordAudioCommand command is executed.
         /// </summary>
         bool isRecordingAudio = false;
+        Timer record_timer = null;
         private void OnRecordAudioCommandExecute()
         {
+            
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!isRecordingAudio)
             {
                 AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
                 CLPServiceAgent.Instance.RecordAudio(page);
                 isRecordingAudio = true;
+                record_timer = new Timer();
+                record_timer.Elapsed +=new ElapsedEventHandler(record_timer_Elapsed);
+                record_timer.Interval = 500;
+                record_timer.Enabled = true;
+                record_timer.Start();
             }
             else
             {
                 AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
                 CLPServiceAgent.Instance.StopAudio(page);
                 isRecordingAudio = false;
+                try
+                {
+                    record_timer.Stop();
+                    record_timer.Dispose();
+                }
+                catch (Exception e)
+                { }
             }
         }
+        bool flash = true;
+        void record_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (flash)
+            {
+                AudioRecordImage = new Uri("..\\Images\\recordflash1.png", UriKind.Relative);
+            }
+            else
+            {
+                AudioRecordImage = new Uri("..\\Images\\recordflash2.png", UriKind.Relative);
+            }
 
+            flash = !flash;
+        }
         /// <summary>
         /// Gets the PlayAudioCommand command.
         /// </summary>
@@ -1577,10 +1614,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the PlayAudioCommand command is executed.
         /// </summary>
+        bool playingAudio = false;
         private void OnPlayAudioCommandExecute()
         {
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-            CLPServiceAgent.Instance.PlayAudio(page);
+            if (!playingAudio)
+            {
+                CLPServiceAgent.Instance.PlayAudio(page);
+                playingAudio = true;
+            }
+            else
+            {
+                CLPServiceAgent.Instance.StopAudioPlayback(page);
+                playingAudio = false;
+            }
+
         }
 
         /// <summary>

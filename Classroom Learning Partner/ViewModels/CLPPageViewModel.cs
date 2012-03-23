@@ -489,10 +489,16 @@ namespace Classroom_Learning_Partner.ViewModels
         bool inRecorded = false;
         public void StartPlayBack()
         {
+            CLPHistory.replaceHistoryInPage(CLPHistory.GetSegmentedHistory(Page), Page);
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
             while (PageHistory.HistoryItems.Count > 0)
             {
-                Undo();
+                try
+                {
+                    Undo();
+                }
+                catch (Exception e)
+                { }
                 i++;
             }
             System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
@@ -511,7 +517,12 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if (i == 1)
             {
-                Redo();
+                try
+                {
+                    Redo();
+                }
+                catch (Exception x)
+                { }
                 i = 0;
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
@@ -545,8 +556,12 @@ namespace Classroom_Learning_Partner.ViewModels
            {
                timer.Interval = new TimeSpan(0);
            }
-           
-           Redo();
+           try
+           {
+               Redo();
+           }
+           catch (Exception x)
+           { }
         }
         int numRecordedSessions = 0;
         public void Undo()
@@ -560,6 +575,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (item.ObjectID != null)
                 {
                     pageObject = GetPageObjectByID(item.ObjectID);
+                    //if (pageObject.PageID != Page.UniqueID)
+                    //{
+                    //    PageHistory.UndoneHistoryItems.Add(item);
+                    //    PageHistory.IgnoreHistory = false;
+                    //    return;
+                    //}
                 }
                 switch (item.ItemType)
                 {
@@ -613,11 +634,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
-                        for (int i = 0; i < diff; i++)
+                        if (t.NumberOfTiles != Int32.Parse(item.NewValue))
                         {
-                            t.NumberOfTiles--;
+                            Console.WriteLine("not newvalue");
                         }
+                        t.NumberOfTiles = Int32.Parse(item.OldValue);
+                        
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -646,6 +668,12 @@ namespace Classroom_Learning_Partner.ViewModels
                  if (item.ObjectID != null)
                  {
                      pageObject = GetPageObjectByID(item.ObjectID);
+                     //if (pageObject.PageID != Page.UniqueID)
+                     //{
+                     //    PageHistory.HistoryItems.Add(item);
+                     //    PageHistory.IgnoreHistory = false;
+                     //    return;
+                     //}
                  }
                 switch (item.ItemType)
                 {
@@ -701,11 +729,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
-                        for (int i = 0; i < diff; i++)
+                        if (t.NumberOfTiles != Int32.Parse(item.OldValue))
                         {
-                            t.NumberOfTiles++;
+                            Console.WriteLine("not oldvalue");
                         }
+                        t.NumberOfTiles = Int32.Parse(item.NewValue);
+                       
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -855,7 +884,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Handle command logic here
             while (this.PageHistory.UndoneHistoryItems.Count > 0)
             {
-                Redo();
+                try
+                {
+                    Redo();
+                }
+                catch (Exception e)
+                { }
                 i--;
             }
             timer.Stop();
