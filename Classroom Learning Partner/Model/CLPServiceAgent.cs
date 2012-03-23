@@ -291,6 +291,7 @@ namespace Classroom_Learning_Partner.Model
                 //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
 
                 string s_page = ObjectSerializer.ToString(page);
+
                 App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
 
                 double size_standard = s_page.Length / 1024.0;
