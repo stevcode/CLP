@@ -123,6 +123,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Displays
             SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+            SwitchToLinkedDisplayCommand = new Command(OnSwitchToLinkedDisplayCommandExecute);
+            CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
@@ -1330,6 +1332,47 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the SwitchToLinkedDisplayCommand command.
+        /// </summary>
+        public Command SwitchToLinkedDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SwitchToLinkedDisplayCommand command is executed.
+        /// </summary>
+        private void OnSwitchToLinkedDisplayCommandExecute()
+        {
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay == null)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).InitializeLinkedDisplay();
+            }
+
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
+            if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector)
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+            }
+            else
+            {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        /// <summary>
+        /// Gets the CreateNewGridDisplayCommand command.
+        /// </summary>
+        public Command CreateNewGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CreateNewGridDisplayCommand command is executed.
+        /// </summary>
+        private void OnCreateNewGridDisplayCommandExecute()
+        {
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(new GridDisplayViewModel());
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
         }
 
         //private RelayCommand _sendDisplayToProjectorCommand;
