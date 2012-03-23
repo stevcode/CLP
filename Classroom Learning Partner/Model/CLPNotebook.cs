@@ -211,6 +211,28 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        public CLPPage GetSubmissionByID(string pageID)
+        {
+            CLPPage returnPage = null;
+            foreach (var pageKey in Submissions.Keys)
+            {
+                foreach (var page in Submissions[pageKey])
+                {
+                    if (page.UniqueID == pageID)
+                    {
+                        returnPage = page;
+                        break;
+                    }
+                }
+                if (returnPage != null)
+                {
+                    break;
+                }
+            }
+
+            return returnPage;
+        }
+
         public int GetSubmissionIndex(CLPPage page)
         {
             if (page.IsSubmission)

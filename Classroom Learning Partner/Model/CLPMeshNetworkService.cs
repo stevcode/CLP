@@ -294,6 +294,11 @@ namespace Classroom_Learning_Partner.Model
                         {
                             CLPPage page = notebook.GetNotebookPageByID(pageID);
 
+                            if (page == null)
+                            {
+                                page = notebook.GetSubmissionByID(pageID);
+                            }
+
                             if (page != null)
                             {
                             	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(new CLPPageViewModel(page));

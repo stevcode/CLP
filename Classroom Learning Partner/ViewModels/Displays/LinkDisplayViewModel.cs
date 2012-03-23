@@ -74,7 +74,14 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             DisplayedPage = page;
             if (IsOnProjector && App.Peer.Channel != null)
             {
-            	App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+                if (page.IsSubmission)
+                {
+                    App.Peer.Channel.AddPageToDisplay(page.Page.SubmissionID);
+                }
+                else
+                {
+                    App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+                }
             }
         }
 
