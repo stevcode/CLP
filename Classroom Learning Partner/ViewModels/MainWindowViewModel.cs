@@ -77,6 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AuthoringTabVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
             StudentVisibility = Visibility.Collapsed;
+            PlayingAudioVisibility = Visibility.Collapsed;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -92,7 +93,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 default:
                     break;
             }
-
+           
             //Ribbon Commands
             //App Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
@@ -152,8 +153,12 @@ namespace Classroom_Learning_Partner.ViewModels
             PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
+            AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
 
             currentlyPlayingVisual = false;
+            //String pageID = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+            PageHasAudioFile = false;
+            
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -484,10 +489,35 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Register the PlayingAudioVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlayingAudioVisibilityProperty = RegisterProperty("PlayingAudioVisibility", typeof(Visibility));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility PlayingAudioVisibility
+        {
+            get { return GetValue<Visibility>(PlayingAudioVisibilityProperty); }
+            set { SetValue(PlayingAudioVisibilityProperty, value); }
+        }
+
+        /// <summary>
         /// Register the StudentVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData StudentVisibilityProperty = RegisterProperty("StudentVisibility", typeof(Visibility));
-
+        
+        /// <summary>
+        /// Register the CurrentSliderValue property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentSliderValueProperty = RegisterProperty("CurrentSliderValue", typeof(double));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double CurrentSliderValue
+        {
+            get { return GetValue<double>(CurrentSliderValueProperty); }
+            set { SetValue(CurrentSliderValueProperty, value); }
+        }
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -500,6 +530,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the RecordImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData AudioRecordImageProperty = RegisterProperty("AudioRecordImage", typeof(Uri));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri AudioPlayImage
+        {
+            get { return GetValue<Uri>(AudioPlayImageProperty); }
+            set { SetValue(AudioPlayImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the AudioPlayImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AudioPlayImageProperty = RegisterProperty("AudioPlayImage", typeof(Uri));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -565,6 +607,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the CurrentColorButton property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool PageHasAudioFile
+        {
+            get { return GetValue<bool>(PageHasAudioFileProperty); }
+            set { SetValue(PageHasAudioFileProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageHasAudioFile property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageHasAudioFileProperty = RegisterProperty("PageHasAudioFile", typeof(bool));
+
 
         #endregion //Convert to XAMLS?
 
@@ -1623,15 +1681,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the RecordAudioCommand command is executed.
         /// </summary>
-        bool isRecordingAudio = false;
-        Timer record_timer = null;
-        private void OnRecordAudioCommandExecute()
+        public bool isRecordingAudio = false;
+        public Timer record_timer = null;
+        public void OnRecordAudioCommandExecute()
         {
             
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!isRecordingAudio)
             {
-                AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                PageHasAudioFile = true;
                 CLPServiceAgent.Instance.RecordAudio(page);
                 isRecordingAudio = true;
                 record_timer = new Timer();
@@ -1677,18 +1736,34 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Method to invoke when the PlayAudioCommand command is executed.
         /// </summary>
         bool playingAudio = false;
+        
         private void OnPlayAudioCommandExecute()
         {
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!playingAudio)
             {
-                CLPServiceAgent.Instance.PlayAudio(page);
-                playingAudio = true;
+                try
+                {
+                    AudioPlayImage = new Uri("..\\Images\\stop.png", UriKind.Relative);
+                    //show the slider
+                    PlayingAudioVisibility = Visibility.Visible;
+                    //start the slider
+                    CurrentSliderValue = 0;
+                    CLPServiceAgent.Instance.PlayAudio(page);
+                    playingAudio = true;
+                }
+                catch (Exception e) { }
             }
             else
             {
-                CLPServiceAgent.Instance.StopAudioPlayback(page);
-                playingAudio = false;
+                try
+                {
+                    PlayingAudioVisibility = Visibility.Collapsed;
+                    AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+                    CLPServiceAgent.Instance.StopAudioPlayback(page);
+                    playingAudio = false;
+                }
+                catch (Exception e) { }
             }
 
         }

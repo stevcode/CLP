@@ -15,6 +15,7 @@ using Catel.MVVM;
 using Catel.Data;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Timers;
 
 //using System.Windows.Media.MediaPlayer;
 
@@ -91,14 +92,15 @@ namespace Classroom_Learning_Partner.ViewModels
            // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
             
             path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + page.UniqueID + ".wav";
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\"))
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
             {
-                DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Audio_Files");
+                DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\");
             }
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            //if (File.Exists(path))
+            //{
+            //    File.Delete(path);
+                
+            //}
 
         }
         
@@ -501,7 +503,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 { }
                 i++;
             }
-            System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+            //System.Threading.Thread.Sleep(new TimeSpan(0, 0, 5));
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(0);
             timer.Tick += new EventHandler(timer_Tick);
@@ -768,7 +770,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                 }
@@ -792,10 +794,51 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         System.Media.SoundPlayer soundPlayer;
+        System.Timers.Timer audio_play_timer;
+        double seconds;
+        void audio_play_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            App.MainWindowViewModel.CurrentSliderValue += (.5) / seconds * 10;
+            Console.WriteLine("Slider Position: " + App.MainWindowViewModel.CurrentSliderValue);
+            if (App.MainWindowViewModel.CurrentSliderValue >= 10)
+            {
+                audio_play_timer.Stop();
+                audio_play_timer.Dispose();
+                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
+                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+            }
+        }
         public void playAudio()
         {
             try
             {
+                //get the size if the file to calculate the duration so we can show a progress bar
+                FileInfo file = new FileInfo(path);
+                long sizeKb = file.Length / (long)1024.0;
+                seconds = (Double)sizeKb / 11.0;
+                TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
+                //initialize the timer
+                audio_play_timer = new System.Timers.Timer();
+                audio_play_timer.Interval = 500;
+                audio_play_timer.Elapsed += new ElapsedEventHandler(audio_play_timer_Elapsed);
+                audio_play_timer.Enabled = true;
+                //string[] files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID);
+                //DateTime mostRecent = DateTime.MinValue;
+                //if (!File.Exists(path))
+                //{
+                //    for (int i = 0; i < files.Length; i++)
+                //    {
+                //        if (files[i].Contains(Page.UniqueID))
+                //        {
+                //            if ((DateTime.Parse(files[i])).CompareTo(mostRecent) > 0)
+                //            {
+                //                mostRecent = DateTime.Parse(files[i]);
+                //            }
+                //        }
+
+                //    }
+                //}
+                //string playPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID + @"\" + mostRecent.ToString();
                 soundPlayer = new System.Media.SoundPlayer(path);
                 soundPlayer.LoadAsync();
                 soundPlayer.Play();
@@ -834,6 +877,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     soundPlayer.Stop();
                 }
+                audio_play_timer.Stop();
+                audio_play_timer.Dispose();
+                App.MainWindowViewModel.CurrentSliderValue = 0;
+                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
             }
             catch (Exception e)
             {
