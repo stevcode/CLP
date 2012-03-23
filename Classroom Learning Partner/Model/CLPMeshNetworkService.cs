@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.Model
         void ReceiveNotebook(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID);
+        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID);
 
         [OperationContract(IsOneWay = true)]
         void SwitchProjectorDisplay(string displayType, List<string> displayPages);
@@ -217,43 +217,35 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageUniqueID)
+        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        //{
-                        //    if (pageViewModel.Page.UniqueID == pageUniqueID)
-                        //    {
-                        //        foreach (var stringStroke in strokesAdded)
-                        //        {
-                        //            Stroke stroke = CLPPageViewModel.StringToStroke(stringStroke);
-                        //            pageViewModel.OtherStrokes.Add(stroke);
-                        //        }
-                        //        foreach (var stringStroke in strokesRemoved)
-                        //        {
-                        //            Stroke sentStroke = CLPPageViewModel.StringToStroke(stringStroke);
-                        //            foreach (var stroke in pageViewModel.OtherStrokes.ToList())
-                        //            {
-                        //                string a = sentStroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                        //                string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                        //                if (a == b)
-                        //                {
-                        //                    pageViewModel.OtherStrokes.Remove(stroke);
-                        //                }
-                        //            }
-                        //            pageViewModel.OtherStrokes.Remove(CLPPageViewModel.StringToStroke(stringStroke));
-                        //        }
-                        //    }
-                        //}
+                        foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            CLPPage page = notebook.GetNotebookPageByID(pageID);
 
+                            if (page == null)
+                            {
+                                page = notebook.GetSubmissionByID(pageID);
+                            }
+
+                            if (page != null)
+                            {
+                                StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
+                                page.InkStrokes.Remove(removedStrokes);
+
+                                StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
+                                page.InkStrokes.Add(addedStrokes);
+                                break;
+                            }
+                        }
                     }
                     return null;
                 }, null);
-
         }
 
         public void SwitchProjectorDisplay(string displayType, List<string> displayPages)
@@ -302,8 +294,8 @@ namespace Classroom_Learning_Partner.Model
                             if (page != null)
                             {
                             	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(new CLPPageViewModel(page));
+                                break;
                             }
-                            break;
                         }
                     }
                     return null;
