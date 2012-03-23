@@ -236,7 +236,27 @@ namespace Classroom_Learning_Partner.Model
                             if (page != null)
                             {
                                 StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
-                                page.InkStrokes.Remove(removedStrokes);
+
+                                foreach (var strokeToRemove in removedStrokes)
+                                {
+                                    int strokeIndex = -1;
+                                    foreach (var stroke in page.InkStrokes)
+                                    {
+                                        if ((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                                        {
+                                            strokeIndex = page.InkStrokes.IndexOf(stroke);
+                                            break;
+                                        }
+                                    }
+                                    try
+                                    {
+                                        page.InkStrokes.RemoveAt(strokeIndex);
+                                    }
+                                    catch (System.Exception ex)
+                                    {
+                                        Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
+                                    }
+                                }
 
                                 StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
                                 page.InkStrokes.Add(addedStrokes);
