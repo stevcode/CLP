@@ -160,6 +160,7 @@ namespace Classroom_Learning_Partner.Model
             }
 
         }
+
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -193,6 +194,7 @@ namespace Classroom_Learning_Partner.Model
                     break;
             }
         }
+
         public void SavePageDB(CLPPage page, string s_page, string userName, bool isSubmission)
         {
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -328,6 +330,16 @@ namespace Classroom_Learning_Partner.Model
                         file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
                         file.WriteLine("<Number>" + tile.NumberOfTiles + "</Number>");
                         file.WriteLine("</Tile>");
+                    }
+                    else if (obj is CLPStrokePathContainer)
+                    {
+                        CLPStrokePathContainer container = obj as CLPStrokePathContainer;
+                        file.WriteLine("<Container>");
+                        file.WriteLine("<Height>" + container.Height);
+                        file.WriteLine("<Width>" + container.Width + "</Width>");
+                        file.WriteLine("<UniqueId>" + container.UniqueID + "</UniqueId>");
+                        file.WriteLine("<ParentStampID>" + container.ParentID + "</ParentStampID>");
+                        file.WriteLine("</Container>");
                     }
                 }
                 file.WriteLine("</Page>");
