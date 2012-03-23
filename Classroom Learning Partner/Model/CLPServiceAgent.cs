@@ -43,7 +43,13 @@ namespace Classroom_Learning_Partner.Model
             if (File.Exists(filePath))
             {
                 //alternatively, pull from database and build
+                DateTime start = DateTime.Now;
                 CLPNotebook notebook = CLPNotebook.Load(filePath);
+                DateTime end = DateTime.Now;
+                TimeSpan span = end.Subtract(start);
+                Logger.Instance.WriteToLog("Time to open notebook (In Milliseconds): " + span.TotalMilliseconds);
+                Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
+                Logger.Instance.WriteToLog("Time to open notebook (In Minutes): " + span.TotalMinutes);
                 notebook.NotebookName = notebookName;
 
                 int count = 0;

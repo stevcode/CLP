@@ -6,6 +6,8 @@ using Catel.Data;
 using System.Windows.Ink;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.IO;
+using System.Text;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -25,6 +27,8 @@ namespace Classroom_Learning_Partner.Model
 
         #endregion
 
+        
+
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
@@ -38,8 +42,10 @@ namespace Classroom_Learning_Partner.Model
             PageObjects = new ObservableCollection<ICLPPageObject>();
             PageHistory = new CLPHistory();
             PageIndex = -1;
-            PageTopics = new ObservableCollection<string>();
+            PageTopics = new ObservableCollection<string>();            
         }
+
+        
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -284,6 +290,23 @@ namespace Classroom_Learning_Partner.Model
             {
                 strings.Add(StrokeToString(stroke));
             }
+
+            //This will reduce size of strokes by more than half. convert to this method soon! - steve
+            //var m_stream = new MemoryStream();
+            //strokes.Save(m_stream, true);
+            //byte[] b_strokes = m_stream.ToArray();
+
+            //string s_allstrings = "";
+            //foreach (var strin in strings)
+            //{
+            //    s_allstrings += strin;
+            //}
+
+            //byte[] x = ASCIIEncoding.Unicode.GetBytes(s_allstrings);
+
+            //Console.WriteLine("obscoll byte length: " + (x.Length).ToString());
+            //Console.WriteLine("array byte length: " + (b_strokes.Length).ToString());
+
             return strings;
         }
 

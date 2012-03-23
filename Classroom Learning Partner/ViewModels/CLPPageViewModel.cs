@@ -45,7 +45,6 @@ namespace Classroom_Learning_Partner.ViewModels
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             NumberOfSubmissions = 0;
-
             Page = page;
 
             OtherStrokes = new StrokeCollection();
