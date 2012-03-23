@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = new SolidColorBrush(Colors.Black);
             //Steve - Set to New Times Roman
             CurrentFontFamily = Fonts[0];
-            CurrentFontSize = 24;
+            CurrentFontSize = 26;
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
@@ -120,6 +120,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
 
+            //Displays
+            SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
+
             //Page
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
@@ -131,6 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
+            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
 
             //Student Record and Playback 
@@ -716,12 +720,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             IsAuthoring = false;
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach (CLPPage page in notebook.Pages)
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                page.PageHistory.ClearHistory();
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
             }
-            //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
         }
 
         /// <summary>
@@ -734,7 +741,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            }
         }
 
         /// <summary>
@@ -1226,6 +1236,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Display Commands
 
+        /// <summary>
+        /// Gets the SendDisplayToProjectorcommand command.
+        /// </summary>
+        public Command SendDisplayToProjectorcommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SendDisplayToProjectorcommand command is executed.
+        /// </summary>
+        private void OnSendDisplayToProjectorcommandExecute()
+        {
+            if (App.Peer.Channel != null)
+            {
+                foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                {
+                    gridDisplay.IsOnProjector = false;
+                }
+
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+
+
+                List<string> pageIDs = new List<string>();
+                if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+                    pageIDs.Add(pageID);
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+                else
+                {
+                    foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    {
+                        pageIDs.Add(pageVM.Page.UniqueID);
+                    }
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                }
+            }
+        }
+
         //private RelayCommand _sendDisplayToProjectorCommand;
 
         ///// <summary>
@@ -1459,6 +1507,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, square);
+        }
+
+        /// <summary>
+        /// Gets the InsertCircleShapeCommand command.
+        /// </summary>
+        public Command InsertCircleShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertCircleShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertCircleShapeCommandExecute()
+        {
+            CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, circle);
         }
 
         /// <summary>
