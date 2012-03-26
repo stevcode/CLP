@@ -39,7 +39,7 @@ namespace Classroom_Learning_Partner
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Projector;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.NotUsing;
 
             Logger.Instance.InitializeLog();

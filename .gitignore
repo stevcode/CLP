@@ -1,6 +1,6 @@
-
+*/[Dd]ebug*/*
 */obj/*
-*/bin/*
+*/[Bb]in/*
 *.suo
 #ignore thumbnails created by windows
 Thumbs.db
@@ -22,11 +22,11 @@ Thumbs.db
 *.cache
 *.ilk
 *.log
-[Bb]in
-[Dd]ebug*/
 *.lib
 *.sbr
-obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+#ignore backup files from merge tools
+*.orig
+*.bak
