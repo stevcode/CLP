@@ -870,6 +870,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
         }
+       
+
         
         #endregion //Commands
 

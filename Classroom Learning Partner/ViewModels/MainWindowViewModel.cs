@@ -1240,28 +1240,13 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (App.Peer.Channel != null)
             {
-                foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
-                {
-                    gridDisplay.IsOnProjector = false;
-                }
-
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
-
-
-                List<string> pageIDs = new List<string>();
                 if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
                 {
-                    string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
-                    pageIDs.Add(pageID);
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
-                }
-                else
-                {
-                    foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+                    foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                     {
-                        pageIDs.Add(pageVM.Page.UniqueID);
+
                     }
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                 }
             }
         }

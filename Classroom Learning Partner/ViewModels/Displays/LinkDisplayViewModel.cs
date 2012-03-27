@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPage = page;
-            DisplayID = "LinkedDisplay";
+            DisplayID = Guid.NewGuid().ToString();
             IsOnProjector = false;
         }
 
