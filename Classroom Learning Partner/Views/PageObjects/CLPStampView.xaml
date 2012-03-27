@@ -193,8 +193,8 @@
             <Thumb>
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="PageObjectHitBox" Tag="0"  Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="50" Stretch="Fill"
-                                  Stroke="Black" StrokeThickness="0" Fill="Black"
+                        <Polygon x:Name="PageObjectHitBox" Tag="0"  Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
+                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave"
                                   Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0">
 
                         </Polygon>

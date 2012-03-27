@@ -59,7 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
         private void OnNumberOfTilesChanged()
         {
             //Claire, HistoryItems stuff here
-
+            CLPPage currentPage = CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
             int diff = NumberOfTiles - Tiles.Count;
 
             if (diff > 0)
@@ -67,6 +67,11 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 for (int i = diff - 1; i >= 0; i--)
                 {
                     Tiles.Add("SpringGreen");
+                    //if (!currentPage.PageHistory.IgnoreHistory)
+                    //{
+                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, (PageObject as CLPSnapTileContainer).UniqueID, null, null);
+                    //    currentPage.PageHistory.HistoryItems.Add(item);
+                    //}
                 }
             }
             else
@@ -75,6 +80,11 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 for (int i = diff - 1; i >= 0; i--)
                 {
                     Tiles.RemoveAt(Tiles.Count - 1);
+                    //if (!currentPage.PageHistory.IgnoreHistory)
+                    //{
+                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (PageObject as CLPSnapTileContainer).UniqueID, null, null);
+                    //    currentPage.PageHistory.HistoryItems.Add(item);
+                    //}
                 }
             }
 
@@ -115,9 +125,13 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 //    count++;
                                 //}
                                 int oldCount = otherTile.NumberOfTiles;
-
                                 otherTile.NumberOfTiles += NumberOfTiles;
-
+                                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                                if (!currentPage.PageHistory.IgnoreHistory)
+                                {
+                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
+                                    currentPage.PageHistory.HistoryItems.Add(item);
+                                }
                                 //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
@@ -125,26 +139,35 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 //item.NewValue = otherTile.Tiles.Count.ToString();
 
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
+                                
+                                //if (!currentPage.PageHistory.IgnoreHistory)
+                                //{
+                                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
+                                //    currentPage.PageHistory.HistoryItems.Add(item);
+                                //}
+                                
+                                //for (int i = 0; i < (pageObject as CLPSnapTileContainer).NumberOfTiles; i++)
+                                //{
+                                //    (pageObject as CLPSnapTileContainer).NumberOfTiles--;
+                                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (pageObject as CLPSnapTileContainer).UniqueID, null, null);
+                                //    currentPage.PageHistory.HistoryItems.Add(item);
+                                //}
+                                break;
+                            }
+                            else if (deltaYTopSnap < 55)
+                            {
+                                //int oldCount = NumberOfTiles;
+                                //NumberOfTiles += otherTile.NumberOfTiles;
 
+                                //does it really matter if we technically add to the top or bottom?
+                                int oldCount = otherTile.NumberOfTiles;
+                                otherTile.NumberOfTiles += NumberOfTiles;
+                                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                                 if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
                                     currentPage.PageHistory.HistoryItems.Add(item);
                                 }
-                                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-                                break;
-                            }
-                            else if (deltaYTopSnap < 55)
-                            {
-                                int oldCount = NumberOfTiles;
-
-                                //for (int i = otherTile.NumberOfTiles - 1; i >= 0; i--)
-                                //{
-                                //    Tiles.Add("SpringGreen");
-                                //}
-
-                                NumberOfTiles += otherTile.NumberOfTiles;
-
                                 //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
@@ -152,14 +175,25 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 //item.OldValue = oldCount.ToString();
                                 //item.NewValue = tile.Tiles.Count.ToString();
                                 //CLPSnapTile t = container.PageObjectViewModel.PageViewModel.HistoryVM.ObjectReferences[item.ObjectID] as CLPSnapTile;
-                                if (!currentPage.PageHistory.IgnoreHistory )
-                                {
-                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, pageObject.UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
-                                    currentPage.PageHistory.HistoryItems.Add(item);
-                                }
+                                //if (!currentPage.PageHistory.IgnoreHistory )
+                                //{
+                                //    //CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, (pageObject as CLPSnapTileContainer).UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
+                                //    //currentPage.PageHistory.HistoryItems.Add(item);
 
+                                   
+                                //}
 
-                                CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
+                                
+                                //for (int i = 0; i < otherTile.NumberOfTiles; i++)
+                                //{
+                                //    otherTile.NumberOfTiles--;
+                                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, otherTile.UniqueID, null, null);
+                                //    currentPage.PageHistory.HistoryItems.Add(item);
+                                //}
+                                //if (otherTile.NumberOfTiles == 1)
+                                //{
+                                //    CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
+                                //}
                                 break;
                             }
 

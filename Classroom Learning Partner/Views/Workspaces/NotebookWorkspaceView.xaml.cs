@@ -1,5 +1,7 @@
 ﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
 using Classroom_Learning_Partner.ViewModels;
+using System;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
@@ -16,6 +18,13 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         {
             InitializeComponent();
             SkipSearchingForInfoBarMessageControl = true;
+
+            Display.DataContextChanged += new System.Windows.DependencyPropertyChangedEventHandler(Display_DataContextChanged);
+        }
+
+        void Display_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            Console.WriteLine("DataContext for Display changed to display with ID: " + (Display.DataContext as IDisplayViewModel).DisplayID);
         }
 
         protected override System.Type GetViewModelType()

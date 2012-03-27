@@ -122,7 +122,7 @@
         {
 
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
-            droppedContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + 50);
+            droppedContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + CLPStamp.HANDLE_HEIGHT);
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
             
@@ -160,9 +160,9 @@
             {
                 x = 0;
             }
-            if (y < -49)
+            if (y < - CLPStamp.HANDLE_HEIGHT)
             {
-                y = -49;
+                y = -CLPStamp.HANDLE_HEIGHT;
             }
             if (x > 1056 - PageObject.Width)
             {

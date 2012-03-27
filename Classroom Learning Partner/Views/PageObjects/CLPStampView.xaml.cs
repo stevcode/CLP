@@ -8,6 +8,8 @@
     using System.Windows.Input;
     using System;
     using System.Windows.Controls.Primitives;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
 
     /// <summary>
     /// Interaction logic for CLPStampView.xaml.
@@ -84,6 +86,16 @@
             }
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(stamp.PageObject, newHeight, newWidth);
+        }
+
+        private void PageObjectHitBox_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
+        }
+
+        private void PageObjectHitBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
         }
     }
 }

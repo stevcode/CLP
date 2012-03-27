@@ -15,6 +15,7 @@ using Catel.MVVM;
 using Catel.Data;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Timers;
 
 //using System.Windows.Media.MediaPlayer;
 
@@ -44,8 +45,6 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-            NumberOfSubmissions = 0;
-
             Page = page;
 
             OtherStrokes = new StrokeCollection();
@@ -91,14 +90,15 @@ namespace Classroom_Learning_Partner.ViewModels
            // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
             
             path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + page.UniqueID + ".wav";
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\"))
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
             {
-                DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Audio_Files");
+                DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\");
             }
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            //if (File.Exists(path))
+            //{
+            //    File.Delete(path);
+                
+            //}
 
         }
         
@@ -248,6 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("Page")]
         public int NumberOfSubmissions
         {
             get { return GetValue<int>(NumberOfSubmissionsProperty); }
@@ -489,13 +490,19 @@ namespace Classroom_Learning_Partner.ViewModels
         bool inRecorded = false;
         public void StartPlayBack()
         {
+            CLPHistory.replaceHistoryInPage(CLPHistory.GetSegmentedHistory(Page), Page);
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
             while (PageHistory.HistoryItems.Count > 0)
             {
-                Undo();
+                try
+                {
+                    Undo();
+                }
+                catch (Exception e)
+                { }
                 i++;
             }
-            System.Threading.Thread.Sleep(new TimeSpan(0, 0, 2));
+            //System.Threading.Thread.Sleep(new TimeSpan(0, 0, 5));
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(0);
             timer.Tick += new EventHandler(timer_Tick);
@@ -511,7 +518,12 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if (i == 1)
             {
-                Redo();
+                try
+                {
+                    Redo();
+                }
+                catch (Exception x)
+                { }
                 i = 0;
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
@@ -545,8 +557,12 @@ namespace Classroom_Learning_Partner.ViewModels
            {
                timer.Interval = new TimeSpan(0);
            }
-           
-           Redo();
+           try
+           {
+               Redo();
+           }
+           catch (Exception x)
+           { }
         }
         int numRecordedSessions = 0;
         public void Undo()
@@ -560,6 +576,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (item.ObjectID != null)
                 {
                     pageObject = GetPageObjectByID(item.ObjectID);
+                    //if (pageObject.PageID != Page.UniqueID)
+                    //{
+                    //    PageHistory.UndoneHistoryItems.Add(item);
+                    //    PageHistory.IgnoreHistory = false;
+                    //    return;
+                    //}
                 }
                 switch (item.ItemType)
                 {
@@ -613,11 +635,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
-                        for (int i = 0; i < diff; i++)
+                        if (t.NumberOfTiles != Int32.Parse(item.NewValue))
                         {
-                            t.NumberOfTiles--;
+                            Console.WriteLine("not newvalue");
                         }
+                        t.NumberOfTiles = Int32.Parse(item.OldValue);
+                        
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -646,6 +669,12 @@ namespace Classroom_Learning_Partner.ViewModels
                  if (item.ObjectID != null)
                  {
                      pageObject = GetPageObjectByID(item.ObjectID);
+                     //if (pageObject.PageID != Page.UniqueID)
+                     //{
+                     //    PageHistory.HistoryItems.Add(item);
+                     //    PageHistory.IgnoreHistory = false;
+                     //    return;
+                     //}
                  }
                 switch (item.ItemType)
                 {
@@ -701,11 +730,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        int diff = Int32.Parse(item.NewValue) - Int32.Parse(item.OldValue);
-                        for (int i = 0; i < diff; i++)
+                        if (t.NumberOfTiles != Int32.Parse(item.OldValue))
                         {
-                            t.NumberOfTiles++;
+                            Console.WriteLine("not oldvalue");
                         }
+                        t.NumberOfTiles = Int32.Parse(item.NewValue);
+                       
                         break;
                     case HistoryItemType.SnapTileRemoveTile:
                         CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -739,7 +769,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                 }
@@ -763,10 +793,51 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         System.Media.SoundPlayer soundPlayer;
+        System.Timers.Timer audio_play_timer;
+        double seconds;
+        void audio_play_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            App.MainWindowViewModel.CurrentSliderValue += (.5) / seconds * 10;
+            Console.WriteLine("Slider Position: " + App.MainWindowViewModel.CurrentSliderValue);
+            if (App.MainWindowViewModel.CurrentSliderValue >= 10)
+            {
+                audio_play_timer.Stop();
+                audio_play_timer.Dispose();
+                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
+                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+            }
+        }
         public void playAudio()
         {
             try
             {
+                //get the size if the file to calculate the duration so we can show a progress bar
+                FileInfo file = new FileInfo(path);
+                long sizeKb = file.Length / (long)1024.0;
+                seconds = (Double)sizeKb / 11.0;
+                TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
+                //initialize the timer
+                audio_play_timer = new System.Timers.Timer();
+                audio_play_timer.Interval = 500;
+                audio_play_timer.Elapsed += new ElapsedEventHandler(audio_play_timer_Elapsed);
+                audio_play_timer.Enabled = true;
+                //string[] files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID);
+                //DateTime mostRecent = DateTime.MinValue;
+                //if (!File.Exists(path))
+                //{
+                //    for (int i = 0; i < files.Length; i++)
+                //    {
+                //        if (files[i].Contains(Page.UniqueID))
+                //        {
+                //            if ((DateTime.Parse(files[i])).CompareTo(mostRecent) > 0)
+                //            {
+                //                mostRecent = DateTime.Parse(files[i]);
+                //            }
+                //        }
+
+                //    }
+                //}
+                //string playPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID + @"\" + mostRecent.ToString();
                 soundPlayer = new System.Media.SoundPlayer(path);
                 soundPlayer.LoadAsync();
                 soundPlayer.Play();
@@ -805,6 +876,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     soundPlayer.Stop();
                 }
+                audio_play_timer.Stop();
+                audio_play_timer.Dispose();
+                App.MainWindowViewModel.CurrentSliderValue = 0;
+                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
             }
             catch (Exception e)
             {
@@ -855,7 +930,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Handle command logic here
             while (this.PageHistory.UndoneHistoryItems.Count > 0)
             {
-                Redo();
+                try
+                {
+                    Redo();
+                }
+                catch (Exception e)
+                { }
                 i--;
             }
             timer.Stop();

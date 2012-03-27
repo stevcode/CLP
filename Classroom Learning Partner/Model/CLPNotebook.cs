@@ -211,6 +211,28 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        public CLPPage GetSubmissionByID(string pageID)
+        {
+            CLPPage returnPage = null;
+            foreach (var pageKey in Submissions.Keys)
+            {
+                foreach (var page in Submissions[pageKey])
+                {
+                    if (page.SubmissionID == pageID)
+                    {
+                        returnPage = page;
+                        break;
+                    }
+                }
+                if (returnPage != null)
+                {
+                    break;
+                }
+            }
+
+            return returnPage;
+        }
+
         public int GetSubmissionIndex(CLPPage page)
         {
             if (page.IsSubmission)
@@ -238,9 +260,22 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddStudentSubmission(string pageID, CLPPage submission)
         {
-
+            CLPPage notebookPage = GetNotebookPageByID(pageID);
             if (Submissions.ContainsKey(pageID))
             {
+                int count = 0;
+                foreach (var page in Submissions[pageID])
+                {
+                    if (submission.SubmitterName == page.SubmitterName)
+                    {
+                        count++;
+                        break;
+                    }
+                }
+                if (count == 0)
+                {
+                    notebookPage.NumberOfSubmissions++;
+                }
                 Submissions[pageID].Add(submission);
             }
             else
@@ -248,6 +283,7 @@ namespace Classroom_Learning_Partner.Model
                 ObservableCollection<CLPPage> pages = new ObservableCollection<CLPPage>();
                 pages.Add(submission);
                 Submissions.Add(pageID, pages);
+                notebookPage.NumberOfSubmissions++;
             }
         }
 
