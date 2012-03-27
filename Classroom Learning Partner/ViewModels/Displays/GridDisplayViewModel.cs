@@ -16,8 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPages = new ObservableCollection<CLPPageViewModel>();
-            DisplayedPages.Add(new CLPPageViewModel(new CLPPage()));
-            DisplayedPages.Add(new CLPPageViewModel(new CLPPage()));
             DisplayID = Guid.NewGuid().ToString();
             IsOnProjector = false;
 
