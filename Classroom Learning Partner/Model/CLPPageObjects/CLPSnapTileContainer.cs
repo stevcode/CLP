@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             NumberOfTiles = 1;
             Height = TILE_HEIGHT * NumberOfTiles;
             Width = TILE_HEIGHT;
+            
         }
 
         //Parameterless constructor for Protobuf

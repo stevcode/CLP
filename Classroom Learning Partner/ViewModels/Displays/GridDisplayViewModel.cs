@@ -7,7 +7,6 @@ using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Displays
 {
-    [InterestedIn(typeof(NotebookWorkspaceViewModel))]
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -65,16 +64,17 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         {
             DisplayedPages.Remove(page);
 
-            if (App.CurrentUserMode == App.UserMode.Instructor)
-            {
-                if (App.Peer.Channel != null)
-                {
-                    if (this.IsOnProjector)
-                    {
-                        App.Peer.Channel.RemovePageFromGridDisplay(page.Page.UniqueID);
-                    }
-                }
-            }
+            //if (App.CurrentUserMode == App.UserMode.Instructor)
+            //{
+            //    if (App.Peer.Channel != null)
+            //    {
+            //        if (this.IsOnProjector)
+            //        {
+            //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
+            //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
+            //        }
+            //    }
+            //}
         }
 
         public string DisplayName
