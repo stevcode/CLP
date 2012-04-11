@@ -133,6 +133,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertAudioFileCommand = new Command(OnInsertAudioFileCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
@@ -593,7 +594,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the RecordBothImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData RecordBothImageProperty = RegisterProperty("RecordBothImage", typeof(Uri));
-
+        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -1552,7 +1553,22 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPStamp stamp = new CLPStamp(null);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
         }
+        /// <summary>
+        /// Gets the InsertBlankStampCommand command.
+        /// </summary>
+        public Command InsertAudioFileCommand { get; private set; }
 
+        /// <summary>
+        /// Method to invoke when the InsertBlankStampCommand command is executed.
+        /// </summary>
+        private void OnInsertAudioFileCommandExecute()
+        {
+            String ID = DateTime.Now.ToString("R").Replace(':', ' ');
+            ID.Replace(',', ' ');
+            CLPAudio audioFile = new CLPAudio(ID);
+            //(SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.StudentName + " - " +
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, audioFile);
+        }
         /// <summary>
         /// Gets the InsertSquareShapeCommand command.
         /// </summary>

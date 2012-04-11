@@ -113,7 +113,8 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
-
+        
+       
         /// <summary>
         /// Gets the CLPPage history.
         /// </summary>

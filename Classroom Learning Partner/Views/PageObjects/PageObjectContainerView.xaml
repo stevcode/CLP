@@ -195,6 +195,10 @@
                             <vwpo:CLPImageView DataContext="{Binding}" />
                         </ControlTemplate>
 
+                        <ControlTemplate x:Key="CLPAudioTemplate">
+                            <vwpo:CLPAudioView DataContext="{Binding}" />
+                        </ControlTemplate>
+                        
                         <ControlTemplate x:Key="CLPTextBoxTemplate">
                             <vwpo:CLPTextBoxView DataContext="{Binding}" />
                         </ControlTemplate>
@@ -228,6 +232,11 @@
                                 <!-- CLPImage trigger -->
                                 <DataTrigger Binding="{Binding PageObjectType}" Value="CLPImage">
                                     <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPAudio trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPAudio">
+                                    <Setter Property="Template" Value="{StaticResource CLPAudioTemplate}" />
                                 </DataTrigger>
 
                                 <!-- CLPTextBox trigger -->
