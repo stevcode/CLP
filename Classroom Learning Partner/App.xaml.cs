@@ -40,10 +40,10 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
 
             //Uncomment this to enable Catel Logging
-            LogManager.RegisterDebugListener();
+            //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Student;
-            _databaseUse = DatabaseMode.NotUsing;
+            CurrentUserMode = UserMode.Instructor;
+            _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
@@ -83,14 +83,15 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
 
         protected void ProtoBufferSetup()
         {
-            var model = TypeModel.Create();
+            var model = RuntimeTypeModel.Default;
+            //var model = TypeModel.Create();
             model[typeof(CLPPage)]
                 .Add(1, "ParentNotebookID")
                 .Add(2, "Strokes")
@@ -103,7 +104,16 @@ namespace Classroom_Learning_Partner
                 .Add(9, "CreationDate")
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
-                .Add(12, "SubmissionTime");
+                .Add(12, "SubmissionTime")
+                .Add(14, "PageStrokesSer")
+                .Add(17, "PageObjectsSer");
+            
+            model[typeof(CLPPage)][17].AsReference = true;
+            model[typeof(CLPPage)][17].OverwriteList = true;
+            model[typeof(CLPPage)][14].AsReference = true;
+            model[typeof(CLPPage)][14].OverwriteList = true;
+
+            
             //Page Object hierarchy 
             model[typeof(ICLPPageObject)]
                 .Add(1, "PageID")
@@ -115,7 +125,7 @@ namespace Classroom_Learning_Partner
                 .Add(7, "Height")
                 .Add(8, "Width")
                 .Add(9, "XPosition")
-                .Add(10, "XPosition")
+                .Add(10, "YPosition")
                 .AddSubType(15, typeof(CLPPageObjectBase))
                 .AddSubType(16, typeof(CLPStamp));
             model[typeof(CLPPageObjectBase)]
@@ -152,7 +162,7 @@ namespace Classroom_Learning_Partner
                 .Add(4, "ItemType")
                 .Add(5, "OldValue")
                 .Add(6, "NewValue");
-
+           
             model.CompileInPlace();
             _pageTypeModel = model;
         }

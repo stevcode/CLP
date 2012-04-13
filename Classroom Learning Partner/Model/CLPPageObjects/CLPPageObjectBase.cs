@@ -6,9 +6,11 @@ using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Media;
+using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model
 {
+    [ProtoContract]
     public interface ICLPPageObject
     {
         string PageID { get; set; }
@@ -18,6 +20,7 @@ namespace Classroom_Learning_Partner.Model
         ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
+        //X,Y Position needed for protobuf - can't serialize Point
         double XPosition { get; set; }
         double YPosition { get; set; }
         double Height { get; set; }
@@ -29,6 +32,12 @@ namespace Classroom_Learning_Partner.Model
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+
+        [ProtoBeforeSerialization]
+        void storePositionAsXY();
+
+        [ProtoAfterDeserialization]
+        void retrievePositionFromXY();
     }
 
     /// <summary>
@@ -36,6 +45,7 @@ namespace Classroom_Learning_Partner.Model
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
+    [ProtoContract]
     abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
     {
         #region Variables
@@ -287,6 +297,18 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        [ProtoBeforeSerialization]
+        public virtual void storePositionAsXY()
+        {
+            XPosition = Position.X;
+            YPosition = Position.Y;
+        }
+
+        [ProtoAfterDeserialization]
+        public virtual void retrievePositionFromXY()
+        {
+            Position = new Point(XPosition, YPosition);
+        }
         #endregion
     }
 

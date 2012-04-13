@@ -2,6 +2,7 @@
 using System.Windows;
 using System;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
@@ -10,6 +11,8 @@ using MongoDB.Driver;
 using System.Threading;
 using Classroom_Learning_Partner.Views;
 using Catel.Logging;
+using ProtoBuf;
+using ProtoBuf.Meta;
 
 
 namespace Classroom_Learning_Partner
@@ -39,11 +42,13 @@ namespace Classroom_Learning_Partner
 
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
-            
-            CLPServiceAgent.Instance.Initialize();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.NotUsing;
+
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
+            
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
                 ConnectToDB();
@@ -58,6 +63,7 @@ namespace Classroom_Learning_Partner
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
            
             JoinMeshNetwork();
+            ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
@@ -78,9 +84,78 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost/?conenct=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
+        }
+
+        protected void ProtoBufferSetup()
+        {
+            var model = TypeModel.Create();
+            model[typeof(CLPPage)]
+                .Add(1, "ParentNotebookID")
+                .Add(2, "Strokes")
+                .Add(3, "PageObjects")
+                .Add(4, "PageHistory")
+                .Add(5, "IsSubmission")
+                .Add(6, "UniqueID")
+                .Add(7, "PageIndex")
+                .Add(8, "PageTopics")
+                .Add(9, "CreationDate")
+                .Add(10, "SubmissionID")
+                .Add(11, "SubmitterName")
+                .Add(12, "SubmissionTime");
+            //Page Object hierarchy 
+            model[typeof(ICLPPageObject)]
+                .Add(1, "PageID")
+                .Add(2, "ParentID")
+                .Add(3, "CreationDate")
+                .Add(4, "UniqueID")
+                .Add(5, "PageObjectStrokes")
+                .Add(6, "CanAcceptStrokes")
+                .Add(7, "Height")
+                .Add(8, "Width")
+                .Add(9, "XPosition")
+                .Add(10, "XPosition")
+                .AddSubType(15, typeof(CLPPageObjectBase))
+                .AddSubType(16, typeof(CLPStamp));
+            model[typeof(CLPPageObjectBase)]
+                .AddSubType(7, typeof(CLPImage))
+                .AddSubType(8, typeof(CLPInkRegion))
+                .AddSubType(9, typeof(CLPShape))
+                .AddSubType(10, typeof(CLPSnapTileContainer))
+                .AddSubType(11, typeof(CLPStrokePathContainer))
+                .AddSubType(12, typeof(CLPTextBox));
+            model[typeof(CLPStamp)]
+                .Add(1, "StrokePathContainer");
+            model[typeof(CLPImage)].Add(1, "ByteSource");
+            model[typeof(CLPInkRegion)]
+                .Add(1, "CorrectAnswer")
+                .Add(2, "AnalysisType")
+                .Add(3, "StoredAnswer")
+                .Add(4, "NumberOfResponses");
+            model[typeof(CLPShape)].Add(1, "ShapeType");
+            model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
+            model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");
+            model[typeof(CLPTextBox)].Add(1, "Text");
+
+            //Page History
+            model[typeof(CLPHistory)]
+                .Add(1, "IgnoreHistory")
+                .Add(2, "HistoryItems")
+                .Add(3, "UndoneHistoryItems")
+                .Add(4, "TrashedPageObjects")
+                .Add(5, "TrashedInkStrokes");
+            model[typeof(CLPHistoryItem)]
+                .Add(1, "CreationDate")
+                .Add(2, "ObjectID")
+                .Add(3, "UniqueID")
+                .Add(4, "ItemType")
+                .Add(5, "OldValue")
+                .Add(6, "NewValue");
+
+            model.CompileInPlace();
+            _pageTypeModel = model;
         }
 
         #endregion //Methods
@@ -154,9 +229,19 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        private static RuntimeTypeModel _pageTypeModel;
+        public static RuntimeTypeModel PageTypeModel
+        {
+            get
+            {
+                return _pageTypeModel;
+            }
+        }
+
         #endregion //Properties
     }
 }
+
 =======
 using System.Windows;
 using System;
@@ -197,16 +282,14 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
 
             //Uncomment this to enable Catel Logging
-            //LogManager.RegisterDebugListener();
+            LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Student;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.NotUsing;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
-            //#############################
-            CurrentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.NotUsing;
+            
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
                 ConnectToDB();
@@ -241,7 +324,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost/?conenct=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
@@ -320,4 +403,4 @@ namespace Classroom_Learning_Partner
         #endregion //Properties
     }
 }
->>>>>>> c03566e452b1e51331c58d74064c93a307335f69
+>>>>>>> 7023d35c041137a151b283348f48c80a8338d58e

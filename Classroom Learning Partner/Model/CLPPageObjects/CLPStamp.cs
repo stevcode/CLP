@@ -8,9 +8,11 @@ using Catel.Data;
 using System.Windows.Ink;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
+    [ProtoContract]
     [Serializable]
     public class CLPStamp : DataObjectBase<CLPStamp>, ICLPPageObject
     {
@@ -130,6 +132,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
                 PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
             }
+        }
+
+        [ProtoBeforeSerialization]
+        public virtual void storePositionAsXY()
+        {
+            XPosition = Position.X;
+            YPosition = Position.Y;
+        }
+
+        [ProtoAfterDeserialization]
+        public virtual void retrievePositionFromXY()
+        {
+            Position = new Point(XPosition, YPosition);
         }
 
         #endregion //Methods

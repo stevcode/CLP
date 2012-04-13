@@ -11,6 +11,8 @@ using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
+using System.IO;
+using ProtoBuf;
 
 
 
@@ -26,7 +28,7 @@ namespace Classroom_Learning_Partner.Model
         void Disconnect(string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SubmitFullPage(string page, string userName);
+        void SubmitFullPage(string page, string userName, string notebookName);
 
         [OperationContract(IsOneWay = true)]
         void SubmitPage(string userName, string submissionID, string submissionTime, string s_history, string s_pageObjects, List<string> inkStrokes);
@@ -35,7 +37,7 @@ namespace Classroom_Learning_Partner.Model
         void SaveNotebookDB(string s_notebook, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SavePage(string page, string userName, DateTime submitTime);
+        void SavePage(string page, string userName, DateTime submitTime, string notebookName);
 
         [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
@@ -88,20 +90,26 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void SubmitFullPage(string s_page, string userName)
+        public void SubmitFullPage(string s_page, string userName, string notebookName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
+                    //Deserialize Using Protobuf
+                    Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
+                    CLPPage page = new CLPPage();
+                    page = Serializer.Deserialize<CLPPage>(stream);
+
                     if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
                         Console.WriteLine("page received");
                         Console.WriteLine(s_page);
 
-                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //interpolate the history to make it bigger again - claire
-                        CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(page.PageHistory);
-                        CLPHistory.ReplaceHistoryItems(page.PageHistory, interpolatedHistory);
+                        //History is sent separately- Jessie
+                        //CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(page.PageHistory);
+                        //CLPHistory.ReplaceHistoryItems(page.PageHistory, interpolatedHistory);
 
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
@@ -122,9 +130,7 @@ namespace Classroom_Learning_Partner.Model
                         //Database call
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
-                            CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                            CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, true);
-                            //CLPServiceAgent.Instance.SavePageDB(page);
+                            CLPServiceAgent.Instance.SavePageDB(page, userName, true, DateTime.Now, notebookName);
                         }
                     }
                     return null;
@@ -151,7 +157,7 @@ namespace Classroom_Learning_Partner.Model
              }, null);
         }
 
-        public void SavePage(string s_page, string userName, DateTime submitTime)
+        public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
             (DispatcherOperationCallback)delegate(object arg)
@@ -165,8 +171,12 @@ namespace Classroom_Learning_Partner.Model
                     Logger.Instance.WriteToLog("RecvSave " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
                     if (App.DatabaseUse == App.DatabaseMode.Using)
                     {
-                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
-                        CLPServiceAgent.Instance.SavePageDB(page, s_page, userName, false);
+                        //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        //Deserialize Using Protobuf
+                        Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
+                        CLPPage page = new CLPPage();
+                        page = Serializer.Deserialize<CLPPage>(stream);
+                        CLPServiceAgent.Instance.SavePageDB(page,userName, false, DateTime.Now, notebookName);
                     }
                 }
                 return null;

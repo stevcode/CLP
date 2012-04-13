@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        private void LoadImageFromByteSource(byte[] byteSource)
+        public void LoadImageFromByteSource(byte[] byteSource)
         {
             MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
             BitmapImage genBmpImage = new BitmapImage();

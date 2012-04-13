@@ -48,6 +48,7 @@
             <!--Contextual Tab Definitions-->
             <ribbon:Ribbon.ContextualTabGroups>
                 <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
+                <ribbon:RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
             </ribbon:Ribbon.ContextualTabGroups>
 
             <!--Application Menu Button-->
@@ -91,6 +92,11 @@
                                                   Command="{Binding Path=ConvertToXPSCommand}"
                                                   KeyTip="C"
                                                   ImageSource="..\Images\LargeIcon.png" />
+                    <ribbon:RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
+                                                  Command="{Binding Path=ImportLocalNotebooksDBCommand}"
+                                                  KeyTip="I"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Visibility="{Binding Path=ServerVisibility}"/>
                     
                     <ribbon:RibbonSeparator />
                     
@@ -205,9 +211,9 @@
 
                 </ribbon:RibbonGroup>
                 
-               <!-- <ribbon:RibbonGroup Header="History">
+               <ribbon:RibbonGroup Header="History">
 
-                    <ribbon:RibbonToggleButton Visibility="{Binding Path=InstructorVisibility}"
+                    <ribbon:RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
                         IsChecked="False"
                         LargeImageSource="..\Images\video.png"
                         Label="Enable Playback"
@@ -222,7 +228,7 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" /> 
                 
-                </ribbon:RibbonGroup> -->
+                </ribbon:RibbonGroup> 
 
                 <!--<ribbon:RibbonGroup Header="Audio" Visibility="{Binding Path=InstructorVisibility}">
 
@@ -512,7 +518,67 @@
                 </ribbon:RibbonGroup>
 
             </ribbon:RibbonTab>
-            
+
+
+            <!--Notebook Viewing Tab-->
+            <ribbon:RibbonTab Header="Query Pages" ContextualTabGroupHeader="Server and Page Viewer">
+
+                <ribbon:RibbonGroup Header="Page">
+
+                    <ribbon:RibbonButton
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=QueryDatabaseCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
+
+                </ribbon:RibbonGroup>
+
+              <!--  <ribbon:RibbonGroup Header="Insert">
+
+                    <ribbon:RibbonButton
+                        Label="Insert Image"
+                        LargeImageSource="..\Images\AddImage.png"
+                        Command="{Binding Path=InsertImageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Image Stamp"
+                        LargeImageSource="..\Images\AddPictureStamp.jpg"
+                        Command="{Binding Path=InsertImageStampCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Square"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Circle"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertCircleShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Ink Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkRegionCommand}" />
+
+                </ribbon:RibbonGroup> -->
+
+                
+
+            </ribbon:RibbonTab>
         </ribbon:Ribbon>
 
         <!-- Control that dynamically determines what Display to show -->
