@@ -368,6 +368,7 @@ namespace Classroom_Learning_Partner.Model
         [ProtoBeforeSerialization]
         public void serializePageObjectsHelper()
         {
+            ObservableCollection<string> blah = CLPPage.StrokesToStrings(InkStrokes);
             PageObjectsSer = new List<string>();
             PageStrokesSer = new List<string>(); 
             foreach (ICLPPageObject obj in PageObjects)
@@ -386,10 +387,18 @@ namespace Classroom_Learning_Partner.Model
                     //However, may also be holding a shape .. 
                     else
                     {
-                        PageObjectsSer.Add(PageStrokesSer.Count.ToString());
-                        PageStrokesSer.Add(obj.PageObjectStrokes.Count.ToString());
-                        PageStrokesSer.AddRange(obj.PageObjectStrokes);
-                        obj.PageObjectStrokes = new ObservableCollection<string>();
+                        if (obj.PageObjectStrokes.Count > 0)
+                        {
+                            PageObjectsSer.Add(PageStrokesSer.Count.ToString());
+                            PageStrokesSer.Add(obj.PageObjectStrokes.Count.ToString());
+                            PageStrokesSer.AddRange(obj.PageObjectStrokes);
+                            obj.PageObjectStrokes = new ObservableCollection<string>();
+                        }
+                        else
+                        {
+                            //no strokes in stamp
+                            PageObjectsSer.Add("");
+                        }
                     }
 
 
@@ -414,10 +423,17 @@ namespace Classroom_Learning_Partner.Model
                     }
                     else
                     {
-                        PageObjectsSer.Add(PageStrokesSer.Count.ToString());
-                        PageStrokesSer.Add(container.PageObjectStrokes.Count.ToString());
-                        PageStrokesSer.AddRange(container.PageObjectStrokes);
-                        obj.PageObjectStrokes = new ObservableCollection<string>();
+                        if (container.PageObjectStrokes.Count > 0)
+                        {
+                            PageObjectsSer.Add(PageStrokesSer.Count.ToString());
+                            PageStrokesSer.Add(container.PageObjectStrokes.Count.ToString());
+                            PageStrokesSer.AddRange(container.PageObjectStrokes);
+                            container.PageObjectStrokes = new ObservableCollection<string>();
+                        }
+                        else
+                        {
+                            PageObjectsSer.Add("");
+                        }
                     }
                 }
                 else
@@ -437,6 +453,7 @@ namespace Classroom_Learning_Partner.Model
         [ProtoAfterDeserialization, ProtoAfterSerialization]
         public void deserializePageObjectsHelper()
         {
+            
             for (int i = 0; i < PageObjects.Count; i++)
             {
                 if (!PageObjectsSer[i].Equals(""))
@@ -481,7 +498,7 @@ namespace Classroom_Learning_Partner.Model
                             if (count > 0)
                             {
                                 container.PageObjectStrokes = new ObservableCollection<string>(PageStrokesSer.GetRange(startIndex + 1, count));
-
+                                //container. CLPPage.StringsToStrokes(container.PageObjectStrokes)
                             }
                         }
                     }
@@ -497,7 +514,7 @@ namespace Classroom_Learning_Partner.Model
 
             PageObjectsSer = null;
             PageStrokesSer = null; 
-
+            //InkStrokes = StringsToStrokes(Strokes);
 
         }
         #endregion
