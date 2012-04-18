@@ -8,11 +8,11 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
-    <Grid Height="500" Width="500">
-        <ItemsControl Height="500" Width="500" x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
+    <Grid>
+        <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <UniformGrid Height="500" Width="500" />
+                <UniformGrid />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>

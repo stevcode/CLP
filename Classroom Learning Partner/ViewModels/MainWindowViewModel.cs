@@ -77,6 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AuthoringTabVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
             StudentVisibility = Visibility.Collapsed;
+            PlayingAudioVisibility = Visibility.Collapsed;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -92,7 +93,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 default:
                     break;
             }
-
+           
             //Ribbon Commands
             //App Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
@@ -154,8 +155,12 @@ namespace Classroom_Learning_Partner.ViewModels
             PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
+            AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
 
             currentlyPlayingVisual = false;
+            //String pageID = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+            PageHasAudioFile = false;
+            
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -485,10 +490,35 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Register the PlayingAudioVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PlayingAudioVisibilityProperty = RegisterProperty("PlayingAudioVisibility", typeof(Visibility));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility PlayingAudioVisibility
+        {
+            get { return GetValue<Visibility>(PlayingAudioVisibilityProperty); }
+            set { SetValue(PlayingAudioVisibilityProperty, value); }
+        }
+
+        /// <summary>
         /// Register the StudentVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData StudentVisibilityProperty = RegisterProperty("StudentVisibility", typeof(Visibility));
-
+        
+        /// <summary>
+        /// Register the CurrentSliderValue property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentSliderValueProperty = RegisterProperty("CurrentSliderValue", typeof(double));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double CurrentSliderValue
+        {
+            get { return GetValue<double>(CurrentSliderValueProperty); }
+            set { SetValue(CurrentSliderValueProperty, value); }
+        }
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -501,6 +531,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the RecordImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData AudioRecordImageProperty = RegisterProperty("AudioRecordImage", typeof(Uri));
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Uri AudioPlayImage
+        {
+            get { return GetValue<Uri>(AudioPlayImageProperty); }
+            set { SetValue(AudioPlayImageProperty, value); }
+        }
+        /// <summary>
+        /// Register the AudioPlayImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AudioPlayImageProperty = RegisterProperty("AudioPlayImage", typeof(Uri));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -566,6 +608,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the CurrentColorButton property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool PageHasAudioFile
+        {
+            get { return GetValue<bool>(PageHasAudioFileProperty); }
+            set { SetValue(PageHasAudioFileProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageHasAudioFile property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageHasAudioFileProperty = RegisterProperty("PageHasAudioFile", typeof(bool));
+
 
         #endregion //Convert to XAMLS?
 
@@ -778,118 +836,116 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnConvertToXPSCommandExecute()
         {
-            foreach (var notebook in OpenNotebooks)
+            CLPNotebook notebook = (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+            if (App.CurrentUserMode == App.UserMode.Instructor)
             {
-                if (App.CurrentUserMode == App.UserMode.Instructor)
+                FixedDocument docSubmissions = new FixedDocument();
+                docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+
+
+                foreach (var pageID in notebook.Submissions.Keys)
                 {
-                    FixedDocument docSubmissions = new FixedDocument();
-                    docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-
-                    foreach (var pageID in notebook.Submissions.Keys)
+                    foreach (CLPPage page in notebook.Submissions[pageID])
                     {
-                        foreach (CLPPage page in notebook.Submissions[pageID])
-                        {
-                            PageContent pageContent = new PageContent();
-                            FixedPage fixedPage = new FixedPage();
+                        PageContent pageContent = new PageContent();
+                        FixedPage fixedPage = new FixedPage();
 
-                            CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                            CLPPageViewModel pageVM = new CLPPageViewModel(page);
-                            currentPage.DataContext = pageVM;
-                            currentPage.UpdateLayout();
+                        CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                        CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                        currentPage.DataContext = pageVM;
+                        currentPage.UpdateLayout();
 
-                            Grid grid = new Grid();
-                            grid.Children.Add(currentPage);
-                            Label label = new Label();
-                            label.FontSize = 20;
-                            label.FontWeight = FontWeights.Bold;
-                            label.FontStyle = FontStyles.Oblique;
-                            label.HorizontalAlignment = HorizontalAlignment.Left;
-                            label.VerticalAlignment = VerticalAlignment.Top;
-                            label.Content = pageVM.SubmitterName;
-                            grid.Children.Add(label);
+                        Grid grid = new Grid();
+                        grid.Children.Add(currentPage);
+                        Label label = new Label();
+                        label.FontSize = 20;
+                        label.FontWeight = FontWeights.Bold;
+                        label.FontStyle = FontStyles.Oblique;
+                        label.HorizontalAlignment = HorizontalAlignment.Left;
+                        label.VerticalAlignment = VerticalAlignment.Top;
+                        label.Content = pageVM.SubmitterName;
+                        grid.Children.Add(label);
 
-                            //Create first page of document
-                            RotateTransform rotate = new RotateTransform(90.0);
-                            TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-                            TransformGroup transform = new TransformGroup();
-                            transform.Children.Add(rotate);
-                            transform.Children.Add(translate);
-                            grid.RenderTransform = transform;
+                        //Create first page of document
+                        RotateTransform rotate = new RotateTransform(90.0);
+                        TranslateTransform translate = new TranslateTransform(816 + 2, -2);
+                        TransformGroup transform = new TransformGroup();
+                        transform.Children.Add(rotate);
+                        transform.Children.Add(translate);
+                        grid.RenderTransform = transform;
 
-                            fixedPage.Children.Add(grid);
-                            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                            docSubmissions.Pages.Add(pageContent);
-                        }
+                        fixedPage.Children.Add(grid);
+                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                        docSubmissions.Pages.Add(pageContent);
                     }
-
-                    //Save the submissions
-                    string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
-                    string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
-                    if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
-                    {
-                        Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-                    }
-                    if (File.Exists(pathSubs))
-                    {
-                        File.Delete(pathSubs);
-                    }
-
-
-                    XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
-                    XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
-                    if (docSubmissions.Pages.Count > 0)
-                    {
-                        xwSubs.Write(docSubmissions);
-                    }
-                    xpsdSubs.Close();
                 }
 
-
-                FixedDocument doc = new FixedDocument();
-                doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-                foreach (CLPPage page in notebook.Pages)
-                {
-                    PageContent pageContent = new PageContent();
-                    FixedPage fixedPage = new FixedPage();
-
-                    CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                    CLPPageViewModel pageVM = new CLPPageViewModel(page);
-                    currentPage.DataContext = pageVM;
-                    currentPage.UpdateLayout();
-
-                    //Create first page of document
-                    RotateTransform rotate = new RotateTransform(90.0);
-                    TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-                    TransformGroup transform = new TransformGroup();
-                    transform.Children.Add(rotate);
-                    transform.Children.Add(translate);
-                    currentPage.RenderTransform = transform;
-
-                    fixedPage.Children.Add(currentPage);
-                    ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                    doc.Pages.Add(pageContent);
-                }
-
-                //Save the document
-                string filename = notebook.NotebookName + ".xps";
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
+                //Save the submissions
+                string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
+                string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
                 if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
                 {
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
                 }
-                if (File.Exists(path))
+                if (File.Exists(pathSubs))
                 {
-                    File.Delete(path);
+                    File.Delete(pathSubs);
                 }
 
-                XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
-                XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
-                xw.Write(doc);
-                xpsd.Close();
+
+                XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
+                XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
+                if (docSubmissions.Pages.Count > 0)
+                {
+                    xwSubs.Write(docSubmissions);
+                }
+                xpsdSubs.Close();
             }
 
+
+            FixedDocument doc = new FixedDocument();
+            doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+
+            foreach (CLPPage page in notebook.Pages)
+            {
+                PageContent pageContent = new PageContent();
+                FixedPage fixedPage = new FixedPage();
+
+                CLPPagePreviewView currentPage = new CLPPagePreviewView();
+                CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                currentPage.DataContext = pageVM;
+                currentPage.UpdateLayout();
+
+                //Create first page of document
+                RotateTransform rotate = new RotateTransform(90.0);
+                TranslateTransform translate = new TranslateTransform(816 + 2, -2);
+                TransformGroup transform = new TransformGroup();
+                transform.Children.Add(rotate);
+                transform.Children.Add(translate);
+                currentPage.RenderTransform = transform;
+
+                fixedPage.Children.Add(currentPage);
+                ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                doc.Pages.Add(pageContent);
+            }
+
+            //Save the document
+            string filename = notebook.NotebookName + ".xps";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+            }
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
+            XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
+            xw.Write(doc);
+            xpsd.Close();
         }
 
         /// <summary>
@@ -1050,7 +1106,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
+                try
+                {
+                    (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
+                }
+                catch (Exception e)
+                { }
             }
         }
 
@@ -1066,7 +1127,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (SelectedWorkspace.WorkspaceName == "NotebookWorkspace")
             {
-                (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
+                try
+                {
+                    (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
+                }
+                catch (Exception e)
+                { }
             }
         }
 
@@ -1266,7 +1332,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach (var pageVM in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
                     {
-                        pageIDs.Add(pageVM.Page.UniqueID);
+                        if (pageVM.IsSubmission)
+                        {
+                            pageIDs.Add(pageVM.Page.SubmissionID);
+                        }
+                        else
+                        {
+                            pageIDs.Add(pageVM.Page.UniqueID);
+                        }
                     }
                     App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                 }
@@ -1313,6 +1386,44 @@ namespace Classroom_Learning_Partner.ViewModels
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
         }
+
+        //private RelayCommand _sendDisplayToProjectorCommand;
+
+        ///// <summary>
+        ///// Gets the SendDisplayToProjectorCommand.
+        ///// </summary>
+        //public RelayCommand SendDisplayToProjectorCommand
+        //{
+        //    get
+        //    {
+        //        return _sendDisplayToProjectorCommand
+        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
+        //                                  () =>
+        //                                  {
+        //                                      if (App.Peer.Channel != null)
+        //                                      {
+        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
+        //                                          {
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
+        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
+        //                                          }
+        //                                          else
+        //                                          {
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
+        //                                              List<string> pageList = new List<string>();
+        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
+        //                                              {
+        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
+        //                                              }
+
+        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
+        //                                          }
+        //                                      }
+        //                                  }));
+        //    }
+        //}
 
         //private RelayCommand _switchToLinkedDisplayCommand;
 
@@ -1625,24 +1736,52 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the RecordAudioCommand command is executed.
         /// </summary>
-        bool isRecordingAudio = false;
-        private void OnRecordAudioCommandExecute()
+        public bool isRecordingAudio = false;
+        public Timer record_timer = null;
+        public void OnRecordAudioCommandExecute()
         {
+            
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!isRecordingAudio)
             {
-                AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
+                PageHasAudioFile = true;
                 CLPServiceAgent.Instance.RecordAudio(page);
                 isRecordingAudio = true;
+                record_timer = new Timer();
+                record_timer.Elapsed +=new ElapsedEventHandler(record_timer_Elapsed);
+                record_timer.Interval = 500;
+                record_timer.Enabled = true;
+                record_timer.Start();
             }
             else
             {
                 AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
                 CLPServiceAgent.Instance.StopAudio(page);
                 isRecordingAudio = false;
+                try
+                {
+                    record_timer.Stop();
+                    record_timer.Dispose();
+                }
+                catch (Exception e)
+                { }
             }
         }
+        bool flash = true;
+        void record_timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (flash)
+            {
+                AudioRecordImage = new Uri("..\\Images\\recordflash1.png", UriKind.Relative);
+            }
+            else
+            {
+                AudioRecordImage = new Uri("..\\Images\\recordflash2.png", UriKind.Relative);
+            }
 
+            flash = !flash;
+        }
         /// <summary>
         /// Gets the PlayAudioCommand command.
         /// </summary>
@@ -1651,10 +1790,37 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the PlayAudioCommand command is executed.
         /// </summary>
+        bool playingAudio = false;
+        
         private void OnPlayAudioCommandExecute()
         {
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-            CLPServiceAgent.Instance.PlayAudio(page);
+            if (!playingAudio)
+            {
+                try
+                {
+                    AudioPlayImage = new Uri("..\\Images\\stop.png", UriKind.Relative);
+                    //show the slider
+                    PlayingAudioVisibility = Visibility.Visible;
+                    //start the slider
+                    CurrentSliderValue = 0;
+                    CLPServiceAgent.Instance.PlayAudio(page);
+                    playingAudio = true;
+                }
+                catch (Exception e) { }
+            }
+            else
+            {
+                try
+                {
+                    PlayingAudioVisibility = Visibility.Collapsed;
+                    AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+                    CLPServiceAgent.Instance.StopAudioPlayback(page);
+                    playingAudio = false;
+                }
+                catch (Exception e) { }
+            }
+
         }
 
         /// <summary>

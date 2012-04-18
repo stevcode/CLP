@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Classroom_Learning_Partner.Views;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.IO;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -208,7 +209,9 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                         CurrentPage.stopAudioPlayback();
                         CurrentPage.stopAudio();
                         CurrentPage.StopPlayback();
-                    }
+                        App.MainWindowViewModel.isRecordingAudio = false;
+                        
+                       }
                     catch (Exception e)
                     { }
                 }
@@ -219,6 +222,20 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
                 
                 SelectedDisplay.AddPageToDisplay(value);
+
+                String pageID = CurrentPage.Page.UniqueID;
+                App.MainWindowViewModel.PageHasAudioFile = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + pageID + ".wav");
+                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+                App.MainWindowViewModel.AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
+
+                try
+                {
+                    App.MainWindowViewModel.record_timer.Stop();
+                    App.MainWindowViewModel.record_timer.Dispose();
+                }
+                catch (Exception e)
+                { }
+
                 Console.WriteLine("CurrentPage Set");
             }
         }
