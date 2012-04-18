@@ -444,7 +444,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
 
-
         #region Convert to XAMLS?
 
         //Steve - Switch these visibility tags into XAML getters/setters
@@ -664,6 +663,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentFontColorProperty = RegisterProperty("CurrentFontColor", typeof(Brush));
 
         #endregion //TextBox
+
+        #region ToolBarChecked
+
+        #endregion //ToolBarChecked
 
         #endregion //Bindings
 
@@ -984,6 +987,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentColorButton = button as RibbonButton;
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+
+            if (EditingMode != InkCanvasEditingMode.Ink) {
+                SetPenCommand.Execute();
+            }
         }
 
         /// <summary>
