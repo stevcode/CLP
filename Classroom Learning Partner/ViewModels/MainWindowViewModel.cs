@@ -59,6 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = Colors.Black;
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
+            CurrentSelectedButton = new RibbonToggleButton();
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -106,11 +107,11 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
-            SetPenCommand = new Command(OnSetPenCommandExecute);
-            SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
-            SetEraserCommand = new Command(OnSetEraserCommandExecute);
-            SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
-            SetSnapTileCommand = new Command(OnSetSnapTileCommandExecute);
+            SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
+            SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
+            SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
+            SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
+            SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //History
@@ -609,6 +610,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public RibbonToggleButton CurrentSelectedButton
+        {
+            get { return GetValue<RibbonToggleButton>(CurrentSelectedButtonProperty); }
+            set { SetValue(CurrentSelectedButtonProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CurrentSelectedButton property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentSelectedButtonProperty = RegisterProperty("CurrentSelectedButton", typeof(RibbonToggleButton));
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -724,9 +739,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region ToolBarChecked
 
+
+
         #endregion //ToolBarChecked
 
         #endregion //Bindings
+
+        #region Methods
+
+        private void RibbonButtonToggle(RibbonToggleButton button) {
+            CurrentSelectedButton.IsChecked = false;
+            CurrentSelectedButton = button as RibbonToggleButton;
+            CurrentSelectedButton.IsChecked = true;
+        }
+
+        #endregion Methods
 
         #region Commands
 
@@ -972,13 +999,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
-        public Command SetPenCommand { get; private set; }
+        public Command<RibbonToggleButton> SetPenCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
-        private void OnSetPenCommandExecute()
+        private void OnSetPenCommandExecute(RibbonToggleButton button)
         {
+            RibbonButtonToggle(button);   
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
@@ -988,13 +1016,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetMarkerCommand command.
         /// </summary>
-        public Command SetMarkerCommand { get; private set; }
+        public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetMarkerCommand command is executed.
         /// </summary>
-        private void OnSetMarkerCommandExecute()
+        private void OnSetMarkerCommandExecute(RibbonToggleButton button)
         {
+            RibbonButtonToggle(button);
             DrawingAttributes.Height = MARKER_RADIUS;
             DrawingAttributes.Width = MARKER_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
@@ -1004,13 +1033,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetEraserCommand command.
         /// </summary>
-        public Command SetEraserCommand { get; private set; }
+        public Command<RibbonToggleButton> SetEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetEraserCommand command is executed.
         /// </summary>
-        private void OnSetEraserCommandExecute()
+        private void OnSetEraserCommandExecute(RibbonToggleButton button)
         {
+            RibbonButtonToggle(button);
             DrawingAttributes.Height = ERASER_RADIUS;
             DrawingAttributes.Width = ERASER_RADIUS;
             EditingMode = InkCanvasEditingMode.EraseByPoint;
@@ -1020,13 +1050,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 /// <summary>
         /// Gets the SetStrokeEraserCommand command.
         /// </summary>
-        public Command SetStrokeEraserCommand { get; private set; }
+        public Command<RibbonToggleButton> SetStrokeEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetStrokeEraserCommand command is executed.
         /// </summary>
-        private void OnSetStrokeEraserCommandExecute()
+        private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
         {
+            RibbonButtonToggle(button);
             EditingMode = InkCanvasEditingMode.EraseByStroke;
             PageObjectAddMode = PageObjectAddMode.None;
         }
@@ -1052,13 +1083,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetSnapTileCommand command.
         /// </summary>
-        public Command SetSnapTileCommand { get; private set; }
+        public Command<RibbonToggleButton> SetSnapTileCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetSnapTileCommand command is executed.
         /// </summary>
-        private void OnSetSnapTileCommandExecute()
+        private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
         {
+            RibbonButtonToggle(button);
             EditingMode = InkCanvasEditingMode.None;
             PageObjectAddMode = PageObjectAddMode.SnapTile;
         }

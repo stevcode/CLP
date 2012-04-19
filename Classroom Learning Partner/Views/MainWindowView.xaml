@@ -129,32 +129,32 @@
                     
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup x:Name="ToolsGroup" Header="Pen Type">
+                <ribbon:RibbonGroup Header="Pen Type">
 
                     <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}" IsChecked="True" Checked="ToolsGroup_Checked" />
+                        Command="{Binding Path=SetPenCommand}" IsChecked="True"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Marker"
                         LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}" Checked="ToolsGroup_Checked" />
+                        Command="{Binding Path=SetMarkerCommand}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetEraserCommand}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Stroke Eraser"
                         LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetStrokeEraserCommand}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Tile"
                         LargeImageSource="..\Images\SnapTileIcon.png"
-                        Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetSnapTileCommand}"/>
 
                     <ribbon:RibbonToggleButton
                         Label="Stamp"
