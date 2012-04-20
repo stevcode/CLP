@@ -154,6 +154,7 @@
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPAudio.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -212,6 +214,9 @@
     </Compile>
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
+      <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
       <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
@@ -307,6 +312,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NotebookSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPAudioView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -459,6 +468,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="External Libraries\lame.exe" />
     <Resource Include="Images\recordflash2.png" />
     <Resource Include="Images\recordflash1.png" />
     <Resource Include="Images\recording.png" />
@@ -475,6 +485,7 @@
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
     <Content Include="External Libraries\IAWinFX.dll" />
+    <Content Include="External Libraries\lame_enc.dll" />
     <Content Include="External Libraries\Microsoft.Ink.dll" />
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
