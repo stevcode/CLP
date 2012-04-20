@@ -167,11 +167,11 @@ namespace Classroom_Learning_Partner.Views
             if (pt.X > 1056) pt.X = 1056;
             if (pt.Y > 816) pt.Y = 816;
 
-            switch (App.MainWindowViewModel.PageObjectAddMode)
+            switch (App.MainWindowViewModel.PageInteractionMode)
             {
-                case PageObjectAddMode.None:
+                case PageInteractionMode.None:
                     break;
-                case PageObjectAddMode.SnapTile:
+                case PageInteractionMode.SnapTile:
                     CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt);
                     CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
                     break;

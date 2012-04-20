@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = false;
             IsMinimized = false;
             IsPlaybackEnabled = false;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Pen;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
 
             //MainWindow Commands
@@ -59,7 +59,6 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = Colors.Black;
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
-            CurrentSelectedButton = new RibbonToggleButton();
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -421,16 +420,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public PageObjectAddMode PageObjectAddMode
+        public PageInteractionMode PageInteractionMode
         {
-            get { return GetValue<PageObjectAddMode>(PageObjectAddModeProperty); }
-            set { SetValue(PageObjectAddModeProperty, value); }
+            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            set { SetValue(PageInteractionModeProperty, value); }
         }
 
         /// <summary>
-        /// Register the PageObjectAddMode property so it is known in the class.
+        /// Register the PageInteractionMode property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectAddModeProperty = RegisterProperty("PageObjectAddMode", typeof(PageObjectAddMode));
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
 
         #endregion //Properties
 
@@ -613,21 +612,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public RibbonToggleButton CurrentSelectedButton
-        {
-            get { return GetValue<RibbonToggleButton>(CurrentSelectedButtonProperty); }
-            set { SetValue(CurrentSelectedButtonProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CurrentSelectedButton property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CurrentSelectedButtonProperty = RegisterProperty("CurrentSelectedButton", typeof(RibbonToggleButton));
-
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public bool PageHasAudioFile
         {
             get { return GetValue<bool>(PageHasAudioFileProperty); }
@@ -737,23 +721,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //TextBox
 
-        #region ToolBarChecked
-
-
-
-        #endregion //ToolBarChecked
-
         #endregion //Bindings
-
-        #region Methods
-
-        private void RibbonButtonToggle(RibbonToggleButton button) {
-            CurrentSelectedButton.IsChecked = false;
-            CurrentSelectedButton = button as RibbonToggleButton;
-            CurrentSelectedButton.IsChecked = true;
-        }
-
-        #endregion Methods
 
         #region Commands
 
@@ -1005,12 +973,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
         private void OnSetPenCommandExecute(RibbonToggleButton button)
-        {
-            RibbonButtonToggle(button);   
+        {   
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Pen;
         }
 
         /// <summary>
@@ -1023,11 +990,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetMarkerCommandExecute(RibbonToggleButton button)
         {
-            RibbonButtonToggle(button);
             DrawingAttributes.Height = MARKER_RADIUS;
             DrawingAttributes.Width = MARKER_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Marker;
         }
 
         /// <summary>
@@ -1040,11 +1006,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetEraserCommandExecute(RibbonToggleButton button)
         {
-            RibbonButtonToggle(button);
             DrawingAttributes.Height = ERASER_RADIUS;
             DrawingAttributes.Width = ERASER_RADIUS;
             EditingMode = InkCanvasEditingMode.EraseByPoint;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Eraser;
         }
 
                 /// <summary>
@@ -1057,9 +1022,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
         {
-            RibbonButtonToggle(button);
             EditingMode = InkCanvasEditingMode.EraseByStroke;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.StrokeEraser;
         }
 
         /// <summary>
@@ -1090,9 +1054,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
         {
-            RibbonButtonToggle(button);
             EditingMode = InkCanvasEditingMode.None;
-            PageObjectAddMode = PageObjectAddMode.SnapTile;
+            PageInteractionMode = PageInteractionMode.SnapTile;
         }
 
         #endregion //Pen Commands
