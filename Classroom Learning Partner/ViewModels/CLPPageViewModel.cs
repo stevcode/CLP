@@ -522,7 +522,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
+                    Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
                     Redo();
+                    Logger.Instance.WriteToLog("------------end redo # " + i + "  " + DateTime.Now.ToString());
                 }
                 catch (Exception x)
                 { }
@@ -561,6 +563,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         interval = new TimeSpan(0, 0, 0, 0, 250);
                     }
                     timer.Interval = interval;
+                    Logger.Instance.WriteToLog("Interval = " + interval.ToString());
                     i--;
                 }
            }
@@ -570,7 +573,17 @@ namespace Classroom_Learning_Partner.ViewModels
            }
            try
            {
+               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+               int len = this.PageHistory.UndoneHistoryItems.Count;
+               try
+               {
+                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 2].ItemType.ToString());
+                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 1].ItemType.ToString());
+               }
+               catch (Exception w) { }
                Redo();
+               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+                    
            }
            catch (Exception x)
            { }
