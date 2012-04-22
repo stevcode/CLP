@@ -163,15 +163,16 @@
                         Command="{Binding Path=SetSnapTileCommand}"
                         IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='SnapTile'}"/>
 
-                    <ribbon:RibbonToggleButton
+                    <ribbon:RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Stamp'}"/>
-                    <ribbon:RibbonToggleButton
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
+                    
+                    <ribbon:RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
-                        Command="{Binding Path=InsertAudioFileCommand}" />     
+                        Command="{Binding Path=InsertAudioFileCommand}"/>
+                
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Pen Color">

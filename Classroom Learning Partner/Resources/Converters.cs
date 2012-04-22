@@ -62,7 +62,9 @@ namespace Classroom_Learning_Partner.Resources
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (value.ToString().Equals(parameter)) {
+            Console.WriteLine(value.ToString() + " : " + parameter.ToString() + String.Equals(value.ToString(), parameter.ToString()));
+            if (String.Equals(value.ToString(), parameter.ToString()))
+            {
                 return true;
             }
             return false;
