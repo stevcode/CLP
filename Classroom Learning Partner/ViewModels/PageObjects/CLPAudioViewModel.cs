@@ -40,9 +40,16 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
                 PageHasAudioFile = false;
                 this.path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + audio.ID + ".mp3";
-                if(File.Exists(this.path))
+                if(File.Exists(this.path) || (PageObject as CLPAudio).File.Length > 1)
                 {
                     PageHasAudioFile = true;
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+              (DispatcherOperationCallback)delegate(object arg)
+              {
+                  AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                  return null;
+              }, null);
+                   
                 }
             }
             string path;
@@ -142,7 +149,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 }
                 
             }
-            System.Media.SoundPlayer soundPlayer;
+            //System.Media.SoundPlayer soundPlayer;
             System.Timers.Timer audio_play_timer;
             double seconds;
             void audio_play_timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -157,7 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
               (DispatcherOperationCallback)delegate(object arg)
               {
-                  AudioPlayImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                  AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
                   return null;
               }, null);
                 }
@@ -175,7 +182,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     FileInfo file = new FileInfo(path);
                     long sizeKb = file.Length / (long)1024.0;
                     //seconds = (Double)sizeKb / 11.0; //value for wav
-                    seconds = (Double)sizeKb / 2; //value for mp3 has to be changed based on the bitrate we encode at
+                    seconds = (Double)sizeKb / 1.8; //value for mp3 has to be changed based on the bitrate we encode at
                     TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
                     //initialize the timer
                     audio_play_timer = new System.Timers.Timer();
@@ -244,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             {
 
                 CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-                if (!isRecordingAudio)
+                if (!isRecordingAudio && !PageHasAudioFile)
                 {
                     //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
                     PageHasAudioFile = true;
@@ -256,7 +263,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     record_timer.Start();
                     recordAudio();
                 }
-                else
+                else if(isRecordingAudio)
                 {
                     
                     stopAudio();
@@ -268,12 +275,16 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
               (DispatcherOperationCallback)delegate(object arg)
               {
-                  AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\mic_start.png", UriKind.Relative));
+                  AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
                   return null;
               }, null);
                     }
                     catch (Exception e)
                     { }
+                }
+                else if (PageHasAudioFile)
+                {
+                    PlayAudioCommand.Execute();
                 }
             }
             bool flash = true;
@@ -318,7 +329,8 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     {
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (DispatcherOperationCallback)delegate(object arg)
               {
-                  AudioPlayImage = new BitmapImage(new Uri("..\\..\\Images\\stop.png", UriKind.Relative));
+                 // AudioPlayImage = new BitmapImage(new Uri("..\\..\\Images\\stop.png", UriKind.Relative));
+                  AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\stop.png", UriKind.Relative));
                   return null;
               }, null);
                         
@@ -338,7 +350,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                         PlayingAudioVisibility = Visibility.Collapsed;
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (DispatcherOperationCallback)delegate(object arg)
                         {
-                            AudioPlayImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                            //AudioPlayImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                            AudioRecordImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                            
                             return null;
                         }, null);
                         

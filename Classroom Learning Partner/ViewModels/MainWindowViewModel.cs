@@ -20,6 +20,7 @@ using System.IO;
 using System.Windows.Documents;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using System.Diagnostics;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -1750,9 +1751,39 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool isRecordingAudio = false;
         public Timer record_timer = null;
         public void OnRecordAudioCommandExecute()
-        {
-            
+        {//hijacking this button to popup the file viewer for the teacher to see all audios for this page.
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\"))
+            {
+                Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\", true);
+            }
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\");
+            foreach (ICLPPageObject obj in page.PageObjects)
+            {
+                if (obj.PageObjectType == "CLPAudio")
+                {
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                    if (!File.Exists(path))
+                    {
+                        System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                    }
+                }
+                
+            }
+            foreach (ICLPPageObject obj in page.PageHistory.TrashedPageObjects.Values)
+            {
+                if (obj.PageObjectType == "CLPAudio")
+                {
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                    if (!File.Exists(path))
+                    {
+                        System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                    }
+                }
+
+            }
+            Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\");
+           /* CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!isRecordingAudio)
             {
                 //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
@@ -1778,6 +1809,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch (Exception e)
                 { }
             }
+            */
         }
         bool flash = true;
         void record_timer_Elapsed(object sender, ElapsedEventArgs e)

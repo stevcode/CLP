@@ -34,10 +34,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             //    fullPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + path + i.ToString() + ".mp3";
             //    i++;
             //}
+            this.File = new Byte[0];
             this.ID = ID;
             Position = new System.Windows.Point(10, 10);
-            Height = 300;
-            Width = 300;
+            Height = 50;
+            Width = 50;
             
             //LoadImageFromByteSource(ByteSource);
 
@@ -61,13 +62,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Properties
         
-        public string FilePath
+       public string FilePath
         {
             get { return GetValue<string>(FilePathProperty); }
             private set { SetValue(FilePathProperty, value); }
         }
         public static readonly PropertyData FilePathProperty = RegisterProperty("FilePath", typeof(string), null);
-
+        
         public Byte[] File
         {
             get { return GetValue<Byte[]>(FileProperty); }
@@ -81,6 +82,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             private set { SetValue(IDProperty, value); }
         }
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), null);
+
 
         #endregion
 
