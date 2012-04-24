@@ -14,6 +14,6 @@
             <Label Name="analysis_type" VerticalAlignment="Top" Content="{Binding AnalysisType, Mode=TwoWay}"></Label>
             <Label Name="correct_answer" VerticalAlignment="Bottom" Content="{Binding CorrectAnswer, Mode=TwoWay}"></Label>
         </Grid>
-        <Image Width="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Source="/Images/EditNotebook.png" PreviewMouseDown="EditInkRegion"></Image>
+        <Image Width="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Source="/Images/EditNotebook.png" MouseDown="EditInkRegion"></Image>
     </Grid>
 </catel:UserControl>
