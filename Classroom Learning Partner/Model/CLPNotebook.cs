@@ -29,6 +29,10 @@ namespace Classroom_Learning_Partner.Model
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
+            if (App.CurrentUserMode == App.UserMode.Student)
+            {
+                StudentName = App.Peer.UserName;
+            }
         }
 
         /// <summary>
@@ -41,6 +45,14 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+
+        public String StudentName
+        {
+            get { return GetValue<string>(StudentNameProperty); }
+            set { SetValue(StudentNameProperty, value); }
+        }
+        public static readonly PropertyData StudentNameProperty = RegisterProperty("StudentName", typeof(String), "NoName");
+
         /// <summary>
         /// Gets the list of CLPPages in the notebook.
         /// </summary>

@@ -166,7 +166,10 @@
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}" />
-
+                    <ribbon:RibbonToggleButton
+                        Label="Audio"
+                        LargeImageSource="..\Images\mic_start.png"
+                        Command="{Binding Path=InsertAudioFileCommand}" />     
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Pen Color">
@@ -211,7 +214,7 @@
 
                 </ribbon:RibbonGroup>
                 
-               <ribbon:RibbonGroup Header="History">
+                <ribbon:RibbonGroup Header="History">
 
                     <ribbon:RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
                         IsChecked="False"
@@ -304,7 +307,7 @@
 
                 </ribbon:RibbonGroup>
                 
-               <!-- <ribbon:RibbonGroup Header="Visual" >
+             <!--   <ribbon:RibbonGroup Header="Visual" >
                     <ribbon:RibbonButton
                         LargeImageSource="{Binding Path=VisualRecordImage}"
                         Label="Record"
@@ -351,8 +354,8 @@
                     </Grid>
                 </ribbon:RibbonGroup>
 
-                <!--
-                <ribbon:RibbonGroup Header="Visual and Audio" >
+               
+         <!--       <ribbon:RibbonGroup Header="Visual and Audio" >
                     <ribbon:RibbonButton
                         LargeImageSource="{Binding Path=RecordBothImage}"
                         Label="Record"
@@ -361,8 +364,8 @@
                         LargeImageSource="{Binding Path=PlayPauseBothImage}"
                         Label="Play"
                         Command="{Binding Path=PlayStopBothCommand}" /> 
-                </ribbon:RibbonGroup>
-                -->
+                </ribbon:RibbonGroup> -->
+                
                 
                 <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
                 <ribbon:RibbonContentPresenter>

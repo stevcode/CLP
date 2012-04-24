@@ -224,7 +224,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedDisplay.AddPageToDisplay(value);
 
                 String pageID = CurrentPage.Page.UniqueID;
-                App.MainWindowViewModel.PageHasAudioFile = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + pageID + ".wav");
+                String notebookID = CurrentPage.Page.ParentNotebookID.ToString();
+                App.MainWindowViewModel.PageHasAudioFile = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + notebookID + @" - " + pageID + ".wav");
                 App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
                 App.MainWindowViewModel.AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
 
