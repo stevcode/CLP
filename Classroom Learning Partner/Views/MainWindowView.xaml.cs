@@ -35,19 +35,5 @@ namespace Classroom_Learning_Partner.Views
         {
             (DataContext as MainWindowViewModel).SaveAndCloseViewModel();
         }
-
-        private void ToolsGroup_Checked(object sender, RoutedEventArgs e)
-        {
-            foreach (var button in ToolsGroup.Items)
-            {
-                (button as RibbonToggleButton).Checked -= ToolsGroup_Checked;
-                (button as RibbonToggleButton).IsChecked = false;
-                (button as RibbonToggleButton).Checked += ToolsGroup_Checked;
-            }
-
-            (sender as RibbonToggleButton).Checked -= ToolsGroup_Checked;
-            (sender as RibbonToggleButton).IsChecked = true;
-            (sender as RibbonToggleButton).Checked += ToolsGroup_Checked;
-        }
     }
 }

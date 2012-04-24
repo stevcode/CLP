@@ -55,6 +55,30 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class PageInteractionModeConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            Console.WriteLine(value.ToString() + " : " + parameter.ToString() + String.Equals(value.ToString(), parameter.ToString()));
+            if (String.Equals(value.ToString(), parameter.ToString()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return false;
+        }
+    }
+
     public class Converters
     {
     }

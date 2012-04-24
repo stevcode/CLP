@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = false;
             IsMinimized = false;
             IsPlaybackEnabled = false;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Pen;
             OpenNotebooks = new ObservableCollection<CLPNotebook>();
 
             //MainWindow Commands
@@ -107,11 +107,11 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
-            SetPenCommand = new Command(OnSetPenCommandExecute);
-            SetMarkerCommand = new Command(OnSetMarkerCommandExecute);
-            SetEraserCommand = new Command(OnSetEraserCommandExecute);
-            SetStrokeEraserCommand = new Command(OnSetStrokeEraserCommandExecute);
-            SetSnapTileCommand = new Command(OnSetSnapTileCommandExecute);
+            SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
+            SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
+            SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
+            SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
+            SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //History
@@ -422,16 +422,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public PageObjectAddMode PageObjectAddMode
+        public PageInteractionMode PageInteractionMode
         {
-            get { return GetValue<PageObjectAddMode>(PageObjectAddModeProperty); }
-            set { SetValue(PageObjectAddModeProperty, value); }
+            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            set { SetValue(PageInteractionModeProperty, value); }
         }
 
         /// <summary>
-        /// Register the PageObjectAddMode property so it is known in the class.
+        /// Register the PageInteractionMode property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectAddModeProperty = RegisterProperty("PageObjectAddMode", typeof(PageObjectAddMode));
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
 
         #endregion //Properties
 
@@ -450,7 +450,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the SideBarVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
-
 
         #region Convert to XAMLS?
 
@@ -611,7 +610,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the CurrentColorButton property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
-
 
         /// <summary>
         /// Gets or sets the property value.
@@ -971,63 +969,63 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
-        public Command SetPenCommand { get; private set; }
+        public Command<RibbonToggleButton> SetPenCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
-        private void OnSetPenCommandExecute()
-        {
+        private void OnSetPenCommandExecute(RibbonToggleButton button)
+        {   
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Pen;
         }
 
         /// <summary>
         /// Gets the SetMarkerCommand command.
         /// </summary>
-        public Command SetMarkerCommand { get; private set; }
+        public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetMarkerCommand command is executed.
         /// </summary>
-        private void OnSetMarkerCommandExecute()
+        private void OnSetMarkerCommandExecute(RibbonToggleButton button)
         {
             DrawingAttributes.Height = MARKER_RADIUS;
             DrawingAttributes.Width = MARKER_RADIUS;
             EditingMode = InkCanvasEditingMode.Ink;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Marker;
         }
 
         /// <summary>
         /// Gets the SetEraserCommand command.
         /// </summary>
-        public Command SetEraserCommand { get; private set; }
+        public Command<RibbonToggleButton> SetEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetEraserCommand command is executed.
         /// </summary>
-        private void OnSetEraserCommandExecute()
+        private void OnSetEraserCommandExecute(RibbonToggleButton button)
         {
             DrawingAttributes.Height = ERASER_RADIUS;
             DrawingAttributes.Width = ERASER_RADIUS;
             EditingMode = InkCanvasEditingMode.EraseByPoint;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.Eraser;
         }
 
                 /// <summary>
         /// Gets the SetStrokeEraserCommand command.
         /// </summary>
-        public Command SetStrokeEraserCommand { get; private set; }
+        public Command<RibbonToggleButton> SetStrokeEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetStrokeEraserCommand command is executed.
         /// </summary>
-        private void OnSetStrokeEraserCommandExecute()
+        private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
         {
             EditingMode = InkCanvasEditingMode.EraseByStroke;
-            PageObjectAddMode = PageObjectAddMode.None;
+            PageInteractionMode = PageInteractionMode.StrokeEraser;
         }
 
         /// <summary>
@@ -1042,20 +1040,24 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentColorButton = button as RibbonButton;
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+
+            if (EditingMode != InkCanvasEditingMode.Ink) {
+                SetPenCommand.Execute();
+            }
         }
 
         /// <summary>
         /// Gets the SetSnapTileCommand command.
         /// </summary>
-        public Command SetSnapTileCommand { get; private set; }
+        public Command<RibbonToggleButton> SetSnapTileCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetSnapTileCommand command is executed.
         /// </summary>
-        private void OnSetSnapTileCommandExecute()
+        private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
         {
             EditingMode = InkCanvasEditingMode.None;
-            PageObjectAddMode = PageObjectAddMode.SnapTile;
+            PageInteractionMode = PageInteractionMode.SnapTile;
         }
 
         #endregion //Pen Commands
