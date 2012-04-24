@@ -27,7 +27,7 @@
                     SelectionMode="Single">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border Width="150">
+                            <Border Width="140">
                                 <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
