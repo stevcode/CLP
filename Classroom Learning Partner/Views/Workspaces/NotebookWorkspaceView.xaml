@@ -9,18 +9,48 @@
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
     </UserControl.Resources>
-    
+
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />
 
+        <Border Grid.Column="1" BorderThickness="2,2,2,2" BorderBrush="LightGreen" CornerRadius="5,5,5,5" Background="White">
+            <Grid Name="GridDisplays">
+                <ListBox x:Name="GridDisplaysListBox" Width="150"
+                    ItemsSource="{Binding Path=GridDisplays, UpdateSourceTrigger=PropertyChanged}"
+                    SelectionMode="Single">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="140">
+                                <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <vw:CLPPagePreviewView DataContext="{Binding}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
         <!-- Control that dynamically determines what Display to show -->
-        <Control DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display"  Grid.Column="1">
+        <Control DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display"  Grid.Column="2">
             <Control.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
@@ -36,7 +66,7 @@
             <Control.Style>
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
-                        
+
                         <!-- LinkeDisplay trigger -->
                         <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
                             <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
@@ -51,7 +81,6 @@
                 </Style>
             </Control.Style>
         </Control>
-
 
     </Grid>
 </catel:UserControl>

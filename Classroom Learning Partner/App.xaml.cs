@@ -37,7 +37,8 @@ namespace Classroom_Learning_Partner
             base.OnStartup(e);
 
             //Uncomment this to enable Catel Logging
-            LogManager.RegisterDebugListener();
+            //Comment out to speed up program, all the consoles write are very taxing.
+            //LogManager.RegisterDebugListener();
 
             CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.NotUsing;
