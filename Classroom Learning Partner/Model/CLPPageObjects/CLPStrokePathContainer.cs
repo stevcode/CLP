@@ -29,6 +29,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
+        //Parameterless constructor for Protobuf
+        private CLPStrokePathContainer()
+            : base()
+        { }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>

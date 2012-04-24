@@ -22,6 +22,7 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using System.Diagnostics;
 
+
 namespace Classroom_Learning_Partner.ViewModels
 {
 
@@ -78,15 +79,25 @@ namespace Classroom_Learning_Partner.ViewModels
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
+            PageViewerVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
             StudentVisibility = Visibility.Collapsed;
+            ServerVisibility = Visibility.Collapsed;
             PlayingAudioVisibility = Visibility.Collapsed;
+            HistoryVisibility = Visibility.Collapsed;
+            SubmissionVisibility = Visibility.Collapsed;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
+                    ServerVisibility = Visibility.Visible;
+                    PageViewerVisibility = Visibility.Visible;
+                    HistoryVisibility = Visibility.Visible;
+                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Instructor:
                     InstructorVisibility = Visibility.Visible;
+                    HistoryVisibility = Visibility.Visible;
+                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Projector:
                     break;
@@ -106,6 +117,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
+            ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
@@ -160,6 +172,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
             AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+
+
+            //DB
+            QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
 
             currentlyPlayingVisual = false;
             //String pageID = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
@@ -500,6 +516,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData AuthoringTabVisibilityProperty = RegisterProperty("AuthoringTabVisibility", typeof(Visibility));
 
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility PageViewerVisibility
+        {
+            get { return GetValue<Visibility>(PageViewerVisibilityProperty); }
+            set { SetValue(PageViewerVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AuthoringTabVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageViewerVisibilityProperty = RegisterProperty("PageViewerVisibility", typeof(Visibility));
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -513,6 +543,51 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the InstructorVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData InstructorVisibilityProperty = RegisterProperty("InstructorVisibility", typeof(Visibility));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility HistoryVisibility
+        {
+            get { return GetValue<Visibility>(HistoryVisibilityProperty); }
+            set { SetValue(HistoryVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HistoryVisibilityProperty = RegisterProperty("HistoryVisibility", typeof(Visibility));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility SubmissionVisibility
+        {
+            get { return GetValue<Visibility>(SubmissionVisibilityProperty); }
+            set { SetValue(SubmissionVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SubmissionVisibilityProperty = RegisterProperty("SubmissionVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility ServerVisibility
+        {
+            get { return GetValue<Visibility>(ServerVisibilityProperty); }
+            set { SetValue(ServerVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ServerVisibilityProperty = RegisterProperty("ServerVisibility", typeof(Visibility));
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -819,7 +894,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     page.PageHistory.ClearHistory();
                 }
-                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
+                
             }
         }
 
@@ -853,6 +928,36 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPServiceAgent.Instance.SaveNotebook(notebook);
             }
+        }
+
+        public Command ImportLocalNotebooksDBCommand { get; private set; }
+
+
+        private static System.Threading.Thread _backgroundThread;
+        public static System.Threading.Thread BackgroundThread
+        {
+            get
+            {
+                return _backgroundThread;
+            }
+        }
+        /// <summary>
+        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// </summary>
+        private void ImportLocalNotebooksDBCommandExecute()
+        {
+            _backgroundThread = new System.Threading.Thread(CLPServiceAgent.Instance.ImportLocalNotebooksFromDB) { IsBackground = true };
+            BackgroundThread.Start();
+        }
+
+        public Command QueryDatabaseCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// </summary>
+        private void QueryDatabaseCommandExecute()
+        {
+            CLPServiceAgent.Instance.RunDBQueryForPages();
         }
 
         /// <summary>
@@ -1241,7 +1346,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (CanSendToTeacher)
             {
                 CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
-                CLPServiceAgent.Instance.SubmitPage(page);
+                CLPServiceAgent.Instance.SubmitPage(page, (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
             }
             CanSendToTeacher = false;
             
