@@ -2,6 +2,7 @@
 {
     using Catel.Windows.Controls;
     using System.Windows;
+    using System;
     using Classroom_Learning_Partner.Views.Modal_Windows;
     using Classroom_Learning_Partner.ViewModels.PageObjects;
 
@@ -37,7 +38,6 @@
                 this.correct_answer.Content = correct_answer;
                 this.analysis_type.Content = selected_type.ToString();
             }
-            //Console.WriteLine("Edit");
         }
     }
 }
