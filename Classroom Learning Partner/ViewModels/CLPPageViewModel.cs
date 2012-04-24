@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
-            EraserEditingMode = InkCanvasEditingMode.EraseByStroke;
+            EraserEditingMode = App.MainWindowViewModel.EraserEditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             Page = page;
 
@@ -300,6 +300,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
+        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

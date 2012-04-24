@@ -42,9 +42,21 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!isMouseDown)
+            if (!(isMouseDown || (e.StylusDevice != null && e.StylusDevice.Inverted)))
             {
                 VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+            }
+            else if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
+            {
+                switch (App.MainWindowViewModel.PageEraserInteractionMode)
+                {
+                    case PageEraserInteractionMode.ObjectStrokeEraser:
+                        VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraserHitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+                        //InkCanvas.StrokesProperty
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -144,6 +156,82 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
+        private HitTestFilterBehavior EraserHitFilter(DependencyObject o)
+        {
+            if (o.GetType() == typeof(Grid) && (o as Grid).Name == "ContainerHitBox")
+            {
+                return HitTestFilterBehavior.ContinueSkipChildren;
+            }
+            return HitTestFilterBehavior.Continue;
+        }
+
+        private HitTestResultBehavior EraserHitResult(HitTestResult result)
+        {
+            Console.WriteLine("Start of result");
+            Console.WriteLine(result.VisualHit.GetType());
+            if (result.VisualHit.GetType() == typeof(Grid))
+            {
+                if ((result.VisualHit as Grid).Name == "ContainerHitBox")
+                {
+                    Console.WriteLine("Result: Container");
+                    Console.WriteLine("Context: " + (result.VisualHit as Grid).DataContext);
+                    if ((result.VisualHit as Grid).DataContext is CLPStrokePathContainer)
+                    {
+                        Console.WriteLine("StampObject Background: " + ((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground);
+                        if (!((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground || (((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPStrokePathContainer);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPSnapTileContainer)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground || (((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPSnapTileContainer);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPShape)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPShape).IsBackground || (((result.VisualHit as Grid).DataContext as CLPShape).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPShape);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPStamp)
+                    {
+                        Console.WriteLine("Stamp Background: " + ((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground);
+                        if (!((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground || (((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPStamp);
+                        }
+                    }
+                }
+                return HitTestResultBehavior.Stop; 
+            }
+            else if (result.VisualHit.GetType().BaseType == typeof(Shape))
+            {
+                if ((result.VisualHit as Shape).Name == "PageObjectHitBox")
+                {
+                    Console.WriteLine("Result: PageObjectHitBox");
+                    Console.WriteLine("Context: " + (result.VisualHit as Shape).DataContext);
+                    if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
+                    {
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject);
+                    }
+                    else if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
+                    {
+                        if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground || 
+                            (((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject);
+                        }
+                    }
+                }
+                return HitTestResultBehavior.Stop;
+            }
+            return HitTestResultBehavior.Continue;
+        }
+
         void timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
@@ -167,16 +255,20 @@ namespace Classroom_Learning_Partner.Views
             if (pt.X > 1056) pt.X = 1056;
             if (pt.Y > 816) pt.Y = 816;
 
-            switch (App.MainWindowViewModel.PageInteractionMode)
+            // Don't want to add objects if in inverted mode
+            if (!(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
-                case PageInteractionMode.None:
-                    break;
-                case PageInteractionMode.SnapTile:
-                    CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt);
-                    CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
-                    break;
-                default:
-                    break;
+                switch (App.MainWindowViewModel.PageInteractionMode)
+                {
+                    case PageInteractionMode.None:
+                        break;
+                    case PageInteractionMode.SnapTile:
+                        CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt);
+                        CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
