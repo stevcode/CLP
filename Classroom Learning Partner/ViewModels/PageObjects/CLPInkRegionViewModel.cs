@@ -46,31 +46,16 @@
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public string CorrectAnswer
+        public ANALYSIS_TYPE AnalysisType
         {
-            get { return GetValue<string>(CorrectAnswerProperty); }
-            set { SetValue(CorrectAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CorrectAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CorrectAnswerProperty = RegisterProperty("CorrectAnswer", typeof(string));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public int AnalysisType
-        {
-            get { return GetValue<int>(AnalysisTypeProperty); }
+            get { return GetValue<ANALYSIS_TYPE>(AnalysisTypeProperty); }
             set { SetValue(AnalysisTypeProperty, value); }
         }
 
         /// <summary>
         /// Register the AnalysisType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(int));
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(ANALYSIS_TYPE));
 
         #endregion //Model
 

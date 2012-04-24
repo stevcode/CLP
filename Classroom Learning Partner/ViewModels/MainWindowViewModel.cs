@@ -1645,9 +1645,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (optionChooser.DialogResult == true)
             {
                 string correct_answer = optionChooser.CorrectAnswer.Text;
-                int selected_type = optionChooser.ExpectedType.SelectedIndex;
+                ANALYSIS_TYPE selected_type = (ANALYSIS_TYPE)optionChooser.ExpectedType.SelectedIndex;
 
-                CLPInkRegion region = new CLPInkRegion(correct_answer, selected_type);
+                CLPInkRegion region = new CLPInkRegion(selected_type);
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
         }

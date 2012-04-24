@@ -35,8 +35,7 @@
                 string correct_answer = optionChooser.CorrectAnswer.Text;
                 int selected_type = optionChooser.ExpectedType.SelectedIndex;
 
-                this.correct_answer.Content = correct_answer;
-                this.analysis_type.Content = selected_type.ToString();
+                this.AnalysisType.Text = selected_type.ToString();
             }
         }
     }
