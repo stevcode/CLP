@@ -88,8 +88,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Audio
            // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
-            
-            path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + page.UniqueID + ".wav";
+            string NotebookID = Page.ParentNotebookID.ToString();
+            //path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + NotebookID + @" - " + page.UniqueID + ".wav";
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
             {
                 DirectoryInfo worked = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\");
@@ -492,6 +492,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPHistory.replaceHistoryInPage(CLPHistory.GetSegmentedHistory(Page), Page);
             PlaybackImage = new Uri("..\\Images\\pause_blue.png", UriKind.Relative);
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             while (PageHistory.HistoryItems.Count > 0)
             {
                 try
@@ -520,7 +521,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
+                    Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
                     Redo();
+                    Logger.Instance.WriteToLog("------------end redo # " + i + "  " + DateTime.Now.ToString());
                 }
                 catch (Exception x)
                 { }
@@ -528,6 +531,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                 timer.Stop();
                 numRecordedSessions = 0;
+                InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
                 if (PlayingRecorded)
                 {
                     inRecorded = false;
@@ -544,12 +548,21 @@ namespace Classroom_Learning_Partner.ViewModels
                
                     int len = this.PageHistory.UndoneHistoryItems.Count;
                     TimeSpan interval = this.PageHistory.UndoneHistoryItems[len - 2].CreationDate - this.PageHistory.UndoneHistoryItems[len - 1].CreationDate;
+                    if (this.PageHistory.UndoneHistoryItems[len - 1].ItemType == HistoryItemType.Save || this.PageHistory.UndoneHistoryItems[len - 1].ItemType == HistoryItemType.Submit)
+                    {
+                        interval = new TimeSpan(0, 0, 0, 0, 0);
+                    }
                     //if there's more than two seconds between the actions just wait for two seconds
                     if(interval > new TimeSpan(0, 0, 2))
                     {
                         interval = new TimeSpan(0, 0, 2);
                     }
+                    if (interval < new TimeSpan(0, 0, 0, 0, 0))
+                    {
+                        interval = new TimeSpan(0, 0, 0, 0, 250);
+                    }
                     timer.Interval = interval;
+                    Logger.Instance.WriteToLog("Interval = " + interval.ToString());
                     i--;
                 }
            }
@@ -559,12 +572,25 @@ namespace Classroom_Learning_Partner.ViewModels
            }
            try
            {
+               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+               int len = this.PageHistory.UndoneHistoryItems.Count;
+               try
+               {
+                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 2].ItemType.ToString());
+                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 1].ItemType.ToString());
+               }
+               catch (Exception w) { }
                Redo();
+               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+                    
            }
            catch (Exception x)
            { }
         }
         int numRecordedSessions = 0;
+
+
+        /************** UNDO **************/
         public void Undo()
         {
             PageHistory.IgnoreHistory = true;
@@ -595,7 +621,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
-                            PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
+                            if (!PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
+                            {
+                                PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
+                            }
                             CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
                         }
                         break;
@@ -615,9 +644,27 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
                             {
+                                 
                                 Page.InkStrokes.Remove(s);
                                 PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
                                 break;
+                            }
+                        }
+                        //if its not in page.inkstrokes then maybe its in stamps inkstrokes?
+                        foreach (ICLPPageObject obj in Page.PageObjects)
+                        {
+                            if (obj.CanAcceptStrokes && obj.PageObjectStrokes.Count > 0)
+                            {
+                                foreach (String s in obj.PageObjectStrokes)
+                                {
+                                    if (s == item.ObjectID)
+                                    {
+
+                                        obj.PageObjectStrokes.Remove(s.ToString());
+                                        PageHistory.TrashedInkStrokes.Add((CLPPage.StringToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
+                                        break;
+                                    }
+                                }
                             }
                         }
                         break;
@@ -691,7 +738,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         if (pageObject != null)
                         {
                             CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
-                            PageHistory.TrashedPageObjects.Remove(item.ObjectID);
+                            if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
+                            {
+                                PageHistory.TrashedPageObjects.Remove(item.ObjectID);
+                            }
+
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
@@ -811,6 +862,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
+
                 //get the size if the file to calculate the duration so we can show a progress bar
                 FileInfo file = new FileInfo(path);
                 long sizeKb = file.Length / (long)1024.0;

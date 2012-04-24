@@ -20,6 +20,7 @@ using System.IO;
 using System.Windows.Documents;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using System.Diagnostics;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -135,6 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertAudioFileCommand = new Command(OnInsertAudioFileCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
@@ -595,7 +597,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the RecordBothImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData RecordBothImageProperty = RegisterProperty("RecordBothImage", typeof(Uri));
-
+        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -1600,7 +1602,22 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPStamp stamp = new CLPStamp(null);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
         }
+        /// <summary>
+        /// Gets the InsertBlankStampCommand command.
+        /// </summary>
+        public Command InsertAudioFileCommand { get; private set; }
 
+        /// <summary>
+        /// Method to invoke when the InsertBlankStampCommand command is executed.
+        /// </summary>
+        private void OnInsertAudioFileCommandExecute()
+        {
+            String ID = DateTime.Now.ToString("R").Replace(':', ' ');
+            ID.Replace(',', ' ');
+            CLPAudio audioFile = new CLPAudio(ID);
+            //(SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.StudentName + " - " +
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, audioFile);
+        }
         /// <summary>
         /// Gets the InsertSquareShapeCommand command.
         /// </summary>
@@ -1732,9 +1749,39 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool isRecordingAudio = false;
         public Timer record_timer = null;
         public void OnRecordAudioCommandExecute()
-        {
-            
+        {//hijacking this button to popup the file viewer for the teacher to see all audios for this page.
             CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            if(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\"))
+            {
+                Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\", true);
+            }
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\");
+            foreach (ICLPPageObject obj in page.PageObjects)
+            {
+                if (obj.PageObjectType == "CLPAudio")
+                {
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                    if (!File.Exists(path))
+                    {
+                        System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                    }
+                }
+                
+            }
+            foreach (ICLPPageObject obj in page.PageHistory.TrashedPageObjects.Values)
+            {
+                if (obj.PageObjectType == "CLPAudio")
+                {
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                    if (!File.Exists(path))
+                    {
+                        System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                    }
+                }
+
+            }
+            Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\");
+           /* CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             if (!isRecordingAudio)
             {
                 //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
@@ -1760,6 +1807,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch (Exception e)
                 { }
             }
+            */
         }
         bool flash = true;
         void record_timer_Elapsed(object sender, ElapsedEventArgs e)
