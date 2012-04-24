@@ -44,6 +44,16 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         }
 
+        //Parameterless constructor for Protobuf
+        protected CLPAudio()
+        {
+            this.File = new Byte[0];
+            this.ID = ID;
+            Position = new System.Windows.Point(10, 10);
+            Height = 50;
+            Width = 50;
+        }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>

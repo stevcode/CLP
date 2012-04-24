@@ -135,10 +135,12 @@ namespace Classroom_Learning_Partner
                 .AddSubType(9, typeof(CLPShape))
                 .AddSubType(10, typeof(CLPSnapTileContainer))
                 .AddSubType(11, typeof(CLPStrokePathContainer))
-                .AddSubType(12, typeof(CLPTextBox));
+                .AddSubType(12, typeof(CLPTextBox))
+                .AddSubType(13, typeof(CLPAudio));
             model[typeof(CLPStamp)]
                 .Add(1, "StrokePathContainer");
-            model[typeof(CLPImage)].Add(1, "ByteSource");
+            model[typeof(CLPImage)]
+                .Add(1, "ByteSource");
             model[typeof(CLPInkRegion)]
                 .Add(1, "CorrectAnswer")
                 .Add(2, "AnalysisType")
@@ -148,7 +150,8 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
             model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");
             model[typeof(CLPTextBox)].Add(1, "Text");
-
+            model[typeof(CLPAudio)].Add(1, "ID")
+                .Add(2, "File");
             //Page History
             model[typeof(CLPHistory)]
                 .Add(1, "IgnoreHistory")
