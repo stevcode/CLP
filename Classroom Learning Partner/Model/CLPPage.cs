@@ -368,7 +368,7 @@ namespace Classroom_Learning_Partner.Model
         [ProtoBeforeSerialization]
         public void serializePageObjectsHelper()
         {
-            ObservableCollection<string> blah = CLPPage.StrokesToStrings(InkStrokes);
+            Strokes = CLPPage.StrokesToStrings(InkStrokes);
             PageObjectsSer = new List<string>();
             PageStrokesSer = new List<string>(); 
             foreach (ICLPPageObject obj in PageObjects)
@@ -392,7 +392,7 @@ namespace Classroom_Learning_Partner.Model
                             PageObjectsSer.Add(PageStrokesSer.Count.ToString());
                             PageStrokesSer.Add(obj.PageObjectStrokes.Count.ToString());
                             PageStrokesSer.AddRange(obj.PageObjectStrokes);
-                            obj.PageObjectStrokes = new ObservableCollection<string>();
+                            obj.PageObjectStrokes.Clear(); //= new ObservableCollection<string>();
                         }
                         else
                         {
@@ -428,7 +428,7 @@ namespace Classroom_Learning_Partner.Model
                             PageObjectsSer.Add(PageStrokesSer.Count.ToString());
                             PageStrokesSer.Add(container.PageObjectStrokes.Count.ToString());
                             PageStrokesSer.AddRange(container.PageObjectStrokes);
-                            container.PageObjectStrokes = new ObservableCollection<string>();
+                            container.PageObjectStrokes.Clear();// = new ObservableCollection<string>();
                         }
                         else
                         {
@@ -453,7 +453,7 @@ namespace Classroom_Learning_Partner.Model
         [ProtoAfterDeserialization, ProtoAfterSerialization]
         public void deserializePageObjectsHelper()
         {
-            
+            InkStrokes = StringsToStrokes(Strokes);
             for (int i = 0; i < PageObjects.Count; i++)
             {
                 if (!PageObjectsSer[i].Equals(""))
@@ -473,8 +473,10 @@ namespace Classroom_Learning_Partner.Model
                             int count = Convert.ToInt32(PageStrokesSer[startIndex]);
                             if (count > 0)
                             {
+                                //StrokeCollection stampStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string> (PageStrokesSer.GetRange(startIndex + 1, count)));
+                                //stamp.AcceptStrokes(stampStrokes, new StrokeCollection());
                                 stamp.PageObjectStrokes = new ObservableCollection<string>(PageStrokesSer.GetRange(startIndex + 1, count));
-
+                                CLPPage.StringsToStrokes(stamp.PageObjectStrokes);
                             }
                         }
 

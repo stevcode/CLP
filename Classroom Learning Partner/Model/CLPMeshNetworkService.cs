@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner.Model
                     if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
                         Console.WriteLine("page received");
-                        Console.WriteLine(s_page);
+                        
 
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //interpolate the history to make it bigger again - claire

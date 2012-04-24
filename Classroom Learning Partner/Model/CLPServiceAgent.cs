@@ -309,9 +309,9 @@ namespace Classroom_Learning_Partner.Model
                 
 
                 //Test deserialize 
-                Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
-                CLPPage page2 = new CLPPage();
-                page2 = Serializer.Deserialize<CLPPage>(stream2);
+                //Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
+                //CLPPage page2 = new CLPPage();
+                //page2 = Serializer.Deserialize<CLPPage>(stream2);
                 //App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
                
 
@@ -331,10 +331,10 @@ namespace Classroom_Learning_Partner.Model
                 sizes.Add(s_history_pb.Length / 1024.0);
 
                 //Test deserialize 
-                Stream stream4 = new MemoryStream(Convert.FromBase64String(s_history_pb));
-                CLPHistory history = new CLPHistory();
+               // Stream stream4 = new MemoryStream(Convert.FromBase64String(s_history_pb));
+                //CLPHistory history = new CLPHistory();
                 //CLPHistory history = Serializer.Deserialize<CLPHistory>(stream4);
-                App.PageTypeModel.Deserialize(stream4, history, typeof(CLPHistory));
+                //App.PageTypeModel.Deserialize(stream4, history, typeof(CLPHistory));
 
                 //Submit Page using PB
                 App.Peer.Channel.SubmitFullPage(s_page_pb, App.Peer.UserName, notebookName);
