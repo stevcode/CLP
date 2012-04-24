@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNotebook(string notebookName)
         {
-
+            
             string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
             if (File.Exists(filePath))
             {

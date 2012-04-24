@@ -45,7 +45,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSelectNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.OpenNotebook(NotebookName);
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            CLPServiceAgent.Instance.OpenNotebook(NotebookName), null, "Loading Notebook", 0.0/0.0);
         }
     }
 }
