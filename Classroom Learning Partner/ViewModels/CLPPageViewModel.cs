@@ -28,8 +28,15 @@ namespace Classroom_Learning_Partner.ViewModels
         Pen,
         Marker,
         Eraser,
+        StrokeEraser
+    }
+
+    public enum PageEraserInteractionMode
+    {
+        None,
+        Eraser,
         StrokeEraser,
-        StudentStamp
+        ObjectStrokeEraser
     }
 
     [InterestedIn(typeof(MainWindowViewModel))]
@@ -49,6 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
+            EraserEditingMode = App.MainWindowViewModel.EraserEditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             Page = page;
 
@@ -292,6 +300,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
+        
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserEditingMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserEditingModeProperty); }
+            set { SetValue(EraserEditingModeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the EditingMode property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData EraserEditingModeProperty = RegisterProperty("EraserEditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -328,7 +350,7 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.CanSendToTeacher = true;
-            Console.WriteLine("adding page ofject to page with uniqueID: " + Page.UniqueID);
+            Console.WriteLine("adding page object to page with uniqueID: " + Page.UniqueID);
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -349,7 +371,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
                     PageHistory.HistoryItems.Add(item);
-                    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
+                //    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
                 }
             }
 

@@ -40,7 +40,7 @@
                                Background="Transparent" 
                                Strokes="{Binding Path=InkStrokes}"
                                EditingMode="{Binding Path=EditingMode}"
-                               EditingModeInverted="EraseByStroke"
+                               EditingModeInverted="{Binding Path=EraserEditingMode}"
                                DefaultDrawingAttributes="{Binding Path=DefaultDA}">
                     </InkCanvas>
                 </Canvas>

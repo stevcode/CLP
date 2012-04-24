@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<CLPHistoryItem> HistoryItems
         {
             get { return GetValue<ObservableCollection<CLPHistoryItem>>(HistoryItemsProperty); }
-            private set { SetValue(HistoryItemsProperty, value); }
+            set { SetValue(HistoryItemsProperty, value); }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
         {
             get { return GetValue<ObservableCollection<CLPHistoryItem>>(UndoneHistoryItemsProperty); }
-            private set { SetValue(UndoneHistoryItemsProperty, value); }
+            set { SetValue(UndoneHistoryItemsProperty, value); }
         }
 
         /// <summary>
