@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
         None,
         Eraser,
         StrokeEraser,
-        ObjectStrokeEraser
+        ObjectEraser
     }
 
     [InterestedIn(typeof(MainWindowViewModel))]
@@ -56,7 +56,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PlaybackControlsVisibility = Visibility.Collapsed;
             DefaultDA = App.MainWindowViewModel.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.EditingMode;
-            EraserEditingMode = App.MainWindowViewModel.EraserEditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             Page = page;
 
@@ -301,20 +300,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
         
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public InkCanvasEditingMode EraserEditingMode
-        {
-            get { return GetValue<InkCanvasEditingMode>(EraserEditingModeProperty); }
-            set { SetValue(EraserEditingModeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData EraserEditingModeProperty = RegisterProperty("EraserEditingMode", typeof(InkCanvasEditingMode));
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

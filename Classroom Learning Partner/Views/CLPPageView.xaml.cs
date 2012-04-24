@@ -50,9 +50,8 @@ namespace Classroom_Learning_Partner.Views
             {
                 switch (App.MainWindowViewModel.PageEraserInteractionMode)
                 {
-                    case PageEraserInteractionMode.ObjectStrokeEraser:
+                    case PageEraserInteractionMode.ObjectEraser:
                         VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraserHitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
-                        //InkCanvas.StrokesProperty
                         break;
                     default:
                         break;
