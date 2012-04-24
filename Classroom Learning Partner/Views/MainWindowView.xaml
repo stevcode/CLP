@@ -6,6 +6,7 @@
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
         xmlns:vww="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
+        xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
         mc:Ignorable="d"
         Icon="..\Images\InkWell.ico"
         Height="800"
@@ -22,9 +23,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Window.InputBindings>
         <KeyBinding Command="{Binding Path=SetInstructorCommand}"
               Gesture="CTRL+SHIFT+I" />
@@ -135,41 +137,48 @@
                     
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup x:Name="ToolsGroup" Header="Pen Type">
+                <ribbon:RibbonGroup Header="Pen Type">
 
                     <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}" IsChecked="True" Checked="ToolsGroup_Checked" />
+                        Command="{Binding Path=SetPenCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Pen'}" />
                     
                     <ribbon:RibbonToggleButton
                         Label="Marker"
                         LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}" Checked="ToolsGroup_Checked" />
+                        Command="{Binding Path=SetMarkerCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Marker'}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetEraserCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Stroke Eraser"
                         LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetStrokeEraserCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
                     
                     <ribbon:RibbonToggleButton
-                        Label="Tile"
+                        Label="SnapTile"
                         LargeImageSource="..\Images\SnapTileIcon.png"
-                        Command="{Binding Path=SetSnapTileCommand}" Checked="ToolsGroup_Checked"/>
+                        Command="{Binding Path=SetSnapTileCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='SnapTile'}"/>
 
-                    <ribbon:RibbonToggleButton
+                    <ribbon:RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}" />
-                    <ribbon:RibbonToggleButton
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
+                    
+                    <ribbon:RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
-                        Command="{Binding Path=InsertAudioFileCommand}" />     
+                        Command="{Binding Path=InsertAudioFileCommand}"/>
+                
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Pen Color">

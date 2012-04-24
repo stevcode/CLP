@@ -21,10 +21,15 @@ using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public enum PageObjectAddMode
+    public enum PageInteractionMode
     {
         None,
-        SnapTile
+        SnapTile,
+        Pen,
+        Marker,
+        Eraser,
+        StrokeEraser,
+        StudentStamp
     }
 
     [InterestedIn(typeof(MainWindowViewModel))]
