@@ -136,29 +136,41 @@ namespace Classroom_Learning_Partner.Model
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
 
-                int i = 1;
+                
                 foreach (CLPPage page in notebook.Pages)
                 {
                     if (!page.PageHistory.IsSaved())
                     {
                         //submit page, removing history first
-                        //CLPHistory tempHistory = removeHistoryFromPageVM(page);
+                        DateTime now = DateTime.Now;
+                        CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
 
                         //Serialize using protobuf
-                        string s_page = ObjectSerializer.ToString(notebook);
+                        MemoryStream stream = new MemoryStream();
+                        Serializer.PrepareSerializer<CLPPage>();
+                        Serializer.Serialize<CLPPage>(stream, page);
+                        string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                        //string s_page = ObjectSerializer.ToString(notebook);
 
                         //Actual send
-                        DateTime now = DateTime.Now;
-                        App.Peer.Channel.SavePage(s_page, App.Peer.UserName, now, notebook.NotebookName);
-                        Logger.Instance.WriteToLog("Page " + i.ToString() + " sent to server(save), size: " + (s_page.Length / 1024.0).ToString() + " kB");
+
+                        System.Threading.Thread thread = new System.Threading.Thread(() =>
+                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName));
+                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
                         //replace history:
-                        //replacePageHistory(tempHistory, page);
+                        CLPHistory.replaceHistoryInPage(tempHistory, page);
                         CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
                         page.PageHistory.HistoryItems.Add(item);
 
                     }
-                    i++;
+                    else
+                    {
+                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
+                    }
+
                 }
+
+                Logger.Instance.WriteToLog("===================");
             }
 
         }
