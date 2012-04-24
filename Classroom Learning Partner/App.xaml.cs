@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner
             //Uncomment this to enable Catel Logging
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Student;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
@@ -105,13 +105,14 @@ namespace Classroom_Learning_Partner
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
                 .Add(12, "SubmissionTime")
-                .Add(14, "PageStrokesSer")
+                //.Add(14, "PageStrokesSer")
                 .Add(17, "PageObjectsSer");
-            
+
+           // model[typeof(CLPPage)][14].OverwriteList = true;
             model[typeof(CLPPage)][17].AsReference = true;
             model[typeof(CLPPage)][17].OverwriteList = true;
-            model[typeof(CLPPage)][14].AsReference = true;
-            model[typeof(CLPPage)][14].OverwriteList = true;
+            //model[typeof(CLPPage)][14].AsReference = true;
+           
 
             
             //Page Object hierarchy 

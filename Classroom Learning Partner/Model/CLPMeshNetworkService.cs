@@ -95,13 +95,15 @@ namespace Classroom_Learning_Partner.Model
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-                    //Deserialize Using Protobuf
-                    Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
-                    CLPPage page = new CLPPage();
-                    page = Serializer.Deserialize<CLPPage>(stream);
+
+                        
 
                     if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
+                        //Deserialize Using Protobuf
+                        Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
+                        CLPPage page = new CLPPage();
+                        page = Serializer.Deserialize<CLPPage>(stream);
                         Console.WriteLine("page received");
                         
 
@@ -125,6 +127,10 @@ namespace Classroom_Learning_Partner.Model
                     }
                     else if (App.CurrentUserMode == App.UserMode.Server)
                     {
+                        //Deserialize Using Protobuf
+                        Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
+                        CLPPage page = new CLPPage();
+                        page = Serializer.Deserialize<CLPPage>(stream);
                         pagecount++;
                         Console.WriteLine("Page Recieved, Current Count: " + pagecount.ToString());
                         //Database call
