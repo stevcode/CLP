@@ -468,7 +468,9 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="External Libraries\lame.exe" />
+    <Content Include="External Libraries\lame.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\recordflash2.png" />
     <Resource Include="Images\recordflash1.png" />
     <Resource Include="Images\recording.png" />
@@ -485,13 +487,11 @@
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
     <Content Include="External Libraries\IAWinFX.dll" />
-    <Content Include="External Libraries\lame_enc.dll" />
     <Content Include="External Libraries\Microsoft.Ink.dll" />
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\protobuf-net.dll" />
-    <Resource Include="External Libraries\protobuf-net.dll.VisualState.xml" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\Inkwell.ico" />

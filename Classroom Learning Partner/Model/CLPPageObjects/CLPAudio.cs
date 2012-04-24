@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 System.IO.File.Delete(outmp3File);
             }
 	        ProcessStartInfo psi = new ProcessStartInfo();
-	        psi.FileName = @"..\..\External Libraries\lame.exe";
+	        psi.FileName = @"External Libraries\lame.exe";
 	        psi.Arguments = "-b 20 " + wavFile + " " + outmp3File;
 	        psi.WindowStyle = ProcessWindowStyle.Hidden;
 	        Process p = Process.Start(psi);
