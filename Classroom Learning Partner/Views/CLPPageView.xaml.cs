@@ -178,31 +178,42 @@ namespace Classroom_Learning_Partner.Views
                     if ((result.VisualHit as Grid).DataContext is CLPStrokePathContainer)
                     {
                         Console.WriteLine("StampObject Background: " + ((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground);
-                        if (!((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground || (((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        if (!((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground || 
+                            (((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPStrokePathContainer);
                         }
                     }
                     else if ((result.VisualHit as Grid).DataContext is CLPSnapTileContainer)
                     {
-                        if (!((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground || (((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        if (!((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground || 
+                            (((result.VisualHit as Grid).DataContext as CLPSnapTileContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPSnapTileContainer);
                         }
                     }
                     else if ((result.VisualHit as Grid).DataContext is CLPShape)
                     {
-                        if (!((result.VisualHit as Grid).DataContext as CLPShape).IsBackground || (((result.VisualHit as Grid).DataContext as CLPShape).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        if (!((result.VisualHit as Grid).DataContext as CLPShape).IsBackground || 
+                            (((result.VisualHit as Grid).DataContext as CLPShape).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPShape);
                         }
                     }
                     else if ((result.VisualHit as Grid).DataContext is CLPStamp)
                     {
-                        Console.WriteLine("Stamp Background: " + ((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground);
-                        if (!((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground || (((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        if (!((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground || 
+                            (((result.VisualHit as Grid).DataContext as CLPStamp).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPStamp);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPAudio)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPAudio).IsBackground ||
+                            (((result.VisualHit as Grid).DataContext as CLPAudio).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPAudio);
                         }
                     }
                 }
@@ -210,21 +221,28 @@ namespace Classroom_Learning_Partner.Views
             }
             else if (result.VisualHit.GetType().BaseType == typeof(Shape))
             {
-                if ((result.VisualHit as Shape).Name == "PageObjectHitBox")
+                if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
                 {
-                    Console.WriteLine("Result: PageObjectHitBox");
-                    Console.WriteLine("Context: " + (result.VisualHit as Shape).DataContext);
-                    if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
+                    if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground || 
+                        (((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground && App.MainWindowViewModel.IsAuthoring))
+                    {
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject);
+                    }
+                }
+                if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
+                {
+                    if (!((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject.IsBackground ||
+                        (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject.IsBackground && App.MainWindowViewModel.IsAuthoring))
                     {
                         CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject);
                     }
-                    else if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
+                }
+                if ((result.VisualHit as Shape).DataContext is CLPAudio)
+                {
+                    if (!((result.VisualHit as Shape).DataContext as CLPAudio).IsBackground ||
+                        (((result.VisualHit as Shape).DataContext as CLPAudio).IsBackground && App.MainWindowViewModel.IsAuthoring))
                     {
-                        if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground || 
-                            (((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject.IsBackground && App.MainWindowViewModel.IsAuthoring))
-                        {
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).PageObject);
-                        }
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Shape).DataContext as CLPAudio);
                     }
                 }
                 return HitTestResultBehavior.Stop;
