@@ -172,6 +172,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName)
         {
+            
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
             (DispatcherOperationCallback)delegate(object arg)
             {
@@ -200,7 +201,7 @@ namespace Classroom_Learning_Partner.Model
         {
             //recieve notebook
             //App.PeerNode.channel
-
+            
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Notebook save requtest received");
