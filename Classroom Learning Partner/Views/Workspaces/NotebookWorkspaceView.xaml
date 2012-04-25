@@ -14,8 +14,8 @@
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />
@@ -53,7 +53,8 @@
             </Control.Style>
         </Control>
 
-        <Border HorizontalAlignment="Right"  Grid.Column="2" BorderThickness="2,2,2,2" Width="150" BorderBrush="LightGreen" CornerRadius="5,5,5,5" Background="White">
+        <Border Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
+            HorizontalAlignment="Right"  Grid.Column="2" BorderThickness="2,2,2,2" Width="150" BorderBrush="LightGreen" CornerRadius="5,5,5,5" Background="White">
             <Grid Name="GridDisplays">
                 <ListBox x:Name="GridDisplaysListBox" Width="145"
                     ItemsSource="{Binding Path=GridDisplays, UpdateSourceTrigger=PropertyChanged}"
