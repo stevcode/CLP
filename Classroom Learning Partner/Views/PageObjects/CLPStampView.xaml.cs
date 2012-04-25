@@ -97,5 +97,16 @@
         {
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
         }
+
+        private void PageObjectHitBox_StylusEnter(object sender, StylusEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
+        }
+
+        private void PageObjectHitBox_StylusLeave(object sender, StylusEventArgs e)
+        {
+            (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
+        }
+
     }
 }
