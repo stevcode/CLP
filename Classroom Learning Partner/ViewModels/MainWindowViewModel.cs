@@ -61,8 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = Colors.Black;
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
-            EraserEditingMode = InkCanvasEditingMode.None;
-            PageEraserInteractionMode = PageEraserInteractionMode.ObjectStrokeEraser;
+            PageEraserInteractionMode = PageEraserInteractionMode.ObjectEraser;
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -452,20 +451,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageInteractionMode property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public InkCanvasEditingMode EraserEditingMode
-        {
-            get { return GetValue<InkCanvasEditingMode>(EraserEditingModeProperty); }
-            set { SetValue(EraserEditingModeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData EraserEditingModeProperty = RegisterProperty("EraserEditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -911,7 +896,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
             }
         }
 
