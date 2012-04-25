@@ -8,6 +8,7 @@ using System.Windows.Ink;
 using Microsoft.Ink;
 using Classroom_Learning_Partner.Resources;
 using Catel.Data;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -85,7 +86,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         protected override void OnDeserialized()
         {
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(PageObjectStrokes), AnalysisType);
+            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
+            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;
             base.OnDeserialized();
@@ -94,7 +96,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         [OnSerializing]
         void InterpretStrokes(StreamingContext sc)
         {
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(PageObjectStrokes), AnalysisType);
+            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
+            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;
         }
