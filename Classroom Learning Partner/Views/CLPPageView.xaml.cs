@@ -42,11 +42,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!(isMouseDown || (e.StylusDevice != null && e.StylusDevice.Inverted)))
-            {
-                VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
-            }
-            else if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
+            if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
             {
                 switch (App.MainWindowViewModel.PageEraserInteractionMode)
                 {
@@ -55,6 +51,13 @@ namespace Classroom_Learning_Partner.Views
                         break;
                     default:
                         break;
+                }
+            }
+            else 
+            {
+                if (!(isMouseDown))
+                {
+                    VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
                 }
             }
         }
@@ -123,7 +126,14 @@ namespace Classroom_Learning_Partner.Views
                         timer.Interval = TimeSpan.FromMilliseconds(timer_delay);
                         if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
                         {
-                            if (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).IsStamped)
+                            if (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).IsStamped && !((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject.IsBackground)
+                            {
+                                timer.Start();
+                            }
+                        }
+                        else if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
+                        {
+                            if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).IsBackground)
                             {
                                 timer.Start();
                             }
@@ -153,15 +163,6 @@ namespace Classroom_Learning_Partner.Views
                 
                 return HitTestResultBehavior.Continue;
             }
-        }
-
-        private HitTestFilterBehavior EraserHitFilter(DependencyObject o)
-        {
-            if (o.GetType() == typeof(Grid) && (o as Grid).Name == "ContainerHitBox")
-            {
-                return HitTestFilterBehavior.ContinueSkipChildren;
-            }
-            return HitTestFilterBehavior.Continue;
         }
 
         private HitTestResultBehavior EraserHitResult(HitTestResult result)
