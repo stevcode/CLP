@@ -9,6 +9,7 @@ using Microsoft.Ink;
 using Classroom_Learning_Partner.Resources;
 using Catel.Data;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -16,6 +17,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [Serializable]
     public class CLPInkRegion : CLPPageObjectBase
     {
+
+        #region Variables
+
+        private Object interpretation_lock = new Object();
+        private Thread interpretation_thread = null;
+
+        #endregion //Variables
 
         #region Constructors
 
@@ -86,20 +94,30 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         protected override void OnDeserialized()
         {
-            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
-            if (result != null)
-                StoredAnswer = result;
-            base.OnDeserialized();
+            lock (interpretation_lock)
+            {
+                base.OnDeserialized();
+            }
         }
 
         [OnSerializing]
-        void InterpretStrokes(StreamingContext sc)
+        void OnSerializing(StreamingContext sc)
         {
-            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
-            if (result != null)
-                StoredAnswer = result;
+            lock (interpretation_lock)
+            {
+
+            }
+        }
+
+        void InterpretStrokes()
+        {
+            lock (interpretation_lock)
+            {
+                ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
+                string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
+                if (result != null)
+                    StoredAnswer = result;
+            }
         }
 
         public override string PageObjectType
@@ -109,15 +127,28 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public override ICLPPageObject Duplicate()
         {
-            CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
-            newInkRegion.UniqueID = Guid.NewGuid().ToString();
-
-            return newInkRegion;
+            lock (interpretation_lock)
+            {
+                CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
+                newInkRegion.UniqueID = Guid.NewGuid().ToString();
+                return newInkRegion;
+            }
         }
 
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            this.ProcessStrokes(addedStrokes, removedStrokes);
+            if (interpretation_thread != null && interpretation_thread.IsAlive)
+            {
+                Console.WriteLine("Aborting thread");
+                interpretation_thread.Abort();
+            }
+            lock (interpretation_lock)
+            {
+                this.ProcessStrokes(addedStrokes, removedStrokes);
+            }
+            interpretation_thread = new Thread(new ThreadStart(this.InterpretStrokes));
+            interpretation_thread.Name = "Ink Interpretation Thread";
+            interpretation_thread.Start();
         }
 
         #endregion
