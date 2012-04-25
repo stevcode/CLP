@@ -4,6 +4,7 @@
     using Classroom_Learning_Partner.Model.CLPPageObjects;
     using System.Windows.Ink;
     using Catel.Data;
+    using Classroom_Learning_Partner.Resources;
 
     /// <summary>
     /// UserControl view model.

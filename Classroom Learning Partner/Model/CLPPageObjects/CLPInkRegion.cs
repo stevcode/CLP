@@ -6,11 +6,11 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using Microsoft.Ink;
+using Classroom_Learning_Partner.Resources;
 using Catel.Data;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
-    public enum ANALYSIS_TYPE { DEFAULT, NUMBER, DIGIT, WORDS };
 
     [Serializable]
     public class CLPInkRegion : CLPPageObjectBase
@@ -83,62 +83,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        public void InterpretStrokes()
-        {
-            InkAnalyzer analyzer = new InkAnalyzer();
-            AnalysisHintNode hint = analyzer.CreateAnalysisHint();
-            hint.Location.MakeInfinite();
-            if (AnalysisType != ANALYSIS_TYPE.DEFAULT)
-            {
-                switch (AnalysisType)
-                {
-                    case ANALYSIS_TYPE.NUMBER:
-                        Console.WriteLine("Number");
-                        // Number sentence or number
-                        hint.Factoid = Factoid.Number;
-                        break;
-                    case ANALYSIS_TYPE.DIGIT:
-                        // Digit
-                        Console.WriteLine("Digit");
-                        hint.Factoid = Factoid.Digit;
-                        break;
-                    case ANALYSIS_TYPE.WORDS:
-                        // Words
-                        Console.WriteLine("Words");
-                        hint.Factoid = Factoid.SystemDictionary;
-                        break;
-                    default:
-                        Console.WriteLine("Not a valid ink analysis type");
-                        break;
-                }
-                hint.CoerceToFactoid = true;
-            }
-
-            if (PageObjectStrokes.Count > 0)
-            {
-                analyzer.AddStrokes(CLPPage.StringsToStrokes(PageObjectStrokes));
-                if (analyzer.Analyze().Successful)
-                {
-                    Console.WriteLine("Storing interpretation result");
-                    StoredAnswer = analyzer.GetRecognizedString();
-                }
-            }
-
-            analyzer.Dispose();
-        }
-
-
-
         protected override void OnDeserialized()
         {
-            InterpretStrokes();
+            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(PageObjectStrokes), AnalysisType);
+            if (result != null)
+                StoredAnswer = result;
             base.OnDeserialized();
         }
 
         [OnSerializing]
         void InterpretStrokes(StreamingContext sc)
         {
-            InterpretStrokes();
+            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(PageObjectStrokes), AnalysisType);
+            if (result != null)
+                StoredAnswer = result;
         }
 
         public override string PageObjectType
