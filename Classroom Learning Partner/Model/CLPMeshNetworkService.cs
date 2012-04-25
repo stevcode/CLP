@@ -64,6 +64,9 @@ namespace Classroom_Learning_Partner.Model
         void AddPageObjectToPage(string pageID, string stringPageObject);
     }
 
+    public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
+    {
+    }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract

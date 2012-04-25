@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNotebook(string notebookName)
         {
-            
+
             string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
             if (File.Exists(filePath))
             {
@@ -126,47 +126,6 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void SaveNotebookOverNetwork(object notebook)
-        {
-            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
-            {
-
-
-                foreach (CLPPage page in ((CLPNotebook)notebook).Pages)
-                {
-                    if (!page.PageHistory.IsSaved())
-                    {
-                        //submit page, removing history first
-                        DateTime now = DateTime.Now;
-                        CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
-
-                        //Serialize using protobuf
-                        MemoryStream stream = new MemoryStream();
-                        Serializer.PrepareSerializer<CLPPage>();
-                        Serializer.Serialize<CLPPage>(stream, page);
-                        string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                        //string s_page = ObjectSerializer.ToString(notebook);
-
-                        //Actual send
-
-                        App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, ((CLPNotebook)notebook).NotebookName);
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
-                        //replace history:
-                        CLPHistory.replaceHistoryInPage(tempHistory, page);
-                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
-                        page.PageHistory.HistoryItems.Add(item);
-
-                    }
-                    else
-                    {
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
-                    }
-
-                }
-
-                Logger.Instance.WriteToLog("===================");
-            }
-        }
         public void SaveNotebook(CLPNotebook notebook)
         {
             //make async?
@@ -174,12 +133,46 @@ namespace Classroom_Learning_Partner.Model
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             notebook.Save(filePath);
             Console.WriteLine("Notebook saved locally");
-
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
-                
-                System.Threading.Thread savingThread = new System.Threading.Thread(CLPServiceAgent.Instance.SaveNotebookOverNetwork);
-                savingThread.Start(notebook);
+
+                System.Threading.Thread thread = new System.Threading.Thread(() =>
+                {
+                    foreach (CLPPage page in notebook.Pages)
+                    {
+                        if (!page.PageHistory.IsSaved())
+                        {
+                            //submit page, removing history first
+                            DateTime now = DateTime.Now;
+                            CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+
+                            //Serialize using protobuf
+                            MemoryStream stream = new MemoryStream();
+                            Serializer.PrepareSerializer<CLPPage>();
+                            Serializer.Serialize<CLPPage>(stream, page);
+                            string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                            //string s_page = ObjectSerializer.ToString(notebook);
+
+                            //Actual send
+
+                            
+                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName);
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
+                            //replace history:
+                            CLPHistory.replaceHistoryInPage(tempHistory, page);
+                            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                            page.PageHistory.HistoryItems.Add(item);
+
+                        }
+                        else
+                        {
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
+                        }
+
+                    }
+                });
+
+                Logger.Instance.WriteToLog("===================");
             }
 
         }
