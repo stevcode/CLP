@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNotebook(string notebookName)
         {
-            
+
             string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
             if (File.Exists(filePath))
             {
@@ -136,39 +136,41 @@ namespace Classroom_Learning_Partner.Model
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
 
-                
-                foreach (CLPPage page in notebook.Pages)
+                System.Threading.Thread thread = new System.Threading.Thread(() =>
                 {
-                    if (!page.PageHistory.IsSaved())
+                    foreach (CLPPage page in notebook.Pages)
                     {
-                        //submit page, removing history first
-                        DateTime now = DateTime.Now;
-                        CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+                        if (!page.PageHistory.IsSaved())
+                        {
+                            //submit page, removing history first
+                            DateTime now = DateTime.Now;
+                            CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
 
-                        //Serialize using protobuf
-                        MemoryStream stream = new MemoryStream();
-                        Serializer.PrepareSerializer<CLPPage>();
-                        Serializer.Serialize<CLPPage>(stream, page);
-                        string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                        //string s_page = ObjectSerializer.ToString(notebook);
+                            //Serialize using protobuf
+                            MemoryStream stream = new MemoryStream();
+                            Serializer.PrepareSerializer<CLPPage>();
+                            Serializer.Serialize<CLPPage>(stream, page);
+                            string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                            //string s_page = ObjectSerializer.ToString(notebook);
 
-                        //Actual send
+                            //Actual send
 
-                        System.Threading.Thread thread = new System.Threading.Thread(() =>
-                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName));
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
-                        //replace history:
-                        CLPHistory.replaceHistoryInPage(tempHistory, page);
-                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
-                        page.PageHistory.HistoryItems.Add(item);
+                            
+                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName);
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
+                            //replace history:
+                            CLPHistory.replaceHistoryInPage(tempHistory, page);
+                            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                            page.PageHistory.HistoryItems.Add(item);
+
+                        }
+                        else
+                        {
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
+                        }
 
                     }
-                    else
-                    {
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
-                    }
-
-                }
+                });
 
                 Logger.Instance.WriteToLog("===================");
             }
@@ -355,6 +357,7 @@ namespace Classroom_Learning_Partner.Model
                 CLPHistory.replaceHistoryInPage(tempHistory, page);
 
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null)); 
 
 
                 //log sizes
@@ -822,6 +825,42 @@ namespace Classroom_Learning_Partner.Model
             //{
             ////do something else
             //}
+        }
+
+        internal void SaveAllHistories(CLPNotebook notebook)
+        {
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
+            {
+
+                Logger.Instance.WriteToLog("Save All Histories");
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    if (true) //In the future, check to see if history has been saved 
+                    {
+                        //submit page, removing history first
+                        DateTime now = DateTime.Now;
+                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(page);
+                        
+                        //Serialize history using protobuf
+                        MemoryStream stream = new MemoryStream();
+                        Serializer.PrepareSerializer<CLPHistory>();
+                        Serializer.Serialize<CLPHistory>(stream, segmentedHistory);
+                        string s_history_pb = Convert.ToBase64String(stream.ToArray());
+                        //string s_page = ObjectSerializer.ToString(notebook);
+
+                        //Actual send
+
+                        
+                         App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName);
+                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
+                        //replace history:
+                        CLPHistory.replaceHistoryInPage(segmentedHistory, page);
+
+                    }
+                }
+
+                Logger.Instance.WriteToLog("===================");
+            }
         }
     }
 }
