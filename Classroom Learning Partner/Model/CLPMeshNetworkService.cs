@@ -40,6 +40,9 @@ namespace Classroom_Learning_Partner.Model
         void SavePage(string page, string userName, DateTime submitTime, string notebookName);
 
         [OperationContract(IsOneWay = true)]
+        void SaveHistory(string s_history, string userName, DateTime time, string notebookName);
+
+        [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
 
         [OperationContract(IsOneWay = true)]
@@ -61,9 +64,6 @@ namespace Classroom_Learning_Partner.Model
         void AddPageObjectToPage(string pageID, string stringPageObject);
     }
 
-    public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
-    {
-    }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class CLPMeshNetworkService : ICLPMeshNetworkContract
@@ -89,7 +89,9 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
-
+        public void SaveHistory(string s_history, string userName, DateTime time, string notebookName)
+        {
+        }
         public void SubmitFullPage(string s_page, string userName, string notebookName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -136,7 +138,9 @@ namespace Classroom_Learning_Partner.Model
                         //Database call
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
+                            //save as submission and as page save
                             CLPServiceAgent.Instance.SavePageDB(page, userName, true, DateTime.Now, notebookName);
+                            CLPServiceAgent.Instance.SavePageDB(page, userName, false, DateTime.Now, notebookName);
                         }
                     }
                     return null;

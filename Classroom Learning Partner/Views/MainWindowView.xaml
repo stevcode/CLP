@@ -90,6 +90,11 @@
                                                   KeyTip="A"
                                                   ImageSource="..\Images\LargeIcon.png" />
                     
+                    <ribbon:RibbonApplicationMenuItem Header="Save Notebook Histories"
+                                                  Command="{Binding Path=SaveAllHistoriesCommand}"
+                                                  KeyTip="Bs"
+                                                  ImageSource="..\Images\LargeIcon.png" />
+
                     <ribbon:RibbonApplicationMenuItem Header="Convert to XPS"
                                                   Command="{Binding Path=ConvertToXPSCommand}"
                                                   KeyTip="C"

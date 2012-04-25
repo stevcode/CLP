@@ -116,6 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
+            SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -917,6 +918,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SaveAllNotebooksCommand command.
         /// </summary>
+        public Command SaveAllHistoriesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SaveNotebookCommand command is executed.
+        /// </summary>
+        private void OnSaveAllHistoriesCommandExecute()
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+
+            {
+                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+            }
+        }
+
+        /// <summary>
+        /// Gets the SaveAllNotebooksCommand command.
+        /// </summary>
         public Command SaveAllNotebooksCommand { get; private set; }
 
         /// <summary>
@@ -942,7 +960,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// Method to invoke when the ImportLocalNotebooksDBCommandExecute command is executed.
         /// </summary>
         private void ImportLocalNotebooksDBCommandExecute()
         {
@@ -953,7 +971,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command QueryDatabaseCommand { get; private set; }
 
         /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// Method to invoke when the QueryDatabaseCommand command is executed.
         /// </summary>
         private void QueryDatabaseCommandExecute()
         {
