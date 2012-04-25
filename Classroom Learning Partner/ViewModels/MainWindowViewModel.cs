@@ -1741,6 +1741,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPStamp stamp = new CLPStamp(null);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
+            if (EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
         }
         /// <summary>
         /// Gets the InsertBlankStampCommand command.
