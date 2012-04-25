@@ -47,6 +47,9 @@
             </Border>
         </Viewbox>
 
+        <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
+        HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
+
         <StackPanel  Height="40" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Visibility="{Binding Path=PlaybackControlsVisibility}">
             <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}">
                 <Image Source="{Binding Path=PlaybackImage}"></Image>
