@@ -220,7 +220,7 @@ namespace Classroom_Learning_Partner.Model
             else
             {
                 //Logger.Instance.WriteToLog("Zero history items");
-                return true;
+                return false;
             }
         }
 

@@ -53,6 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Ribbon Content
             SideBarVisibility = true;
+            GridDisplaysVisibility = false;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -115,6 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
+            SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -483,6 +485,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the SideBarVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool GridDisplaysVisibility
+        {
+            get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
+            set { SetValue(GridDisplaysVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplaysVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool));
 
         #region Convert to XAMLS?
 
@@ -895,7 +911,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
+            }
+        }
+
+        /// <summary>
+        /// Gets the SaveAllNotebooksCommand command.
+        /// </summary>
+        public Command SaveAllHistoriesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SaveNotebookCommand command is executed.
+        /// </summary>
+        private void OnSaveAllHistoriesCommandExecute()
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+
+            {
+                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
             }
         }
 
@@ -927,7 +961,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
         /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// Method to invoke when the ImportLocalNotebooksDBCommandExecute command is executed.
         /// </summary>
         private void ImportLocalNotebooksDBCommandExecute()
         {
@@ -938,7 +972,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command QueryDatabaseCommand { get; private set; }
 
         /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
+        /// Method to invoke when the QueryDatabaseCommand command is executed.
         /// </summary>
         private void QueryDatabaseCommandExecute()
         {

@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner
             //LogManager.RegisterDebugListener();
 
             CurrentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.Using;
+            _databaseUse = DatabaseMode.NotUsing;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();

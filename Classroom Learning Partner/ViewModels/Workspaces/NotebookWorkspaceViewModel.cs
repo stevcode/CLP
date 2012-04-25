@@ -12,6 +12,8 @@ using Classroom_Learning_Partner.Views;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.IO;
+using Classroom_Learning_Partner.Views.Displays;
+using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -29,6 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             : base()
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
+            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
 
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
@@ -258,6 +261,23 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
         }
+
+
+        
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
+        {
+            SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+        }
+
 
         public string WorkspaceName
         {
