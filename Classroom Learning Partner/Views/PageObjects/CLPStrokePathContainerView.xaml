@@ -172,7 +172,7 @@
             <Rectangle x:Name="PageObjectHitBox" Tag="0"  Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
             <ContentControl IsHitTestVisible="True" Style="{StaticResource InternalStyle}"  x:Name="InternalView"  />
 
-            <ItemsControl
+            <ItemsControl ClipToBounds="True"
                                   ItemsSource="{Binding Path=StrokePathViewModels}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
