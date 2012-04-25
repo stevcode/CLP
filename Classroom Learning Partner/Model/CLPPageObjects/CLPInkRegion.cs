@@ -5,8 +5,8 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using Catel.Data;
 using Microsoft.Ink;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -119,20 +119,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 analyzer.AddStrokes(CLPPage.StringsToStrokes(PageObjectStrokes));
                 if (analyzer.Analyze().Successful)
                 {
-                    Console.WriteLine("doing this");
-                    foreach (System.Windows.Ink.Stroke stroke in CLPPage.StringsToStrokes(PageObjectStrokes))
-                    {
-                        stroke.DrawingAttributes.Color = System.Windows.Media.Colors.Red;
-                    }
-                    string result = analyzer.GetRecognizedString();
-                    if (result != StoredAnswer)
-                    {
-                        StoredAnswer = result;
-                    }
+                    Console.WriteLine("Storing interpretation result");
+                    StoredAnswer = analyzer.GetRecognizedString();
                 }
             }
 
-            //Steve/Kelsey - I added this at the recommendation of a Warning in the Error List, if it appears to cause problems, remove it.
             analyzer.Dispose();
         }
 
