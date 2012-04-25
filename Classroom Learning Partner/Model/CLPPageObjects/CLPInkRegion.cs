@@ -133,7 +133,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
 
             //Steve/Kelsey - I added this at the recommendation of a Warning in the Error List, if it appears to cause problems, remove it.
-            //analyzer.Dispose();
+            analyzer.Dispose();
         }
 
 
