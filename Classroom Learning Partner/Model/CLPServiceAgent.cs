@@ -26,8 +26,8 @@ namespace Classroom_Learning_Partner.Model
     {
         private CLPServiceAgent()
         {
-        }
 
+        }
 
         //readonly allows thread-safety and means it can only be allocated once.
         private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
@@ -141,8 +141,12 @@ namespace Classroom_Learning_Partner.Model
 
                     int numPagesSaved = 0;
                     DateTime startSavingTime= DateTime.Now;
+                    HistoryItemType lastItem = HistoryItemType.EraseInk;
+                    int count = 0;
                     foreach (CLPPage page in notebook.Pages)
                     {
+
+
                         if (!page.PageHistory.IsSaved())
                         {
                             numPagesSaved++;
@@ -161,6 +165,8 @@ namespace Classroom_Learning_Partner.Model
 
                             //Actual send
 
+
+                            //CLPServiceAgent.TimeCallBack(Tuple.Create<string, string>(s_page_pb, notebook.NotebookName));
                            // System.Threading.Thread thread = new System.Threading.Thread(() =>
                            // {
                             System.Threading.ThreadPool.QueueUserWorkItem(state =>
@@ -169,7 +175,7 @@ namespace Classroom_Learning_Partner.Model
                             });
                             //Logger is not thread safe
                             //So, page likely was sent, but no guarantee
-                            Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
+                            Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB,  Last history item " + lastItem.ToString());
                             //});
                             //thread.Start();
                             //replace history:
@@ -180,7 +186,7 @@ namespace Classroom_Learning_Partner.Model
                         }
                         else
                         {
-                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered, ");
                         }
 
                     }
@@ -190,6 +196,13 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("===================");
             }
 
+        }
+
+        public static void TimeCallBack(object o)
+        {
+            Tuple<string, string> s = ((Tuple<string, string>) o);
+            App.Peer.Channel.SavePage(s.Item1, App.Peer.UserName, DateTime.Now, s.Item2);
+            
         }
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
