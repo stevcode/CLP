@@ -2,18 +2,19 @@
 {
     using Catel.Windows.Controls;
     using System.Windows;
+    using System;
     using Classroom_Learning_Partner.Views.Modal_Windows;
     using Classroom_Learning_Partner.ViewModels.PageObjects;
 
     /// <summary>
-    /// Interaction logic for CLPInkRegionView.xaml.
+    /// Interaction logic for CLPHandwritingRegionView.xaml.
     /// </summary>
-    public partial class CLPInkRegionView : UserControl
+    public partial class CLPHandwritingRegionView : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPInkRegionView"/> class.
+        /// Initializes a new instance of the <see cref="CLPHandwritingRegionView"/> class.
         /// </summary>
-        public CLPInkRegionView()
+        public CLPHandwritingRegionView()
         {
             InitializeComponent();
             SkipSearchingForInfoBarMessageControl = true;
@@ -21,7 +22,7 @@
 
         protected override System.Type GetViewModelType()
         {
-            return typeof(CLPInkRegionViewModel);
+            return typeof(CLPHandwritingRegionViewModel);
         }
 
         public void EditInkRegion(object sender, RoutedEventArgs e)
@@ -34,10 +35,8 @@
                 string correct_answer = optionChooser.CorrectAnswer.Text;
                 int selected_type = optionChooser.ExpectedType.SelectedIndex;
 
-                this.correct_answer.Content = correct_answer;
-                this.analysis_type.Content = selected_type.ToString();
+                this.AnalysisType.Text = selected_type.ToString();
             }
-            //Console.WriteLine("Edit");
         }
     }
 }

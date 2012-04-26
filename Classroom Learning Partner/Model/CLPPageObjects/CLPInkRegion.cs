@@ -5,44 +5,30 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using Catel.Data;
 using Microsoft.Ink;
+using Classroom_Learning_Partner.Resources;
+using Catel.Data;
+using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
+
     [Serializable]
-    public class CLPInkRegion : CLPPageObjectBase
+    public abstract class CLPInkRegion : CLPPageObjectBase
     {
+
+        #region Variables
+
+        private Object interpretation_lock = new Object();
+
+        #endregion //Variables
 
         #region Constructors
 
-        public CLPInkRegion()
-            : base()
+        public CLPInkRegion() : base()
         {
             CanAcceptStrokes = true;
-
-            CorrectAnswer = "";
-            AnalysisType = 0;
-
-            StoredAnswer = "";
-            NumberOfResponses = 0;
-
-            Position = new Point(100, 100);
-            Height = 100;
-            Width = 100;
-        }
-
-        public CLPInkRegion(string correct_answer, int analysis_type)
-            : base()
-        {
-            CanAcceptStrokes = true;
-
-            CorrectAnswer = correct_answer;
-            AnalysisType = analysis_type;
-
-            StoredAnswer = "";
-            NumberOfResponses = 0;
-
             Position = new Point(100, 100);
             Height = 100;
             Width = 100;
@@ -58,142 +44,30 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #endregion //Constructors
 
-        #region Properties
-
-        /// <summary>
-        /// Correct answer that should be supplied in this region.
-        /// </summary>
-        public string CorrectAnswer
-        {
-            get { return GetValue<string>(CorrectAnswerProperty); }
-            set { SetValue(CorrectAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CorrectAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CorrectAnswerProperty = RegisterProperty("CorrectAnswer", typeof(string), "");
-
-        /// <summary>
-        /// Ink interpretation type (default, words, numbers, number sentence, etc.).
-        /// Kelsey - convert this to an enum.
-        /// </summary>
-        public int AnalysisType
-        {
-            get { return GetValue<int>(AnalysisTypeProperty); }
-            set { SetValue(AnalysisTypeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the AnalysisType property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(int), 0);
-
-        /// <summary>
-        /// Stored interpreted answer.
-        /// </summary>
-        public string StoredAnswer
-        {
-            get { return GetValue<string>(StoredAnswerProperty); }
-            set { SetValue(StoredAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the StoredAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
-
-        /// <summary>
-        /// Number of different stored answers for this problem
-        /// </summary>
-        public int NumberOfResponses
-        {
-            get { return GetValue<int>(NumberOfResponsesProperty); }
-            set { SetValue(NumberOfResponsesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the NumberOfResponses property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData NumberOfResponsesProperty = RegisterProperty("NumberOfResponses", typeof(int), 0);
-
-        #endregion //Properties
-
         #region Methods
-
-        public void InterpretStrokes()
-        {
-            InkAnalyzer analyzer = new InkAnalyzer();
-            AnalysisHintNode hint = analyzer.CreateAnalysisHint();
-            hint.Location.MakeInfinite();
-            if (AnalysisType != 0)
-            {
-                switch (AnalysisType)
-                {
-                    case 1:
-                        // Number sentence or number
-                        hint.Factoid = Factoid.Number;
-                        break;
-                    case 2:
-                        // Digit
-                        hint.Factoid = Factoid.Digit;
-                        break;
-                    case 3:
-                        // Words
-                        hint.Factoid = Factoid.SystemDictionary;
-                        break;
-                    default:
-                        Console.WriteLine("Not a valid ink analysis type");
-                        break;
-                }
-                hint.CoerceToFactoid = true;
-            }
-
-            if (PageObjectStrokes.Count > 0)
-            {
-                analyzer.AddStrokes(CLPPage.StringsToStrokes(PageObjectStrokes));
-                if (analyzer.Analyze().Successful)
-                {
-                    string result = analyzer.GetRecognizedString();
-                    if (result != StoredAnswer)
-                    {
-                        NumberOfResponses++;
-                        StoredAnswer = result;
-
-                        /*string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs\analysis_log.csv";
-                        if (!File.Exists(path))
-                        {
-                            TextWriter tw = new StreamWriter(path);
-                            tw.WriteLine("PositionX,PositionY,Try_Number,Answer,Result,Type");
-                            tw.WriteLine(this.Position + "," + this._numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
-                            tw.Close();
-                        }
-                        else
-                        {
-                            TextWriter tw = File.AppendText(path);
-                            tw.WriteLine(this.Position + "," + this._numberOfResponses + "," + this.CorrectAnswer + "," + result + "," + this.AnalysisType);
-                            tw.Close();
-                        }*/
-                    }
-                }
-            }
-
-            //Steve/Kelsey - I added this at the recommendation of a Warning in the Error List, if it appears to cause problems, remove it.
-            analyzer.Dispose();
-        }
-
-
 
         protected override void OnDeserialized()
         {
-            InterpretStrokes();
-            base.OnDeserialized();
+            lock (interpretation_lock)
+            {
+                base.OnDeserialized();
+            }
         }
 
         [OnSerializing]
-        void InterpretStrokes(StreamingContext sc)
+        void OnSerializing(StreamingContext sc)
         {
             InterpretStrokes();
+        }
+
+        public abstract void DoInterpretation();
+
+        public void InterpretStrokes()
+        {
+            lock (interpretation_lock)
+            {
+                DoInterpretation();
+            }
         }
 
         public override string PageObjectType
@@ -203,15 +77,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public override ICLPPageObject Duplicate()
         {
-            CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
-            newInkRegion.UniqueID = Guid.NewGuid().ToString();
-
-            return newInkRegion;
+            lock (interpretation_lock)
+            {
+                CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
+                newInkRegion.UniqueID = Guid.NewGuid().ToString();
+                return newInkRegion;
+            }
         }
 
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             this.ProcessStrokes(addedStrokes, removedStrokes);
+            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
+            t.Name = "Ink Interpretation Thread";
+            t.Start();
         }
 
         #endregion
