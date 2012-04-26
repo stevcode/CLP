@@ -142,11 +142,11 @@ namespace Classroom_Learning_Partner
                 .Add(1, "StrokePathContainer");
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
-            model[typeof(CLPInkRegion)]
-                .Add(1, "CorrectAnswer")
-                .Add(2, "AnalysisType")
-                .Add(3, "StoredAnswer")
-                .Add(4, "NumberOfResponses");
+            model[typeof(CLPHandwritingRegion)]
+                .Add(1, "AnalysisType")
+                .Add(2, "StoredAnswer");
+            model[typeof(CLPInkShapeRegion)]
+                .Add(1, "InkShapesString");
             model[typeof(CLPShape)].Add(1, "ShapeType");
             model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
             model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");

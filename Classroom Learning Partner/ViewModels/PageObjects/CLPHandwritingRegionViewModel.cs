@@ -4,16 +4,17 @@
     using Classroom_Learning_Partner.Model.CLPPageObjects;
     using System.Windows.Ink;
     using Catel.Data;
+    using Classroom_Learning_Partner.Resources;
 
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPInkRegionViewModel : CLPPageObjectBaseViewModel
+    public class CLPHandwritingRegionViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPInkRegionViewModel"/> class.
+        /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.
         /// </summary>
-        public CLPInkRegionViewModel(CLPInkRegion inkRegion)
+        public CLPHandwritingRegionViewModel(CLPHandwritingRegion inkRegion)
             : base()
         {
             PageObject = inkRegion;
@@ -23,7 +24,7 @@
         /// Gets the title of the view model.
         /// </summary>
         /// <value>The title.</value>
-        public override string Title { get { return "InkRegionVM"; } }
+        public override string Title { get { return "HandwritingRegionVM"; } }
 
         #region Model
 
@@ -46,31 +47,16 @@
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public string CorrectAnswer
+        public CLPHandwritingAnalysisType AnalysisType
         {
-            get { return GetValue<string>(CorrectAnswerProperty); }
-            set { SetValue(CorrectAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CorrectAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CorrectAnswerProperty = RegisterProperty("CorrectAnswer", typeof(string));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public int AnalysisType
-        {
-            get { return GetValue<int>(AnalysisTypeProperty); }
+            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
             set { SetValue(AnalysisTypeProperty, value); }
         }
 
         /// <summary>
         /// Register the AnalysisType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(int));
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType));
 
         #endregion //Model
 

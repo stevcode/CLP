@@ -21,6 +21,7 @@ using System.Windows.Documents;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using System.Diagnostics;
+using Classroom_Learning_Partner.Resources;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -1824,9 +1825,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (optionChooser.DialogResult == true)
             {
                 string correct_answer = optionChooser.CorrectAnswer.Text;
-                int selected_type = optionChooser.ExpectedType.SelectedIndex;
+                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
-                CLPInkRegion region = new CLPInkRegion(correct_answer, selected_type);
+                CLPInkShapeRegion region = new CLPInkShapeRegion();
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
         }
