@@ -5,6 +5,8 @@
     using System.Windows.Ink;
     using Catel.Data;
     using Classroom_Learning_Partner.Resources;
+    using System.Collections.ObjectModel;
+    using Classroom_Learning_Partner.Model;
 
     /// <summary>
     /// UserControl view model.
@@ -42,6 +44,22 @@
         /// Register the InkShapesString property so it is known in the class.
         /// </summary>
         public static readonly PropertyData InkShapesStringProperty = RegisterProperty("InkShapesString", typeof(string));
+
+        /// <summary>
+        /// Stored strokecollections that constitute shapes
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPInkShape> InkShapes
+        {
+            get { return GetValue<ObservableCollection<CLPInkShape>>(InkShapesProperty); }
+            set { SetValue(InkShapesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ShapeStrokes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPInkShape>));
+
 
         #endregion //Model
 

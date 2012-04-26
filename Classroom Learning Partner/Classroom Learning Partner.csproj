@@ -151,6 +151,7 @@
     <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
+    <Compile Include="Model\CLPInkShape.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
@@ -223,7 +224,7 @@
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPHandwritingRegionView.xaml.cs">
-      <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>    
+      <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
       <DependentUpon>CLPShapeView.xaml</DependentUpon>
@@ -322,7 +323,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPAudioView.xaml"> 
+    <Page Include="Views\PageObjects\CLPAudioView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

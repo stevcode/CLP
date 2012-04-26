@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Server;
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
@@ -146,7 +146,11 @@ namespace Classroom_Learning_Partner
                 .Add(1, "AnalysisType")
                 .Add(2, "StoredAnswer");
             model[typeof(CLPInkShapeRegion)]
-                .Add(1, "InkShapesString");
+                .Add(1, "InkShapesString")
+                .Add(2, "InkShapes");
+            model[typeof(CLPInkShape)]
+                .Add(1, "InkShapeStrokes")
+                .Add(2, "InkShapeType");
             model[typeof(CLPShape)].Add(1, "ShapeType");
             model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
             model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");

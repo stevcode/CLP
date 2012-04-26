@@ -436,9 +436,14 @@
                         Command="{Binding Path=InsertCircleShapeCommand}" />
 
                     <ribbon:RibbonButton
-                        Label="Insert Ink Region"
+                        Label="Handwriting Region"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertInkRegionCommand}" />
+                        Command="{Binding Path=InsertHandwritingRegionCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Ink Shape Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkShapeRegionCommand}" />
 
                 </ribbon:RibbonGroup>
 
