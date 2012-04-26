@@ -38,7 +38,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             this.ID = ID;
             Position = new System.Windows.Point(10, 10);
             Height = 50;
-            Width = 50;
+            Width = 200;
             
             //LoadImageFromByteSource(ByteSource);
 
