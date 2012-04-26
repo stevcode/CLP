@@ -86,7 +86,6 @@ namespace Classroom_Learning_Partner.Resources
                     return analyzer.FindNodesOfType(ContextNodeType.InkDrawing);
                 }
             }
-
             return null;
         }
 
