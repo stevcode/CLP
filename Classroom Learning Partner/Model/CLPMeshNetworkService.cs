@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.Model
         void SavePage(string page, string userName, DateTime submitTime, string notebookName);
 
         [OperationContract(IsOneWay = true)]
-        void SaveHistory(string s_history, string userName, DateTime time, string notebookName);
+        void SaveHistory(string s_history, string userName, DateTime time, string notebookName, string pageID);
 
         [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
@@ -92,8 +92,36 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
-        public void SaveHistory(string s_history, string userName, DateTime time, string notebookName)
+        public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID)
         {
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            (DispatcherOperationCallback)delegate(object arg)
+            {
+
+         if (App.CurrentUserMode == App.UserMode.Server)
+                {
+                    //Deserialize Using Protobuf
+                    Stream stream = new MemoryStream(Convert.FromBase64String(s_history));
+                    CLPHistory history = new CLPHistory();
+                    history = Serializer.Deserialize<CLPHistory>(stream);
+
+                    //Interpolate History to make it bigger again
+                    
+                    TimeSpan difference = DateTime.Now.Subtract(submitTime);
+                    double kbSize = s_history.Length / 1024.0;
+                    Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                    CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(history);
+                    //Database call
+                    if (App.DatabaseUse == App.DatabaseMode.Using)
+                    {
+                        //save as submission and as page save
+                        CLPServiceAgent.Instance.SaveHistoryDB(interpolatedHistory, pageID, userName, submitTime);
+
+                    }
+                }
+                return null;
+            }, null);
         }
         public void SubmitFullPage(string s_page, string userName, string notebookName)
         {
@@ -172,6 +200,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName)
         {
+            
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
             (DispatcherOperationCallback)delegate(object arg)
             {
@@ -200,7 +229,7 @@ namespace Classroom_Learning_Partner.Model
         {
             //recieve notebook
             //App.PeerNode.channel
-
+            
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Notebook save requtest received");

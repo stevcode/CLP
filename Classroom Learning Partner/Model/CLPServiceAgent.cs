@@ -26,8 +26,8 @@ namespace Classroom_Learning_Partner.Model
     {
         private CLPServiceAgent()
         {
-        }
 
+        }
 
         //readonly allows thread-safety and means it can only be allocated once.
         private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
@@ -130,34 +130,54 @@ namespace Classroom_Learning_Partner.Model
         {
             //make async?
             //compare model w/ database
+            DateTime startLocalSave = DateTime.Now;
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             notebook.Save(filePath);
-            Console.WriteLine("Notebook saved locally");
+            TimeSpan timeToSaveLocal = DateTime.Now.Subtract(startLocalSave);
+            //System.Threading.Thread
+
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
 
-                System.Threading.Thread thread = new System.Threading.Thread(() =>
-                {
+                    int numPagesSaved = 0;
+                    DateTime startSavingTime= DateTime.Now;
+                    HistoryItemType lastItem = HistoryItemType.EraseInk;
+                    int count = 0;
                     foreach (CLPPage page in notebook.Pages)
                     {
+
+
                         if (!page.PageHistory.IsSaved())
                         {
-                            //submit page, removing history first
+                            numPagesSaved++;
                             DateTime now = DateTime.Now;
+                            CLPPage p = page;
+                            //submit page, removing history first
+                            
                             CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
 
                             //Serialize using protobuf
                             MemoryStream stream = new MemoryStream();
                             Serializer.PrepareSerializer<CLPPage>();
-                            Serializer.Serialize<CLPPage>(stream, page);
+                            Serializer.Serialize<CLPPage>(stream, p);
                             string s_page_pb = Convert.ToBase64String(stream.ToArray());
                             //string s_page = ObjectSerializer.ToString(notebook);
 
                             //Actual send
 
-                            
-                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName);
-                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB");
+
+                            //CLPServiceAgent.TimeCallBack(Tuple.Create<string, string>(s_page_pb, notebook.NotebookName));
+                           // System.Threading.Thread thread = new System.Threading.Thread(() =>
+                           // {
+                            System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                            {
+                                App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName);
+                            });
+                            //Logger is not thread safe
+                            //So, page likely was sent, but no guarantee
+                            Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB,  Last history item " + lastItem.ToString());
+                            //});
+                            //thread.Start();
                             //replace history:
                             CLPHistory.replaceHistoryInPage(tempHistory, page);
                             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
@@ -166,15 +186,23 @@ namespace Classroom_Learning_Partner.Model
                         }
                         else
                         {
-                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered");
+                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered, ");
                         }
 
                     }
-                });
-
+               
+                Logger.Instance.WriteToLog("Network Saving " + numPagesSaved.ToString() + " took " + DateTime.Now.Subtract(startSavingTime).ToString()
+                    + ",  Local Save took " + timeToSaveLocal.ToString());
                 Logger.Instance.WriteToLog("===================");
             }
 
+        }
+
+        public static void TimeCallBack(object o)
+        {
+            Tuple<string, string> s = ((Tuple<string, string>) o);
+            App.Peer.Channel.SavePage(s.Item1, App.Peer.UserName, DateTime.Now, s.Item2);
+            
         }
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
@@ -747,7 +775,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private void SaveHistoryDB(CLPHistory history, string pageID, string userName, DateTime saveDate)
+        public void SaveHistoryDB(CLPHistory history, string pageID, string userName, DateTime saveDate)
         {
             string s_history = ObjectSerializer.ToString(history);
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -833,13 +861,15 @@ namespace Classroom_Learning_Partner.Model
             {
 
                 Logger.Instance.WriteToLog("Save All Histories");
+                CLPPage tempP;
                 foreach (CLPPage page in notebook.Pages)
                 {
                     if (true) //In the future, check to see if history has been saved 
                     {
+                        tempP = page;
                         //submit page, removing history first
                         DateTime now = DateTime.Now;
-                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(page);
+                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(tempP);
                         
                         //Serialize history using protobuf
                         MemoryStream stream = new MemoryStream();
@@ -850,9 +880,12 @@ namespace Classroom_Learning_Partner.Model
 
                         //Actual send
 
-                        
-                         App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName);
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
+                        System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                        {
+                            App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName, tempP.UniqueID);
+                        });
+
+                        Logger.Instance.WriteToLog("Page " + tempP.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
                         //replace history:
                         CLPHistory.replaceHistoryInPage(segmentedHistory, page);
 
