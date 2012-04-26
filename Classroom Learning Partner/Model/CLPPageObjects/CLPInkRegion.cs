@@ -15,13 +15,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
 
     [Serializable]
-    public class CLPInkRegion : CLPPageObjectBase
+    public abstract class CLPInkRegion : CLPPageObjectBase
     {
 
         #region Variables
 
         private Object interpretation_lock = new Object();
-        private Thread interpretation_thread = null;
 
         #endregion //Variables
 
@@ -30,18 +29,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public CLPInkRegion() : base()
         {
             CanAcceptStrokes = true;
-            AnalysisType = ANALYSIS_TYPE.DEFAULT;
-            StoredAnswer = "";
-            Position = new Point(100, 100);
-            Height = 100;
-            Width = 100;
-        }
-
-        public CLPInkRegion(ANALYSIS_TYPE analysis_type) : base()
-        {
-            CanAcceptStrokes = true;
-            AnalysisType = analysis_type;
-            StoredAnswer = "";
             Position = new Point(100, 100);
             Height = 100;
             Width = 100;
@@ -57,39 +44,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #endregion //Constructors
 
-        #region Properties
-
-        /// <summary>
-        /// Ink interpretation type (default, words, numbers, number sentence, etc.).
-        /// Kelsey - convert this to an enum.
-        /// </summary>
-        public ANALYSIS_TYPE AnalysisType
-        {
-            get { return GetValue<ANALYSIS_TYPE>(AnalysisTypeProperty); }
-            set { SetValue(AnalysisTypeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the AnalysisType property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(ANALYSIS_TYPE), 0);
-
-        /// <summary>
-        /// Stored interpreted answer.
-        /// </summary>
-        public string StoredAnswer
-        {
-            get { return GetValue<string>(StoredAnswerProperty); }
-            set { SetValue(StoredAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the StoredAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
-
-        #endregion //Properties
-
         #region Methods
 
         protected override void OnDeserialized()
@@ -103,20 +57,16 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            lock (interpretation_lock)
-            {
-
-            }
+            InterpretStrokes();
         }
 
-        void InterpretStrokes()
+        public abstract void DoInterpretation();
+
+        public void InterpretStrokes()
         {
             lock (interpretation_lock)
             {
-                ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-                string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
-                if (result != null)
-                    StoredAnswer = result;
+                DoInterpretation();
             }
         }
 
@@ -137,18 +87,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            if (interpretation_thread != null && interpretation_thread.IsAlive)
-            {
-                Console.WriteLine("Aborting thread");
-                interpretation_thread.Abort();
-            }
-            lock (interpretation_lock)
-            {
-                this.ProcessStrokes(addedStrokes, removedStrokes);
-            }
-            interpretation_thread = new Thread(new ThreadStart(this.InterpretStrokes));
-            interpretation_thread.Name = "Ink Interpretation Thread";
-            interpretation_thread.Start();
+            this.ProcessStrokes(addedStrokes, removedStrokes);
+            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
+            t.Name = "Ink Interpretation Thread";
+            t.Start();
         }
 
         #endregion

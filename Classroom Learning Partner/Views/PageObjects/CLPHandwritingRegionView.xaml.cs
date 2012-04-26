@@ -7,14 +7,14 @@
     using Classroom_Learning_Partner.ViewModels.PageObjects;
 
     /// <summary>
-    /// Interaction logic for CLPInkRegionView.xaml.
+    /// Interaction logic for CLPHandwritingRegionView.xaml.
     /// </summary>
-    public partial class CLPInkRegionView : UserControl
+    public partial class CLPHandwritingRegionView : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPInkRegionView"/> class.
+        /// Initializes a new instance of the <see cref="CLPHandwritingRegionView"/> class.
         /// </summary>
-        public CLPInkRegionView()
+        public CLPHandwritingRegionView()
         {
             InitializeComponent();
             SkipSearchingForInfoBarMessageControl = true;
@@ -22,7 +22,7 @@
 
         protected override System.Type GetViewModelType()
         {
-            return typeof(CLPInkRegionViewModel);
+            return typeof(CLPHandwritingRegionViewModel);
         }
 
         public void EditInkRegion(object sender, RoutedEventArgs e)

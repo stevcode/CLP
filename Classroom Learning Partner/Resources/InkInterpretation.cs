@@ -7,30 +7,36 @@ using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.Resources
 {
-    public enum ANALYSIS_TYPE { DEFAULT, NUMBER, DIGIT, WORDS };
+    public enum CLPHandwritingAnalysisType 
+    {
+        DEFAULT,
+        NUMBER,
+        DIGIT,
+        WORDS
+    };
 
     public static class InkInterpretation
     {
 
-        public static string InterpretHandwriting(StrokeCollection strokes, ANALYSIS_TYPE type)
+        public static string InterpretHandwriting(StrokeCollection strokes, CLPHandwritingAnalysisType type)
         {
             string result = null;
             InkAnalyzer analyzer = new InkAnalyzer();
             AnalysisHintNode hint = analyzer.CreateAnalysisHint();
             hint.Location.MakeInfinite();
-            if (type != ANALYSIS_TYPE.DEFAULT)
+            if (type != CLPHandwritingAnalysisType.DEFAULT)
             {
                 switch (type)
                 {
-                    case ANALYSIS_TYPE.NUMBER:
+                    case CLPHandwritingAnalysisType.NUMBER:
                         // Number sentence or number
                         hint.Factoid = Factoid.Number;
                         break;
-                    case ANALYSIS_TYPE.DIGIT:
+                    case CLPHandwritingAnalysisType.DIGIT:
                         // Digit
                         hint.Factoid = Factoid.Digit;
                         break;
-                    case ANALYSIS_TYPE.WORDS:
+                    case CLPHandwritingAnalysisType.WORDS:
                         // Words
                         hint.Factoid = Factoid.SystemDictionary;
                         break;

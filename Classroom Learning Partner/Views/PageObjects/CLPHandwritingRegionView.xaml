@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPInkRegionView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPHandwritingRegionView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"

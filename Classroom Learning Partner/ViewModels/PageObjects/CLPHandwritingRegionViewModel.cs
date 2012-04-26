@@ -9,12 +9,12 @@
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPInkRegionViewModel : CLPPageObjectBaseViewModel
+    public class CLPHandwritingRegionViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPInkRegionViewModel"/> class.
+        /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.
         /// </summary>
-        public CLPInkRegionViewModel(CLPInkRegion inkRegion)
+        public CLPHandwritingRegionViewModel(CLPHandwritingRegion inkRegion)
             : base()
         {
             PageObject = inkRegion;
@@ -47,16 +47,16 @@
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ANALYSIS_TYPE AnalysisType
+        public CLPHandwritingAnalysisType AnalysisType
         {
-            get { return GetValue<ANALYSIS_TYPE>(AnalysisTypeProperty); }
+            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
             set { SetValue(AnalysisTypeProperty, value); }
         }
 
         /// <summary>
         /// Register the AnalysisType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(ANALYSIS_TYPE));
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType));
 
         #endregion //Model
 

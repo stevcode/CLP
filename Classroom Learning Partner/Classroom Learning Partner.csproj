@@ -154,6 +154,7 @@
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPHandwritingRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
@@ -168,7 +169,7 @@
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
@@ -214,8 +215,8 @@
     <Compile Include="Views\NotebookSelectorView.xaml.cs">
       <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
-      <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPHandwritingRegionView.xaml.cs">
+      <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
       <DependentUpon>CLPShapeView.xaml</DependentUpon>
@@ -311,7 +312,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPInkRegionView.xaml">
+    <Page Include="Views\PageObjects\CLPHandwritingRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
