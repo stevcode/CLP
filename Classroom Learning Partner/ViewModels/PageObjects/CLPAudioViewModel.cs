@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     FileInfo file = new FileInfo(path);
                     long sizeKb = file.Length / (long)1024.0;
                     //seconds = (Double)sizeKb / 11.0; //value for wav
-                    seconds = (Double)sizeKb / 1.8; //value for mp3 has to be changed based on the bitrate we encode at
+                    seconds = (Double)sizeKb / 1.6; //value for mp3 has to be changed based on the bitrate we encode at
                     TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
                     //initialize the timer
                     audio_play_timer = new System.Timers.Timer();
