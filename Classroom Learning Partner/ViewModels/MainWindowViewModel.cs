@@ -1827,7 +1827,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 string correct_answer = optionChooser.CorrectAnswer.Text;
                 CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
-                CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type);
+                CLPInkShapeRegion region = new CLPInkShapeRegion();
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
         }

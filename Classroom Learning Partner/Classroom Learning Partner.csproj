@@ -164,6 +164,7 @@
     <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStrokePathContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkShapeRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
@@ -231,6 +233,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
       <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
+      <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -336,6 +341,10 @@
     <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>
