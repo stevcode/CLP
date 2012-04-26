@@ -75,9 +75,19 @@ namespace Classroom_Learning_Partner.Resources
 
         }
 
-        public static void InterpretCircle(StrokeCollection strokes)
+        public static ContextNodeCollection InterpretShapes(StrokeCollection strokes)
         {
+            if (strokes.Count > 0)
+            {
+                InkAnalyzer analyzer = new InkAnalyzer();
+                analyzer.AddStrokes(strokes);
+                if (analyzer.Analyze().Successful)
+                {
+                    return analyzer.FindNodesOfType(ContextNodeType.InkDrawing);
+                }
+            }
 
+            return null;
         }
 
     }
