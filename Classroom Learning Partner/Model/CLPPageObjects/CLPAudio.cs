@@ -89,7 +89,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
-            private set { SetValue(IDProperty, value); }
+            set { SetValue(IDProperty, value); }
         }
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), null);
 
