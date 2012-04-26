@@ -775,7 +775,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        private void SaveHistoryDB(CLPHistory history, string pageID, string userName, DateTime saveDate)
+        public void SaveHistoryDB(CLPHistory history, string pageID, string userName, DateTime saveDate)
         {
             string s_history = ObjectSerializer.ToString(history);
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
@@ -861,13 +861,15 @@ namespace Classroom_Learning_Partner.Model
             {
 
                 Logger.Instance.WriteToLog("Save All Histories");
+                CLPPage tempP;
                 foreach (CLPPage page in notebook.Pages)
                 {
                     if (true) //In the future, check to see if history has been saved 
                     {
+                        tempP = page;
                         //submit page, removing history first
                         DateTime now = DateTime.Now;
-                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(page);
+                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(tempP);
                         
                         //Serialize history using protobuf
                         MemoryStream stream = new MemoryStream();
@@ -878,9 +880,12 @@ namespace Classroom_Learning_Partner.Model
 
                         //Actual send
 
-                        
-                         App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName);
-                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
+                        System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                        {
+                            App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName, tempP.UniqueID);
+                        });
+
+                        Logger.Instance.WriteToLog("Page " + tempP.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
                         //replace history:
                         CLPHistory.replaceHistoryInPage(segmentedHistory, page);
 
