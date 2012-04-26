@@ -53,6 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Ribbon Content
             SideBarVisibility = true;
+            GridDisplaysVisibility = false;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -484,6 +485,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the SideBarVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool GridDisplaysVisibility
+        {
+            get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
+            set { SetValue(GridDisplaysVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplaysVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool));
 
         #region Convert to XAMLS?
 
@@ -1744,6 +1759,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPStamp stamp = new CLPStamp(null);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
+            if (EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
         }
         /// <summary>
         /// Gets the InsertBlankStampCommand command.

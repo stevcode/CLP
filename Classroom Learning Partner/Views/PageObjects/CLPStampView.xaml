@@ -194,7 +194,7 @@
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon x:Name="PageObjectHitBox" Tag="0"  Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
-                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave"
+                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave" StylusEnter="PageObjectHitBox_StylusEnter"  StylusInRange="PageObjectHitBox_StylusEnter"  StylusLeave="PageObjectHitBox_StylusLeave"  StylusOutOfRange="PageObjectHitBox_StylusLeave"
                                   Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0">
 
                         </Polygon>
