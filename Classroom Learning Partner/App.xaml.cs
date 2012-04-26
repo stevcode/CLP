@@ -106,13 +106,11 @@ namespace Classroom_Learning_Partner
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
                 .Add(12, "SubmissionTime")
-                //.Add(14, "PageStrokesSer")
                 .Add(17, "PageObjectsSer");
 
-           // model[typeof(CLPPage)][14].OverwriteList = true;
+
             model[typeof(CLPPage)][17].AsReference = true;
             model[typeof(CLPPage)][17].OverwriteList = true;
-            //model[typeof(CLPPage)][14].AsReference = true;
            
 
             
@@ -142,9 +140,13 @@ namespace Classroom_Learning_Partner
                 .Add(1, "StrokePathContainer");
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
+        
+            model[typeof(CLPInkRegion)]
+                .AddSubType(1, typeof(CLPInkShapeRegion))
+                .AddSubType(2, typeof(CLPHandwritingRegion));
             model[typeof(CLPHandwritingRegion)]
                 .Add(1, "AnalysisType")
-                .Add(2, "StoredAnswer");
+                .Add(2, "StoredAnswer");    
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");
