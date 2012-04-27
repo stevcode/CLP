@@ -16,12 +16,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
-        //Parameterless constructor for protobuf
         public CLPDataTable()
             : base()
         {
         }
-        public CLPDataTable(int rows, int cols) : base()
+        
+        public CLPDataTable(int rows, int cols, CLPHandwritingAnalysisType analysis_type) : base()
         {
             Rows = rows;
             Cols = cols;
@@ -30,6 +30,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 DataValues.Add(new CLPNamedInkSet());
             }
+
+            AnalysisType = analysis_type;
             //Console.WriteLine(DataTableCols + " ... " + DataTableRows);
         }
 
@@ -92,43 +94,44 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// </summary>
         public static readonly PropertyData ColsProperty = RegisterProperty("Cols", typeof(int), 0);
 
+        /// <summary>
+        /// Handwriting analysis type
+        /// </summary>
+        public CLPHandwritingAnalysisType AnalysisType
+        {
+            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
+            set { SetValue(AnalysisTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DataTableCols property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType), CLPHandwritingAnalysisType.DEFAULT);
+
         #endregion // Properties
 
         #region Methods
 
-        public override void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public override void DoInterpretation()
         {
-            // Add strokes to appropriate bins
-            List<Point> discr_added = InkInterpretation.InterpretTable(addedStrokes, Position, Width, Height, Rows, Cols);
-            for (int i = 0; i < discr_added.Count; i++)
+            DataValues = new List<CLPNamedInkSet>();
+            for (int i = 0; i < Rows * Cols; i++)
             {
-                Point p = discr_added.ElementAt<Point>(i);
-                // if the point is not outside of the grid
-                if (p.X >= 0 && p.Y >= 0 && p.X < Cols && p.Y < Rows)
-                {
-                    string stroke = CLPPage.StrokeToString(addedStrokes[i]);
-                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Add(stroke);
-                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes =
-                        new ObservableCollection<string>(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Distinct().ToList());
-                    StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
-                    string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, CLPHandwritingAnalysisType.DEFAULT);
-                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeType = result;
-                }
+                DataValues.Add(new CLPNamedInkSet());
             }
-
-            // Delete strokes from appropriate bins
-            List<Point> discr_removed = InkInterpretation.InterpretTable(removedStrokes, Position, Width, Height, Rows, Cols);
-            for (int i = 0; i < discr_removed.Count; i++)
+            // Add strokes to appropriate bins
+            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
+            List<Point> locations = InkInterpretation.InterpretTable(CLPPage.StringsToStrokes(StrokesNoDuplicates), Width, Height, Rows, Cols);
+            for (int i = 0; i < locations.Count; i++)
             {
-                Point p = discr_removed.ElementAt<Point>(i);
+                Point p = locations[i];
                 // if the point is not outside of the grid
                 if (p.X >= 0 && p.Y >= 0 && p.X < Cols && p.Y < Rows)
                 {
-                    string stroke = CLPPage.StrokeToString(removedStrokes[i]);
-                    while (DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Contains(stroke))
-                        DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Remove(stroke);
+                    string stroke = StrokesNoDuplicates[i];
+                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Add(stroke);
                     StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
-                    string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, CLPHandwritingAnalysisType.DEFAULT);
+                    string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, AnalysisType);
                     DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeType = result;
                 }
             }

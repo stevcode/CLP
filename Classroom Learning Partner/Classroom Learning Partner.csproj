@@ -167,6 +167,7 @@
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkShapeRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPDataTable.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPShadingRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPDataTableViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
@@ -198,6 +200,12 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
+    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
+      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+      <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
@@ -240,8 +248,11 @@
     <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
       <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPGridView.xaml.cs">
-      <DependentUpon>CLPGridView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPDataTableView.xaml.cs">
+      <DependentUpon>CLPDataTableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
+      <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -295,6 +306,14 @@
     <Page Include="Resources\MainWindowResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>
@@ -352,7 +371,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPGridView.xaml">
+    <Page Include="Views\PageObjects\CLPDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

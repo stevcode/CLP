@@ -14,12 +14,12 @@
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPDataTableViewModel : CLPPageObjectBaseViewModel
+    public class CLPShadingRegionViewModel : CLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.
         /// </summary>
-        public CLPDataTableViewModel(CLPDataTable inkRegion)
+        public CLPShadingRegionViewModel(CLPShadingRegion inkRegion)
             : base()
         {
             PageObject = inkRegion;
@@ -30,24 +30,24 @@
         /// Gets the title of the view model.
         /// </summary>
         /// <value>The title.</value>
-        public override string Title { get { return "DataTableVM"; } }
+        public override string Title { get { return "ShadingRegionVM"; } }
 
         #region Model
 
         /// <summary>
-        /// Stored values in the data table
+        /// Percent Shaded
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public List<CLPNamedInkSet> DataValues
+        public double PercentFilled
         {
-            get { return GetValue<List<CLPNamedInkSet>>(DataValuesProperty); }
-            set { SetValue(DataValuesProperty, value); }
+            get { return GetValue<double>(PercentFilledProperty); }
+            set { SetValue(PercentFilledProperty, value); }
         }
 
         /// <summary>
-        /// Register the DataValues property so it is known in the class.
+        /// Register the PercentFilled property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(List<CLPNamedInkSet>));
+        public static readonly PropertyData PercentFilledProperty = RegisterProperty("PercentFilled", typeof(double));
 
         /// <summary>
         /// Number of rows
@@ -79,40 +79,11 @@
         /// </summary>
         public static readonly PropertyData ColsProperty = RegisterProperty("Cols", typeof(int));
 
-        /// <summary>
-        /// Handwriting analysis type
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public CLPHandwritingAnalysisType AnalysisType
-        {
-            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
-            set { SetValue(AnalysisTypeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the DataTableCols property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType));
-
         #endregion //Model
 
         public string GetStringRepresentation()
         {
-            string result = AnalysisType.ToString()+"\n";
-            for (int i = 0; i < Rows * Cols; i++)
-            {
-                if (i % Cols == Cols - 1)
-                {
-                    result += DataValues[i].InkShapeType + ",\n";
-                }
-                else
-                {
-
-                    result += DataValues[i].InkShapeType + ",\t";
-                }
-
-            }
-            return result;
+            return PercentFilled.ToString();
         }
     }
 }

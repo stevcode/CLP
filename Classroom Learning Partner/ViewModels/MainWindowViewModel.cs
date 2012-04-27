@@ -161,6 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
+            InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
 
             //Student Record and Playback 
             RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
@@ -1875,7 +1876,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the InsertInkShapeRegionCommand command.
+        /// Gets the InsertDataTableCommand command.
         /// </summary>
         public Command InsertDataTableCommand { get; private set; }
 
@@ -1884,8 +1885,54 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertDataTableCommandExecute()
         {
-            CLPDataTable region = new CLPDataTable(5,5);
-            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+            CustomizeDataTableView optionChooser = new CustomizeDataTableView();
+            optionChooser.Owner = Application.Current.MainWindow;
+            optionChooser.ShowDialog();
+            if (optionChooser.DialogResult == true)
+            {
+                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+
+                int rows = 1;
+                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+                catch (FormatException e) { rows = 1; }
+
+                int cols = 1;
+                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+                catch (FormatException e) { cols = 1; }
+
+                CLPDataTable region = new CLPDataTable(rows, cols, selected_type);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+            }
+        }
+
+        /// <summary>
+        /// Gets the InsertShadingRegionCommand command.
+        /// </summary>
+        public Command InsertShadingRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkShapeRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertShadingRegionCommandExecute()
+        {
+            CustomizeShadingRegionView optionChooser = new CustomizeShadingRegionView();
+            optionChooser.Owner = Application.Current.MainWindow;
+            optionChooser.ShowDialog();
+            if (optionChooser.DialogResult == true)
+            {
+                //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+
+                int rows = 0;
+                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+                catch (FormatException e) { rows = 0; }
+
+                int cols = 0;
+                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+                catch (FormatException e) { cols = 0; }
+
+                CLPShadingRegion region = new CLPShadingRegion(rows, cols);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+            }
         }
 
         /// <summary>

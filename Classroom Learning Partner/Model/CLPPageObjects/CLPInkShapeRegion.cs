@@ -69,7 +69,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        public override void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public override void DoInterpretation()
         {
             ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
             ContextNodeCollection shapes = InkInterpretation.InterpretShapes(CLPPage.StringsToStrokes(StrokesNoDuplicates));
