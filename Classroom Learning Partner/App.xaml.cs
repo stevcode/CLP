@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }

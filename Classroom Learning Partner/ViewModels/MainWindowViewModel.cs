@@ -935,7 +935,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
 
             {
-                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving All Notebook Histories", 0.0 / 0.0);
+               
             }
         }
 

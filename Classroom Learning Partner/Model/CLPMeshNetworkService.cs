@@ -137,8 +137,6 @@ namespace Classroom_Learning_Partner.Model
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
                         CLPPage page = new CLPPage();
                         page = Serializer.Deserialize<CLPPage>(stream);
-                        Console.WriteLine("page received");
-                        
 
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //interpolate the history to make it bigger again - claire
@@ -165,7 +163,9 @@ namespace Classroom_Learning_Partner.Model
                         CLPPage page = new CLPPage();
                         page = Serializer.Deserialize<CLPPage>(stream);
                         pagecount++;
-                        Console.WriteLine("Page Recieved, Current Count: " + pagecount.ToString());
+
+                        double kbSize = s_page.Length / 1024.0;
+                        Logger.Instance.WriteToLog("RecvSubmission " + kbSize.ToString() + " "+ DateTime.Now.ToString()+ " " + userName);
                         //Database call
                         if (App.DatabaseUse == App.DatabaseMode.Using)
                         {
