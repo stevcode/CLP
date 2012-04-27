@@ -63,13 +63,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
-        public abstract void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+        public abstract void DoInterpretation();
 
-        public void InterpretStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public void InterpretStrokes()
         {
             lock (interpretation_lock)
             {
-                DoInterpretation(addedStrokes, removedStrokes);
+                DoInterpretation();
             }
         }
 
@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             this.ProcessStrokes(addedStrokes, removedStrokes);
-            Thread t = new Thread(unused => this.InterpretStrokes(addedStrokes,removedStrokes));
+            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
             t.Name = "Ink Interpretation Thread";
             t.Start();
         }

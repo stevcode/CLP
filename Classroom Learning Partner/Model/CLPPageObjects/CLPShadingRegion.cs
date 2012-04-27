@@ -85,10 +85,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        public override void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public override void DoInterpretation()
         {
             ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            int[,] result = InkInterpretation.InterpretShading(CLPPage.StringsToStrokes(StrokesNoDuplicates), Position, Width, Height, 15.0);
+            int[,] result = InkInterpretation.InterpretShading(CLPPage.StringsToStrokes(StrokesNoDuplicates), Width, Height, 15.0);
             double total_shaded = 0.0;
             double total = 0.0;
             foreach (int i in result)

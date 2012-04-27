@@ -148,11 +148,12 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPDataTable)]
                 .Add(1, "DataValues")
                 .Add(2, "Rows")
-                .Add(3, "Cols"); ;
+                .Add(3, "Cols")
+                .Add(4, "AnalysisType");
             model[typeof(CLPShadingRegion)]
                 .Add(1, "PercentFilled")
                 .Add(2, "Rows")
-                .Add(3, "Cols"); ;
+                .Add(3, "Cols");
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");

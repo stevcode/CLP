@@ -62,7 +62,7 @@ namespace Classroom_Learning_Partner.Resources
             return result;
         }
 
-        public static int[,] InterpretShading(StrokeCollection strokes, Point position, double width, double height, double spacing)
+        public static int[,] InterpretShading(StrokeCollection strokes, double width, double height, double spacing)
         {
             int rows = (int)Math.Floor(height / spacing);
             int cols = (int)Math.Floor(width / spacing);
@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.Resources
 
         }
 
-        public static List<Point> InterpretTable(StrokeCollection strokes, Point position, double width, double height, int rows, int cols)
+        public static List<Point> InterpretTable(StrokeCollection strokes, double width, double height, int rows, int cols)
         {
             List<Point> discretizaton_result = new List<Point>();
             foreach (System.Windows.Ink.Stroke s in strokes)
@@ -115,8 +115,8 @@ namespace Classroom_Learning_Partner.Resources
                 double total = (double) s.StylusPoints.Count;
                 foreach (StylusPoint sp in s.StylusPoints)
                 {
-                    centroidX += sp.X - position.X;
-                    centroidY += sp.Y - position.Y;
+                    centroidX += sp.X;
+                    centroidY += sp.Y;
                 }
                 centroidX /= total;
                 centroidY /= total;
