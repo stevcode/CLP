@@ -5,7 +5,10 @@
                    xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
 
     <Border BorderThickness="1" BorderBrush="Black">
-        <UniformGrid x:Name="Grid" Rows="{Binding Rows}" Columns="{Binding Cols}"  Height="{Binding Height}" Width="{Binding Width}" DataContextChanged="SetupGrid">
-        </UniformGrid>
+        <Grid>
+            <UniformGrid x:Name="Grid" Rows="{Binding Rows}" Columns="{Binding Cols}"  Height="{Binding Height}" Width="{Binding Width}" DataContextChanged="SetupGrid">
+            </UniformGrid>
+            <Image Grid.Row="1" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Source="/Images/SmallIcon.png" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}" MouseDown="ShowContentsCommand"></Image>
+        </Grid>
     </Border>
 </catel:UserControl>

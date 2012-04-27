@@ -48,16 +48,16 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Stored ink strokes and values for each cell in the table
         /// </summary>
-        public ObservableCollection<CLPNamedInkSet> DataValues
+        public List<CLPNamedInkSet> DataValues
         {
-            get { return GetValue<ObservableCollection<CLPNamedInkSet>>(DataValuesProperty); }
+            get { return GetValue<List<CLPNamedInkSet>>(DataValuesProperty); }
             set { SetValue(DataValuesProperty, value); }
         }
 
         /// <summary>
         /// Register the DataValues property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(ObservableCollection<CLPNamedInkSet>), new ObservableCollection<CLPNamedInkSet>());
+        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(List<CLPNamedInkSet>), new List<CLPNamedInkSet>());
 
         /// <summary>
         /// Number of rows
@@ -101,13 +101,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 // if the point is not outside of the grid
                 if (p.X >= 0 && p.Y >= 0 && p.X < Cols && p.Y < Rows)
                 {
-                    string stroke = CLPPage.StrokeToString(addedStrokes.ElementAt<Stroke>(i));
-                    DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes.Add(stroke);
-                    DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes =
-                        new ObservableCollection<string>(DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes.Distinct().ToList());
-                    StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes);
+                    string stroke = CLPPage.StrokeToString(addedStrokes[i]);
+                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Add(stroke);
+                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes =
+                        new ObservableCollection<string>(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Distinct().ToList());
+                    StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
                     string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, CLPHandwritingAnalysisType.DEFAULT);
-                    DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeType = result;
+                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeType = result;
                 }
             }
 
@@ -119,24 +119,14 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 // if the point is not outside of the grid
                 if (p.X >= 0 && p.Y >= 0 && p.X < Cols && p.Y < Rows)
                 {
-                    string stroke = CLPPage.StrokeToString(addedStrokes.ElementAt<Stroke>(i));
-                    while (DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes.Contains(stroke))
-                        DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes.Remove(stroke);
-                    StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeStrokes);
+                    string stroke = CLPPage.StrokeToString(removedStrokes[i]);
+                    while (DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Contains(stroke))
+                        DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Remove(stroke);
+                    StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
                     string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, CLPHandwritingAnalysisType.DEFAULT);
-                    DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(p.X, p.Y)).InkShapeType = result;
+                    DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeType = result;
                 }
             }
-
-            for (int i = 0; i < Rows; i++)
-            {
-                for (int j = 0; j < Cols; j++)
-                {
-                    Console.Write(DataValues.ElementAt<CLPNamedInkSet>(Idx2Dto1D(j, i)).InkShapeType+ ", ");
-                }
-                Console.Write("\n");
-            }
-            
         }
 
         public int Idx2Dto1D(double x, double y)

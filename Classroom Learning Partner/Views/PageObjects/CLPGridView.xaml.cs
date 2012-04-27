@@ -34,6 +34,12 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
+        public void ShowContentsCommand(object sender, RoutedEventArgs e)
+        {
+            string result = (DataContext as CLPDataTableViewModel).GetStringRepresentation();
+            MessageBox.Show(result);
+        }
+
         protected override System.Type GetViewModelType()
         {
             return typeof(CLPDataTableViewModel);

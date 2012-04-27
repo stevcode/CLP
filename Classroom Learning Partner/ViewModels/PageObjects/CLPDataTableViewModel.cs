@@ -8,6 +8,8 @@
     using System;
     using System.Collections.ObjectModel;
     using Classroom_Learning_Partner.Model;
+    using Microsoft.Windows.Controls;
+    using System.Collections.Generic;
 
     /// <summary>
     /// UserControl view model.
@@ -36,16 +38,16 @@
         /// Stored values in the data table
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<CLPNamedInkSet> DataValues
+        public List<CLPNamedInkSet> DataValues
         {
-            get { return GetValue<ObservableCollection<CLPNamedInkSet>>(DataValuesProperty); }
+            get { return GetValue<List<CLPNamedInkSet>>(DataValuesProperty); }
             set { SetValue(DataValuesProperty, value); }
         }
 
         /// <summary>
         /// Register the DataValues property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(ObservableCollection<CLPNamedInkSet>));
+        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(List<CLPNamedInkSet>));
 
         /// <summary>
         /// Number of rows
@@ -79,5 +81,23 @@
 
         #endregion //Model
 
+        public string GetStringRepresentation()
+        {
+            string result = "";
+            for (int i = 0; i < Rows * Cols; i++)
+            {
+                if (i % Cols == Cols - 1)
+                {
+                    result += DataValues[i].InkShapeType + "\n";
+                }
+                else
+                {
+
+                    result += DataValues[i].InkShapeType + ",\t";
+                }
+
+            }
+            return result;
+        }
     }
 }
