@@ -60,10 +60,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         protected override void OnDeserialized()
         {
-            lock (interpretation_lock)
-            {
-                base.OnDeserialized();
-            }
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += new EventHandler(timer_Tick);
         }
 
         [OnSerializing]
