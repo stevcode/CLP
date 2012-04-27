@@ -68,6 +68,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
+            timer.Stop();
             lock (interpretation_lock)
             {
                 DoInterpretation();
