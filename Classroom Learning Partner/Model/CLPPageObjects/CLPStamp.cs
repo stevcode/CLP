@@ -42,7 +42,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             ParentID = "";
             PageObjectStrokes = new ObservableCollection<string>();
             CanAcceptStrokes = true;
-            IsBackground = false;
         }
 
         //Parameterless constructor for Protobuf
