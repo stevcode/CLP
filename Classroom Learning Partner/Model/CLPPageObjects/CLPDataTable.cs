@@ -16,6 +16,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
+        //Parameterless constructor for protobuf
+        public CLPDataTable()
+            : base()
+        {
+        }
         public CLPDataTable(int rows, int cols) : base()
         {
             Rows = rows;

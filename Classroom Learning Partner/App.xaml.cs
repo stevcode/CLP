@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner
             //LogManager.RegisterDebugListener();
 
             CurrentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.NotUsing;
+            _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
@@ -140,17 +140,18 @@ namespace Classroom_Learning_Partner
                 .Add(1, "StrokePathContainer");
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
-        
+
             model[typeof(CLPInkRegion)]
                 .AddSubType(1, typeof(CLPInkShapeRegion))
-                .AddSubType(2, typeof(CLPHandwritingRegion));
+                .AddSubType(2, typeof(CLPHandwritingRegion))
+                .AddSubType(3, typeof(CLPDataTable));
             model[typeof(CLPHandwritingRegion)]
                 .Add(1, "AnalysisType")
                 .Add(2, "StoredAnswer");    
             model[typeof(CLPDataTable)]
                 .Add(1, "DataValues")
                 .Add(2, "Rows")
-                .Add(3, "Cols"); ;
+                .Add(3, "Cols"); 
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");
