@@ -41,9 +41,16 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         void timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
-            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
-            t.Name = "Ink Interpretation Thread";
-            t.Start();
+            //Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
+            //t.Name = "Ink Interpretation Thread";
+            //t.Start();
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+            (DispatcherOperationCallback)delegate(object arg)
+            {
+                InterpretStrokes();
+                return null;
+            }, null);
         }
 
         /// <summary>
