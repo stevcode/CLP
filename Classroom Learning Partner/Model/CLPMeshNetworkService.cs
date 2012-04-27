@@ -37,10 +37,10 @@ namespace Classroom_Learning_Partner.Model
         void SaveNotebookDB(string s_notebook, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void SavePage(string page, string userName, DateTime submitTime, string notebookName);
+        void SavePage(string page, string userName, DateTime submitTime, string notebookName, int pageNumber);
 
         [OperationContract(IsOneWay = true)]
-        void SaveHistory(string s_history, string userName, DateTime time, string notebookName, string pageID);
+        void SaveHistory(string s_history, string userName, DateTime time, string notebookName, string pageID, int pageNumber);
 
         [OperationContract(IsOneWay = true)]
         void DistributeNotebook(string s_notebook, string author);
@@ -92,7 +92,7 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
-        public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID)
+        public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID, int pageNumber)
         {
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -110,7 +110,7 @@ namespace Classroom_Learning_Partner.Model
                     
                     TimeSpan difference = DateTime.Now.Subtract(submitTime);
                     double kbSize = s_history.Length / 1024.0;
-                    Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                    Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " page num " + pageNumber.ToString());
                     CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(history);
                     //Database call
                     if (App.DatabaseUse == App.DatabaseMode.Using)
@@ -198,7 +198,7 @@ namespace Classroom_Learning_Partner.Model
              }, null);
         }
 
-        public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName)
+        public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName, int pageNumber)
         {
             
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -210,7 +210,7 @@ namespace Classroom_Learning_Partner.Model
                     //Database call
                     TimeSpan difference = DateTime.Now.Subtract(submitTime);
                     double kbSize = s_page.Length / 1024.0;
-                    Logger.Instance.WriteToLog("RecvSave " + kbSize.ToString() + " " + difference.ToString() + " " + userName);
+                    Logger.Instance.WriteToLog("RecvSave " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " pageNum: " + pageNumber.ToString());
                     if (App.DatabaseUse == App.DatabaseMode.Using)
                     {
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);

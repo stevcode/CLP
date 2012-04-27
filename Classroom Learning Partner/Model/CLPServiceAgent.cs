@@ -171,7 +171,7 @@ namespace Classroom_Learning_Partner.Model
                            // {
                             System.Threading.ThreadPool.QueueUserWorkItem(state =>
                             {
-                                App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName);
+                                App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName, p.PageIndex);
                             });
                             //Logger is not thread safe
                             //So, page likely was sent, but no guarantee
@@ -198,12 +198,7 @@ namespace Classroom_Learning_Partner.Model
 
         }
 
-        public static void TimeCallBack(object o)
-        {
-            Tuple<string, string> s = ((Tuple<string, string>) o);
-            App.Peer.Channel.SavePage(s.Item1, App.Peer.UserName, DateTime.Now, s.Item2);
-            
-        }
+
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
         {
@@ -889,10 +884,11 @@ namespace Classroom_Learning_Partner.Model
 
                         System.Threading.ThreadPool.QueueUserWorkItem(state =>
                         {
-                            App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName, tempP.UniqueID);
+                            App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName, tempP.UniqueID, tempP.PageIndex);
                         });
 
                         Logger.Instance.WriteToLog("Page " + tempP.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
+                        System.Threading.Thread.Sleep(1000);
                         //replace history:
                         CLPHistory.replaceHistoryInPage(segmentedHistory, page);
 
