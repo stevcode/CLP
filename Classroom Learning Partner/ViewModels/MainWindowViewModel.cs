@@ -160,6 +160,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
+            InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
 
             //Student Record and Playback 
             RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
@@ -1853,9 +1854,7 @@ namespace Classroom_Learning_Partner.ViewModels
             optionChooser.ShowDialog();
             if (optionChooser.DialogResult == true)
             {
-                string correct_answer = optionChooser.CorrectAnswer.Text;
                 CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
-
                 CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type);
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
@@ -1872,6 +1871,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertInkShapeRegionCommandExecute()
         {
             CLPInkShapeRegion region = new CLPInkShapeRegion();
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+        }
+
+        /// <summary>
+        /// Gets the InsertInkShapeRegionCommand command.
+        /// </summary>
+        public Command InsertDataTableCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkShapeRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertDataTableCommandExecute()
+        {
+            CLPDataTable region = new CLPDataTable(5,5);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
         }
 

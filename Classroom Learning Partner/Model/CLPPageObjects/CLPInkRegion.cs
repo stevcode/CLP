@@ -57,16 +57,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            InterpretStrokes();
+            lock (interpretation_lock)
+            {
+                // Make sure interpretation isn't going on while serializing
+            }
         }
 
-        public abstract void DoInterpretation();
+        public abstract void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
 
-        public void InterpretStrokes()
+        public void InterpretStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             lock (interpretation_lock)
             {
-                DoInterpretation();
+                DoInterpretation(addedStrokes, removedStrokes);
             }
         }
 
@@ -88,7 +91,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             this.ProcessStrokes(addedStrokes, removedStrokes);
-            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
+            Thread t = new Thread(unused => this.InterpretStrokes(addedStrokes,removedStrokes));
             t.Name = "Ink Interpretation Thread";
             t.Start();
         }

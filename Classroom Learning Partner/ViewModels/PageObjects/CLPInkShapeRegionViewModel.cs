@@ -49,16 +49,16 @@
         /// Stored strokecollections that constitute shapes
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<CLPInkShape> InkShapes
+        public ObservableCollection<CLPNamedInkSet> InkShapes
         {
-            get { return GetValue<ObservableCollection<CLPInkShape>>(InkShapesProperty); }
+            get { return GetValue<ObservableCollection<CLPNamedInkSet>>(InkShapesProperty); }
             set { SetValue(InkShapesProperty, value); }
         }
 
         /// <summary>
         /// Register the ShapeStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPInkShape>));
+        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPNamedInkSet>));
 
 
         #endregion //Model

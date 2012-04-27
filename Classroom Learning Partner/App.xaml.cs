@@ -147,10 +147,14 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPHandwritingRegion)]
                 .Add(1, "AnalysisType")
                 .Add(2, "StoredAnswer");    
+            model[typeof(CLPDataTable)]
+                .Add(1, "DataValues")
+                .Add(2, "Rows")
+                .Add(3, "Cols"); ;
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");
-            model[typeof(CLPInkShape)]
+            model[typeof(CLPNamedInkSet)]
                 .Add(1, "InkShapeStrokes")
                 .Add(2, "InkShapeType");
             model[typeof(CLPShape)].Add(1, "ShapeType");

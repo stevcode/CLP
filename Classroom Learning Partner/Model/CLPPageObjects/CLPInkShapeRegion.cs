@@ -54,22 +54,22 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Stored strokecollections that constitute shapes
         /// </summary>
-        public ObservableCollection<CLPInkShape> InkShapes
+        public ObservableCollection<CLPNamedInkSet> InkShapes
         {
-            get { return GetValue<ObservableCollection<CLPInkShape>>(InkShapesProperty); }
+            get { return GetValue<ObservableCollection<CLPNamedInkSet>>(InkShapesProperty); }
             set { SetValue(InkShapesProperty, value); }
         }
 
         /// <summary>
         /// Register the ShapeStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPInkShape>), new ObservableCollection<CLPInkShape>());
+        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPNamedInkSet>), new ObservableCollection<CLPNamedInkSet>());
 
         #endregion // Properties
 
         #region Methods
 
-        public override void DoInterpretation()
+        public override void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
             ContextNodeCollection shapes = InkInterpretation.InterpretShapes(CLPPage.StringsToStrokes(StrokesNoDuplicates));
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 InkShapes.Clear();
                 foreach (InkDrawingNode shape in shapes)
                 {
-                    InkShapes.Add(new CLPInkShape(shape.GetShapeName(),CLPPage.StrokesToStrings(shape.Strokes)));
+                    InkShapes.Add(new CLPNamedInkSet(shape.GetShapeName(),CLPPage.StrokesToStrings(shape.Strokes)));
                     text.AppendLine(shape.GetShapeName());
                 }
                 InkShapesString = text.ToString();

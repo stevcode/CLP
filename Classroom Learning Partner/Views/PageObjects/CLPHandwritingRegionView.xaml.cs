@@ -32,9 +32,7 @@
             optionChooser.ShowDialog();
             if (optionChooser.DialogResult == true)
             {
-                string correct_answer = optionChooser.CorrectAnswer.Text;
                 int selected_type = optionChooser.ExpectedType.SelectedIndex;
-
                 this.AnalysisType.Text = selected_type.ToString();
             }
         }

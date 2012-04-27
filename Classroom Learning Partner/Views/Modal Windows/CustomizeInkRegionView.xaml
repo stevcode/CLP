@@ -21,10 +21,6 @@
                 <ComboBoxItem Name="cbi5">Word</ComboBoxItem>
             </ComboBox>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5,2,5,10">
-            <Label VerticalContentAlignment="Center" Width="115" Height="40" FontSize="15">Correct Answer:</Label>
-            <TextBox VerticalContentAlignment="Center" x:Name="CorrectAnswer" Width="200" Height="25" FontSize="15"></TextBox>
-        </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Right">
             <Button IsDefault="True" Content="OK" Width="100" Height="30" Margin="5" Click="OKButton_Click"/>
             <Button IsCancel="True" Content="Cancel" Width="100" Height="30" Margin="5"/>
