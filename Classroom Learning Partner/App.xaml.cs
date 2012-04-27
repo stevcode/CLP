@@ -149,6 +149,9 @@ namespace Classroom_Learning_Partner
                 .Add(1, "DataValues")
                 .Add(2, "Rows")
                 .Add(3, "Cols"); ;
+            model[typeof(CLPShadingRegion)]
+                .Add(1, "Rows")
+                .Add(2, "Cols"); ;
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");

@@ -1,0 +1,14 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPDataTableView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
+
+    <Border BorderThickness="1" BorderBrush="Black">
+        <Grid>
+            <UniformGrid x:Name="Grid" Rows="{Binding Rows}" Columns="{Binding Cols}"  Height="{Binding Height}" Width="{Binding Width}" DataContextChanged="SetupGrid">
+            </UniformGrid>
+            <Image Grid.Row="1" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Source="/Images/SmallIcon.png" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}" MouseDown="ShowContentsCommand"></Image>
+        </Grid>
+    </Border>
+</catel:UserControl>
