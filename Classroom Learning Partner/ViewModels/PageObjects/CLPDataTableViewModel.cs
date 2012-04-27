@@ -79,16 +79,31 @@
         /// </summary>
         public static readonly PropertyData ColsProperty = RegisterProperty("Cols", typeof(int));
 
+        /// <summary>
+        /// Handwriting analysis type
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public CLPHandwritingAnalysisType AnalysisType
+        {
+            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
+            set { SetValue(AnalysisTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DataTableCols property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType));
+
         #endregion //Model
 
         public string GetStringRepresentation()
         {
-            string result = "";
+            string result = AnalysisType.ToString()+"\n";
             for (int i = 0; i < Rows * Cols; i++)
             {
                 if (i % Cols == Cols - 1)
                 {
-                    result += DataValues[i].InkShapeType + "\n";
+                    result += DataValues[i].InkShapeType + ",\n";
                 }
                 else
                 {

@@ -35,6 +35,21 @@
         #region Model
 
         /// <summary>
+        /// Percent Shaded
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double PercentFilled
+        {
+            get { return GetValue<double>(PercentFilledProperty); }
+            set { SetValue(PercentFilledProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PercentFilled property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PercentFilledProperty = RegisterProperty("PercentFilled", typeof(double));
+
+        /// <summary>
         /// Number of rows
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -68,8 +83,7 @@
 
         public string GetStringRepresentation()
         {
-            string result = "";
-            return result;
+            return PercentFilled.ToString();
         }
     }
 }

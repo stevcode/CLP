@@ -200,6 +200,12 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
+    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
+      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+      <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
@@ -300,6 +306,14 @@
     <Page Include="Resources\MainWindowResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>

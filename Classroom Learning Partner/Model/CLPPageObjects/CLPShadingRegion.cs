@@ -40,6 +40,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         }
 
         /// <summary>
+        /// Percent filled in
+        /// </summary>
+        public double PercentFilled
+        {
+            get { return GetValue<double>(PercentFilledProperty); }
+            set { SetValue(PercentFilledProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PercentFilled property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PercentFilledProperty = RegisterProperty("PercentFilled", typeof(double), 0);
+
+        /// <summary>
         /// Number of rows
         /// </summary>
         public int Rows
@@ -82,15 +96,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 total_shaded += i;
                 total += 1;
             }
-            /*for (int i = 0; i < result.GetUpperBound(1); i++)
-            {
-                for (int j = 0; j < result.GetUpperBound(0); j++)
-                {
-                    Console.Write(result[j, i] + ", ");
-                }
-                Console.WriteLine("\n");
-            }*/
-            Console.WriteLine("Percent shaded: " + total_shaded / total);
+            PercentFilled = total_shaded / total;
         }
 
         public int Idx2Dto1D(double x, double y)

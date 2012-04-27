@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
-        public CLPDataTable(int rows, int cols) : base()
+        public CLPDataTable(int rows, int cols, CLPHandwritingAnalysisType analysis_type) : base()
         {
             Rows = rows;
             Cols = cols;
@@ -25,6 +25,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 DataValues.Add(new CLPNamedInkSet());
             }
+
+            AnalysisType = analysis_type;
             //Console.WriteLine(DataTableCols + " ... " + DataTableRows);
         }
 
@@ -87,6 +89,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// </summary>
         public static readonly PropertyData ColsProperty = RegisterProperty("Cols", typeof(int), 0);
 
+        /// <summary>
+        /// Handwriting analysis type
+        /// </summary>
+        public CLPHandwritingAnalysisType AnalysisType
+        {
+            get { return GetValue<CLPHandwritingAnalysisType>(AnalysisTypeProperty); }
+            set { SetValue(AnalysisTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DataTableCols property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType), CLPHandwritingAnalysisType.DEFAULT);
+
         #endregion // Properties
 
         #region Methods
@@ -123,7 +139,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                     while (DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Contains(stroke))
                         DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Remove(stroke);
                     StrokeCollection newStrokeCollection = CLPPage.StringsToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
-                    string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, CLPHandwritingAnalysisType.DEFAULT);
+                    string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, AnalysisType);
                     DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeType = result;
                 }
             }

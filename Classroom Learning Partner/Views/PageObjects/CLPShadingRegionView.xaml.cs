@@ -34,8 +34,8 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         public void ShowContentsCommand(object sender, RoutedEventArgs e)
         {
-            //string result = (DataContext as CLPDataTableViewModel).GetStringRepresentation();
-            //MessageBox.Show(result);
+            string result = (DataContext as CLPShadingRegionViewModel).GetStringRepresentation();
+            MessageBox.Show(result);
         }
 
         protected override System.Type GetViewModelType()
