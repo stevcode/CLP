@@ -10,6 +10,7 @@ using Classroom_Learning_Partner.Resources;
 using Catel.Data;
 using System.Collections.ObjectModel;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -32,6 +33,17 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Position = new Point(100, 100);
             Height = 100;
             Width = 100;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += new EventHandler(timer_Tick);
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
+            t.Name = "Ink Interpretation Thread";
+            t.Start();
         }
 
         /// <summary>
@@ -59,7 +71,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             lock (interpretation_lock)
             {
-                // Make sure interpretation isn't going on while serializing
+                DoInterpretation();
             }
         }
 
@@ -88,12 +100,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             }
         }
 
+        private DispatcherTimer timer = null;
+
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
+            timer.Stop();
             this.ProcessStrokes(addedStrokes, removedStrokes);
-            Thread t = new Thread(new ThreadStart(this.InterpretStrokes));
-            t.Name = "Ink Interpretation Thread";
-            t.Start();
+            timer.Start();
         }
 
         #endregion
