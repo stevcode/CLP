@@ -22,6 +22,7 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using System.Diagnostics;
 using Classroom_Learning_Partner.Resources;
+using Catel.Windows;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -147,6 +148,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
+            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -1674,6 +1676,32 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyPageCommandExecute()
         {
             // TODO: Handle command logic here
+        }
+
+        /// <summary>
+        /// Gets the AddPageTopicCommand command.
+        /// </summary>
+        public Command AddPageTopicCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AddPageTopicCommand command is executed.
+        /// </summary>
+        private void OnAddPageTopicCommandExecute()
+        {
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+
+            NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
+            nameChooser.Owner = Application.Current.MainWindow;
+
+            string originalPageTopics = String.Join(",", page.PageTopics);
+            nameChooser.NotebookName.Text = originalPageTopics;
+            nameChooser.ShowDialog();
+            if (nameChooser.DialogResult == true)
+            {
+                string pageTopics = nameChooser.NotebookName.Text;
+                string [] stringArray = pageTopics.Split(',');
+                page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
+            }
         }
 
         #endregion //Page Commands

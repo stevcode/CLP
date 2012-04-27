@@ -401,10 +401,15 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
 
-                    <ribbon:RibbonButton
+                    <!--<ribbon:RibbonButton
                         Label="Copy This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />
+                        Command="{Binding Path=CopyPageCommand}" />-->
+
+                    <ribbon:RibbonButton
+                        Label="Add Page Topic to this Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=AddPageTopicCommand}" />
 
                 </ribbon:RibbonGroup>
 
