@@ -62,9 +62,41 @@ namespace Classroom_Learning_Partner.Resources
             return result;
         }
 
-        public static void InterpretShading(StrokeCollection strokes)
+        public static int[,] InterpretShading(StrokeCollection strokes, Point position, double width, double height, double spacing)
         {
+            int rows = (int)Math.Floor(height / spacing);
+            int cols = (int)Math.Floor(width / spacing);
 
+            int[,] discretization_result = new int[cols,rows];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    discretization_result[j, i] = 0;
+                }
+            }
+
+            foreach (System.Windows.Ink.Stroke s in strokes)
+            {
+                //Console.WriteLine("no of points: " + s.StylusPoints.Count);
+                foreach (StylusPoint sp in s.StylusPoints)
+                {
+                    double pointX = sp.X;
+                    double pointY = sp.Y;
+
+                    // Discretize to grid
+                    int idxX = (int)Math.Floor(pointX / (width / cols));
+                    int idxY = (int)Math.Floor(pointY / (height / rows));
+
+                    if (idxX >= 0 && idxY >= 0 && idxX < cols && idxY < rows)
+                    {
+                        discretization_result[idxX, idxY] = 1;
+                    }
+
+                }
+            }
+
+            return discretization_result;
         }
 
         public static void InterpretGraph(StrokeCollection strokes)
@@ -89,13 +121,9 @@ namespace Classroom_Learning_Partner.Resources
                 centroidX /= total;
                 centroidY /= total;
 
-                Console.WriteLine("Centroid: " + centroidX + " , " + centroidY); 
-
                 // Discretize to grid
                 int idxX = (int)Math.Floor(centroidX / (width / cols));
                 int idxY = (int)Math.Floor(centroidY / (height / rows));
-
-                Console.WriteLine("Discretized to: " + idxX + " , " + idxY); 
 
                 Point p = new Point(idxX, idxY);
                 discretizaton_result.Add(p);

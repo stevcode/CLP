@@ -455,6 +455,11 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertDataTableCommand}" />
 
+                    <ribbon:RibbonButton
+                        Label="Shading Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertShadingRegionCommand}" />
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Text">
