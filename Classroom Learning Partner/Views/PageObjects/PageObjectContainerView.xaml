@@ -215,6 +215,10 @@
                             <vwpo:CLPInkShapeRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
+                        <ControlTemplate x:Key="CLPDataTableTemplate">
+                            <vwpo:CLPGridView DataContext="{Binding}" />
+                        </ControlTemplate>
+
                         <ControlTemplate x:Key="CLPStampTemplate">
                             <vwpo:CLPStampView DataContext="{Binding}" />
                         </ControlTemplate>
@@ -261,6 +265,11 @@
                                 <!-- CLPInkShapeRegion trigger -->
                                 <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkShapeRegion">
                                     <Setter Property="Template" Value="{StaticResource CLPInkShapeRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPHandwritingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPDataTable">
+                                    <Setter Property="Template" Value="{StaticResource CLPDataTableTemplate}" />
                                 </DataTrigger>
 
                                 <!-- CLPStamp trigger -->

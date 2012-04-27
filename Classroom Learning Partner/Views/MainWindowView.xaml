@@ -445,6 +445,11 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertInkShapeRegionCommand}" />
 
+                    <ribbon:RibbonButton
+                        Label="Data Table"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertDataTableCommand}" />
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Text">

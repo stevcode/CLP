@@ -10,15 +10,21 @@ using System.Collections.ObjectModel;
 namespace Classroom_Learning_Partner.Model
 {
     [Serializable]
-    public class CLPInkShape : DataObjectBase<CLPInkShape>
+    public class CLPNamedInkSet : DataObjectBase<CLPNamedInkSet>
     {
-        public CLPInkShape(string shapeName, ObservableCollection<string> strokes)
+        public CLPNamedInkSet(string shapeName, ObservableCollection<string> strokes)
         {
             InkShapeType = shapeName;
             InkShapeStrokes = strokes;
         }
 
-        protected CLPInkShape(SerializationInfo info, StreamingContext context)
+        public CLPNamedInkSet()
+        {
+            InkShapeType = "";
+            InkShapeStrokes = new ObservableCollection<string>();
+        }
+
+        protected CLPNamedInkSet(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
 

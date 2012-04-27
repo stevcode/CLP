@@ -6,6 +6,7 @@ using Classroom_Learning_Partner.Resources;
 using Catel.Data;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -75,7 +76,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Methods
 
-        public override void DoInterpretation()
+        public override void DoInterpretation(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
             string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);

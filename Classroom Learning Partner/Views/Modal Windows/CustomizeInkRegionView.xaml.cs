@@ -23,10 +23,9 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
             InitializeComponent();
         }
 
-        public CustomizeInkRegionView(int AnalysisType, string CorrectAnswer)
+        public CustomizeInkRegionView(int AnalysisType)
         {
             this.ExpectedType.SelectedIndex = AnalysisType;
-            this.CorrectAnswer.Text = CorrectAnswer;
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

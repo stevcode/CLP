@@ -1,0 +1,11 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPGridView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
+
+    <Border BorderThickness="1" BorderBrush="Black">
+        <UniformGrid x:Name="Grid" Rows="{Binding Rows}" Columns="{Binding Cols}"  Height="{Binding Height}" Width="{Binding Width}" DataContextChanged="SetupGrid">
+        </UniformGrid>
+    </Border>
+</catel:UserControl>

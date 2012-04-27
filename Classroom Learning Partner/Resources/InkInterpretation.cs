@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Ink;
 using Microsoft.Ink;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Classroom_Learning_Partner.Resources
 {
@@ -70,9 +72,35 @@ namespace Classroom_Learning_Partner.Resources
 
         }
 
-        public static void InterpretTable(StrokeCollection strokes)
+        public static List<Point> InterpretTable(StrokeCollection strokes, Point position, double width, double height, int rows, int cols)
         {
+            List<Point> discretizaton_result = new List<Point>();
+            foreach (System.Windows.Ink.Stroke s in strokes)
+            {
+                // Calculate centroids
+                double centroidX = 0.0;
+                double centroidY = 0.0;
+                double total = (double) s.StylusPoints.Count;
+                foreach (StylusPoint sp in s.StylusPoints)
+                {
+                    centroidX += sp.X - position.X;
+                    centroidY += sp.Y - position.Y;
+                }
+                centroidX /= total;
+                centroidY /= total;
 
+                Console.WriteLine("Centroid: " + centroidX + " , " + centroidY); 
+
+                // Discretize to grid
+                int idxX = (int)Math.Floor(centroidX / (width / cols));
+                int idxY = (int)Math.Floor(centroidY / (height / rows));
+
+                Console.WriteLine("Discretized to: " + idxX + " , " + idxY); 
+
+                Point p = new Point(idxX, idxY);
+                discretizaton_result.Add(p);
+            }
+            return discretizaton_result;
         }
 
         public static ContextNodeCollection InterpretShapes(StrokeCollection strokes)
