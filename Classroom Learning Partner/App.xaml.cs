@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
@@ -144,7 +144,8 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPInkRegion)]
                 .AddSubType(1, typeof(CLPInkShapeRegion))
                 .AddSubType(2, typeof(CLPHandwritingRegion))
-                .AddSubType(3, typeof(CLPDataTable));
+                .AddSubType(3, typeof(CLPDataTable))
+                .AddSubType(4, typeof(CLPShadingRegion));
             model[typeof(CLPHandwritingRegion)]
                 .Add(1, "AnalysisType")
                 .Add(2, "StoredAnswer");    
