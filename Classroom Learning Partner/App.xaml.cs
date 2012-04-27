@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Projector;
             _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();

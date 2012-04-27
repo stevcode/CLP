@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Audio
            // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
-            string NotebookID = Page.ParentNotebookID.ToString();
+            //string NotebookID = Page.ParentNotebookID.ToString();
             //path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + NotebookID + @" - " + page.UniqueID + ".wav";
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
             {
