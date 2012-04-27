@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.Model
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
-        
+
 
         string PageObjectType { get; }
 

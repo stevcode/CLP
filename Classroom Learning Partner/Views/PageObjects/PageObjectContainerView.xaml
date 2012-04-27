@@ -207,8 +207,20 @@
                             <vwpo:CLPShapeView DataContext="{Binding}" />
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPInkRegionTemplate">
-                            <vwpo:CLPInkRegionView DataContext="{Binding}" />
+                        <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
+                            <vwpo:CLPHandwritingRegionView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
+                            <vwpo:CLPInkShapeRegionView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPDataTableTemplate">
+                            <vwpo:CLPDataTableView DataContext="{Binding}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPShadingRegionTemplate">
+                            <vwpo:CLPShadingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPStampTemplate">
@@ -249,9 +261,24 @@
                                     <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
                                 </DataTrigger>
 
-                                <!-- CLPInkRegion trigger -->
-                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkRegion">
-                                    <Setter Property="Template" Value="{StaticResource CLPInkRegionTemplate}" />
+                                <!-- CLPHandwritingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPHandwritingRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPInkShapeRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPInkShapeRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPInkShapeRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPDataTable trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPDataTable">
+                                    <Setter Property="Template" Value="{StaticResource CLPDataTableTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPShadingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObjectType}" Value="CLPShadingRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPShadingRegionTemplate}" />
                                 </DataTrigger>
 
                                 <!-- CLPStamp trigger -->

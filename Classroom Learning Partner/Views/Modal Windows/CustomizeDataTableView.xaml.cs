@@ -16,16 +16,11 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
     /// <summary>
     /// Interaction logic for CustomizeInkRegionView.xaml
     /// </summary>
-    public partial class CustomizeInkRegionView : Window
+    public partial class CustomizeDataTableView : Window
     {
-        public CustomizeInkRegionView()
+        public CustomizeDataTableView()
         {
             InitializeComponent();
-        }
-
-        public CustomizeInkRegionView(int AnalysisType)
-        {
-            this.ExpectedType.SelectedIndex = AnalysisType;
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

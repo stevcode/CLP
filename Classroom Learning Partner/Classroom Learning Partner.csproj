@@ -151,10 +151,12 @@
     <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
+    <Compile Include="Model\CLPNamedInkSet.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPAudio.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPHandwritingRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
@@ -163,19 +165,26 @@
     <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStrokePathContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkShapeRegion.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPDataTable.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPShadingRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
+    <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkShapeRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPDataTableViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
@@ -191,6 +200,12 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
+    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
+      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+      <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
@@ -218,8 +233,8 @@
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
-      <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPHandwritingRegionView.xaml.cs">
+      <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
       <DependentUpon>CLPShapeView.xaml</DependentUpon>
@@ -229,6 +244,15 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
       <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
+      <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPDataTableView.xaml.cs">
+      <DependentUpon>CLPDataTableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
+      <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -283,6 +307,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -319,7 +351,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPInkRegionView.xaml">
+    <Page Include="Views\PageObjects\CLPHandwritingRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -334,6 +366,18 @@
     <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>

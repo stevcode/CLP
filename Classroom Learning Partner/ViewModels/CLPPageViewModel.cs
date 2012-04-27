@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Audio
            // System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(path);
-            string NotebookID = Page.ParentNotebookID.ToString();
+            //string NotebookID = Page.ParentNotebookID.ToString();
             //path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + NotebookID + @" - " + page.UniqueID + ".wav";
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
             {
@@ -356,7 +356,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
                     PageHistory.HistoryItems.Add(item);
-                //    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
+                    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
                 }
             }
 

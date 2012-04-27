@@ -215,7 +215,7 @@
             <Border Grid.Row="1" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Margin="0">
                 <vwpo:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" />
             </Border>
-            </Grid>
+        </Grid>
     </ac:AdornedControl>
 
 </catel:UserControl>
