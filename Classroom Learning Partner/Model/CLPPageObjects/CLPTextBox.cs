@@ -63,7 +63,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public override string PageObjectType
         {
             get { return "CLPTextBox"; }
-             
         }
 
         public override ICLPPageObject Duplicate()

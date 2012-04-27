@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
@@ -106,13 +106,11 @@ namespace Classroom_Learning_Partner
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
                 .Add(12, "SubmissionTime")
-                //.Add(14, "PageStrokesSer")
                 .Add(17, "PageObjectsSer");
 
-           // model[typeof(CLPPage)][14].OverwriteList = true;
+
             model[typeof(CLPPage)][17].AsReference = true;
             model[typeof(CLPPage)][17].OverwriteList = true;
-            //model[typeof(CLPPage)][14].AsReference = true;
            
 
             
@@ -142,9 +140,14 @@ namespace Classroom_Learning_Partner
                 .Add(1, "StrokePathContainer");
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
+
+            model[typeof(CLPInkRegion)]
+                .AddSubType(1, typeof(CLPInkShapeRegion))
+                .AddSubType(2, typeof(CLPHandwritingRegion))
+                .AddSubType(3, typeof(CLPDataTable));
             model[typeof(CLPHandwritingRegion)]
                 .Add(1, "AnalysisType")
-                .Add(2, "StoredAnswer");
+                .Add(2, "StoredAnswer");    
             model[typeof(CLPDataTable)]
                 .Add(1, "DataValues")
                 .Add(2, "Rows")

@@ -16,6 +16,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
+        public CLPDataTable()
+            : base()
+        {
+        }
+        
         public CLPDataTable(int rows, int cols, CLPHandwritingAnalysisType analysis_type) : base()
         {
             Rows = rows;
