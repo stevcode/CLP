@@ -888,7 +888,7 @@ namespace Classroom_Learning_Partner.Model
                         });
 
                         Logger.Instance.WriteToLog("Page " + tempP.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
-                        System.Threading.Thread.Sleep(1000);
+                        System.Threading.Thread.Sleep(250);
                         //replace history:
                         CLPHistory.replaceHistoryInPage(segmentedHistory, page);
 
