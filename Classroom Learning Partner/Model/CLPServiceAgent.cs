@@ -302,16 +302,78 @@ namespace Classroom_Learning_Partner.Model
         }
 
 
+        //Method for logging size of submissions with various serialization methods
+        //Used for testing
+        private void serializationSizes(CLPPage page, string notebookName)
+        {
+            //Size tests
+            List<double> sizes = new List<double>();
+
+
+            //remove history before serializing 
+            CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+
+            string oldSubmissionID = page.SubmissionID;
+            page.SubmissionID = Guid.NewGuid().ToString();
+            page.SubmissionTime = DateTime.Now;
+
+
+            //ProtoBufTest - Page
+            //Serialize using protobuf
+            MemoryStream stream = new MemoryStream();
+            Serializer.PrepareSerializer<CLPPage>();
+            Serializer.Serialize<CLPPage>(stream, page);
+            string s_page_pb = Convert.ToBase64String(stream.ToArray());
+
+            // Add BFPage
+            string s_page = ObjectSerializer.ToString(page);
+            double size_standard = s_page.Length / 1024.0;
+            sizes.Add(size_standard);
+            
+            //Add PB Page
+            sizes.Add(s_page_pb.Length / 1024.0);
+
+            //Test deserialize 
+            //Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
+            //CLPPage page2 = new CLPPage();
+            //page2 = Serializer.Deserialize<CLPPage>(stream2);
+            //App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
+
+            //BF History
+            string s_history = ObjectSerializer.ToString(tempHistory);
+            sizes.Add(s_history.Length / 1024.0);
+
+            //ProtoBufTest - History
+            App.PageTypeModel[typeof(CLPHistory)].CompileInPlace();
+            MemoryStream stream3 = new MemoryStream();
+            App.PageTypeModel.Serialize(stream3, tempHistory);
+            //Serializer.Serialize<CLPHistory>(stream3, tempHistory);
+            string s_history_pb = Convert.ToBase64String(stream3.ToArray());
+            sizes.Add(s_history_pb.Length / 1024.0);
+
+            //Test deserialize 
+            // Stream stream4 = new MemoryStream(Convert.FromBase64String(s_history_pb));
+            //CLPHistory history = new CLPHistory();
+            //CLPHistory history = Serializer.Deserialize<CLPHistory>(stream4);
+            //App.PageTypeModel.Deserialize(stream4, history, typeof(CLPHistory));
+
+            //put the history back into the page
+            CLPHistory.replaceHistoryInPage(tempHistory, page);
+
+
+            //log sizes
+            Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString());
+            Logger.Instance.WriteToLog("Page w/o  History " + sizes[0].ToString() + " " + sizes[1].ToString());
+            Logger.Instance.WriteToLog("Full      History " + sizes[2].ToString() + " " + sizes[3].ToString());
+            //Logger.Instance.WriteToLog("Segmented History " + sizes[4].ToString() + " " + sizes[5].ToString());
+            //Logger.Instance.WriteToLog("Num Full History Items " + sizes[6].ToString());
+            //Logger.Instance.WriteToLog("Num Seg History  Items " + sizes[7].ToString());
+        }
+
         public void SubmitPage(CLPPage page, string notebookName)
         {
             if (App.Peer.Channel != null)
             {
-                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                //string s_history = ObjectSerializer.ToString(history);
-                //ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
-
-                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
                 //remove history before sending
                 CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
@@ -327,56 +389,7 @@ namespace Classroom_Learning_Partner.Model
                 Serializer.PrepareSerializer<CLPPage>();
                 Serializer.Serialize<CLPPage>(stream, page);
                 string s_page_pb = Convert.ToBase64String(stream.ToArray());
-
-
-                string s_page = ObjectSerializer.ToString(page);
-
-
-
-                double size_standard = s_page.Length / 1024.0;
-                //Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
-                //Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString() + " kB");
-
-                //Size tests
-                List<double> sizes = new List<double>();
-                //BFPage
-                sizes.Add(size_standard);
-
-
-
-
-                
-                sizes.Add(s_page_pb.Length / 1024.0);
-
-                
-
-                //Test deserialize 
-                //Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
-                //CLPPage page2 = new CLPPage();
-                //page2 = Serializer.Deserialize<CLPPage>(stream2);
-                //App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
-               
-
-
-                //BF History
-                string s_history = ObjectSerializer.ToString(tempHistory);
-                sizes.Add(s_history.Length / 1024.0);
-
-
-                //ProtoBufTest - History
-                //Serialize using protobuf
-                App.PageTypeModel[typeof(CLPHistory)].CompileInPlace();
-                MemoryStream stream3 = new MemoryStream();
-                App.PageTypeModel.Serialize(stream3, tempHistory);
-                //Serializer.Serialize<CLPHistory>(stream3, tempHistory);
-                string s_history_pb = Convert.ToBase64String(stream3.ToArray());
-                sizes.Add(s_history_pb.Length / 1024.0);
-
-                //Test deserialize 
-               // Stream stream4 = new MemoryStream(Convert.FromBase64String(s_history_pb));
-                //CLPHistory history = new CLPHistory();
-                //CLPHistory history = Serializer.Deserialize<CLPHistory>(stream4);
-                //App.PageTypeModel.Deserialize(stream4, history, typeof(CLPHistory));
+                double pbPageSize = (s_page_pb.Length / 1024.0);
 
                 //Submit Page using PB
                 App.Peer.Channel.SubmitFullPage(s_page_pb, App.Peer.UserName, notebookName);
@@ -387,14 +400,8 @@ namespace Classroom_Learning_Partner.Model
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
                 page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null)); 
 
-
                 //log sizes
-                Logger.Instance.WriteToLog("==== Serialization Size (in .5 kB) for page " + page.PageIndex.ToString());
-                Logger.Instance.WriteToLog("Page w/o  History " + sizes[0].ToString() + " " + sizes[1].ToString());
-                Logger.Instance.WriteToLog("Full      History " + sizes[2].ToString() + " " + sizes[3].ToString());
-                //Logger.Instance.WriteToLog("Segmented History " + sizes[4].ToString() + " " + sizes[5].ToString());
-                //Logger.Instance.WriteToLog("Num Full History Items " + sizes[6].ToString());
-                //Logger.Instance.WriteToLog("Num Seg History  Items " + sizes[7].ToString());
+                Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
 
                 // Stamp and Tile log information
                 //TODO: Fix the naming of the log path. This is really messy.

@@ -16,6 +16,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     {
         #region Constructors
 
+
+        public CLPShadingRegion()
+            : base()
+        {
+        }
         public CLPShadingRegion(int rows, int cols) : base()
         {
             Rows = rows;

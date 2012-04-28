@@ -938,7 +938,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
 
             {
-                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving All Notebook Histories", 0.0 / 0.0);
+               
             }
         }
 
@@ -1488,7 +1490,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
                     pageIDs.Add(pageID);
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                 }
                 else
                 {
