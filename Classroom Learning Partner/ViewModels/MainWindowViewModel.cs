@@ -163,8 +163,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
-            // FAKE SUBMIT TAKE THIS OUT
-            FakeSubmitCommand = new Command(OnFakeSubmitCommandExecute);
 
             //Student Record and Playback 
             RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
@@ -1938,108 +1936,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols);
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
-        }
-
-        public Command FakeSubmitCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SubmitPageCommand command is executed.
-        /// </summary>
-        private void OnFakeSubmitCommandExecute()
-        {
-            //Steve - change to different thread and do callback to make sure sent page has arrived
-            IsSending = true;
-            Timer timer = new Timer();
-            timer.Interval = 1000;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-            timer.Enabled = true;
-
-            if (CanSendToTeacher)
-            {
-                CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
-                CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
-                string oldSubmissionID = page.SubmissionID;
-                page.SubmissionID = Guid.NewGuid().ToString();
-                page.SubmissionTime = DateTime.Now;
-                MemoryStream stream = new MemoryStream();
-                Serializer.PrepareSerializer<CLPPage>();
-                Serializer.Serialize<CLPPage>(stream, page);
-                string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                string s_page = ObjectSerializer.ToString(page);
-                double size_standard = s_page.Length / 1024.0;
-                List<double> sizes = new List<double>();
-                sizes.Add(size_standard);
-                sizes.Add(s_page_pb.Length / 1024.0);
-                string s_history = ObjectSerializer.ToString(tempHistory);
-                sizes.Add(s_history.Length / 1024.0);
-                App.PageTypeModel[typeof(CLPHistory)].CompileInPlace();
-                MemoryStream stream3 = new MemoryStream();
-                App.PageTypeModel.Serialize(stream3, tempHistory);
-                string s_history_pb = Convert.ToBase64String(stream3.ToArray());
-                sizes.Add(s_history_pb.Length / 1024.0);
-
-                //Submit Page using PB
-                //App.Peer.Channel.SubmitFullPage(s_page_pb, App.Peer.UserName, notebookName);
-
-                //put the history back into the page
-                CLPHistory.replaceHistoryInPage(tempHistory, page);
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null));
-
-
-                //log sizes
-                Logger.Instance.WriteToLog("==== Serialization Size (in .5 kB) for page " + page.PageIndex.ToString());
-                Logger.Instance.WriteToLog("Page w/o  History " + sizes[0].ToString() + " " + sizes[1].ToString());
-                Logger.Instance.WriteToLog("Full      History " + sizes[2].ToString() + " " + sizes[3].ToString());
-                //Logger.Instance.WriteToLog("Segmented History " + sizes[4].ToString() + " " + sizes[5].ToString());
-                //Logger.Instance.WriteToLog("Num Full History Items " + sizes[6].ToString());
-                //Logger.Instance.WriteToLog("Num Seg History  Items " + sizes[7].ToString());
-
-                // Stamp and Tile log information
-                //TODO: Fix the naming of the log path. This is really messy.
-                string filePath = App.NotebookDirectory + @"\.." + @"\Logs" + @"\StampTileLog" + page.SubmissionID.ToString() + @".log";
-                System.IO.StreamWriter file = new System.IO.StreamWriter(filePath);
-                file.WriteLine("<Page id=" + page.UniqueID + " />");
-
-                foreach (ICLPPageObject obj in page.PageObjects)
-                {
-                    if (obj is CLPStamp)
-                    {
-                        CLPStamp stamp = obj as CLPStamp;
-                        file.WriteLine("<Stamp>");
-                        file.WriteLine("<Height>" + stamp.Height + "</Height>");
-                        file.WriteLine("<Width>" + stamp.Width + "</Width>");
-                        file.WriteLine("<Position>" + stamp.Position + "</Position>");
-                        file.WriteLine("<UniqueId>" + stamp.UniqueID + "</UniqueId>");
-                        file.WriteLine("<ParentId>" + stamp.ParentID + "</ParentId>");
-                        file.WriteLine("</Stamp>");
-                    }
-                    else if (obj is CLPSnapTileContainer)
-                    {
-                        CLPSnapTileContainer tile = obj as CLPSnapTileContainer;
-                        file.WriteLine("<Tile>");
-                        file.WriteLine("<Height>" + tile.Height);
-                        file.WriteLine("<Width>" + tile.Width + "</Width>");
-                        file.WriteLine("<UniqueId>" + tile.UniqueID + "</UniqueId>");
-                        file.WriteLine("<Number>" + tile.NumberOfTiles + "</Number>");
-                        file.WriteLine("</Tile>");
-                    }
-                    else if (obj is CLPStrokePathContainer)
-                    {
-                        CLPStrokePathContainer container = obj as CLPStrokePathContainer;
-                        file.WriteLine("<Container>");
-                        file.WriteLine("<Height>" + container.Height);
-                        file.WriteLine("<Width>" + container.Width + "</Width>");
-                        file.WriteLine("<UniqueId>" + container.UniqueID + "</UniqueId>");
-                        file.WriteLine("<ParentStampID>" + container.ParentID + "</ParentStampID>");
-                        file.WriteLine("</Container>");
-                    }
-                }
-                file.WriteLine("</Page>");
-                file.Close();
-            }
-            CanSendToTeacher = false;
-
         }
 
         /// <summary>
