@@ -460,6 +460,12 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertShadingRegionCommand}" />
 
+                    <ribbon:RibbonButton
+                        LargeImageSource="..\Images\Send.png" 
+                        Command="{Binding Path=SubmitPageCommand}" 
+                        Label="Send To Teacher"
+                        Visibility="{Binding Path=FakeSubmitCommand}"/>
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Text">
