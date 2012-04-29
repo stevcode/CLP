@@ -23,6 +23,7 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using System.Diagnostics;
 using Classroom_Learning_Partner.Resources;
 using Catel.Windows;
+using ProtoBuf;
 
 
 namespace Classroom_Learning_Partner.ViewModels

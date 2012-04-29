@@ -151,7 +151,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageObjectsSer property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectsSerProperty = RegisterProperty("PageObjectsSer", typeof(List<String>), new List<String>());
+        public static readonly PropertyData PageObjectsSerProperty = RegisterProperty("PageObjectsSer", typeof(List<String>), () => new List<String>());
         
 
         /// <summary>

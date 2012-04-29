@@ -75,11 +75,11 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            timer.Stop();
-            lock (interpretation_lock)
-            {
+            //timer.Stop();
+            //lock (interpretation_lock)
+            //{
                 DoInterpretation();
-            }
+            //}
         }
 
         public abstract void DoInterpretation();
@@ -111,9 +111,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            timer.Stop();
+            //timer.Stop();
             this.ProcessStrokes(addedStrokes, removedStrokes);
-            timer.Start();
+            //timer.Start();
         }
 
         #endregion
