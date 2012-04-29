@@ -22,7 +22,7 @@
         <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />
 
         <!-- Control that dynamically determines what Display to show -->
-        <Control DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display"  Grid.Column="1">
+        <Control Margin="15"  DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display"  Grid.Column="1">
             <Control.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
