@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Instructor;
+            CurrentUserMode = UserMode.Student;
             _databaseUse = DatabaseMode.Using;
 
             Logger.Instance.InitializeLog();
@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
