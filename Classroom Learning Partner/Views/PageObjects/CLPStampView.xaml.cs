@@ -10,12 +10,20 @@
     using System.Windows.Controls.Primitives;
     using System.Windows.Media;
     using System.Windows.Shapes;
+    using System.Windows.Threading;
+    using System.Threading;
+    using System.Windows.Controls;
 
     /// <summary>
     /// Interaction logic for CLPStampView.xaml.
     /// </summary>
-    public partial class CLPStampView : UserControl
+    public partial class CLPStampView : Catel.Windows.Controls.UserControl
     {
+        private bool isMouseDown = false;
+        private bool isHidden = true;
+        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner appears
+        private DispatcherTimer timer = null;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPStampView"/> class.
         /// </summary>
@@ -23,6 +31,10 @@
         {
             InitializeComponent();
             SkipSearchingForInfoBarMessageControl = true;
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
+            timer.Tick += new EventHandler(timer_Tick);
         }
 
         protected override System.Type GetViewModelType()
@@ -91,6 +103,7 @@
         private void PageObjectHitBox_MouseEnter(object sender, MouseEventArgs e)
         {
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
+            adornerCanvas.Visibility = Visibility.Hidden;
         }
 
         private void PageObjectHitBox_MouseLeave(object sender, MouseEventArgs e)
@@ -98,7 +111,7 @@
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
         }
 
-        private void PageObjectHitBox_StylusEnter(object sender, StylusEventArgs e)
+/*        private void PageObjectHitBox_StylusEnter(object sender, StylusEventArgs e)
         {
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
         }
@@ -106,7 +119,95 @@
         private void PageObjectHitBox_StylusLeave(object sender, StylusEventArgs e)
         {
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
+        }*/
+
+        private void StrokeContainerMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            isMouseDown = true;
+            timer.Stop();
         }
 
+        private void StrokeContainerwMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            timer.Start();
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            Console.WriteLine("Woot");
+            //if (!stamp.PageObject.IsBackground)
+            //{
+                adornerCanvas.Visibility = Visibility.Visible;
+            //}
+        }
+
+        private void StampObject_MouseMove(object sender, MouseEventArgs e)
+        {
+            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            if ((stamp.PageObject.IsBackground && App.MainWindowViewModel.IsAuthoring) || (!stamp.PageObject.IsBackground))
+            {
+                VisualTreeHelper.HitTest(StampObject, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(StampObject)));
+            }
+            else
+            {
+                adornerCanvas.Visibility = Visibility.Hidden;
+            }
+             //   StylusEnter="PageObjectHitBox_StylusEnter"  StylusInRange="PageObjectHitBox_StylusEnter"  StylusLeave="PageObjectHitBox_StylusLeave"  StylusOutOfRange="PageObjectHitBox_StylusLeave"
+             
+        }
+
+        private HitTestFilterBehavior HitFilter(DependencyObject o)
+        {
+            Console.WriteLine("Filter" + o.GetType());
+            if (o.GetType().BaseType == typeof(Shape))
+            {
+                if ((o as Shape).Name == "PageObjectHitBox")
+                {
+                    return HitTestFilterBehavior.ContinueSkipChildren;
+                }
+                else
+                {
+                    return HitTestFilterBehavior.Continue;
+                }
+            }
+            else
+            {
+                return HitTestFilterBehavior.Continue;
+            }
+        }
+
+        private HitTestResultBehavior HitResult(HitTestResult result)
+        {
+            Console.WriteLine("Start: " + result.VisualHit.GetType());
+            Console.WriteLine("Base: " + result.VisualHit.GetType().BaseType);
+            if (result.VisualHit.GetType().BaseType == typeof(Shape))
+            {
+                Console.WriteLine("Shape: " + (result.VisualHit as Shape).DataContext);
+                Console.WriteLine("Shape Name: " + (result.VisualHit as Shape).Name);
+                if ((result.VisualHit as Shape).DataContext is CLPStampViewModel)
+                {
+                    if (!timer.IsEnabled)
+                        timer.Start();
+                    Console.WriteLine("Handle");
+                    //adornerCanvas.Visibility = Visibility.Hidden;
+                    return HitTestResultBehavior.Stop;
+                }
+                else if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
+                {
+                    timer.Stop();
+                    Console.WriteLine("Stroke Me!");
+                    return HitTestResultBehavior.Stop;
+                }
+                else
+                {
+                    Console.WriteLine("Boo!");
+                    timer.Stop();
+                    return HitTestResultBehavior.Continue;
+                }
+            }
+            return HitTestResultBehavior.Continue;
+        }
     }
 }

@@ -96,6 +96,10 @@ namespace Classroom_Learning_Partner.Views
         {
             if (result.VisualHit.GetType() == typeof(Grid))
             {
+                if ((result.VisualHit as Grid).DataContext is CLPStamp)
+                {
+                    MainInkCanvas.IsHitTestVisible = false;
+                }
                 if ((result.VisualHit as Grid).Name == "ContainerHitBox")
                 {
                     if (App.MainWindowViewModel.IsAuthoring)
