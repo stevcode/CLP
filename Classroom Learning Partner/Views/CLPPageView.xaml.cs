@@ -264,6 +264,14 @@ namespace Classroom_Learning_Partner.Views
                         CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Shape).DataContext as CLPAudio);
                     }
                 }
+                if ((result.VisualHit as Shape).DataContext is CLPStampViewModel)
+                {
+                    if (!((result.VisualHit as Shape).DataContext as CLPStampViewModel).IsBackground ||
+                        (((result.VisualHit as Shape).DataContext as CLPStampViewModel).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                    {
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPStampViewModel).PageObject);
+                    }
+                }
                 return HitTestResultBehavior.Stop;
             }
             return HitTestResultBehavior.Continue;
