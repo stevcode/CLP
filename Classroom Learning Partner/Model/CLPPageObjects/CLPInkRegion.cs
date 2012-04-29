@@ -118,6 +118,5 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #endregion
 
-        
     }
 }

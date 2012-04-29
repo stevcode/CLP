@@ -86,6 +86,20 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// </summary>
         public static readonly PropertyData ColsProperty = RegisterProperty("Cols", typeof(int), 0);
 
+        /// <summary>
+        /// The feature vector representation of the region
+        /// </summary>
+        public double[] FeatureVector
+        {
+            get { return GetValue<double[]>(FeatureVectorProperty); }
+            set { SetValue(FeatureVectorProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the FeatureVector property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData FeatureVectorProperty = RegisterProperty("FeatureVector", typeof(double[]), new double[11]);
+
         #endregion // Properties
 
         #region Methods
@@ -102,11 +116,70 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 total += 1;
             }
             PercentFilled = total_shaded / total;
+            MakeFeatureVector(result);
+            foreach (double i in FeatureVector)
+                Console.Write(i + ", ");
+            Console.WriteLine("");
         }
 
         public int Idx2Dto1D(double x, double y)
         {
             return (int)(y * Cols + x);
+        }
+
+        //private static double[] weights = { 1.85, 1.02, 1.25, 0.78, 1.65, 2.43, 0.78, 0.15, 2.43, 0.49, 0.15 };
+        private void MakeFeatureVector(int[,] shading)
+        {
+            // Percent filled
+            FeatureVector[0] = PercentFilled;
+
+            // Centroids
+            double totalX = 0;
+            double totalY = 0;
+            double total = 0;
+            for (int i = 0; i < shading.GetLength(0); i++)
+            {
+                for (int j = 0; j < shading.GetLength(1); j++)
+                {
+                    if (shading[i, j] > 0)
+                    {
+                        totalX += i;
+                        totalY += j;
+                        total++;
+                    }
+                }
+            }
+            FeatureVector[1] = (totalX / total) / shading.GetLength(0);
+            FeatureVector[2] = (Math.Abs(totalX / total - shading.GetLength(0) / 2)) / (shading.GetLength(0) / 2);
+            FeatureVector[3] = (totalY / total) / shading.GetLength(0);
+            FeatureVector[4] = (Math.Abs(totalY / total - shading.GetLength(0) / 2)) / (shading.GetLength(0) / 2);
+            FeatureVector[5] = (FeatureVector[2] + FeatureVector[4]);
+
+            // Bounding Box
+            double minX = double.PositiveInfinity;
+            double minY = double.PositiveInfinity;
+            double maxX = 0;
+            double maxY = 0;
+
+            for (int i = 0; i < shading.GetLength(0); i++)
+            {
+                for (int j = 0; j < shading.GetLength(1); j++)
+                {
+                    if (shading[i, j] > 0)
+                    {
+                        minX = Math.Min(minX, i);
+                        minY = Math.Min(minY, j);
+                        maxX = Math.Max(maxX, i);
+                        maxY = Math.Max(maxY, j);
+                    }
+                }
+            }
+
+            FeatureVector[6] = (maxX - minX) / shading.GetLength(0);
+            FeatureVector[7] = (maxY - minY) / shading.GetLength(1);
+            FeatureVector[8] = (maxX - minX) * (maxY - minY) / (shading.GetLength(0) * shading.GetLength(1));
+            FeatureVector[9] = (minX) / shading.GetLength(0);
+            FeatureVector[10] = (minY) / shading.GetLength(1);
         }
 
         #endregion // Methods
