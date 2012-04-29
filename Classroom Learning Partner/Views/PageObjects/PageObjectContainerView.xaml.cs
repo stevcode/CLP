@@ -144,7 +144,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         isStampAdornerSet = true;
                     if (!timer.IsEnabled)
                         timer.Start();
-                    Console.WriteLine("I am stamp");
                     return HitTestResultBehavior.Stop;
                 }
             }
@@ -155,7 +154,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             timer.Stop();
             CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            Console.WriteLine("Woot");
             adornerCanvas.Visibility = Visibility.Visible;
         }
     }
