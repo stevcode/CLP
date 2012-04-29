@@ -36,6 +36,23 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             return typeof(CLPPageObjectBaseViewModel);
         }
 
+        protected override System.Type GetViewModelType(object dataContext)
+        {
+            if (dataContext is CLPAudio) return typeof(CLPAudioViewModel);
+            if (dataContext is CLPDataTable) return typeof(CLPDataTableViewModel);
+            if (dataContext is CLPHandwritingRegion) return typeof(CLPHandwritingRegionViewModel);
+            if (dataContext is CLPImage) return typeof(CLPImageViewModel);
+            if (dataContext is CLPInkShapeRegion) return typeof(CLPInkShapeRegionViewModel);
+            if (dataContext is CLPShadingRegion) return typeof(CLPShadingRegionViewModel);
+            if (dataContext is CLPShape) return typeof(CLPShapeViewModel);
+            if (dataContext is CLPSnapTileContainer) return typeof(CLPSnapTileContainerViewModel);
+            if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
+            if (dataContext is CLPStrokePathContainer) return typeof(CLPStrokePathContainerViewModel);
+            if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
+
+            return null;
+        }
+
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             ICLPPageObject pageObject = (this.DataContext as ICLPPageObject);

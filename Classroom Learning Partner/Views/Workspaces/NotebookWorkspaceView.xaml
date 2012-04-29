@@ -9,6 +9,31 @@
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
+
+        <Style TargetType="{x:Type ContentControl}" x:Key="DisplayStyle">
+            <Style.Triggers>
+
+                <!-- LinkedDipslay trigger -->
+                <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwd:LinkedDisplayView />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+                <!-- GridDisplay trigger -->
+                <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <vwd:GridDisplayView />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+        
     </UserControl.Resources>
 
     <!-- Content -->
@@ -22,37 +47,7 @@
         <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />
 
         <!-- Control that dynamically determines what Display to show -->
-        <Control DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display"  Grid.Column="1">
-            <Control.Resources>
-
-                <ControlTemplate x:Key="LinkedDisplayTemplate">
-                    <vwd:LinkedDisplayView DataContext="{Binding}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="GridDisplayTemplate">
-                    <vwd:GridDisplayView DataContext="{Binding}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!-- LinkeDisplay trigger -->
-                        <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                            <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
-                        </DataTrigger>
-
-                        <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                            <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </Control>
+        <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" Style="{StaticResource DisplayStyle}" x:Name="Display" Grid.Column="1" />       
 
         <Border Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
             HorizontalAlignment="Right"  Grid.Column="2" BorderThickness="2,2,2,2" Width="150" BorderBrush="LightGreen" CornerRadius="5,5,5,5" Background="White">

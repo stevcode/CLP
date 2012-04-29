@@ -24,6 +24,66 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
+
+            <Style TargetType="{x:Type ContentControl}" x:Key="WorkspaceStyle">
+                <Style.Triggers>
+
+                    <!-- BlankWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="BlankWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:BlankWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <!-- NotebookChooserWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookChooserWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:NotebookChooserWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <!-- NotebookWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:NotebookWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <!-- ProjectorWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="ProjectorWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:ProjectorWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <!-- ServerWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="ServerWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:ServerWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                    <!-- UserLoginWorkspace trigger -->
+                    <DataTrigger Binding="{Binding WorkspaceName}" Value="UserLoginWorkspace">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <vww:UserLoginWorkspaceView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -591,73 +651,7 @@
         </ribbon:Ribbon>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Grid.Row="1">
-            <Control.Resources>
-
-                <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <vww:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <vww:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <vww:ProjectorWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="ServerWorkspaceTemplate">
-                    <vww:ServerWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <vww:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="BlankWorkspace">
-                            <Setter Property="Template" Value="{StaticResource BlankWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookWorkspace">
-                            <Setter Property="Template" Value="{StaticResource NotebookWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- ProjectorWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ProjectorWorkspace">
-                            <Setter Property="Template" Value="{StaticResource ProjectorWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- ServerWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ServerWorkspace">
-                            <Setter Property="Template" Value="{StaticResource ServerWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="UserLoginWorkspace">
-                            <Setter Property="Template" Value="{StaticResource UserLoginWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
-                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </ContentControl>
+        <ContentControl Grid.Row="1" DataContext="{Binding SelectedWorkspace, Mode=OneWay}" Style="{StaticResource WorkspaceStyle}" />
 
     </Grid>
 </ribbon:RibbonWindow>

@@ -259,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
-            CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
+            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel);
         }
 
 

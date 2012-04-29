@@ -21,9 +21,9 @@ namespace Classroom_Learning_Partner.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             CLPPagePreviewView pagePreviewView = (((sender as Button).Parent as Grid).Parent as Grid).Children[0] as CLPPagePreviewView;
-            CLPPageViewModel pageViewModel = pagePreviewView.DataContext as CLPPageViewModel;
+            CLPPageViewModel pageViewModel = pagePreviewView.ViewModel as CLPPageViewModel;
             string pageID = pageViewModel.Page.UniqueID;
-            var viewModel = (this.DataContext as NotebookWorkspaceViewModel);
+            var viewModel = (this.ViewModel as NotebookWorkspaceViewModel);
             if (viewModel.Notebook.Submissions.ContainsKey(pageID))
             {
                 viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.Views
 
         protected override System.Type GetViewModelType()
         {
-            return typeof(IWorkspaceViewModel);
+            return typeof(NotebookWorkspaceViewModel);
         }
     }
 }
