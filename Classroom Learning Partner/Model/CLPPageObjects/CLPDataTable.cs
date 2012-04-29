@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Register the DataValues property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(List<CLPNamedInkSet>), new List<CLPNamedInkSet>());
+        public static readonly PropertyData DataValuesProperty = RegisterProperty("DataValues", typeof(List<CLPNamedInkSet>), () => new List<CLPNamedInkSet>());
 
         /// <summary>
         /// Number of rows

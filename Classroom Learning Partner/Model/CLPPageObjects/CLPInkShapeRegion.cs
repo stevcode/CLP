@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <summary>
         /// Register the ShapeStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPNamedInkSet>), new ObservableCollection<CLPNamedInkSet>());
+        public static readonly PropertyData InkShapesProperty = RegisterProperty("InkShapes", typeof(ObservableCollection<CLPNamedInkSet>), () => new ObservableCollection<CLPNamedInkSet>());
 
         #endregion // Properties
 

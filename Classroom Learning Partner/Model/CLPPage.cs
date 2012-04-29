@@ -107,7 +107,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the InkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), new StrokeCollection()); //, true, false
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection()); //, true, false
 
         /// <summary>
         /// Gets a list of stringified strokes on the page.
@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the Strokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData StrokesProperty = RegisterProperty("Strokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData StrokesProperty = RegisterProperty("Strokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -135,7 +135,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
+        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
         
        
         /// <summary>
@@ -240,7 +240,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageTopics property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// Exact time and date the page was created.

@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the InkShapeStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapeStrokesProperty = RegisterProperty("InkShapesStrokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData InkShapeStrokesProperty = RegisterProperty("InkShapesStrokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// The type of the shape
