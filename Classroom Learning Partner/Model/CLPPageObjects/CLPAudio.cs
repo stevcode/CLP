@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             this.File = new Byte[0];
             this.ID = ID;
             Position = new System.Windows.Point(10, 10);
-            Height = 50;
+            Height = 70;
             Width = 200;
             CanAcceptStrokes = false;
         }

@@ -317,8 +317,8 @@
                         Label="Stop"
                         Command="{Binding Path=StopVisualCommand}" />
                 </ribbon:RibbonGroup> -->
-                
-                <ribbon:RibbonGroup Header="Review" FontStretch="Condensed">
+
+                <ribbon:RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">
                 
                     <ribbon:RibbonButton
                         Label="Audio"
