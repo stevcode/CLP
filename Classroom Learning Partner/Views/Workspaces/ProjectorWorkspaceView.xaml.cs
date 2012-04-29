@@ -10,7 +10,6 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         public ProjectorWorkspaceView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

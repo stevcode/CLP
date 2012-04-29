@@ -19,7 +19,7 @@
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black">
                 <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas">
-                    <ItemsControl x:Name="PageObjects"
+                    <!--TEST<ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjects}"
                                   ItemsPanel="{StaticResource PanelTemplate}"
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
@@ -31,7 +31,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
+                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />-->
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=InkStrokes}"

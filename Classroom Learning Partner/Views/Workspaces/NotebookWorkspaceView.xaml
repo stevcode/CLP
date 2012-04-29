@@ -9,31 +9,7 @@
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
-
-        <Style TargetType="{x:Type ContentControl}" x:Key="DisplayStyle">
-            <Style.Triggers>
-
-                <!-- LinkedDipslay trigger -->
-                <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <vwd:LinkedDisplayView />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-                <!-- GridDisplay trigger -->
-                <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <vwd:GridDisplayView />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-            </Style.Triggers>
-        </Style>
-        
+        <catel:IntToStringConverter x:Key="IntToString" />
     </UserControl.Resources>
 
     <!-- Content -->
@@ -44,12 +20,107 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />
+        <!--<vw:SideBarView DataContext="{Binding}"  Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}" />-->
+        <Border Name="SideBarBorder" BorderThickness="0,2,2,2" BorderBrush="DarkBlue" CornerRadius="0,5,5,0" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
+        <Grid Name="SideBarGrid">
+        <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="5" />
+        <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="NotebookPageListBox" MinWidth="150"  Grid.Row="0"
+        ItemsSource="{Binding Path=NotebookPages, UpdateSourceTrigger=PropertyChanged}"
+        SelectionMode="Single">
+        <ListBox.ItemTemplate>
+        <DataTemplate>
+        <Border>
+        <Grid Margin="5,10" Name="grid">
+        <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseDown">
+        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        </i:Interaction.Triggers>
+        <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" Grid.Column="0" x:Name="preview" MaxWidth="200" />
+        <Label Grid.Column="1" Content="{Binding InkStrokes.Count, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+        <!--TEST<Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                            <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                        <Button Height="50" Width="25" Grid.Row="0" >
+                                        <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
+                                            </Button>
+                                        <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+                                        </Grid>-->
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                <!--TODO Make this Rectangle into selection buttons to choose submissions-->
+                <!--TEST<Rectangle Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" Name="TempRectangle" Grid.Column="1" Height="Auto" Width="5" Fill="DarkBlue"/>
+                <ListBox Grid.Column="2" x:Name="SubmissionsSideBar"
+                ItemsSource="{Binding Path=FilteredSubmissions.View}"
+                     Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}">
+                     <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <Grid Margin="5,10" Name="grid">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" x:Name="preview" MaxWidth="200" />
+                                    <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
+                                            </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>-->
+                </Grid>
+            </Border>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" Style="{StaticResource DisplayStyle}" x:Name="Display" Grid.Column="1" />       
+        <ContentControl Grid.Column="1">
+            <ContentControl.Resources>
 
-        <Border Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
+                <ControlTemplate x:Key="LinkedDisplayTemplate">
+                    <vwd:LinkedDisplayView DataContext="{Binding SelectedDisplay}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="GridDisplayTemplate">
+                    <vwd:GridDisplayView DataContext="{Binding SelectedDisplay}" />
+                </ControlTemplate>
+
+            </ContentControl.Resources>
+
+            <ContentControl.Style>
+                <Style TargetType="{x:Type Control}">
+                    <Style.Triggers>
+
+                        <!-- LinkedDisplay trigger -->
+                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="LinkedDisplay">
+                            <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
+                        </DataTrigger>
+
+                        <!-- GridDisplay trigger -->
+                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="GridDisplay">
+                            <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
+        <Border x:Name="GridDisplaysSideBar"  Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
             HorizontalAlignment="Right"  Grid.Column="2" BorderThickness="2,2,2,2" Width="150" BorderBrush="LightGreen" CornerRadius="5,5,5,5" Background="White">
             <Grid Name="GridDisplays">
                 <ListBox x:Name="GridDisplaysListBox" Width="145"

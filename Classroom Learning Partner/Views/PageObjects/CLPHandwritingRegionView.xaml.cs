@@ -17,7 +17,6 @@
         public CLPHandwritingRegionView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

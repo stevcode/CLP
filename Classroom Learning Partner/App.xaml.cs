@@ -41,7 +41,8 @@ namespace Classroom_Learning_Partner
 
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            //LogManager.RegisterDebugListener();
+            LogManager.RegisterDebugListener();
+            Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
 
             CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;

@@ -17,7 +17,6 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         public NotebookWorkspaceView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

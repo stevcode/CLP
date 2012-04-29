@@ -15,7 +15,6 @@ namespace Classroom_Learning_Partner.Views
         public SideBarView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

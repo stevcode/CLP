@@ -17,8 +17,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPDataTableView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
-
         }
 
         private void SetupGrid(object sender, DependencyPropertyChangedEventArgs e)

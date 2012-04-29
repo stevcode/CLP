@@ -262,9 +262,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel);
         }
 
-
-        
-
         /// <summary>
         /// Gets the SetCurrentPageCommand command.
         /// </summary>
@@ -277,7 +274,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
         }
-
 
         public string WorkspaceName
         {

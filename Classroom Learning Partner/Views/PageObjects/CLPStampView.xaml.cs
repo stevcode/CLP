@@ -28,7 +28,6 @@
         public CLPStampView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);

@@ -22,7 +22,7 @@
                 <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
                                                                                                 PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
                                                                                                 PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
-                    <ItemsControl x:Name="PageObjects"
+                    <!--TEST<ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjects}"
                                   ItemsPanel="{StaticResource PanelTemplate}"
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
@@ -35,7 +35,7 @@
                             </DataTemplate>  
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
+                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />-->
                     <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=InkStrokes}"
@@ -47,7 +47,7 @@
             </Border>
         </Viewbox>
 
-        <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
+        <!--TEST<Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
         HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
 
         <StackPanel  Height="40" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Visibility="{Binding Path=PlaybackControlsVisibility}">
@@ -57,7 +57,7 @@
             <Button Name="Stop" HorizontalAlignment="Right" Command="{Binding Path=StopPlaybackCommand}">
                 <Image Source="..\Images\stop.png"></Image>
             </Button>
-        </StackPanel>
+        </StackPanel>-->
 
     </Grid>
 </catel:UserControl>
