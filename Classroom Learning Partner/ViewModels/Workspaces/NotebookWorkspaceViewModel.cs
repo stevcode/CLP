@@ -21,7 +21,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
-    [InterestedIn(typeof(IDisplayViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
@@ -141,7 +140,18 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public IDisplayViewModel SelectedDisplay
         {
             get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
-            set { SetValue(SelectedDisplayProperty, value); }
+            set
+            {
+                SetValue(SelectedDisplayProperty, value);
+                if (SelectedDisplay.IsOnProjector)
+                {
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                }
+                else
+                {
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                }
+            }
         }
 
         /// <summary>
@@ -304,21 +314,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
                     App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
                 }
-            }
-
-            if (propertyName == "IsOnProjector")
-            {
-                if ((viewModel as IDisplayViewModel).DisplayID == SelectedDisplay.DisplayID)
-                {
-                    if (SelectedDisplay.IsOnProjector)
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-                    }
-                    else
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-                    }
-                }   
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
