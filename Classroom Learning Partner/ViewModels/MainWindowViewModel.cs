@@ -2037,6 +2037,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 
             }
+            foreach (var item in page.PageHistory.HistoryItems)
+            {
+                if (item.ItemType == HistoryItemType.RemovePageObject)
+                {
+                    ICLPPageObject obj = (ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                    if (obj.PageObjectType == "CLPAudio")
+                    {
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                        if (!File.Exists(path))
+                        {
+                            System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                        }
+                    }
+                }
+            }
             foreach (ICLPPageObject obj in page.PageHistory.TrashedPageObjects.Values)
             {
                 if (obj.PageObjectType == "CLPAudio")
