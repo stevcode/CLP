@@ -5,6 +5,10 @@ using System.Windows;
 using System.Windows.Input;
 using System;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using System.Windows.Shapes;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -13,10 +17,18 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     /// </summary>
     public partial class PageObjectContainerView : Catel.Windows.Controls.UserControl
     {
+        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner appears
+        private DispatcherTimer timer = null;
+        private bool isStampAdornerSet = false;
+
         public PageObjectContainerView()
         {
             InitializeComponent();
             SkipSearchingForInfoBarMessageControl = true;
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
+            timer.Tick += new EventHandler(timer_Tick);
         }
 
         protected override System.Type GetViewModelType()
@@ -91,6 +103,60 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
                 CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObject, newHeight, newWidth);
             }
+        }
+
+        private void PageObjectContainer_MouseLeave(object sender, MouseEventArgs e)
+        {
+            isStampAdornerSet = false;
+            timer.Stop();
+        }
+
+        private void PageObjectContainer_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (App.MainWindowViewModel.IsAuthoring)
+                VisualTreeHelper.HitTest(PageObjectContainer, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(PageObjectContainer)));
+        }
+
+        private HitTestFilterBehavior HitFilter(DependencyObject o)
+        {
+            if (o.GetType() == typeof(Grid))
+            {
+                if ((o as Grid).Name == "StampObject")
+                {
+                    return HitTestFilterBehavior.ContinueSkipChildren;
+                }
+                else
+                {
+                    return HitTestFilterBehavior.Continue;
+                }
+            }
+            return HitTestFilterBehavior.Continue;
+        }
+
+        private HitTestResultBehavior HitResult(HitTestResult result)
+        {
+            if (result.VisualHit.GetType().BaseType == typeof(Shape))
+            {
+                if ((result.VisualHit as Shape).DataContext is CLPStamp)
+                {
+                    if (!isStampAdornerSet)
+                        adornerCanvas.Visibility = Visibility.Hidden;
+                        isStampAdornerSet = true;
+                    if (!timer.IsEnabled)
+                        timer.Start();
+                    Console.WriteLine("I am stamp");
+                    return HitTestResultBehavior.Stop;
+                }
+            }
+            return HitTestResultBehavior.Continue;
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            Console.WriteLine("Woot");
+            adornerCanvas.Visibility = Visibility.Visible;
         }
     }
 }

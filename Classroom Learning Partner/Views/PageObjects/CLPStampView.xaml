@@ -33,12 +33,14 @@
             >
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
-            <Canvas Visibility="{Binding IsBackground, Converter={StaticResource showAdorners}}"
+            <Canvas
+                    Visibility="Hidden"
                     x:Name="adornerCanvas"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Width="{Binding Path=Width}"
-                    Height="{Binding Path=Height}">
+                    Height="{Binding Path=Height}"                    
+                    >
 
                 <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
                            Canvas.Top="-5" Canvas.Left="-5"
@@ -171,7 +173,6 @@
                               StrokeThickness="2"
                               Data="M 12,27 L 27,27 L 27,12"
                               />
-
                     </Grid>
                     <Thumb DragDelta="ResizeThumb_DragDelta">
                         <Thumb.Template>
@@ -185,7 +186,9 @@
                 </Grid>
             </Canvas>
         </ac:AdornedControl.AdornerContent>
-        <Grid>
+        <Grid
+            x:Name="StampObject"
+            MouseMove="StampObject_MouseMove">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -194,9 +197,8 @@
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon x:Name="PageObjectHitBox" Tag="0"  Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
-                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave" StylusEnter="PageObjectHitBox_StylusEnter"  StylusInRange="PageObjectHitBox_StylusEnter"  StylusLeave="PageObjectHitBox_StylusLeave"  StylusOutOfRange="PageObjectHitBox_StylusLeave"
+                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave"
                                   Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0">
-
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>

@@ -42,11 +42,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (!(isMouseDown || (e.StylusDevice != null && e.StylusDevice.Inverted)))
-            {
-                VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
-            }
-            else if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
+            if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
             {
                 switch (App.MainWindowViewModel.PageEraserInteractionMode)
                 {
@@ -55,6 +51,13 @@ namespace Classroom_Learning_Partner.Views
                         break;
                     default:
                         break;
+                }
+            }
+            else 
+            {
+                if (!(isMouseDown))
+                {
+                    VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
                 }
             }
         }
@@ -93,6 +96,10 @@ namespace Classroom_Learning_Partner.Views
         {
             if (result.VisualHit.GetType() == typeof(Grid))
             {
+                if ((result.VisualHit as Grid).DataContext is CLPStamp)
+                {
+                    MainInkCanvas.IsHitTestVisible = false;
+                }
                 if ((result.VisualHit as Grid).Name == "ContainerHitBox")
                 {
                     if (App.MainWindowViewModel.IsAuthoring)
@@ -123,7 +130,14 @@ namespace Classroom_Learning_Partner.Views
                         timer.Interval = TimeSpan.FromMilliseconds(timer_delay);
                         if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
                         {
-                            if (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).IsStamped)
+                            if (((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).IsStamped && !((result.VisualHit as Shape).DataContext as CLPStrokePathContainerViewModel).PageObject.IsBackground)
+                            {
+                                timer.Start();
+                            }
+                        }
+                        else if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
+                        {
+                            if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).IsBackground)
                             {
                                 timer.Start();
                             }
@@ -155,28 +169,14 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
-        private HitTestFilterBehavior EraserHitFilter(DependencyObject o)
-        {
-            if (o.GetType() == typeof(Grid) && (o as Grid).Name == "ContainerHitBox")
-            {
-                return HitTestFilterBehavior.ContinueSkipChildren;
-            }
-            return HitTestFilterBehavior.Continue;
-        }
-
         private HitTestResultBehavior EraserHitResult(HitTestResult result)
         {
-            Console.WriteLine("Start of result");
-            Console.WriteLine(result.VisualHit.GetType());
             if (result.VisualHit.GetType() == typeof(Grid))
             {
                 if ((result.VisualHit as Grid).Name == "ContainerHitBox")
                 {
-                    Console.WriteLine("Result: Container");
-                    Console.WriteLine("Context: " + (result.VisualHit as Grid).DataContext);
                     if ((result.VisualHit as Grid).DataContext is CLPStrokePathContainer)
                     {
-                        Console.WriteLine("StampObject Background: " + ((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground);
                         if (!((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground || 
                             (((result.VisualHit as Grid).DataContext as CLPStrokePathContainer).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
@@ -215,6 +215,30 @@ namespace Classroom_Learning_Partner.Views
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPAudio);
                         }
                     }
+                    else if ((result.VisualHit as Grid).DataContext is CLPImage)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPImage).IsBackground ||
+                            (((result.VisualHit as Grid).DataContext as CLPImage).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPImage);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPTextBox)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPTextBox).IsBackground ||
+                            (((result.VisualHit as Grid).DataContext as CLPTextBox).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPTextBox);
+                        }
+                    }
+                    else if ((result.VisualHit as Grid).DataContext is CLPInkRegion)
+                    {
+                        if (!((result.VisualHit as Grid).DataContext as CLPInkRegion).IsBackground ||
+                            (((result.VisualHit as Grid).DataContext as CLPInkRegion).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        {
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPInkRegion);
+                        }
+                    }
                 }
                 return HitTestResultBehavior.Stop; 
             }
@@ -242,6 +266,14 @@ namespace Classroom_Learning_Partner.Views
                         (((result.VisualHit as Shape).DataContext as CLPAudio).IsBackground && App.MainWindowViewModel.IsAuthoring))
                     {
                         CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Shape).DataContext as CLPAudio);
+                    }
+                }
+                if ((result.VisualHit as Shape).DataContext is CLPStampViewModel)
+                {
+                    if (!((result.VisualHit as Shape).DataContext as CLPStampViewModel).IsBackground ||
+                        (((result.VisualHit as Shape).DataContext as CLPStampViewModel).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                    {
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(((result.VisualHit as Shape).DataContext as CLPStampViewModel).PageObject);
                     }
                 }
                 return HitTestResultBehavior.Stop;

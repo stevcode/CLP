@@ -184,7 +184,10 @@
                     </Grid>
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
-            <Grid>
+            <Grid
+                x:Name="PageObjectContainer"
+                MouseMove="PageObjectContainer_MouseMove"
+                MouseLeave="PageObjectContainer_MouseLeave">
             <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
                 <!-- Control that dynamically determines what PageObject to show -->
                 <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" Content="{Binding}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}">

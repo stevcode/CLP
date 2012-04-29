@@ -81,8 +81,6 @@
         {
             try
             {
-
-
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
                 leftBehindStamp.UniqueID = PageObject.UniqueID;
 

@@ -501,7 +501,6 @@ namespace Classroom_Learning_Partner.Model
             if (page != null)
             {
                 pageObject.PageID = page.UniqueID;
-                Console.WriteLine("IsBackground: " + App.MainWindowViewModel.IsAuthoring.ToString());
                 pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
