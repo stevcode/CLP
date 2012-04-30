@@ -86,17 +86,12 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border>
-                            <Grid Margin="5,10" Name="grid">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
                                         <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                                <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" Grid.Column="0" x:Name="preview" />
+                                <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                                 <!--TEST<Grid Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
@@ -107,7 +102,6 @@
                                             </Button>
                                         <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
                                         </Grid>-->
-                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -123,7 +117,7 @@
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDown">
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
+                                        </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 <vw:CLPPagePreviewView DataContext="{Binding}"  Background="White" x:Name="preview" MaxWidth="200" />
                                 <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique"
@@ -182,7 +176,7 @@
             
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border >
+                        <Border>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDown">
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
