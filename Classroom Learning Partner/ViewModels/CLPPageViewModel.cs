@@ -681,16 +681,18 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.EraseInk:
-                        foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-                        {
-                            Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
-                            if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                            {
-                                PageHistory.TrashedInkStrokes.Remove(s);
-                                Page.InkStrokes.Add(inkStroke);
-                                break;
-                            }
-                        }
+                        //foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                        //{
+                        //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+                        //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                        //    {
+                        //        PageHistory.TrashedInkStrokes.Remove(s);
+                        //        Page.InkStrokes.Add(inkStroke);
+                        //        break;
+                        //    }
+                        //}
+                        Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
+                        Page.InkStrokes.Add(inkStroke);
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -786,7 +788,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
                             {
                                 Page.InkStrokes.Remove(s);
-                                PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+                                //PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
                                 break;
                             }
                         }

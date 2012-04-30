@@ -88,7 +88,7 @@
         </Border>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Grid.Column="1">
+        <Control Margin="15" x:Name="Display"  Grid.Column="1">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
