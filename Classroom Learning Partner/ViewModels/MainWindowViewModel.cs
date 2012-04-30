@@ -1657,7 +1657,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage page = new CLPPage();
             page.ParentNotebookID = (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-            //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
 
         /// <summary>

@@ -8,6 +8,32 @@ using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.Resources
 {
+    public class ProjectedDisplayBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if ((bool)value)
+            {
+                return new SolidColorBrush(Colors.PaleGreen);
+            }
+            else
+            {
+                return new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,

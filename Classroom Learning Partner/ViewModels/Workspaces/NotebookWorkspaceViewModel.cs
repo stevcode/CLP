@@ -282,7 +282,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
-            SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+            try
+            {
+                SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+            }
+            catch (Exception)
+            {
+            }  
         }
 
         public string WorkspaceName
