@@ -181,8 +181,9 @@ namespace Classroom_Learning_Partner.Model
                             //replace history:
                             CLPHistory.replaceHistoryInPage(tempHistory, page);
                             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
-                            page.PageHistory.HistoryItems.Add(item);
-
+                           // page.PageHistory.HistoryItems.Add(item);
+                            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                            CLPHistory.AddToHistoryItems(item, new Guid(ID));
                         }
                         else
                         {
@@ -392,9 +393,13 @@ namespace Classroom_Learning_Partner.Model
                 //put the history back into the page
                 CLPHistory.replaceHistoryInPage(tempHistory, page);
 
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null)); 
-
+                //page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                //page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null)); 
+                CLPHistoryItem item1 = new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID);
+                CLPHistoryItem item2 = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                CLPHistory.AddToHistoryItems(item1, new Guid(ID));
+                CLPHistory.AddToHistoryItems(item2, new Guid(ID));
                 //log sizes
                 Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
 
@@ -447,12 +452,16 @@ namespace Classroom_Learning_Partner.Model
         public void StartRecordingVisual(CLPPage page)
         {
             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StartRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
+            //page.PageHistory.HistoryItems.Add(item);
+            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+            CLPHistory.AddToHistoryItems(item, new Guid(ID));
         }
         public void StopRecordingVisual(CLPPage page)
         {
             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StopRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
+            //page.PageHistory.HistoryItems.Add(item);
+            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+            CLPHistory.AddToHistoryItems(item, new Guid(ID));
         }
 
         public void PlaybackRecording(CLPPage page)
@@ -507,7 +516,11 @@ namespace Classroom_Learning_Partner.Model
                 if (!page.PageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
-                    page.PageHistory.HistoryItems.Add(item);
+                    //page.PageHistory.HistoryItems.Add(item);
+                    //trying to fix the history items going into multiple page's histories problem
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
+                  
                 }
             }
         }
@@ -539,7 +552,9 @@ namespace Classroom_Learning_Partner.Model
                 if (!page.PageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-                    page.PageHistory.HistoryItems.Add(item);
+                    //page.PageHistory.HistoryItems.Add(item);
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                 }
             }
         }
@@ -563,7 +578,9 @@ namespace Classroom_Learning_Partner.Model
             if (!page.PageHistory.IgnoreHistory)
             {
                 CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
-                page.PageHistory.HistoryItems.Add(item);
+               // page.PageHistory.HistoryItems.Add(item);
+                String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                CLPHistory.AddToHistoryItems(item, new Guid(ID));
             }
 
             pageObject.Position = pt;

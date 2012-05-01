@@ -16,6 +16,7 @@ using Catel.Data;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Timers;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 //using System.Windows.Media.MediaPlayer;
 
@@ -354,9 +355,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 //}
                 if (!PageHistory.IgnoreHistory)
                 {
-                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
-                    PageHistory.HistoryItems.Add(item);
-                    PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
+                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke), null);
+                    //PageHistory.HistoryItems.Add(item);
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
+                   // PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
                 }
             }
 
@@ -395,7 +398,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (!PageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
-                    PageHistory.HistoryItems.Add(item);
+                    //PageHistory.HistoryItems.Add(item);
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                 }
             }
 
@@ -498,7 +503,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         int i = 0;
-        DispatcherTimer timer;
+        DispatcherTimer timer = new DispatcherTimer();
         bool inRecorded = false;
         public void StartPlayBack()
         {
@@ -533,9 +538,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
-                    Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+                    //Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
                     Redo();
-                    Logger.Instance.WriteToLog("------------end redo # " + i + "  " + DateTime.Now.ToString());
+                    //Logger.Instance.WriteToLog("------------end redo # " + i + "  " + DateTime.Now.ToString());
                 }
                 catch (Exception x)
                 { }
@@ -550,12 +555,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     PlayingRecorded = false;
                     App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                     App.MainWindowViewModel.PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
+                    PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
                     App.MainWindowViewModel.currentlyPlayingVisual = false;
                 }
             }
             lock(_locker)
             {
-                if(this.PageHistory.UndoneHistoryItems.Count >= 2 && i > 0)
+                if(this.PageHistory.UndoneHistoryItems.Count >= (2)  && i > 0)
                 {
                
                     int len = this.PageHistory.UndoneHistoryItems.Count;
@@ -571,12 +577,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     if (interval < new TimeSpan(0, 0, 0, 0, 0))
                     {
-                        interval = new TimeSpan(0, 0, 0, 0, 250);
+                        interval = new TimeSpan(0, 0, 0, 0, 500);
                     }
                     timer.Interval = interval;
-                    Logger.Instance.WriteToLog("Interval = " + interval.ToString());
-                    i--;
+                    //Logger.Instance.WriteToLog("Interval = " + interval.ToString());
+                   
                 }
+                i--;
            }
            if (PlayingRecorded && !inRecorded) 
            {
@@ -584,16 +591,16 @@ namespace Classroom_Learning_Partner.ViewModels
            }
            try
            {
-               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+               //Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
                int len = this.PageHistory.UndoneHistoryItems.Count;
                try
                {
-                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 2].ItemType.ToString());
-                   Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 1].ItemType.ToString());
+                  // Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 2].ItemType.ToString());
+                  // Logger.Instance.WriteToLog(this.PageHistory.UndoneHistoryItems[len - 1].ItemType.ToString());
                }
                catch (Exception w) { }
                Redo();
-               Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
+              // Logger.Instance.WriteToLog("------------Playback Timing: start redo # " + i + "  " + DateTime.Now.ToString());
                     
            }
            catch (Exception x)
@@ -681,7 +688,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.EraseInk:
-                        foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                       /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
                         {
                             Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
                             if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
@@ -690,7 +697,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                 Page.InkStrokes.Add(inkStroke);
                                 break;
                             }
-                        }
+                        } */
+                        Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
+                        Page.InkStrokes.Add(inkStroke);
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -754,7 +763,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 PageHistory.TrashedPageObjects.Remove(item.ObjectID);
                             }
-
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
@@ -778,7 +786,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 PageHistory.TrashedInkStrokes.Remove(s);
                                 break;
                             }
-                        }
+                        } 
                         break;
                     case HistoryItemType.EraseInk:
                         foreach (Stroke s in Page.InkStrokes)
@@ -786,10 +794,13 @@ namespace Classroom_Learning_Partner.ViewModels
                             if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
                             {
                                 Page.InkStrokes.Remove(s);
-                                PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+                                //PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
                                 break;
                             }
                         }
+                       
+                      //  Stroke ink = CLPPage.StringToStroke(item.OldValue);
+                      //  Page.InkStrokes.Add(ink);
                         break;
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
@@ -808,7 +819,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                 }
 
-                PageHistory.HistoryItems.Add(item);
+                //PageHistory.HistoryItems.Add(item);
+                String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                CLPHistory.AddToHistoryItems(item, new Guid(ID));
             }
 
             PageHistory.IgnoreHistory = false;
@@ -964,6 +977,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnStartPlaybackCommandExecute()
         {
+
+            
             if (timer != null && timer.IsEnabled)
             {
                 timer.IsEnabled = false;
