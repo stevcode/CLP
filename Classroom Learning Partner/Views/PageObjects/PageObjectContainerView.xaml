@@ -18,35 +18,6 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>              
             </ResourceDictionary.MergedDictionaries>
             <conv:LengthConverter x:Key="LengthConverter"/>
-
-            <Style TargetType="{x:Type ContentControl}" x:Key="PageObjectStyle">
-                <Style.Triggers>
-
-
-                    <!-- CLPHandwritingRegion trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPHandwritingRegionView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPImage trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPImageView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-
-
-
-                </Style.Triggers>
-            </Style>
-            
         </ResourceDictionary>
     </UserControl.Resources>
 
