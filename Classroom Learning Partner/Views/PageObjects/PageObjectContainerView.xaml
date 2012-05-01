@@ -197,47 +197,47 @@
                     <Control.Resources>
 
                         <ControlTemplate x:Key="CLPAudioTemplate">
-                            <vwpo:CLPAudioView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPAudioView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPDataTableTemplate">
-                            <vwpo:CLPDataTableView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPDataTableView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
-                            <vwpo:CLPHandwritingRegionView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPHandwritingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPImageTemplate">
-                            <vwpo:CLPImageView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPImageView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
-                            <vwpo:CLPInkShapeRegionView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPInkShapeRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPShadingRegionTemplate">
-                            <vwpo:CLPShadingRegionView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPShadingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPShapeTemplate">
-                            <vwpo:CLPShapeView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPShapeView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                            <vwpo:CLPSnapTileContainerView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPStampTemplate">
-                            <vwpo:CLPStampView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPStampView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
-                            <vwpo:CLPStrokePathContainerView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPTextBoxTemplate">
-                            <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
+                            <vwpo:CLPTextBoxView DataContext="{Binding}" />
                         </ControlTemplate>
 
                     </Control.Resources>

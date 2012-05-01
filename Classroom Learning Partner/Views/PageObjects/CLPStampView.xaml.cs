@@ -121,13 +121,13 @@
         void timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            CLPStampViewModel stamp = (this.ViewModel as CLPStampViewModel);
             adornerCanvas.Visibility = Visibility.Visible;
         }
 
         private void StampObject_MouseMove(object sender, MouseEventArgs e)
         {
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            CLPStampViewModel stamp = (this.ViewModel as CLPStampViewModel);
             if (!stamp.PageObject.IsBackground)
             {
                 VisualTreeHelper.HitTest(StampObject, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(StampObject)));
