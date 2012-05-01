@@ -247,7 +247,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     App.MainWindowViewModel.record_timer.Stop();
                     App.MainWindowViewModel.record_timer.Dispose();
                 }
-                catch (Exception e)
+                catch (Exception)
                 { }
 
                 Console.WriteLine("CurrentPage Set");

@@ -71,6 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
 
         public void AddPageToDisplay(CLPPageViewModel page)
         {
+            DisplayedPage = null;
             DisplayedPage = page;
             if (IsOnProjector && App.Peer.Channel != null)
             {
