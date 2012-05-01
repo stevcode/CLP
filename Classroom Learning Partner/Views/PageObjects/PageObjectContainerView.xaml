@@ -22,23 +22,6 @@
             <Style TargetType="{x:Type ContentControl}" x:Key="PageObjectStyle">
                 <Style.Triggers>
 
-                    <!-- CLPAudio trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPAudio">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPAudioView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPDataTable trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPDataTable">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPDataTableView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
 
                     <!-- CLPHandwritingRegion trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
@@ -58,68 +41,8 @@
                         </Setter>
                     </DataTrigger>
 
-                    <!-- CLPInkShapeRegion trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPInkShapeRegion">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPInkShapeRegionView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
 
-                    <!-- CLPShadingRegion trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShadingRegion">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPShadingRegionView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
 
-                    <!-- CLPShape trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShape">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPShapeView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPSnapTileContainer trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSnapTileContainer">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPSnapTileContainerView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPStamp trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStamp">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPStampView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPStrokePathContainer trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStrokePathContainer">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPStrokePathContainerView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-
-                    <!-- CLPTextBox trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <vwpo:CLPTextBoxView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
 
                 </Style.Triggers>
             </Style>
@@ -296,7 +219,123 @@
                 MouseLeave="PageObjectContainer_MouseLeave">
             <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
                 <!-- Control that dynamically determines what PageObject to show -->
-                <ContentControl IsHitTestVisible="True" x:Name="PageObjectView" DataContext="{Binding}" Style="{StaticResource PageObjectStyle}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+                <!--<ContentControl  DataContext="{Binding}" Style="{StaticResource PageObjectStyle}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />-->
+
+
+                <Control IsHitTestVisible="True" x:Name="PageObjectView">
+                    <Control.Resources>
+
+                        <ControlTemplate x:Key="CLPAudioTemplate">
+                            <vwpo:CLPAudioView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPDataTableTemplate">
+                            <vwpo:CLPDataTableView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
+                            <vwpo:CLPHandwritingRegionView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPImageTemplate">
+                            <vwpo:CLPImageView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
+                            <vwpo:CLPInkShapeRegionView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPShadingRegionTemplate">
+                            <vwpo:CLPShadingRegionView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPShapeTemplate">
+                            <vwpo:CLPShapeView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
+                            <vwpo:CLPSnapTileContainerView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPStampTemplate">
+                            <vwpo:CLPStampView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
+                            <vwpo:CLPStrokePathContainerView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPTextBoxTemplate">
+                            <vwpo:CLPTextBoxView DataContext="{Binding PageObject}" />
+                        </ControlTemplate>
+
+                    </Control.Resources>
+
+                    <Control.Style>
+                        <Style TargetType="{x:Type Control}">
+                            <Style.Triggers>
+
+                                <!-- CLPAudio trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPAudio">
+                                    <Setter Property="Template" Value="{StaticResource CLPAudioTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPDataTable trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPDataTable">
+                                    <Setter Property="Template" Value="{StaticResource CLPDataTableTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPHandwritingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPImage trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
+                                    <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPInkShapeRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPInkShapeRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPInkShapeRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPShadingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShadingRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPShadingRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPShape trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShape">
+                                    <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPSnapTileContainer trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSnapTileContainer">
+                                    <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPStamp trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStamp">
+                                    <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPStrokePathContainer trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStrokePathContainer">
+                                    <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPTextBox trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
+                                    <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </Control.Style>
+                </Control>
+
+
             </Grid>
         </ac:AdornedControl>      
     </Grid>
