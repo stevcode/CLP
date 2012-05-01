@@ -132,6 +132,10 @@ namespace Classroom_Learning_Partner.Model
             //compare model w/ database
             DateTime startLocalSave = DateTime.Now;
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
+            if (App.CurrentUserMode == App.UserMode.Student)
+            {
+                notebook.Submissions.Clear();
+            }
             notebook.Save(filePath);
             TimeSpan timeToSaveLocal = DateTime.Now.Subtract(startLocalSave);
             //System.Threading.Thread
@@ -139,57 +143,57 @@ namespace Classroom_Learning_Partner.Model
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
             {
 
-                    int numPagesSaved = 0;
-                    DateTime startSavingTime= DateTime.Now;
-                    HistoryItemType lastItem = HistoryItemType.EraseInk;
-                    int count = 0;
-                    foreach (CLPPage page in notebook.Pages)
+                int numPagesSaved = 0;
+                DateTime startSavingTime= DateTime.Now;
+                HistoryItemType lastItem = HistoryItemType.EraseInk;
+                int count = 0;
+                foreach (CLPPage page in notebook.Pages)
+                {
+
+
+                    if (!page.PageHistory.IsSaved())
                     {
+                        numPagesSaved++;
+                        DateTime now = DateTime.Now;
+                        CLPPage p = page;
+                        //submit page, removing history first
+
+                        CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+
+                        //Serialize using protobuf
+                        MemoryStream stream = new MemoryStream();
+                        Serializer.PrepareSerializer<CLPPage>();
+                        Serializer.Serialize<CLPPage>(stream, p);
+                        string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                        //string s_page = ObjectSerializer.ToString(notebook);
+
+                        //Actual send
 
 
-                        if (!page.PageHistory.IsSaved())
+                        //CLPServiceAgent.TimeCallBack(Tuple.Create<string, string>(s_page_pb, notebook.NotebookName));
+                        // System.Threading.Thread thread = new System.Threading.Thread(() =>
+                        // {
+                        System.Threading.ThreadPool.QueueUserWorkItem(state =>
                         {
-                            numPagesSaved++;
-                            DateTime now = DateTime.Now;
-                            CLPPage p = page;
-                            //submit page, removing history first
-                            
-                            CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
-
-                            //Serialize using protobuf
-                            MemoryStream stream = new MemoryStream();
-                            Serializer.PrepareSerializer<CLPPage>();
-                            Serializer.Serialize<CLPPage>(stream, p);
-                            string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                            //string s_page = ObjectSerializer.ToString(notebook);
-
-                            //Actual send
-
-
-                            //CLPServiceAgent.TimeCallBack(Tuple.Create<string, string>(s_page_pb, notebook.NotebookName));
-                           // System.Threading.Thread thread = new System.Threading.Thread(() =>
-                           // {
-                            System.Threading.ThreadPool.QueueUserWorkItem(state =>
-                            {
-                                App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName, p.PageIndex);
-                            });
-                            //Logger is not thread safe
-                            //So, page likely was sent, but no guarantee
-                            Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB,  Last history item " + lastItem.ToString());
-                            //});
-                            //thread.Start();
-                            //replace history:
-                            CLPHistory.replaceHistoryInPage(tempHistory, page);
-                            CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
-                            page.PageHistory.HistoryItems.Add(item);
-
-                        }
-                        else
-                        {
-                            Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered, ");
-                        }
+                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName, p.PageIndex);
+                        });
+                        //Logger is not thread safe
+                        //So, page likely was sent, but no guarantee
+                        Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB,  Last history item " + lastItem.ToString());
+                        //});
+                        //thread.Start();
+                        //replace history:
+                        CLPHistory.replaceHistoryInPage(tempHistory, page);
+                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                        page.PageHistory.HistoryItems.Add(item);
 
                     }
+                    else
+                    {
+                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered, ");
+                    }
+
+                }
                
                 Logger.Instance.WriteToLog("Network Saving " + numPagesSaved.ToString() + " took " + DateTime.Now.Subtract(startSavingTime).ToString()
                     + ",  Local Save took " + timeToSaveLocal.ToString());

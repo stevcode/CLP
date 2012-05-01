@@ -167,7 +167,8 @@
                          Background="Lavender"
                          ItemsSource="{Binding Path=FilteredSubmissions.View}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
-                         Visibility="Collapsed">
+                         Visibility="Collapsed"
+                         SelectionMode="Single">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border>

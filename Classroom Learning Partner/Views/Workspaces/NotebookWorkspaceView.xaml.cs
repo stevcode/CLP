@@ -56,6 +56,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                 SubmissionsSideBar.Visibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
+
         }
     }
 }
