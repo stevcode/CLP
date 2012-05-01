@@ -147,13 +147,20 @@ namespace Classroom_Learning_Partner.Model
                         page.IsSubmission = true;
                         page.SubmitterName = userName;
 
-                        foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        try
                         {
-                            if (page.ParentNotebookID == notebook.UniqueID)
+                            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                             {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                break;
+                                if (page.ParentNotebookID == notebook.UniqueID)
+                                {
+                                    CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                    break;
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
                         }
                     }
                     else if (App.CurrentUserMode == App.UserMode.Server)

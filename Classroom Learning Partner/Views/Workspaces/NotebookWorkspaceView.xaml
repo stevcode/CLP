@@ -52,14 +52,15 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid>
+                        <Grid x:Name="itemGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <Border Grid.Column="0"
-                                    BorderBrush="White"
+                                    BorderBrush="Transparent"
+                                    Background="White"
                                     CornerRadius="8"
                                     BorderThickness="3"
                                     x:Name="IconBorder"
@@ -102,7 +103,8 @@
                             </Grid.ColumnDefinitions>
 
                             <Border Grid.Column="0"
-                                    BorderBrush="White"
+                                    BorderBrush="Transparent"
+                                    Background="White"
                                     CornerRadius="8"
                                     BorderThickness="3"
                                     x:Name="IconBorder"
@@ -121,7 +123,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
     </UserControl.Resources>
 
     <!-- Content -->
@@ -159,24 +161,27 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <ListBox Grid.Column="1" x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                <Border Grid.Column="1" Background="Lavender" BorderThickness="0">
+                    <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="200" Width="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Background="Lavender"
                          ItemsSource="{Binding Path=FilteredSubmissions.View}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          Visibility="Collapsed">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDown">
-                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
             </Grid>
         </Border>
 

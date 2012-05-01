@@ -190,8 +190,6 @@
                 MouseLeave="PageObjectContainer_MouseLeave">
             <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
                 <!-- Control that dynamically determines what PageObject to show -->
-                <!--<ContentControl  DataContext="{Binding}" Style="{StaticResource PageObjectStyle}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />-->
-
 
                 <Control IsHitTestVisible="True" x:Name="PageObjectView">
                     <Control.Resources>
@@ -305,7 +303,6 @@
                         </Style>
                     </Control.Style>
                 </Control>
-
 
             </Grid>
         </ac:AdornedControl>      

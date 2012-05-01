@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.Model;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
@@ -35,6 +36,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             if (currentToggledButton != null && currentToggledButton != button)
             {
                 currentToggledButton.IsChecked = false;
+                ((currentToggledButton.Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
             currentToggledButton = button;
             if ((bool)currentToggledButton.IsChecked)
@@ -47,10 +49,12 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                 {
                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
                 }
+                (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }
             else
             {
                 SubmissionsSideBar.Visibility = Visibility.Collapsed;
+                (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
         }
     }
