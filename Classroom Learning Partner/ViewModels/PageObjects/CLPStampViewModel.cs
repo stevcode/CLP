@@ -9,6 +9,7 @@
     using System.Windows;
     using System.Threading;
     using System.Windows.Threading;
+    using Classroom_Learning_Partner.ViewModels.Workspaces;
 
     /// <summary>
     /// UserControl view model.
@@ -98,7 +99,9 @@
                     if (!page.PageHistory.IgnoreHistory)
                     {
                         CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
-                        page.PageHistory.HistoryItems.Add(item);
+                        //page.PageHistory.HistoryItems.Add(item);
+                        String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                        CLPHistory.AddToHistoryItems(item, new Guid(ID));
                     }
                 }
             }
