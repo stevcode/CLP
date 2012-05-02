@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -67,7 +68,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 if (!pageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
-                    pageHistory.HistoryItems.Add(item);
+                    //pageHistory.HistoryItems.Add(item);
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                 }
             }
         }

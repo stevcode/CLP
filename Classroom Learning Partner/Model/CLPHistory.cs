@@ -9,6 +9,7 @@ using Classroom_Learning_Partner.ViewModels;
 using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -32,6 +33,9 @@ namespace Classroom_Learning_Partner.Model
             TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
             TrashedInkStrokes = new Dictionary<string, string>();
             IgnoreHistory = false;
+            //included for history items problem
+            UniqueID = Guid.NewGuid().ToString();
+            
         }
 
         /// <summary>
@@ -44,6 +48,19 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// UniqueID of the page.
+        /// </summary>
+        public string UniqueID
+        {
+            get { return GetValue<string>(UniqueIDProperty); }
+            set { SetValue(UniqueIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the UniqueID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -66,7 +83,9 @@ namespace Classroom_Learning_Partner.Model
         {
             get { return GetValue<ObservableCollection<CLPHistoryItem>>(HistoryItemsProperty); }
             set { SetValue(HistoryItemsProperty, value); }
+            
         }
+        
 
         /// <summary>
         /// Register the HistoryItems property so it is known in the class.
@@ -118,6 +137,19 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Methods
+        //A method to add to the historyItems collection to make sure the uniqueIDs match before adding to a history
+        public static void AddToHistoryItems(CLPHistoryItem item, Guid ID)
+        {
+            foreach (CLPPage page in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages)
+            {
+                if (page.PageHistory.UniqueID == ID.ToString())
+                {
+                    page.PageHistory.HistoryItems.Add(item);
+                }
+            }
+        }
+
+
         //because the historyItems collection has a private set accessor
         public static void ReplaceHistoryItems(CLPHistory oldHistory, CLPHistory newHistory)
         {
