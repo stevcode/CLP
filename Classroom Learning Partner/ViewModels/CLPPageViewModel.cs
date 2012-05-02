@@ -688,22 +688,21 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.EraseInk:
-                       /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-                        //{
-                        //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
-                        //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                        //    {
-                        //        PageHistory.TrashedInkStrokes.Remove(s);
-                        //        Page.InkStrokes.Add(inkStroke);
-                        //        break;
-                        //    }
-                        //}
+                        /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                         //{
+                         //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+                         //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+                         //    {
+                         //        PageHistory.TrashedInkStrokes.Remove(s);
+                         //        Page.InkStrokes.Add(inkStroke);
+                         //        break;
+                         //    }
+                         //}
+                         * } */
                         Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
                         Page.InkStrokes.Add(inkStroke);
                         break;
-                        } */
-                        Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
-                        Page.InkStrokes.Add(inkStroke);
+                        
                     case HistoryItemType.SnapTileSnap:
                         CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
                         if (t.NumberOfTiles != Int32.Parse(item.NewValue))
