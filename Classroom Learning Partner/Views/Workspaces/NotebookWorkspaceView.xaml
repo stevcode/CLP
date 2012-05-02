@@ -73,7 +73,7 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Style="{StaticResource checkedToggle}" Click="ToggleButton_Click" >
+                                <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
                                     <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
                                 </ToggleButton>
                                 <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
@@ -143,7 +143,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="200" Width="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MinWidth="270" Width="270" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                          SelectionMode="Single">
@@ -163,7 +163,7 @@
 
                 <Border Grid.Column="1" Background="Lavender" BorderThickness="0">
                     <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="200" Width="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MinWidth="220" Width="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
                          ItemsSource="{Binding Path=FilteredSubmissions.View}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
