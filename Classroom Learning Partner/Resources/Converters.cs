@@ -5,6 +5,8 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Media;
+using Classroom_Learning_Partner.Model;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Resources
 {
@@ -93,6 +95,27 @@ namespace Classroom_Learning_Partner.Resources
                 return true;
             }
             return false;
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return false;
+        }
+    }
+
+    public class LastItemInCollectionConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            ReadOnlyCollection<object> items = value as ReadOnlyCollection<object>;
+            CLPPage page = items.Last() as CLPPage;
+            return page;
         }
 
         public object ConvertBack(object value,

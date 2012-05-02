@@ -4,6 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                    xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
                    xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
                    xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
@@ -12,15 +13,7 @@
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
         <catel:IntToStringConverter x:Key="IntToString" />
         <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
-
-        <Style TargetType="ToggleButton" x:Key="checkedToggle">
-            <Setter Property="Padding" Value="5" />
-            <Style.Triggers>
-                <Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Padding" Value="0" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <conv:LastItemInCollectionConverter x:Key="LastItem" />
 
         <!-- GridDisplay with the Trigger for Selected -->
         <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -124,6 +117,45 @@
             </Setter>
         </Style>
 
+        <CollectionViewSource x:Key="NameSortedCollectionView" Source="{Binding SubmissionPages}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="SubmitterName"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="SubmitterName" />
+                <cm:SortDescription PropertyName="SubmissionTime" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
+
+            <!--<ControlTemplate.Triggers>
+                <Trigger Property="IsSelected" Value="true">
+                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
+                </Trigger>
+            </ControlTemplate.Triggers>-->
+
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+
+
+
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click">
+                    <DockPanel>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
+                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                    </DockPanel>
+                </ToggleButton>                
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
+
+            </Grid>
+        </ControlTemplate>
+
     </UserControl.Resources>
 
     <!-- Content -->
@@ -165,10 +197,19 @@
                     <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="220" Width="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding Path=FilteredSubmissions.View}"
+                         ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          Visibility="Collapsed"
                          SelectionMode="Single">
+                        <ListBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ListBox.GroupStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border>
