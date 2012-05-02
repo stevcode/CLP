@@ -88,6 +88,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                 }
             }
         }
+
         private static T GetVisualChild<T>(DependencyObject parent) where T : Visual
         {
             T child = default(T);
@@ -116,6 +117,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
 
             foreach (ListBoxItem item in vsp.Children)
             {
+                //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
                 if (item != vsp.Children[vsp.Children.Count - 1])
                 {
                     item.Visibility = Visibility.Collapsed;
