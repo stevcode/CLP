@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels.Displays;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 namespace Classroom_Learning_Partner.Views.Displays
 {

@@ -9,7 +9,7 @@
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
     <Grid>
-        <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
+        <ItemsControl x:Name="itemsControl" ItemsSource="{Binding DisplayedPages}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid />

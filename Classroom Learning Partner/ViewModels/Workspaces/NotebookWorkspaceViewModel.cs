@@ -142,13 +142,16 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set
             {
                 SetValue(SelectedDisplayProperty, value);
-                if (SelectedDisplay.IsOnProjector)
+                if (SelectedDisplay != null)
                 {
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-                }
-                else
-                {
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    if (SelectedDisplay.IsOnProjector)
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                    }
+                    else
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    }
                 }
             }
         }
@@ -262,13 +265,14 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
-            try
-            {
+            //try
+            //{
+                SelectedDisplay = null;
                 SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
-            }
-            catch (Exception)
-            {
-            }  
+            //}
+            //catch (Exception ex)
+            //{
+            //}  
         }
 
         public string WorkspaceName

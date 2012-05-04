@@ -219,37 +219,37 @@
         </Border>
 
         <!-- Control that dynamically determines what Display to show -->
-        <Control Margin="15" x:Name="Display"  Grid.Column="1">
-            <Control.Resources>
+        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="1">
+            <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
-                    <vwd:LinkedDisplayView DataContext="{Binding SelectedDisplay}" />
+                    <vwd:LinkedDisplayView  />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
-                    <vwd:GridDisplayView DataContext="{Binding SelectedDisplay}" />
+                    <vwd:GridDisplayView  />
                 </ControlTemplate>
 
-            </Control.Resources>
+            </ContentControl.Resources>
 
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
                     <Style.Triggers>
 
                         <!-- LinkedDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="LinkedDisplay">
+                        <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
                             <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay.DisplayName}" Value="GridDisplay">
+                        <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
                             <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
                 </Style>
-            </Control.Style>
-        </Control>
+            </ContentControl.Style>
+        </ContentControl>
 
         <!-- SideBar that displays projected displays -->
         <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
