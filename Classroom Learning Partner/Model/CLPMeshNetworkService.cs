@@ -333,10 +333,12 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
+                        (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = null;
+
                         if (displayType == "LinkedDisplay")
                         {
                             (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
-                        
+
                             AddPageToDisplay(displayPages[0]);
                         }
                         else
@@ -346,7 +348,7 @@ namespace Classroom_Learning_Partner.Model
                             foreach (var pageID in displayPages)
                             {
                                 AddPageToDisplay(pageID);
-                            }  
+                            }
                         }
                     }
                     return null;
