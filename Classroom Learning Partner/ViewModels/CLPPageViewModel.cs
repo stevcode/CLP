@@ -357,7 +357,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke), null);
                     //PageHistory.HistoryItems.Add(item);
-                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    string ID = Page.PageHistory.UniqueID;
                     CLPHistory.AddToHistoryItems(item, new Guid(ID));
                    // PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
                 }
@@ -399,7 +399,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
                     //PageHistory.HistoryItems.Add(item);
-                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    string ID = Page.PageHistory.UniqueID;
                     CLPHistory.AddToHistoryItems(item, new Guid(ID));
                 }
             }

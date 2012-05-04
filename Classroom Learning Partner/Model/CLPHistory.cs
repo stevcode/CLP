@@ -140,11 +140,14 @@ namespace Classroom_Learning_Partner.Model
         //A method to add to the historyItems collection to make sure the uniqueIDs match before adding to a history
         public static void AddToHistoryItems(CLPHistoryItem item, Guid ID)
         {
-            foreach (CLPPage page in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages)
+            if (App.CurrentUserMode != App.UserMode.Projector)
             {
-                if (page.PageHistory.UniqueID == ID.ToString())
+                foreach (CLPPage page in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages)
                 {
-                    page.PageHistory.HistoryItems.Add(item);
+                    if (page.PageHistory.UniqueID == ID.ToString())
+                    {
+                        page.PageHistory.HistoryItems.Add(item);
+                    }
                 }
             }
         }
