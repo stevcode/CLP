@@ -337,6 +337,29 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.CanSendToTeacher = true;
             Console.WriteLine("adding page object to page with uniqueID: " + Page.UniqueID);
+
+            //STEVE - Stamps add/remove too quicly and crash projector
+            //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
+            //{
+            //    List<string> added = new List<string>();
+            //    List<string> removedIDs = new List<string>();
+            //    if (e.NewItems != null)
+            //    {
+            //        foreach (var item in e.NewItems)
+            //        {
+            //            added.Add(ObjectSerializer.ToString(item as ICLPPageObject));
+            //        }
+            //    }
+            //    if (e.OldItems != null)
+            //    {
+            //        foreach (var item in e.OldItems)
+            //        {
+            //            removedIDs.Add((item as ICLPPageObject).UniqueID);
+            //        }
+            //    }
+
+            //    App.Peer.Channel.ChangePageObjectsOnPage(Page.UniqueID, added, removedIDs);
+            //}
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)

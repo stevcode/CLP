@@ -58,10 +58,7 @@ namespace Classroom_Learning_Partner.Model
         void AddPageToDisplay(string pageID);
 
         [OperationContract(IsOneWay = true)]
-        void RemovePageFromGridDisplay(string pageID);
-
-        [OperationContract(IsOneWay = true)]
-        void AddPageObjectToPage(string pageID, string stringPageObject);
+        void ChangePageObjectsOnPage(string pageID, List<string> added, List<string> removedIDs);
     }
 
     public interface ICLPMeshNetworkChannel : ICLPMeshNetworkContract, IClientChannel
@@ -382,81 +379,50 @@ namespace Classroom_Learning_Partner.Model
                 }, null);
         }
 
-        public void RemovePageFromGridDisplay(string pageID)
+        public void ChangePageObjectsOnPage(string pageID, List<string> added, List<string> removedIDs)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        int pageIndex = -1;
-                        foreach (var pageVM in (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages)
+                        foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            if (pageVM.Page.UniqueID == pageID)
+                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+
+                            if (page == null)
                             {
-                                pageIndex = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.IndexOf(pageVM);
+                                page = notebook.GetSubmissionByID(pageID);
+                            }
+
+                            if (page != null)
+                            {
+                                foreach (string pageObjectString in added)
+                                {
+                                    ICLPPageObject pageObject = ObjectSerializer.ToObject(pageObjectString) as ICLPPageObject;
+                                    CLPServiceAgent.Instance.AddPageObjectToPage(page, pageObject);
+                                }
+                                foreach (string id in removedIDs)
+                                {
+                                    ICLPPageObject objectToRemove = null;
+                                    foreach (ICLPPageObject pageObject in page.PageObjects)
+                                    {
+                                        if (pageObject.UniqueID == id)
+                                        {
+                                            objectToRemove = pageObject;
+                                            break;
+                                        }
+                                    }
+                                    if (objectToRemove != null)
+                                    {
+                                        CLPServiceAgent.Instance.RemovePageObjectFromPage(page, objectToRemove);
+                                    }
+                                }
+                                
                                 break;
                             }
                         }
-                        try
-                        {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.RemoveAt(pageIndex);
-                        }
-                        catch (System.Exception ex)
-                        {
-                            Logger.Instance.WriteToLog("[ERROR] - Failed to remove page from GridDisplay. " + ex.Message);
-                        }
-                    }
-                    return null;
-                }, null);
-        }
-
-        public void AddPageObjectToPage(string pageID, string stringPageObject)
-        {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    if (App.CurrentUserMode == App.UserMode.Projector)
-                    {
-
-                        //foreach (var pageViewModel in App.CurrentNotebookViewModel.PageViewModels)
-                        //{
-                        //    if (pageViewModel.Page.UniqueID == pageID)
-                        //    {
-                        //        object pageObject = ObjectSerializer.ToObject(stringPageObject);
-
-
-                        //        CLPPageObjectBaseViewModel pageObjectViewModel;
-                        //        if (pageObject is CLPImage)
-                        //        {
-                        //            pageObjectViewModel = new CLPImageViewModel(pageObject as CLPImage, pageViewModel);
-                        //        }
-                        //        else if (pageObject is CLPImageStamp)
-                        //        {
-                        //            pageObjectViewModel = new CLPImageStampViewModel(pageObject as CLPImageStamp, pageViewModel);
-                        //        }
-                        //        else if (pageObject is CLPBlankStamp)
-                        //        {
-                        //            pageObjectViewModel = new CLPBlankStampViewModel(pageObject as CLPBlankStamp, pageViewModel);
-                        //        }
-                        //        else if (pageObject is CLPTextBox)
-                        //        {
-                        //            pageObjectViewModel = new CLPTextBoxViewModel(pageObject as CLPTextBox, pageViewModel);
-                        //        }
-                        //        else if (pageObject is CLPSnapTileContainer)
-                        //        {
-                        //            pageObjectViewModel = new CLPSnapTileContainerViewModel(pageObject as CLPSnapTileContainer, pageViewModel);
-                        //        }
-                        //        else
-                        //        {
-                        //            pageObjectViewModel = null;
-                        //        }
-
-                        //        pageViewModel.PageObjectContainerViewModels.Add(new PageObjectContainerViewModel(pageObjectViewModel));
-                        //        pageViewModel.Page.PageObjects.Add(pageObjectViewModel.PageObject);
-                        //        break;
-                        //    }
-                        //}
+                        
                     }
                     return null;
                 }, null);
