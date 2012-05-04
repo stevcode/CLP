@@ -15,7 +15,6 @@
         WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
-        Closed="RibbonWindow_Closed"
         Title="{Binding Path=TitleBarText}">
     
     <Window.Resources>
@@ -240,6 +239,7 @@
                         Label="Undo"
                         LargeImageSource="..\Images\Undo.png"
                         Command="{Binding Path=UndoCommand}" />
+                    
                     <ribbon:RibbonButton
                         Label="Redo"
                         LargeImageSource="..\Images\Redo.png"
@@ -351,38 +351,6 @@
                         Label="Play"
                         Command="{Binding Path=PlayStopBothCommand}" /> 
                 </ribbon:RibbonGroup> -->
-                
-                
-                <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
-                <ribbon:RibbonContentPresenter>
-                    <ribbon:RibbonContentPresenter.Content>
-                        <DockPanel>
-                            <ribbon:RibbonMenuButton DockPanel.Dock="Bottom" Label="On Projector">
-                                <ribbon:RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden" >
-                                    <ribbon:RibbonContentPresenter Content="{Binding Path=ProjectedDisplay}" ContentTemplate="{StaticResource BigProjectorTemplate}"/>
-                                </ribbon:RibbonGallery>
-                            </ribbon:RibbonMenuButton>
-                            <ribbon:RibbonContentPresenter Content="{Binding Path=ProjectedDisplay}" ContentTemplate="{StaticResource OnProjectorTemplate}"/>
-                        </DockPanel>
-                    </ribbon:RibbonContentPresenter.Content>
-                </ribbon:RibbonContentPresenter>
-
-            </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup Header="Displays" Style="{StaticResource InstructorOnlyVisibility}">
-                <ribbon:RibbonButton
-                    Label="New Single Display"
-                    LargeImageSource="..\Images\SingleDisplay.png"
-                    Command="{Binding Path=CreateNewSingleDisplayCommand}"/>
-                <ribbon:RibbonButton
-                    Label="New Grid Display"
-                    LargeImageSource="..\Images\GridDisplay.png"
-                    Command="{Binding Path=CreateNewGridDisplayCommand}"/>
-                <ribbon:RibbonMenuButton Label="Removed Displays" LargeImageSource="..\Images\Trash.png" IsEnabled="{Binding Path=HasRemovedDisplays}">
-                    <ribbon:RibbonGallery  ItemsSource="{Binding Path=RemovedDisplays}" ItemTemplate="{StaticResource RemovedDisplayPreviewTemplate}" Background="Red"/>
-                </ribbon:RibbonMenuButton>
-                <ribbon:RibbonGroup  ItemsSource="{Binding Path=Displays}" ItemTemplate="{StaticResource DisplayPreviewTemplate}" Background="White"/>
-
-            </ribbon:RibbonGroup>-->
 
             </ribbon:RibbonTab>
 
@@ -527,7 +495,6 @@
                 </ribbon:RibbonGroup>
 
             </ribbon:RibbonTab>
-
 
             <!--Notebook Viewing Tab-->
             <ribbon:RibbonTab Header="Query Pages" ContextualTabGroupHeader="Server and Page Viewer">

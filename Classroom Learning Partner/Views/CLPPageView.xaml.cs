@@ -41,6 +41,9 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
+            //Console.WriteLine("ViewModel: " + (ViewModel as CLPPageViewModel).EditingMode.ToString());
+            //Console.WriteLine("View:" + MainInkCanvas.EditingMode.ToString());
+
             if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
             {
                 switch (App.MainWindowViewModel.PageEraserInteractionMode)

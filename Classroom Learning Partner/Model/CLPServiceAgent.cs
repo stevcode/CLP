@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner.Model
             TimeSpan timeToSaveLocal = DateTime.Now.Subtract(startLocalSave);
             //System.Threading.Thread
 
-            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student && App.Peer.Channel != null)
             {
 
                 int numPagesSaved = 0;
