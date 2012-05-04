@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>
-        private void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
+        public void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
         {
             DisplayedPages.Remove(page);
         }

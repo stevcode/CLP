@@ -18,17 +18,15 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <vw:CLPPageView DataContext="{Binding}" />
+                        <vw:CLPPageView x:Name="page" DataContext="{Binding}" />
                         <Button
                             Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
                             x:Name="closeButton"
                             Width="40"
                             Height="40"
                             Cursor="Hand"
-                            Command="{Binding ElementName=itemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
-                            CommandParameter="{Binding}"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Top">
+                            VerticalAlignment="Top" Click="closeButton_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Grid
