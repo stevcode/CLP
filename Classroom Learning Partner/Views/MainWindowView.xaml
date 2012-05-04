@@ -591,31 +591,31 @@
         </ribbon:Ribbon>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Grid.Row="1">
+        <ContentControl Grid.Row="1" DataContext="{Binding SelectedWorkspace}">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <vww:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:BlankWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <vww:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:NotebookChooserWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <vww:ProjectorWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:ProjectorWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ServerWorkspaceTemplate">
-                    <vww:ServerWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:ServerWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <vww:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:UserLoginWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
             </ContentControl.Resources>
@@ -625,32 +625,32 @@
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="BlankWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="BlankWorkspace">
                             <Setter Property="Template" Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookChooserWorkspace">
                             <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookWorkspace">
                             <Setter Property="Template" Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- ProjectorWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ProjectorWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="ProjectorWorkspace">
                             <Setter Property="Template" Value="{StaticResource ProjectorWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- ServerWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ServerWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="ServerWorkspace">
                             <Setter Property="Template" Value="{StaticResource ServerWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="UserLoginWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="UserLoginWorkspace">
                             <Setter Property="Template" Value="{StaticResource UserLoginWorkspaceTemplate}" />
                         </DataTrigger>
 

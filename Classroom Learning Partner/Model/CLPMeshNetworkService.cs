@@ -13,6 +13,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.IO;
 using ProtoBuf;
+using Classroom_Learning_Partner.ViewModels.Displays;
 
 
 
@@ -331,13 +332,35 @@ namespace Classroom_Learning_Partner.Model
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
+
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
                         (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = null;
 
                         if (displayType == "LinkedDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            LinkedDisplayViewModel linkVM = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            if (linkVM == null)
+                            {
+                                foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                                {
+                                    CLPPage page = notebook.GetNotebookPageByID(displayPages[0]);
+
+                                    if (page == null)
+                                    {
+                                        page = notebook.GetSubmissionByID(displayPages[0]);
+                                    }
+
+                                    if (page != null)
+                                    {
+                                        linkVM = new LinkedDisplayViewModel(new CLPPageViewModel(page));
+                                        break;
+                                    }
+                                }
+                            }
+
+
+                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = linkVM;
 
                             AddPageToDisplay(displayPages[0]);
                         }

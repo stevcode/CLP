@@ -11,8 +11,8 @@
              xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays">
     
     <!-- Control that dynamically determines what Display to show -->
-    <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" >
-        <ContentControl.Resources>
+    <Control Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display">
+        <Control.Resources>
 
             <ControlTemplate x:Key="LinkedDisplayTemplate">
                 <vwd:LinkedDisplayView  />
@@ -22,10 +22,10 @@
                 <vwd:GridDisplayView  />
             </ControlTemplate>
 
-        </ContentControl.Resources>
+        </Control.Resources>
 
-        <ContentControl.Style>
-            <Style TargetType="{x:Type ContentControl}">
+        <Control.Style>
+            <Style TargetType="{x:Type Control}">
                 <Style.Triggers>
 
                     <!-- LinkedDisplay trigger -->
@@ -40,7 +40,7 @@
 
                 </Style.Triggers>
             </Style>
-        </ContentControl.Style>
-    </ContentControl>
+        </Control.Style>
+    </Control>
 
 </catel:UserControl>

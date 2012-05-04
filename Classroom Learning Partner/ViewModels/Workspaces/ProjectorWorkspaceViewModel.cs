@@ -14,9 +14,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ProjectorWorkspaceViewModel()
             : base()
         {   
-            LinkedDisplay = new LinkedDisplayViewModel(new CLPPageViewModel(new CLPPage()));
+            
+            //LinkedDisplay = new LinkedDisplayViewModel(new CLPPageViewModel(new CLPPage()));
             GridDisplay = new GridDisplayViewModel();
-            SelectedDisplay = LinkedDisplay;
+            //SelectedDisplay = LinkedDisplay;
         }
 
         public override string Title { get { return "ProjectorWorkspaceVM"; } }

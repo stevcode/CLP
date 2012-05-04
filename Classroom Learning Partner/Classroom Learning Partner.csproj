@@ -514,8 +514,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="External Libraries\Catel.Core.dll" />
+    <Content Include="External Libraries\Catel.Core.pdb" />
     <Content Include="External Libraries\Catel.Extensions.Controls.dll" />
+    <Content Include="External Libraries\Catel.Extensions.Controls.pdb" />
     <Content Include="External Libraries\Catel.MVVM.dll" />
+    <Content Include="External Libraries\Catel.MVVM.pdb" />
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
