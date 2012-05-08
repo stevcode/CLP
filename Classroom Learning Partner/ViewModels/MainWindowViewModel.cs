@@ -1956,7 +1956,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public Timer record_timer = null;
         public void OnRecordAudioCommandExecute()
         {//hijacking this button to popup the file viewer for the teacher to see all audios for this page.
-            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            //CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            CLPPage page = null;
+            try
+            {
+                page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            }
+            catch (System.NullReferenceException e)
+            {
+                Logger.Instance.WriteToLog("Can't review audio in grid display.");
+            }
             if(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\"))
             {
                 Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\", true);
