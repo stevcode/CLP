@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the Pages property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// Gets a dictionary that maps the UniqueID of a page to a list of the submissions for that page.
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the Submissions property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>), new Dictionary<string, ObservableCollection<CLPPage>>());
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>), () => new Dictionary<string, ObservableCollection<CLPPage>>());
 
         /// <summary>
         /// Name of notebook.

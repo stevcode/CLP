@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 InternalType = container.InternalPageObject.PageObjectType;
             }
 
-            //ScribblesToStrokePaths();
+            ScribblesToStrokePaths();
         }
 
         /// <summary>

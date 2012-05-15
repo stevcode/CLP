@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                     FileInfo file = new FileInfo(path);
                     long sizeKb = file.Length / (long)1024.0;
                     //seconds = (Double)sizeKb / 11.0; //value for wav
-                    seconds = (Double)sizeKb / 1.8; //value for mp3 has to be changed based on the bitrate we encode at
+                    seconds = (Double)sizeKb / 1.6; //value for mp3 has to be changed based on the bitrate we encode at
                     TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
                     //initialize the timer
                     audio_play_timer = new System.Timers.Timer();
@@ -249,9 +249,26 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             public Timer record_timer = null;
             public void OnRecordAudioCommandExecute()
             {
-
-                CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
-                if (!isRecordingAudio && !PageHasAudioFile)
+                
+                CLPPage page = null;
+                try
+                {
+                    page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                }
+                catch (System.NullReferenceException e)
+                {
+                    foreach(CLPPageViewModel p in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    {
+                        foreach (ICLPPageObject o in p.Page.PageObjects)
+                        {
+                            if((o.PageObjectType == "CLPAudio" && o.UniqueID == PageObject.UniqueID))
+                            {
+                                page = p.Page;
+                            }
+                        }
+                    }
+                }
+                    if (!isRecordingAudio && !PageHasAudioFile)
                 {
                     //AudioRecordImage = new Uri("..\\Images\\mic_stop.png", UriKind.Relative);
                     PageHasAudioFile = true;
@@ -322,7 +339,25 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
             private void OnPlayAudioCommandExecute()
             {
-                CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+               // CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                CLPPage page = null;
+                try
+                {
+                    page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+                }
+                catch (System.NullReferenceException e)
+                {
+                    foreach (CLPPageViewModel p in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+                    {
+                        foreach (ICLPPageObject o in p.Page.PageObjects)
+                        {
+                            if ((o.PageObjectType == "CLPAudio" && o.UniqueID == PageObject.UniqueID))
+                            {
+                                page = p.Page;
+                            }
+                        }
+                    }
+                }
                 if (!playingAudio)
                 {
                     try

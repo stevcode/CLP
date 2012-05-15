@@ -5,6 +5,7 @@ using Catel.Data;
 using System.Collections.Specialized;
 using System;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.ViewModels.PageObjects
 {
@@ -130,7 +131,9 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                                 if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
-                                    currentPage.PageHistory.HistoryItems.Add(item);
+                                    //currentPage.PageHistory.HistoryItems.Add(item);
+                                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                                 }
                                 //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
@@ -156,17 +159,20 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                             }
                             else if (deltaYTopSnap < 55)
                             {
-                                //int oldCount = NumberOfTiles;
-                                //NumberOfTiles += otherTile.NumberOfTiles;
+                                int oldCount = NumberOfTiles;
+                                NumberOfTiles += otherTile.NumberOfTiles;
 
                                 //does it really matter if we technically add to the top or bottom?
-                                int oldCount = otherTile.NumberOfTiles;
-                                otherTile.NumberOfTiles += NumberOfTiles;
-                                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                                //int oldCount = otherTile.NumberOfTiles;
+                                //otherTile.NumberOfTiles += NumberOfTiles;
+                                
+                                CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
                                 if (!currentPage.PageHistory.IgnoreHistory)
                                 {
-                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
-                                    currentPage.PageHistory.HistoryItems.Add(item);
+                                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, PageObject.UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
+                                    //currentPage.PageHistory.HistoryItems.Add(item);
+                                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                                 }
                                 //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;

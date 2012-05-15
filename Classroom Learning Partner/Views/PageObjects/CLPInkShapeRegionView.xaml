@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPInkRegionView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPInkShapeRegionView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
@@ -9,11 +9,14 @@
 
     <Grid Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}">
         <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Transparent" Stroke="Gray" StrokeThickness="4" StrokeDashArray="2" />
-        <Label Name="stored_answer" Margin="15" Content="{Binding StoredAnswer, Mode=TwoWay}"></Label>
-        <Grid Height="50" Margin="15" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Label Name="analysis_type" VerticalAlignment="Top" Content="{Binding AnalysisType, Mode=TwoWay}"></Label>
-            <Label Name="correct_answer" VerticalAlignment="Bottom" Content="{Binding CorrectAnswer, Mode=TwoWay}"></Label>
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" x:Name="InkShapesString" Text="{Binding Path=InkShapesString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"></TextBlock>
         </Grid>
-        <Image Width="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Source="/Images/EditNotebook.png" PreviewMouseDown="EditInkRegion"></Image>
     </Grid>
 </catel:UserControl>

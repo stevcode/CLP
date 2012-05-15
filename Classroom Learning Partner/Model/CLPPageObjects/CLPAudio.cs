@@ -13,8 +13,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
     [AllowNonSerializableMembers]
     public class CLPAudio : CLPPageObjectBase
     {
-        #region Variables
-        #endregion
 
         #region Constructor & destructor
         /// <summary>
@@ -37,11 +35,19 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             this.File = new Byte[0];
             this.ID = ID;
             Position = new System.Windows.Point(10, 10);
+            Height = 70;
+            Width = 200;
+            CanAcceptStrokes = false;
+        }
+
+        //Parameterless constructor for Protobuf
+        protected CLPAudio()
+        {
+            this.File = new Byte[0];
+            this.ID = ID;
+            Position = new System.Windows.Point(10, 10);
             Height = 50;
             Width = 50;
-            
-            //LoadImageFromByteSource(ByteSource);
-
         }
 
         /// <summary>
@@ -51,12 +57,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPAudio(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-
-        protected override void OnDeserialized()
-        {
-            //LoadImageFromByteSource(ByteSource);
-            base.OnDeserialized();
-        }
 
         #endregion
 
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
-            private set { SetValue(IDProperty, value); }
+            set { SetValue(IDProperty, value); }
         }
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), null);
 
@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
                 System.IO.File.Delete(outmp3File);
             }
 	        ProcessStartInfo psi = new ProcessStartInfo();
-	        psi.FileName = @"..\..\External Libraries\lame.exe";
+	        psi.FileName = @"External Libraries\lame.exe";
 	        psi.Arguments = "-b 20 " + wavFile + " " + outmp3File;
 	        psi.WindowStyle = ProcessWindowStyle.Hidden;
 	        Process p = Process.Start(psi);

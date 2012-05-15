@@ -1,4 +1,7 @@
-﻿using Classroom_Learning_Partner.ViewModels.Displays;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels.Displays;
+using System.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views.Displays
 {
@@ -10,12 +13,16 @@ namespace Classroom_Learning_Partner.Views.Displays
         public GridDisplayView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()
         {
             return typeof(GridDisplayViewModel);
+        }
+
+        private void closeButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            (ViewModel as GridDisplayViewModel).OnRemovePageFromGridDisplayCommandExecute((((sender as Button).Parent as Grid).Children[0] as CLPPageView).ViewModel as CLPPageViewModel);
         }
     }
 }

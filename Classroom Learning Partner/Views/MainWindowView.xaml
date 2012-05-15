@@ -15,7 +15,6 @@
         WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
-        Closed="RibbonWindow_Closed"
         Title="{Binding Path=TitleBarText}">
     
     <Window.Resources>
@@ -45,11 +44,12 @@
         </Grid.RowDefinitions>
 
         <!--Ribbon-->
-        <ribbon:Ribbon x:Name="Ribbon" Grid.Row="0" Visibility="{Binding Path=RibbonVisibility}" IsMinimized="{Binding IsMinimized}">
+        <ribbon:Ribbon x:Name="Ribbon" Grid.Row="0" IsMinimized="{Binding IsMinimized}">
 
             <!--Contextual Tab Definitions-->
             <ribbon:Ribbon.ContextualTabGroups>
                 <ribbon:RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
+                <ribbon:RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
             </ribbon:Ribbon.ContextualTabGroups>
 
             <!--Application Menu Button-->
@@ -89,10 +89,20 @@
                                                   KeyTip="A"
                                                   ImageSource="..\Images\LargeIcon.png" />
                     
+                    <ribbon:RibbonApplicationMenuItem Header="Save Notebook Histories"
+                                                  Command="{Binding Path=SaveAllHistoriesCommand}"
+                                                  KeyTip="Bs"
+                                                  ImageSource="..\Images\LargeIcon.png" />
+
                     <ribbon:RibbonApplicationMenuItem Header="Convert to XPS"
                                                   Command="{Binding Path=ConvertToXPSCommand}"
                                                   KeyTip="C"
                                                   ImageSource="..\Images\LargeIcon.png" />
+                    <ribbon:RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
+                                                  Command="{Binding Path=ImportLocalNotebooksDBCommand}"
+                                                  KeyTip="I"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Visibility="{Binding Path=ServerVisibility}"/>
                     
                     <ribbon:RibbonSeparator />
                     
@@ -127,7 +137,7 @@
                     <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
                         Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        Command="{Binding Path=ShowNotebookPagesCommand}" IsChecked="{Binding SideBarVisibility}" />
+                        IsChecked="{Binding SideBarVisibility}" />
                     
                 </ribbon:RibbonGroup>
                 
@@ -219,7 +229,7 @@
                 
                 <ribbon:RibbonGroup Header="History">
 
-                    <ribbon:RibbonToggleButton Visibility="{Binding Path=InstructorVisibility}"
+                    <ribbon:RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
                         IsChecked="False"
                         LargeImageSource="..\Images\video.png"
                         Label="Enable Playback"
@@ -229,6 +239,7 @@
                         Label="Undo"
                         LargeImageSource="..\Images\Undo.png"
                         Command="{Binding Path=UndoCommand}" />
+                    
                     <ribbon:RibbonButton
                         Label="Redo"
                         LargeImageSource="..\Images\Redo.png"
@@ -280,33 +291,15 @@
                         Label="Linked Display"
                         Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
 
-                    <ribbon:RibbonSplitButton
-                        ItemsSource="{Binding SelectedWorkspace.GridDisplays}"
+                    <ribbon:RibbonButton
                         LargeImageSource="..\Images\GridDisplay.png"
                         Label="New Grid Display"
-                        Command="{Binding Path=CreateNewGridDisplayCommand}">
-                        <ribbon:RibbonSplitButton.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" DataContext="{Binding}">
-                                    <UniformGrid>
-                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
-                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
-                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
-                                        <Rectangle Margin="1" Fill="White" Stroke="Black" StrokeThickness="2" Height="10" Width="10" />
-                                    </UniformGrid>
-                                    <Label>
-                                        <Label.Content>
-                                            <!--<Binding Path="QuestionnaireName"/>-->
-                                            2
-                                        </Label.Content>
-                                        <Label.ContentStringFormat>
-                                            Grid Display #{0}
-                                        </Label.ContentStringFormat>
-                                    </Label>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ribbon:RibbonSplitButton.ItemTemplate>
-                    </ribbon:RibbonSplitButton>
+                        Command="{Binding Path=CreateNewGridDisplayCommand}" />
+
+                    <ribbon:RibbonToggleButton x:Name="ShowGridDisplaysToggleButton"
+                        Label="Show Grid Displays"
+                        LargeImageSource="..\Images\OpenNotebook.png"
+                        IsChecked="{Binding GridDisplaysVisibility}" />
 
                 </ribbon:RibbonGroup>
                 
@@ -324,26 +317,16 @@
                         Label="Stop"
                         Command="{Binding Path=StopVisualCommand}" />
                 </ribbon:RibbonGroup> -->
+
+                <ribbon:RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">
                 
-                <ribbon:RibbonGroup Header="Audio" >
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
                     <ribbon:RibbonButton
-                        Label="Record"
-                        LargeImageSource="{Binding Path=AudioRecordImage}"
-                        Command="{Binding Path=RecordAudioCommand}" 
-                        Grid.Row="0"
-                        Grid.RowSpan="1"
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"/>
-                    <ribbon:RibbonButton
+                        Label="Audio"
+                        LargeImageSource="..\Images\mic_stop.png" 
+                        Command="{Binding Path=RecordAudioCommand}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                        <!--    <ribbon:RibbonButton
                         Label="Play"
                         LargeImageSource="{Binding Path=AudioPlayImage}"
                         IsEnabled="{Binding Path=PageHasAudioFile}"
@@ -351,10 +334,10 @@
                         Grid.Row="0"
                         Grid.RowSpan="1"
                         Grid.Column="1"
-                        HorizontalAlignment="Center"/>
+                        HorizontalAlignment="Center"/> 
                         <Slider Value="{Binding Path=CurrentSliderValue}" Height="22"
-         Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/>
-                    </Grid>
+         Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/> -->
+                    
                 </ribbon:RibbonGroup>
 
                
@@ -368,38 +351,6 @@
                         Label="Play"
                         Command="{Binding Path=PlayStopBothCommand}" /> 
                 </ribbon:RibbonGroup> -->
-                
-                
-                <!--<ribbon:RibbonGroup Header="Projector" Style="{StaticResource InstructorOnlyVisibility}">
-                <ribbon:RibbonContentPresenter>
-                    <ribbon:RibbonContentPresenter.Content>
-                        <DockPanel>
-                            <ribbon:RibbonMenuButton DockPanel.Dock="Bottom" Label="On Projector">
-                                <ribbon:RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden" >
-                                    <ribbon:RibbonContentPresenter Content="{Binding Path=ProjectedDisplay}" ContentTemplate="{StaticResource BigProjectorTemplate}"/>
-                                </ribbon:RibbonGallery>
-                            </ribbon:RibbonMenuButton>
-                            <ribbon:RibbonContentPresenter Content="{Binding Path=ProjectedDisplay}" ContentTemplate="{StaticResource OnProjectorTemplate}"/>
-                        </DockPanel>
-                    </ribbon:RibbonContentPresenter.Content>
-                </ribbon:RibbonContentPresenter>
-
-            </ribbon:RibbonGroup>
-            <ribbon:RibbonGroup Header="Displays" Style="{StaticResource InstructorOnlyVisibility}">
-                <ribbon:RibbonButton
-                    Label="New Single Display"
-                    LargeImageSource="..\Images\SingleDisplay.png"
-                    Command="{Binding Path=CreateNewSingleDisplayCommand}"/>
-                <ribbon:RibbonButton
-                    Label="New Grid Display"
-                    LargeImageSource="..\Images\GridDisplay.png"
-                    Command="{Binding Path=CreateNewGridDisplayCommand}"/>
-                <ribbon:RibbonMenuButton Label="Removed Displays" LargeImageSource="..\Images\Trash.png" IsEnabled="{Binding Path=HasRemovedDisplays}">
-                    <ribbon:RibbonGallery  ItemsSource="{Binding Path=RemovedDisplays}" ItemTemplate="{StaticResource RemovedDisplayPreviewTemplate}" Background="Red"/>
-                </ribbon:RibbonMenuButton>
-                <ribbon:RibbonGroup  ItemsSource="{Binding Path=Displays}" ItemTemplate="{StaticResource DisplayPreviewTemplate}" Background="White"/>
-
-            </ribbon:RibbonGroup>-->
 
             </ribbon:RibbonTab>
 
@@ -418,10 +369,15 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
 
-                    <ribbon:RibbonButton
+                    <!--<ribbon:RibbonButton
                         Label="Copy This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />
+                        Command="{Binding Path=CopyPageCommand}" />-->
+
+                    <ribbon:RibbonButton
+                        Label="Add Page Topic to this Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=AddPageTopicCommand}" />
 
                 </ribbon:RibbonGroup>
 
@@ -453,9 +409,24 @@
                         Command="{Binding Path=InsertCircleShapeCommand}" />
 
                     <ribbon:RibbonButton
-                        Label="Insert Ink Region"
+                        Label="Handwriting Region"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertInkRegionCommand}" />
+                        Command="{Binding Path=InsertHandwritingRegionCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Ink Shape Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkShapeRegionCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Data Table"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertDataTableCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Shading Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertShadingRegionCommand}" />
 
                 </ribbon:RibbonGroup>
 
@@ -524,76 +495,135 @@
                 </ribbon:RibbonGroup>
 
             </ribbon:RibbonTab>
-            
+
+            <!--Notebook Viewing Tab-->
+            <ribbon:RibbonTab Header="Query Pages" ContextualTabGroupHeader="Server and Page Viewer">
+
+                <ribbon:RibbonGroup Header="Page">
+
+                    <ribbon:RibbonButton
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=QueryDatabaseCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
+
+                </ribbon:RibbonGroup>
+
+              <!--  <ribbon:RibbonGroup Header="Insert">
+
+                    <ribbon:RibbonButton
+                        Label="Insert Image"
+                        LargeImageSource="..\Images\AddImage.png"
+                        Command="{Binding Path=InsertImageCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Image Stamp"
+                        LargeImageSource="..\Images\AddPictureStamp.jpg"
+                        Command="{Binding Path=InsertImageStampCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Square"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Circle"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertCircleShapeCommand}" />
+
+                    <ribbon:RibbonButton
+                        Label="Insert Ink Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkRegionCommand}" />
+
+                </ribbon:RibbonGroup> -->
+
+                
+
+            </ribbon:RibbonTab>
         </ribbon:Ribbon>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Grid.Row="1">
-            <Control.Resources>
+        <ContentControl Grid.Row="1" DataContext="{Binding SelectedWorkspace}">
+            <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <vww:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:BlankWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <vww:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:NotebookChooserWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <vww:ProjectorWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:ProjectorWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ServerWorkspaceTemplate">
-                    <vww:ServerWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:ServerWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <vww:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <vww:UserLoginWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
-            </Control.Resources>
+            </ContentControl.Resources>
 
-            <Control.Style>
+            <ContentControl.Style>
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="BlankWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="BlankWorkspace">
                             <Setter Property="Template" Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
+                        <!-- NotebookChooserWorkspace trigger -->
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookChooserWorkspace">
+                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
+                        </DataTrigger>
+
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="NotebookWorkspace">
                             <Setter Property="Template" Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- ProjectorWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ProjectorWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="ProjectorWorkspace">
                             <Setter Property="Template" Value="{StaticResource ProjectorWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- ServerWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="ServerWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="ServerWorkspace">
                             <Setter Property="Template" Value="{StaticResource ServerWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="UserLoginWorkspace">
+                        <DataTrigger Binding="{Binding WorkspaceName}" Value="UserLoginWorkspace">
                             <Setter Property="Template" Value="{StaticResource UserLoginWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace.WorkspaceName}" Value="NotebookChooserWorkspace">
-                            <Setter Property="Template" Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
                 </Style>
-            </Control.Style>
+            </ContentControl.Style>
         </ContentControl>
 
     </Grid>

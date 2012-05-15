@@ -8,6 +8,7 @@ using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.IO;
 using System.Text;
+using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -15,6 +16,7 @@ namespace Classroom_Learning_Partner.Model
     /// CLPPage Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
     /// </summary>
+    [ProtoContract]
     [Serializable]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
@@ -99,13 +101,13 @@ namespace Classroom_Learning_Partner.Model
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            private set { SetValue(InkStrokesProperty, value); }
+            set { SetValue(InkStrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the InkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), new StrokeCollection()); //, true, false
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection()); //, true, false
 
         /// <summary>
         /// Gets a list of stringified strokes on the page.
@@ -113,13 +115,13 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<string> Strokes
         {
             get { return GetValue<ObservableCollection<string>>(StrokesProperty); }
-            private set { SetValue(StrokesProperty, value); }
+            set { SetValue(StrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the Strokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData StrokesProperty = RegisterProperty("Strokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData StrokesProperty = RegisterProperty("Strokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -127,22 +129,56 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<ICLPPageObject> PageObjects
         {
             get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            private set { SetValue(PageObjectsProperty, value); }
+            set { SetValue(PageObjectsProperty, value); }
         }
 
         /// <summary>
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
+        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
         
        
+        /// <summary>
+        /// Gets a list of pageObjects image data, if it exisits, on the page. Only used for compression during serialization 
+        /// </summary>
+        //[ProtoMember(20, AsReference= true, OverwriteList = true)]
+        public List<String> PageObjectsSer
+        {
+            get { return GetValue<List<String>>(PageObjectsSerProperty); }
+            set { SetValue(PageObjectsSerProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageObjectsSer property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectsSerProperty = RegisterProperty("PageObjectsSer", typeof(List<String>), () => new List<String>());
+        
+
+        /// <summary>
+        /// Gets a list of pageObjects image data, if it exisits, on the page. Only used for compression during serialization 
+        /// </summary>
+        //public List<string> PageStrokesSer
+        //{
+        //    get { return GetValue<List<string>>(PageStrokesSerProperty); }
+        //    set { SetValue(PageObjectsSerProperty, value); }
+        //}
+
+        ///// <summary>
+        ///// Register the PageObjectsSer property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData PageStrokesSerProperty = RegisterProperty("PageStrokesSer", typeof(List<string>), new List<string>());
+        
+
+
+
+
         /// <summary>
         /// Gets the CLPPage history.
         /// </summary>
         public CLPHistory PageHistory
         {
             get { return GetValue<CLPHistory>(PageHistoryProperty); }
-            private set { SetValue(PageHistoryProperty, value); }
+            set { SetValue(PageHistoryProperty, value); }
         }
 
         /// <summary>
@@ -170,7 +206,7 @@ namespace Classroom_Learning_Partner.Model
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         /// <summary>
@@ -204,7 +240,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageTopics property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// Exact time and date the page was created.
@@ -212,7 +248,7 @@ namespace Classroom_Learning_Partner.Model
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
         /// <summary>
@@ -326,6 +362,184 @@ namespace Classroom_Learning_Partner.Model
             return strings;
         }
 
+
+        /**
+        * Helper method that places images in the same list so that protobuf serializaiton can optimaize serialized string 
+        */
+        [ProtoBeforeSerialization]
+        public void serializePageObjectsHelper()
+        {
+            Strokes = CLPPage.StrokesToStrings(InkStrokes);
+            PageObjectsSer = new List<string>();
+            //PageStrokesSer = new List<string>();
+            foreach (ICLPPageObject obj in PageObjects)
+            {
+                if (obj is CLPPageObjects.CLPStamp)
+                {
+                    CLPPageObjects.CLPStamp stamp = (CLPPageObjects.CLPStamp)obj;
+                    //Check to see if 
+                    if (stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
+                    {
+                        CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)stamp.StrokePathContainer.InternalPageObject;
+                        PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
+ 
+                        im.ByteSource = null;
+                    }
+                    //copy strokes over
+                    //However, may also be holding a shape .. 
+                    else
+                    {
+                        if (obj.PageObjectStrokes.Count > 0)
+                        {
+                            //PageObjectsSer.Add(PageStrokesSer.Count.ToString());
+                            PageObjectsSer.Add(obj.PageObjectStrokes.Count.ToString());
+                            PageObjectsSer.AddRange(obj.PageObjectStrokes);
+                            obj.PageObjectStrokes.Clear(); //= new ObservableCollection<string>();
+                        }
+                        else
+                        {
+                            //no strokes in stamp
+                            PageObjectsSer.Add("");
+                        }
+                    }
+
+
+                }
+
+
+                else if (obj is CLPPageObjects.CLPImage)
+                {
+                    CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)obj;
+                    PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
+                    im.ByteSource = null;
+                }
+                else if (obj is CLPPageObjects.CLPStrokePathContainer)
+                {
+                    CLPPageObjects.CLPStrokePathContainer container = (CLPPageObjects.CLPStrokePathContainer)obj;
+                    //Check to see if 
+                    if (container.InternalPageObject is CLPPageObjects.CLPImage)
+                    {
+                        CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)container.InternalPageObject;
+                        PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
+                        im.ByteSource = null;
+                    }
+                    else
+                    {
+                        if (container.PageObjectStrokes.Count > 0)
+                        {
+                            //PageObjectsSer.Add(PageStrokesSer.Count.ToString());
+                            PageObjectsSer.Add(container.PageObjectStrokes.Count.ToString());
+                            PageObjectsSer.AddRange(container.PageObjectStrokes);
+                            container.PageObjectStrokes.Clear();// = new ObservableCollection<string>();
+                        }
+                        else
+                        {
+                            PageObjectsSer.Add("");
+                        }
+                    }
+                }
+                else
+                {
+                    PageObjectsSer.Add("");
+
+                }
+
+
+            }
+
+           
+
+        }
+
+
+        [ProtoAfterSerialization]
+        public void afterSerialization()
+        {
+            deserializePageObjectsHelper();
+        }
+
+        [ProtoAfterDeserialization]
+        public void afterDeserialization()
+        {
+            deserializePageObjectsHelper();
+            InkStrokes = StringsToStrokes(Strokes);
+        }
+
+        public void deserializePageObjectsHelper()
+        {
+            int currentIndex = 0;
+            for (int i = 0; i < PageObjects.Count; i++)
+            {
+                if (!PageObjectsSer[currentIndex].Equals(""))
+                {
+                    if (PageObjects[i] is CLPPageObjects.CLPStamp)
+                    {
+                        CLPPageObjects.CLPStamp stamp = ((CLPPageObjects.CLPStamp)PageObjects[i]);
+                        if (stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
+                        {
+                            CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)stamp.StrokePathContainer.InternalPageObject;
+                            im.ByteSource = Convert.FromBase64String(PageObjectsSer[currentIndex]);
+                            im.LoadImageFromByteSource(im.ByteSource);
+                            currentIndex++;
+                        }
+                        else
+                        {
+                            //int startIndex = Convert.ToInt32(PageObjectsSer[i]);
+                            int count = Convert.ToInt32(PageObjectsSer[currentIndex]);
+                            if (count > 0)
+                            {
+                                stamp.PageObjectStrokes = new ObservableCollection<string>(PageObjectsSer.GetRange(currentIndex + 1, count));
+                                CLPPage.StringsToStrokes(stamp.PageObjectStrokes);
+                                currentIndex += count + 1;
+                            }
+                        }
+
+
+                    }
+
+
+                    else if (PageObjects[i] is CLPPageObjects.CLPStrokePathContainer)
+                    {
+                        CLPPageObjects.CLPStrokePathContainer container = (CLPPageObjects.CLPStrokePathContainer)PageObjects[i];
+                        if (container.InternalPageObject is CLPPageObjects.CLPImage)
+                        {
+                            CLPPageObjects.CLPImage curImage = (CLPPageObjects.CLPImage)container.InternalPageObject;
+                            curImage.ByteSource = Convert.FromBase64String(PageObjectsSer[currentIndex]);
+                            curImage.LoadImageFromByteSource(curImage.ByteSource);
+                            currentIndex++;
+                        }
+                        else
+                        {
+                            int count = Convert.ToInt32(PageObjectsSer[currentIndex]);
+                            if (count > 0)
+                            {
+                                foreach ( string s in (PageObjectsSer.GetRange(currentIndex + 1, count)))
+                                {
+                                    container.PageObjectStrokes.Add(s);
+                                }
+                                currentIndex += count + 1;
+
+                            }
+                        }
+                    }
+                    else //CLPImage
+                    {
+                        CLPPageObjects.CLPImage curImage = ((CLPPageObjects.CLPImage)PageObjects[i]);
+                        curImage.ByteSource = Convert.FromBase64String(PageObjectsSer[currentIndex]);
+                        curImage.LoadImageFromByteSource(curImage.ByteSource);
+                        currentIndex++;
+                    }
+                }
+                else
+                {
+                    currentIndex++;
+                }
+
+            }
+            //PageObjectsSer.Clear();
+            //PageStrokesSer.Clear();
+
+        }
         #endregion
     }
 

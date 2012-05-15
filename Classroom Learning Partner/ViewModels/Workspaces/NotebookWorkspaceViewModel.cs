@@ -12,6 +12,8 @@ using Classroom_Learning_Partner.Views;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.IO;
+using Classroom_Learning_Partner.Views.Displays;
+using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -19,7 +21,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
-    [InterestedIn(typeof(IDisplayViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         /// <summary>
@@ -29,11 +30,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             : base()
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
+            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
 
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
-            FilteredSubmissions = new CollectionViewSource();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
 
             Notebook.GeneratePageIndexes();
@@ -138,7 +139,21 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public IDisplayViewModel SelectedDisplay
         {
             get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
-            set { SetValue(SelectedDisplayProperty, value); }
+            set
+            {
+                SetValue(SelectedDisplayProperty, value);
+                if (SelectedDisplay != null)
+                {
+                    if (SelectedDisplay.IsOnProjector)
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                    }
+                    else
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -160,32 +175,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public CollectionViewSource FilteredSubmissions
-        {
-            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
-            set { SetValue(FilteredSubmissionsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the FilteredSubmissions property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource));
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<CLPPage> SubmissionPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value);
-            FilteredSubmissions = new CollectionViewSource();
-            FilteredSubmissions.Source = SubmissionPages;
-            FilteredSubmissions.SortDescriptions.Add(new SortDescription("SubmitterName", ListSortDirection.Ascending));
-            }
+            set { SetValue(SubmissionPagesProperty, value); }
         }
 
         /// <summary>
@@ -234,7 +230,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     App.MainWindowViewModel.record_timer.Stop();
                     App.MainWindowViewModel.record_timer.Dispose();
                 }
-                catch (Exception e)
+                catch (Exception)
                 { }
 
                 Console.WriteLine("CurrentPage Set");
@@ -256,7 +252,27 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
-            CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
+            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel);
+        }
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetCurrentPageCommand command is executed.
+        /// </summary>
+        private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
+        {
+            //try
+            //{
+                SelectedDisplay = null;
+                SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+            //}
+            //catch (Exception ex)
+            //{
+            //}  
         }
 
         public string WorkspaceName
@@ -284,21 +300,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
                     App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
                 }
-            }
-
-            if (propertyName == "IsOnProjector")
-            {
-                if ((viewModel as IDisplayViewModel).DisplayID == SelectedDisplay.DisplayID)
-                {
-                    if (SelectedDisplay.IsOnProjector)
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-                    }
-                    else
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-                    }
-                }   
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);

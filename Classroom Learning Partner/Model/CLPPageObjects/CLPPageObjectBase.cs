@@ -6,9 +6,11 @@ using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Media;
+using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model
 {
+    [ProtoContract]
     public interface ICLPPageObject
     {
         string PageID { get; set; }
@@ -18,14 +20,24 @@ namespace Classroom_Learning_Partner.Model
         ObservableCollection<string> PageObjectStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         Point Position { get; set; }
+        //X,Y Position needed for protobuf - can't serialize Point
+        double XPosition { get; set; }
+        double YPosition { get; set; }
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
+
 
         string PageObjectType { get; }
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+
+        [ProtoBeforeSerialization]
+        void storePositionAsXY();
+
+        [ProtoAfterDeserialization]
+        void retrievePositionFromXY();
     }
 
     /// <summary>
@@ -33,6 +45,7 @@ namespace Classroom_Learning_Partner.Model
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
+    [ProtoContract]
     abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
     {
         #region Variables
@@ -134,7 +147,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the PageObjectStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectStrokesProperty = RegisterProperty("PageObjectStrokes", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData PageObjectStrokesProperty = RegisterProperty("PageObjectStrokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -163,6 +176,35 @@ namespace Classroom_Learning_Partner.Model
         /// Register the Position property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point), new Point(10, 10));
+
+        /// <summary>
+        /// xPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double XPosition
+        {
+            get { return GetValue<double>(XPositionProperty); }
+            set { SetValue(XPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the XPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
+
+
+        /// <summary>
+        /// YPosition of pageObject on page, used for serialization.
+        /// </summary>
+        public double YPosition
+        {
+            get { return GetValue<double>(YPositionProperty); }
+            set { SetValue(YPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the YPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
 
         /// <summary>
         /// Height of pageObject.
@@ -255,6 +297,18 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
+        [ProtoBeforeSerialization]
+        public virtual void storePositionAsXY()
+        {
+            XPosition = Position.X;
+            YPosition = Position.Y;
+        }
+
+        [ProtoAfterDeserialization]
+        public virtual void retrievePositionFromXY()
+        {
+            Position = new Point(XPosition, YPosition);
+        }
         #endregion
     }
 

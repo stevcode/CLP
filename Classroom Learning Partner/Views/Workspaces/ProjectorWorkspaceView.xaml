@@ -9,17 +9,17 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
              xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays">
-
+    
     <!-- Control that dynamically determines what Display to show -->
-    <Control DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display">
+    <Control Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display">
         <Control.Resources>
 
             <ControlTemplate x:Key="LinkedDisplayTemplate">
-                <vwd:LinkedDisplayView DataContext="{Binding}" />
+                <vwd:LinkedDisplayView  />
             </ControlTemplate>
 
             <ControlTemplate x:Key="GridDisplayTemplate">
-                <vwd:GridDisplayView DataContext="{Binding}" />
+                <vwd:GridDisplayView  />
             </ControlTemplate>
 
         </Control.Resources>
@@ -28,7 +28,7 @@
             <Style TargetType="{x:Type Control}">
                 <Style.Triggers>
 
-                    <!-- LinkeDisplay trigger -->
+                    <!-- LinkedDisplay trigger -->
                     <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
                         <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
                     </DataTrigger>

@@ -17,7 +17,7 @@
     </UserControl.Resources>
     <Grid>
         <Viewbox>
-            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black">
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2" BorderBrush="Black">
                 <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas">
                     <ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjects}"
@@ -37,8 +37,6 @@
                                Strokes="{Binding Path=InkStrokes}"
                                EditingMode="None" >
                     </InkCanvas>
-
-
                 </Canvas>
             </Border>
         </Viewbox>

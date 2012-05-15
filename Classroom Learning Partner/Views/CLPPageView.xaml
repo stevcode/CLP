@@ -18,7 +18,7 @@
     </UserControl.Resources>
     <Grid Name="RootGrid" Background="Transparent">
         <Viewbox>
-            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2,2,2,2" CornerRadius="5" BorderBrush="Black" Background="White">
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2" BorderBrush="Black" Background="White">
                 <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
                                                                                                 PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
                                                                                                 PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
@@ -40,12 +40,15 @@
                                Background="Transparent" 
                                Strokes="{Binding Path=InkStrokes}"
                                EditingMode="{Binding Path=EditingMode}"
-                               EditingModeInverted="{Binding Path=EraserEditingMode}"
+                               EditingModeInverted="EraseByStroke"
                                DefaultDrawingAttributes="{Binding Path=DefaultDA}">
                     </InkCanvas>
                 </Canvas>
             </Border>
         </Viewbox>
+
+        <Label Content="{Binding Path=SubmitterName}" FontSize="20" FontWeight="Bold" FontStyle="Oblique" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
+        HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False" />
 
         <StackPanel  Height="40" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Visibility="{Binding Path=PlaybackControlsVisibility}">
             <Button Name="Play" HorizontalAlignment="Left" Command="{Binding Path=StartPlaybackCommand}">

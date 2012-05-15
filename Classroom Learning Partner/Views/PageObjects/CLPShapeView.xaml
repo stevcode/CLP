@@ -3,33 +3,37 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
-    <UserControl.Resources>
-        <Style TargetType="{x:Type ContentControl}" x:Key="ShapeStyle">
-            <Style.Triggers>
 
-                <!-- Rectangle trigger -->
-                <DataTrigger Binding="{Binding ShapeType}" Value="Rectangle">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <Rectangle DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
+    <Control IsHitTestVisible="True" x:Name="ShapeView" >
+        <Control.Resources>
 
-                <!-- Circle trigger -->
-                <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <Ellipse DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
+            <ControlTemplate x:Key="RectangleTemplate">
+                <Rectangle DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+            </ControlTemplate>
 
-            </Style.Triggers>
-        </Style>
+            <ControlTemplate x:Key="EllipseTemplate">
+                <Ellipse DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+            </ControlTemplate>
 
-    </UserControl.Resources>
+        </Control.Resources>
 
-    <ContentControl IsHitTestVisible="True" Style="{StaticResource ShapeStyle}"  x:Name="ShapeView"  />
-    
+        <Control.Style>
+            <Style TargetType="{x:Type Control}">
+                <Style.Triggers>
+
+                    <!-- Rectangle trigger -->
+                    <DataTrigger Binding="{Binding ShapeType}" Value="Rectangle">
+                        <Setter Property="Template" Value="{StaticResource RectangleTemplate}" />
+                    </DataTrigger>
+
+                    <!-- Ellipse trigger -->
+                    <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
+                        <Setter Property="Template" Value="{StaticResource EllipseTemplate}" />
+                    </DataTrigger>
+
+                </Style.Triggers>
+            </Style>
+        </Control.Style>
+    </Control>
+
 </catel:UserControl>

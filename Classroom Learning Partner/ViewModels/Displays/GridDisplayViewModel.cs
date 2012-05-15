@@ -60,21 +60,9 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>
-        private void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
+        public void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
         {
             DisplayedPages.Remove(page);
-
-            //if (App.CurrentUserMode == App.UserMode.Instructor)
-            //{
-            //    if (App.Peer.Channel != null)
-            //    {
-            //        if (this.IsOnProjector)
-            //        {
-            //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-            //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
-            //        }
-            //    }
-            //}
         }
 
         public string DisplayName
@@ -95,7 +83,6 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// Register the IsOnProjector property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
-
 
         public void AddPageToDisplay(CLPPageViewModel page)
         {

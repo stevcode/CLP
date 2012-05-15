@@ -30,10 +30,5 @@ namespace Classroom_Learning_Partner.Views
                 CLPServiceAgent.Instance.Exit();
             }
         }
-
-        private void RibbonWindow_Closed(object sender, System.EventArgs e)
-        {
-            (DataContext as MainWindowViewModel).SaveAndCloseViewModel();
-        }
     }
 }

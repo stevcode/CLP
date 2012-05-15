@@ -1,4 +1,5 @@
 ﻿using Classroom_Learning_Partner.ViewModels;
+using System;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -10,8 +11,6 @@ namespace Classroom_Learning_Partner.Views
         public CLPPagePreviewView()
         {
             InitializeComponent();
-            CloseViewModelOnUnloaded = false;
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

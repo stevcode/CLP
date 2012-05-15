@@ -46,7 +46,7 @@
     <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisLogFile>bin\Debug\Classroom Learning Partner.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -151,10 +151,12 @@
     <Compile Include="AppMessages.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
+    <Compile Include="Model\CLPNamedInkSet.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPNotebook.cs" />
     <Compile Include="Model\CLPPage.cs" />
     <Compile Include="Model\CLPPageObjects\CLPAudio.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPHandwritingRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPInkRegion.cs" />
     <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
     <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
@@ -163,19 +165,27 @@
     <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
     <Compile Include="Model\CLPPageObjects\CLPStrokePathContainer.cs" />
     <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPInkShapeRegion.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPDataTable.cs" />
+    <Compile Include="Model\CLPPageObjects\CLPShadingRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
+    <Compile Include="Resources\BindableInkCanvas.cs" />
     <Compile Include="Resources\Converters.cs" />
+    <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPInkRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\LinkDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPInkShapeRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPDataTableViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
@@ -191,6 +201,12 @@
     <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
+    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
+      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+      <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
@@ -218,8 +234,8 @@
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPInkRegionView.xaml.cs">
-      <DependentUpon>CLPInkRegionView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPHandwritingRegionView.xaml.cs">
+      <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
       <DependentUpon>CLPShapeView.xaml</DependentUpon>
@@ -229,6 +245,15 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
       <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
+      <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPDataTableView.xaml.cs">
+      <DependentUpon>CLPDataTableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
+      <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -241,9 +266,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SideBarView.xaml.cs">
-      <DependentUpon>SideBarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
@@ -283,6 +305,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -319,7 +349,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPInkRegionView.xaml">
+    <Page Include="Views\PageObjects\CLPHandwritingRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -335,6 +365,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPDataTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -348,10 +390,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPTextBoxView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SideBarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -468,7 +506,15 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="External Libraries\lame.exe" />
+    <Content Include="External Libraries\Catel.Core.dll" />
+    <Content Include="External Libraries\Catel.Core.pdb" />
+    <Content Include="External Libraries\Catel.Extensions.Controls.dll" />
+    <Content Include="External Libraries\Catel.Extensions.Controls.pdb" />
+    <Content Include="External Libraries\Catel.MVVM.dll" />
+    <Content Include="External Libraries\Catel.MVVM.pdb" />
+    <Content Include="External Libraries\lame.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\recordflash2.png" />
     <Resource Include="Images\recordflash1.png" />
     <Resource Include="Images\recording.png" />
@@ -479,19 +525,14 @@
     <Resource Include="Images\stop_record.png" />
     <Resource Include="Images\video.png" />
     <Resource Include="Images\SnapTileIcon.png" />
-    <Content Include="External Libraries\Catel.Core.dll" />
-    <Content Include="External Libraries\Catel.Extensions.Controls.dll" />
-    <Content Include="External Libraries\Catel.MVVM.dll" />
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
     <Content Include="External Libraries\IAWinFX.dll" />
-    <Content Include="External Libraries\lame_enc.dll" />
     <Content Include="External Libraries\Microsoft.Ink.dll" />
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Content Include="External Libraries\MongoDB.Bson.dll" />
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\protobuf-net.dll" />
-    <Resource Include="External Libraries\protobuf-net.dll.VisualState.xml" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\Inkwell.ico" />

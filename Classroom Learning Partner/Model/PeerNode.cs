@@ -49,7 +49,8 @@ namespace Classroom_Learning_Partner.Model
             // It also prevents closing idle sessions.
             binding.ReceiveTimeout = TimeSpan.MaxValue;
             binding.SendTimeout = TimeSpan.MaxValue;
-
+            binding.OpenTimeout = TimeSpan.MaxValue;
+            binding.CloseTimeout = TimeSpan.MaxValue;
             XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
 
             // Remove quotas limitations

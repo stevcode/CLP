@@ -8,53 +8,50 @@
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
              xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
-    <Grid>
-        <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <UniformGrid />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Grid>
-                    <vw:CLPPageView DataContext="{Binding}" />
-                    <Button
-                        Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
-                        x:Name="closeButton"
-                        Width="40"
-                        Height="40"
-                        Cursor="Hand"
-                        Command="{Binding ElementName=itemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
-                        CommandParameter="{Binding}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Ellipse
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="White"
-                                        />
-                                    <Path 
-                                        Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" 
-                                        Stroke="Red" 
-                                        StrokeThickness="3" 
-                                        Margin="5" 
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
-    </Grid>
+    
+        <ItemsControl x:Name="itemsControl" Background="Transparent" ItemsSource="{Binding DisplayedPages}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <vw:CLPPageView Margin="5" x:Name="page" DataContext="{Binding}" />
+                        <Button
+                            Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
+                            x:Name="closeButton"
+                            Width="35"
+                            Height="35"
+                            Cursor="Hand"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Click="closeButton_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Grid
+                                        x:Name="grid"
+                                        >
+                                        <Ellipse
+                                            Stroke="Black"
+                                            StrokeThickness="3"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Fill="White"
+                                            />
+                                        <Path 
+                                            Data="M0,0 L1,1 M0,1 L1,0" 
+                                            Stretch="Fill" 
+                                            Stroke="Red" 
+                                            StrokeThickness="3" 
+                                            Margin="5" 
+                                            />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    
 </catel:UserControl>

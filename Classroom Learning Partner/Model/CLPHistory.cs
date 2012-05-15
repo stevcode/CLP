@@ -9,6 +9,7 @@ using Classroom_Learning_Partner.ViewModels;
 using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows;
+using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -32,6 +33,9 @@ namespace Classroom_Learning_Partner.Model
             TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
             TrashedInkStrokes = new Dictionary<string, string>();
             IgnoreHistory = false;
+            //included for history items problem
+            UniqueID = Guid.NewGuid().ToString();
+            
         }
 
         /// <summary>
@@ -44,6 +48,19 @@ namespace Classroom_Learning_Partner.Model
         #endregion
 
         #region Properties
+        /// <summary>
+        /// UniqueID of the page.
+        /// </summary>
+        public string UniqueID
+        {
+            get { return GetValue<string>(UniqueIDProperty); }
+            set { SetValue(UniqueIDProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the UniqueID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -65,13 +82,15 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<CLPHistoryItem> HistoryItems
         {
             get { return GetValue<ObservableCollection<CLPHistoryItem>>(HistoryItemsProperty); }
-            private set { SetValue(HistoryItemsProperty, value); }
+            set { SetValue(HistoryItemsProperty, value); }
+            
         }
+        
 
         /// <summary>
         /// Register the HistoryItems property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData HistoryItemsProperty = RegisterProperty("HistoryItems", typeof(ObservableCollection<CLPHistoryItem>), new ObservableCollection<CLPHistoryItem>());
+        public static readonly PropertyData HistoryItemsProperty = RegisterProperty("HistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
 
         /// <summary>
         /// List to enable undo/redo functionality.
@@ -79,13 +98,13 @@ namespace Classroom_Learning_Partner.Model
         public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
         {
             get { return GetValue<ObservableCollection<CLPHistoryItem>>(UndoneHistoryItemsProperty); }
-            private set { SetValue(UndoneHistoryItemsProperty, value); }
+            set { SetValue(UndoneHistoryItemsProperty, value); }
         }
 
         /// <summary>
         /// Register the UndoneHistoryItems property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData UndoneHistoryItemsProperty = RegisterProperty("UndoneHistoryItems", typeof(ObservableCollection<CLPHistoryItem>), new ObservableCollection<CLPHistoryItem>());
+        public static readonly PropertyData UndoneHistoryItemsProperty = RegisterProperty("UndoneHistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -99,7 +118,7 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the TrashedObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), new Dictionary<string, ICLPPageObject>());
+        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), () => new Dictionary<string, ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -113,11 +132,27 @@ namespace Classroom_Learning_Partner.Model
         /// <summary>
         /// Register the TrashedInkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, string>), new Dictionary<string, string>());
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
 
         #endregion
 
         #region Methods
+        //A method to add to the historyItems collection to make sure the uniqueIDs match before adding to a history
+        public static void AddToHistoryItems(CLPHistoryItem item, Guid ID)
+        {
+            if (App.CurrentUserMode != App.UserMode.Projector)
+            {
+                foreach (CLPPage page in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages)
+                {
+                    if (page.PageHistory.UniqueID == ID.ToString())
+                    {
+                        page.PageHistory.HistoryItems.Add(item);
+                    }
+                }
+            }
+        }
+
+
         //because the historyItems collection has a private set accessor
         public static void ReplaceHistoryItems(CLPHistory oldHistory, CLPHistory newHistory)
         {
@@ -220,10 +255,12 @@ namespace Classroom_Learning_Partner.Model
             else
             {
                 //Logger.Instance.WriteToLog("Zero history items");
-                return true;
+                return false;
             }
         }
 
+
+        
 
         public static CLPHistory InterpolateHistory(CLPHistory history)
         {

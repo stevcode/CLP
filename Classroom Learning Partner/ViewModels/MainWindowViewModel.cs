@@ -21,6 +21,10 @@ using System.Windows.Documents;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using System.Diagnostics;
+using Classroom_Learning_Partner.Resources;
+using Catel.Windows;
+using ProtoBuf;
+
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -52,6 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Ribbon Content
             SideBarVisibility = true;
+            GridDisplaysVisibility = false;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -60,6 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = Colors.Black;
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
+            PageEraserInteractionMode = PageEraserInteractionMode.ObjectEraser;
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -76,15 +82,25 @@ namespace Classroom_Learning_Partner.ViewModels
             
 
             AuthoringTabVisibility = Visibility.Collapsed;
+            PageViewerVisibility = Visibility.Collapsed;
             InstructorVisibility = Visibility.Collapsed;
             StudentVisibility = Visibility.Collapsed;
+            ServerVisibility = Visibility.Collapsed;
             PlayingAudioVisibility = Visibility.Collapsed;
+            HistoryVisibility = Visibility.Collapsed;
+            SubmissionVisibility = Visibility.Collapsed;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
+                    ServerVisibility = Visibility.Visible;
+                    PageViewerVisibility = Visibility.Visible;
+                    HistoryVisibility = Visibility.Visible;
+                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Instructor:
                     InstructorVisibility = Visibility.Visible;
+                    HistoryVisibility = Visibility.Visible;
+                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Projector:
                     break;
@@ -103,7 +119,9 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
+            SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
+            ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
@@ -131,6 +149,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
+            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -140,7 +159,10 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
-            InsertInkRegionCommand = new Command(OnInsertInkRegionCommandExecute);
+            InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
+            InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
+            InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
+            InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
 
             //Student Record and Playback 
             RecordVisualCommand = new Command(OnRecordVisualCommandExecute);
@@ -158,6 +180,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             RecordBothImage = new Uri("..\\Images\\video.png", UriKind.Relative);
             AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
+
+
+            //DB
+            QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
 
             currentlyPlayingVisual = false;
             //String pageID = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
@@ -414,6 +440,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return _currentlyPlayingVisual; }
             set { _currentlyPlayingVisual = value; }
         }
+
         /// <summary>
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
@@ -433,6 +460,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public PageEraserInteractionMode PageEraserInteractionMode
+        {
+            get { return GetValue<PageEraserInteractionMode>(PageEraserInteractionModeProperty); }
+            set { SetValue(PageEraserInteractionModeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageEraserInteraction property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageEraserInteractionModeProperty = RegisterProperty("PageEraserInteractionMode", typeof(PageEraserInteractionMode));
+
+
         #endregion //Properties
 
         #region Bindings
@@ -451,6 +493,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool GridDisplaysVisibility
+        {
+            get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
+            set { SetValue(GridDisplaysVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplaysVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool));
+
         #region Convert to XAMLS?
 
         //Steve - Switch these visibility tags into XAML getters/setters
@@ -468,6 +524,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData AuthoringTabVisibilityProperty = RegisterProperty("AuthoringTabVisibility", typeof(Visibility));
 
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility PageViewerVisibility
+        {
+            get { return GetValue<Visibility>(PageViewerVisibilityProperty); }
+            set { SetValue(PageViewerVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AuthoringTabVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageViewerVisibilityProperty = RegisterProperty("PageViewerVisibility", typeof(Visibility));
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -481,6 +551,51 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the InstructorVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData InstructorVisibilityProperty = RegisterProperty("InstructorVisibility", typeof(Visibility));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility HistoryVisibility
+        {
+            get { return GetValue<Visibility>(HistoryVisibilityProperty); }
+            set { SetValue(HistoryVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HistoryVisibilityProperty = RegisterProperty("HistoryVisibility", typeof(Visibility));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility SubmissionVisibility
+        {
+            get { return GetValue<Visibility>(SubmissionVisibilityProperty); }
+            set { SetValue(SubmissionVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SubmissionVisibilityProperty = RegisterProperty("SubmissionVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility ServerVisibility
+        {
+            get { return GetValue<Visibility>(ServerVisibilityProperty); }
+            set { SetValue(ServerVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InstructorVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ServerVisibilityProperty = RegisterProperty("ServerVisibility", typeof(Visibility));
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -787,7 +902,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     page.PageHistory.ClearHistory();
                 }
-                //CLPService.DistributeNotebook(App.CurrentNotebookViewModel, App.Peer.UserName);
+                
             }
         }
 
@@ -803,7 +918,32 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook);
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
+            }
+            else if (App.MainWindowViewModel.SelectedWorkspace is ProjectorWorkspaceViewModel)
+            {
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    OnSaveAllNotebooksCommandExecute(), null, "Saving Notebook", 0.0 / 0.0);
+            }
+        }
+
+        /// <summary>
+        /// Gets the SaveAllNotebooksCommand command.
+        /// </summary>
+        public Command SaveAllHistoriesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SaveNotebookCommand command is executed.
+        /// </summary>
+        private void OnSaveAllHistoriesCommandExecute()
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+
+            {
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving All Notebook Histories", 0.0 / 0.0);
+               
             }
         }
 
@@ -821,6 +961,36 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPServiceAgent.Instance.SaveNotebook(notebook);
             }
+        }
+
+        public Command ImportLocalNotebooksDBCommand { get; private set; }
+
+
+        private static System.Threading.Thread _backgroundThread;
+        public static System.Threading.Thread BackgroundThread
+        {
+            get
+            {
+                return _backgroundThread;
+            }
+        }
+        /// <summary>
+        /// Method to invoke when the ImportLocalNotebooksDBCommandExecute command is executed.
+        /// </summary>
+        private void ImportLocalNotebooksDBCommandExecute()
+        {
+            _backgroundThread = new System.Threading.Thread(CLPServiceAgent.Instance.ImportLocalNotebooksFromDB) { IsBackground = true };
+            BackgroundThread.Start();
+        }
+
+        public Command QueryDatabaseCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the QueryDatabaseCommand command is executed.
+        /// </summary>
+        private void QueryDatabaseCommandExecute()
+        {
+            CLPServiceAgent.Instance.RunDBQueryForPages();
         }
 
         /// <summary>
@@ -1209,7 +1379,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (CanSendToTeacher)
             {
                 CLPPage page = (SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
-                CLPServiceAgent.Instance.SubmitPage(page);
+                CLPServiceAgent.Instance.SubmitPage(page, (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
             }
             CanSendToTeacher = false;
             
@@ -1310,20 +1480,30 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (App.Peer.Channel != null)
             {
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                 foreach (var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                 {
                     gridDisplay.IsOnProjector = false;
                 }
 
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
-
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
 
                 List<string> pageIDs = new List<string>();
                 if ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
                 {
-                    string pageID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.UniqueID;
+                    CLPPage page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page;
+                    string pageID;
+                    if (page.IsSubmission)
+                    {
+                        pageID = page.SubmissionID;
+                    }
+                    else
+                    {
+                        pageID = page.UniqueID;
+                    }
                     pageIDs.Add(pageID);
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                 }
                 else
                 {
@@ -1380,87 +1560,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateNewGridDisplayCommandExecute()
         {
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(new GridDisplayViewModel());
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = null;
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
         }
-
-        //private RelayCommand _sendDisplayToProjectorCommand;
-
-        ///// <summary>
-        ///// Gets the SendDisplayToProjectorCommand.
-        ///// </summary>
-        //public RelayCommand SendDisplayToProjectorCommand
-        //{
-        //    get
-        //    {
-        //        return _sendDisplayToProjectorCommand
-        //            ?? (_sendDisplayToProjectorCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      if (App.Peer.Channel != null)
-        //                                      {
-        //                                          if ((App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display is LinkedDisplayViewModel)
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = true;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = false;
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("LinkedDisplay", new List<string>());
-        //                                          }
-        //                                          else
-        //                                          {
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-        //                                              (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsOnProjector = true;
-        //                                              List<string> pageList = new List<string>();
-        //                                              foreach (var page in (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.DisplayPages)
-        //                                              {
-        //                                                  pageList.Add(ObjectSerializer.ToString(page.Page));
-        //                                              }
-
-        //                                              App.Peer.Channel.SwitchProjectorDisplay("GridDisplay", pageList);
-        //                                          }
-        //                                      }
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _switchToLinkedDisplayCommand;
-
-        ///// <summary>
-        ///// Gets the SwitchToLinkedDisplayCommand.
-        ///// </summary>
-        //public RelayCommand SwitchToLinkedDisplayCommand
-        //{
-        //    get
-        //    {
-        //        return _switchToLinkedDisplayCommand
-        //            ?? (_switchToLinkedDisplayCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = true;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = false;
-        //                                  }));
-        //    }
-        //}
-
-        //private RelayCommand _createNewGridDisplayCommand;
-
-        ///// <summary>
-        ///// Gets the CreateNewGridDisplayCommand.
-        ///// </summary>
-        //public RelayCommand CreateNewGridDisplayCommand
-        //{
-        //    get
-        //    {
-        //        return _createNewGridDisplayCommand
-        //            ?? (_createNewGridDisplayCommand = new RelayCommand(
-        //                                  () =>
-        //                                  {
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).Display = (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).LinkedDisplay.IsActive = false;
-        //                                      (App.MainWindowViewModel.Workspace as InstructorWorkspaceViewModel).GridDisplay.IsActive = true;
-        //                                  }));
-        //    }
-        //}
 
         #endregion //Display Commands
 
@@ -1482,7 +1585,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage page = new CLPPage();
             page.ParentNotebookID = (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-            //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Insert(index, new CLPPageViewModel(page));
         }
 
         /// <summary>
@@ -1516,6 +1618,32 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyPageCommandExecute()
         {
             // TODO: Handle command logic here
+        }
+
+        /// <summary>
+        /// Gets the AddPageTopicCommand command.
+        /// </summary>
+        public Command AddPageTopicCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AddPageTopicCommand command is executed.
+        /// </summary>
+        private void OnAddPageTopicCommandExecute()
+        {
+            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+
+            NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
+            nameChooser.Owner = Application.Current.MainWindow;
+
+            string originalPageTopics = String.Join(",", page.PageTopics);
+            nameChooser.NotebookName.Text = originalPageTopics;
+            nameChooser.ShowDialog();
+            if (nameChooser.DialogResult == true)
+            {
+                string pageTopics = nameChooser.NotebookName.Text;
+                string [] stringArray = pageTopics.Split(',');
+                page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
+            }
         }
 
         #endregion //Page Commands
@@ -1603,6 +1731,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPStamp stamp = new CLPStamp(null);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, stamp);
+            if (EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
         }
         /// <summary>
         /// Gets the InsertBlankStampCommand command.
@@ -1649,24 +1781,96 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the InsertInkRegionCommand command.
+        /// Gets the InsertHandwritingRegionCommand command.
         /// </summary>
-        public Command InsertInkRegionCommand { get; private set; }
+        public Command InsertHandwritingRegionCommand { get; private set; }
 
         /// <summary>
-        /// Method to invoke when the InsertInkRegionCommand command is executed.
+        /// Method to invoke when the InsertHandwritingRegionCommand command is executed.
         /// </summary>
-        private void OnInsertInkRegionCommandExecute()
+        private void OnInsertHandwritingRegionCommandExecute()
         {
             CustomizeInkRegionView optionChooser = new CustomizeInkRegionView();
             optionChooser.Owner = Application.Current.MainWindow;
             optionChooser.ShowDialog();
             if (optionChooser.DialogResult == true)
             {
-                string correct_answer = optionChooser.CorrectAnswer.Text;
-                int selected_type = optionChooser.ExpectedType.SelectedIndex;
+                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+                CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+            }
+        }
 
-                CLPInkRegion region = new CLPInkRegion(correct_answer, selected_type);
+        /// <summary>
+        /// Gets the InsertInkShapeRegionCommand command.
+        /// </summary>
+        public Command InsertInkShapeRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkShapeRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertInkShapeRegionCommandExecute()
+        {
+            CLPInkShapeRegion region = new CLPInkShapeRegion();
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+        }
+
+        /// <summary>
+        /// Gets the InsertDataTableCommand command.
+        /// </summary>
+        public Command InsertDataTableCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkShapeRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertDataTableCommandExecute()
+        {
+            CustomizeDataTableView optionChooser = new CustomizeDataTableView();
+            optionChooser.Owner = Application.Current.MainWindow;
+            optionChooser.ShowDialog();
+            if (optionChooser.DialogResult == true)
+            {
+                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+
+                int rows = 1;
+                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+                catch (FormatException e) { rows = 1; }
+
+                int cols = 1;
+                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+                catch (FormatException e) { cols = 1; }
+
+                CLPDataTable region = new CLPDataTable(rows, cols, selected_type);
+                CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
+            }
+        }
+
+        /// <summary>
+        /// Gets the InsertShadingRegionCommand command.
+        /// </summary>
+        public Command InsertShadingRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertInkShapeRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertShadingRegionCommandExecute()
+        {
+            CustomizeShadingRegionView optionChooser = new CustomizeShadingRegionView();
+            optionChooser.Owner = Application.Current.MainWindow;
+            optionChooser.ShowDialog();
+            if (optionChooser.DialogResult == true)
+            {
+                //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+
+                int rows = 0;
+                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+                catch (FormatException e) { rows = 0; }
+
+                int cols = 0;
+                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+                catch (FormatException e) { cols = 0; }
+
+                CLPShadingRegion region = new CLPShadingRegion(rows, cols);
                 CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, region);
             }
         }
@@ -1752,7 +1956,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public Timer record_timer = null;
         public void OnRecordAudioCommandExecute()
         {//hijacking this button to popup the file viewer for the teacher to see all audios for this page.
-            CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            //CLPPage page = ((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            CLPPage page = null;
+            try
+            {
+                page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            }
+            catch (System.NullReferenceException e)
+            {
+                Logger.Instance.WriteToLog("Can't review audio in grid display.");
+            }
             if(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\"))
             {
                 Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\", true);
@@ -1769,6 +1982,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
                 
+            }
+            foreach (var item in page.PageHistory.HistoryItems)
+            {
+                if (item.ItemType == HistoryItemType.RemovePageObject)
+                {
+                    ICLPPageObject obj = (ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                    if (obj.PageObjectType == "CLPAudio")
+                    {
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Current Page Audio\" + (obj as CLPAudio).ID + @".mp3";
+                        if (!File.Exists(path))
+                        {
+                            System.IO.File.WriteAllBytes(path, (obj as CLPAudio).File);
+                        }
+                    }
+                }
             }
             foreach (ICLPPageObject obj in page.PageHistory.TrashedPageObjects.Values)
             {

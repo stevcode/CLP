@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Collections.ObjectModel;
+using ProtoBuf;
 
 
 namespace Classroom_Learning_Partner.Model
@@ -25,8 +26,8 @@ namespace Classroom_Learning_Partner.Model
     {
         private CLPServiceAgent()
         {
-        }
 
+        }
 
         //readonly allows thread-safety and means it can only be allocated once.
         private static readonly CLPServiceAgent _instance = new CLPServiceAgent();
@@ -39,10 +40,11 @@ namespace Classroom_Learning_Partner.Model
 
         public void OpenNotebook(string notebookName)
         {
+
             string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
             if (File.Exists(filePath))
             {
-                //alternatively, pull from database and build
+                
                 DateTime start = DateTime.Now;
                 CLPNotebook notebook = null;
                 try
@@ -142,38 +144,80 @@ namespace Classroom_Learning_Partner.Model
         {
             //make async?
             //compare model w/ database
+            DateTime startLocalSave = DateTime.Now;
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
+            if (App.CurrentUserMode == App.UserMode.Student)
+            {
+                notebook.Submissions.Clear();
+            }
             notebook.Save(filePath);
-            Console.WriteLine("Notebook saved locally");
-            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
+            TimeSpan timeToSaveLocal = DateTime.Now.Subtract(startLocalSave);
+            //System.Threading.Thread
+
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student && App.Peer.Channel != null)
             {
 
-                int i = 1;
+                int numPagesSaved = 0;
+                DateTime startSavingTime= DateTime.Now;
+                HistoryItemType lastItem = HistoryItemType.EraseInk;
+                int count = 0;
                 foreach (CLPPage page in notebook.Pages)
                 {
+
+
                     if (!page.PageHistory.IsSaved())
                     {
+                        numPagesSaved++;
+                        DateTime now = DateTime.Now;
+                        CLPPage p = page;
                         //submit page, removing history first
-                        //CLPHistory tempHistory = removeHistoryFromPageVM(page);
+
+                        CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
 
                         //Serialize using protobuf
-                        string s_page = ObjectSerializer.ToString(notebook);
+                        MemoryStream stream = new MemoryStream();
+                        Serializer.PrepareSerializer<CLPPage>();
+                        Serializer.Serialize<CLPPage>(stream, p);
+                        string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                        //string s_page = ObjectSerializer.ToString(notebook);
 
                         //Actual send
-                        DateTime now = DateTime.Now;
-                        App.Peer.Channel.SavePage(s_page, App.Peer.UserName, now);
-                        Logger.Instance.WriteToLog("Page " + i.ToString() + " sent to server(save), size: " + (s_page.Length / 1024.0).ToString() + " kB");
-                        //replace history:
-                        //replacePageHistory(tempHistory, page);
-                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
-                        page.PageHistory.HistoryItems.Add(item);
 
+
+                        //CLPServiceAgent.TimeCallBack(Tuple.Create<string, string>(s_page_pb, notebook.NotebookName));
+                        // System.Threading.Thread thread = new System.Threading.Thread(() =>
+                        // {
+                        System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                        {
+                            App.Peer.Channel.SavePage(s_page_pb, App.Peer.UserName, now, notebook.NotebookName, p.PageIndex);
+                        });
+                        //Logger is not thread safe
+                        //So, page likely was sent, but no guarantee
+                        Logger.Instance.WriteToLog("Page " + p.PageIndex.ToString() + " sent to server(save), size: " + (s_page_pb.Length / 1024.0).ToString() + " kB,  Last history item " + lastItem.ToString());
+                        //});
+                        //thread.Start();
+                        //replace history:
+                        CLPHistory.replaceHistoryInPage(tempHistory, page);
+                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                           // page.PageHistory.HistoryItems.Add(item);
+                            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                            CLPHistory.AddToHistoryItems(item, new Guid(ID));
                     }
-                    i++;
+                    else
+                    {
+                        Logger.Instance.WriteToLog("Page " + page.PageIndex.ToString() + " no changed registered, ");
+                    }
+
                 }
+               
+                Logger.Instance.WriteToLog("Network Saving " + numPagesSaved.ToString() + " took " + DateTime.Now.Subtract(startSavingTime).ToString()
+                    + ",  Local Save took " + timeToSaveLocal.ToString());
+                Logger.Instance.WriteToLog("===================");
             }
 
         }
+
+
 
         public void SaveNotebookDB(CLPNotebook notebook, string userName)
         {
@@ -209,17 +253,19 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void SavePageDB(CLPPage page, string s_page, string userName, bool isSubmission)
+        public void SavePageDB(CLPPage page, string userName, bool isSubmission, DateTime saveDate, string notebookName)
         {
+            string s_page = ObjectSerializer.ToString(page);
             if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
             {
+
                 //save to database
                 MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
                 MongoCollection<BsonDocument> pageCollection;
                 if (isSubmission)
                 {
                     pageCollection = nb.GetCollection<BsonDocument>("Pages");
-                    pageCollection.Insert(createBsonPage(page, s_page, userName));
+                    pageCollection.Insert(createBsonPage(page, s_page, userName, saveDate, notebookName));
                 }
                 else
                 {
@@ -229,34 +275,20 @@ namespace Classroom_Learning_Partner.Model
                     if (currentPage != null)
                     {
                         //update with newer notebook version
-                        currentPage["SaveDate"] = BsonDateTime.Create(DateTime.UtcNow);
+                        currentPage["SaveDate"] = BsonDateTime.Create(saveDate);
                         currentPage["PageContent"] = s_page;
                         pageCollection.Save(currentPage);
                     }
                     else
                     {
                         //create new page- page for this student has never been saved before 
-                        pageCollection.Insert(createBsonPage(page, s_page, userName));
+                        pageCollection.Insert(createBsonPage(page, s_page, userName, saveDate, notebookName));
                     }
                 }
 
             }
         }
-        //public void SavePageDB(CLPPage page)
-        //{
-        //    if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
-        //    {
-        //        //save to database
-        //        MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
-        //        MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("Pages");
-        //        BsonDocument currentPage = new BsonDocument {
-        //            { "ID", page.UniqueID },
-        //            { "CreationDate", page.CreationDate },
-        //                { "PageContent", ObjectSerializer.ToString(page) }
-        //            };
-        //        pageCollection.Insert(currentPage);
-        //    }
-        //}
+
 
         public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
@@ -284,17 +316,78 @@ namespace Classroom_Learning_Partner.Model
         }
 
 
-        public void SubmitPage(CLPPage page)
+        //Method for logging size of submissions with various serialization methods
+        //Used for testing
+        private void serializationSizes(CLPPage page, string notebookName)
+        {
+            //Size tests
+            List<double> sizes = new List<double>();
+
+
+            //remove history before serializing 
+            CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+
+            string oldSubmissionID = page.SubmissionID;
+            page.SubmissionID = Guid.NewGuid().ToString();
+            page.SubmissionTime = DateTime.Now;
+
+
+            //ProtoBufTest - Page
+            //Serialize using protobuf
+            MemoryStream stream = new MemoryStream();
+            Serializer.PrepareSerializer<CLPPage>();
+            Serializer.Serialize<CLPPage>(stream, page);
+            string s_page_pb = Convert.ToBase64String(stream.ToArray());
+
+            // Add BFPage
+            string s_page = ObjectSerializer.ToString(page);
+            double size_standard = s_page.Length / 1024.0;
+            sizes.Add(size_standard);
+            
+            //Add PB Page
+            sizes.Add(s_page_pb.Length / 1024.0);
+
+            //Test deserialize 
+            //Stream stream2 = new MemoryStream(Convert.FromBase64String(s_page_pb));
+            //CLPPage page2 = new CLPPage();
+            //page2 = Serializer.Deserialize<CLPPage>(stream2);
+            //App.PageTypeModel.Deserialize(stream2, page2, typeof(CLPPage));
+
+            //BF History
+            string s_history = ObjectSerializer.ToString(tempHistory);
+            sizes.Add(s_history.Length / 1024.0);
+
+            //ProtoBufTest - History
+            App.PageTypeModel[typeof(CLPHistory)].CompileInPlace();
+            MemoryStream stream3 = new MemoryStream();
+            App.PageTypeModel.Serialize(stream3, tempHistory);
+            //Serializer.Serialize<CLPHistory>(stream3, tempHistory);
+            string s_history_pb = Convert.ToBase64String(stream3.ToArray());
+            sizes.Add(s_history_pb.Length / 1024.0);
+
+            //Test deserialize 
+            // Stream stream4 = new MemoryStream(Convert.FromBase64String(s_history_pb));
+            //CLPHistory history = new CLPHistory();
+            //CLPHistory history = Serializer.Deserialize<CLPHistory>(stream4);
+            //App.PageTypeModel.Deserialize(stream4, history, typeof(CLPHistory));
+
+            //put the history back into the page
+            CLPHistory.replaceHistoryInPage(tempHistory, page);
+
+
+            //log sizes
+            Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString());
+            Logger.Instance.WriteToLog("Page w/o  History " + sizes[0].ToString() + " " + sizes[1].ToString());
+            Logger.Instance.WriteToLog("Full      History " + sizes[2].ToString() + " " + sizes[3].ToString());
+            //Logger.Instance.WriteToLog("Segmented History " + sizes[4].ToString() + " " + sizes[5].ToString());
+            //Logger.Instance.WriteToLog("Num Full History Items " + sizes[6].ToString());
+            //Logger.Instance.WriteToLog("Num Seg History  Items " + sizes[7].ToString());
+        }
+
+        public void SubmitPage(CLPPage page, string notebookName)
         {
             if (App.Peer.Channel != null)
             {
-                //CLPHistory history = CLPHistory.GenerateHistorySinceLastSubmission(page);
-                //string s_history = ObjectSerializer.ToString(history);
-
-                //ObservableCollection<ICLPPageObject> pageObjects = CLPHistory.PageObjectsSinceLastSubmission(page, history);
-                //string s_pageObjects = ObjectSerializer.ToString(pageObjects);
-
-                //List<string> inkStrokes = CLPPage.InkStrokesSinceLastSubmission(page, history);
 
                 //remove history before sending
                 CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
@@ -302,20 +395,31 @@ namespace Classroom_Learning_Partner.Model
                 string oldSubmissionID = page.SubmissionID;
                 page.SubmissionID = Guid.NewGuid().ToString();
                 page.SubmissionTime = DateTime.Now;
-                //App.Peer.Channel.SubmitPage(App.Peer.UserName, page.SubmissionID, page.SubmissionTime.ToString(), s_history, s_pageObjects, inkStrokes);
+                
 
-                string s_page = ObjectSerializer.ToString(page);
+                //ProtoBufTest - Page
+                //Serialize using protobuf
+                MemoryStream stream = new MemoryStream();
+                Serializer.PrepareSerializer<CLPPage>();
+                Serializer.Serialize<CLPPage>(stream, page);
+                string s_page_pb = Convert.ToBase64String(stream.ToArray());
+                double pbPageSize = (s_page_pb.Length / 1024.0);
 
-                App.Peer.Channel.SubmitFullPage(s_page, App.Peer.UserName);
-
-                double size_standard = s_page.Length / 1024.0;
-                Logger.Instance.WriteToLog("Submitting Page " + page.PageIndex + ": " + page.UniqueID + ", at " + page.SubmissionTime.ToShortTimeString());
-                Logger.Instance.WriteToLog("Submission Size: " + size_standard.ToString());
+                //Submit Page using PB
+                App.Peer.Channel.SubmitFullPage(s_page_pb, App.Peer.UserName, notebookName);
 
                 //put the history back into the page
                 CLPHistory.replaceHistoryInPage(tempHistory, page);
 
-                page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                //page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                //page.PageHistory.HistoryItems.Add(new CLPHistoryItem(HistoryItemType.Save, null, null, null)); 
+                CLPHistoryItem item1 = new CLPHistoryItem(HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID);
+                CLPHistoryItem item2 = new CLPHistoryItem(HistoryItemType.Save, null, null, null);
+                String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                CLPHistory.AddToHistoryItems(item1, new Guid(ID));
+                CLPHistory.AddToHistoryItems(item2, new Guid(ID));
+                //log sizes
+                Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
 
                 // Stamp and Tile log information
                 //TODO: Fix the naming of the log path. This is really messy.
@@ -366,12 +470,16 @@ namespace Classroom_Learning_Partner.Model
         public void StartRecordingVisual(CLPPage page)
         {
             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StartRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
+            //page.PageHistory.HistoryItems.Add(item);
+            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+            CLPHistory.AddToHistoryItems(item, new Guid(ID));
         }
         public void StopRecordingVisual(CLPPage page)
         {
             CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.StopRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
+            //page.PageHistory.HistoryItems.Add(item);
+            String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+            CLPHistory.AddToHistoryItems(item, new Guid(ID));
         }
 
         public void PlaybackRecording(CLPPage page)
@@ -420,14 +528,17 @@ namespace Classroom_Learning_Partner.Model
             if (page != null)
             {
                 pageObject.PageID = page.UniqueID;
-                Console.WriteLine("IsBackground: " + App.MainWindowViewModel.IsAuthoring.ToString());
                 pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
                 if (!page.PageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
-                    page.PageHistory.HistoryItems.Add(item);
+                    //page.PageHistory.HistoryItems.Add(item);
+                    //trying to fix the history items going into multiple page's histories problem
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
+                  
                 }
             }
         }
@@ -459,7 +570,9 @@ namespace Classroom_Learning_Partner.Model
                 if (!page.PageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-                    page.PageHistory.HistoryItems.Add(item);
+                    //page.PageHistory.HistoryItems.Add(item);
+                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
                 }
             }
         }
@@ -483,7 +596,9 @@ namespace Classroom_Learning_Partner.Model
             if (!page.PageHistory.IgnoreHistory)
             {
                 CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
-                page.PageHistory.HistoryItems.Add(item);
+               // page.PageHistory.HistoryItems.Add(item);
+                String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
+                CLPHistory.AddToHistoryItems(item, new Guid(ID));
             }
 
             pageObject.Position = pt;
@@ -569,30 +684,34 @@ namespace Classroom_Learning_Partner.Model
             BsonDocument currentNotebook = new BsonDocument {
                     { "ID", notebook.UniqueID },
                     {"User", userName}, 
-                    { "CreationDate", notebook.CreationDate.ToString() },
-                    {"SaveDate", DateTime.Now.ToString()},
+                    { "CreationDate", BsonDateTime.Create(notebook.CreationDate.ToUniversalTime()) },
+                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow)},
                     { "NotebookName", notebook.NotebookName },
                     { "NotebookContent", ObjectSerializer.ToString(notebook) }
                     };
             return currentNotebook;
         }
-        private BsonDocument createBsonHistory(string s_history, string pageID, string userName)
+        private BsonDocument createBsonHistory(string s_history, string pageID, string userName, DateTime saveDate)
         {
             return new BsonDocument {
                     { "ID", pageID },
-                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"SaveDate", BsonDateTime.Create(saveDate) },
                     {"User", userName},
                         { "HistoryContent", s_history }
                     };
         }
-        private BsonDocument createBsonPage(CLPPage page, string s_page, string userName)
+        private BsonDocument createBsonPage(CLPPage page, string s_page, string userName, DateTime saveDate, string notebookName)
         {
             return new BsonDocument {
                     { "ID", page.UniqueID },
+                    {"ParentNotebookID", page.ParentNotebookID},
+                    {"NotebookName", notebookName},
+                    {"PageNumber", page.PageIndex},
                     { "CreationDate", BsonDateTime.Create(page.CreationDate.ToUniversalTime()) },
-                    {"SaveDate", BsonDateTime.Create(DateTime.UtcNow) },
+                    {"SaveDate", BsonDateTime.Create(saveDate) },
+                    {"PageTopics", BsonArray.Create(page.PageTopics.ToList())},
                     {"User", userName},
-                        { "PageContent", s_page }
+                    { "PageContent", s_page }
                     };
         }
         public void Initialize()
@@ -650,6 +769,168 @@ namespace Classroom_Learning_Partner.Model
             }
             //return the random string
             return randomString;
+        }
+
+        //Function that reads in all notebooks in notebook folder and saves them to database
+        //Used for saving old data to db
+
+        public void ImportLocalNotebooksFromDB()
+        {
+            Logger.Instance.WriteToLog("ImportLocalNotebooksFromDB Called");
+            string[] filePaths = Directory.GetFiles(App.NotebookDirectory + @"\");
+            CLPNotebook notebook;
+            DateTime start, end;
+            TimeSpan span;
+            string[] parts, dateParts;
+            DateTime date;
+            string userName, notebookName;
+            foreach (string nbPath in filePaths)
+            {
+                //pull of info from path
+                parts = Path.GetFileNameWithoutExtension(nbPath).Split('-');
+                dateParts = parts[0].Split('.');
+                date = new DateTime(Convert.ToInt32(dateParts[0]), Convert.ToInt32(dateParts[1]), Convert.ToInt32(dateParts[2]));
+                userName = parts[2];
+
+
+                //load notebook
+                start = DateTime.Now;
+                notebook = CLPNotebook.Load(nbPath);
+                end = DateTime.Now;
+                span = end.Subtract(start);
+                Logger.Instance.WriteToLog("Time to open " + userName + "  "+ parts[1] + "  notebook (In Seconds): " + span.TotalSeconds);
+                notebookName = notebook.NotebookName;
+                //Save to DB
+                foreach(CLPPage page in notebook.Pages){
+                    //Okay to save teacher history? Who knows
+                    CLPHistory tempHistory = CLPHistory.removeHistoryFromPage(page);
+                    CLPServiceAgent.Instance.SaveHistoryDB(tempHistory, page.UniqueID, userName, date);
+                    CLPServiceAgent.Instance.SavePageDB(page, userName, false, date, notebookName);
+                }
+                Logger.Instance.WriteToLog("Done saving " + userName + "  " + parts[1] + "  notebook");
+            }
+        }
+
+        public void SaveHistoryDB(CLPHistory history, string pageID, string userName, DateTime saveDate)
+        {
+            string s_history = ObjectSerializer.ToString(history);
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Server)
+            {
+
+                //save to database
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> historyCollection;
+
+                historyCollection = nb.GetCollection<BsonDocument>("SavedHistories");
+                var query = Query.And(Query.EQ("ID", pageID), Query.EQ("User", userName));
+                BsonDocument currentPage = historyCollection.FindOne(query);
+                if (currentPage != null)
+                {
+                    //update with newer notebook version
+                    currentPage["SaveDate"] = BsonDateTime.Create(saveDate);
+                    currentPage["HistoryContent"] = s_history;
+                    historyCollection.Save(currentPage);
+                }
+                else
+                {
+                    //create new history- history for this student has never been saved before 
+                    historyCollection.Insert(createBsonHistory(s_history, pageID, userName, saveDate));
+                }
+                
+
+            }
+            
+        }
+
+        internal void RunDBQueryForPages()
+        {
+
+            if (App.DatabaseUse == App.DatabaseMode.Using){
+                Logger.Instance.WriteToLog("RunDBQueryForPages called");
+                DateTime start = DateTime.Now;
+
+                MongoDatabase nb = App.DatabaseServer.GetDatabase("Notebooks");
+                MongoCollection<BsonDocument> pageCollection = nb.GetCollection<BsonDocument>("SavedPages");
+               // var query = Query.And(Query.EQ("ID", page.UniqueID), Query.EQ("User", userName));
+                var query = Query.EQ("User", "Teacher");
+                MongoCursor cursor = pageCollection.Find(query).SetSortOrder(SortBy.Ascending("PageNumber"));
+                Logger.Instance.WriteToLog("Query for Teacher pages takes" + DateTime.Now.Subtract(start).TotalSeconds.ToString() +  " seconds");
+
+                CLPNotebook newNotebook = new CLPNotebook();
+                newNotebook.NotebookName = "NotebookFromDBQuery";
+                newNotebook.Pages.RemoveAt(0);
+                start = DateTime.Now;
+                foreach (BsonDocument page in cursor)
+                {
+                
+                    newNotebook.AddPage( ObjectSerializer.ToObject(page["PageContent"].ToString()) as CLPPage );
+                    
+                }
+                Logger.Instance.WriteToLog("Adding all Teacher pages takes " + DateTime.Now.Subtract(start).TotalSeconds.ToString() +  " seconds");
+
+                start = DateTime.Now;
+                query = Query.NE("User", "Teacher");
+                cursor = pageCollection.Find(query).SetSortOrder(SortBy.Ascending("PageNumber"));
+                Logger.Instance.WriteToLog("Query for student pages takes" + DateTime.Now.Subtract(start).TotalSeconds.ToString() + " seconds");
+                start = DateTime.Now;
+                foreach (BsonDocument page in cursor)
+                {
+
+                    newNotebook.AddStudentSubmission(page["ID"].ToString(), ObjectSerializer.ToObject(page["PageContent"].ToString()) as CLPPage);
+                   
+                }
+
+                Logger.Instance.WriteToLog("Adding all student pages takes " + DateTime.Now.Subtract(start).TotalSeconds.ToString() + " seconds");
+
+                App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
+                App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
+            }
+            //else
+            //{
+            ////do something else
+            //}
+        }
+
+        internal void SaveAllHistories(CLPNotebook notebook)
+        {
+            if (App.DatabaseUse == App.DatabaseMode.Using && App.CurrentUserMode == App.UserMode.Student)
+            {
+
+                Logger.Instance.WriteToLog("Save All Histories");
+                CLPPage tempP;
+                foreach (CLPPage page in notebook.Pages)
+                {
+                    if (true) //In the future, check to see if history has been saved 
+                    {
+                        tempP = page;
+                        //submit page, removing history first
+                        DateTime now = DateTime.Now;
+                        CLPHistory segmentedHistory = CLPHistory.GetSegmentedHistory(tempP);
+                        
+                        //Serialize history using protobuf
+                        MemoryStream stream = new MemoryStream();
+                        Serializer.PrepareSerializer<CLPHistory>();
+                        Serializer.Serialize<CLPHistory>(stream, segmentedHistory);
+                        string s_history_pb = Convert.ToBase64String(stream.ToArray());
+                        //string s_page = ObjectSerializer.ToString(notebook);
+
+                        //Actual send
+
+                        System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                        {
+                            App.Peer.Channel.SaveHistory(s_history_pb, App.Peer.UserName, now, notebook.NotebookName, tempP.UniqueID, tempP.PageIndex);
+                        });
+
+                        Logger.Instance.WriteToLog("Page " + tempP.PageIndex.ToString() + " history sent to server(save), size: " + (s_history_pb.Length / 1024.0).ToString() + " kB");
+                        System.Threading.Thread.Sleep(250);
+                        //replace history:
+                        CLPHistory.replaceHistoryInPage(segmentedHistory, page);
+
+                    }
+                }
+
+                Logger.Instance.WriteToLog("===================");
+            }
         }
     }
 }
