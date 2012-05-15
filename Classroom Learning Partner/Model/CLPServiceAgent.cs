@@ -44,40 +44,54 @@ namespace Classroom_Learning_Partner.Model
             {
                 //alternatively, pull from database and build
                 DateTime start = DateTime.Now;
-                CLPNotebook notebook = CLPNotebook.Load(filePath);
+                CLPNotebook notebook = null;
+                try
+                {
+                    notebook = CLPNotebook.Load(filePath, true);
+                }
+                catch (MissingMethodException ex)
+                {
+                    Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
+                }
+                
                 DateTime end = DateTime.Now;
                 TimeSpan span = end.Subtract(start);
                 Logger.Instance.WriteToLog("Time to open notebook (In Milliseconds): " + span.TotalMilliseconds);
                 Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
                 Logger.Instance.WriteToLog("Time to open notebook (In Minutes): " + span.TotalMinutes);
-                notebook.NotebookName = notebookName;
-
-                int count = 0;
-                foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
+                if (notebook != null)
                 {
-                    if (otherNotebook.UniqueID == notebook.UniqueID)
+                    notebook.NotebookName = notebookName;
+
+                    int count = 0;
+                    foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
-                        count++;
-                        break;
+                        if (otherNotebook.UniqueID == notebook.UniqueID)
+                        {
+                            App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
+                            count++;
+                            break;
+                        }
+                    }
+
+                    if (count == 0)
+                    {
+                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                        if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student)
+                        {
+                            App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                        }
+                        else
+                        {
+                            App.MainWindowViewModel.SelectedWorkspace = new ProjectorWorkspaceViewModel();
+                        }
+
                     }
                 }
-
-                if (count == 0)
+                else
                 {
-                    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                    if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student)
-                    {
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
-                    }
-                    else
-                    {
-                        App.MainWindowViewModel.SelectedWorkspace = new ProjectorWorkspaceViewModel();
-                    }
-                    
+                    MessageBox.Show("Notebook could not be opened. Check error log.");
                 }
-
-
             }
             else //else doesn't exist, error checking
             {
