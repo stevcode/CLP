@@ -138,10 +138,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPFToolkit.Extended, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Downloads\ExtendedWPFToolkit_Binaries\WPFToolkit.Extended.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -534,7 +530,6 @@
     <Content Include="External Libraries\MongoDB.Driver.dll" />
     <Content Include="External Libraries\protobuf-net.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
-    <Content Include="External Libraries\WPFToolkit.Extended.dll" />
     <Resource Include="Images\Inkwell.ico" />
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />
