@@ -16,7 +16,7 @@
     <RichTextBox x:Name="RichTextBox"
         ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
         FontSize="24"
-        FontFamily="Times New Roman"
+        FontFamily="Arial"
         SelectionChanged="RichTextBox_SelectionChanged"
         vwo:RichTextBoxHelper.DocumentXaml="{Binding Text}"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}"
