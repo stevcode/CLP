@@ -13,12 +13,12 @@
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
     </UserControl.Resources>
 
-    <RichTextBox x:Name="RichTextBox"
+    <RichTextBox x:Name="TextBox"
         ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
         FontSize="24"
         FontFamily="Arial"
         SelectionChanged="RichTextBox_SelectionChanged"
-        vwo:RichTextBoxHelper.DocumentXaml="{Binding Text}"
+        vwo:CLPTextBoxView.DocumentXaml="{Binding Text}"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}"
         Padding="10" />
 
