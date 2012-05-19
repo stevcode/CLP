@@ -17,18 +17,18 @@ namespace Classroom_Learning_Partner.Model.Displays
 
     public interface ICLPDisplay
     {
-        string UniqueID;
-        DisplayTypes DisplayType;
-        string ParentNotebookUniqueID;
-        DateTime CreationDate;
-        DateTime LastProjectionTime;
-        List<DateTime> ProjectionTimesHistory;
+        string UniqueID { get; set; }
+        DisplayTypes DisplayType { get; }
+        string ParentNotebookUniqueID { get; set; }
+        DateTime CreationDate { get; set; }
+        DateTime LastProjectionTime { get; set; }
+        List<DateTime> ProjectionTimesHistory { get; set; }
 
-        ObservableCollection<CLPPage> ForeignPages;
-        ObservableCollection<Tuple<bool,string>> DisplayPages;
+        ObservableCollection<CLPPage> ForeignPages { get; set; }
+        ObservableCollection<Tuple<bool, string>> DisplayPages { get; set; }
     }
 
-    abstract public class ACLPDisplayBase : DataObjectBase<ACLPDisplayBase>, ICLPDisplay
+    abstract public class ACLPDisplayBase : DataObjectBase<ACLPDisplayBase>
     {
     }
 }

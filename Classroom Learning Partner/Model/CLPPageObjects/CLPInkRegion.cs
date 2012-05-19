@@ -78,7 +78,10 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             //timer.Stop();
             //lock (interpretation_lock)
             //{
-                DoInterpretation();
+                if (App.CurrentUserMode == App.UserMode.Student)
+                {
+                	DoInterpretation();
+                }
             //}
         }
 
