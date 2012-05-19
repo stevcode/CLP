@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             Text = text;
 
-            Position = new System.Windows.Point(100, 100);
+            Position = new System.Windows.Point(50, 50);
             Height = 200;
             Width = 400;
         }
