@@ -14,10 +14,10 @@
     </UserControl.Resources>
 
     <RichTextBox x:Name="TextBox" Background="Transparent"
-        ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-        FontSize="24" FontFamily="Arial"
+        ScrollViewer.VerticalScrollBarVisibility="Disabled"
         SelectionChanged="RichTextBox_SelectionChanged"
-        vwo:CLPTextBoxView.Document="{Binding Text}"
+        vwo:CLPTextBoxView.Document="{Binding Text, NotifyOnTargetUpdated=True}"
+        TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" Padding="10"
         BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}">
 

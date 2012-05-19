@@ -29,6 +29,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             ribbonView = Application.Current.MainWindow as MainWindowView;
             App.MainWindowViewModel.LastFocusedTextBox = this;
+
+            TextBox.FontSize = App.MainWindowViewModel.CurrentFontSize;
+            TextBox.FontFamily = App.MainWindowViewModel.CurrentFontFamily;
         }
 
         protected override void OnLoaded(EventArgs e)
@@ -99,8 +102,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         #endregion //Document Dependency Property
 
-        private void SetFont(double fontSize, FontFamily font, Brush fontColor)
+        private bool isSettingFont = false;
+        public void SetFont(double fontSize, FontFamily font, Brush fontColor)
         {
+            isSettingFont = true;
             Console.WriteLine("setfont called");
             // Make sure we have a selection. Should have one even if there is no text selected.
             if (TextBox.Selection != null)
@@ -152,18 +157,18 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             {
                 TextBox.Focus();
             }
+            isSettingFont = false;
         }
 
         private void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (!isSettingFont)
             {
-                //UpdateVisualState();
+                UpdateVisualState();
             }
         }
 
-        private bool isSettingFont = false;
-        private bool isUpdatingVisualState = false;
+        public bool isUpdatingVisualState = false;
         public void UpdateVisualState()
         {
             if (!isUpdatingVisualState)
@@ -198,6 +203,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             {
                 ribbonView.FontFamilyComboBox.SelectedItem = currentFontFamily;
             }
+            else
+            {
+                ribbonView.FontFamilyComboBox.SelectedIndex = -1;
+            }
         }
 
         private void UpdateSelectedFontSize()
@@ -216,15 +225,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             }
         }
 
-        protected override void OnLostMouseCapture(MouseEventArgs e)
+        protected override void OnGotMouseCapture(MouseEventArgs e)
         {
-            base.OnLostMouseCapture(e);
+            base.OnGotMouseCapture(e);
             App.MainWindowViewModel.LastFocusedTextBox = this;
-        }
-
-        protected override void OnLostMouseCapture(MouseEventArgs e)
-        {
-        
         }
     }
 }

@@ -70,16 +70,35 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
 
+            CurrentFontSize = 34;
+
             foreach (var color in _colors)
             {
                 _fontColors.Add(new SolidColorBrush(color));
+                
             }
 
-            CurrentFontColor = new SolidColorBrush(Colors.Black);
-            //Steve - Set to New Times Roman
-            CurrentFontFamily = Fonts[0];
-            CurrentFontSize = 26;
-            
+            foreach (var color in _fontColors)
+            {
+                if (color.ToString() == "Black")
+                {
+                    CurrentFontColor = color;
+                    break;
+                }
+            }
+
+            foreach (var font in Fonts)         
+            {
+                if (font.Source == "Arial")
+                {
+                    CurrentFontFamily = font;
+                    break;
+                }
+            }
+            if (CurrentFontFamily == null)
+            {
+                CurrentFontFamily = Fonts[0];
+            }
 
             AuthoringTabVisibility = Visibility.Collapsed;
             PageViewerVisibility = Visibility.Collapsed;
@@ -763,8 +782,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentFontFamilyProperty, value);
-                Console.WriteLine("fontfamily changed");
-                AppMessages.UpdateFont.Send(-1, CurrentFontFamily, null);
+                if (LastFocusedTextBox != null)
+                {
+                    if (!LastFocusedTextBox.isUpdatingVisualState)
+                    {
+                        LastFocusedTextBox.SetFont(-1.0, value, null);
+                    }
+                }
             }
         }
 
@@ -796,8 +820,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentFontSizeProperty, value);
-                Console.WriteLine("fontsize changed");
-                AppMessages.UpdateFont.Send(CurrentFontSize, null, null);
+                if (LastFocusedTextBox != null)
+                {
+                    if (!LastFocusedTextBox.isUpdatingVisualState)
+                    {
+                        LastFocusedTextBox.SetFont(CurrentFontSize, null, null);
+                    }
+                }
             }
         }
 
@@ -826,8 +855,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentFontColorProperty, value);
-                Console.WriteLine("fontcolor changed");
-                AppMessages.UpdateFont.Send(-1, null, CurrentFontColor);
+                if (LastFocusedTextBox != null)
+                {
+                    if (!LastFocusedTextBox.isUpdatingVisualState)
+                    {
+                        LastFocusedTextBox.SetFont(-1.0, null, CurrentFontColor);
+                    }
+                }
             }
         }
 
