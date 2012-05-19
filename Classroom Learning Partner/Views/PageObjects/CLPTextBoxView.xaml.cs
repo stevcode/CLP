@@ -23,39 +23,19 @@ namespace Classroom_Learning_Partner.Views.PageObjects
     {
         private MainWindowView ribbonView;
 
-
         public CLPTextBoxView()
         {
             InitializeComponent();
 
             ribbonView = Application.Current.MainWindow as MainWindowView;
-
-            
-
-
-            AppMessages.UpdateFont.Register(this, (t) =>
-                                                        {
-                                                            if (!isSettingFont)
-                                                            {
-                                                                if (!isUpdatingVisualState)
-                                                                {
-                                                                    isSettingFont = true;
-                                                                    SetFont(t.Item1, t.Item2, t.Item3);
-                                                                    isSettingFont = false;
-                                                                }
-                                                            }
-                                                             
-                                                         });
-
             App.MainWindowViewModel.LastFocusedTextBox = this;
-            
         }
 
         protected override void OnLoaded(EventArgs e)
         {
             try
             {
-                var xaml = GetDocumentXaml(TextBox);
+                var xaml = GetDocument(TextBox);
                 var doc = new FlowDocument();
 
                 var bytes = Encoding.UTF8.GetBytes(xaml);
@@ -86,7 +66,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             TextRange text = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
             MemoryStream stream = new MemoryStream();
             text.Save(stream, DataFormats.Rtf);
-            SetDocumentXaml(TextBox, Encoding.UTF8.GetString(stream.ToArray()));
+            SetDocument(TextBox, Encoding.UTF8.GetString(stream.ToArray()));
         }
 
         protected override System.Type GetViewModelType()
@@ -94,42 +74,30 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             return typeof(CLPTextBoxViewModel);
         }
 
-
-
-
+        #region Document Dependency Property
 
         private static HashSet<Thread> _recursionProtection = new HashSet<Thread>();
 
-        public static string GetDocumentXaml(DependencyObject obj)
+        public static string GetDocument(DependencyObject obj)
         {
-            return (string)obj.GetValue(DocumentXamlProperty);
+            return (string)obj.GetValue(DocumentProperty);
         }
 
-        public static void SetDocumentXaml(DependencyObject obj, string value)
+        public static void SetDocument(DependencyObject obj, string value)
         {
             _recursionProtection.Add(Thread.CurrentThread);
-            obj.SetValue(DocumentXamlProperty, value);
+            obj.SetValue(DocumentProperty, value);
             _recursionProtection.Remove(Thread.CurrentThread);
         }
 
-        public static readonly DependencyProperty DocumentXamlProperty = DependencyProperty.RegisterAttached(
-            "DocumentXaml",
+        public static readonly DependencyProperty DocumentProperty = DependencyProperty.RegisterAttached(
+            "Document",
             typeof(string),
             typeof(CLPTextBoxView),
-            new FrameworkPropertyMetadata(
-                "",
-                FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                (obj, e) =>
-                {
-
-                }
-            )
+            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
         );
 
-
-
-
-
+        #endregion //Document Dependency Property
 
         private void SetFont(double fontSize, FontFamily font, Brush fontColor)
         {
@@ -254,9 +222,9 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             App.MainWindowViewModel.LastFocusedTextBox = this;
         }
 
-        private void RichTextBox_SelectionChanged_1(object sender, RoutedEventArgs e)
+        protected override void OnLostMouseCapture(MouseEventArgs e)
         {
-
+        
         }
     }
 }

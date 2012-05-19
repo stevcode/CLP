@@ -13,13 +13,14 @@
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
     </UserControl.Resources>
 
-    <RichTextBox x:Name="TextBox"
-        ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent"
-        FontSize="24"
-        FontFamily="Arial"
+    <RichTextBox x:Name="TextBox" Background="Transparent"
+        ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+        FontSize="24" FontFamily="Arial"
         SelectionChanged="RichTextBox_SelectionChanged"
-        vwo:CLPTextBoxView.DocumentXaml="{Binding Text}"
-        Width="{Binding Path=Width}" Height="{Binding Path=Height}" BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}"
-        Padding="10" />
+        vwo:CLPTextBoxView.Document="{Binding Text}"
+        Width="{Binding Path=Width}" Height="{Binding Path=Height}" Padding="10"
+        BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}">
+
+    </RichTextBox>
 
 </catel:UserControl>
