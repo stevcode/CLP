@@ -38,10 +38,10 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             try
             {
-                var xaml = GetDocument(TextBox);
+                var rtfText = GetDocument(TextBox);
                 var doc = new FlowDocument();
 
-                var bytes = Encoding.UTF8.GetBytes(xaml);
+                var bytes = Encoding.UTF8.GetBytes(rtfText);
                 var stream = new MemoryStream(bytes);
 
                 var range = new TextRange(doc.ContentStart, doc.ContentEnd);
