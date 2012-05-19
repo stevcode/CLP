@@ -78,14 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 
             }
 
-            foreach (var color in _fontColors)
-            {
-                if (color.ToString() == "Black")
-                {
-                    CurrentFontColor = color;
-                    break;
-                }
-            }
+            CurrentFontColor = _fontColors[0];
 
             foreach (var font in Fonts)         
             {
