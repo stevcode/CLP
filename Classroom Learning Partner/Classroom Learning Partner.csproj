@@ -166,6 +166,8 @@
     <Compile Include="Model\CLPPageObjects\CLPShadingRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
     <Compile Include="Model\Displays\ACLPDisplayBase.cs" />
+    <Compile Include="Model\Displays\CLPGridDisplay.cs" />
+    <Compile Include="Model\Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
