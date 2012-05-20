@@ -277,7 +277,7 @@ namespace Classroom_Learning_Partner.Model
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-                    if (App.CurrentUserMode == App.UserMode.Projector)
+                    if (App.CurrentUserMode == App.UserMode.Projector || App.CurrentUserMode == App.UserMode.Student)
                     {
                         foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
@@ -285,6 +285,10 @@ namespace Classroom_Learning_Partner.Model
 
                             if (page == null)
                             {
+                                if (App.CurrentUserMode == App.UserMode.Student)
+                                {
+                                    break;
+                                }
                                 page = notebook.GetSubmissionByID(pageID);
                             }
 
