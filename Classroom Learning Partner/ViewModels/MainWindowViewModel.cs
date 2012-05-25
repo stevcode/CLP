@@ -1175,7 +1175,21 @@ namespace Classroom_Learning_Partner.ViewModels
         {   
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
-            EditingMode = InkCanvasEditingMode.Ink;
+
+            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+            if (display is LinkedDisplayViewModel)
+            {
+                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
+            }
+            else if (display is GridDisplayViewModel)
+            {
+                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                {
+                    page.EditingMode = InkCanvasEditingMode.Ink;
+                }
+            }
+
+            //EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
         }
 
@@ -1191,7 +1205,21 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DrawingAttributes.Height = MARKER_RADIUS;
             DrawingAttributes.Width = MARKER_RADIUS;
-            EditingMode = InkCanvasEditingMode.Ink;
+
+            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+            if (display is LinkedDisplayViewModel)
+            {
+                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
+            }
+            else if (display is GridDisplayViewModel)
+            {
+                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                {
+                    page.EditingMode = InkCanvasEditingMode.Ink;
+                }
+            }
+
+            //EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Marker;
         }
 
@@ -1207,7 +1235,21 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DrawingAttributes.Height = ERASER_RADIUS;
             DrawingAttributes.Width = ERASER_RADIUS;
-            EditingMode = InkCanvasEditingMode.EraseByPoint;
+
+            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+            if (display is LinkedDisplayViewModel)
+            {
+                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByPoint;
+            }
+            else if (display is GridDisplayViewModel)
+            {
+                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                {
+                    page.EditingMode = InkCanvasEditingMode.EraseByPoint;
+                }
+            }
+
+            //EditingMode = InkCanvasEditingMode.EraseByPoint;
             PageInteractionMode = PageInteractionMode.Eraser;
         }
 
@@ -1221,7 +1263,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
         {
-            EditingMode = InkCanvasEditingMode.EraseByStroke;
+            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+            if (display is LinkedDisplayViewModel)
+            {
+                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByStroke;
+            }
+            else if (display is GridDisplayViewModel)
+            {
+                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                {
+                    page.EditingMode = InkCanvasEditingMode.EraseByStroke;
+                }
+            }
+
+            //EditingMode = InkCanvasEditingMode.EraseByStroke;
             PageInteractionMode = PageInteractionMode.StrokeEraser;
         }
 
@@ -1253,7 +1308,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
         {
-            EditingMode = InkCanvasEditingMode.None;
+            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+            if (display is LinkedDisplayViewModel)
+            {
+                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.None;
+            }
+            else if (display is GridDisplayViewModel)
+            {
+                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                {
+                    page.EditingMode = InkCanvasEditingMode.None;
+                }
+            }
+
+            //EditingMode = InkCanvasEditingMode.None;
             PageInteractionMode = PageInteractionMode.SnapTile;
         }
 

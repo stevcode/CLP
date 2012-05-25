@@ -484,7 +484,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (propertyName == "EditingMode")
             {
-                EditingMode = (viewModel as MainWindowViewModel).EditingMode;
+                //EditingMode = (viewModel as MainWindowViewModel).EditingMode;
             }
 
             if (propertyName == "IsPlaybackEnabled")
