@@ -171,6 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
+            InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
             InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
@@ -1873,6 +1874,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, circle);
+        }
+
+        /// <summary>
+        /// Gets the InsertHorizontalLineShapCommand command.
+        /// </summary>
+        public Command InsertHorizontalLineShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertHorizontalLineShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertHorizontalLineShapeCommandExecute()
+        {
+            CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, line);
         }
 
         /// <summary>

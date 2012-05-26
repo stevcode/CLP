@@ -409,6 +409,11 @@
                         Command="{Binding Path=InsertCircleShapeCommand}" />
 
                     <ribbon:RibbonButton
+                        Label="Insert Horizontal Line"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+
+                    <ribbon:RibbonButton
                         Label="Handwriting Region"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertHandwritingRegionCommand}" />

@@ -15,6 +15,14 @@
                 <Ellipse DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Fill="Transparent" Stroke="Black" StrokeThickness="3" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="HorizontalLineTemplate">
+                <Line DataContext="{Binding}"  
+                      HorizontalAlignment="Left" VerticalAlignment="Center"
+                      Stretch="UniformToFill"
+                      Width="{Binding Width, Mode=TwoWay}" Height="5"
+                      StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -29,6 +37,11 @@
                     <!-- Ellipse trigger -->
                     <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
                         <Setter Property="Template" Value="{StaticResource EllipseTemplate}" />
+                    </DataTrigger>
+
+                    <!-- HorizontalLine trigger -->
+                    <DataTrigger Binding="{Binding ShapeType}" Value="HorizontalLine">
+                        <Setter Property="Template" Value="{StaticResource HorizontalLineTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>
