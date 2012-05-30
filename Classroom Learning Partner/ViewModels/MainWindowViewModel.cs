@@ -172,6 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
+            InsertVerticalLineShapeCommand = new Command(OnInsertVerticalLineShapeCommandExecute);
             InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
@@ -1887,6 +1888,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine);
+            CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, line);
+        }
+
+        /// <summary>
+        /// Gets the InsertHorizontalLineShapCommand command.
+        /// </summary>
+        public Command InsertVerticalLineShapeCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertHorizontalLineShapeCommand command is executed.
+        /// </summary>
+        private void OnInsertVerticalLineShapeCommandExecute()
+        {
+            CLPShape line = new CLPShape(CLPShape.CLPShapeType.VerticalLine);
             CLPServiceAgent.Instance.AddPageObjectToPage(((SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page, line);
         }
 

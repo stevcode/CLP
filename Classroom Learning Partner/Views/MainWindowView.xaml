@@ -414,6 +414,11 @@
                         Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
 
                     <ribbon:RibbonButton
+                        Label="Insert Vertical Line"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}" />
+
+                    <ribbon:RibbonButton
                         Label="Handwriting Region"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertHandwritingRegionCommand}" />

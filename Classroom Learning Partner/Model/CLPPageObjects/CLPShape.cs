@@ -12,7 +12,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             Rectangle,
             Ellipse,
             Triangle,
-            HorizontalLine
+            HorizontalLine,
+            VerticalLine
         }
 
         /// <summary>

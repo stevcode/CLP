@@ -23,6 +23,14 @@
                       StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="VerticalLineTemplate">
+                <Line DataContext="{Binding}"  
+                      HorizontalAlignment="Center" VerticalAlignment="Top"
+                      Stretch="UniformToFill"
+                      Height="{Binding Height, Mode=TwoWay}"
+                      StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="0" Y2="1" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -42,6 +50,11 @@
                     <!-- HorizontalLine trigger -->
                     <DataTrigger Binding="{Binding ShapeType}" Value="HorizontalLine">
                         <Setter Property="Template" Value="{StaticResource HorizontalLineTemplate}" />
+                    </DataTrigger>
+
+                    <!-- VerticalLine trigger -->
+                    <DataTrigger Binding="{Binding ShapeType}" Value="VerticalLine">
+                        <Setter Property="Template" Value="{StaticResource VerticalLineTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>
