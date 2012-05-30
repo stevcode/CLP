@@ -19,7 +19,7 @@
                 <Line DataContext="{Binding}"  
                       HorizontalAlignment="Left" VerticalAlignment="Center"
                       Stretch="UniformToFill"
-                      Width="{Binding Width, Mode=TwoWay}" Height="5"
+                      Width="{Binding Width, Mode=TwoWay}"
                       StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0" />
             </ControlTemplate>
 
