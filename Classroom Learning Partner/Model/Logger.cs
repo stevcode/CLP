@@ -45,7 +45,7 @@ namespace Classroom_Learning_Partner.Model
         public void WriteToLog(string s)
         {
             File.AppendAllText(filePath, Environment.NewLine + s);
-            Console.WriteLine("[CLP Logger]: " + s);
+            Console.WriteLine(DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
         }
     }
 }
