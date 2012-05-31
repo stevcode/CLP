@@ -19,7 +19,18 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             InitializeComponent();
         }
 
-        private void SetupGrid(object sender, DependencyPropertyChangedEventArgs e)
+        public void ShowContentsCommand(object sender, RoutedEventArgs e)
+        {
+            string result = (DataContext as CLPDataTableViewModel).GetStringRepresentation();
+            MessageBox.Show(result);
+        }
+
+        protected override System.Type GetViewModelType()
+        {
+            return typeof(CLPDataTableViewModel);
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             //Console.WriteLine("DIMENSIONS: " + this.Grid.Columns + " , " + this.Grid.Rows + " , " + this.Grid.Width);
             for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
@@ -30,17 +41,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 rect.StrokeThickness = 0.5;
                 this.Grid.Children.Add(rect);
             }
-        }
-
-        public void ShowContentsCommand(object sender, RoutedEventArgs e)
-        {
-            string result = (DataContext as CLPDataTableViewModel).GetStringRepresentation();
-            MessageBox.Show(result);
-        }
-
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(CLPDataTableViewModel);
         }
     }
 }

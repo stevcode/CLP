@@ -19,17 +19,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             InitializeComponent();
         }
 
-        private void SetupGrid(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
-            {
-                Rectangle rect = new Rectangle();
-                rect.Stroke = System.Windows.Media.Brushes.Black;
-                rect.StrokeThickness = 0.5;
-                this.Grid.Children.Add(rect);
-            }
-        }
-
         public void ShowContentsCommand(object sender, RoutedEventArgs e)
         {
             string result = (DataContext as CLPShadingRegionViewModel).GetStringRepresentation();
@@ -39,6 +28,17 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         protected override System.Type GetViewModelType()
         {
             return typeof(CLPShadingRegionViewModel);
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
+            {
+                Rectangle rect = new Rectangle();
+                rect.Stroke = System.Windows.Media.Brushes.Black;
+                rect.StrokeThickness = 0.5;
+                this.Grid.Children.Add(rect);
+            }
         }
     }
 }
