@@ -134,6 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
+            MergeNotebookIntoCurrentNotebookCommand = new Command(OnMergeNotebookIntoCurrentNotebookCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
@@ -1142,6 +1143,19 @@ namespace Classroom_Learning_Partner.ViewModels
             XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
             xw.Write(doc);
             xpsd.Close();
+        }
+
+        /// <summary>
+        /// Gets the MergeNotebookIntoCurrentNotebook command.
+        /// </summary>
+        public Command MergeNotebookIntoCurrentNotebookCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MergeNotebookIntoCurrentNotebook command is executed.
+        /// </summary>
+        private void OnMergeNotebookIntoCurrentNotebookCommandExecute()
+        {
+            // TODO: Handle command logic here
         }
 
         /// <summary>
