@@ -267,7 +267,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             //try
             //{
-                SelectedDisplay = null;
+                //SelectedDisplay = null;
                 SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
             //}
             //catch (Exception ex)
