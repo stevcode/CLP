@@ -16,10 +16,24 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             : base()
         {
             DisplayedPages = new ObservableCollection<CLPPageViewModel>();
+            DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
             DisplayID = Guid.NewGuid().ToString();
             IsOnProjector = false;
+            UGridRows = 1;
 
             RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
+        }
+
+        void DisplayedPages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (DisplayedPages.Count < 3)
+            {
+                UGridRows = 1;
+            }
+            else
+            {
+                UGridRows = 0;
+            }
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
@@ -83,6 +97,20 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         /// Register the IsOnProjector property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int UGridRows
+        {
+            get { return GetValue<int>(UGridRowsProperty); }
+            set { SetValue(UGridRowsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the UGridRows property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), null);
 
         public void AddPageToDisplay(CLPPageViewModel page)
         {

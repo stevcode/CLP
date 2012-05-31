@@ -1109,9 +1109,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 FixedPage fixedPage = new FixedPage();
 
                 CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                CLPPageViewModel pageVM = new CLPPageViewModel(page);
-                currentPage.DataContext = pageVM;
-                currentPage.UpdateLayout();
+                //CLPPageViewModel pageVM = new CLPPageViewModel(page);
+                currentPage.DataContext = page;
+                //currentPage.UpdateLayout();
 
                 //Create first page of document
                 RotateTransform rotate = new RotateTransform(90.0);
