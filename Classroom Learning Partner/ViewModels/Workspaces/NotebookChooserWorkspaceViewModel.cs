@@ -13,32 +13,41 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         public NotebookChooserWorkspaceViewModel() : base()
         {
-            NotebookSelectorViewModels = new ObservableCollection<NotebookSelectorViewModel>();
-            CLPServiceAgent.Instance.ChooseNotebook(this);
-        }
+            SelectNotebookCommand = new Command<string>(OnSelectNotebookCommandExecute);
 
-        protected override void Close()
-        {
-            Console.WriteLine(Title + " closed");
-            base.Close();
+            NotebookNames = new ObservableCollection<string>();
+            CLPServiceAgent.Instance.GetNotebookNames(this);
         }
 
         public override string Title { get { return "NotebookChooserWorkspaceVM"; } }
 
-        //Steve - No need for NotebookSelecterViewModel, convert to something cleaner
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<NotebookSelectorViewModel> NotebookSelectorViewModels
+        public ObservableCollection<string> NotebookNames
         {
-            get { return GetValue<ObservableCollection<NotebookSelectorViewModel>>(NotebookSelectorViewModelsProperty); }
-            set { SetValue(NotebookSelectorViewModelsProperty, value); }
+            get { return GetValue<ObservableCollection<string>>(NotebookNamesProperty); }
+            set { SetValue(NotebookNamesProperty, value); }
         }
 
         /// <summary>
-        /// Register the NotebookSelectorViewModels property so it is known in the class.
+        /// Register the NotebookNames property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData NotebookSelectorViewModelsProperty = RegisterProperty("NotebookSelectorViewModels", typeof(ObservableCollection<NotebookSelectorViewModel>));
+        public static readonly PropertyData NotebookNamesProperty = RegisterProperty("NotebookNames", typeof(ObservableCollection<string>));
+        
+        /// <summary>
+        /// Gets the SelectNotebookCommand command.
+        /// </summary>
+        public Command<string> SelectNotebookCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SelectNotebookCommand command is executed.
+        /// </summary>
+        private void OnSelectNotebookCommandExecute(string notebookName)
+        {
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
+        }
 
         public string WorkspaceName
         {

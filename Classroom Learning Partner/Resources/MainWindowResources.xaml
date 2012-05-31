@@ -15,10 +15,6 @@
         <vw:CLPPageView />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vm:NotebookSelectorViewModel}">
-        <vw:NotebookSelectorView />
-    </DataTemplate>
-
     <!--Visual Datatemplates-->
 
     <Style TargetType="{x:Type ListBox}">

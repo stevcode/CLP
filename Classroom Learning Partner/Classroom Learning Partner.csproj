@@ -185,7 +185,6 @@
     <Compile Include="ViewModels\PageObjects\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShadingRegionViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\NotebookSelectorViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPSnapTileContainerViewModel.cs" />
@@ -226,9 +225,6 @@
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookNamerWindowView.xaml.cs">
       <DependentUpon>NotebookNamerWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\NotebookSelectorView.xaml.cs">
-      <DependentUpon>NotebookSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
@@ -337,10 +333,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookNamerWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\NotebookSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

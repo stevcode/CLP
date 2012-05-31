@@ -289,8 +289,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-
-        public void ChooseNotebook(NotebookChooserWorkspaceViewModel notebookChooserVM)
+        public void GetNotebookNames(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
             if (!Directory.Exists(App.NotebookDirectory))
             {
@@ -300,8 +299,7 @@ namespace Classroom_Learning_Partner.Model
             foreach (string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
             {
                 string notebookName = Path.GetFileNameWithoutExtension(fullFile);
-                NotebookSelectorViewModel notebookSelector = new NotebookSelectorViewModel(notebookName);
-                notebookChooserVM.NotebookSelectorViewModels.Add(notebookSelector);
+                notebookChooserVM.NotebookNames.Add(notebookName);
             }
             //Jessie - grab notebookNames from database if using DB
         }

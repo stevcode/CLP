@@ -4,14 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300" d:DesignWidth="300" Background="CadetBlue"
              xmlns:catel="http://catel.codeplex.com"
+             xmlns:wvw="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces">
-    <ItemsControl ItemsSource="{Binding Path=NotebookSelectorViewModels}" >
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <UniformGrid Background="CadetBlue" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-    </ItemsControl>
+
+    <Grid x:Name="grid">
+        <ListBox ItemsSource="{Binding Path=NotebookNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type wvw:NotebookChooserWorkspaceView}}}" CommandParameter="{Binding}" 
+                            Margin="10" Height="90" Width="175">
+                        <DockPanel LastChildFill="True">
+                            <Label DockPanel.Dock="Bottom" Height="30" 
+                                   Content="{Binding}" FontWeight="Bold" FontSize="12"
+                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom"/>
+                            <Image Margin="5" Source="..\..\Images\NotebookImage.png" />
+                        </DockPanel>
+                    </Button>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel  Margin="20" Width="{Binding ElementName=grid,Path=ActualWidth}" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
 </catel:UserControl>
