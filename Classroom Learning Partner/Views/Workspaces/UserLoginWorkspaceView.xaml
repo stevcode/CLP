@@ -8,16 +8,19 @@
              d:DesignHeight="300" d:DesignWidth="300" Background="CadetBlue"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces">
-    <ListBox ItemsSource="{Binding Path=UserNames}">
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <Button Command="{Binding DataContext.LogInCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type wvw:UserLoginWorkspaceView}}}" CommandParameter="{Binding}" Margin="10" x:Name="UserNameButton"  Height="125" Width="125" Content="{Binding}" />
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-        <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-                <WrapPanel Margin="20" Width="{Binding RelativeSource={RelativeSource AncestorType=Window},Path=ActualWidth}" />
-            </ItemsPanelTemplate>
-        </ListBox.ItemsPanel>
-    </ListBox>
+    <Grid x:Name="grid">
+        <ListBox ItemsSource="{Binding Path=UserNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Command="{Binding DataContext.LogInCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type wvw:UserLoginWorkspaceView}}}" CommandParameter="{Binding}" 
+                            Margin="10" Height="125" Width="125" Content="{Binding}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel  Margin="20" Width="{Binding ElementName=grid,Path=ActualWidth}" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
 </catel:UserControl>
