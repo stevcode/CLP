@@ -182,7 +182,12 @@
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
                         Command="{Binding Path=InsertAudioFileCommand}"/>
-                
+
+                    <ribbon:RibbonButton
+                        Label="Insert Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Pen Color">
@@ -410,7 +415,7 @@
 
                     <ribbon:RibbonButton
                         Label="Insert Horizontal Line"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
                         Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
 
                     <ribbon:RibbonButton

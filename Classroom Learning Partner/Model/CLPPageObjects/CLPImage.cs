@@ -98,7 +98,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
             genBmpImage.BeginInit();
             genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
-            genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height)/2;
+            //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
             genBmpImage.StreamSource = memoryStream;
             genBmpImage.EndInit();
             genBmpImage.Freeze();
