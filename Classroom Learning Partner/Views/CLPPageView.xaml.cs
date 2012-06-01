@@ -121,6 +121,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 if ((result.VisualHit as Shape).Name == "PageObjectHitBox")
                 {
+                    Console.WriteLine("dirtyHitBox: " + DirtyHitbox.ToString());
                     if (DirtyHitbox > 3)
                     {
                         double timer_delay = 0;
@@ -140,6 +141,13 @@ namespace Classroom_Learning_Partner.Views
                         else if ((result.VisualHit as Shape).DataContext is CLPSnapTileContainerViewModel)
                         {
                             if (!((result.VisualHit as Shape).DataContext as CLPSnapTileContainerViewModel).IsBackground)
+                            {
+                                timer.Start();
+                            }
+                        }
+                        else if ((result.VisualHit as Shape).DataContext is CLPShapeViewModel)
+                        {
+                            if (!((result.VisualHit as Shape).DataContext as CLPShapeViewModel).IsBackground)
                             {
                                 timer.Start();
                             }
@@ -195,11 +203,11 @@ namespace Classroom_Learning_Partner.Views
                     }
                     else if ((result.VisualHit as Grid).DataContext is CLPShape)
                     {
-                        if (!((result.VisualHit as Grid).DataContext as CLPShape).IsBackground || 
-                            (((result.VisualHit as Grid).DataContext as CLPShape).IsBackground && App.MainWindowViewModel.IsAuthoring))
-                        {
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPShape);
-                        }
+                        //if (!((result.VisualHit as Grid).DataContext as CLPShape).IsBackground || 
+                        //    (((result.VisualHit as Grid).DataContext as CLPShape).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        //{
+                        //    CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPShape);
+                        //}
                     }
                     else if ((result.VisualHit as Grid).DataContext is CLPStamp)
                     {
