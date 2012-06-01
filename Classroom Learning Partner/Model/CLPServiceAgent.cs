@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner.Model
                     int count = 0;
                     foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        if (otherNotebook.UniqueID == notebook.UniqueID)
+                        if (otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)
                         {
                             App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
                             count++;
