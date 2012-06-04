@@ -437,14 +437,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if (App.Peer.Channel != null)
                     {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID);
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.BroadcastInkToStudents);
                     }
                 }
                 else
                 {
                     if (App.Peer.Channel != null)
                     {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID);
+                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.BroadcastInkToStudents);
                     }
                 }
             }

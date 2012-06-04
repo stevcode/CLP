@@ -57,6 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Ribbon Content
             SideBarVisibility = true;
             GridDisplaysVisibility = false;
+            BroadcastInkToStudents = false;
             CanSendToTeacher = true;
             IsSending = false;
             DrawingAttributes = new DrawingAttributes();
@@ -521,6 +522,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the GridDisplaysVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool BroadcastInkToStudents
+        {
+            get { return GetValue<bool>(BroadcastInkToStudentsProperty); }
+            set { SetValue(BroadcastInkToStudentsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the GridDisplaysVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData BroadcastInkToStudentsProperty = RegisterProperty("BroadcastInkToStudents", typeof(bool));
 
         #region Convert to XAMLS?
 

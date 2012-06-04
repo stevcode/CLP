@@ -135,9 +135,19 @@
                 <ribbon:RibbonGroup Header="Notebook">
                     
                     <ribbon:RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
-                        Label="Show Notebook Pages"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        IsChecked="{Binding SideBarVisibility}" />
+                        IsChecked="{Binding SideBarVisibility}">
+                        <ribbon:RibbonToggleButton.Style>
+                            <Style TargetType="{x:Type ribbon:RibbonToggleButton}">
+                                <Setter Property="Label" Value="Show Notebook Pages"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Label" Value="Hide Notebook Pages"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ribbon:RibbonToggleButton.Style>
+                    </ribbon:RibbonToggleButton>
                     
                 </ribbon:RibbonGroup>
                 
@@ -184,7 +194,7 @@
                         Command="{Binding Path=InsertAudioFileCommand}"/>
 
                     <ribbon:RibbonButton
-                        Label="Insert Horizontal Line"
+                        Label="Horizontal Line"
                         LargeImageSource="..\Images\HorizontalLineIcon.png"
                         Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
 
@@ -302,9 +312,34 @@
                         Command="{Binding Path=CreateNewGridDisplayCommand}" />
 
                     <ribbon:RibbonToggleButton x:Name="ShowGridDisplaysToggleButton"
-                        Label="Show Grid Displays"
                         LargeImageSource="..\Images\OpenNotebook.png"
-                        IsChecked="{Binding GridDisplaysVisibility}" />
+                        IsChecked="{Binding GridDisplaysVisibility}">
+                        <ribbon:RibbonToggleButton.Style>
+                            <Style TargetType="{x:Type ribbon:RibbonToggleButton}">
+                                <Setter Property="Label" Value="Show Grid Displays"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Label" Value="Hide Grid Displays"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ribbon:RibbonToggleButton.Style>
+                    </ribbon:RibbonToggleButton>
+                    
+                    <ribbon:RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        IsChecked="{Binding BroadcastInkToStudents}">
+                        <ribbon:RibbonToggleButton.Style>
+                            <Style TargetType="{x:Type ribbon:RibbonToggleButton}">
+                                <Setter Property="Label" Value="Send Ink to Students Off"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Label" Value="Send Ink to Students On"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ribbon:RibbonToggleButton.Style>
+                    </ribbon:RibbonToggleButton>
 
                 </ribbon:RibbonGroup>
                 

@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner.Model
         void ReceiveNotebook(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID);
+        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID, bool broadcastInkToStudents);
 
         [OperationContract(IsOneWay = true)]
         void SwitchProjectorDisplay(string displayType, List<string> displayPages);
@@ -272,7 +272,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID)
+        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID, bool broadcastInkToStudents)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
@@ -308,6 +308,49 @@ namespace Classroom_Learning_Partner.Model
                                         page.InkStrokes.RemoveAt(strokeIndex);
                                     }
                                     catch (System.Exception ex)
+                                    {
+                                        Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
+                                    }
+                                }
+
+                                StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
+                                page.InkStrokes.Add(addedStrokes);
+                                break;
+                            }
+                        }
+                    }
+
+                    if(App.CurrentUserMode == App.UserMode.Student && broadcastInkToStudents)
+                    {
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+
+                            if(page == null)
+                            {
+                                page = notebook.GetSubmissionByID(pageID);
+                            }
+
+                            if(page != null)
+                            {
+                                StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
+
+                                foreach(var strokeToRemove in removedStrokes)
+                                {
+                                    int strokeIndex = -1;
+                                    foreach(var stroke in page.InkStrokes)
+                                    {
+                                        if((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                                        {
+                                            strokeIndex = page.InkStrokes.IndexOf(stroke);
+                                            break;
+                                        }
+                                    }
+                                    try
+                                    {
+                                        page.InkStrokes.RemoveAt(strokeIndex);
+                                    }
+                                    catch(System.Exception ex)
                                     {
                                         Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
                                     }
