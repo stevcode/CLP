@@ -299,8 +299,6 @@
                         Label="Send To Projector"
                         Command="{Binding Path=SendDisplayToProjectorcommand}" />
                     
-                    <ribbon:RibbonSeparator Height="65" Width="20" Background="Black" />
-                    
                     <ribbon:RibbonButton
                         LargeImageSource="..\Images\SingleDisplay.png"
                         Label="Linked Display"
@@ -358,8 +356,8 @@
                         Command="{Binding Path=StopVisualCommand}" />
                 </ribbon:RibbonGroup> -->
 
-                <ribbon:RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">
-                
+                <!--<ribbon:RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">-->
+                <ribbon:RibbonGroup Header="Review" FontStretch="Condensed" Visibility="Collapsed">
                     <ribbon:RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_stop.png" 
