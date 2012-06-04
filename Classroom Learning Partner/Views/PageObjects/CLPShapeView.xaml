@@ -241,7 +241,7 @@
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
 
-            <Rectangle Name="PageObjectHitBox" Tag="1500" Fill="Transparent" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Stretch="Fill" />
+            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Stretch="Fill" />
 
         </ac:AdornedControl>
 
