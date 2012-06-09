@@ -30,6 +30,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 }
                 reader.Dispose();
             }
+            else
+            {
+                for(int i = 1; i < 26; i++)
+                {
+                    UserNames.Add("Guest " + i.ToString());
+                }
+            }
         }
 
         public override string Title { get { return "UserLoginWorkspaceVM"; } }

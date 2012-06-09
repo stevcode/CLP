@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.Model
                 {
                     notebook = CLPNotebook.Load(filePath, true);
                 }
-                catch (MissingMethodException ex)
+                catch (Exception ex)
                 {
                     Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
                 }

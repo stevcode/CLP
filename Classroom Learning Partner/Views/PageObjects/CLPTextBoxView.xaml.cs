@@ -102,6 +102,8 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         #endregion //Document Dependency Property
 
+        #region Font Style Methods
+
         private bool isSettingFont = false;
         public void SetFont(double fontSize, FontFamily font, Brush fontColor)
         {
@@ -230,5 +232,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             base.OnGotMouseCapture(e);
             App.MainWindowViewModel.LastFocusedTextBox = this;
         }
+
+        #endregion //Font Style Methods
     }
 }
