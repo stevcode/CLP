@@ -12,7 +12,7 @@ using System.Windows;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPDataTable : CLPInkRegion
+    public class CLPDataTable : ACLPInkRegion
     {
         #region Constructors
 

@@ -11,7 +11,7 @@ using System.Windows.Ink;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPInkShapeRegion : CLPInkRegion
+    public class CLPInkShapeRegion : ACLPInkRegion
     {
         #region Constructors
 

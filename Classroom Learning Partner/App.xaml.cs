@@ -164,7 +164,7 @@ namespace Classroom_Learning_Partner
                 .AddSubType(16, typeof(CLPStamp));
             model[typeof(CLPPageObjectBase)]
                 .AddSubType(7, typeof(CLPImage))
-                .AddSubType(8, typeof(CLPInkRegion))
+                .AddSubType(8, typeof(ACLPInkRegion))
                 .AddSubType(9, typeof(CLPShape))
                 .AddSubType(10, typeof(CLPSnapTileContainer))
                 .AddSubType(11, typeof(CLPStrokePathContainer))
@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
 
-            model[typeof(CLPInkRegion)]
+            model[typeof(ACLPInkRegion)]
                 .AddSubType(1, typeof(CLPInkShapeRegion))
                 .AddSubType(2, typeof(CLPHandwritingRegion))
                 .AddSubType(3, typeof(CLPDataTable))

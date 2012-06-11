@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using Catel.Data;
 using System.Runtime.Serialization;
+using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -36,7 +37,14 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPTextBox(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context) 
+        {
+            //Deserialization for pre-Catel version of notebooks.
+            Text = SerializationHelper.GetString(info, "_text", TextProperty.GetDefaultValue() as string);
+            Height = SerializationHelper.GetObject(info, "CLPPageObjectBase+_height", 200);
+            Width = SerializationHelper.GetObject(info, "CLPPageObjectBase+_width", 400);
+            Position = SerializationHelper.GetObject(info, "CLPPageObjectBase+_position", new Point(50,50));
+        }
 
         #endregion
 
@@ -74,31 +82,5 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         }
 
         #endregion
-
-        //public CLPTextBox() : this("")
-        //{ 
-        //}
-
-        //public CLPTextBox(string s) : base()
-        //{
-        //    _text = s;
-        //    Position = new Point(100, 100);
-        //    Height = 200;
-        //    Width = 400;
-        //}
-
-        //private string _text;
-        //public string Text
-        //{
-        //    get
-        //    {
-        //        return _text;
-        //    }
-        //    set
-        //    {
-        //        _text = value;
-        //    }
-        //}
-
     }
 }

@@ -241,12 +241,12 @@ namespace Classroom_Learning_Partner.Views
                             CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPTextBox);
                         }
                     }
-                    else if ((result.VisualHit as Grid).DataContext is CLPInkRegion)
+                    else if ((result.VisualHit as Grid).DataContext is ACLPInkRegion)
                     {
-                        if (!((result.VisualHit as Grid).DataContext as CLPInkRegion).IsBackground ||
-                            (((result.VisualHit as Grid).DataContext as CLPInkRegion).IsBackground && App.MainWindowViewModel.IsAuthoring))
+                        if (!((result.VisualHit as Grid).DataContext as ACLPInkRegion).IsBackground ||
+                            (((result.VisualHit as Grid).DataContext as ACLPInkRegion).IsBackground && App.MainWindowViewModel.IsAuthoring))
                         {
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as CLPInkRegion);
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage((result.VisualHit as Grid).DataContext as ACLPInkRegion);
                         }
                     }
                 }

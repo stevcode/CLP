@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
 
     [Serializable]
-    public abstract class CLPInkRegion : CLPPageObjectBase
+    public abstract class ACLPInkRegion : CLPPageObjectBase
     {
 
         #region Variables
@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
 
         #region Constructors
 
-        public CLPInkRegion() : base()
+        public ACLPInkRegion() : base()
         {
             CanAcceptStrokes = true;
             Position = new Point(100, 100);
@@ -58,7 +58,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPInkRegion(SerializationInfo info, StreamingContext context)
+        protected ACLPInkRegion(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             lock (interpretation_lock)
             {
-                CLPInkRegion newInkRegion = this.Clone() as CLPInkRegion;
+                ACLPInkRegion newInkRegion = this.Clone() as ACLPInkRegion;
                 newInkRegion.UniqueID = Guid.NewGuid().ToString();
                 return newInkRegion;
             }

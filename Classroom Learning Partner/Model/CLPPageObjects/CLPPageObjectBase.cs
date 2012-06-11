@@ -48,8 +48,6 @@ namespace Classroom_Learning_Partner.Model
     [ProtoContract]
     abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
     {
-        #region Variables
-        #endregion
 
         #region Constructor & destructor
         /// <summary>

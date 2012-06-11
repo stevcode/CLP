@@ -7,11 +7,13 @@ using Catel.Data;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
+using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-    public class CLPHandwritingRegion : CLPInkRegion
+   // [RedirectType("Classroom_Learning_Partner.Model.CLPPageObjects", "CLPInkRegion")]
+    public class CLPHandwritingRegion : ACLPInkRegion
     {
         #region Constructors
 
@@ -33,7 +35,27 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPHandwritingRegion(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context) {
+
+                int analysisType = (int)info.GetValue("AnalysisType", typeof(int));
+                switch(analysisType)
+                {
+                    case 0:
+                        AnalysisType = CLPHandwritingAnalysisType.DEFAULT;
+                        break;
+                    case 1:
+                        AnalysisType = CLPHandwritingAnalysisType.NUMBER;
+                        break;
+                    case 2:
+                        AnalysisType = CLPHandwritingAnalysisType.DIGIT;
+                        break;
+                    case 3:
+                        AnalysisType = CLPHandwritingAnalysisType.WORDS;
+                        break;
+                    default:
+                        break;
+                }
+        }
 
         #endregion // Constructors
 
@@ -82,6 +104,28 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;
+        }
+
+        /// <summary>
+        /// Retrieves the actual data from the serialization info.
+        /// </summary>
+        /// <remarks>
+        /// This method should only be implemented if backwards compatibility should be implemented for
+        /// a class that did not previously implement the DataObjectBase class.
+        /// </remarks>
+        protected override void GetDataFromSerializationInfo(SerializationInfo info)
+        {
+            // Check if deserialization succeeded
+            if(DeserializationSucceeded)
+            {
+                return;
+            }
+
+            // Deserialization did not succeed for any reason, so retrieve the values manually
+            // Luckily there is a helper class (SerializationHelper) 
+            // that eases the deserialization of "old" style objects
+            //FirstName = SerializationHelper.GetString(info, "FirstName", FirstNameProperty.GetDefaultValue());
+            //LastName = SerializationHelper.GetString(info, "LastName", LastNameProperty.GetDefaultValue());
         }
 
         #endregion // Methods
