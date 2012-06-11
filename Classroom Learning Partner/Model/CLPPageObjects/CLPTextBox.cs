@@ -41,9 +41,6 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         {
             //Deserialization for pre-Catel version of notebooks.
             Text = SerializationHelper.GetString(info, "_text", TextProperty.GetDefaultValue() as string);
-            Height = SerializationHelper.GetObject(info, "CLPPageObjectBase+_height", 200);
-            Width = SerializationHelper.GetObject(info, "CLPPageObjectBase+_width", 400);
-            Position = SerializationHelper.GetObject(info, "CLPPageObjectBase+_position", new Point(50,50));
         }
 
         #endregion

@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Media;
 using ProtoBuf;
+using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -72,7 +73,13 @@ namespace Classroom_Learning_Partner.Model
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPPageObjectBase(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context)
+        {
+            Height = SerializationHelper.GetObject(info, "CLPPageObjectBase+_height", 200);
+            Width = SerializationHelper.GetObject(info, "CLPPageObjectBase+_width", 400);
+            Position = SerializationHelper.GetObject(info, "CLPPageObjectBase+_position", new Point(50, 50));
+        }
+
         #endregion
 
         #region Properties
@@ -340,71 +347,4 @@ namespace Classroom_Learning_Partner.Model
     //            _pageObjectStrokes = value;
     //        }
     //    }
-
-    //    private Point _position;
-    //    public Point Position
-    //    {
-    //        get
-    //        {
-    //            return _position;
-    //        }
-    //        set
-    //        {
-    //            _position = value;
-    //        }
-    //    }
-
-    //    private double _height;
-    //    public double Height
-    //    {
-    //        get
-    //        {
-    //            return _height;
-    //        }
-    //        set
-    //        {
-    //            _height = value;
-    //        }
-    //    }
-
-    //    private double _width;
-    //    public double Width
-    //    {
-    //        get
-    //        {
-    //            return _width;
-    //        }
-    //        set
-    //        {
-    //            _width = value;
-    //        }
-    //    }
-
-    //    //can this be controlled by position in list?
-    //    private int _zIndex;
-    //    public int ZIndex
-    //    {
-    //        get
-    //        {
-    //            return _zIndex;
-    //        }
-    //        set
-    //        {
-    //            _zIndex = value;
-    //        }
-    //    }
-
-    //    public virtual CLPPageObjectBase Copy()
-    //    {
-    //        return null;
-    //    }
-
-    //    public string UniqueID
-    //    {
-    //        get
-    //        {
-    //            return MetaData.GetValue("UniqueID");
-    //        }
-    //    }
-    //}
 }

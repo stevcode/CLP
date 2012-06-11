@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
@@ -42,7 +43,13 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPImage(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context)
+        {
+            //Deserialization for pre-Catel version of notebooks.
+            ByteSource = SerializationHelper.GetObject<byte[]>(info, "_byteSource", null);
+
+            LoadImageFromByteSource(ByteSource);
+        }
 
         //Parameterless constructor for Protobuf
         private CLPImage()

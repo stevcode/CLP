@@ -45,10 +45,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSelectNotebookCommandExecute(string notebookName)
         {
-            //Catel.Windows.PleaseWaitHelper.Show(() =>
-            //CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
-
-            CLPServiceAgent.Instance.OpenNotebook(notebookName);
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
         }
 
         public string WorkspaceName
