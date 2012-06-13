@@ -43,13 +43,7 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPImage(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            //Deserialization for pre-Catel version of notebooks.
-            ByteSource = SerializationHelper.GetObject<byte[]>(info, "_byteSource", null);
-
-            LoadImageFromByteSource(ByteSource);
-        }
+            : base(info, context) { }
 
         //Parameterless constructor for Protobuf
         private CLPImage()

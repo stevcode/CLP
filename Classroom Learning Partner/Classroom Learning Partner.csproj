@@ -144,7 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppMessages.cs" />
+    <Compile Include="Model\CLPAttributeValue.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
     <Compile Include="Model\CLPNamedInkSet.cs" />
@@ -169,6 +169,7 @@
     <Compile Include="Model\Displays\CLPGridDisplay.cs" />
     <Compile Include="Model\Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Model\Logger.cs" />
+    <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\BindableInkCanvas.cs" />
@@ -503,6 +504,7 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\StudentsInk.png" />
     <Resource Include="Images\HorizontalLineIcon.png" />
     <Resource Include="Images\recordflash2.png" />
     <Resource Include="Images\recordflash1.png" />

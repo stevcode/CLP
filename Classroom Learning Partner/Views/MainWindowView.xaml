@@ -325,7 +325,7 @@
                     </ribbon:RibbonToggleButton>
                     
                     <ribbon:RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\StudentsInk.png"
                         IsChecked="{Binding BroadcastInkToStudents}">
                         <ribbon:RibbonToggleButton.Style>
                             <Style TargetType="{x:Type ribbon:RibbonToggleButton}">

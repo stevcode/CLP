@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner.Model
                 CLPNotebook notebook = null;
                 try
                 {
-                    notebook = CLPNotebook.Load(filePath);
+                    notebook = CLPNotebook.Load(filePath, true);
                 }
                 catch (Exception ex)
                 {

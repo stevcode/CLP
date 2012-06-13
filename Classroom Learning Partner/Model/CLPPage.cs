@@ -56,7 +56,10 @@ namespace Classroom_Learning_Partner.Model
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPPage(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context) 
+        { 
+        
+        }
         #endregion
 
         protected override void OnDeserialized()

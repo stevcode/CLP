@@ -37,10 +37,28 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPTextBox(SerializationInfo info, StreamingContext context)
-            : base(info, context) 
+            : base(info, context) { }
+
+        /// <summary>
+        /// Retrieves the actual data from the serialization info.
+        /// </summary>
+        /// <remarks>
+        /// This method should only be implemented if backwards compatibility should be implemented for
+        /// a class that did not previously implement the DataObjectBase class.
+        /// </remarks>
+        protected override void GetDataFromSerializationInfo(SerializationInfo info)
         {
-            //Deserialization for pre-Catel version of notebooks.
-            Text = SerializationHelper.GetString(info, "_text", TextProperty.GetDefaultValue() as string);
+            // Check if deserialization succeeded
+            if(DeserializationSucceeded)
+            {
+                return;
+            }
+
+            // Deserialization did not succeed for any reason, so retrieve the values manually
+            // Luckily there is a helper class (SerializationHelper) 
+            // that eases the deserialization of "old" style objects
+            //FirstName = SerializationHelper.GetString(info, "FirstName", FirstNameProperty.GetDefaultValue());
+            //LastName = SerializationHelper.GetString(info, "LastName", LastNameProperty.GetDefaultValue());
         }
 
         #endregion

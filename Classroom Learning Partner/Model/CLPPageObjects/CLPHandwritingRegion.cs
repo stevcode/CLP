@@ -37,24 +37,24 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         protected CLPHandwritingRegion(SerializationInfo info, StreamingContext context)
             : base(info, context) {
 
-                int analysisType = (int)info.GetValue("AnalysisType", typeof(int));
-                switch(analysisType)
-                {
-                    case 0:
-                        AnalysisType = CLPHandwritingAnalysisType.DEFAULT;
-                        break;
-                    case 1:
-                        AnalysisType = CLPHandwritingAnalysisType.NUMBER;
-                        break;
-                    case 2:
-                        AnalysisType = CLPHandwritingAnalysisType.DIGIT;
-                        break;
-                    case 3:
-                        AnalysisType = CLPHandwritingAnalysisType.WORDS;
-                        break;
-                    default:
-                        break;
-                }
+                //int analysisType = (int)info.GetValue("AnalysisType", typeof(int));
+                //switch(analysisType)
+                //{
+                //    case 0:
+                //        AnalysisType = CLPHandwritingAnalysisType.DEFAULT;
+                //        break;
+                //    case 1:
+                //        AnalysisType = CLPHandwritingAnalysisType.NUMBER;
+                //        break;
+                //    case 2:
+                //        AnalysisType = CLPHandwritingAnalysisType.DIGIT;
+                //        break;
+                //    case 3:
+                //        AnalysisType = CLPHandwritingAnalysisType.WORDS;
+                //        break;
+                //    default:
+                //        break;
+                //}
         }
 
         #endregion // Constructors
