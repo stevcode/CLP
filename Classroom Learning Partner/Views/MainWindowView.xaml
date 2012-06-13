@@ -325,14 +325,15 @@
                     </ribbon:RibbonToggleButton>
                     
                     <ribbon:RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
-                        LargeImageSource="..\Images\StudentsInk.png"
                         IsChecked="{Binding BroadcastInkToStudents}">
                         <ribbon:RibbonToggleButton.Style>
                             <Style TargetType="{x:Type ribbon:RibbonToggleButton}">
                                 <Setter Property="Label" Value="Send Ink to Students Off"/>
+                                <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOff.png"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsChecked" Value="True">
                                         <Setter Property="Label" Value="Send Ink to Students On"/>
+                                        <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOn.png"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>

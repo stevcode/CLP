@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 if ((result.VisualHit as Shape).Name == "PageObjectHitBox")
                 {
-                    Console.WriteLine("dirtyHitBox: " + DirtyHitbox.ToString());
+                    //Console.WriteLine("dirtyHitBox: " + DirtyHitbox.ToString());
                     if (DirtyHitbox > 3)
                     {
                         double timer_delay = 0;

@@ -504,6 +504,8 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\InkToStudentsOff.png" />
+    <Resource Include="Images\InkToStudentsOn.png" />
     <Resource Include="Images\StudentsInk.png" />
     <Resource Include="Images\HorizontalLineIcon.png" />
     <Resource Include="Images\recordflash2.png" />
