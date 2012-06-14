@@ -47,11 +47,12 @@
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Grid x:Name="itemGrid">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0"
+                            <!--This column number determines SubmissionsSidebar placement-->
+                            <Border Grid.Column="1"
                                     BorderBrush="Transparent"
                                     Background="White"
                                     CornerRadius="8"
@@ -61,12 +62,13 @@
                                 <ContentPresenter />
                             </Border>
 
-                            <Grid Margin="0,0,8,0"  Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
+                            <!--This column number determines button placement-->
+                            <Grid Margin="0,0,8,0"  Grid.Column="0" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
+                                <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Column="0" Click="ToggleButton_Click">
                                     <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
                                 </ToggleButton>
                                 <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
@@ -94,7 +96,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
+                            
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
                                     Background="White"
@@ -140,7 +142,7 @@
                         <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
                     </DockPanel>
-                </ToggleButton>                
+                </ToggleButton>
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
 
