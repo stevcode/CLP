@@ -165,7 +165,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                <ListBox x:Name="NotebookPageListBox" Grid.Column="1" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="270" Width="270" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
@@ -184,7 +184,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Border Grid.Column="1" Background="Lavender" BorderThickness="0">
+                <Border Grid.Column="0" Background="Lavender" BorderThickness="0">
                     <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="220" Width="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
@@ -205,7 +205,7 @@
                             <DataTemplate>
                                 <Border>
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
+                                        <i:EventTrigger EventName="MouseDown"> 
                                             <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
