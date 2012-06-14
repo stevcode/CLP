@@ -63,7 +63,7 @@
                             </Border>
 
                             <!--This column number determines button placement-->
-                            <Grid Margin="0,0,8,0"  Grid.Column="0" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
+                            <Grid Margin="8,0,0,0"  Grid.Column="0" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
