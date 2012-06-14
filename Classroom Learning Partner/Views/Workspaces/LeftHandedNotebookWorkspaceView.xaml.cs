@@ -15,14 +15,14 @@ namespace Classroom_Learning_Partner.Views.Workspaces
 {
 
     /// <summary>
-    /// Interaction logic for NotebookWorkspaceView.xaml.
+    /// Interaction logic for LeftHandedNotebookWorkspaceView.xaml.
     /// </summary>
-    public partial class NotebookWorkspaceView : Catel.Windows.Controls.UserControl
+    public partial class LeftHandedNotebookWorkspaceView : Catel.Windows.Controls.UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceView"/> class.
         /// </summary>
-        public NotebookWorkspaceView()
+        public LeftHandedNotebookWorkspaceView()
         {
             InitializeComponent();
         }

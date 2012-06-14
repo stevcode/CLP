@@ -266,6 +266,9 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Workspaces\LeftHandedNotebookWorkspaceView.xaml.cs">
+      <DependentUpon>LeftHandedNotebookWorkspaceView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
@@ -388,6 +391,10 @@
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\LeftHandedNotebookWorkspaceView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>

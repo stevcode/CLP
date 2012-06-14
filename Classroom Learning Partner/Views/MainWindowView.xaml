@@ -618,7 +618,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
+                    <vww:LeftHandedNotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
