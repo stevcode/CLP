@@ -439,16 +439,13 @@
     <Resource Include="Images\AddImage.png" />
     <Resource Include="Images\AddPage.png" />
     <Resource Include="Images\AddPathStamp.png" />
-    <Resource Include="Images\AddPictureStamp.jpg" />
     <Resource Include="Images\AddText.png" />
     <Resource Include="Images\AddToDisplay.png" />
     <Resource Include="Images\camera.png" />
     <Resource Include="Images\Collapse.png" />
     <Resource Include="Images\Correct.png" />
-    <Resource Include="Images\CrayonPhysics.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\EditNotebook.png" />
-    <Resource Include="Images\Eraser.png" />
     <Resource Include="Images\Exit.png" />
     <Resource Include="Images\Expand.png" />
     <Resource Include="Images\GridDisplay.png" />
@@ -476,11 +473,8 @@
     <Resource Include="Images\SingleDisplay.png" />
     <Resource Include="Images\SingleSidebarView.png" />
     <Resource Include="Images\SmallIcon.png" />
-    <Resource Include="Images\StrokeEraser.jpg" />
-    <Resource Include="Images\StrokeEraser2.jpg" />
     <Resource Include="Images\Students.png" />
     <Resource Include="Images\Trash.png" />
-    <Resource Include="Images\Unknown.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -504,6 +498,17 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\AddCircle.png" />
+    <Resource Include="Images\AddSquare.png" />
+    <Resource Include="Images\ReconnectToNetwork.png" />
+    <Resource Include="Images\ConvertToXPS.png" />
+    <Resource Include="Images\SaveNotebookHistories.png" />
+    <Resource Include="Images\SaveAllNotebooks.png" />
+    <Resource Include="Images\DoneEditingNotebook.png" />
+    <Resource Include="Images\NewNotebook.png" />
+    <Resource Include="Images\PictureStamp.png" />
+    <Resource Include="Images\StrokeEraser.png" />
+    <Resource Include="Images\Eraser.png" />
     <Resource Include="Images\InkToStudentsOff.png" />
     <Resource Include="Images\InkToStudentsOn.png" />
     <Resource Include="Images\StudentsInk.png" />

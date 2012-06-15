@@ -58,7 +58,7 @@
                     
                     <ribbon:RibbonApplicationMenuItem Header="New Notebook"
                                                   KeyTip="N"
-                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  ImageSource="..\Images\NewNotebook.png"
                                                   Command="{Binding Path=NewNotebookCommand}"
                                                   Visibility="{Binding Path=InstructorVisibility}"/>
                     
@@ -76,7 +76,7 @@
                     <ribbon:RibbonApplicationMenuItem Header="Done Editing Notebook"
                                                   Command="{Binding Path=DoneEditingNotebookCommand}"
                                                   KeyTip="E"
-                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  ImageSource="..\Images\DoneEditingNotebook.png"
                                                   Visibility="{Binding Path=InstructorVisibility}"/>
                     
                     <ribbon:RibbonApplicationMenuItem Header="Save Notebook"
@@ -87,17 +87,17 @@
                     <ribbon:RibbonApplicationMenuItem Header="Save All Notebooks"
                                                   Command="{Binding Path=SaveAllNotebooksCommand}"
                                                   KeyTip="A"
-                                                  ImageSource="..\Images\LargeIcon.png" />
+                                                  ImageSource="..\Images\SaveAllNotebooks.png" />
                     
                     <ribbon:RibbonApplicationMenuItem Header="Save Notebook Histories"
                                                   Command="{Binding Path=SaveAllHistoriesCommand}"
                                                   KeyTip="Bs"
-                                                  ImageSource="..\Images\LargeIcon.png" />
+                                                  ImageSource="..\Images\SaveNotebookHistories.png" />
 
                     <ribbon:RibbonApplicationMenuItem Header="Convert to XPS"
                                                   Command="{Binding Path=ConvertToXPSCommand}"
                                                   KeyTip="C"
-                                                  ImageSource="..\Images\LargeIcon.png" />
+                                                  ImageSource="..\Images\ConvertToXPS.png" />
                     <ribbon:RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
                                                   Command="{Binding Path=ImportLocalNotebooksDBCommand}"
                                                   KeyTip="I"
@@ -109,7 +109,7 @@
                     <!--Bind header for toggle text: disconnect/reconnect to network-->
                     <ribbon:RibbonApplicationMenuItem Header="Reconnect to Network"
                                                   Command="{Binding Path=NetworkReconnectCommand}"
-                                                  ImageSource="..\Images\LargeIcon.png" />
+                                                  ImageSource="..\Images\ReconnectToNetwork.png" />
 
                     <ribbon:RibbonApplicationMenu.FooterPaneContent>
                         <DockPanel LastChildFill="False">
@@ -167,13 +167,13 @@
                     
                     <ribbon:RibbonToggleButton
                         Label="Eraser"
-                        LargeImageSource="..\Images\StrokeEraser.jpg"
+                        LargeImageSource="..\Images\Eraser.png"
                         Command="{Binding Path=SetEraserCommand}"
                         IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Stroke Eraser"
-                        LargeImageSource="..\Images\StrokeEraser2.jpg"
+                        LargeImageSource="..\Images\StrokeEraser.png"
                         Command="{Binding Path=SetStrokeEraserCommand}"
                         IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
                     
@@ -434,17 +434,17 @@
 
                     <ribbon:RibbonButton
                         Label="Insert Image Stamp"
-                        LargeImageSource="..\Images\AddPictureStamp.jpg"
+                        LargeImageSource="..\Images\PictureStamp.png"
                         Command="{Binding Path=InsertImageStampCommand}" />
 
                     <ribbon:RibbonButton
                         Label="Insert Square"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\AddSquare.png"
                         Command="{Binding Path=InsertSquareShapeCommand}" />
 
                     <ribbon:RibbonButton
                         Label="Insert Circle"
-                        LargeImageSource="..\Images\LargeIcon.png"
+                        LargeImageSource="..\Images\AddCircle.png"
                         Command="{Binding Path=InsertCircleShapeCommand}" />
 
                     <ribbon:RibbonButton
