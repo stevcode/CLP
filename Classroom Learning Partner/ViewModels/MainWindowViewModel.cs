@@ -71,6 +71,14 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
 
+            CurrentWidthButton = new RibbonButton();
+            ///***add something to line below so that image displayed is rectangle of proper height and width
+            ///***define width as property of SolidColorBrush, find SolidColorBrush constructor, where is solidcolorbrush defined?
+            CurrentWidthButton.Height = 10;
+
+            ///Console.Write("CurrentWidthButton.Height: {0} ", CurrentWidthButton.Height);
+            ///Console.WriteLine();
+
             CurrentFontSize = 34;
 
             foreach (var color in _colors)
@@ -78,6 +86,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 _fontColors.Add(new SolidColorBrush(color));
                 
             }
+
+            ///***make a list of penWidth values, so pen width attribute can be added to SolidColorBrush
+	        List<int> widths = new List<int>();
+	        widths.Add(1);
+	        widths.Add(3);
+	        widths.Add(5);
+	        widths.Add(7);	
+	        widths.Add(9);
+
+
+            ///***new stuff below this line
+            ///foreach(var width in widths)
+            ///{
+            ///    penWidths.Add(new SolidColorBrush(width));
+
+            ///}
+            ///new stuff above this line
 
             CurrentFontColor = _fontColors[0];
 
@@ -139,7 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
-            SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
+            //****SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
             SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
             SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
             SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
@@ -404,7 +429,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Ribbon
 
-        public const double PEN_RADIUS = 2;
+        public const double PEN_RADIUS = 3;
         public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
@@ -752,9 +777,34 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Register the CurrentColorButton property so it is known in the class.
+        /// Register the CurrentPenWidth property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
+
+
+
+
+
+        ///new stuff below this Line
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public RibbonButton CurrentWidthButton
+        {
+            get { return GetValue<RibbonButton>(CurrentWidthButtonProperty); }
+            set { SetValue(CurrentWidthButtonProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CurrentPenWidth property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentWidthButtonProperty = RegisterProperty("CurrentWidthButton", typeof(RibbonButton));
+        ///new stuff above this line
+
+
+
+
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1202,8 +1252,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
-        private void OnSetPenCommandExecute(RibbonToggleButton button)
-        {   
+        private void OnSetPenCommandExecute(RibbonToggleButton button, int PEN_RADIUS)
+        {
             DrawingAttributes.Height = PEN_RADIUS;
             DrawingAttributes.Width = PEN_RADIUS;
 
@@ -1223,6 +1273,12 @@ namespace Classroom_Learning_Partner.ViewModels
             //EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
         }
+
+        ///***changePenWidth method not working
+        ///private void changePenWidth(int width)
+        ///{
+        ///    PEN_RADIUS = width;
+        ///}
 
         /// <summary>
         /// Gets the SetMarkerCommand command.
@@ -1328,6 +1384,34 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetPenCommand.Execute();
             }
         }
+
+
+
+        ///new stuff below this line
+        /// <summary>
+        /// Gets the SetPenWidthCommand command.
+        /// </summary>
+        public Command<RibbonButton> SetPenWidthCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetPenWidthCommand command is executed.
+        /// </summary>
+        private void OnSetPenWidthCommandExecute(RibbonButton button)
+        {
+            CurrentWidthButton = button as RibbonButton;
+            ///***can I define a width attribute?
+            DrawingAttributes.Height = CurrentWidthButton.Height;
+
+            if(EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
+        }
+        ///new stuff above this line
+
+
+
+
 
         /// <summary>
         /// Gets the SetSnapTileCommand command.

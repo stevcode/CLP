@@ -151,13 +151,78 @@
                     
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup Header="Pen Type">
-
+                <ribbon:RibbonGroup Header="Pen">
+                    <ribbon:RibbonGroup.Resources>
+                        <Style x:Name="PenWidthStyle" TargetType="{x:Type ribbon:RibbonButton}">
+                            <Setter Property="Width" Value="25"/>
+                            <Setter Property="Height" Value="5"/>
+                            <Setter Property="Command">
+                                <Setter.Value>
+                                    <Binding Path="SetPenWidthCommand"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="CommandParameter">
+                                <Setter.Value>
+                                    <Binding RelativeSource="{RelativeSource Self}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="BorderBrush" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ribbon:RibbonGroup.Resources>
                     <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
                         Command="{Binding Path=SetPenCommand}"
                         IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Pen'}" />
+                    
+                    <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
+                    <!--Header="Pen Thickness"-->
+
+                    <ribbon:RibbonMenuButton Label="Size"
+                        LargeImageSource="..\Images\LargeIcon.png">
+                        
+                        <ribbon:RibbonMenuItem>
+                            <ribbon:RibbonButton Height ="1" Margin ="1.5" Background="Black"/>
+                        </ribbon:RibbonMenuItem>
+                        
+                        <ribbon:RibbonMenuItem>
+                            <ribbon:RibbonButton Height ="3" Margin ="1.5" Background="Black"/>
+                        </ribbon:RibbonMenuItem>
+                        
+                        <ribbon:RibbonMenuItem>
+                            <ribbon:RibbonButton Height ="5" Margin ="1.5" Background="Black"/>
+                        </ribbon:RibbonMenuItem>
+                            
+                        <ribbon:RibbonMenuItem>
+                            <ribbon:RibbonButton Height ="7" Margin ="1.5" Background="Black"/>
+                        </ribbon:RibbonMenuItem>
+                            
+                        <ribbon:RibbonMenuItem>
+                            <ribbon:RibbonButton Height ="9" Margin ="1.5" Background="Black"/>
+                        </ribbon:RibbonMenuItem>
+
+
+                    </ribbon:RibbonMenuButton>
+
+                        
+                        <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1">
+                            <ribbon:RibbonButton Height ="{Binding Path=CurrentWidthButton.Height}" Width="40" Background="Black" IsEnabled ="False">
+                                <!--<Rectangle Height ="{Binding Path=CurrentWidthButton.Height}" Width = "Auto" IsEnabled="False"/>-->
+                                <!--<ribbon:RibbonButton Height="3" Width="35" Background="Red" IsEnabled="True"></ribbon:RibbonButton>-->
+                                <!--<Rectangle Height ="3" Width = "Auto" Fill="Blue"/>-->
+                            </ribbon:RibbonButton>
+                        </Border>
+
+                    </ribbon:RibbonGroup>
+                    
+                    <ribbon:RibbonGroup>
+                        
+                    
+
+                    <!-- added parts are above this line-->
+                    
                     
                     <ribbon:RibbonToggleButton
                         Label="Marker"
