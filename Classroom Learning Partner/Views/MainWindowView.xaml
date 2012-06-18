@@ -181,29 +181,14 @@
                     <!--Header="Pen Thickness"-->
 
                     <ribbon:RibbonMenuButton Label="Size"
-                        LargeImageSource="..\Images\LargeIcon.png">
-                        
-                        <ribbon:RibbonMenuItem>
-                            <ribbon:RibbonButton Height ="1" Margin ="1.5" Background="Black"/>
-                        </ribbon:RibbonMenuItem>
-                        
-                        <ribbon:RibbonMenuItem>
-                            <ribbon:RibbonButton Height ="3" Margin ="1.5" Background="Black"/>
-                        </ribbon:RibbonMenuItem>
-                        
-                        <ribbon:RibbonMenuItem>
-                            <ribbon:RibbonButton Height ="5" Margin ="1.5" Background="Black"/>
-                        </ribbon:RibbonMenuItem>
-                            
-                        <ribbon:RibbonMenuItem>
-                            <ribbon:RibbonButton Height ="7" Margin ="1.5" Background="Black"/>
-                        </ribbon:RibbonMenuItem>
-                            
-                        <ribbon:RibbonMenuItem>
-                            <ribbon:RibbonButton Height ="9" Margin ="1.5" Background="Black"/>
-                        </ribbon:RibbonMenuItem>
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Width="70">
 
-
+                        <ribbon:RibbonButton Height ="1" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="1"/>
+                        <ribbon:RibbonButton Height ="3" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="3"/>
+                        <ribbon:RibbonButton Height ="5" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="5"/>
+                        <ribbon:RibbonButton Height ="7" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="7"/>
+                        <ribbon:RibbonButton Height ="9" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="9"/>
                     </ribbon:RibbonMenuButton>
 
                         

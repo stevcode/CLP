@@ -164,12 +164,13 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
-            //****SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
+            SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
             SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
             SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
             SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
+            SetPenWidthCommand = new Command<string>(OnSetPenWidthCommandExecute);
 
             //History
             EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
@@ -1245,6 +1246,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Pen Commands
 
         /// <summary>
+        /// Gets the SetPenWidthCommand command.
+        /// </summary>
+        public Command<string> SetPenWidthCommand { get; private set; }
+
+
+        /// <summary>
+        /// Method to invoke when the SetPenWidthCommand command is executed.
+        /// </summary>
+        private void OnSetPenWidthCommandExecute(string radius)
+        {
+            int radiusInt = Int16.Parse(radius);
+            DrawingAttributes.Height = radiusInt;
+            DrawingAttributes.Width = radiusInt;
+        }
+
+        /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
         public Command<RibbonToggleButton> SetPenCommand { get; private set; }
@@ -1252,10 +1269,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
-        private void OnSetPenCommandExecute(RibbonToggleButton button, int PEN_RADIUS)
+        private void OnSetPenCommandExecute(RibbonToggleButton button)
         {
-            DrawingAttributes.Height = PEN_RADIUS;
-            DrawingAttributes.Width = PEN_RADIUS;
 
             IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
             if (display is LinkedDisplayViewModel)
@@ -1274,11 +1289,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = PageInteractionMode.Pen;
         }
 
-        ///***changePenWidth method not working
-        ///private void changePenWidth(int width)
-        ///{
-        ///    PEN_RADIUS = width;
-        ///}
+
 
         /// <summary>
         /// Gets the SetMarkerCommand command.
@@ -1320,9 +1331,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetEraserCommandExecute(RibbonToggleButton button)
         {
-            DrawingAttributes.Height = ERASER_RADIUS;
-            DrawingAttributes.Width = ERASER_RADIUS;
-
             IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
             if (display is LinkedDisplayViewModel)
             {
@@ -1384,34 +1392,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetPenCommand.Execute();
             }
         }
-
-
-
-        ///new stuff below this line
-        /// <summary>
-        /// Gets the SetPenWidthCommand command.
-        /// </summary>
-        public Command<RibbonButton> SetPenWidthCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetPenWidthCommand command is executed.
-        /// </summary>
-        private void OnSetPenWidthCommandExecute(RibbonButton button)
-        {
-            CurrentWidthButton = button as RibbonButton;
-            ///***can I define a width attribute?
-            DrawingAttributes.Height = CurrentWidthButton.Height;
-
-            if(EditingMode != InkCanvasEditingMode.Ink)
-            {
-                SetPenCommand.Execute();
-            }
-        }
-        ///new stuff above this line
-
-
-
-
 
         /// <summary>
         /// Gets the SetSnapTileCommand command.
