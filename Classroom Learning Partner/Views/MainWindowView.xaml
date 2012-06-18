@@ -191,29 +191,9 @@
                         <ribbon:RibbonButton Height ="9" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="9"/>
                     </ribbon:RibbonMenuButton>
 
-                        
-                        <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1">
-                            <ribbon:RibbonButton Height ="{Binding Path=CurrentWidthButton.Height}" Width="40" Background="Black" IsEnabled ="False">
-                                <!--<Rectangle Height ="{Binding Path=CurrentWidthButton.Height}" Width = "Auto" IsEnabled="False"/>-->
-                                <!--<ribbon:RibbonButton Height="3" Width="35" Background="Red" IsEnabled="True"></ribbon:RibbonButton>-->
-                                <!--<Rectangle Height ="3" Width = "Auto" Fill="Blue"/>-->
-                            </ribbon:RibbonButton>
-                        </Border>
-
                     </ribbon:RibbonGroup>
                     
                     <ribbon:RibbonGroup>
-                        
-                    
-
-                    <!-- added parts are above this line-->
-                    
-                    
-                    <ribbon:RibbonToggleButton
-                        Label="Marker"
-                        LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Marker'}"/>
                     
                     <ribbon:RibbonToggleButton
                         Label="Eraser"

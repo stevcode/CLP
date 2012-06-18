@@ -165,7 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Tools
             SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
-            SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
+            //SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
             SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
             SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
@@ -431,7 +431,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Ribbon
 
         public const double PEN_RADIUS = 3;
-        public const double MARKER_RADIUS = 5;
+        //public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
         #region Properties
@@ -1294,32 +1294,32 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetMarkerCommand command.
         /// </summary>
-        public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
+        //public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetMarkerCommand command is executed.
-        /// </summary>
-        private void OnSetMarkerCommandExecute(RibbonToggleButton button)
-        {
-            DrawingAttributes.Height = MARKER_RADIUS;
-            DrawingAttributes.Width = MARKER_RADIUS;
+        // <summary>
+        // Method to invoke when the SetMarkerCommand command is executed.
+        // </summary>
+        //private void OnSetMarkerCommandExecute(RibbonToggleButton button)
+        //{
+        //    DrawingAttributes.Height = MARKER_RADIUS;
+        //    DrawingAttributes.Width = MARKER_RADIUS;
 
-            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if (display is LinkedDisplayViewModel)
-            {
-                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
-            }
-            else if (display is GridDisplayViewModel)
-            {
-                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
-                {
-                    page.EditingMode = InkCanvasEditingMode.Ink;
-                }
-            }
+        //    IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+        //    if (display is LinkedDisplayViewModel)
+        //    {
+        //        (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
+        //    }
+        //    else if (display is GridDisplayViewModel)
+        //    {
+        //        foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+        //        {
+        //            page.EditingMode = InkCanvasEditingMode.Ink;
+        //        }
+        //    }
 
             //EditingMode = InkCanvasEditingMode.Ink;
-            PageInteractionMode = PageInteractionMode.Marker;
-        }
+          //  PageInteractionMode = PageInteractionMode.Marker;
+        //}
 
         /// <summary>
         /// Gets the SetEraserCommand command.
