@@ -191,7 +191,7 @@
                         <ribbon:RibbonButton Height ="9" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="9"/>
                     </ribbon:RibbonMenuButton>
 
-                    </ribbon:RibbonGroup>
+                </ribbon:RibbonGroup>
 
                 
                 <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
@@ -205,7 +205,6 @@
                                 </Setter>
                                 <Setter Property="CommandParameter">
                                     <Setter.Value>
-                                        <!--*****will this be set to Eraser and StrokeEraser automatically?-->
                                     <Binding Path="SetStrokeEraserCommand"/>
                                 </Setter.Value>
                                 </Setter>
@@ -219,42 +218,13 @@
                         <ribbon:RibbonSplitButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg">
-
-                            <!--attempt at making RibbonGallery
-                        <ribbon:RibbonGallery SelectedValuePath="Content">
-                            <ribbon:RibbonGalleryCategory>
-                                <ribbon:RibbonGalleryItem Content="Eraser" ToolTipImageSource="..\Images\StrokeEraser.jpg"/>
-                                <ribbon:RibbonGalleryItem Content="Stroke Eraser" ToolTipImageSource="..\Images\StrokeEraser2.jpg"/>
-                            </ribbon:RibbonGalleryCategory>
-                        </ribbon:RibbonGallery>
-                        -->
-
-                            <!--attempt at making RibbonToggleButtons withing RibbonSplitButton
-                        <ribbon:RibbonToggleButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}" IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
-                        <ribbon:RibbonToggleButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetEraserCommand}" IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
-                        -->
-
                             <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
                             <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
-
-                            <!--make SetEraserTypeCommand-->
                         </ribbon:RibbonSplitButton>
                     </ribbon:RibbonGroup>
 
                     <ribbon:RibbonGroup>
 
-                    <ribbon:RibbonToggleButton
-                        Label="Eraser"
-                        LargeImageSource="..\Images\StrokeEraser.jpg"
-                        Command="{Binding Path=SetEraserCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
-                    
-                    <ribbon:RibbonToggleButton
-                        Label="Stroke Eraser"
-                        LargeImageSource="..\Images\StrokeEraser2.jpg"
-                        Command="{Binding Path=SetStrokeEraserCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
-                    
                     <ribbon:RibbonToggleButton
                         Label="SnapTile"
                         LargeImageSource="..\Images\SnapTileIcon.png"

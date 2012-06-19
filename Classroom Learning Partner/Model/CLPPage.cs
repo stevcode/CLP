@@ -26,6 +26,11 @@ namespace Classroom_Learning_Partner.Model
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
         public static Guid ParentPageID = new Guid("00000000-0000-0000-0000-000000000003");
+        public static const double LANDSCAPE_HEIGHT = 816;
+        public static const double LANDSCAPE_WIDTH = 1056;
+        public static const double PORTRAIT_HEIGHT = 1056;
+        public static const double PORTRAIT_WIDTH = 816;
+
 
         #endregion
 
@@ -69,6 +74,34 @@ namespace Classroom_Learning_Partner.Model
         }
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double PageHeight
+        {
+            get { return GetValue<double>(PageHeightProperty); }
+            set { SetValue(PageHeightProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageHeight property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double), LANDSCAPE_HEIGHT);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double PageWidth
+        {
+            get { return GetValue<double>(PageWidthProperty); }
+            set { SetValue(PageWidthProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageWidth property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
 
         /// <summary>
         /// Gets or sets the property value.

@@ -453,6 +453,21 @@ namespace Classroom_Learning_Partner.ViewModels
         //Steve - Dont' want Views in ViewModels, can this be fixed?
         public CLPTextBoxView LastFocusedTextBox = null;
 
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double PenSize
+        {
+            get { return GetValue<double>(PenSizeProperty); }
+            set { SetValue(PenSizeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PenSize property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
+
         /// <summary>
         /// Gets the DrawingAttributes of the Ribbon.
         /// </summary>
@@ -1259,7 +1274,20 @@ namespace Classroom_Learning_Partner.ViewModels
             int radiusInt = Int16.Parse(radius);
             DrawingAttributes.Height = radiusInt;
             DrawingAttributes.Width = radiusInt;
+            PenSize = radiusInt;
         }
+
+        //***trying to get eraser radius to change
+        /// <summary>
+        /// Method to invoke when the SetPenWidthCommand command is executed.
+        /// </summary>
+        ///private void OnSetEraserCommandExecute(string radius)
+        //{
+        //    int radiusInt = Int16.Parse(radius);
+        //    DrawingAttributes.Height = radiusInt;
+        //    DrawingAttributes.Width = radiusInt;
+        //}
+
 
         /// <summary>
         /// Gets the SetPenCommand command.
@@ -1378,72 +1406,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         //*****end of SetEraserCommand with RibbonButton instead of RibbonToggleButton
-
-
-
-
-
-
-
-
-
-
-
-
-
-        ///// <summary>
-        ///// Gets the SetEraserCommand command.
-        ///// </summary>
-        //public Command<RibbonToggleButton> SetEraserCommand { get; private set; }
-
-        ///// <summary>
-        ///// Method to invoke when the SetEraserCommand command is executed.
-        ///// </summary>
-        //private void OnSetEraserCommandExecute(RibbonToggleButton button)
-        //{
-        //    IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-        //    if (display is LinkedDisplayViewModel)
-        //    {
-        //        (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByPoint;
-        //    }
-        //    else if (display is GridDisplayViewModel)
-        //    {
-        //        foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
-        //        {
-        //            page.EditingMode = InkCanvasEditingMode.EraseByPoint;
-        //        }
-        //    }
-
-        //    //EditingMode = InkCanvasEditingMode.EraseByPoint;
-        //    PageInteractionMode = PageInteractionMode.Eraser;
-        //}
-
-        //        /// <summary>
-        ///// Gets the SetStrokeEraserCommand command.
-        ///// </summary>
-        //public Command<RibbonToggleButton> SetStrokeEraserCommand { get; private set; }
-
-        ///// <summary>
-        ///// Method to invoke when the SetStrokeEraserCommand command is executed.
-        ///// </summary>
-        //private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
-        //{
-        //    IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-        //    if (display is LinkedDisplayViewModel)
-        //    {
-        //        (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByStroke;
-        //    }
-        //    else if (display is GridDisplayViewModel)
-        //    {
-        //        foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
-        //        {
-        //            page.EditingMode = InkCanvasEditingMode.EraseByStroke;
-        //        }
-        //    }
-
-        //    //EditingMode = InkCanvasEditingMode.EraseByStroke;
-        //    PageInteractionMode = PageInteractionMode.StrokeEraser;
-        //}
 
         /// <summary>
         /// Gets the SetPenColorCommand command.
