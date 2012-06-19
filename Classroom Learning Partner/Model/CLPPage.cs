@@ -26,15 +26,13 @@ namespace Classroom_Learning_Partner.Model
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
         public static Guid ParentPageID = new Guid("00000000-0000-0000-0000-000000000003");
-        public static const double LANDSCAPE_HEIGHT = 816;
-        public static const double LANDSCAPE_WIDTH = 1056;
-        public static const double PORTRAIT_HEIGHT = 1056;
-        public static const double PORTRAIT_WIDTH = 816;
+        public const double LANDSCAPE_HEIGHT = 816;
+        public const double LANDSCAPE_WIDTH = 1056;
+        public const double PORTRAIT_HEIGHT = 1056;
+        public const double PORTRAIT_WIDTH = 816;
 
 
         #endregion
-
-        
 
         #region Constructor & destructor
         /// <summary>
