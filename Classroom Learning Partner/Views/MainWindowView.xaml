@@ -192,9 +192,57 @@
                     </ribbon:RibbonMenuButton>
 
                     </ribbon:RibbonGroup>
-                    
+
+                
+                <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
+                    <ribbon:RibbonGroup Header="Eraser">
+                        <ribbon:RibbonGroup.Resources>
+                            <Style x:Name="EraserButtonStyle" TargetType="{x:Type ribbon:RibbonButton}">
+                                <Setter Property="Command">
+                                    <Setter.Value>
+                                        <Binding Path="SetEraserCommand"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="CommandParameter">
+                                    <Setter.Value>
+                                        <!--*****will this be set to Eraser and StrokeEraser automatically?-->
+                                    <Binding Path="SetStrokeEraserCommand"/>
+                                </Setter.Value>
+                                </Setter>
+                                <Setter Property="Margin" Value="1"/>
+                                <Setter Property="BorderBrush" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </ribbon:RibbonGroup.Resources>
+
+                        <!--Making RibbonSplitButton for Eraser and StrokeEraser-->
+                        <ribbon:RibbonSplitButton
+                        Label="Eraser"
+                        LargeImageSource="..\Images\StrokeEraser.jpg">
+
+                            <!--attempt at making RibbonGallery
+                        <ribbon:RibbonGallery SelectedValuePath="Content">
+                            <ribbon:RibbonGalleryCategory>
+                                <ribbon:RibbonGalleryItem Content="Eraser" ToolTipImageSource="..\Images\StrokeEraser.jpg"/>
+                                <ribbon:RibbonGalleryItem Content="Stroke Eraser" ToolTipImageSource="..\Images\StrokeEraser2.jpg"/>
+                            </ribbon:RibbonGalleryCategory>
+                        </ribbon:RibbonGallery>
+                        -->
+
+                            <!--attempt at making RibbonToggleButtons withing RibbonSplitButton
+                        <ribbon:RibbonToggleButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}" IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
+                        <ribbon:RibbonToggleButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetEraserCommand}" IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
+                        -->
+
+                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
+                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
+
+                            <!--make SetEraserTypeCommand-->
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonGroup>
+
                     <ribbon:RibbonGroup>
-                    
+
                     <ribbon:RibbonToggleButton
                         Label="Eraser"
                         LargeImageSource="..\Images\StrokeEraser.jpg"
