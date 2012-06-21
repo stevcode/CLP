@@ -193,7 +193,6 @@
 
                 </ribbon:RibbonGroup>
 
-                
                 <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
                     <ribbon:RibbonGroup Header="Eraser">
                         <ribbon:RibbonGroup.Resources>
@@ -215,11 +214,11 @@
                         </ribbon:RibbonGroup.Resources>
 
                         <!--Making RibbonSplitButton for Eraser and StrokeEraser-->
-                        <ribbon:RibbonSplitButton
+                    <ribbon:RibbonSplitButton
                         Label="Eraser"
-                        LargeImageSource="..\Images\Eraser.png"
-                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
-                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
+                        LargeImageSource="..\Images\Eraser.png">
+                        <ribbon:RibbonButton LargeImageSource="..\Images\Eraser.png" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
+                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser.png" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
                         </ribbon:RibbonSplitButton>
                     </ribbon:RibbonGroup>
 
@@ -666,7 +665,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:LeftHandedNotebookWorkspaceView DataContext="{Binding }" />
+                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
