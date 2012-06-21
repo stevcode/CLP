@@ -19,24 +19,28 @@
     <Grid Name="RootGrid" Background="Transparent">
         <Viewbox>
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2" BorderBrush="Black" Background="White">
-                <Canvas Width="1056" Height="816" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
+                <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
                                                                                                 PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
                                                                                                 PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
                     <ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjects}"
-                                  ItemsPanel="{StaticResource PanelTemplate}"
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   >
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <vwpo:PageObjectContainerView DataContext="{Binding}" />
                             </DataTemplate>  
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <InkPresenter Width="1056" Height="816" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
-                    <InkCanvas Width="1056" Height="816" x:Name="MainInkCanvas"
+                    <InkPresenter Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
+                    <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
                                Background="Transparent" 
                                Strokes="{Binding Path=InkStrokes}"
                                EditingMode="{Binding Path=EditingMode}"

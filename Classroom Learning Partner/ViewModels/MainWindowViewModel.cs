@@ -71,6 +71,14 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
 
+            CurrentWidthButton = new RibbonButton();
+            ///***add something to line below so that image displayed is rectangle of proper height and width
+            ///***define width as property of SolidColorBrush, find SolidColorBrush constructor, where is solidcolorbrush defined?
+            CurrentWidthButton.Height = 10;
+
+            ///Console.Write("CurrentWidthButton.Height: {0} ", CurrentWidthButton.Height);
+            ///Console.WriteLine();
+
             CurrentFontSize = 34;
 
             foreach (var color in _colors)
@@ -78,6 +86,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 _fontColors.Add(new SolidColorBrush(color));
                 
             }
+
+            ///***make a list of penWidth values, so pen width attribute can be added to SolidColorBrush
+	        List<int> widths = new List<int>();
+	        widths.Add(1);
+	        widths.Add(3);
+	        widths.Add(5);
+	        widths.Add(7);	
+	        widths.Add(9);
+
+
+            ///***new stuff below this line
+            ///foreach(var width in widths)
+            ///{
+            ///    penWidths.Add(new SolidColorBrush(width));
+
+            ///}
+            ///new stuff above this line
 
             CurrentFontColor = _fontColors[0];
 
@@ -140,11 +165,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Tools
             SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
-            SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
-            SetEraserCommand = new Command<RibbonToggleButton>(OnSetEraserCommandExecute);
-            SetStrokeEraserCommand = new Command<RibbonToggleButton>(OnSetStrokeEraserCommandExecute);
+            //SetMarkerCommand = new Command<RibbonToggleButton>(OnSetMarkerCommandExecute);
+            SetEraserCommand = new Command<RibbonButton>(OnSetEraserCommandExecute);
+            SetStrokeEraserCommand = new Command<RibbonButton>(OnSetStrokeEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
+            SetPenWidthCommand = new Command<string>(OnSetPenWidthCommandExecute);
 
             //History
             EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
@@ -404,8 +430,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Ribbon
 
-        public const double PEN_RADIUS = 2;
-        public const double MARKER_RADIUS = 5;
+        public const double PEN_RADIUS = 3;
+        //public const double MARKER_RADIUS = 5;
         public const double ERASER_RADIUS = 5;
 
         #region Properties
@@ -426,6 +452,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Steve - Dont' want Views in ViewModels, can this be fixed?
         public CLPTextBoxView LastFocusedTextBox = null;
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double PenSize
+        {
+            get { return GetValue<double>(PenSizeProperty); }
+            set { SetValue(PenSizeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PenSize property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
 
         /// <summary>
         /// Gets the DrawingAttributes of the Ribbon.
@@ -752,9 +793,34 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Register the CurrentColorButton property so it is known in the class.
+        /// Register the CurrentPenWidth property so it is known in the class.
         /// </summary>
         public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
+
+
+
+
+
+        ///new stuff below this Line
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public RibbonButton CurrentWidthButton
+        {
+            get { return GetValue<RibbonButton>(CurrentWidthButtonProperty); }
+            set { SetValue(CurrentWidthButtonProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CurrentPenWidth property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentWidthButtonProperty = RegisterProperty("CurrentWidthButton", typeof(RibbonButton));
+        ///new stuff above this line
+
+
+
+
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1195,6 +1261,35 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Pen Commands
 
         /// <summary>
+        /// Gets the SetPenWidthCommand command.
+        /// </summary>
+        public Command<string> SetPenWidthCommand { get; private set; }
+
+
+        /// <summary>
+        /// Method to invoke when the SetPenWidthCommand command is executed.
+        /// </summary>
+        private void OnSetPenWidthCommandExecute(string radius)
+        {
+            int radiusInt = Int16.Parse(radius);
+            DrawingAttributes.Height = radiusInt;
+            DrawingAttributes.Width = radiusInt;
+            PenSize = radiusInt;
+        }
+
+        //***trying to get eraser radius to change
+        /// <summary>
+        /// Method to invoke when the SetPenWidthCommand command is executed.
+        /// </summary>
+        ///private void OnSetEraserCommandExecute(string radius)
+        //{
+        //    int radiusInt = Int16.Parse(radius);
+        //    DrawingAttributes.Height = radiusInt;
+        //    DrawingAttributes.Width = radiusInt;
+        //}
+
+
+        /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
         public Command<RibbonToggleButton> SetPenCommand { get; private set; }
@@ -1203,9 +1298,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
         private void OnSetPenCommandExecute(RibbonToggleButton button)
-        {   
-            DrawingAttributes.Height = PEN_RADIUS;
-            DrawingAttributes.Width = PEN_RADIUS;
+        {
 
             IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
             if (display is LinkedDisplayViewModel)
@@ -1224,57 +1317,58 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = PageInteractionMode.Pen;
         }
 
+
+
         /// <summary>
         /// Gets the SetMarkerCommand command.
         /// </summary>
-        public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
+        //public Command<RibbonToggleButton> SetMarkerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetMarkerCommand command is executed.
-        /// </summary>
-        private void OnSetMarkerCommandExecute(RibbonToggleButton button)
-        {
-            DrawingAttributes.Height = MARKER_RADIUS;
-            DrawingAttributes.Width = MARKER_RADIUS;
+        // <summary>
+        // Method to invoke when the SetMarkerCommand command is executed.
+        // </summary>
+        //private void OnSetMarkerCommandExecute(RibbonToggleButton button)
+        //{
+        //    DrawingAttributes.Height = MARKER_RADIUS;
+        //    DrawingAttributes.Width = MARKER_RADIUS;
 
-            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if (display is LinkedDisplayViewModel)
-            {
-                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
-            }
-            else if (display is GridDisplayViewModel)
-            {
-                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
-                {
-                    page.EditingMode = InkCanvasEditingMode.Ink;
-                }
-            }
+        //    IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
+        //    if (display is LinkedDisplayViewModel)
+        //    {
+        //        (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
+        //    }
+        //    else if (display is GridDisplayViewModel)
+        //    {
+        //        foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+        //        {
+        //            page.EditingMode = InkCanvasEditingMode.Ink;
+        //        }
+        //    }
 
             //EditingMode = InkCanvasEditingMode.Ink;
-            PageInteractionMode = PageInteractionMode.Marker;
-        }
+          //  PageInteractionMode = PageInteractionMode.Marker;
+        //}
 
+
+        //*****SetEraserCommand with RibbonButton instead of RibbonToggleButton
         /// <summary>
         /// Gets the SetEraserCommand command.
         /// </summary>
-        public Command<RibbonToggleButton> SetEraserCommand { get; private set; }
+        public Command<RibbonButton> SetEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetEraserCommand command is executed.
         /// </summary>
-        private void OnSetEraserCommandExecute(RibbonToggleButton button)
+        private void OnSetEraserCommandExecute(RibbonButton button)
         {
-            DrawingAttributes.Height = ERASER_RADIUS;
-            DrawingAttributes.Width = ERASER_RADIUS;
-
             IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if (display is LinkedDisplayViewModel)
+            if(display is LinkedDisplayViewModel)
             {
                 (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByPoint;
             }
-            else if (display is GridDisplayViewModel)
+            else if(display is GridDisplayViewModel)
             {
-                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                foreach(var page in (display as GridDisplayViewModel).DisplayedPages)
                 {
                     page.EditingMode = InkCanvasEditingMode.EraseByPoint;
                 }
@@ -1284,24 +1378,24 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = PageInteractionMode.Eraser;
         }
 
-                /// <summary>
+        /// <summary>
         /// Gets the SetStrokeEraserCommand command.
         /// </summary>
-        public Command<RibbonToggleButton> SetStrokeEraserCommand { get; private set; }
+        public Command<RibbonButton> SetStrokeEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetStrokeEraserCommand command is executed.
         /// </summary>
-        private void OnSetStrokeEraserCommandExecute(RibbonToggleButton button)
+        private void OnSetStrokeEraserCommandExecute(RibbonButton button)
         {
             IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if (display is LinkedDisplayViewModel)
+            if(display is LinkedDisplayViewModel)
             {
                 (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByStroke;
             }
-            else if (display is GridDisplayViewModel)
+            else if(display is GridDisplayViewModel)
             {
-                foreach (var page in (display as GridDisplayViewModel).DisplayedPages)
+                foreach(var page in (display as GridDisplayViewModel).DisplayedPages)
                 {
                     page.EditingMode = InkCanvasEditingMode.EraseByStroke;
                 }
@@ -1310,6 +1404,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //EditingMode = InkCanvasEditingMode.EraseByStroke;
             PageInteractionMode = PageInteractionMode.StrokeEraser;
         }
+
+        //*****end of SetEraserCommand with RibbonButton instead of RibbonToggleButton
 
         /// <summary>
         /// Gets the SetPenColorCommand command.

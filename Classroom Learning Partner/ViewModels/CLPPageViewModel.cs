@@ -200,6 +200,37 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
+        public double PageHeight
+        {
+            get { return GetValue<double>(PageHeightProperty); }
+            set { SetValue(PageHeightProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageHeight property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public double PageWidth
+        {
+            get { return GetValue<double>(PageWidthProperty); }
+            set { SetValue(PageWidthProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageWidth property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double));
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
         public string SubmitterName
         {
             get { return GetValue<string>(SubmitterNameProperty); }
@@ -328,6 +359,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PlaybackImage property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PlaybackImageProperty = RegisterProperty("PlaybackImage", typeof(Uri));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public StylusShape EraserShape
+        {
+            get { return GetValue<StylusShape>(EraserShapeProperty); }
+            set { SetValue(EraserShapeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the EraserShape property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData EraserShapeProperty = RegisterProperty("EraserShape", typeof(StylusShape), new RectangleStylusShape(5,5));
 
         #endregion //Bindings
 
@@ -496,6 +541,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     PlaybackControlsVisibility = Visibility.Collapsed;
+                }
+            }
+
+            if(propertyName == "PenSize")
+            {
+                if(viewModel is MainWindowViewModel)
+                {
+                    double x = (viewModel as MainWindowViewModel).PenSize;
+                    EraserShape = new RectangleStylusShape(x, x);
                 }
             }
 

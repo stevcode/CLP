@@ -151,32 +151,79 @@
                     
                 </ribbon:RibbonGroup>
                 
-                <ribbon:RibbonGroup Header="Pen Type">
-
+                <ribbon:RibbonGroup Header="Pen">
+                    <ribbon:RibbonGroup.Resources>
+                        <Style x:Name="PenWidthStyle" TargetType="{x:Type ribbon:RibbonButton}">
+                            <Setter Property="Width" Value="25"/>
+                            <Setter Property="Height" Value="5"/>
+                            <Setter Property="Command">
+                                <Setter.Value>
+                                    <Binding Path="SetPenWidthCommand"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="CommandParameter">
+                                <Setter.Value>
+                                    <Binding RelativeSource="{RelativeSource Self}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="BorderBrush" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ribbon:RibbonGroup.Resources>
                     <ribbon:RibbonToggleButton
                         Label="Pen"
                         LargeImageSource="..\Images\Pen.png"
                         Command="{Binding Path=SetPenCommand}"
                         IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Pen'}" />
                     
-                    <ribbon:RibbonToggleButton
-                        Label="Marker"
-                        LargeImageSource="..\Images\Marker.png"
-                        Command="{Binding Path=SetMarkerCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Marker'}"/>
-                    
-                    <ribbon:RibbonToggleButton
+                    <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
+                    <!--Header="Pen Thickness"-->
+
+                    <ribbon:RibbonMenuButton Label="Size"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Width="70">
+
+                        <ribbon:RibbonButton Height ="1" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="1"/>
+                        <ribbon:RibbonButton Height ="3" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="3"/>
+                        <ribbon:RibbonButton Height ="5" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="5"/>
+                        <ribbon:RibbonButton Height ="7" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="7"/>
+                        <ribbon:RibbonButton Height ="9" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="9"/>
+                    </ribbon:RibbonMenuButton>
+
+                </ribbon:RibbonGroup>
+
+                
+                <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
+                    <ribbon:RibbonGroup Header="Eraser">
+                        <ribbon:RibbonGroup.Resources>
+                            <Style x:Name="EraserButtonStyle" TargetType="{x:Type ribbon:RibbonButton}">
+                                <Setter Property="Command">
+                                    <Setter.Value>
+                                        <Binding Path="SetEraserCommand"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="CommandParameter">
+                                    <Setter.Value>
+                                    <Binding Path="SetStrokeEraserCommand"/>
+                                </Setter.Value>
+                                </Setter>
+                                <Setter Property="Margin" Value="1"/>
+                                <Setter Property="BorderBrush" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </ribbon:RibbonGroup.Resources>
+
+                        <!--Making RibbonSplitButton for Eraser and StrokeEraser-->
+                        <ribbon:RibbonSplitButton
                         Label="Eraser"
                         LargeImageSource="..\Images\Eraser.png"
-                        Command="{Binding Path=SetEraserCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Eraser'}"/>
-                    
-                    <ribbon:RibbonToggleButton
-                        Label="Stroke Eraser"
-                        LargeImageSource="..\Images\StrokeEraser.png"
-                        Command="{Binding Path=SetStrokeEraserCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='StrokeEraser'}"/>
-                    
+                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser.jpg" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
+                            <ribbon:RibbonButton LargeImageSource="..\Images\StrokeEraser2.jpg" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
+                        </ribbon:RibbonSplitButton>
+                    </ribbon:RibbonGroup>
+
+                    <ribbon:RibbonGroup>
                     <ribbon:RibbonToggleButton
                         Label="SnapTile"
                         LargeImageSource="..\Images\SnapTileIcon.png"
@@ -619,7 +666,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
+                    <vww:LeftHandedNotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
