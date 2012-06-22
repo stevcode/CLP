@@ -78,6 +78,7 @@ namespace Classroom_Learning_Partner.Model
                 //Users Notebooks to user machine
                 //Currently username is the machine name -> CHANGE when using actual names
                 CLPServiceAgent.Instance.RetrieveNotebooks(userName);
+                
             }
 
         }

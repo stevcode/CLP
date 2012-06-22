@@ -14,7 +14,7 @@
         <catel:IntToStringConverter x:Key="IntToString" />
         <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
         <conv:LastItemInCollectionConverter x:Key="LastItem" />
-
+                
         <!-- GridDisplay with the Trigger for Selected -->
         <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -51,6 +51,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
+                            <!--Where slides are located-->
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
                                     Background="White"
@@ -61,15 +62,19 @@
                                 <ContentPresenter />
                             </Border>
 
+                            
+                            <!--Where buttons that reveal submissions are located, trying to add DockPanel Here-->
                             <Grid Margin="0,0,8,0"  Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
+                              
                                 <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
                                     <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
                                 </ToggleButton>
                                 <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+
                             </Grid>
                             
                         </Grid>
@@ -84,12 +89,15 @@
             </Setter>
         </Style>
 
+        
+        <!--SubmissionsSidebar is here-->
+        
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid>
+                        <Grid DockPanel.Dock="Left">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -144,7 +152,8 @@
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
 
-            </Grid>
+            </Grid>                
+                
         </ControlTemplate>
 
     </UserControl.Resources>
@@ -152,6 +161,7 @@
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
@@ -161,12 +171,12 @@
         <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
             <Grid Name="SideBarGrid">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" MinWidth="150"/>
+                    <ColumnDefinition Width="*" MinWidth="150"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="270" Width="270" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                          SelectionMode="Single">
@@ -184,42 +194,71 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Border Grid.Column="1" Background="Lavender" BorderThickness="0">
-                    <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="220" Width="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                <Border x:Name="SubmissionBorder" Grid.Column="1" Background="Lavender" BorderThickness="0" MinWidth="150">
+
+                    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
+                        
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Label Grid.Column="0">Sort By:</Label>
+                                <ComboBox Grid.Column="1">Time</ComboBox>
+                            </Grid>
+
+                            <Slider Grid.Row="1" Margin="10"></Slider>
+
+                        </Grid>
+
+
+                        <ListBox x:Name="SubmissionListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
                          ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
-                         Visibility="Collapsed"
                          SelectionMode="Single">
-                        <ListBox.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.ContainerStyle>
-                                    <Style TargetType="{x:Type GroupItem}">
-                                        <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
-                                    </Style>
-                                </GroupStyle.ContainerStyle>
-                            </GroupStyle>
-                        </ListBox.GroupStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
-                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                    <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            <ListBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListBox.GroupStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDown">
+                                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    
+                    </DockPanel>
+                
                 </Border>
             </Grid>
         </Border>
 
+        <GridSplitter Grid.Column ="1" Background="Black" Width="5"
+                HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="1">
+        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="2">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
@@ -254,7 +293,7 @@
         <!-- SideBar that displays projected displays -->
         <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
-              Grid.Column="2" HorizontalAlignment="Right" Margin="0">
+              Grid.Column="3" HorizontalAlignment="Right" Margin="0">
             <ListBox VirtualizingStackPanel.VirtualizationMode="Recycling"
                 x:Name="GridDisplaysListBox"
                 MinWidth="150" Width="150" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
