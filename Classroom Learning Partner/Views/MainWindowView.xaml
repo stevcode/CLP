@@ -180,7 +180,7 @@
                     <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
                     <!--Header="Pen Thickness"-->
                     <ribbon:RibbonMenuButton Label="Size" 
-                         LargeImageSource="..\Images\LargeIcon.png" >
+                         LargeImageSource="..\Images\PenSize.png" >
                         <ribbon:RibbonGallery SelectedValuePath="StrokeThickness" SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                             <ribbon:RibbonGalleryCategory>
