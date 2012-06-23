@@ -550,6 +550,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     double x = (viewModel as MainWindowViewModel).PenSize;
                     EraserShape = new RectangleStylusShape(x, x);
+                    DefaultDA.Height = x;
+                    DefaultDA.Width = x;
                 }
             }
 

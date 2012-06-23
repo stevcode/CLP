@@ -179,8 +179,31 @@
                     
                     <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
                     <!--Header="Pen Thickness"-->
+                    <ribbon:RibbonMenuButton Label="Size" 
+                         LargeImageSource="..\Images\LargeIcon.png" >
+                        <ribbon:RibbonGallery SelectedValuePath="StrokeThickness" SelectedValue="{Binding PenSize, Mode=TwoWay}"
+                                              ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                            <ribbon:RibbonGalleryCategory>
+                                <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="1" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                                <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="3" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                                <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="5" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                                <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="7" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                                <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="12" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                            </ribbon:RibbonGalleryCategory>
+                        </ribbon:RibbonGallery>
+                    </ribbon:RibbonMenuButton>
 
-                    <ribbon:RibbonMenuButton Label="Size"
+                    <!--<ribbon:RibbonMenuButton Label="Size"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Width="70">
 
@@ -189,7 +212,7 @@
                         <ribbon:RibbonButton Height ="5" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="5"/>
                         <ribbon:RibbonButton Height ="7" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="7"/>
                         <ribbon:RibbonButton Height ="9" Width="70" Margin ="1.5" Background="Black" Command="{Binding SetPenWidthCommand}" CommandParameter="9"/>
-                    </ribbon:RibbonMenuButton>
+                    </ribbon:RibbonMenuButton>-->
 
                 </ribbon:RibbonGroup>
 
