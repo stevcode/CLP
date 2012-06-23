@@ -16,6 +16,89 @@ using System.Threading;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
+    public class RichTextBoxHelper : DependencyObject
+    {
+        private static HashSet<Thread> _recursionProtection = new HashSet<Thread>();
+
+        //public RichTextBoxHelper(RichTextBox rtb)
+        //{
+        //}
+
+        public static string GetDocument(DependencyObject obj)
+        {
+            return (string)obj.GetValue(DocumentProperty);
+        }
+
+        public static void SetDocument(DependencyObject obj, string value)
+        {
+            _recursionProtection.Add(Thread.CurrentThread);
+            obj.SetValue(DocumentProperty, value);
+            _recursionProtection.Remove(Thread.CurrentThread);
+        }
+
+        public static readonly DependencyProperty DocumentProperty = DependencyProperty.RegisterAttached(
+            "Document",
+            typeof(string),
+            typeof(RichTextBoxHelper),
+            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                (obj, e) =>
+                {
+                    if(_recursionProtection.Contains(Thread.CurrentThread))
+                        return;
+
+                    var richTextBox = (RichTextBox)obj;
+
+                    // Parse the XAML to a document (or use XamlReader.Parse())
+
+                    try
+                    {
+                        var rtfText = RichTextBoxHelper.GetDocument(richTextBox);
+                        var doc = new FlowDocument();
+
+                        var bytes = Encoding.UTF8.GetBytes(rtfText);
+                        var stream = new MemoryStream(bytes);
+
+                        var range = new TextRange(doc.ContentStart, doc.ContentEnd);
+                        range.Load(stream, DataFormats.Rtf);
+
+                        // Set the document
+                        richTextBox.Document = doc;
+                    }
+                    catch(Exception)
+                    {
+                        Console.WriteLine("document failed");
+                    }
+                    Console.WriteLine("after exception");
+                    //try
+                    //{
+                    //    var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDocumentXaml(richTextBox)));
+                    //    var doc = (FlowDocument)XamlReader.Load(stream);
+
+                    //    // Set the document
+                    //    richTextBox.Document = doc;
+                    //}
+                    //catch(Exception)
+                    //{
+                    //    richTextBox.Document = new FlowDocument();
+                    //}
+
+                    // When the document changes update the source
+                    richTextBox.TextChanged += (obj2, e2) =>
+                    {
+                        RichTextBox richTextBox2 = obj2 as RichTextBox;
+                        if(richTextBox2 != null)
+                        {
+                            TextRange text = new TextRange(richTextBox2.Document.ContentStart, richTextBox2.Document.ContentEnd);
+                            MemoryStream stream = new MemoryStream();
+                            text.Save(stream, DataFormats.Rtf);
+
+                            SetDocument(richTextBox, Encoding.UTF8.GetString(stream.ToArray()));
+                        }
+                    };
+                })
+        );
+    }
+
     /// <summary>
     /// Interaction logic for CLPTextBoxView.xaml
     /// </summary>
@@ -34,73 +117,21 @@ namespace Classroom_Learning_Partner.Views.PageObjects
             TextBox.FontFamily = App.MainWindowViewModel.CurrentFontFamily;
         }
 
-        protected override void OnLoaded(EventArgs e)
-        {
-            try
-            {
-                var rtfText = GetDocument(TextBox);
-                var doc = new FlowDocument();
-
-                var bytes = Encoding.UTF8.GetBytes(rtfText);
-                var stream = new MemoryStream(bytes);
-
-                var range = new TextRange(doc.ContentStart, doc.ContentEnd);
-                range.Load(stream, DataFormats.Rtf);
-
-                // Set the document
-                TextBox.Document = doc;
-            }
-            catch (Exception)
-            {
-                TextBox.Document = new FlowDocument();
-            }
-
-            // When the document changes update the source
-            TextBox.TextChanged += TextBox_TextChanged;
-
-            base.OnLoaded(e);
-        }
-
         void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_recursionProtection.Contains(Thread.CurrentThread))
-                return;
+            //if(RichTextBoxHelper._recursionProtection.Contains(Thread.CurrentThread))
+            //    return;
 
-            TextRange text = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
-            MemoryStream stream = new MemoryStream();
-            text.Save(stream, DataFormats.Rtf);
-            SetDocument(TextBox, Encoding.UTF8.GetString(stream.ToArray()));
+            //TextRange text = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
+            //MemoryStream stream = new MemoryStream();
+            //text.Save(stream, DataFormats.Rtf);
+            //RichTextBoxHelper.SetDocument(TextBox, Encoding.UTF8.GetString(stream.ToArray()));
         }
 
         protected override System.Type GetViewModelType()
         {
             return typeof(CLPTextBoxViewModel);
         }
-
-        #region Document Dependency Property
-
-        private static HashSet<Thread> _recursionProtection = new HashSet<Thread>();
-
-        public static string GetDocument(DependencyObject obj)
-        {
-            return (string)obj.GetValue(DocumentProperty);
-        }
-
-        public static void SetDocument(DependencyObject obj, string value)
-        {
-            _recursionProtection.Add(Thread.CurrentThread);
-            obj.SetValue(DocumentProperty, value);
-            _recursionProtection.Remove(Thread.CurrentThread);
-        }
-
-        public static readonly DependencyProperty DocumentProperty = DependencyProperty.RegisterAttached(
-            "Document",
-            typeof(string),
-            typeof(CLPTextBoxView),
-            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
-        );
-
-        #endregion //Document Dependency Property
 
         #region Font Style Methods
 

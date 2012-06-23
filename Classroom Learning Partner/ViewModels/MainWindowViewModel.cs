@@ -1116,17 +1116,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 FixedDocument docSubmissions = new FixedDocument();
                 docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
+                int pageCount = 0;
 
                 foreach (var pageID in notebook.Submissions.Keys)
                 {
                     foreach (CLPPage page in notebook.Submissions[pageID])
                     {
+                        pageCount++;
+
                         PageContent pageContent = new PageContent();
                         FixedPage fixedPage = new FixedPage();
 
                         CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                        CLPPageViewModel pageVM = new CLPPageViewModel(page);
-                        currentPage.DataContext = pageVM;
+                        currentPage.DataContext = page;
                         currentPage.UpdateLayout();
 
                         Grid grid = new Grid();
@@ -1137,7 +1139,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         label.FontStyle = FontStyles.Oblique;
                         label.HorizontalAlignment = HorizontalAlignment.Left;
                         label.VerticalAlignment = VerticalAlignment.Top;
-                        label.Content = pageVM.SubmitterName;
+                        label.Content = page.SubmitterName;
                         grid.Children.Add(label);
 
                         //Create first page of document
@@ -1155,25 +1157,28 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 //Save the submissions
-                string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
-                string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
-                if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                if(pageCount > 0)
                 {
-                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-                }
-                if (File.Exists(pathSubs))
-                {
-                    File.Delete(pathSubs);
-                }
+                    string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
+                    string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
+                    if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
+                    {
+                        Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
+                    }
+                    if(File.Exists(pathSubs))
+                    {
+                        File.Delete(pathSubs);
+                    }
 
 
-                XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
-                XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
-                if (docSubmissions.Pages.Count > 0)
-                {
-                    xwSubs.Write(docSubmissions);
+                    XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
+                    XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
+                    if(docSubmissions.Pages.Count > 0)
+                    {
+                        xwSubs.Write(docSubmissions);
+                    }
+                    xpsdSubs.Close(); 
                 }
-                xpsdSubs.Close();
             }
 
 
@@ -1186,9 +1191,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 FixedPage fixedPage = new FixedPage();
 
                 CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                //CLPPageViewModel pageVM = new CLPPageViewModel(page);
                 currentPage.DataContext = page;
-                //currentPage.UpdateLayout();
+                currentPage.UpdateLayout();
 
                 //Create first page of document
                 RotateTransform rotate = new RotateTransform(90.0);
@@ -1199,6 +1203,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 currentPage.RenderTransform = transform;
 
                 fixedPage.Children.Add(currentPage);
+                
                 ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
                 doc.Pages.Add(pageContent);
             }
