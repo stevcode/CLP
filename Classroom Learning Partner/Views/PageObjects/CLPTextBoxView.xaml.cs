@@ -53,6 +53,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                     try
                     {
                         var rtfText = RichTextBoxHelper.GetDocument(richTextBox);
+                        Console.WriteLine(rtfText);
                         var doc = new FlowDocument();
 
                         var bytes = Encoding.UTF8.GetBytes(rtfText);
@@ -64,23 +65,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                         // Set the document
                         richTextBox.Document = doc;
                     }
-                    catch(Exception)
+                    catch(Exception ex)
                     {
                         Console.WriteLine("document failed");
                     }
                     Console.WriteLine("after exception");
-                    //try
-                    //{
-                    //    var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDocumentXaml(richTextBox)));
-                    //    var doc = (FlowDocument)XamlReader.Load(stream);
-
-                    //    // Set the document
-                    //    richTextBox.Document = doc;
-                    //}
-                    //catch(Exception)
-                    //{
-                    //    richTextBox.Document = new FlowDocument();
-                    //}
 
                     // When the document changes update the source
                     richTextBox.TextChanged += (obj2, e2) =>
