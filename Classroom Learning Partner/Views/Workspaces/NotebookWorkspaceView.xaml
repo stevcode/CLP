@@ -21,6 +21,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
 
+                        <!--Border that will appear on GridDisplay when Show Grid Display option is selected-->
                         <Border BorderBrush="White"
                             Background="{Binding IsOnProjector, Converter={StaticResource BackgroundConverter}}"
                             CornerRadius="8"
@@ -47,11 +48,13 @@
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Grid x:Name="itemGrid">
                             <Grid.ColumnDefinitions>
+                                <!--Width of column that shows blank notebook pages (far left)-->
                                 <ColumnDefinition Width="*"/>
+                                <!--Width of Show Submissions Button Column (Button with person on it)-->
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!--Where slides are located-->
+                            <!--Blank Notebook pages (far left)-->
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
                                     Background="White"
@@ -61,9 +64,8 @@
                                     Margin="8,4,4,4">
                                 <ContentPresenter />
                             </Border>
-
-                            
-                            <!--Where buttons that reveal submissions are located, trying to add DockPanel Here-->
+                         
+                            <!--Where buttons that reveal submissions are located-->
                             <Grid Margin="0,0,8,0"  Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -99,18 +101,24 @@
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Grid DockPanel.Dock="Left">
                             <Grid.ColumnDefinitions>
+                                <!--Width of column that holds Student Submissions-->
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <!--Width of column that will hold scrollbar? no, unnecessary column-->
+                                <!--<ColumnDefinition Width="Auto"/>-->
                             </Grid.ColumnDefinitions>
 
+                            <!--Display of Student Submissions-->
+                            <!--#Must bind this to width of listBoxItem, not width of entire column-->
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
                                     Background="White"
                                     CornerRadius="8"
                                     BorderThickness="3"
                                     x:Name="IconBorder"
+                                    
+                                    Width="{Binding ElementName=content, Path=Width}"
                                     Margin="8,4,8,4">
-                                <ContentPresenter />
+                                <ContentPresenter x:Name="content"/>
                             </Border>
 
                         </Grid>
@@ -196,6 +204,7 @@
 
                 <Border x:Name="SubmissionBorder" Grid.Column="1" Background="Lavender" BorderThickness="0" MinWidth="150">
 
+                    <!--Width fo SubmissionsSideBar bound to width of SubmissionBorder-->
                     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
                         
                         <Grid DockPanel.Dock="Top">
@@ -214,13 +223,14 @@
                                 <ComboBox Grid.Column="1">Time</ComboBox>
                             </Grid>
 
-                            <Slider Grid.Row="1" Margin="10"></Slider>
+                            <!--Maximum="{Binding ElementName=Slider, Path=ActualWidth}"-->
+                            <Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}"></Slider>
 
                         </Grid>
 
-
+                        <!--ListBox Width must be bound to slider value-->
                         <ListBox x:Name="SubmissionListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MinWidth="150" Width="{Binding ElementName=Slider, Path=Value, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
                          ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
@@ -236,13 +246,14 @@
                             </ListBox.GroupStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border>
+                                    <!--ListBox Border Width must be "Auto" otherwise it cuts off part of ListBox-->
+                                    <Border Width="Auto">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                        <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                        <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/>
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
