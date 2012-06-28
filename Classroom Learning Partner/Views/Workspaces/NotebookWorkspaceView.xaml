@@ -93,7 +93,7 @@
 
         
         <!--SubmissionsSidebar is here-->
-        
+        <!--$$$-->
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -163,6 +163,7 @@
             </Grid>                
                 
         </ControlTemplate>
+        
 
     </UserControl.Resources>
 
@@ -183,13 +184,19 @@
                     <ColumnDefinition Width="*" MinWidth="150"/>
                 </Grid.ColumnDefinitions>
 
-                <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                
+                <!--<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                    <WrapPanel>-->
+                <!--$Original ScrollViewer.HorizontalScrollBarVisibility="Disabled"-->
+                <!--$Original VirtualizingStackPanel.VirtualizationMode="Recycling" what effect does the virtualizingStackPanel Have?, can we change this to a WrapPanel?-->
+                <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}" 
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                          SelectionMode="Single">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
+                            <!--<WrapPanel>-->
                             <Border>
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
@@ -198,13 +205,16 @@
                                 </i:Interaction.Triggers>
                                 <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                             </Border>
+                            <!--</WrapPanel>-->
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                  <!--  </WrapPanel>
+                </ScrollViewer>-->
 
                 <Border x:Name="SubmissionBorder" Grid.Column="1" Background="Lavender" BorderThickness="0" MinWidth="150">
 
-                    <!--Width fo SubmissionsSideBar bound to width of SubmissionBorder-->
+                    <!--Width of SubmissionsSideBar bound to width of SubmissionBorder-->
                     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
                         
                         <Grid DockPanel.Dock="Top">
@@ -223,28 +233,38 @@
                                 <ComboBox Grid.Column="1">Time</ComboBox>
                             </Grid>
 
-                            <!--Maximum="{Binding ElementName=Slider, Path=ActualWidth}"-->
                             <Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}"></Slider>
 
                         </Grid>
 
-                        <!--ListBox Width must be bound to slider value-->
-                        <ListBox x:Name="SubmissionListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                        <!--ListBox Width must be bound to slider value, ListBoxes contained in Wrap Panel-->
+                        <!--VirtualizingStackPanel.VirtualizationMode="Recycling"-->
+                        <ListBox x:Name="SubmissionListBox"
                          MinWidth="150" Width="{Binding ElementName=Slider, Path=Value, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
                          ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          SelectionMode="Single">
+
                             <ListBox.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.ContainerStyle>
-                                        <Style TargetType="{x:Type GroupItem}">
+                                        <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                                             <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
                                         </Style>
                                     </GroupStyle.ContainerStyle>
                                 </GroupStyle>
                             </ListBox.GroupStyle>
+                            <!--</ListBox.ItemTemplate>-->
+
+                            <!--$$$new line-->
+                            <!--<Style x:Name="ListBoxStyle" TargetType="ListBox">
+                                <Setter Property="ItemsPanel" Value="WrapPanel" />
+                            </Style>-->
+
+
                             <ListBox.ItemTemplate>
+
                                 <DataTemplate>
                                     <!--ListBox Border Width must be "Auto" otherwise it cuts off part of ListBox-->
                                     <Border Width="Auto">
@@ -255,10 +275,22 @@
                                         </i:Interaction.Triggers>
                                         <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/>
                                     </Border>
+                                    <!--</WrapPanel>-->
                                 </DataTemplate>
+
                             </ListBox.ItemTemplate>
+
+                            <!--$$$ItemsPanel Why doesn't this work-->
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+
                         </ListBox>
-                    
+
+
+                        <!--</WrapPanel>-->
                     </DockPanel>
                 
                 </Border>
@@ -326,11 +358,15 @@
                                 ItemsSource="{Binding Path=DisplayedPages}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
+                                        <!--<WrapPanel Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}" Height="Auto"/>-->
+                                        <!--$changed this to wrappanel-->
                                         <UniformGrid />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
+                                        <!--$Trying to add WrapPanels-->                                        
+                                        <!--Grid Display (far right)-->
                                         <vw:CLPPagePreviewView Margin="2" Background="White" DataContext="{Binding}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
