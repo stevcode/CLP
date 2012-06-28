@@ -13,13 +13,13 @@
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
     </UserControl.Resources>
 
-    <RichTextBox x:Name="TextBox" Background="Transparent"
+    <vwo:BindableRTB x:Name="TextBox" Background="Transparent"
         ScrollViewer.VerticalScrollBarVisibility="Disabled"
-        vwo:RichTextBoxHelper.Document="{Binding Text}"
+        RTFDocument="{Binding Text}"
         TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" Padding="10"
         BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}">
 
-    </RichTextBox>
+    </vwo:BindableRTB>
 
 </catel:UserControl>

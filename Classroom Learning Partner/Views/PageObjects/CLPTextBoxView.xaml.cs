@@ -16,6 +16,76 @@ using System.Threading;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
+    public class BindableRTB : RichTextBox
+    {
+        private HashSet<Thread> _recursionProtection = new HashSet<Thread>();
+
+        public BindableRTB()
+        {
+            try
+            {
+
+
+                var rtfText = RTFDocument;
+                var doc = new FlowDocument();
+
+                if(rtfText == "")
+                {
+                    //create rtf version of ""
+                    RichTextBox richTextBox = new RichTextBox();
+                    richTextBox.Text = "Européen";
+                    string rtfFormattedString = richTextBox.Rtf;
+                }
+
+                var bytes = Encoding.UTF8.GetBytes(rtfText);
+                var stream = new MemoryStream(bytes);
+
+                var range = new TextRange(doc.ContentStart, doc.ContentEnd);
+                range.Load(stream, DataFormats.Rtf);
+
+                // Set the document
+                this.Document = doc;
+            }
+            catch(Exception ex)
+            {
+                this.Document = new FlowDocument();
+                Console.WriteLine("document failed");
+            }
+
+        }
+
+        //public string GetRTFDocument(DependencyObject obj)
+        //{
+        //    return (string)obj.GetValue(RTFDocumentProperty);
+        //}
+
+        //public void SetRTFDocument(DependencyObject obj, string value)
+        //{
+        //    _recursionProtection.Add(Thread.CurrentThread);
+        //    obj.SetValue(RTFDocumentProperty, value);
+        //    _recursionProtection.Remove(Thread.CurrentThread);
+        //}
+
+        public string RTFDocument
+        {
+            get { return (string)GetValue(RTFDocumentProperty); }
+            set
+            {
+                _recursionProtection.Add(Thread.CurrentThread);
+                SetValue(RTFDocumentProperty, value);
+                _recursionProtection.Remove(Thread.CurrentThread);
+            }
+        }
+
+        public static readonly DependencyProperty RTFDocumentProperty = DependencyProperty.RegisterAttached(
+            "RTFDocument",
+            typeof(string),
+            typeof(BindableRTB),
+            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+        );
+
+    }
+
     public class RichTextBoxHelper : DependencyObject
     {
         private static HashSet<Thread> _recursionProtection = new HashSet<Thread>();
