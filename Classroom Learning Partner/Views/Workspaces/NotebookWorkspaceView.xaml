@@ -217,7 +217,7 @@
                     <!--Width of SubmissionsSideBar bound to width of SubmissionBorder-->
                     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
                         
-                        <Grid DockPanel.Dock="Top">
+                            <Grid DockPanel.Dock="Top">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -230,7 +230,26 @@
                                 </Grid.ColumnDefinitions>
                                 
                                 <Label Grid.Column="0">Sort By:</Label>
-                                <ComboBox Grid.Column="1">Time</ComboBox>
+                                <!--Populating ComboBox with sorting options and then making those options functional-->
+                                <ComboBox Grid.Column="1">
+                                    <ComboBoxItem Name="Time">Time
+                                        
+                                    </ComboBoxItem>
+                                    
+                                    <ComboBoxItem Name="Alphabetical">Alphabetical
+                                        ItemsSource="{Binding Path=FirstSortCategories}"
+                                        ItemTemplate="{StaticResource CategoryTemplate}"
+                                        SelectedItem="{Binding Path=FirstSortingCondition, Mode=TwoWay}">
+                                    </ComboBoxItem>
+                                    
+                                    <ComboBoxItem Name="ReverseAlphabetical">ReverseAlphabetical
+
+                                    </ComboBoxItem>
+
+                                    <!--ItemsSource="{Binding Path=FirstSortCategories}"
+                                    ItemTemplate="{StaticResource CategoryTemplate}"
+                                    SelectedItem="{Binding Path=FirstSortingCondition, Mode=TwoWay}">-->
+                                </ComboBox>
                             </Grid>
 
                             <Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}"></Slider>
@@ -280,15 +299,26 @@
 
                             </ListBox.ItemTemplate>
 
-                            <!--$$$ItemsPanel Why doesn't this work-->
+                            <!--ItemsPanel, Binding causes strange behavior-->
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel/>
+                                    <WrapPanel Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth, Mode=OneWay}"/>
+                                    <!--<WrapPanel x:Name="WrapPanel" Width="{Binding ElementName=WrapPanel,Path=ActualWidth, Mode=OneWay}"/>-->
+                                    <!--<WrapPanel Width="Auto"/>-->
+                                    <!--<WrapPanel />-->
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
 
-                        </ListBox>
 
+                            <!--<ListBox.ItemsPanel >
+                                <ItemsPanelTemplate >
+                                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" IsItemsHost="False"
+                                     ItemHeight="{Binding ElementName=Slider, Path='Value'}" 
+                                     ItemWidth="{Binding ElementName=Slider, Path='Value'}" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>-->
+
+                        </ListBox>
 
                         <!--</WrapPanel>-->
                     </DockPanel>

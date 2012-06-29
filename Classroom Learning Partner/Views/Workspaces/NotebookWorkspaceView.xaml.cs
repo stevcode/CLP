@@ -36,19 +36,19 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         private void ToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             ToggleButton button = sender as ToggleButton;
-            if (currentToggledButton != null && currentToggledButton != button)
+            if(currentToggledButton != null && currentToggledButton != button)
             {
                 currentToggledButton.IsChecked = false;
                 ((currentToggledButton.Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
             currentToggledButton = button;
-            if ((bool)currentToggledButton.IsChecked)
+            if((bool)currentToggledButton.IsChecked)
             {
                 SubmissionsSideBar.Visibility = Visibility.Visible;
                 CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[0] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
-                if (viewModel.Notebook.Submissions.ContainsKey(pageID))
+                if(viewModel.Notebook.Submissions.ContainsKey(pageID))
                 {
                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
                 }
@@ -67,11 +67,11 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
             var vsp = GetVisualChild<VirtualizingStackPanel>(itemsPresenter);
 
-            foreach (ListBoxItem item in vsp.Children)
+            foreach(ListBoxItem item in vsp.Children)
             {
-                if (item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[vsp.Children.Count - 1])
                 {
-                    if ((bool)(sender as ToggleButton).IsChecked)
+                    if((bool)(sender as ToggleButton).IsChecked)
                     {
                         //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
                         //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
@@ -94,15 +94,15 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             T child = default(T);
 
             int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < numVisuals; i++)
+            for(int i = 0; i < numVisuals; i++)
             {
                 Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
                 child = v as T;
-                if (child == null)
+                if(child == null)
                 {
                     child = GetVisualChild<T>(v);
                 }
-                if (child != null)
+                if(child != null)
                 {
                     break;
                 }
@@ -113,16 +113,89 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         private void allItems_Loaded(object sender, RoutedEventArgs e)
         {
             var itemsPresenter = sender as ItemsPresenter;
-            var vsp = GetVisualChild<VirtualizingStackPanel>(itemsPresenter);
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
 
-            foreach (ListBoxItem item in vsp.Children)
+            foreach(UIElement item in vsp.Children)
             {
                 //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
-                if (item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[vsp.Children.Count - 1])
                 {
                     item.Visibility = Visibility.Collapsed;
                 }
             }
         }
+
+
+
+
+
+
+        //#region Sorting (Bindings)
+
+        //private List<Category> _alphabeticalSortCategories;
+        //public List<Category> AlphabeticalSortCategories
+        //{
+        //    get
+        //    {
+        //        if(_alphabeticalSortCategories == null)
+        //        {
+        //            _alphabeticalSortCategories = new List<Category>();
+        //        }
+        //        return _alphabeticalSortCategories;
+        //    }
+        //    set
+        //    {
+        //        _alphabeticalSortCategories = value;
+        //        base.OnPropertyChanged("AlphabeticalSortCategories");
+        //    }
+        //}
+
+        //private Category _alphabeticalSortingCondition;
+        //public Category AlphabeticalSortingCondition
+        //{
+        //    get
+        //    {
+        //        if(_alphabeticalSortingCondition == null)
+        //        {
+        //            _alphabeticalSortingCondition = new Category("Time in", new List<CategoryValue>(), false);
+        //        }
+        //        return _alphabeticalSortingCondition;
+        //    }
+        //    set
+        //    {
+        //        _alphabeticalSortingCondition = value;
+        //        AlphabeticalSortingConditionChanged();
+        //        base.OnPropertyChanged("AlphabeticalSortingCondition");
+        //    }
+        //}
+        //#endregion
+
+        //#region Sorting (Methods)
+
+        //void AlphabeticalSortingConditionChanged()
+        //{
+        //    if(AphabeticalSortingCondition.Name == "Alphabetical Order")
+        //    {
+        //        SubmissionsGroup.RemoveSubGroups();
+        //    }
+        //    else { UpdateGroupsWithNewFirstCondition(AlphabeticalSortingCondition); }
+
+        //    //if(!(SecondSortingCondition.Name == "")) SecondSortingConditionChanged();
+        //}
+        //#endregion //Sorting (Methods)
+
+        //#region Groups (Methods)
+
+        //void UpdateGroupsWithNewFirstCondition(Category condition)
+        //{
+        //    List<string> categoryValues = new List<string>();
+        //    foreach(CategoryValue value in condition.Values)
+        //    {
+        //        categoryValues.Add(value.Text);
+        //    }
+        //    categoryValues.Sort();
+        //    SubmissionsGroup.CreateNewSubGroups(condition.Name, categoryValues);
+        //}
+        //#endregion
     }
 }
