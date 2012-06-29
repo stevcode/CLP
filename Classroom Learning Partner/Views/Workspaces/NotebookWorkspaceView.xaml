@@ -258,8 +258,9 @@
 
                         <!--ListBox Width must be bound to slider value, ListBoxes contained in Wrap Panel-->
                         <!--VirtualizingStackPanel.VirtualizationMode="Recycling"-->
+                        <!--ORIGINAL: Width="{Binding ElementName=Slider, Path=Value, Mode=TwoWay}"-->
                         <ListBox x:Name="SubmissionListBox"
-                         MinWidth="150" Width="{Binding ElementName=Slider, Path=Value, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
                          ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
@@ -272,9 +273,27 @@
                                             <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
                                         </Style>
                                     </GroupStyle.ContainerStyle>
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" 
+                                             HorizontalAlignment="Stretch" 
+                                             VerticalAlignment="Stretch" 
+                                             Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}"/>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
                                 </GroupStyle>
                             </ListBox.GroupStyle>
                             <!--</ListBox.ItemTemplate>-->
+
+                            <!--<ListBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel></WrapPanel>
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
+                            </ListBox.GroupStyle>-->
 
                             <!--$$$new line-->
                             <!--<Style x:Name="ListBoxStyle" TargetType="ListBox">
@@ -286,7 +305,8 @@
 
                                 <DataTemplate>
                                     <!--ListBox Border Width must be "Auto" otherwise it cuts off part of ListBox-->
-                                    <Border Width="Auto">
+                                    <!--<Border Width="Auto">-->
+                                    <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
@@ -299,15 +319,20 @@
 
                             </ListBox.ItemTemplate>
 
+                            
+                            <!--commenting this out for now-->
                             <!--ItemsPanel, Binding causes strange behavior-->
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth, Mode=OneWay}"/>
+                                    <!--<WrapPanel Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth, Mode=OneWay}"/>-->
                                     <!--<WrapPanel x:Name="WrapPanel" Width="{Binding ElementName=WrapPanel,Path=ActualWidth, Mode=OneWay}"/>-->
                                     <!--<WrapPanel Width="Auto"/>-->
-                                    <!--<WrapPanel />-->
+                                    <WrapPanel />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
+
+
+
 
 
                             <!--<ListBox.ItemsPanel >

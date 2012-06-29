@@ -65,9 +65,9 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         private void toggle_Click(object sender, RoutedEventArgs e)
         {
             var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
-            var vsp = GetVisualChild<VirtualizingStackPanel>(itemsPresenter);
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
 
-            foreach(ListBoxItem item in vsp.Children)
+            foreach(UIElement item in vsp.Children)
             {
                 if(item != vsp.Children[vsp.Children.Count - 1])
                 {
