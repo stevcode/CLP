@@ -19,7 +19,6 @@
         RTFText="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" Padding="10"
         BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}">
-
     </vwo:BindableRTB>
 
 </catel:UserControl>

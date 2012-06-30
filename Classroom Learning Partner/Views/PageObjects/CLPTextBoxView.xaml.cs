@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public BindableRTB()
         {
             this.TextChanged += BindableRTB_TextChanged;
+            BorderThickness = new Thickness(0.0);
         }
 
         void BindableRTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -82,85 +83,11 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 // Set the document
                 rtb.Document = doc;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 rtb.Document = new FlowDocument();
-                Console.WriteLine("document failed");
             }
         }
-
-    }
-
-    public class RichTextBoxHelper : DependencyObject
-    {
-        private static HashSet<Thread> _recursionProtection = new HashSet<Thread>();
-
-        //public RichTextBoxHelper(RichTextBox rtb)
-        //{
-        //}
-
-        public static string GetDocument(DependencyObject obj)
-        {
-            return (string)obj.GetValue(DocumentProperty);
-        }
-
-        public static void SetDocument(DependencyObject obj, string value)
-        {
-            _recursionProtection.Add(Thread.CurrentThread);
-            obj.SetValue(DocumentProperty, value);
-            _recursionProtection.Remove(Thread.CurrentThread);
-        }
-
-        public static readonly DependencyProperty DocumentProperty = DependencyProperty.RegisterAttached(
-            "Document",
-            typeof(string),
-            typeof(RichTextBoxHelper),
-            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                (obj, e) =>
-                {
-                    if(_recursionProtection.Contains(Thread.CurrentThread))
-                        return;
-
-                    var richTextBox = (RichTextBox)obj;
-
-                    // Parse the XAML to a document (or use XamlReader.Parse())
-
-                    try
-                    {
-                        var rtfText = RichTextBoxHelper.GetDocument(richTextBox);
-                        Console.WriteLine(rtfText);
-                        var doc = new FlowDocument();
-
-                        var bytes = Encoding.UTF8.GetBytes(rtfText);
-                        var stream = new MemoryStream(bytes);
-
-                        var range = new TextRange(doc.ContentStart, doc.ContentEnd);
-                        range.Load(stream, DataFormats.Rtf);
-
-                        // Set the document
-                        richTextBox.Document = doc;
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine("document failed");
-                    }
-                    Console.WriteLine("after exception");
-
-                    // When the document changes update the source
-                    richTextBox.TextChanged += (obj2, e2) =>
-                    {
-                        RichTextBox richTextBox2 = obj2 as RichTextBox;
-                        if(richTextBox2 != null)
-                        {
-                            TextRange text = new TextRange(richTextBox2.Document.ContentStart, richTextBox2.Document.ContentEnd);
-                            MemoryStream stream = new MemoryStream();
-                            text.Save(stream, DataFormats.Rtf);
-
-                            SetDocument(richTextBox, Encoding.UTF8.GetString(stream.ToArray()));
-                        }
-                    };
-                })
-        );
     }
 
     /// <summary>
@@ -179,17 +106,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
             TextBox.FontSize = App.MainWindowViewModel.CurrentFontSize;
             TextBox.FontFamily = App.MainWindowViewModel.CurrentFontFamily;
-        }
-
-        void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //if(RichTextBoxHelper._recursionProtection.Contains(Thread.CurrentThread))
-            //    return;
-
-            //TextRange text = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
-            //MemoryStream stream = new MemoryStream();
-            //text.Save(stream, DataFormats.Rtf);
-            //RichTextBoxHelper.SetDocument(TextBox, Encoding.UTF8.GetString(stream.ToArray()));
         }
 
         protected override System.Type GetViewModelType()
