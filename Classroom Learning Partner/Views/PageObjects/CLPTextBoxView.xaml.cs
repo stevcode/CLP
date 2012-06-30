@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Threading;
+using Catel.MVVM.UI;
 
 namespace Classroom_Learning_Partner.Views.PageObjects
 {
@@ -22,19 +23,54 @@ namespace Classroom_Learning_Partner.Views.PageObjects
 
         public BindableRTB()
         {
+            this.TextChanged += BindableRTB_TextChanged;
+        }
+
+        void BindableRTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextRange text = new TextRange(this.Document.ContentStart, this.Document.ContentEnd);
+            MemoryStream stream = new MemoryStream();
+            text.Save(stream, DataFormats.Rtf);
+
+            this.RTFText = Encoding.UTF8.GetString(stream.ToArray());
+        }
+
+        public string RTFText
+        {
+            get { return (string)GetValue(RTFTextProperty); }
+            set
+            {
+                _recursionProtection.Add(Thread.CurrentThread);
+                SetValue(RTFTextProperty, value);
+                _recursionProtection.Remove(Thread.CurrentThread);
+            }
+        }
+
+        public static readonly DependencyProperty RTFTextProperty = DependencyProperty.RegisterAttached(
+            "RTFText",
+            typeof(string),
+            typeof(BindableRTB),
+            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, CallBack)
+        );
+
+        private static void CallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            BindableRTB rtb = d as BindableRTB;
+
+            if(rtb._recursionProtection.Contains(Thread.CurrentThread))
+                return;
+
             try
             {
-
-
-                var rtfText = RTFDocument;
+                string rtfText = e.NewValue as string;
                 var doc = new FlowDocument();
 
                 if(rtfText == "")
                 {
                     //create rtf version of ""
-                    RichTextBox richTextBox = new RichTextBox();
-                    richTextBox.Text = "Européen";
-                    string rtfFormattedString = richTextBox.Rtf;
+                    //RichTextBox richTextBox = new RichTextBox();
+                    //richTextBox.Text = "Européen";
+                    //string rtfFormattedString = richTextBox.Rtf;
                 }
 
                 var bytes = Encoding.UTF8.GetBytes(rtfText);
@@ -44,45 +80,14 @@ namespace Classroom_Learning_Partner.Views.PageObjects
                 range.Load(stream, DataFormats.Rtf);
 
                 // Set the document
-                this.Document = doc;
+                rtb.Document = doc;
             }
             catch(Exception ex)
             {
-                this.Document = new FlowDocument();
+                rtb.Document = new FlowDocument();
                 Console.WriteLine("document failed");
             }
-
         }
-
-        //public string GetRTFDocument(DependencyObject obj)
-        //{
-        //    return (string)obj.GetValue(RTFDocumentProperty);
-        //}
-
-        //public void SetRTFDocument(DependencyObject obj, string value)
-        //{
-        //    _recursionProtection.Add(Thread.CurrentThread);
-        //    obj.SetValue(RTFDocumentProperty, value);
-        //    _recursionProtection.Remove(Thread.CurrentThread);
-        //}
-
-        public string RTFDocument
-        {
-            get { return (string)GetValue(RTFDocumentProperty); }
-            set
-            {
-                _recursionProtection.Add(Thread.CurrentThread);
-                SetValue(RTFDocumentProperty, value);
-                _recursionProtection.Remove(Thread.CurrentThread);
-            }
-        }
-
-        public static readonly DependencyProperty RTFDocumentProperty = DependencyProperty.RegisterAttached(
-            "RTFDocument",
-            typeof(string),
-            typeof(BindableRTB),
-            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
-        );
 
     }
 
