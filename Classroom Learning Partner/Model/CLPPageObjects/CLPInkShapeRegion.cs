@@ -7,9 +7,11 @@ using Catel.Data;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
+using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
+    [RedirectType("Classroom_Learning_Partner", "CLPInkRegion")]
     [Serializable]
     public class CLPInkShapeRegion : ACLPInkRegion
     {
@@ -26,7 +28,9 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPInkShapeRegion(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context) {
+                Console.WriteLine("constructor deserialize");
+        }
 
         #endregion // Constructors
 
@@ -87,5 +91,29 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         }
 
         #endregion // Methods
+
+        #region Custom Deserialization
+
+        /// <summary>
+        /// Retrieves the actual data from the serialization info.
+        /// </summary>
+        /// .
+        /// <remarks>
+        /// This method should only be implemented if backwards 
+        /// compatibility should be implemented for
+        /// a class that did not previously implement the DataObjectBase class.
+        /// </remarks>
+        protected override void GetDataFromSerializationInfo(SerializationInfo info)
+        {
+            // Check if deserialization succeeded
+            if(DeserializationSucceeded) return;
+
+            // Deserialization did not succeed for any reason, so retrieve the values manually
+            // Luckily there is a helper class (SerializationHelper) 
+            // that eases the deserialization of "old" style objects
+            Console.WriteLine("custom deserialize");
+        }
+
+        #endregion //Custom Deserialization
     }
 }
