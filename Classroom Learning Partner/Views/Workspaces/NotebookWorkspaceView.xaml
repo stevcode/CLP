@@ -7,7 +7,8 @@
                    xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                    xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
                    xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
-                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
@@ -132,13 +133,16 @@
             </Setter>
         </Style>
 
-        <CollectionViewSource x:Key="NameSortedCollectionView" Source="{Binding SubmissionPages}">
+
+        <CollectionViewSource x:Key="SortedCollectionView" Source="{Binding SubmissionPages}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="SubmitterName"/>
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="SubmitterName" />
-                <cm:SortDescription PropertyName="SubmissionTime" />
+                <scm:SortDescription PropertyName="SubmitterName" Direction="Ascending"/>
+                <!--<cm:SortDescription PropertyName="SubmitterNameD" Direction="Descending"/>-->
+                <scm:SortDescription PropertyName="SubmissionTime" Direction="Ascending" />
+                <!--<cm:SortDescription PropertyName="SubmissionTimeD" Direction="Descending" />-->
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
 
@@ -221,24 +225,11 @@
                                 
                                 <Label Grid.Column="0">Sort By:</Label>
                                 <!--Populating ComboBox with sorting options and then making those options functional-->
-                                <ComboBox Grid.Column="1">
-                                    <ComboBoxItem Name="Time">Time
-                                        
-                                    </ComboBoxItem>
-                                    
-                                    <ComboBoxItem Name="Alphabetical">Alphabetical
-                                        ItemsSource="{Binding Path=FirstSortCategories}"
-                                        ItemTemplate="{StaticResource CategoryTemplate}"
-                                        SelectedItem="{Binding Path=FirstSortingCondition, Mode=TwoWay}">
-                                    </ComboBoxItem>
-                                    
-                                    <ComboBoxItem Name="ReverseAlphabetical">ReverseAlphabetical
-
-                                    </ComboBoxItem>
-
-                                    <!--ItemsSource="{Binding Path=FirstSortCategories}"
-                                    ItemTemplate="{StaticResource CategoryTemplate}"
-                                    SelectedItem="{Binding Path=FirstSortingCondition, Mode=TwoWay}">-->
+                                <ComboBox x:Name="SortComboBox" Grid.Column="1" SelectionChanged="SortComboBox_SelectionChanged">
+                                    <ComboBoxItem Name="SumbitterName">Student Name - Ascending</ComboBoxItem>
+                                    <!--<ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>-->
+                                    <ComboBoxItem Name="SumbissionTime">Time In - Ascending</ComboBoxItem>
+                                    <!--<ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>-->
                                 </ComboBox>
                             </Grid>
 
@@ -250,7 +241,7 @@
                         <ListBox x:Name="SubmissionListBox"
                          MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
+                         ItemsSource="{Binding Source={StaticResource SortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          SelectionMode="Single">
 
