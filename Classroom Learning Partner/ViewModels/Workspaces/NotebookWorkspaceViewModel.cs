@@ -202,42 +202,66 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         //ListCollectionView lcv = CollectionViewSource.GetDefaultView(myCollection) as ListCollectionView;
         //lcv.SortDescriptions.Add(new SortDescription(…));
 
-
-        //#Stuff that I added to ViewModel
-        CollectionViewSource AlphaSortedCollectionViewA = new CollectionViewSource();
-        SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-        AlphaSortedCollectionViewA.SortDescriptions.Add(sdAA);
-
-        CollectionViewSource AlphaSortedCollectionViewD = new CollectionViewSource();
-        SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
-        AlphaSortedCollectionViewD.SortDescriptions.Add(sdAD);
-
-        CollectionViewSource TimeSortedCollectionViewA = new CollectionViewSource();
-        SortDescription sdTA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-        AlphaSortedCollectionViewA.SortDescriptions.Add(sdTA);
-
-        CollectionViewSource TimeSortedCollectionViewD = new CollectionViewSource();
-        SortDescription sdTD = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-        AlphaSortedCollectionViewD.SortDescriptions.Add(sdTD);
-
-
         private string _selectedSort;
         private CollectionViewSource _selectedCollectionViewSource;
-        public CollectionViewSource SelectedCollectionViewSource
+        public void SwitchSortingMethod(string sortType)
         {
-            get { return _selectedCollectionViewSource}
-            set 
-            {
-                if(_selectedSort == "SubmitterNameA")
-                    _selectedCollectionViewSource = AlphaSortedCollectionViewA;
-                if(_selectedSort == "SubmitterNameD")
-                    _selectedCollectionViewSource = AlphaSortedCollectionViewD;
-                if(_selectedSort == "SubmissionTimeA")
-                    _selectedCollectionViewSource = TimeSortedCollectionViewA;
-                if(_selectedSort == "SubmissionTimeD")
-                    _selectedCollectionViewSource = TimeSortedCollectionViewD;   
-            }
+            _selectedCollectionViewSource = new CollectionViewSource();
+
+            if(_selectedSort == "SubmitterNameA")
+                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                _selectedCollectionViewSource.SortDescriptions.Add(sdAA);
+            if(_selectedSort == "SubmitterNameD")
+                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
+                _selectedCollectionViewSource.SortDescriptions.Add(sdAD);
+            if(_selectedSort == "SubmissionTimeA")
+                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SortDescription sdTA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                _selectedCollectionViewSource.SortDescriptions.Add(sdTA);
+            if(_selectedSort == "SubmissionTimeD")
+                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SortDescription sdTD = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                _selectedCollectionViewSource.SortDescriptions.Add(sdTD);
         }
+
+
+        //#Stuff that I added to ViewModel
+        //CollectionViewSource AlphaSortedCollectionViewA = new CollectionViewSource();
+        //SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+        //AlphaSortedCollectionViewA.SortDescriptions.Add(sdAA);
+
+        //CollectionViewSource AlphaSortedCollectionViewD = new CollectionViewSource();
+        //SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
+        //AlphaSortedCollectionViewD.SortDescriptions.Add(sdAD);
+
+        //CollectionViewSource TimeSortedCollectionViewA = new CollectionViewSource();
+        //SortDescription sdTA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+        //AlphaSortedCollectionViewA.SortDescriptions.Add(sdTA);
+
+        //CollectionViewSource TimeSortedCollectionViewD = new CollectionViewSource();
+        //SortDescription sdTD = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+        //AlphaSortedCollectionViewD.SortDescriptions.Add(sdTD);
+
+
+        //private string _selectedSort;
+        //private CollectionViewSource _selectedCollectionViewSource;
+        //public CollectionViewSource SelectedCollectionViewSource
+        //{
+        //    get { return _selectedCollectionViewSource}
+        //    set 
+        //    {
+        //        if(_selectedSort == "SubmitterNameA")
+        //            _selectedCollectionViewSource = AlphaSortedCollectionViewA;
+        //        if(_selectedSort == "SubmitterNameD")
+        //            _selectedCollectionViewSource = AlphaSortedCollectionViewD;
+        //        if(_selectedSort == "SubmissionTimeA")
+        //            _selectedCollectionViewSource = TimeSortedCollectionViewA;
+        //        if(_selectedSort == "SubmissionTimeD")
+        //            _selectedCollectionViewSource = TimeSortedCollectionViewD;   
+        //    }
+        //}
 
 
 
