@@ -7,9 +7,10 @@
                    xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                    xmlns:vmw="clr-namespace:Classroom_Learning_Partner.ViewModels.Workspaces"
                    xmlns:vwd="clr-namespace:Classroom_Learning_Partner.Views.Displays"
-                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase">
+                   xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
 
+    <!--xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"-->
+    
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
         <catel:IntToStringConverter x:Key="IntToString" />
@@ -108,7 +109,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!--Display of Student Submissions-->
-                            <!--#Must bind this to width of listBoxItem, not width of entire column-->
+                            <!--Must bind this to width of listBoxItem, not width of entire column-->
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
                                     Background="White"
@@ -134,17 +135,35 @@
         </Style>
 
 
-        <CollectionViewSource x:Key="SortedCollectionView" Source="{Binding SubmissionPages}">
+        <!--<CollectionViewSource x:Key="AlphaSortedCollectionViewA" Source="{Binding SubmissionPages}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="SubmitterName"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>-->
+        
+        <!--<CollectionViewSource x:Key="AlphaSortedCollectionViewD" Source="{Binding SubmissionPages}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="SubmitterName"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+
+        <CollectionViewSource x:Key="TimeSortedCollectionViewA" Source="{Binding SubmissionPages}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="SubmitterName"/>
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription PropertyName="SubmitterName" Direction="Ascending"/>
-                <!--<cm:SortDescription PropertyName="SubmitterNameD" Direction="Descending"/>-->
-                <scm:SortDescription PropertyName="SubmissionTime" Direction="Ascending" />
-                <!--<cm:SortDescription PropertyName="SubmissionTimeD" Direction="Descending" />-->
+                <cm:SortDescription PropertyName="SubmissionTime" Direction="Ascending" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
+
+        <CollectionViewSource x:Key="TimeSortedCollectionViewD" Source="{Binding SubmissionPages}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="SubmitterName"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="SubmissionTime" Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>-->
 
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
 
@@ -225,11 +244,15 @@
                                 
                                 <Label Grid.Column="0">Sort By:</Label>
                                 <!--Populating ComboBox with sorting options and then making those options functional-->
-                                <ComboBox x:Name="SortComboBox" Grid.Column="1" SelectionChanged="SortComboBox_SelectionChanged">
-                                    <ComboBoxItem Name="SumbitterName">Student Name - Ascending</ComboBoxItem>
-                                    <!--<ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>-->
-                                    <ComboBoxItem Name="SumbissionTime">Time In - Ascending</ComboBoxItem>
-                                    <!--<ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>-->
+                                <!--<ComboBox x:Name="SortComboBox" Grid.Column="1" SelectionChanged="SortComboBox_SelectionChanged">-->
+                                <!--SelectedItem="{Binding SelectedSort, Mode=TwoWay}"-->
+                                <ComboBox x:Name="SortComboBox" Grid.Column="1" 
+                                    ItemsSource="{Binding Path=SelectedCollectionViewSource}">
+                                    SelectedValue="{Binding Path=_selectedSort}"
+                                    <ComboBoxItem Name="SumbitterNameA">Student Name - Ascending</ComboBoxItem>
+                                    <ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>
+                                    <ComboBoxItem Name="SumbissionTimeA">Time In - Ascending</ComboBoxItem>
+                                    <ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>
                                 </ComboBox>
                             </Grid>
 
@@ -238,10 +261,11 @@
                         </Grid>
 
                         <!--ListBox Width must be bound to Width of SubmissionsSideBar-->
+                        <!--ItemsSource="{Binding Source={StaticResource TimeSortedCollectionViewA}}" ItemsSource="{Binding Source=SortTrigger.ItemsSource}"-->
                         <ListBox x:Name="SubmissionListBox"
                          MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding Source={StaticResource SortedCollectionView}}"
+                         ItemsSource="{Binding ElementName=SelectedCollectionViewSource}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          SelectionMode="Single">
 
@@ -265,7 +289,7 @@
 
                             <ListBox.ItemTemplate>
 
-                                <DataTemplate>
+                                <DataTemplate x:Name="SortTrigger">
                                     <!--ListBox Border Width must be "Auto" otherwise it cuts off part of ListBox-->
                                     <!--ListBoxBorder Width must be bound to Slider value-->
                                     <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}">
@@ -276,6 +300,24 @@
                                         </i:Interaction.Triggers>
                                         <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/>
                                     </Border>
+
+                                    <!--#Experimenting with DataTriggers-->
+                                    <DataTemplate.Triggers>
+                                        <!--<DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Ascending">
+                                            <Setter Property="Value" Value="AlphaSortedCollectionViewA"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Descending">
+                                            <Setter Property="StaticResource" Value="AlphaSortedCollectionViewD"></Setter>
+                                        </DataTrigger>-->
+                                        
+                                        <!--<DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem.Name}" Value="SubmissionTimeA">
+                                            <Setter Property="ItemsSource" Value="TimeSortedCollectionViewA"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem.Name}" Value="SubmissionTimeD">
+                                            <Setter Property="ItemsSource" Value="TimeSortedCollectionViewD"></Setter>
+                                        </DataTrigger>-->
+                                    </DataTemplate.Triggers>
+
                                 </DataTemplate>
 
                             </ListBox.ItemTemplate>

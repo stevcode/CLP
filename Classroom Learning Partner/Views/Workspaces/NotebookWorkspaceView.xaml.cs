@@ -126,20 +126,20 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         }
 
 
-        private void SortComboBox_SelectionChanged(object seender, SelectionChangedEventArgs e)
-        {
-            SetNewSortOrder();
-        }
+        //private void SortComboBox_SelectionChanged(object seender, SelectionChangedEventArgs e)
+        //{
+        //    SetNewSortOrder();
+        //}
 
 
-        private void SetNewSortOrder()
-        {
-            string newSortOrder = ((ComboBoxItem)SortComboBox.SelectedItem).Name;
-            SortDescription sortDesc = new SortDescription(newSortOrder, ListSortDirection.Ascending);
-            CollectionViewSource src = (CollectionViewSource)FindResource("SortedCollectionView");
-            src.SortDescriptions.Clear();
-            src.SortDescriptions.Add(sortDesc);
-        }
+        //private void SetNewSortOrder()
+        //{
+        //    string newSortOrder = ((ComboBoxItem)SortComboBox.SelectedItem).Name;
+        //    SortDescription sortDesc = new SortDescription(newSortOrder, ListSortDirection.Ascending);
+        //    CollectionViewSource src = (CollectionViewSource)FindResource("SortedCollectionView");
+        //    src.SortDescriptions.Clear();
+        //    src.SortDescriptions.Add(sortDesc);
+        //}
 
 
         //Making use of sorts defined in SortDescriptions
