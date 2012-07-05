@@ -44,7 +44,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SortTypes.Add("Student Name - Ascending");
             SortTypes.Add("Student Name - Descending");
             SortTypes.Add("Time In - Ascending");
-            SortTypes.Add("Time In - Descending"); 
+            SortTypes.Add("Time In - Descending");
+
+            SelectedCollectionViewSource = new CollectionViewSource();
+            SelectedCollectionViewSource.Source = SubmissionPages;
+            SwitchSortingMethod("Student Name - Ascending");
 
             //InitializeLinkedDisplay();
         }
@@ -218,7 +222,22 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         //private string SelectedSort;
         //Console.WriteLine("_selectedSort: {0}", "hi");
 
-        private CollectionViewSource SelectedCollectionViewSource;
+        //private CollectionViewSource SelectedCollectionViewSource;
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CollectionViewSource SelectedCollectionViewSource
+        {
+            get { return GetValue<CollectionViewSource>(SelectedCollectionViewSourceProperty); }
+            set { SetValue(SelectedCollectionViewSourceProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SelectedCollectionViewSource property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SelectedCollectionViewSourceProperty = RegisterProperty("SelectedCollectionViewSource", typeof(CollectionViewSource), null);
+
         public void SwitchSortingMethod(string Sort)
         {
             SelectedCollectionViewSource = new CollectionViewSource();
