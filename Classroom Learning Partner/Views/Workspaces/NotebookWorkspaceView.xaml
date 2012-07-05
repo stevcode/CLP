@@ -193,7 +193,6 @@
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -201,9 +200,11 @@
         <!-- Notebook and Submissions Sidebar -->
         <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
             <Grid Name="SideBarGrid">
-                <Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>       
                     <ColumnDefinition Width="*" MinWidth="150"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*" MinWidth="150"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -225,12 +226,15 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Border x:Name="SubmissionBorder" Grid.Column="1" Background="Lavender" BorderThickness="0" MinWidth="150">
+                <GridSplitter Grid.Column ="1" Background="Orange" Width="5"
+                HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                
+                <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" MinWidth="150">
 
                     <!--Width of SubmissionsSideBar bound to width of SubmissionBorder-->
                     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
                         
-                            <Grid DockPanel.Dock="Top">
+                        <Grid DockPanel.Dock="Top">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -249,11 +253,12 @@
                                 <!--ItemsSource="{Binding Path=SwitchSortingMethod}"-->
                                 <!--SelectedValue="{Binding Path=SelectedSort, Mode=TwoWay}"-->
                                 <ComboBox x:Name="SortComboBox" Grid.Column="1" 
-                                    ItemsSource="{Binding CurrentCollectionViewSource}">
-                                    <ComboBoxItem Name="SumbitterNameA">Student Name - Ascending</ComboBoxItem>
+                                    ItemsSource="{Binding SortTypes}"
+                                    SelectedItem="{Binding SelectedSortType}">
+                                    <!--<ComboBoxItem Name="SumbitterNameA">Student Name - Ascending</ComboBoxItem>
                                     <ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>
                                     <ComboBoxItem Name="SumbissionTimeA">Time In - Ascending</ComboBoxItem>
-                                    <ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>
+                                    <ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>-->
                                 </ComboBox>
                             </Grid>
 
@@ -266,7 +271,7 @@
                         <ListBox x:Name="SubmissionListBox"
                          MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding ElementName=SelectedCollectionViewSource}"
+                         ItemsSource="{Binding Path=SelectedCollectionViewSource}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          SelectionMode="Single">
 
@@ -332,14 +337,18 @@
                         </ListBox>
                     </DockPanel>
                 </Border>
+
+                <GridSplitter Grid.Column ="3" Background="Orange" Width="5"
+                HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Column ="1" Background="Black" Width="5"
-                HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+        <!--<GridSplitter Grid.Column ="1" Background="Black" Width="5"
+                HorizontalAlignment="Center" VerticalAlignment="Stretch"/>-->
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="2">
+        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="1">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
@@ -374,7 +383,7 @@
         <!-- SideBar that displays projected displays -->
         <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
-              Grid.Column="3" HorizontalAlignment="Right" Margin="0">
+              Grid.Column="2" HorizontalAlignment="Right" Margin="0">
             <ListBox VirtualizingStackPanel.VirtualizationMode="Recycling"
                 x:Name="GridDisplaysListBox"
                 MinWidth="150" Width="150" ScrollViewer.HorizontalScrollBarVisibility="Disabled"

@@ -40,6 +40,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
             Notebook.GeneratePageIndexes();
 
+            SortTypes = new ObservableCollection<string>();
+            SortTypes.Add("Student Name - Ascending");
+            SortTypes.Add("Student Name - Descending");
+            SortTypes.Add("Time In - Ascending");
+            SortTypes.Add("Time In - Descending"); 
+
             //InitializeLinkedDisplay();
         }
 
@@ -251,29 +257,69 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 FoundSort = true;
             }
 
-            Console.WriteLine("FoundSort: {0}", FoundSort);
-            Console.WriteLine("SelectedSort: {0}", SelectedSort);
+            //Console.WriteLine("FoundSort: {0}", FoundSort);
+            //Console.WriteLine("SelectedSort: {0}", SelectedSort);
 
             return SelectedCollectionViewSource;
         }
 
 
-        private string SelectedSort = "{Binding ElementName=ComboBox, Path=SlectedItem.Name()}";
-        //Console.WriteLine("SelectedSort: {0}", SelectedSort);
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<string> SortTypes
+        {
+            get { return GetValue<ObservableCollection<string>>(SortTypeProperty); }
+            set { SetValue(SortTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SortType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SortTypeProperty = RegisterProperty("SortType", typeof(ObservableCollection<string>), null);
+
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CollectionViewSource CurrentCollectionViewSource
+        public string SelectedSortType
         {
-            get { return GetValue<CollectionViewSource>(CurrentCollectionViewSourceProperty); }
-            set { SetValue(CurrentCollectionViewSourceProperty, SwitchSortingMethod(SelectedSort)); }
+            get { return GetValue<string>(SelectedSortTypeProperty); }
+            //set { SetValue(SelectedSortTypeProperty, SwitchSortingMethod(SelectedSortType)); }
+            set
+            {
+                SetValue(SelectedSortTypeProperty);
+                SwitchSortingMethod(SelectedSortType);
+            }
         }
 
         /// <summary>
-        /// Register the CurrentCollectionViewSource property so it is known in the class.
+        /// Register the SelectedSortType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData CurrentCollectionViewSourceProperty = RegisterProperty("CurrentCollectionViewSource", typeof(CollectionViewSource), null);
+        public static readonly PropertyData SelectedSortTypeProperty = RegisterProperty("SelectedSortType", typeof(string), null);
+
+
+
+
+
+
+
+        //private string SelectedSort = "{Binding ElementName=ComboBox, Path=SlectedItem.Name()}";
+        ////Console.WriteLine("SelectedSort: {0}", SelectedSort);
+
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //public CollectionViewSource CurrentCollectionViewSource
+        //{
+        //    get { return GetValue<CollectionViewSource>(CurrentCollectionViewSourceProperty); }
+        //    set { SetValue(CurrentCollectionViewSourceProperty, SwitchSortingMethod(SelectedSort)); }
+        //}
+
+        ///// <summary>
+        ///// Register the CurrentCollectionViewSource property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData CurrentCollectionViewSourceProperty = RegisterProperty("CurrentCollectionViewSource", typeof(CollectionViewSource), null);
 
 
 
