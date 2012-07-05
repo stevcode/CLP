@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.IO;
 using Classroom_Learning_Partner.Views.Displays;
 using System.Windows.Controls;
+using System;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -195,6 +196,11 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         //myCollectionView.SortDescriptions.Add(new SortDescription("hey", ListSortDirection=Ascending));
         //AlphaSortedCollectionViewA.SortDescriptions.Clear();
 
+        //CollectionViewSource AlphaSortedCollectionViewA = new CollectionViewSource();
+        //AlphaSortedCollectionViewA.SortDescriptions.Clear();
+        //SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+        //AlphaSortedCollectionViewA.SortDescriptions.Add(sdAA);
+
         //People.SortDescriptions.Clear()
         //SortDescription sd = new SortDescription("Name", ListSortOrder.Ascending)
         //People.SortDescriptions.Add(sd)
@@ -202,35 +208,80 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         //ListCollectionView lcv = CollectionViewSource.GetDefaultView(myCollection) as ListCollectionView;
         //lcv.SortDescriptions.Add(new SortDescription(…));
 
-        private string _selectedSort;
-        private CollectionViewSource _selectedCollectionViewSource;
-        public void SwitchSortingMethod(string sortType)
-        {
-            _selectedCollectionViewSource = new CollectionViewSource();
+        //private string SelectedSort = "{Binding ElementName=ComboBox, Path=SlectedValue.Name()}";
+        //private string SelectedSort;
+        //Console.WriteLine("_selectedSort: {0}", "hi");
 
-            if(_selectedSort == "SubmitterNameA")
-                _selectedCollectionViewSource.SortDescriptions.Clear();
+        private CollectionViewSource SelectedCollectionViewSource;
+        public CollectionViewSource SwitchSortingMethod(string Sort)
+        {
+            SelectedCollectionViewSource = new CollectionViewSource();
+            SelectedCollectionViewSource.Source = "{Binding SubmissionPages}";
+            bool FoundSort = false;
+
+            if(Sort == "SubmitterNameA")
+            {
+                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-                _selectedCollectionViewSource.SortDescriptions.Add(sdAA);
-            if(_selectedSort == "SubmitterNameD")
-                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SelectedCollectionViewSource.SortDescriptions.Add(sdAA);
+                FoundSort = true;
+            }
+
+            if(Sort == "SubmitterNameD")
+            {
+                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
-                _selectedCollectionViewSource.SortDescriptions.Add(sdAD);
-            if(_selectedSort == "SubmissionTimeA")
-                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SelectedCollectionViewSource.SortDescriptions.Add(sdAD);
+                FoundSort = true;
+            }
+
+            if(Sort == "SubmissionTimeA")
+            {
+                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-                _selectedCollectionViewSource.SortDescriptions.Add(sdTA);
-            if(_selectedSort == "SubmissionTimeD")
-                _selectedCollectionViewSource.SortDescriptions.Clear();
+                SelectedCollectionViewSource.SortDescriptions.Add(sdTA);
+                FoundSort = true;
+            }
+
+            if(Sort == "SubmissionTimeD")
+            {
+                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTD = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-                _selectedCollectionViewSource.SortDescriptions.Add(sdTD);
+                SelectedCollectionViewSource.SortDescriptions.Add(sdTD);
+                FoundSort = true;
+            }
+
+            Console.WriteLine("FoundSort: {0}", FoundSort);
+            Console.WriteLine("SelectedSort: {0}", SelectedSort);
+
+            return SelectedCollectionViewSource;
         }
+
+
+        private string SelectedSort = "{Binding ElementName=ComboBox, Path=SlectedItem.Name()}";
+        //Console.WriteLine("SelectedSort: {0}", SelectedSort);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CollectionViewSource CurrentCollectionViewSource
+        {
+            get { return GetValue<CollectionViewSource>(CurrentCollectionViewSourceProperty); }
+            set { SetValue(CurrentCollectionViewSourceProperty, SwitchSortingMethod(SelectedSort)); }
+        }
+
+        /// <summary>
+        /// Register the CurrentCollectionViewSource property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CurrentCollectionViewSourceProperty = RegisterProperty("CurrentCollectionViewSource", typeof(CollectionViewSource), null);
+
 
 
         //#Stuff that I added to ViewModel
         //CollectionViewSource AlphaSortedCollectionViewA = new CollectionViewSource();
         //SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
         //AlphaSortedCollectionViewA.SortDescriptions.Add(sdAA);
+
 
         //CollectionViewSource AlphaSortedCollectionViewD = new CollectionViewSource();
         //SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);

@@ -246,9 +246,10 @@
                                 <!--Populating ComboBox with sorting options and then making those options functional-->
                                 <!--<ComboBox x:Name="SortComboBox" Grid.Column="1" SelectionChanged="SortComboBox_SelectionChanged">-->
                                 <!--SelectedItem="{Binding SelectedSort, Mode=TwoWay}"-->
+                                <!--ItemsSource="{Binding Path=SwitchSortingMethod}"-->
+                                <!--SelectedValue="{Binding Path=SelectedSort, Mode=TwoWay}"-->
                                 <ComboBox x:Name="SortComboBox" Grid.Column="1" 
-                                    ItemsSource="{Binding Path=SelectedCollectionViewSource}">
-                                    SelectedValue="{Binding Path=_selectedSort}"
+                                    ItemsSource="{Binding CurrentCollectionViewSource}">
                                     <ComboBoxItem Name="SumbitterNameA">Student Name - Ascending</ComboBoxItem>
                                     <ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>
                                     <ComboBoxItem Name="SumbissionTimeA">Time In - Ascending</ComboBoxItem>
