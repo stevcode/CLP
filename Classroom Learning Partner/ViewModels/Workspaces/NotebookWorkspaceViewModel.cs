@@ -219,13 +219,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         //Console.WriteLine("_selectedSort: {0}", "hi");
 
         private CollectionViewSource SelectedCollectionViewSource;
-        public CollectionViewSource SwitchSortingMethod(string Sort)
+        public void SwitchSortingMethod(string Sort)
         {
             SelectedCollectionViewSource = new CollectionViewSource();
             SelectedCollectionViewSource.Source = "{Binding SubmissionPages}";
             bool FoundSort = false;
 
-            if(Sort == "SubmitterNameA")
+            if(Sort == "Student Name - Ascending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
@@ -233,7 +233,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 FoundSort = true;
             }
 
-            if(Sort == "SubmitterNameD")
+            else if(Sort == "Student Name - Descending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
@@ -241,26 +241,22 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 FoundSort = true;
             }
 
-            if(Sort == "SubmissionTimeA")
+            else if(Sort == "Time In - Ascending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
-                SortDescription sdTA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdTA);
                 FoundSort = true;
             }
 
-            if(Sort == "SubmissionTimeD")
+            else if(Sort == "Time In - Descending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
-                SortDescription sdTD = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdTD);
                 FoundSort = true;
             }
 
-            //Console.WriteLine("FoundSort: {0}", FoundSort);
-            //Console.WriteLine("SelectedSort: {0}", SelectedSort);
-
-            return SelectedCollectionViewSource;
         }
 
 
@@ -288,7 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             //set { SetValue(SelectedSortTypeProperty, SwitchSortingMethod(SelectedSortType)); }
             set
             {
-                SetValue(SelectedSortTypeProperty);
+                SetValue(SelectedSortTypeProperty, value);
                 SwitchSortingMethod(SelectedSortType);
             }
         }
