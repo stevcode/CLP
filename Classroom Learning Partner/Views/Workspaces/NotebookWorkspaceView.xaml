@@ -135,36 +135,6 @@
         </Style>
 
 
-        <!--<CollectionViewSource x:Key="AlphaSortedCollectionViewA" Source="{Binding SubmissionPages}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="SubmitterName"/>
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>-->
-        
-        <!--<CollectionViewSource x:Key="AlphaSortedCollectionViewD" Source="{Binding SubmissionPages}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="SubmitterName"/>
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
-
-        <CollectionViewSource x:Key="TimeSortedCollectionViewA" Source="{Binding SubmissionPages}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="SubmitterName"/>
-            </CollectionViewSource.GroupDescriptions>
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="SubmissionTime" Direction="Ascending" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-
-        <CollectionViewSource x:Key="TimeSortedCollectionViewD" Source="{Binding SubmissionPages}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="SubmitterName"/>
-            </CollectionViewSource.GroupDescriptions>
-            <CollectionViewSource.SortDescriptions>
-                <cm:SortDescription PropertyName="SubmissionTime" Direction="Descending" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>-->
-
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
 
             <Grid Margin="0,10,0,0">
@@ -192,7 +162,17 @@
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            
+            <!--adding gridsplitter-->
+            <!--<ColumnDefinition Width="Auto" />-->
+
+            <!--adding column for submissions listbox-->
+            <!--<ColumnDefinition Width="*" />-->
+
+            <!--adding gridsplitter-->
+            <!--<ColumnDefinition Width="Auto" />-->
+
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -205,10 +185,13 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*" MinWidth="150"/>
                     <ColumnDefinition Width="Auto"/>
+                    <!--Extra column that lets right-most gridsplitter move-->
+                    <!--<ColumnDefinition Width="*"/>-->
                 </Grid.ColumnDefinitions>
 
+                <!--Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}"-->
                 <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="150" Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}" 
+                         MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                          SelectionMode="Single">
@@ -229,7 +212,7 @@
                 <GridSplitter Grid.Column ="1" Background="Orange" Width="5"
                 HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
                 
-                <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" MinWidth="150">
+                <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" MinWidth="150" Width="{Binding ElementName=SubmissionsSidebarContainer, Path=ActualWidth}">
 
                     <!--Width of SubmissionsSideBar bound to width of SubmissionBorder-->
                     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
@@ -248,17 +231,9 @@
                                 
                                 <Label Grid.Column="0">Sort By:</Label>
                                 <!--Populating ComboBox with sorting options and then making those options functional-->
-                                <!--<ComboBox x:Name="SortComboBox" Grid.Column="1" SelectionChanged="SortComboBox_SelectionChanged">-->
-                                <!--SelectedItem="{Binding SelectedSort, Mode=TwoWay}"-->
-                                <!--ItemsSource="{Binding Path=SwitchSortingMethod}"-->
-                                <!--SelectedValue="{Binding Path=SelectedSort, Mode=TwoWay}"-->
                                 <ComboBox x:Name="SortComboBox" Grid.Column="1" 
                                     ItemsSource="{Binding SortTypes}"
-                                    SelectedItem="{Binding SelectedSortType}">
-                                    <!--<ComboBoxItem Name="SumbitterNameA">Student Name - Ascending</ComboBoxItem>
-                                    <ComboBoxItem Name="SumbitterNameD">Student Name - Descending</ComboBoxItem>
-                                    <ComboBoxItem Name="SumbissionTimeA">Time In - Ascending</ComboBoxItem>
-                                    <ComboBoxItem Name="SumbissionTimeD">Time In - Descending</ComboBoxItem>-->
+                                    SelectedItem="{Binding SelectedSortType, Mode=TwoWay}">
                                 </ComboBox>
                             </Grid>
 
@@ -306,23 +281,6 @@
                                         </i:Interaction.Triggers>
                                         <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/>
                                     </Border>
-
-                                    <!--#Experimenting with DataTriggers-->
-                                    <DataTemplate.Triggers>
-                                        <!--<DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Ascending">
-                                            <Setter Property="Value" Value="AlphaSortedCollectionViewA"></Setter>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Descending">
-                                            <Setter Property="StaticResource" Value="AlphaSortedCollectionViewD"></Setter>
-                                        </DataTrigger>-->
-                                        
-                                        <!--<DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem.Name}" Value="SubmissionTimeA">
-                                            <Setter Property="ItemsSource" Value="TimeSortedCollectionViewA"></Setter>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem.Name}" Value="SubmissionTimeD">
-                                            <Setter Property="ItemsSource" Value="TimeSortedCollectionViewD"></Setter>
-                                        </DataTrigger>-->
-                                    </DataTemplate.Triggers>
 
                                 </DataTemplate>
 

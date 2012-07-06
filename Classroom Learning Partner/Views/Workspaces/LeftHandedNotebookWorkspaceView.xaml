@@ -127,6 +127,7 @@
             </Setter>
         </Style>
 
+        <!--Old Method for changing collectionViewSource-->
         <CollectionViewSource x:Key="SortedCollectionView" Source="{Binding SubmissionPages}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="SubmitterName"/>
