@@ -219,14 +219,16 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SelectedCollectionViewSource = new CollectionViewSource();
             //SelectedCollectionViewSource.Source = "{Binding SubmissionPages}";
             SelectedCollectionViewSource.Source = SubmissionPages;
-            bool FoundSort = false;
+  
+            PropertyGroupDescription gd = new PropertyGroupDescription();
+            gd.PropertyName = "SubmitterName";
+            SelectedCollectionViewSource.GroupDescriptions.Add(gd);
 
             if(Sort == "Student Name - Ascending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdAA);
-                FoundSort = true;
             }
 
             else if(Sort == "Student Name - Descending")
@@ -234,7 +236,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdAD);
-                FoundSort = true;
             }
 
             else if(Sort == "Time In - Ascending")
@@ -242,7 +243,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdTA);
-                FoundSort = true;
             }
 
             else if(Sort == "Time In - Descending")
@@ -250,7 +250,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdTD);
-                FoundSort = true;
             }
 
         }
