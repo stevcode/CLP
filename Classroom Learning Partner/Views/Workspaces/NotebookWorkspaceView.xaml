@@ -246,7 +246,7 @@
                         <ListBox x:Name="SubmissionListBox"
                          MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding Path=SelectedCollectionViewSource}"
+                         ItemsSource="{Binding Path=SelectedCollectionViewSource.View}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          SelectionMode="Single">
 

@@ -248,7 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             else if(Sort == "Time In - Descending")
             {
                 SelectedCollectionViewSource.SortDescriptions.Clear();
-                SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
+                SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
                 SelectedCollectionViewSource.SortDescriptions.Add(sdTD);
                 FoundSort = true;
             }
