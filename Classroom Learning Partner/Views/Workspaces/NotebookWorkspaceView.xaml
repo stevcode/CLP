@@ -163,18 +163,18 @@
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
-            <!--Column that holds Notebook and Submissions Sidebar-->
+            <!--Column that holds Notebook and Submissions Sidebar,now holds only NotebookPages -->
             <ColumnDefinition Width="*" />
             <!--<ColumnDefinition Width="Auto" />-->
             
             <!--adding gridsplitter-->
-            <!--<ColumnDefinition Width="Auto" />-->
+            <ColumnDefinition Width="Auto" />
 
             <!--adding column for submissions listbox-->
-            <!--<ColumnDefinition Width="*" />-->
+            <ColumnDefinition Width="*" />
 
             <!--adding gridsplitter-->
-            <!--<ColumnDefinition Width="Auto" />-->
+            <ColumnDefinition Width="Auto" />
 
             <!--Column that holds main conent window-->
             <ColumnDefinition Width="*" />
@@ -184,42 +184,40 @@
 
         <!-- Notebook and Submissions Sidebar -->
         <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
-            <Grid Name="SideBarGrid">
-                <Grid.ColumnDefinitions>
-                    <!--NotebookPages Column-->
-                    <ColumnDefinition Width="*" MinWidth="150"/>
-                    <!--GridSplitter-->
-                    <ColumnDefinition Width="Auto"/>
-                    <!--<ColumnDefinition Width="*" MinWidth="150"/>-->
-                    <!--Submissions Column-->
-                    <ColumnDefinition Width="Auto" MinWidth="170"/>
-                    <!--GridSplitter-->
-                    <ColumnDefinition Width="Auto"/>
-                    <!--Extra column that lets right-most gridsplitter move-->
-                    <!--<ColumnDefinition Width="*"/>-->
-                </Grid.ColumnDefinitions>
+            <!--<Grid Name="SideBarGrid">-->
+            <!--<Grid.ColumnDefinitions>-->
+            <!--NotebookPages Column-->
+            <!--<ColumnDefinition Width="*" MinWidth="150"/>-->
+            <!--GridSplitter-->
+            <!--<ColumnDefinition Width="Auto"/>-->
+            <!--Submissions Column-->
+            <!--<ColumnDefinition Width="Auto" MinWidth="170"/>-->
+            <!--GridSplitter-->
+            <!--<ColumnDefinition Width="Auto"/>-->
+            <!--</Grid.ColumnDefinitions>-->
 
-                <!--Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}"-->
-                <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+            <!--Width="{Binding ElementName=SubmissionBorder, Path=ActualWidth, Mode=OneWay}"-->
+            <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" Grid.Column="0"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
                          ItemsSource="{Binding Path=NotebookPages}"
                          ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                          SelectionMode="Single">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDown">
-                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <vw:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
 
-                <GridSplitter Grid.Column ="1" Background="Orange" Width="5"
+        <GridSplitter Grid.Column ="1" Background="Black" Width="5"
                 HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
                 
                 <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" MinWidth="150" Width="{Binding ElementName=SubmissionsSidebarContainer, Path=ActualWidth}">
@@ -307,17 +305,17 @@
                     </DockPanel>
                 </Border>
 
-                <GridSplitter Grid.Column ="3" Background="Orange" Width="5"
+                <GridSplitter Grid.Column ="3" Background="Black" Width="5"
                 HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
 
-            </Grid>
-        </Border>
+            <!--</Grid>-->
+        <!--</Border>-->
 
         <!--<GridSplitter Grid.Column ="1" Background="Black" Width="5"
                 HorizontalAlignment="Center" VerticalAlignment="Stretch"/>-->
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="1">
+        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="4">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
@@ -352,7 +350,7 @@
         <!-- SideBar that displays projected displays -->
         <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
-              Grid.Column="2" HorizontalAlignment="Right" Margin="0">
+              Grid.Column="5" HorizontalAlignment="Right" Margin="0">
             <ListBox VirtualizingStackPanel.VirtualizationMode="Recycling"
                 x:Name="GridDisplaysListBox"
                 MinWidth="150" Width="150" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
