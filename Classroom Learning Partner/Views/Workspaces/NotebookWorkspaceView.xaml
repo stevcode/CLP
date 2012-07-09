@@ -103,7 +103,8 @@
                         <Grid DockPanel.Dock="Left">
                             <Grid.ColumnDefinitions>
                                 <!--Width of column that holds Student Submissions-->
-                                <ColumnDefinition Width="*"/>
+                                <!--<ColumnDefinition Width="*"/>-->
+                                <ColumnDefinition Width="Auto"/>
                                 <!--Width of column that will hold scrollbar? no, unnecessary column-->
                                 <!--<ColumnDefinition Width="Auto"/>-->
                             </Grid.ColumnDefinitions>
@@ -162,7 +163,9 @@
     <!-- Content -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
+            <!--Column that holds Notebook and Submissions Sidebar-->
             <ColumnDefinition Width="*" />
+            <!--<ColumnDefinition Width="Auto" />-->
             
             <!--adding gridsplitter-->
             <!--<ColumnDefinition Width="Auto" />-->
@@ -173,17 +176,24 @@
             <!--adding gridsplitter-->
             <!--<ColumnDefinition Width="Auto" />-->
 
+            <!--Column that holds main conent window-->
             <ColumnDefinition Width="*" />
+            <!--Column that holds grid display column-->
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- Notebook and Submissions Sidebar -->
         <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
             <Grid Name="SideBarGrid">
-                <Grid.ColumnDefinitions>       
+                <Grid.ColumnDefinitions>
+                    <!--NotebookPages Column-->
                     <ColumnDefinition Width="*" MinWidth="150"/>
+                    <!--GridSplitter-->
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*" MinWidth="150"/>
+                    <!--<ColumnDefinition Width="*" MinWidth="150"/>-->
+                    <!--Submissions Column-->
+                    <ColumnDefinition Width="Auto" MinWidth="170"/>
+                    <!--GridSplitter-->
                     <ColumnDefinition Width="Auto"/>
                     <!--Extra column that lets right-most gridsplitter move-->
                     <!--<ColumnDefinition Width="*"/>-->
@@ -233,7 +243,8 @@
                                 <!--Populating ComboBox with sorting options and then making those options functional-->
                                 <ComboBox x:Name="SortComboBox" Grid.Column="1" 
                                     ItemsSource="{Binding SortTypes}"
-                                    SelectedItem="{Binding SelectedSortType, Mode=TwoWay}">
+                                    SelectedItem="{Binding SelectedSortType, Mode=TwoWay}"
+                                    SelectedIndex="0">
                                 </ComboBox>
                             </Grid>
 

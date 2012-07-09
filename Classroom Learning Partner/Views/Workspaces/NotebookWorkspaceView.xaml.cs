@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using System.Collections;
 using System.Windows.Data;
+using System.Diagnostics;
 
 namespace Classroom_Learning_Partner.Views.Workspaces
 {
@@ -51,6 +52,11 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                 if(viewModel.Notebook.Submissions.ContainsKey(pageID))
                 {
                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
+                    Debug.WriteLine("Hey");
+                    Debug.WriteLineIf(viewModel.SubmissionPages != null, "viewModel.SubmissionPages is not null");
+
+                    //SwitchSortingMethod("Student Name - Ascending");
+                    //SubmissionListBox.ItemsSource = SelectedCollectionViewSource.View;
                 }
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }
