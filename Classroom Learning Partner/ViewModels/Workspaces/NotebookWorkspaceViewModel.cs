@@ -46,36 +46,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SortTypes.Add("Student Name - Descending");
             SortTypes.Add("Time In - Ascending");
             SortTypes.Add("Time In - Descending");
-
-            
-            
-            //Adding default values to constructor so that Submissions Pages are displayed as soon as show submissions button is pressed
-            //This call creates a CollectionViewSource, it it only useful you bind ItemSource to SelectedCollectionViewSource.View
-            //But SubmissionListBox only exists in NotebookWorkspaceView.xaml
-            //NotebookWorkspaceView.xaml.SubmissionListBox.ItemsSource = SelectedCollectionViewSource.View;
-            //SwitchSortingMethod("Student Name - Ascending");
-
-            Debug.WriteLineIf(SelectedCollectionViewSource != null, "SelectedCollectionViewSource is not null");
-
-
-            SelectedCollectionViewSource = new CollectionViewSource();
-            //SwitchSortingMethod("Student Name - Ascending");
-            //SubmissionListBox.ItemsSource = SelectedCollectionViewSource.View;
-
-            //SelectedSortType;
-
-            SelectedCollectionViewSource.Source = SubmissionPages;
-            SelectedCollectionViewSource.SortDescriptions.Clear();
-            SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-            SelectedCollectionViewSource.SortDescriptions.Add(sdAA);
-
-            PropertyGroupDescription gd = new PropertyGroupDescription();
-            gd.PropertyName = "SubmitterName";
-            SelectedCollectionViewSource.GroupDescriptions.Add(gd);
-
-            //SwitchSortingMethod("Student Name - Ascending");
-
-            //InitializeLinkedDisplay();
         }
 
         public void InitializeLinkedDisplay()
@@ -246,7 +216,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public void SwitchSortingMethod(string Sort)
         {
             SelectedCollectionViewSource = new CollectionViewSource();
-            //SelectedCollectionViewSource.Source = "{Binding SubmissionPages}";
             SelectedCollectionViewSource.Source = SubmissionPages;
   
             PropertyGroupDescription gd = new PropertyGroupDescription();

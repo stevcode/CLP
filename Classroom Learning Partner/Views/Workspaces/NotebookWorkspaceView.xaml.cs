@@ -54,9 +54,6 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
                     Debug.WriteLine("Hey");
                     Debug.WriteLineIf(viewModel.SubmissionPages != null, "viewModel.SubmissionPages is not null");
-
-                    //SwitchSortingMethod("Student Name - Ascending");
-                    //SubmissionListBox.ItemsSource = SelectedCollectionViewSource.View;
                 }
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }
@@ -130,102 +127,5 @@ namespace Classroom_Learning_Partner.Views.Workspaces
                 }
             }
         }
-
-
-        //private void SortComboBox_SelectionChanged(object seender, SelectionChangedEventArgs e)
-        //{
-        //    SetNewSortOrder();
-        //}
-
-
-        //private void SetNewSortOrder()
-        //{
-        //    string newSortOrder = ((ComboBoxItem)SortComboBox.SelectedItem).Name;
-        //    SortDescription sortDesc = new SortDescription(newSortOrder, ListSortDirection.Ascending);
-        //    CollectionViewSource src = (CollectionViewSource)FindResource("SortedCollectionView");
-        //    src.SortDescriptions.Clear();
-        //    src.SortDescriptions.Add(sortDesc);
-        //}
-
-
-        //Making use of sorts defined in SortDescriptions
-        //ICollectionView cvTasks = CollectionViewSource.GetDefaultView(dataGrid1.ItemsSource);
-        //if (cvTasks != null && cvTasks.CanSort == true)
-        //{
-        //        .SortDescriptions.Clear();
-        //    cvTasks.SortDescriptions.Add(new SortDescription("NameSortedCollectionView", ListSortDirection.Ascending));
-        //    cvTasks.SortDescriptions.Add(new SortDescription("Complete", ListSortDirection.Ascending));
-        //    cvTasks.SortDescriptions.Add(new SortDescription("DueDate", ListSortDirection.Ascending));
-        //}
-
-
-
-        //#region Sorting (Bindings)
-
-        //private List<Category> _alphabeticalSortCategories;
-        //public List<Category> AlphabeticalSortCategories
-        //{
-        //    get
-        //    {
-        //        if(_alphabeticalSortCategories == null)
-        //        {
-        //            _alphabeticalSortCategories = new List<Category>();
-        //        }
-        //        return _alphabeticalSortCategories;
-        //    }
-        //    set
-        //    {
-        //        _alphabeticalSortCategories = value;
-        //        base.OnPropertyChanged("AlphabeticalSortCategories");
-        //    }
-        //}
-
-        //private Category _alphabeticalSortingCondition;
-        //public Category AlphabeticalSortingCondition
-        //{
-        //    get
-        //    {
-        //        if(_alphabeticalSortingCondition == null)
-        //        {
-        //            _alphabeticalSortingCondition = new Category("Time in", new List<CategoryValue>(), false);
-        //        }
-        //        return _alphabeticalSortingCondition;
-        //    }
-        //    set
-        //    {
-        //        _alphabeticalSortingCondition = value;
-        //        AlphabeticalSortingConditionChanged();
-        //        base.OnPropertyChanged("AlphabeticalSortingCondition");
-        //    }
-        //}
-        //#endregion
-
-        //#region Sorting (Methods)
-
-        //void AlphabeticalSortingConditionChanged()
-        //{
-        //    if(AphabeticalSortingCondition.Name == "Alphabetical Order")
-        //    {
-        //        SubmissionsGroup.RemoveSubGroups();
-        //    }
-        //    else { UpdateGroupsWithNewFirstCondition(AlphabeticalSortingCondition); }
-
-        //    //if(!(SecondSortingCondition.Name == "")) SecondSortingConditionChanged();
-        //}
-        //#endregion //Sorting (Methods)
-
-        //#region Groups (Methods)
-
-        //void UpdateGroupsWithNewFirstCondition(Category condition)
-        //{
-        //    List<string> categoryValues = new List<string>();
-        //    foreach(CategoryValue value in condition.Values)
-        //    {
-        //        categoryValues.Add(value.Text);
-        //    }
-        //    categoryValues.Sort();
-        //    SubmissionsGroup.CreateNewSubGroups(condition.Name, categoryValues);
-        //}
-        //#endregion
     }
 }
