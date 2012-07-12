@@ -41,11 +41,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
             Notebook.GeneratePageIndexes();
 
-            SortTypes = new ObservableCollection<string>();
-            SortTypes.Add("Student Name - Ascending");
-            SortTypes.Add("Student Name - Descending");
-            SortTypes.Add("Time In - Ascending");
-            SortTypes.Add("Time In - Descending");
+            FilteredSubmissions = new CollectionViewSource();
+            FilterTypes = new ObservableCollection<string>();
+            FilterTypes.Add("Student Name - Ascending");
+            FilterTypes.Add("Student Name - Descending");
+            FilterTypes.Add("Time In - Ascending");
+            FilterTypes.Add("Time In - Descending");
         }
 
         public void InitializeLinkedDisplay()
@@ -190,8 +191,9 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set 
             { 
                 SetValue(SubmissionPagesProperty, value);
-                SwitchSortingMethod("Student Name - Ascending");
-            }
+                SelectedFilterType = "Student Name - Ascending"; 
+                FilterSubmissions("Student Name - Ascending");
+            } 
         }
 
         /// <summary>
@@ -202,90 +204,83 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CollectionViewSource SelectedCollectionViewSource
+        public CollectionViewSource FilteredSubmissions
         {
-            get { return GetValue<CollectionViewSource>(SelectedCollectionViewSourceProperty); }
-            set { SetValue(SelectedCollectionViewSourceProperty, value); }
+            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
+            set { SetValue(FilteredSubmissionsProperty, value); }
         }
 
         /// <summary>
-        /// Register the SelectedCollectionViewSource property so it is known in the class.
+        /// Register the FilteredSubmissionsProperty property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SelectedCollectionViewSourceProperty = RegisterProperty("SelectedCollectionViewSource", typeof(CollectionViewSource), null);
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
 
-        public void SwitchSortingMethod(string Sort)
+        public void FilterSubmissions(string Sort)
         {
-            SelectedCollectionViewSource = new CollectionViewSource();
-            SelectedCollectionViewSource.Source = SubmissionPages;
-  
+            FilteredSubmissions = new CollectionViewSource();
+            FilteredSubmissions.Source = SubmissionPages;
+            FilteredSubmissions.SortDescriptions.Clear();
+
             PropertyGroupDescription gd = new PropertyGroupDescription();
             gd.PropertyName = "SubmitterName";
-            SelectedCollectionViewSource.GroupDescriptions.Add(gd);
 
             if(Sort == "Student Name - Ascending")
             {
-                SelectedCollectionViewSource.SortDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(gd);
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-                SelectedCollectionViewSource.SortDescriptions.Add(sdAA);
+                FilteredSubmissions.SortDescriptions.Add(sdAA);
             }
-
             else if(Sort == "Student Name - Descending")
             {
-                SelectedCollectionViewSource.SortDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(gd);
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
-                SelectedCollectionViewSource.SortDescriptions.Add(sdAD);
+                FilteredSubmissions.SortDescriptions.Add(sdAD);
             }
-
             else if(Sort == "Time In - Ascending")
             {
-                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
-                SelectedCollectionViewSource.SortDescriptions.Add(sdTA);
+                FilteredSubmissions.SortDescriptions.Add(sdTA);
             }
-
             else if(Sort == "Time In - Descending")
             {
-                SelectedCollectionViewSource.SortDescriptions.Clear();
                 SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
-                SelectedCollectionViewSource.SortDescriptions.Add(sdTD);
+                FilteredSubmissions.SortDescriptions.Add(sdTD);
             }
-
         }
 
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<string> SortTypes
+        public ObservableCollection<string> FilterTypes
         {
-            get { return GetValue<ObservableCollection<string>>(SortTypeProperty); }
-            set { SetValue(SortTypeProperty, value); }
+            get { return GetValue<ObservableCollection<string>>(FilterTypesProperty); }
+            set { SetValue(FilterTypesProperty, value); }
         }
 
         /// <summary>
-        /// Register the SortType property so it is known in the class.
+        /// Register the FilterTypes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SortTypeProperty = RegisterProperty("SortType", typeof(ObservableCollection<string>), null);
+        public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>), null);
 
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public string SelectedSortType
+        public string SelectedFilterType
         {
-            get { return GetValue<string>(SelectedSortTypeProperty); }
-            //set { SetValue(SelectedSortTypeProperty, SwitchSortingMethod(SelectedSortType)); }
+            get { return GetValue<string>(SelectedFilterTypeProperty); }
             set
             {
-                SetValue(SelectedSortTypeProperty, value);
-                SwitchSortingMethod(SelectedSortType);
+                SetValue(SelectedFilterTypeProperty, value);
+                FilterSubmissions(SelectedFilterType);
             }
         }
 
         /// <summary>
-        /// Register the SelectedSortType property so it is known in the class.
+        /// Register the SelectedFilterType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SelectedSortTypeProperty = RegisterProperty("SelectedSortType", typeof(string), null);
+        public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string), null);
 
 
         /// <summary>

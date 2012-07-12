@@ -220,8 +220,8 @@
                         <Label Grid.Column="0">Sort By:</Label>
                         <!--Populating ComboBox with Sorting Options-->
                         <ComboBox x:Name="SortComboBox" Grid.Column="1" 
-                            ItemsSource="{Binding SortTypes}"
-                            SelectedItem="{Binding SelectedSortType, Mode=TwoWay}"
+                            ItemsSource="{Binding FilterTypes}"
+                            SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
                             SelectedIndex="0">
                         </ComboBox>
                                 
@@ -235,7 +235,7 @@
                 <ListBox x:Name="SubmissionListBox"
                     MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Lavender"
-                    ItemsSource="{Binding Path=SelectedCollectionViewSource.View}"
+                    ItemsSource="{Binding Path=FilteredSubmissions.View}"
                     ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                     SelectionMode="Single">
 
