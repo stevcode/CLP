@@ -155,25 +155,25 @@
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.ColumnDefinitions>
             <!--Column for NotebookPages and Show Submissions Buttons-->
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition MinWidth="150" Width="250" />
             
             <!--Column for Gridsplitter-->
             <ColumnDefinition Width="Auto" />
 
             <!--Column Submissions-->
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition MinWidth="150" Width="Auto"/>
 
             <!--Column for Gridsplitter-->
             <ColumnDefinition Width="Auto" />
 
             <!--Column for Main Content-->
-            <ColumnDefinition Width="3*" MinWidth="150"/>
+            <ColumnDefinition Width="*" MinWidth="150"/>
             
             <!--Column for GridDisplays-->
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Notebook and Submissions Sidebar -->
+        <!-- Notebook Pages-->
         <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
             <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" Grid.Column="0"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
@@ -197,21 +197,23 @@
             </ListBox>
         </Border>
 
-        <GridSplitter Grid.Column ="1" Background="Black" Width="5"
-         HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+        <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="Black" Width="5"
+         HorizontalAlignment="Center" VerticalAlignment="Stretch"
+         Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}"/>
                 
-        <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" Width="{Binding ElementName=SubmissionSideBarContainer, Path=ActualWidth}">
-
+        <Border x:Name="SubmissionBorder" Grid.Column="2" Background="Lavender" BorderThickness="0" Width="{Binding ElementName=SubmissionSideBarContainer, Path=ActualWidth}"
+                Visibility="Collapsed">
+            
             <!--Width of SubmissionsSideBar bound to width of SubmissionBorder-->
-            <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Visibility="Collapsed"  MinWidth="150" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}">
+            <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionBorder,Path=ActualWidth, Mode=OneWay}" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
                         
                 <Grid DockPanel.Dock="Top">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                            
-                    <Grid Grid.Row="0">
+
+                    <Grid Grid.Row="0" Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -232,7 +234,7 @@
                 </Grid>
 
                 <!--ListBox Width must be bound to Width of SubmissionsSideBar-->
-                <ListBox x:Name="SubmissionListBox"
+                <ListBox x:Name="SubmissionListBox" 
                     MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Lavender"
                     ItemsSource="{Binding Path=FilteredSubmissions.View}"
@@ -283,8 +285,8 @@
             </DockPanel>
         </Border>
 
-        <GridSplitter Grid.Column ="3" Background="Black" Width="5"
-        HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+        <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="Black" Width="5"
+        HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
         
         <!-- Control that dynamically determines what Display to show -->
         <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="4">

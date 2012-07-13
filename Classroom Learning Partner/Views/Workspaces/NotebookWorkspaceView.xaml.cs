@@ -45,7 +45,8 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             currentToggledButton = button;
             if((bool)currentToggledButton.IsChecked)
             {
-                SubmissionsSideBar.Visibility = Visibility.Visible;
+                SubmissionBorder.Visibility = Visibility.Visible;
+                SubmissionPagesSplitter.Visibility = Visibility.Visible;
                 CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[0] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
@@ -59,7 +60,8 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             }
             else
             {
-                SubmissionsSideBar.Visibility = Visibility.Collapsed;
+                SubmissionBorder.Visibility = Visibility.Collapsed;
+                SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
 
