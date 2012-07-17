@@ -45,7 +45,7 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             currentToggledButton = button;
             if((bool)currentToggledButton.IsChecked)
             {
-                SubmissionBorder.Visibility = Visibility.Visible;
+                //SubmissionBorder.Visibility = Visibility.Visible;
                 SubmissionPagesSplitter.Visibility = Visibility.Visible;
                 CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[0] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
@@ -60,38 +60,11 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             }
             else
             {
-                SubmissionBorder.Visibility = Visibility.Collapsed;
+                //SubmissionBorder.Visibility = Visibility.Collapsed;
                 SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
 
-        }
-
-        private void toggle_Click(object sender, RoutedEventArgs e)
-        {
-            var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
-            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
-
-            foreach(UIElement item in vsp.Children)
-            {
-                if(item != vsp.Children[vsp.Children.Count - 1])
-                {
-                    if((bool)(sender as ToggleButton).IsChecked)
-                    {
-                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
-                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
-
-                        item.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
-                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
-
-                        item.Visibility = Visibility.Collapsed;
-                    }
-                }
-            }
         }
 
         private static T GetVisualChild<T>(DependencyObject parent) where T : Visual
@@ -115,19 +88,5 @@ namespace Classroom_Learning_Partner.Views.Workspaces
             return child;
         }
 
-        private void allItems_Loaded(object sender, RoutedEventArgs e)
-        {
-            var itemsPresenter = sender as ItemsPresenter;
-            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
-
-            foreach(UIElement item in vsp.Children)
-            {
-                //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
-                if(item != vsp.Children[vsp.Children.Count - 1])
-                {
-                    item.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
     }
 }
