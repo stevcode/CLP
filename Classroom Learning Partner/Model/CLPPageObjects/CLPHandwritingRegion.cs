@@ -12,7 +12,7 @@ using Catel.Runtime.Serialization;
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
     [Serializable]
-   // [RedirectType("Classroom_Learning_Partner.Model.CLPPageObjects", "CLPInkRegion")]
+    [RedirectType("Classroom Learning Partner", "Classroom_Learning_Partner.Model.CLPPageObjects.CLPInkRegion")]
     public class CLPHandwritingRegion : ACLPInkRegion
     {
         #region Constructors
@@ -120,6 +120,8 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
             {
                 return;
             }
+
+            Console.WriteLine("deserialize fail!");
 
             // Deserialization did not succeed for any reason, so retrieve the values manually
             // Luckily there is a helper class (SerializationHelper) 

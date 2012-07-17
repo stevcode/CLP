@@ -11,7 +11,6 @@ using Catel.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner.Model.CLPPageObjects
 {
-    [RedirectType("Classroom_Learning_Partner", "CLPInkRegion")]
     [Serializable]
     public class CLPInkShapeRegion : ACLPInkRegion
     {
