@@ -232,6 +232,9 @@ namespace Classroom_Learning_Partner.ViewModels
             
         }
 
+
+
+
         public override string Title { get { return "MainWindowVM"; } }
 
         #region NonRibbon Items

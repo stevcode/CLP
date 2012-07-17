@@ -127,7 +127,8 @@
             </Setter>
         </Style>
 
-        <CollectionViewSource x:Key="NameSortedCollectionView" Source="{Binding SubmissionPages}">
+        <!--Old Method for changing collectionViewSource-->
+        <CollectionViewSource x:Key="SortedCollectionView" Source="{Binding SubmissionPages}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="SubmitterName"/>
             </CollectionViewSource.GroupDescriptions>
@@ -208,7 +209,7 @@
                     <ListBox x:Name="SubmissionsSideBar" VirtualizingStackPanel.VirtualizationMode="Recycling"
                          MinWidth="220" Width="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Background="Lavender"
-                         ItemsSource="{Binding Source={StaticResource NameSortedCollectionView}}"
+                         ItemsSource="{Binding Source={StaticResource SortedCollectionView}}"
                          ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                          Visibility="Collapsed"
                          SelectionMode="Single">

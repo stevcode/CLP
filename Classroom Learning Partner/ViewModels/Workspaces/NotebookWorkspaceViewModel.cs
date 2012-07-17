@@ -14,6 +14,8 @@ using System.ComponentModel;
 using System.IO;
 using Classroom_Learning_Partner.Views.Displays;
 using System.Windows.Controls;
+using System;
+using System.Diagnostics;
 
 namespace Classroom_Learning_Partner.ViewModels.Workspaces
 {
@@ -39,7 +41,12 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
 
             Notebook.GeneratePageIndexes();
 
-            //InitializeLinkedDisplay();
+            FilteredSubmissions = new CollectionViewSource();
+            FilterTypes = new ObservableCollection<string>();
+            FilterTypes.Add("Student Name - Ascending");
+            FilterTypes.Add("Student Name - Descending");
+            FilterTypes.Add("Time In - Ascending");
+            FilterTypes.Add("Time In - Descending");
         }
 
         public void InitializeLinkedDisplay()
@@ -181,13 +188,100 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ObservableCollection<CLPPage> SubmissionPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value); }
+            set 
+            { 
+                SetValue(SubmissionPagesProperty, value);
+                SelectedFilterType = "Student Name - Ascending"; 
+                FilterSubmissions("Student Name - Ascending");
+            } 
         }
 
         /// <summary>
         /// Register the SubmissionPages property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CollectionViewSource FilteredSubmissions
+        {
+            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
+            set { SetValue(FilteredSubmissionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the FilteredSubmissionsProperty property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
+
+        public void FilterSubmissions(string Sort)
+        {
+            FilteredSubmissions = new CollectionViewSource();
+            FilteredSubmissions.Source = SubmissionPages;
+            FilteredSubmissions.SortDescriptions.Clear();
+
+            PropertyGroupDescription gd = new PropertyGroupDescription();
+            gd.PropertyName = "SubmitterName";
+
+            if(Sort == "Student Name - Ascending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdAA);
+            }
+            else if(Sort == "Student Name - Descending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdAD);
+            }
+            else if(Sort == "Time In - Ascending")
+            {
+                SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdTA);
+            }
+            else if(Sort == "Time In - Descending")
+            {
+                SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdTD);
+            }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<string> FilterTypes
+        {
+            get { return GetValue<ObservableCollection<string>>(FilterTypesProperty); }
+            set { SetValue(FilterTypesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the FilterTypes property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>), null);
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string SelectedFilterType
+        {
+            get { return GetValue<string>(SelectedFilterTypeProperty); }
+            set
+            {
+                SetValue(SelectedFilterTypeProperty, value);
+                FilterSubmissions(SelectedFilterType);
+            }
+        }
+
+        /// <summary>
+        /// Register the SelectedFilterType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string), null);
+
 
         /// <summary>
         /// Gets or sets the property value.
