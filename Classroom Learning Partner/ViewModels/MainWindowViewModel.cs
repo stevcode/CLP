@@ -13,16 +13,12 @@ using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
 using Catel.MVVM;
-using Catel.Windows;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Classroom_Learning_Partner.Resources;
-using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using Microsoft.Windows.Controls.Ribbon;
-using ProtoBuf;
-
 
 namespace Classroom_Learning_Partner.ViewModels
 {

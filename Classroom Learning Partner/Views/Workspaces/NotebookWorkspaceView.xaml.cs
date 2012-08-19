@@ -1,14 +1,10 @@
-﻿using Classroom_Learning_Partner.ViewModels;
-using System;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.Model; //Steve - No Model in View?
-using System.Windows;
 using System.Windows.Media;
-using System.Collections.Generic;
-using System.Collections;
-using System.Windows.Data;
-using System.Diagnostics;
+using Classroom_Learning_Partner.Model; //Steve - No Model in View?
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

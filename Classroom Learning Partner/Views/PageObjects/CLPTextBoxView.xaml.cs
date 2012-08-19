@@ -1,18 +1,16 @@
-﻿using Classroom_Learning_Partner.ViewModels;
-using System.Windows;
-using System.Windows.Media;
-using System;
-using System.Windows.Documents;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Markup;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using Catel.MVVM.UI;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

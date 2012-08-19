@@ -1,9 +1,5 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels;
-using System.Collections.Specialized;
-using System.Windows.Controls.Primitives;
-
 
 namespace Classroom_Learning_Partner.Views
 {

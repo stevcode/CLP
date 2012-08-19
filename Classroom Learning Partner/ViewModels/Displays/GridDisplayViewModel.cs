@@ -2,8 +2,6 @@
 using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

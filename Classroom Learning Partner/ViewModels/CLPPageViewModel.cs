@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

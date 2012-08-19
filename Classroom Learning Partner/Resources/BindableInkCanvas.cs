@@ -1,8 +1,7 @@
-﻿using System.Windows.Controls;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows.Data;
-using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Resources
 {

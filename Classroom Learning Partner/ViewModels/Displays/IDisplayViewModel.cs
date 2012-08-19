@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model;
-
-namespace Classroom_Learning_Partner.ViewModels
+﻿namespace Classroom_Learning_Partner.ViewModels
 {
     public interface IDisplayViewModel
     {

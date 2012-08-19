@@ -1,13 +1,9 @@
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Ink;
+﻿using System.Collections.Generic;
 using Catel.Data;
-using Classroom_Learning_Partner.Resources;
-using System;
-using System.Collections.ObjectModel;
+using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
-using Microsoft.Windows.Controls;
-using System.Collections.Generic;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.Resources;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

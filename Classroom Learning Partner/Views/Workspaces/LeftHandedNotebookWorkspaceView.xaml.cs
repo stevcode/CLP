@@ -1,13 +1,9 @@
-﻿using Classroom_Learning_Partner.ViewModels;
-using System;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.Model;
-using System.Windows;
 using System.Windows.Media;
-using System.Collections.Generic;
-using System.Collections;
-using System.Windows.Data;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

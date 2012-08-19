@@ -1,8 +1,8 @@
-﻿using Catel.MVVM;
-using System;
-using System.IO;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using Catel.Data;
+using Catel.MVVM;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

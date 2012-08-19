@@ -3,12 +3,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Windows.Ink;
-using Classroom_Learning_Partner.ViewModels;
-using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Ink;
+using Catel.Data;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Model
 {

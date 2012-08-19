@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
-using System.ServiceModel.PeerResolvers;
 using System.Xml;
 
 namespace Classroom_Learning_Partner.Model

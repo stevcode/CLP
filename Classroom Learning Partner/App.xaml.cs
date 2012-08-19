@@ -1,17 +1,13 @@
-using System.Windows;
 using System;
-using Classroom_Learning_Partner.ViewModels;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Collections.ObjectModel;
-using Classroom_Learning_Partner.Model;
-using System.IO;
-using MongoDB.Driver;
 using System.Threading;
-using Classroom_Learning_Partner.Views;
-using Catel.Logging;
-using ProtoBuf;
-using ProtoBuf.Meta;
+using System.Windows;
 using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Views;
+using MongoDB.Driver;
+using ProtoBuf.Meta;
 
 namespace Classroom_Learning_Partner
 {

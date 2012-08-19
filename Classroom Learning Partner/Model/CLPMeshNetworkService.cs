@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.ServiceModel;
-using System.Windows.Threading;
-using System.Windows.Ink;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.IO;
+using System.ServiceModel;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Threading;
+using Classroom_Learning_Partner.ViewModels;
 using ProtoBuf;
-
-
 
 namespace Classroom_Learning_Partner.Model
 {

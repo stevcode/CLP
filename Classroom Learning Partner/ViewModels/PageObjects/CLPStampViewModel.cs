@@ -1,12 +1,10 @@
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Catel.Data;
-using Classroom_Learning_Partner.Model;
-using System;
-using System.Windows.Controls.Primitives;
+﻿using System;
 using System.Windows;
-using System.Threading;
-using System.Windows.Threading;
+using System.Windows.Controls.Primitives;
+using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

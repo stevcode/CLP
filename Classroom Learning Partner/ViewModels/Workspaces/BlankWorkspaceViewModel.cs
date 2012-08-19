@@ -1,5 +1,4 @@
 ﻿using Catel.MVVM;
-using System;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

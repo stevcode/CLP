@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Catel.Data;
 using System.Runtime.Serialization;
+using Catel.Data;
 
 namespace Classroom_Learning_Partner.Model
 {

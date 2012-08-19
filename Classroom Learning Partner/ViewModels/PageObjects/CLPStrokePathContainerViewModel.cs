@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using Catel.MVVM;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Classroom_Learning_Partner.Model;
-using Catel.Data;
-using System.Windows.Media;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows;
+using System.Windows.Media;
+using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

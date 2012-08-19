@@ -1,17 +1,15 @@
-﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Media;
+﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Timers;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
-using System;
-using System.Windows;
-using System.Timers;
-using System.Runtime.InteropServices;
 using Classroom_Learning_Partner.Model;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using System.Diagnostics;
-using System.Windows.Threading;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

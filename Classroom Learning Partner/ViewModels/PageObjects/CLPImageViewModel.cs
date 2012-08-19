@@ -1,9 +1,7 @@
-﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Media;
-using System.IO;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using Classroom_Learning_Partner.ViewModels;
+using System.Linq;
 using System.Windows;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
-using MongoDB.Driver;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using System.Windows.Input;
-using System.Windows.Ink;
-using System.Collections.ObjectModel;
 using ProtoBuf;
-
 
 namespace Classroom_Learning_Partner.Model
 {

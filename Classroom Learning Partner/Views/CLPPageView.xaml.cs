@@ -1,14 +1,13 @@
-﻿using Classroom_Learning_Partner.ViewModels;
-using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
-using System.Threading;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Media;
-using System.Windows.Input;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

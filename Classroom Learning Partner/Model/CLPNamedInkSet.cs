@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Ink;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
-using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Model
 {

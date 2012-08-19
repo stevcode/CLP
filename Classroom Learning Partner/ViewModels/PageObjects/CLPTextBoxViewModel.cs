@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Media;
+﻿using Catel.Data;
 using Catel.MVVM;
-using Catel.Data;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

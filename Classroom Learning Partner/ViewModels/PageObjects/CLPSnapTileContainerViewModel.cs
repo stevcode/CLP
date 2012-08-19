@@ -1,10 +1,9 @@
-﻿using Classroom_Learning_Partner.Model.CLPPageObjects;
+﻿using System;
 using System.Collections.ObjectModel;
-using Catel.MVVM;
 using Catel.Data;
-using System.Collections.Specialized;
-using System;
+using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

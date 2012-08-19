@@ -1,8 +1,8 @@
-﻿using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels;
-using System.Windows;
-using Classroom_Learning_Partner.Model;
+﻿using System.Windows;
 using System.Windows.Controls.Primitives;
+using Catel.Windows.Controls;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

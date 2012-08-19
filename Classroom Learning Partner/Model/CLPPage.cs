@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using Catel.Data;
-using System.Windows.Ink;
 using System.Windows;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.IO;
-using System.Text;
+using System.Windows.Ink;
+using Catel.Data;
 using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model

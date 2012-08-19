@@ -1,6 +1,5 @@
-﻿using Catel.MVVM;
-using Catel.Data;
-using System;
+﻿using Catel.Data;
+using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels

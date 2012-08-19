@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Windows.Data;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 using Classroom_Learning_Partner.Model;
-using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Resources
 {
