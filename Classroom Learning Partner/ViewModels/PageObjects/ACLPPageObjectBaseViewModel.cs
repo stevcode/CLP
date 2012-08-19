@@ -6,9 +6,9 @@ using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    abstract public class CLPPageObjectBaseViewModel : ViewModelBase
+    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase
     {
-        protected CLPPageObjectBaseViewModel() : base()
+        protected ACLPPageObjectBaseViewModel() : base()
         {
         }
 

@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPInkShapeRegionViewModel : CLPPageObjectBaseViewModel
+    public class CLPInkShapeRegionViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.

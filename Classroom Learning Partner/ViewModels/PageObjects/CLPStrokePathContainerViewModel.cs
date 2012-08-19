@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPStrokePathContainerViewModel : CLPPageObjectBaseViewModel
+    public class CLPStrokePathContainerViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPStrokePathContainerViewModel"/> class.

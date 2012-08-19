@@ -5,7 +5,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPImageViewModel : CLPPageObjectBaseViewModel
+    public class CLPImageViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.

@@ -2,7 +2,7 @@
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class StrokePathViewModel : CLPPageObjectBaseViewModel
+    public class StrokePathViewModel : ACLPPageObjectBaseViewModel
     {
         #region Constructor
 

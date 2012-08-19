@@ -13,7 +13,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPAudioViewModel : CLPPageObjectBaseViewModel
+    public class CLPAudioViewModel : ACLPPageObjectBaseViewModel
     {
         [DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);

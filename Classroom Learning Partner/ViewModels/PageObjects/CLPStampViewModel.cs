@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPStampViewModel : CLPPageObjectBaseViewModel
+    public class CLPStampViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPStampViewModel"/> class.

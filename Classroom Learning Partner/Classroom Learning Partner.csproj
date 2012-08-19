@@ -176,7 +176,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPHandwritingRegionViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPPageObjectBaseViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />

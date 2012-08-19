@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.Views
 
         protected override System.Type GetViewModelType()
         {
-            return typeof(CLPPageObjectBaseViewModel);
+            return typeof(ACLPPageObjectBaseViewModel);
         }
 
         protected override System.Type GetViewModelType(object dataContext)

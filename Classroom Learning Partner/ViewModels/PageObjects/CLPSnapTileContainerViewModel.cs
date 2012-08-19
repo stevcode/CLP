@@ -7,7 +7,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPSnapTileContainerViewModel : CLPPageObjectBaseViewModel
+    public class CLPSnapTileContainerViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPSnapTileViewModel class.
