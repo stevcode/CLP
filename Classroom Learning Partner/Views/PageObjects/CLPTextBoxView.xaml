@@ -8,12 +8,12 @@
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
     </UserControl.Resources>
 
-    <Views:BindableRTB x:Name="TextBox" Background="Transparent"
+    <Views:BindableRichTextBox x:Name="TextBox" Background="Transparent"
         ScrollViewer.VerticalScrollBarVisibility="Disabled"
         TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
         RTFText="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
         Width="{Binding Path=Width}" Height="{Binding Path=Height}" Padding="10"
         BorderThickness="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.AuthoringTabVisibility,Converter={StaticResource ThicknessConverter}}">
-    </Views:BindableRTB>
+    </Views:BindableRichTextBox>
 
 </catel:UserControl>
