@@ -1,13 +1,9 @@
 ﻿<ribbon:RibbonWindow x:Class="Classroom_Learning_Partner.Views.MainWindowView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
-        xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views"
-        xmlns:vww="clr-namespace:Classroom_Learning_Partner.Views.Workspaces"
+        xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
         xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-        mc:Ignorable="d"
         Icon="..\Images\InkWell.ico"
         Height="800"
         Width="1280"
@@ -669,27 +665,27 @@
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <vww:BlankWorkspaceView DataContext="{Binding }" />
+                    <Views:BlankWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <vww:NotebookChooserWorkspaceView DataContext="{Binding }" />
+                    <Views:NotebookChooserWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <vww:NotebookWorkspaceView DataContext="{Binding }" />
+                    <Views:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <vww:ProjectorWorkspaceView DataContext="{Binding }" />
+                    <Views:ProjectorWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ServerWorkspaceTemplate">
-                    <vww:ServerWorkspaceView DataContext="{Binding }" />
+                    <Views:ServerWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <vww:UserLoginWorkspaceView DataContext="{Binding }" />
+                    <Views:UserLoginWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
             </ContentControl.Resources>

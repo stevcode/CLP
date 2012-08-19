@@ -1,6 +1,6 @@
 ﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPImageView.xaml

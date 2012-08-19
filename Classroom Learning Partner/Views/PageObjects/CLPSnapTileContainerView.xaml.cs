@@ -7,7 +7,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPSnapTileView.xaml

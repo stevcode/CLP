@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.Windows.Controls.Primitives;
 
 
-namespace Classroom_Learning_Partner.Views.Displays
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for GridDisplayView.xaml

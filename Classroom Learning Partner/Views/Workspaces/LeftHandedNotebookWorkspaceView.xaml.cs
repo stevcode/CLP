@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Windows.Data;
 
-namespace Classroom_Learning_Partner.Views.Workspaces
+namespace Classroom_Learning_Partner.Views
 {
 
     /// <summary>

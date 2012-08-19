@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Shapes;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for PageObjectContainerView.xaml

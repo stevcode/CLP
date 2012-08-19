@@ -1,5 +1,4 @@
-﻿using Classroom_Learning_Partner.Views.PageObjects;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
 using System.Threading;

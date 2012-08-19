@@ -4,7 +4,7 @@ using System.Windows.Shapes;
 using System;
 using System.Windows;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.

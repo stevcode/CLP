@@ -1,4 +1,4 @@
-﻿namespace Classroom_Learning_Partner.Views.PageObjects
+﻿namespace Classroom_Learning_Partner.Views
 {
     using Catel.Windows.Controls;
     using System.Windows;

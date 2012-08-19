@@ -4,7 +4,7 @@ using System;
 using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Model; //Steve - No Model in View?
 using System.Windows;
 using System.Windows.Media;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Collections;
 using System.Windows.Data;
 using System.Diagnostics;
 
-namespace Classroom_Learning_Partner.Views.Workspaces
+namespace Classroom_Learning_Partner.Views
 {
 
     /// <summary>

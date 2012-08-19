@@ -4,7 +4,6 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels.Workspaces;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Media;
-using Classroom_Learning_Partner.Views.PageObjects;
 using System.Windows.Ink;
 using System.Windows;
 using System.Windows.Controls;

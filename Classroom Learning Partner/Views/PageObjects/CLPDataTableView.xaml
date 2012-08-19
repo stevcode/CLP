@@ -1,8 +1,8 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPDataTableView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPDataTableView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects" Loaded="UserControl_Loaded">
+                   Loaded="UserControl_Loaded">
 
     <Border BorderThickness="1" BorderBrush="Black">
         <Grid>

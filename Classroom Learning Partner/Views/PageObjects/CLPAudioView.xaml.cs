@@ -3,7 +3,7 @@ using System.Windows;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Controls.Primitives;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     public partial class CLPAudioView : Catel.Windows.Controls.UserControl
     {

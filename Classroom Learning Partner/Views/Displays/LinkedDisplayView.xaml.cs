@@ -1,7 +1,7 @@
 ﻿using Classroom_Learning_Partner.ViewModels.Displays;
 using System;
 
-namespace Classroom_Learning_Partner.Views.Displays
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for LinkedDisplayView.xaml

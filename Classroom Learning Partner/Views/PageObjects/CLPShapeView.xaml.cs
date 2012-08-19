@@ -3,7 +3,7 @@ using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels.PageObjects;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.

@@ -1,17 +1,12 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.PageObjectContainerView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjectContainerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             x:Name="PageObjectContainerRoot"
              xmlns:catel="http://catel.codeplex.com"
-             xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
-             xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
+             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+             x:Name="PageObjectContainerRoot">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -195,47 +190,47 @@
                     <Control.Resources>
 
                         <ControlTemplate x:Key="CLPAudioTemplate">
-                            <vwpo:CLPAudioView DataContext="{Binding}" />
+                            <Views:CLPAudioView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPDataTableTemplate">
-                            <vwpo:CLPDataTableView DataContext="{Binding}" />
+                            <Views:CLPDataTableView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
-                            <vwpo:CLPHandwritingRegionView DataContext="{Binding}" />
+                            <Views:CLPHandwritingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPImageTemplate">
-                            <vwpo:CLPImageView DataContext="{Binding}" />
+                            <Views:CLPImageView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
-                            <vwpo:CLPInkShapeRegionView DataContext="{Binding}" />
+                            <Views:CLPInkShapeRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPShadingRegionTemplate">
-                            <vwpo:CLPShadingRegionView DataContext="{Binding}" />
+                            <Views:CLPShadingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPShapeTemplate">
-                            <vwpo:CLPShapeView DataContext="{Binding}" />
+                            <Views:CLPShapeView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                            <vwpo:CLPSnapTileContainerView DataContext="{Binding}" />
+                            <Views:CLPSnapTileContainerView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPStampTemplate">
-                            <vwpo:CLPStampView DataContext="{Binding}" />
+                            <Views:CLPStampView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
-                            <vwpo:CLPStrokePathContainerView DataContext="{Binding}" />
+                            <Views:CLPStrokePathContainerView DataContext="{Binding}" />
                         </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPTextBoxTemplate">
-                            <vwpo:CLPTextBoxView DataContext="{Binding}" />
+                            <Views:CLPTextBoxView DataContext="{Binding}" />
                         </ControlTemplate>
 
                     </Control.Resources>

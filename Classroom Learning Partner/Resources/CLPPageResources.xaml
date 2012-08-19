@@ -1,7 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
-                    xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
                     xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels"
                     xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
     <ItemsPanelTemplate x:Key="PanelTemplate">

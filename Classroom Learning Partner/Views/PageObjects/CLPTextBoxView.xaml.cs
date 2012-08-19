@@ -15,7 +15,7 @@ using System.IO;
 using System.Threading;
 using Catel.MVVM.UI;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     public class BindableRTB : RichTextBox
     {

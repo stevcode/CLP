@@ -1,6 +1,6 @@
 ﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
 
-namespace Classroom_Learning_Partner.Views.Workspaces
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for UserLoginWorkspaceView.xaml

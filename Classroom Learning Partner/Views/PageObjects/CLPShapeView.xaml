@@ -1,10 +1,9 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPShapeView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPShapeView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:vm="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
 
     <UserControl.Resources>
         <ResourceDictionary>
