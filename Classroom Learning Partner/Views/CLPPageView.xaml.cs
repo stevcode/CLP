@@ -2,7 +2,6 @@
 using System.Windows.Threading;
 using Classroom_Learning_Partner.Model;
 using System.Threading;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows.Media;
 using System.Windows.Input;

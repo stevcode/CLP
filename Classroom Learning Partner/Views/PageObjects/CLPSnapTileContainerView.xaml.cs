@@ -1,11 +1,10 @@
 ﻿using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Resources;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.ViewModels;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Views
 {

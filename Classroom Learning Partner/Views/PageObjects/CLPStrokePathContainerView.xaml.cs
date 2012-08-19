@@ -1,11 +1,11 @@
-﻿namespace Classroom_Learning_Partner.Views
-{
-    using Catel.Windows.Controls;
-    using Classroom_Learning_Partner.ViewModels.PageObjects;
-    using System.Windows;
-    using Classroom_Learning_Partner.Model;
-    using System.Windows.Controls.Primitives;
+﻿using Catel.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels;
+using System.Windows;
+using Classroom_Learning_Partner.Model;
+using System.Windows.Controls.Primitives;
 
+namespace Classroom_Learning_Partner.Views
+{
     /// <summary>
     /// Interaction logic for CLPStrokePathContainerView.xaml.
     /// </summary>

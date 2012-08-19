@@ -4,7 +4,7 @@ using Classroom_Learning_Partner.Model;
 using Catel.Data;
 using System;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class NotebookChooserWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {

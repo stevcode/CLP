@@ -6,7 +6,7 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
 using Catel.MVVM;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPShapeViewModel : CLPPageObjectBaseViewModel
     {

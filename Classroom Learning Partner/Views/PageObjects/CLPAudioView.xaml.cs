@@ -1,4 +1,4 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
+﻿using Classroom_Learning_Partner.ViewModels;
 using System.Windows;
 using Classroom_Learning_Partner.Model;
 using System.Windows.Controls.Primitives;

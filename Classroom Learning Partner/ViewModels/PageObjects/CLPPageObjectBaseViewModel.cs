@@ -3,13 +3,12 @@ using System.Windows.Ink;
 using Classroom_Learning_Partner.Model;
 using System.Windows;
 using System.Windows.Media;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using Catel.Data;
 using System;
 using System.Windows.Controls.Primitives;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
     abstract public class CLPPageObjectBaseViewModel : ViewModelBase
     {

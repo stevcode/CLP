@@ -1,11 +1,11 @@
-﻿using Catel.MVVM;
+﻿using System;
 using System.Collections.ObjectModel;
-using Classroom_Learning_Partner.Model;
 using Catel.Data;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
-using System;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.ViewModels.Displays
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Catel.Data;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class UserLoginWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {

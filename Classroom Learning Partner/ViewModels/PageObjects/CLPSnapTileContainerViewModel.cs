@@ -5,9 +5,8 @@ using Catel.Data;
 using System.Collections.Specialized;
 using System;
 using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPSnapTileContainerViewModel : CLPPageObjectBaseViewModel
     {

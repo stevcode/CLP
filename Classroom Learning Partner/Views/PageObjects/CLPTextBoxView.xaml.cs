@@ -1,5 +1,4 @@
 ﻿using Classroom_Learning_Partner.ViewModels;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.Windows;
 using System.Windows.Media;
 using System;

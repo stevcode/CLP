@@ -7,7 +7,7 @@ using System.Windows.Media;
 using Catel.MVVM;
 using Catel.Data;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPTextBoxViewModel : CLPPageObjectBaseViewModel
     {

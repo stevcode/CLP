@@ -1,4 +1,4 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
+﻿using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {

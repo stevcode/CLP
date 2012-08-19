@@ -5,7 +5,6 @@ using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Model;
 using System.IO;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 using MongoDB.Driver;
 using System.Threading;
 using Classroom_Learning_Partner.Views;
@@ -13,7 +12,6 @@ using Catel.Logging;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using System.Windows.Threading;
-
 
 namespace Classroom_Learning_Partner
 {

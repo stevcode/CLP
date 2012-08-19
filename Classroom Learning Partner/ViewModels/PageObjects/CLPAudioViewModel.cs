@@ -7,15 +7,13 @@ using System;
 using System.Windows;
 using System.Timers;
 using System.Runtime.InteropServices;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
 using System.Windows.Threading;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPAudioViewModel : CLPPageObjectBaseViewModel
     {

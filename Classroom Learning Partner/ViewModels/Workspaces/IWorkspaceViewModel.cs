@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Catel.MVVM;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public interface IWorkspaceViewModel : IViewModel
     {

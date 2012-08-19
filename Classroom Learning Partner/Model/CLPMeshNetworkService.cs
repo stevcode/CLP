@@ -7,10 +7,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.ServiceModel;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 using System.Windows.Ink;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 using System.IO;
 using ProtoBuf;
 

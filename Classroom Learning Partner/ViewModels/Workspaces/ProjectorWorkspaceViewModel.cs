@@ -1,10 +1,9 @@
 ﻿using Catel.MVVM;
-using Classroom_Learning_Partner.ViewModels.Displays;
 using Catel.Data;
 using System;
 using Classroom_Learning_Partner.Model;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class ProjectorWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {

@@ -1,10 +1,10 @@
-﻿using Classroom_Learning_Partner.Model;
-using Catel.MVVM;
+﻿using System;
 using Catel.Data;
-using System;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 
-namespace Classroom_Learning_Partner.ViewModels.Displays
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {

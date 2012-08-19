@@ -1,7 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 using System;
-using Classroom_Learning_Partner.ViewModels.Displays;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.Model;

@@ -1,15 +1,15 @@
 ﻿using System.Collections.ObjectModel;
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
-{
-    using Catel.MVVM;
-    using Classroom_Learning_Partner.Model.CLPPageObjects;
-    using Classroom_Learning_Partner.Model;
-    using Catel.Data;
-    using System.Windows.Media;
-    using System.Windows.Ink;
-    using System.Windows.Input;
-    using System.Windows;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Classroom_Learning_Partner.Model;
+using Catel.Data;
+using System.Windows.Media;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows;
 
+namespace Classroom_Learning_Partner.ViewModels
+{
     /// <summary>
     /// UserControl view model.
     /// </summary>

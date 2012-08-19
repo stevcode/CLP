@@ -1,5 +1,5 @@
 ﻿using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Model.CLPPageObjects;
 using System.Windows;
 using System.Windows.Input;

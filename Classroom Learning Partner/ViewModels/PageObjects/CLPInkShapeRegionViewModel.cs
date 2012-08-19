@@ -1,13 +1,13 @@
-﻿namespace Classroom_Learning_Partner.ViewModels.PageObjects
-{
-    using Catel.MVVM;
-    using Classroom_Learning_Partner.Model.CLPPageObjects;
-    using System.Windows.Ink;
-    using Catel.Data;
-    using Classroom_Learning_Partner.Resources;
-    using System.Collections.ObjectModel;
-    using Classroom_Learning_Partner.Model;
+﻿using Catel.MVVM;
+using Classroom_Learning_Partner.Model.CLPPageObjects;
+using System.Windows.Ink;
+using Catel.Data;
+using Classroom_Learning_Partner.Resources;
+using System.Collections.ObjectModel;
+using Classroom_Learning_Partner.Model;
 
+namespace Classroom_Learning_Partner.ViewModels
+{
     /// <summary>
     /// UserControl view model.
     /// </summary>

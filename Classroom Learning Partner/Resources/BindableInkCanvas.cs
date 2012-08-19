@@ -3,7 +3,6 @@ using System.Windows;
 using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Collections.ObjectModel;
-using Classroom_Learning_Partner.ViewModels.PageObjects;
 
 namespace Classroom_Learning_Partner.Resources
 {

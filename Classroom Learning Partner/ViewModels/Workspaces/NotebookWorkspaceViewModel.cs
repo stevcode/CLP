@@ -1,21 +1,20 @@
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.ViewModels.Displays;
-using Catel.Data;
-using System.Windows.Media;
-using System;
-using Classroom_Learning_Partner.Model;
-using System.Windows;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
-using Classroom_Learning_Partner.Views;
-using System.Windows.Data;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Windows.Controls;
 using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Views;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     /// <summary>
     /// UserControl view model.

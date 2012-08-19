@@ -9,7 +9,6 @@ using Classroom_Learning_Partner.ViewModels;
 using Catel.Data;
 using System.Runtime.Serialization;
 using System.Windows;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
 
 namespace Classroom_Learning_Partner.Model
 {
