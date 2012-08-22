@@ -5,7 +5,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using Microsoft.Ink;
 
-namespace Classroom_Learning_Partner.Resources
+namespace CLP.Models
 {
     public enum CLPHandwritingAnalysisType 
     {

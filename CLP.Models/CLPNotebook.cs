@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
-namespace Classroom_Learning_Partner.Model
+namespace CLP.Models
 {
     /// <summary>
     /// CLPNotebook Data object class which fully supports serialization, property changed notifications,

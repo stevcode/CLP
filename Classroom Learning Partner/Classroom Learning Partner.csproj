@@ -492,9 +492,6 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AdornedControl\AdornedControl.csproj">
       <Project>{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}</Project>
       <Name>AdornedControl</Name>
