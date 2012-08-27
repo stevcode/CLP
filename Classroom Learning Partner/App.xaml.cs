@@ -2,8 +2,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using MongoDB.Driver;
@@ -45,8 +44,8 @@ namespace Classroom_Learning_Partner
             CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
-            Logger.Instance.InitializeLog();
-            CLPServiceAgent.Instance.Initialize();
+            Classroom_Learning_Partner.Model.Logger.Instance.InitializeLog();
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
             
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
@@ -62,7 +61,7 @@ namespace Classroom_Learning_Partner
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
            
             JoinMeshNetwork();
-            ProtoBufferSetup();
+            //ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
@@ -86,7 +85,7 @@ namespace Classroom_Learning_Partner
             e.Exception.Message + (e.Exception.InnerException != null ? "\n" +
             e.Exception.InnerException.Message : null));
 
-            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
+            Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
 
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
             {
@@ -99,7 +98,7 @@ namespace Classroom_Learning_Partner
 
         public void JoinMeshNetwork()
         {
-            _peer = new PeerNode();
+            _peer = new Classroom_Learning_Partner.Model.PeerNode();
             _peerThread = new Thread(_peer.Run) { IsBackground = true };
             PeerThread.Start();
         }
@@ -123,7 +122,7 @@ namespace Classroom_Learning_Partner
             //var model = TypeModel.Create();
             model[typeof(CLPPage)]
                 .Add(1, "ParentNotebookID")
-                .Add(2, "Strokes")
+                //.Add(2, "Strokes")
                 .Add(3, "PageObjects")
                 .Add(4, "PageHistory")
                 .Add(5, "IsSubmission")
@@ -133,8 +132,8 @@ namespace Classroom_Learning_Partner
                 .Add(9, "CreationDate")
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
-                .Add(12, "SubmissionTime")
-                .Add(17, "PageObjectsSer");
+                .Add(12, "SubmissionTime");
+                //.Add(17, "PageObjectsSer");
 
 
             model[typeof(CLPPage)][17].AsReference = true;
@@ -143,7 +142,7 @@ namespace Classroom_Learning_Partner
 
             
             //Page Object hierarchy 
-            model[typeof(ICLPPageObject)]
+            model[typeof(CLP.Models.ICLPPageObject)]
                 .Add(1, "PageID")
                 .Add(2, "ParentID")
                 .Add(3, "CreationDate")
@@ -154,9 +153,9 @@ namespace Classroom_Learning_Partner
                 .Add(8, "Width")
                 .Add(9, "XPosition")
                 .Add(10, "YPosition")
-                .AddSubType(15, typeof(CLPPageObjectBase))
-                .AddSubType(16, typeof(CLPStamp));
-            model[typeof(CLPPageObjectBase)]
+                .AddSubType(15, typeof(CLP.Models.CLPPageObjectBase))
+                .AddSubType(16, typeof(CLP.Models.CLPStamp));
+            model[typeof(CLP.Models.CLPPageObjectBase)]
                 .AddSubType(7, typeof(CLPImage))
                 .AddSubType(8, typeof(ACLPInkRegion))
                 .AddSubType(9, typeof(CLPShape))
@@ -253,8 +252,8 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private static PeerNode _peer;
-        public static PeerNode Peer
+        private static Classroom_Learning_Partner.Model.PeerNode _peer;
+        public static Classroom_Learning_Partner.Model.PeerNode Peer
         {
             get
             {

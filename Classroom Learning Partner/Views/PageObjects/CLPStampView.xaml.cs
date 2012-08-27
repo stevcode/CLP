@@ -45,8 +45,8 @@ namespace Classroom_Learning_Partner.Views
         {
             CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
 
-            double x = stamp.Position.X + e.HorizontalChange;
-            double y = stamp.Position.Y + e.VerticalChange;
+            double x = stamp.XPosition + e.HorizontalChange;
+            double y = stamp.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -81,11 +81,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 newWidth = 10;
             }
-            if (newHeight + stamp.Position.Y > 816)
+            if (newHeight + stamp.YPosition > 816)
             {
                 newHeight = stamp.Height;
             }
-            if (newWidth + stamp.Position.X > 1056)
+            if (newWidth + stamp.XPosition > 1056)
             {
                 newWidth = stamp.Width;
             }

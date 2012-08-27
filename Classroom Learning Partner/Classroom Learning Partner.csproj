@@ -144,7 +144,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\CLPAttributeValue.cs" />
     <Compile Include="Model\CLPHistory.cs" />
     <Compile Include="Model\CLPHistoryItem.cs" />
     <Compile Include="Model\CLPNamedInkSet.cs" />
@@ -169,7 +168,6 @@
     <Compile Include="Model\Displays\CLPGridDisplay.cs" />
     <Compile Include="Model\Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Model\Logger.cs" />
-    <Compile Include="Model\MetaDataContainer.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
@@ -495,6 +493,10 @@
     <ProjectReference Include="..\AdornedControl\AdornedControl.csproj">
       <Project>{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}</Project>
       <Name>AdornedControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
+      <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
+      <Name>CLP.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -3,8 +3,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -85,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 originalX = leftBehindStamp.Position.X;
                 originalY = leftBehindStamp.Position.Y;
 
-                CLPPage page = CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
+                CLPPage page = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
 
                 if (page != null)
                 {
@@ -96,15 +95,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (!page.PageHistory.IgnoreHistory)
                     {
                         CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
-                        //page.PageHistory.HistoryItems.Add(item);
-                        String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
-                        CLPHistory.AddToHistoryItems(item, new Guid(ID));
+                        page.PageHistory.HistoryItems.Add(item);
                     }
                 }
             }
             catch (System.Exception ex)
             {
-                Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
+                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
             }
         }
 
@@ -120,26 +117,27 @@ namespace Classroom_Learning_Partner.ViewModels
         {
 
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
-            droppedContainer.Position = new Point(PageObject.Position.X, PageObject.Position.Y + CLPStamp.HANDLE_HEIGHT);
+            droppedContainer.XPosition = PageObject.XPosition;
+            droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
             
-            double deltaX = Math.Abs(PageObject.Position.X - originalX);
-            double deltaY = Math.Abs(PageObject.Position.Y - originalY);
+            double deltaX = Math.Abs(PageObject.XPosition - originalX);
+            double deltaY = Math.Abs(PageObject.YPosition - originalY);
 
             if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
             {
                 if (StrokePathContainer.InternalPageObject != null)
                 {
-                	CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
                 }
                 else if (PageObjectStrokes.Count > 0)
                 {
-                    CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
                 }
             }
 
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 
         /// <summary>
@@ -152,8 +150,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
-            double x = PageObject.Position.X + e.HorizontalChange;
-            double y = PageObject.Position.Y + e.VerticalChange;
+            double x = PageObject.XPosition + e.HorizontalChange;
+            double y = PageObject.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -172,7 +170,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Point pt = new Point(x, y);
-            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
     }
 }

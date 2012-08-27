@@ -26,8 +26,8 @@ namespace Classroom_Learning_Partner.Views
         {
             CLPAudioViewModel audio = (this.DataContext as CLPAudioViewModel);
 
-            double x = audio.Position.X + e.HorizontalChange;
-            double y = audio.Position.Y + e.VerticalChange;
+            double x = audio.XPosition + e.HorizontalChange;
+            double y = audio.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;

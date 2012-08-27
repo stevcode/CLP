@@ -33,8 +33,8 @@ namespace Classroom_Learning_Partner.Views
         {
             CLPShapeViewModel shape = (this.DataContext as CLPShapeViewModel);
 
-            double x = shape.Position.X + e.HorizontalChange;
-            double y = shape.Position.Y + e.VerticalChange;
+            double x = shape.XPosition + e.HorizontalChange;
+            double y = shape.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -70,11 +70,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 newWidth = 10;
             }
-            if (newHeight + shape.Position.Y > 816)
+            if (newHeight + shape.YPosition > 816)
             {
                 newHeight = shape.Height;
             }
-            if (newWidth + shape.Position.X > 1056)
+            if (newWidth + shape.XPosition > 1056)
             {
                 newWidth = shape.Width;
             }

@@ -2,7 +2,7 @@
 using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -65,16 +65,31 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public Point Position
+        public double XPosition
         {
-            get { return GetValue<Point>(PositionProperty); }
-            set { SetValue(PositionProperty, value); }
+            get { return GetValue<double>(XPositionProperty); }
+            set { SetValue(XPositionProperty, value); }
         }
 
         /// <summary>
-        /// Register the Position property so it is known in the class.
+        /// Register the XPosition property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point));
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double YPosition
+        {
+            get { return GetValue<double>(YPositionProperty); }
+            set { SetValue(YPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the YPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
         
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes

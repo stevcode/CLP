@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Windows.Controls;
-using Classroom_Learning_Partner.Model;
+using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -28,15 +28,15 @@ namespace Classroom_Learning_Partner.Views
         {
             ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
 
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
         }
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
 
-            double x = pageObject.Position.X + e.HorizontalChange;
-            double y = pageObject.Position.Y + e.VerticalChange;
+            double x = pageObject.XPosition + e.HorizontalChange;
+            double y = pageObject.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.Views
             }
 
             Point pt = new Point(x, y);
-            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
         }
     }
 }

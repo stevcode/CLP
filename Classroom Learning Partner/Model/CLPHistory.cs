@@ -140,13 +140,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.CurrentUserMode != App.UserMode.Projector)
             {
-                foreach (CLPPage page in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages)
-                {
-                    if (page.PageHistory.UniqueID == ID.ToString())
-                    {
-                        page.PageHistory.HistoryItems.Add(item);
-                    }
-                }
+
             }
         }
 

@@ -7,9 +7,9 @@
 
     <Style x:Key="ContainerStyle">
         <Setter Property="Canvas.Left"
-                Value="{Binding Position.X}" />
+                Value="{Binding XPosition}" />
         <Setter Property="Canvas.Top"
-                Value="{Binding Position.Y}" />
+                Value="{Binding YPosition}" />
     </Style>
 
 </ResourceDictionary>

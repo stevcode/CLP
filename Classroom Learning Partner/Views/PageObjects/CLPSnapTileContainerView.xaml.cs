@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -26,15 +25,15 @@ namespace Classroom_Learning_Partner.Views
         {
             ICLPPageObject pageObject = (this.DataContext as CLPSnapTileContainerViewModel).PageObject;
 
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
         }
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             ICLPPageObject pageObject = (this.DataContext as CLPSnapTileContainerViewModel).PageObject;
 
-            double x = pageObject.Position.X + e.HorizontalChange;
-            double y = pageObject.Position.Y + e.VerticalChange;
+            double x = pageObject.XPosition + e.HorizontalChange;
+            double y = pageObject.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -53,7 +52,7 @@ namespace Classroom_Learning_Partner.Views
             }
 
             Point pt = new Point(x, y);
-            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
         }
 
         private void removeTileButton_Click(object sender, RoutedEventArgs e)
@@ -62,13 +61,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
                 //add the snapTileRemoveTile history item here
-                CLPHistory pageHistory = CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
+                CLPHistory pageHistory = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
                 if (!pageHistory.IgnoreHistory)
                 {
                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
-                    //pageHistory.HistoryItems.Add(item);
-                    String ID = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Page.PageHistory.UniqueID;
-                    CLPHistory.AddToHistoryItems(item, new Guid(ID));
+                    pageHistory.HistoryItems.Add(item);
                 }
             }
         }
@@ -78,17 +75,17 @@ namespace Classroom_Learning_Partner.Views
             ICLPPageObject pageObject = (this.DataContext as CLPSnapTileContainerViewModel).PageObject;
 
             CLPSnapTileContainer newSnapTile = pageObject.Duplicate() as CLPSnapTileContainer;
-            double x = newSnapTile.Position.X + 80;
-            double y = newSnapTile.Position.Y;
+            double x = newSnapTile.XPosition + 80;
+            double y = newSnapTile.YPosition;
             if (x > 1056 - pageObject.Width)
             {
                 /* Want some distinguishable change in location. 
                  * Check to see if on the edge already or near the edge.
                  * If on the edge, also move down if possible.
                  */
-                if (newSnapTile.Position.X == 1056 - pageObject.Width)
+                if (newSnapTile.XPosition == 1056 - pageObject.Width)
                 {
-                    y = newSnapTile.Position.Y + 20;
+                    y = newSnapTile.YPosition + 20;
                     if (y > 816 - pageObject.Height)
                     {
                         y = 816 - pageObject.Height;
@@ -97,8 +94,10 @@ namespace Classroom_Learning_Partner.Views
                 x = 1056 - pageObject.Width;
             }
 
-            newSnapTile.Position = new Point(x, y);
-            CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.PageID, newSnapTile);
+            newSnapTile.XPosition = x;
+            newSnapTile.YPosition = y;
+
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.PageID, newSnapTile);
         }
     }
 }

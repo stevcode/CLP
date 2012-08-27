@@ -83,6 +83,7 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Machine Disconnected: " + userName);
             }
         }
+
         public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID, int pageNumber)
         {
 
@@ -94,15 +95,15 @@ namespace Classroom_Learning_Partner.Model
                 {
                     //Deserialize Using Protobuf
                     Stream stream = new MemoryStream(Convert.FromBase64String(s_history));
-                    CLPHistory history = new CLPHistory();
-                    history = Serializer.Deserialize<CLPHistory>(stream);
+                    CLP.Models.CLPHistory history = new CLP.Models.CLPHistory();
+                    history = Serializer.Deserialize<CLP.Models.CLPHistory>(stream);
 
                     //Interpolate History to make it bigger again
                     
                     TimeSpan difference = DateTime.Now.Subtract(submitTime);
                     double kbSize = s_history.Length / 1024.0;
                     Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " page num " + pageNumber.ToString());
-                    CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(history);
+                    CLP.Models.CLPHistory interpolatedHistory = CLP.Models.CLPHistory.InterpolateHistory(history);
                     //Database call
                     if (App.DatabaseUse == App.DatabaseMode.Using)
                     {
@@ -114,6 +115,7 @@ namespace Classroom_Learning_Partner.Model
                 return null;
             }, null);
         }
+
         public void SubmitFullPage(string s_page, string userName, string notebookName)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -126,8 +128,8 @@ namespace Classroom_Learning_Partner.Model
                     {
                         //Deserialize Using Protobuf
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
-                        CLPPage page = new CLPPage();
-                        page = Serializer.Deserialize<CLPPage>(stream);
+                        CLP.Models.CLPPage page = new CLP.Models.CLPPage();
+                        page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
 
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //interpolate the history to make it bigger again - claire
@@ -158,8 +160,8 @@ namespace Classroom_Learning_Partner.Model
                     {
                         //Deserialize Using Protobuf
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
-                        CLPPage page = new CLPPage();
-                        page = Serializer.Deserialize<CLPPage>(stream);
+                        CLP.Models.CLPPage page = new CLP.Models.CLPPage();
+                        page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
                         pagecount++;
 
                         double kbSize = s_page.Length / 1024.0;
@@ -174,7 +176,7 @@ namespace Classroom_Learning_Partner.Model
                     }
                     return null;
                 }, null);
-                }
+        }
 
         public void SubmitPage(string userName, string submissionID, string submissionTime, string s_history, string s_pageObjects, List<string> inkStrokes)
         {
@@ -214,8 +216,8 @@ namespace Classroom_Learning_Partner.Model
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //Deserialize Using Protobuf
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
-                        CLPPage page = new CLPPage();
-                        page = Serializer.Deserialize<CLPPage>(stream);
+                        CLP.Models.CLPPage page = new CLP.Models.CLPPage();
+                        page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
                         CLPServiceAgent.Instance.SavePageDB(page,userName, false, DateTime.Now, notebookName);
                     }
                 }
@@ -233,7 +235,7 @@ namespace Classroom_Learning_Partner.Model
                 Console.WriteLine("Notebook save requtest received");
                 //Console.WriteLine(s_notebook);
                 //DB call
-                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLP.Models.CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLP.Models.CLPNotebook);
                 CLPServiceAgent.Instance.SaveNotebookDB(notebook, userName);
 
             }
@@ -243,7 +245,7 @@ namespace Classroom_Learning_Partner.Model
         {
             if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
-                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLP.Models.CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLP.Models.CLPNotebook);
                 CLPServiceAgent.Instance.DistributeNotebookServer(notebook, author);
             }
         }
@@ -256,7 +258,7 @@ namespace Classroom_Learning_Partner.Model
             if (userName == App.Peer.UserName && App.CurrentUserMode != App.UserMode.Server)
             {
                 Console.WriteLine("ReceiveNotebooks - recieved one notebook");
-                CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLPNotebook);
+                CLP.Models.CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLP.Models.CLPNotebook);
                 CLPServiceAgent.Instance.SaveNotebooksFromDBToHD(notebook);
                 //reload notebook chooser window if already open
                 //if (App.MainWindowViewModel.Workspace.GetType().Equals(new NotebookChooserWorkspaceViewModel().GetType()))
@@ -275,42 +277,44 @@ namespace Classroom_Learning_Partner.Model
                     {
                         foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
                             if (page == null)
                             {
                                 page = notebook.GetSubmissionByID(pageID);
                             }
 
-                            if (page != null)
-                            {
-                                StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
 
-                                foreach (var strokeToRemove in removedStrokes)
-                                {
-                                    int strokeIndex = -1;
-                                    foreach (var stroke in page.InkStrokes)
-                                    {
-                                        if ((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
-                                        {
-                                            strokeIndex = page.InkStrokes.IndexOf(stroke);
-                                            break;
-                                        }
-                                    }
-                                    try
-                                    {
-                                        page.InkStrokes.RemoveAt(strokeIndex);
-                                    }
-                                    catch (System.Exception ex)
-                                    {
-                                        Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
-                                    }
-                                }
+                            //Steve - Fix for page.Inkstrokes
+                            //if (page != null)
+                            //{
+                            //    StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
 
-                                StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
-                                page.InkStrokes.Add(addedStrokes);
-                                break;
-                            }
+                            //    foreach (var strokeToRemove in removedStrokes)
+                            //    {
+                            //        int strokeIndex = -1;
+                            //        foreach (var stroke in page.InkStrokes)
+                            //        {
+                            //            if ((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                            //            {
+                            //                strokeIndex = page.InkStrokes.IndexOf(stroke);
+                            //                break;
+                            //            }
+                            //        }
+                            //        try
+                            //        {
+                            //            page.InkStrokes.RemoveAt(strokeIndex);
+                            //        }
+                            //        catch (System.Exception ex)
+                            //        {
+                            //            Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
+                            //        }
+                            //    }
+
+                            //    StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
+                            //    page.InkStrokes.Add(addedStrokes);
+                            //    break;
+                            //}
                         }
                     }
 
@@ -318,42 +322,43 @@ namespace Classroom_Learning_Partner.Model
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
                             if(page == null)
                             {
                                 page = notebook.GetSubmissionByID(pageID);
                             }
 
-                            if(page != null)
-                            {
-                                StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
+                            //Steve - fix for page.InkStrokes
+                            //if(page != null)
+                            //{
+                            //    StrokeCollection removedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesRemoved));
 
-                                foreach(var strokeToRemove in removedStrokes)
-                                {
-                                    int strokeIndex = -1;
-                                    foreach(var stroke in page.InkStrokes)
-                                    {
-                                        if((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
-                                        {
-                                            strokeIndex = page.InkStrokes.IndexOf(stroke);
-                                            break;
-                                        }
-                                    }
-                                    try
-                                    {
-                                        page.InkStrokes.RemoveAt(strokeIndex);
-                                    }
-                                    catch(System.Exception ex)
-                                    {
-                                        Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
-                                    }
-                                }
+                            //    foreach(var strokeToRemove in removedStrokes)
+                            //    {
+                            //        int strokeIndex = -1;
+                            //        foreach(var stroke in page.InkStrokes)
+                            //        {
+                            //            if((stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (strokeToRemove.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                            //            {
+                            //                strokeIndex = page.InkStrokes.IndexOf(stroke);
+                            //                break;
+                            //            }
+                            //        }
+                            //        try
+                            //        {
+                            //            page.InkStrokes.RemoveAt(strokeIndex);
+                            //        }
+                            //        catch(System.Exception ex)
+                            //        {
+                            //            Logger.Instance.WriteToLog("[ERROR] - Failed to remove stroke from page on Projector. " + ex.Message);
+                            //        }
+                            //    }
 
-                                StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
-                                page.InkStrokes.Add(addedStrokes);
-                                break;
-                            }
+                            //    StrokeCollection addedStrokes = CLPPage.StringsToStrokes(new ObservableCollection<string>(strokesAdded));
+                            //    page.InkStrokes.Add(addedStrokes);
+                            //    break;
+                            //}
                         }
                     }
                     return null;
@@ -398,7 +403,7 @@ namespace Classroom_Learning_Partner.Model
                     {
                         foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
                             if (page == null)
                             {
@@ -425,7 +430,7 @@ namespace Classroom_Learning_Partner.Model
                     {
                         foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            CLPPage page = notebook.GetNotebookPageByID(pageID);
+                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
                             if (page == null)
                             {
@@ -436,13 +441,13 @@ namespace Classroom_Learning_Partner.Model
                             {
                                 foreach (string pageObjectString in added)
                                 {
-                                    ICLPPageObject pageObject = ObjectSerializer.ToObject(pageObjectString) as ICLPPageObject;
+                                    CLP.Models.ICLPPageObject pageObject = ObjectSerializer.ToObject(pageObjectString) as CLP.Models.ICLPPageObject;
                                     CLPServiceAgent.Instance.AddPageObjectToPage(page, pageObject);
                                 }
                                 foreach (string id in removedIDs)
                                 {
-                                    ICLPPageObject objectToRemove = null;
-                                    foreach (ICLPPageObject pageObject in page.PageObjects)
+                                    CLP.Models.ICLPPageObject objectToRemove = null;
+                                    foreach(CLP.Models.ICLPPageObject pageObject in page.PageObjects)
                                     {
                                         if (pageObject.UniqueID == id)
                                         {

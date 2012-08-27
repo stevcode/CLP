@@ -1,7 +1,7 @@
 ﻿using System;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -87,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
         }
 
     }

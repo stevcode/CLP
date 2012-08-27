@@ -6,8 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -58,7 +57,7 @@ namespace Classroom_Learning_Partner.Views
 
             if (App.MainWindowViewModel.IsAuthoring)
             {
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
+                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
             }
         }
 
@@ -68,8 +67,8 @@ namespace Classroom_Learning_Partner.Views
 
             if (App.MainWindowViewModel.IsAuthoring)
             {
-                double x = pageObject.Position.X + e.HorizontalChange;
-                double y = pageObject.Position.Y + e.VerticalChange;
+                double x = pageObject.XPosition + e.HorizontalChange;
+                double y = pageObject.YPosition + e.VerticalChange;
                 if (x < 0)
                 {
                     x = 0;
@@ -88,7 +87,7 @@ namespace Classroom_Learning_Partner.Views
                 }
 
                 Point pt = new Point(x, y);
-                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
+                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
             }
         }
 
@@ -108,16 +107,16 @@ namespace Classroom_Learning_Partner.Views
                 {
                     newWidth = 10;
                 }
-                if (newHeight + pageObject.Position.Y > 816)
+                if (newHeight + pageObject.YPosition > 816)
                 {
                     newHeight = pageObject.Height;
                 }
-                if (newWidth + pageObject.Position.X > 1056)
+                if (newWidth + pageObject.XPosition > 1056)
                 {
                     newWidth = pageObject.Width;
                 }
 
-                CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObject, newHeight, newWidth);
+                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectDimensions(pageObject, newHeight, newWidth);
             }
         }
 
