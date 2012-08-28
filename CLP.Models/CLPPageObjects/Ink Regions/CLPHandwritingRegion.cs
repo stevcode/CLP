@@ -98,7 +98,7 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<byte[]> StrokesNoDuplicates = new ObservableCollection<byte[]>(PageObjectByteStrokes.Distinct().ToList());
+            ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
             string result = InkInterpretation.InterpretHandwriting(CLPPage.BytesToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;

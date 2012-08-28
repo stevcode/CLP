@@ -119,7 +119,7 @@ namespace CLP.Models
                 DataValues.Add(new CLPNamedInkSet());
             }
             // Add strokes to appropriate bins
-            ObservableCollection<byte[]> StrokesNoDuplicates = new ObservableCollection<byte[]>(PageObjectByteStrokes.Distinct().ToList());
+            ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
             List<Point> locations = InkInterpretation.InterpretTable(CLPPage.BytesToStrokes(StrokesNoDuplicates), Width, Height, Rows, Cols);
             for (int i = 0; i < locations.Count; i++)
             {
@@ -127,7 +127,7 @@ namespace CLP.Models
                 // if the point is not outside of the grid
                 if (p.X >= 0 && p.Y >= 0 && p.X < Cols && p.Y < Rows)
                 {
-                    byte[] stroke = StrokesNoDuplicates[i];
+                    List<byte> stroke = StrokesNoDuplicates[i];
                     DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes.Add(stroke);
                     StrokeCollection newStrokeCollection = CLPPage.BytesToStrokes(DataValues[Idx2Dto1D(p.X, p.Y)].InkShapeStrokes);
                     string result = InkInterpretation.InterpretHandwriting(newStrokeCollection, AnalysisType);

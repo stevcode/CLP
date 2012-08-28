@@ -45,7 +45,7 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            ByteStrokes = new ObservableCollection<byte[]>();
+            ByteStrokes = new ObservableCollection<List<byte>>();
             PageObjects = new ObservableCollection<ICLPPageObject>();
             PageHistory = new CLPHistory();
             PageIndex = -1;
@@ -126,16 +126,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets a list of the serialized strokes for a page.
         /// </summary>
-        public ObservableCollection<byte[]> ByteStrokes
+        public ObservableCollection<List<byte>> ByteStrokes
         {
-            get { return GetValue<ObservableCollection<byte[]>>(ByteStrokesProperty); }
+            get { return GetValue<ObservableCollection<List<byte>>>(ByteStrokesProperty); }
             set { SetValue(ByteStrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the ByteStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<byte[]>), () => new ObservableCollection<byte[]>());
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -281,33 +281,33 @@ namespace CLP.Models
 
         #region Methods
 
-        public static Stroke ByteToStroke(byte[] byteStroke)
+        public static Stroke ByteToStroke(List<byte> byteStroke)
         {
-            var m_stream = new MemoryStream(byteStroke);
+            var m_stream = new MemoryStream(byteStroke.ToArray());
             StrokeCollection sc = new StrokeCollection(m_stream);
 
             return sc[0];
         }
 
-        public static byte[] StrokeToByte(Stroke stroke)
+        public static List<byte> StrokeToByte(Stroke stroke)
         {
             StrokeCollection sc = new StrokeCollection();
             sc.Add(stroke);
 
             var m_stream = new MemoryStream();
             sc.Save(m_stream, true);
-            byte[] byteStroke = m_stream.ToArray();
+            List<byte> byteStroke = new List<byte>(m_stream.ToArray());
 
             return byteStroke;
         }
 
         /**
-         * Helper method that converts a ObservableCollection of byte[] to a StrokeCollection
+         * Helper method that converts a ObservableCollection of List<byte> to a StrokeCollection
          */
-        public static StrokeCollection BytesToStrokes(ObservableCollection<byte[]> byteStrokes)
+        public static StrokeCollection BytesToStrokes(ObservableCollection<List<byte>> byteStrokes)
         {
             StrokeCollection strokes = new StrokeCollection();
-            foreach(byte[] s in byteStrokes)
+            foreach(List<byte> s in byteStrokes)
             {
                 strokes.Add(ByteToStroke(s));
             }
@@ -316,11 +316,11 @@ namespace CLP.Models
         }
 
         /**
-         * Helper method that converts a StrokeCollection to an ObservableCollection of byte[]
+         * Helper method that converts a StrokeCollection to an ObservableCollection of List<byte>
          */
-        public static ObservableCollection<byte[]> StrokesToBytes(StrokeCollection strokes)
+        public static ObservableCollection<List<byte>> StrokesToBytes(StrokeCollection strokes)
         {
-            ObservableCollection<byte[]> byteStrokes = new ObservableCollection<byte[]>();
+            ObservableCollection<List<byte>> byteStrokes = new ObservableCollection<List<byte>>();
             foreach(Stroke stroke in strokes)
             {
                 byteStrokes.Add(StrokeToByte(stroke));

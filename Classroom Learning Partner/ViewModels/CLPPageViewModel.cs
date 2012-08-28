@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
             OtherStrokes = new StrokeCollection();
             InkStrokes = new StrokeCollection();
 
-            foreach(byte[] b in Page.ByteStrokes)
+            foreach(List<byte> b in Page.ByteStrokes)
             {
                 Stroke stroke = CLPPage.ByteToStroke(b);
                 InkStrokes.Add(stroke);
@@ -140,16 +140,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public ObservableCollection<byte[]> ByteStrokes
+        public ObservableCollection<List<byte>> ByteStrokes
         {
-            get { return GetValue<ObservableCollection<byte[]>>(ByteStrokesProperty); }
+            get { return GetValue<ObservableCollection<List<byte>>>(ByteStrokesProperty); }
             set { SetValue(ByteStrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the ByteStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<byte[]>));
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -412,14 +412,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var stroke in e.Removed)
             {
-                byte[] b = CLPPage.StrokeToByte(stroke);
+                List<byte> b = CLPPage.StrokeToByte(stroke);
 
-                /* Converting equal strokes to byte[] arrays create byte[] arrays with the same sequence of elements.
-                 * The byte[] arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
+                /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
+                 * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
                  * This predicate searches for the first sequence match, instead of the first identical object, then removes
-                 * that byte[] array, which references the exact same object. */
-                Func<byte[], bool> pred = (x) => { return x.SequenceEqual(b); };
-                byte[] eq = ByteStrokes.First<byte[]>(pred);
+                 * that List<byte> array, which references the exact same object. */
+                Func<List<byte>, bool> pred = (x) => { return x.SequenceEqual(b); };
+                List<byte> eq = ByteStrokes.First<List<byte>>(pred);
 
                 ByteStrokes.Remove(eq);
 
@@ -448,7 +448,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 addedStrokes.Add(stroke);
 
-                byte[] b = CLPPage.StrokeToByte(stroke);
+                List<byte> b = CLPPage.StrokeToByte(stroke);
 
                 ByteStrokes.Add(b);
 

@@ -13,7 +13,7 @@ namespace CLP.Models
         string UniqueID { get; set; }
         DateTime CreationDate { get; set; }
         string PageObjectType { get; }
-        ObservableCollection<byte[]> PageObjectByteStrokes { get; set; }
+        ObservableCollection<List<byte>> PageObjectByteStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
