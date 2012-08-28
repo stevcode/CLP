@@ -18,8 +18,8 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPAudio(string ID)
-            : base()
+        public CLPAudio(string ID, CLPPage page)
+            : base(page)
         {
             //string fullPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + path + ".mp3";
             //if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files"))
@@ -39,17 +39,6 @@ namespace CLP.Models
             Height = 70;
             Width = 200;
             CanAcceptStrokes = false;
-        }
-
-        //Parameterless constructor for Protobuf
-        protected CLPAudio()
-        {
-            this.File = new Byte[0];
-            this.ID = ID;
-            XPosition = 10;
-            YPosition = 10;
-            Height = 50;
-            Width = 50;
         }
 
         /// <summary>

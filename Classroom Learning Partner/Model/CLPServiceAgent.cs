@@ -456,17 +456,16 @@ namespace Classroom_Learning_Partner.Model
             CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             pageVM.stopAudioPlayback();
         }
-        public void AddPageObjectToPage(string pageID, CLP.Models.ICLPPageObject pageObject)
+
+        public void AddPageObjectToPage(CLP.Models.ICLPPageObject pageObject)
         {
-            CLP.Models.CLPPage page = GetPageFromID(pageID);
-            AddPageObjectToPage(page, pageObject);
+            AddPageObjectToPage(pageObject.ParentPage, pageObject);
         }
 
         public void AddPageObjectToPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
         {
             if (page != null)
             {
-                pageObject.PageID = page.UniqueID;
                 pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
@@ -480,13 +479,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageObjectFromPage(CLP.Models.ICLPPageObject pageObject)
         {
-            RemovePageObjectFromPage(pageObject.PageID, pageObject);
-        }
-
-        public void RemovePageObjectFromPage(string pageID, CLP.Models.ICLPPageObject pageObject)
-        {
-            CLP.Models.CLPPage page = GetPageFromID(pageID);
-            RemovePageObjectFromPage(page, pageObject);
+            RemovePageObjectFromPage(pageObject.ParentPage, pageObject);
         }
 
         public void RemovePageObjectFromPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
@@ -510,28 +503,15 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public CLP.Models.CLPPage GetPageFromID(string pageID)
-        {
-            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
-            {
-                CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
-                if (page != null)
-                {
-                    return page;
-                }
-            }
-            return null;
-        }
-
         public void ChangePageObjectPosition(CLP.Models.ICLPPageObject pageObject, Point pt)
         {
-            CLP.Models.CLPPage page = GetPageFromID(pageObject.PageID);
-            if (!page.PageHistory.IgnoreHistory)
-            {
-                //steve - fix for lack of Position
-               //CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
-               //page.PageHistory.HistoryItems.Add(item);
-            }
+
+            //if (!page.PageHistory.IgnoreHistory)
+            //{
+            //    //steve - fix for lack of Position
+            //   //CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
+            //   //page.PageHistory.HistoryItems.Add(item);
+            //}
 
             pageObject.XPosition = pt.X;
             pageObject.YPosition = pt.Y;

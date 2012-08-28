@@ -14,13 +14,8 @@ namespace CLP.Models
     public class CLPDataTable : ACLPInkRegion
     {
         #region Constructors
-
-        public CLPDataTable()
-            : base()
-        {
-        }
         
-        public CLPDataTable(int rows, int cols, CLPHandwritingAnalysisType analysis_type) : base()
+        public CLPDataTable(int rows, int cols, CLPHandwritingAnalysisType analysis_type, CLPPage page) : base(page)
         {
             Rows = rows;
             Cols = cols;

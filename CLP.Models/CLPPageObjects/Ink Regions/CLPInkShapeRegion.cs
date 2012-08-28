@@ -15,7 +15,7 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPInkShapeRegion() : base()
+        public CLPInkShapeRegion(CLPPage page) : base(page)
         {
             InkShapesString = "";
         }

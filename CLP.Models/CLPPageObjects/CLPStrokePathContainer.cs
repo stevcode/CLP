@@ -10,8 +10,8 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPStrokePathContainer(ICLPPageObject internalPageObject)
-            : base()
+        public CLPStrokePathContainer(ICLPPageObject internalPageObject, CLPPage page)
+            : base(page)
         {
             InternalPageObject = internalPageObject;
             IsStrokePathsVisible = false;
@@ -28,11 +28,6 @@ namespace CLP.Models
                 Width = InternalPageObject.Width;
             }
         }
-
-        //Parameterless constructor for Protobuf
-        private CLPStrokePathContainer()
-            : base()
-        { }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.

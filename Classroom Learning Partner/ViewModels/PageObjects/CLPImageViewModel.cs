@@ -1,4 +1,7 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -13,6 +16,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPImageViewModel(CLPImage image) : base()
         {
             PageObject = image;
+            List<byte> ByteSource = PageObject.ParentPage.ImagePool[image.ImageID];
+            LoadImageFromByteSource(ByteSource.ToArray());
         }
 
         public override string Title { get { return "ImageVM"; } }
@@ -22,7 +27,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("PageObject")]
         public ImageSource SourceImage
         {
             get { return GetValue<ImageSource>(SourceImageProperty); }
@@ -32,8 +36,27 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the SourceImage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null);
 
         #endregion //Binding
+
+        public void LoadImageFromByteSource(byte[] byteSource)
+        {
+            MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
+            BitmapImage genBmpImage = new BitmapImage();
+
+            genBmpImage.BeginInit();
+            genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
+            //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
+            genBmpImage.StreamSource = memoryStream;
+            genBmpImage.EndInit();
+            genBmpImage.Freeze();
+
+            memoryStream.Dispose();
+            memoryStream = null;
+
+            SourceImage = genBmpImage;
+        }
+
     }
 }

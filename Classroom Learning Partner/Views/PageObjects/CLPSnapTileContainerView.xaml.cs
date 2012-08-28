@@ -61,12 +61,12 @@ namespace Classroom_Learning_Partner.Views
             {
                 (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
                 //add the snapTileRemoveTile history item here
-                CLPHistory pageHistory = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
-                if (!pageHistory.IgnoreHistory)
-                {
-                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
-                    pageHistory.HistoryItems.Add(item);
-                }
+                //CLPHistory pageHistory = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
+                //if (!pageHistory.IgnoreHistory)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
+                //    pageHistory.HistoryItems.Add(item);
+                //}
             }
         }
 
@@ -97,7 +97,7 @@ namespace Classroom_Learning_Partner.Views
             newSnapTile.XPosition = x;
             newSnapTile.YPosition = y;
 
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.PageID, newSnapTile);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.ParentPage, newSnapTile);
         }
     }
 }

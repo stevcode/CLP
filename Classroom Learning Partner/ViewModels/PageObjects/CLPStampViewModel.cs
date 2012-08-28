@@ -84,20 +84,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 originalX = leftBehindStamp.Position.X;
                 originalY = leftBehindStamp.Position.Y;
 
-                CLPPage page = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
 
-                if (page != null)
-                {
-                    leftBehindStamp.PageID = page.UniqueID;
+                    PageObject.ParentPage.PageObjects.Add(leftBehindStamp);
 
-                    page.PageObjects.Add(leftBehindStamp);
-
-                    if (!page.PageHistory.IgnoreHistory)
-                    {
-                        CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
-                        page.PageHistory.HistoryItems.Add(item);
-                    }
-                }
+                    //if (!page.PageHistory.IgnoreHistory)
+                    //{
+                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
+                    //    page.PageHistory.HistoryItems.Add(item);
+                    //}
+                
             }
             catch (System.Exception ex)
             {
@@ -129,11 +124,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (StrokePathContainer.InternalPageObject != null)
                 {
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.ParentPage, droppedContainer);
                 }
                 else if (PageObjectStrokes.Count > 0)
                 {
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.PageID, droppedContainer);
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.ParentPage, droppedContainer);
                 }
             }
 

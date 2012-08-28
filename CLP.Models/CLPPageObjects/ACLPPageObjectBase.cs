@@ -10,15 +10,16 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
+    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject, IParent
     {
         #region Constructor
 
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPPageObjectBase()
+        public CLPPageObjectBase(CLPPage page)
         {
+            ParentPage = page;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
@@ -46,16 +47,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public string PageID
+        public CLPPage ParentPage
         {
-            get { return GetValue<string>(PageIDProperty); }
-            set { SetValue(PageIDProperty, value); }
+            get { return GetValue<CLPPage>(ParentPageProperty); }
+            set { SetValue(ParentPageProperty, value); }
         }
 
         /// <summary>
-        /// Register the PageID property so it is known in the class.
+        /// Register the ParentPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageIDProperty = RegisterProperty("PageID", typeof(string), "");
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -252,5 +253,10 @@ namespace CLP.Models
         }
 
         #endregion
+
+        IParent IParent.Parent
+        {
+            get { return ParentPage; }
+        }
     }
 }

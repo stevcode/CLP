@@ -318,8 +318,8 @@ namespace Classroom_Learning_Partner.Views
                     case PageInteractionMode.None:
                         break;
                     case PageInteractionMode.SnapTile:
-                        CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt);
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage((this.DataContext as CLPPageViewModel).Page, snapTile);
+                        CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt, (this.DataContext as CLPPageViewModel).Page);
+                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(snapTile);
                         break;
                     default:
                         break;

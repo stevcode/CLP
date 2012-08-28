@@ -25,10 +25,11 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPStamp(ICLPPageObject internalPageObject)
+        public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
             : base()
         {
-            StrokePathContainer = new CLPStrokePathContainer(internalPageObject);
+            ParentPage = page;
+            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, ParentPage);
 
             Position = new Point(100, 100);
 
@@ -41,11 +42,6 @@ namespace CLP.Models
             PageObjectByteStrokes = new ObservableCollection<List<byte>>();
             CanAcceptStrokes = true;
         }
-
-        //Parameterless constructor for Protobuf
-        private CLPStamp()
-            : base()
-        { }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -142,16 +138,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public string PageID
+        public CLPPage ParentPage
         {
-            get { return GetValue<string>(PageIDProperty); }
-            set { SetValue(PageIDProperty, value); }
+            get { return GetValue<CLPPage>(ParentPageProperty); }
+            set { SetValue(ParentPageProperty, value); }
         }
 
         /// <summary>
-        /// Register the PageID property so it is known in the class.
+        /// Register the ParentPage property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageIDProperty = RegisterProperty("PageID", typeof(string), "");
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
         /// Gets or sets the property value.

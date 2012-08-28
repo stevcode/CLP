@@ -15,13 +15,11 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPHandwritingRegion() : base()
+        public CLPHandwritingRegion(CLPPage page) : this(CLPHandwritingAnalysisType.DEFAULT, page)
         {
-            AnalysisType = CLPHandwritingAnalysisType.DEFAULT;
-            StoredAnswer = "";
         }
 
-        public CLPHandwritingRegion(CLPHandwritingAnalysisType analysis_type) : base()
+        public CLPHandwritingRegion(CLPHandwritingAnalysisType analysis_type, CLPPage page) : base(page)
         {
             AnalysisType = analysis_type;
             StoredAnswer = "";

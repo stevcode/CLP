@@ -57,7 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnNumberOfTilesChanged()
         {
             //Claire, HistoryItems stuff here
-            CLPPage currentPage = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
+            //CLPPage currentPage = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
             int diff = NumberOfTiles - Tiles.Count;
 
             if (diff > 0)
@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSnapCommandExecute()
         {
 
-            CLPPage currentPage = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
+            CLPPage currentPage = PageObject.ParentPage;
 
             foreach (var pageObject in currentPage.PageObjects)
             {

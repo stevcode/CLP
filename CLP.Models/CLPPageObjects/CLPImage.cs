@@ -23,20 +23,14 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPImage(string path)
-            : base()
+        public CLPImage(string imageID, CLPPage page)
+            : base(page)
         {
-            if (File.Exists(path))
-            {
-                ByteSource = File.ReadAllBytes(path);
-            }
-
+            ImageID = imageID;
             XPosition = 10;
             YPosition = 10;
             Height = 300;
             Width = 300;
-            LoadImageFromByteSource(ByteSource);
-
         }
 
         /// <summary>
@@ -47,71 +41,27 @@ namespace CLP.Models
         protected CLPImage(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        //Parameterless constructor for Protobuf
-        private CLPImage()
-            : base()
-        { }
-
-        protected override void OnDeserialized()
-        {
-            LoadImageFromByteSource(ByteSource);
-            base.OnDeserialized();
-        }
-
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Byte source of the image that gets serialized.
-        /// </summary>
-        public byte[] ByteSource
-        {
-            get { return GetValue<byte[]>(ByteSourceProperty); }
-            set { SetValue(ByteSourceProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the ByteSource property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ByteSourceProperty = RegisterProperty("ByteSource", typeof(byte[]), null);
-
-        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ImageSource SourceImage
+        public string ImageID
         {
-            get { return GetValue<ImageSource>(SourceImageProperty); }
-            private set { SetValue(SourceImageProperty, value); }
+            get { return GetValue<string>(ImageIDProperty); }
+            set { SetValue(ImageIDProperty, value); }
         }
 
         /// <summary>
-        /// Register the SourceImage property so it is known in the class.
+        /// Register the ImageID property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null);
+        public static readonly PropertyData ImageIDProperty = RegisterProperty("ImageID", typeof(string), null);
 
         #endregion
 
         #region Methods
-
-        public void LoadImageFromByteSource(byte[] byteSource)
-        {
-            //MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
-            //BitmapImage genBmpImage = new BitmapImage();
-
-            //genBmpImage.BeginInit();
-            //genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
-            ////genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
-            //genBmpImage.StreamSource = memoryStream;
-            //genBmpImage.EndInit();
-            //genBmpImage.Freeze();
-
-            ////memoryStream.Close();
-            //memoryStream.Dispose();
-            //memoryStream = null;
-
-            //SourceImage = genBmpImage;
-        }
 
         public override string PageObjectType
         {

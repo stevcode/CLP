@@ -19,8 +19,8 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPShape(CLPShapeType shapeType)
-            : base()
+        public CLPShape(CLPShapeType shapeType, CLPPage page)
+            : base(page)
         {
             ShapeType = shapeType;
             XPosition = 10;

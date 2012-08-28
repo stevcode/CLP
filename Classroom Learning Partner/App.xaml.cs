@@ -7,6 +7,7 @@ using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using MongoDB.Driver;
 using ProtoBuf.Meta;
+using Catel.Logging;
 
 namespace Classroom_Learning_Partner
 {
@@ -36,7 +37,7 @@ namespace Classroom_Learning_Partner
 
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            //LogManager.RegisterDebugListener();
+            LogManager.RegisterDebugListener();
 
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;

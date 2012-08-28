@@ -22,7 +22,7 @@ namespace CLP.Models
     /// </summary>
     [Serializable]
     [AllowNonSerializableMembers]
-    public class CLPPage : DataObjectBase<CLPPage>
+    public class CLPPage : DataObjectBase<CLPPage>, IParent
     {
         #region Variables
 
@@ -46,6 +46,7 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ByteStrokes = new ObservableCollection<List<byte>>();
+            ImagePool = new Dictionary<string, List<byte>>();
             PageObjects = new ObservableCollection<ICLPPageObject>();
             PageHistory = new CLPHistory();
             PageIndex = -1;
@@ -66,6 +67,21 @@ namespace CLP.Models
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Pool of Images used on a page, so that duplications don't occur
+        /// <UniqueID, ByteSource>
+        /// </summary>
+        public Dictionary<string,List<byte>> ImagePool
+        {
+            get { return GetValue<Dictionary<string,List<byte>>>(ImagePoolProperty); }
+            set { SetValue(ImagePoolProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ImagePool property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string,List<byte>>), () => new Dictionary<string, List<byte>>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -286,6 +302,8 @@ namespace CLP.Models
             var m_stream = new MemoryStream(byteStroke.ToArray());
             StrokeCollection sc = new StrokeCollection(m_stream);
 
+            m_stream.Dispose();
+
             return sc[0];
         }
 
@@ -297,6 +315,8 @@ namespace CLP.Models
             var m_stream = new MemoryStream();
             sc.Save(m_stream, true);
             List<byte> byteStroke = new List<byte>(m_stream.ToArray());
+
+            m_stream.Dispose();
 
             return byteStroke;
         }
