@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
@@ -53,6 +54,13 @@ namespace Classroom_Learning_Partner.ViewModels
             Page = page;
 
             OtherStrokes = new StrokeCollection();
+            InkStrokes = new StrokeCollection();
+
+            foreach(byte[] b in Page.ByteStrokes)
+            {
+                Stroke stroke = CLPPage.ByteToStroke(b);
+                InkStrokes.Add(stroke);
+            }
 
             //foreach (string stringStroke in Page.Strokes)
             //{
@@ -132,16 +140,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public ObservableCollection<string> StringStrokes
+        public ObservableCollection<byte[]> ByteStrokes
         {
-            get { return GetValue<ObservableCollection<string>>(StringStrokesProperty); }
-            set { SetValue(StringStrokesProperty, value); }
+            get { return GetValue<ObservableCollection<byte[]>>(ByteStrokesProperty); }
+            set { SetValue(ByteStrokesProperty, value); }
         }
 
         /// <summary>
-        /// Register the name property so it is known in the class.
+        /// Register the ByteStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData StringStrokesProperty = RegisterProperty("StringStrokes", typeof(ObservableCollection<string>));
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<byte[]>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -399,26 +407,33 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
-        {
-            Console.WriteLine("inking on pageVM: " + Page.UniqueID);
-            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+        {            
             App.MainWindowViewModel.CanSendToTeacher = true;
 
-            foreach (var stroke in e.Removed)
+            foreach(var stroke in e.Removed)
             {
-                //steve - fix for lack of Strokes on CLPPAge
-                //Page.Strokes.Remove(CLPPage.StrokeToString(stroke));
+                byte[] b = CLPPage.StrokeToByte(stroke);
+
+                /* Converting equal strokes to byte[] arrays create byte[] arrays with the same sequence of elements.
+                 * The byte[] arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
+                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
+                 * that byte[] array, which references the exact same object. */
+                Func<byte[], bool> pred = (x) => { return x.SequenceEqual(b); };
+                byte[] eq = ByteStrokes.First<byte[]>(pred);
+
+                ByteStrokes.Remove(eq);
+
                 //if (!undoFlag)
                 //{
                 //    //CLPHistoryItem item = new CLPHistoryItem("ERASE");
                 //    //HistoryVM.AddHistoryItem(stroke, item);
                 //}
-                if (!PageHistory.IgnoreHistory)
-                {
-                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke), null);
-                    Page.PageHistory.HistoryItems.Add(item);
-                   // PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
-                }
+                //if(!PageHistory.IgnoreHistory)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.EraseInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke), null);
+                //    Page.PageHistory.HistoryItems.Add(item);
+                //    // PageHistory.TrashedInkStrokes.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(stroke));
+                //}
             }
 
             StrokeCollection addedStrokes = new StrokeCollection();
@@ -430,56 +445,44 @@ namespace Classroom_Learning_Partner.ViewModels
                     stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                     stroke.AddPropertyData(CLPPage.ParentPageID, Page.UniqueID);
                 }
-                foreach (var strokeRemoved in e.Removed)
-                {
-                    string a = strokeRemoved.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    string b = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    if (a == b)
-                    {
-                        string newUniqueID = Guid.NewGuid().ToString();
-                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                    }
-                }
+
                 addedStrokes.Add(stroke);
-            }
 
+                byte[] b = CLPPage.StrokeToByte(stroke);
 
-            foreach (var stroke in addedStrokes)
-            {
-                stroke.AddPropertyData(CLPPage.Immutable, "false");
-                StringStrokes.Add(CLPPage.StrokeToString(stroke));
+                ByteStrokes.Add(b);
+
                 //if (!undoFlag)
                 //{
                 //    CLPHistoryItem item = new CLPHistoryItem("ADD");
                 //    HistoryVM.AddHistoryItem(stroke, item);
                 //}
-                if (!PageHistory.IgnoreHistory)
-                {
-                    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
-                    Page.PageHistory.HistoryItems.Add(item);
-                }
+                //if(!PageHistory.IgnoreHistory)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddInk, stroke.GetPropertyData(CLPPage.StrokeIDKey).ToString(), null, null);
+                //    Page.PageHistory.HistoryItems.Add(item);
+                //}
             }
-
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
-                List<string> add = new List<string>(CLPPage.StrokesToStrings(addedStrokes));
-                List<string> remove = new List<string>(CLPPage.StrokesToStrings(e.Removed));
-                //Steve - re-write BroadcastInk (add, remove, uniqueID, submissionID)
-                if (Page.IsSubmission)
-                {
-                    if (App.Peer.Channel != null)
-                    {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.BroadcastInkToStudents);
-                    }
-                }
-                else
-                {
-                    if (App.Peer.Channel != null)
-                    {
-                        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.BroadcastInkToStudents);
-                    }
-                }
+                //List<string> add = new List<string>(CLPPage.StrokesToStrings(addedStrokes));
+                //List<string> remove = new List<string>(CLPPage.StrokesToStrings(e.Removed));
+                ////Steve - re-write BroadcastInk (add, remove, uniqueID, submissionID)
+                //if (Page.IsSubmission)
+                //{
+                //    if (App.Peer.Channel != null)
+                //    {
+                //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.BroadcastInkToStudents);
+                //    }
+                //}
+                //else
+                //{
+                //    if (App.Peer.Channel != null)
+                //    {
+                //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.BroadcastInkToStudents);
+                //    }
+                //}
             }
 
             foreach (ICLPPageObject pageObject in PageObjects)
@@ -509,8 +512,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
                 }
             }
-
-            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -740,19 +741,19 @@ namespace Classroom_Learning_Partner.ViewModels
                         //if its not in page.inkstrokes then maybe its in stamps inkstrokes?
                         foreach (ICLPPageObject obj in Page.PageObjects)
                         {
-                            if (obj.CanAcceptStrokes && obj.PageObjectStrokes.Count > 0)
-                            {
-                                foreach (String s in obj.PageObjectStrokes)
-                                {
-                                    if (s == item.ObjectID)
-                                    {
+                            //if (obj.CanAcceptStrokes && obj.PageObjectByteStrokes.Count > 0)
+                            //{
+                            //    foreach (byte[] s in obj.PageObjectByteStrokes)
+                            //    {
+                            //        if (s == item.ObjectID)
+                            //        {
 
-                                        obj.PageObjectStrokes.Remove(s.ToString());
-                                        PageHistory.TrashedInkStrokes.Add((CLPPage.StringToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
-                                        break;
-                                    }
-                                }
-                            }
+                            //            obj.PageObjectByteStrokes.Remove(s.ToString());
+                            //            PageHistory.TrashedInkStrokes.Add((CLPPage.ByteToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
+                            //            break;
+                            //        }
+                            //    }
+                            //}
                         }
                         break;
                     case HistoryItemType.EraseInk:
@@ -767,7 +768,7 @@ namespace Classroom_Learning_Partner.ViewModels
                          //    }
                          //}
                          * } */
-                        Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
+                        //Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
                         //Page.InkStrokes.Add(inkStroke);
                         break;
                         
@@ -849,7 +850,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.AddInk:
                         foreach (string s in PageHistory.TrashedInkStrokes.Keys)
                         {
-                            Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+                            //Stroke inkStroke = CLPPage.ByteToStroke(PageHistory.TrashedInkStrokes[s]);
                             //steve
                             //if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
                             //{

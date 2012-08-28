@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Runtime.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace CLP.Models
 {

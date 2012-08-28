@@ -38,7 +38,7 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
-            PageObjectStrokes = new ObservableCollection<string>();
+            PageObjectByteStrokes = new ObservableCollection<byte[]>();
             CanAcceptStrokes = true;
         }
 
@@ -98,36 +98,42 @@ namespace CLP.Models
         protected void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             StrokeCollection strokesToRemove = new StrokeCollection();
-            StrokeCollection PageObjectActualStrokes = CLPPage.StringsToStrokes(PageObjectStrokes);
-            foreach (Stroke objectStroke in PageObjectActualStrokes)
+            StrokeCollection PageObjectActualStrokes = CLPPage.BytesToStrokes(PageObjectByteStrokes);
+            foreach(Stroke objectStroke in PageObjectActualStrokes)
             {
-
                 string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                foreach (Stroke pageStroke in removedStrokes)
+                foreach(Stroke pageStroke in removedStrokes)
                 {
                     string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                    if (objectStrokeUniqueID == pageStrokeUniqueID)
+                    if(objectStrokeUniqueID == pageStrokeUniqueID)
                     {
                         strokesToRemove.Add(objectStroke);
                     }
                 }
             }
 
-            foreach (Stroke stroke in strokesToRemove)
+            foreach(Stroke stroke in strokesToRemove)
             {
-                string stringStroke = CLPPage.StrokeToString(stroke);
-                PageObjectStrokes.Remove(stringStroke);
+                byte[] b = CLPPage.StrokeToByte(stroke);
+
+                /* Converting equal strokes to byte[] arrays create byte[] arrays with the same sequence of elements.
+                 * The byte[] arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
+                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
+                 * that byte[] array, which references the exact same object. */
+                Func<byte[], bool> pred = (x) => { return x.SequenceEqual(b); };
+                byte[] eq = PageObjectByteStrokes.First<byte[]>(pred);
+
+                PageObjectByteStrokes.Remove(eq);
             }
 
-
-            foreach (Stroke stroke in addedStrokes)
+            foreach(Stroke stroke in addedStrokes)
             {
                 Stroke newStroke = stroke.Clone();
                 Matrix transform = new Matrix();
-                transform.Translate(-Position.X, -Position.Y - HANDLE_HEIGHT);
+                transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
                 newStroke.Transform(transform, true);
 
-                PageObjectStrokes.Add(CLPPage.StrokeToString(newStroke));
+                PageObjectByteStrokes.Add(CLPPage.StrokeToByte(newStroke));
             }
         }
 
@@ -190,18 +196,18 @@ namespace CLP.Models
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// PageObject's personal collection of strokes.
+        /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<string> PageObjectStrokes
+        public ObservableCollection<byte[]> PageObjectByteStrokes
         {
-            get { return GetValue<ObservableCollection<string>>(PageObjectStrokesProperty); }
-            set { SetValue(PageObjectStrokesProperty, value); }
+            get { return GetValue<ObservableCollection<byte[]>>(PageObjectByteStrokesProperty); }
+            set { SetValue(PageObjectByteStrokesProperty, value); }
         }
 
         /// <summary>
-        /// Register the PageObjectStrokes property so it is known in the class.
+        /// Register the PageObjectByteStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectStrokesProperty = RegisterProperty("PageObjectStrokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData PageObjectByteStrokesProperty = RegisterProperty("PageObjectByteStrokes", typeof(ObservableCollection<byte[]>), () => new ObservableCollection<byte[]>());
 
         /// <summary>
         /// Gets or sets the property value.

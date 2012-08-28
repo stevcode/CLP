@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Ink;
@@ -12,7 +13,7 @@ namespace CLP.Models
         string UniqueID { get; set; }
         DateTime CreationDate { get; set; }
         string PageObjectType { get; }
-        ObservableCollection<string> PageObjectStrokes { get; set; }
+        ObservableCollection<byte[]> PageObjectByteStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }

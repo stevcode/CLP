@@ -73,15 +73,15 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            ContextNodeCollection shapes = InkInterpretation.InterpretShapes(CLPPage.StringsToStrokes(StrokesNoDuplicates));
+            ObservableCollection<byte[]> StrokesNoDuplicates = new ObservableCollection<byte[]>(PageObjectByteStrokes.Distinct().ToList());
+            ContextNodeCollection shapes = InkInterpretation.InterpretShapes(CLPPage.BytesToStrokes(StrokesNoDuplicates));
             if (shapes != null)
             {
                 StringBuilder text = new StringBuilder();
                 InkShapes.Clear();
                 foreach (InkDrawingNode shape in shapes)
                 {
-                    InkShapes.Add(new CLPNamedInkSet(shape.GetShapeName(),CLPPage.StrokesToStrings(shape.Strokes)));
+                    InkShapes.Add(new CLPNamedInkSet(shape.GetShapeName(),CLPPage.StrokesToBytes(shape.Strokes)));
                     text.AppendLine(shape.GetShapeName());
                 }
                 InkShapesString = text.ToString();
@@ -89,29 +89,5 @@ namespace CLP.Models
         }
 
         #endregion // Methods
-
-        #region Custom Deserialization
-
-        /// <summary>
-        /// Retrieves the actual data from the serialization info.
-        /// </summary>
-        /// .
-        /// <remarks>
-        /// This method should only be implemented if backwards 
-        /// compatibility should be implemented for
-        /// a class that did not previously implement the DataObjectBase class.
-        /// </remarks>
-        protected override void GetDataFromSerializationInfo(SerializationInfo info)
-        {
-            // Check if deserialization succeeded
-            if(DeserializationSucceeded) return;
-
-            // Deserialization did not succeed for any reason, so retrieve the values manually
-            // Luckily there is a helper class (SerializationHelper) 
-            // that eases the deserialization of "old" style objects
-            Console.WriteLine("custom deserialize");
-        }
-
-        #endregion //Custom Deserialization
     }
 }

@@ -48,7 +48,7 @@ namespace Classroom_Learning_Partner.Model
             NumberOfSubmissions = 0;
         }
 
-        
+
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -56,9 +56,9 @@ namespace Classroom_Learning_Partner.Model
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPPage(SerializationInfo info, StreamingContext context)
-            : base(info, context) 
-        { 
-        
+            : base(info, context)
+        {
+
         }
         #endregion
 
@@ -167,8 +167,8 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
-        
-       
+
+
         /// <summary>
         /// Gets a list of pageObjects image data, if it exisits, on the page. Only used for compression during serialization 
         /// </summary>
@@ -183,7 +183,7 @@ namespace Classroom_Learning_Partner.Model
         /// Register the PageObjectsSer property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsSerProperty = RegisterProperty("PageObjectsSer", typeof(List<String>), () => new List<String>());
-        
+
 
         /// <summary>
         /// Gets a list of pageObjects image data, if it exisits, on the page. Only used for compression during serialization 
@@ -198,7 +198,7 @@ namespace Classroom_Learning_Partner.Model
         ///// Register the PageObjectsSer property so it is known in the class.
         ///// </summary>
         //public static readonly PropertyData PageStrokesSerProperty = RegisterProperty("PageStrokesSer", typeof(List<string>), new List<string>());
-        
+
 
 
 
@@ -356,7 +356,7 @@ namespace Classroom_Learning_Partner.Model
         public static StrokeCollection StringsToStrokes(ObservableCollection<string> strings)
         {
             StrokeCollection strokes = new StrokeCollection();
-            foreach (string s in strings)
+            foreach(string s in strings)
             {
                 strokes.Add(StringToStroke(s));
             }
@@ -369,7 +369,7 @@ namespace Classroom_Learning_Partner.Model
         public static ObservableCollection<string> StrokesToStrings(StrokeCollection strokes)
         {
             ObservableCollection<string> strings = new ObservableCollection<string>();
-            foreach (Stroke stroke in strokes)
+            foreach(Stroke stroke in strokes)
             {
                 strings.Add(StrokeToString(stroke));
             }
@@ -403,24 +403,24 @@ namespace Classroom_Learning_Partner.Model
             Strokes = CLPPage.StrokesToStrings(InkStrokes);
             PageObjectsSer = new List<string>();
             //PageStrokesSer = new List<string>();
-            foreach (ICLPPageObject obj in PageObjects)
+            foreach(ICLPPageObject obj in PageObjects)
             {
-                if (obj is CLPPageObjects.CLPStamp)
+                if(obj is CLPPageObjects.CLPStamp)
                 {
                     CLPPageObjects.CLPStamp stamp = (CLPPageObjects.CLPStamp)obj;
                     //Check to see if 
-                    if (stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
+                    if(stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
                     {
                         CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)stamp.StrokePathContainer.InternalPageObject;
                         PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
- 
+
                         im.ByteSource = null;
                     }
                     //copy strokes over
                     //However, may also be holding a shape .. 
                     else
                     {
-                        if (obj.PageObjectStrokes.Count > 0)
+                        if(obj.PageObjectStrokes.Count > 0)
                         {
                             //PageObjectsSer.Add(PageStrokesSer.Count.ToString());
                             PageObjectsSer.Add(obj.PageObjectStrokes.Count.ToString());
@@ -438,17 +438,17 @@ namespace Classroom_Learning_Partner.Model
                 }
 
 
-                else if (obj is CLPPageObjects.CLPImage)
+                else if(obj is CLPPageObjects.CLPImage)
                 {
                     CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)obj;
                     PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
                     im.ByteSource = null;
                 }
-                else if (obj is CLPPageObjects.CLPStrokePathContainer)
+                else if(obj is CLPPageObjects.CLPStrokePathContainer)
                 {
                     CLPPageObjects.CLPStrokePathContainer container = (CLPPageObjects.CLPStrokePathContainer)obj;
                     //Check to see if 
-                    if (container.InternalPageObject is CLPPageObjects.CLPImage)
+                    if(container.InternalPageObject is CLPPageObjects.CLPImage)
                     {
                         CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)container.InternalPageObject;
                         PageObjectsSer.Add(Convert.ToBase64String(im.ByteSource));
@@ -456,7 +456,7 @@ namespace Classroom_Learning_Partner.Model
                     }
                     else
                     {
-                        if (container.PageObjectStrokes.Count > 0)
+                        if(container.PageObjectStrokes.Count > 0)
                         {
                             //PageObjectsSer.Add(PageStrokesSer.Count.ToString());
                             PageObjectsSer.Add(container.PageObjectStrokes.Count.ToString());
@@ -478,7 +478,7 @@ namespace Classroom_Learning_Partner.Model
 
             }
 
-           
+
 
         }
 
@@ -499,14 +499,14 @@ namespace Classroom_Learning_Partner.Model
         public void deserializePageObjectsHelper()
         {
             int currentIndex = 0;
-            for (int i = 0; i < PageObjects.Count; i++)
+            for(int i = 0; i < PageObjects.Count; i++)
             {
-                if (!PageObjectsSer[currentIndex].Equals(""))
+                if(!PageObjectsSer[currentIndex].Equals(""))
                 {
-                    if (PageObjects[i] is CLPPageObjects.CLPStamp)
+                    if(PageObjects[i] is CLPPageObjects.CLPStamp)
                     {
                         CLPPageObjects.CLPStamp stamp = ((CLPPageObjects.CLPStamp)PageObjects[i]);
-                        if (stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
+                        if(stamp.StrokePathContainer.InternalPageObject is CLPPageObjects.CLPImage)
                         {
                             CLPPageObjects.CLPImage im = (CLPPageObjects.CLPImage)stamp.StrokePathContainer.InternalPageObject;
                             im.ByteSource = Convert.FromBase64String(PageObjectsSer[currentIndex]);
@@ -517,7 +517,7 @@ namespace Classroom_Learning_Partner.Model
                         {
                             //int startIndex = Convert.ToInt32(PageObjectsSer[i]);
                             int count = Convert.ToInt32(PageObjectsSer[currentIndex]);
-                            if (count > 0)
+                            if(count > 0)
                             {
                                 stamp.PageObjectStrokes = new ObservableCollection<string>(PageObjectsSer.GetRange(currentIndex + 1, count));
                                 CLPPage.StringsToStrokes(stamp.PageObjectStrokes);
@@ -529,10 +529,10 @@ namespace Classroom_Learning_Partner.Model
                     }
 
 
-                    else if (PageObjects[i] is CLPPageObjects.CLPStrokePathContainer)
+                    else if(PageObjects[i] is CLPPageObjects.CLPStrokePathContainer)
                     {
                         CLPPageObjects.CLPStrokePathContainer container = (CLPPageObjects.CLPStrokePathContainer)PageObjects[i];
-                        if (container.InternalPageObject is CLPPageObjects.CLPImage)
+                        if(container.InternalPageObject is CLPPageObjects.CLPImage)
                         {
                             CLPPageObjects.CLPImage curImage = (CLPPageObjects.CLPImage)container.InternalPageObject;
                             curImage.ByteSource = Convert.FromBase64String(PageObjectsSer[currentIndex]);
@@ -542,9 +542,9 @@ namespace Classroom_Learning_Partner.Model
                         else
                         {
                             int count = Convert.ToInt32(PageObjectsSer[currentIndex]);
-                            if (count > 0)
+                            if(count > 0)
                             {
-                                foreach ( string s in (PageObjectsSer.GetRange(currentIndex + 1, count)))
+                                foreach(string s in (PageObjectsSer.GetRange(currentIndex + 1, count)))
                                 {
                                     container.PageObjectStrokes.Add(s);
                                 }
@@ -709,3 +709,4 @@ namespace Classroom_Learning_Partner.Model
     //    #endregion //MetaData
     //}
 }
+

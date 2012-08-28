@@ -98,34 +98,10 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.StringsToStrokes(StrokesNoDuplicates), AnalysisType);
+            ObservableCollection<byte[]> StrokesNoDuplicates = new ObservableCollection<byte[]>(PageObjectByteStrokes.Distinct().ToList());
+            string result = InkInterpretation.InterpretHandwriting(CLPPage.BytesToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;
-        }
-
-        /// <summary>
-        /// Retrieves the actual data from the serialization info.
-        /// </summary>
-        /// <remarks>
-        /// This method should only be implemented if backwards compatibility should be implemented for
-        /// a class that did not previously implement the DataObjectBase class.
-        /// </remarks>
-        protected override void GetDataFromSerializationInfo(SerializationInfo info)
-        {
-            // Check if deserialization succeeded
-            if(DeserializationSucceeded)
-            {
-                return;
-            }
-
-            Console.WriteLine("deserialize fail!");
-
-            // Deserialization did not succeed for any reason, so retrieve the values manually
-            // Luckily there is a helper class (SerializationHelper) 
-            // that eases the deserialization of "old" style objects
-            //FirstName = SerializationHelper.GetString(info, "FirstName", FirstNameProperty.GetDefaultValue());
-            //LastName = SerializationHelper.GetString(info, "LastName", LastNameProperty.GetDefaultValue());
         }
 
         #endregion // Methods

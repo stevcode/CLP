@@ -67,7 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        return null;
             //    }, null);
             
-            StrokePathContainer.PageObjectStrokes = PageObject.PageObjectStrokes;
+            StrokePathContainer.PageObjectByteStrokes = PageObject.PageObjectByteStrokes;
             StrokePathContainer.IsStrokePathsVisible = true;
         }
 

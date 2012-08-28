@@ -94,7 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {
-            get { _pageObjectStrokes = CLPPage.StringsToStrokes(PageObject.PageObjectStrokes);
+            get { _pageObjectStrokes = CLPPage.BytesToStrokes(PageObject.PageObjectByteStrokes);
             return _pageObjectStrokes;
             }
         }

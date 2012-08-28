@@ -69,12 +69,12 @@ namespace Classroom_Learning_Partner.Model.CLPPageObjects
         }
         public static readonly PropertyData FilePathProperty = RegisterProperty("FilePath", typeof(string), null);
         
-        public Byte[] File
+        public byte[] File
         {
-            get { return GetValue<Byte[]>(FileProperty); }
+            get { return GetValue<byte[]>(FileProperty); }
             set { SetValue(FileProperty, value); }
         }
-        public static readonly PropertyData FileProperty = RegisterProperty("File", typeof(Byte[]), null);
+        public static readonly PropertyData FileProperty = RegisterProperty("File", typeof(byte[]), null);
 
         public string ID
         {

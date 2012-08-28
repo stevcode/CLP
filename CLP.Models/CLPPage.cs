@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -44,7 +45,7 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            StringStrokes = new ObservableCollection<string>();
+            ByteStrokes = new ObservableCollection<byte[]>();
             PageObjects = new ObservableCollection<ICLPPageObject>();
             PageHistory = new CLPHistory();
             PageIndex = -1;
@@ -123,18 +124,18 @@ namespace CLP.Models
         public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), null);
 
         /// <summary>
-        /// Gets a list of stringified strokes on the page.
+        /// Gets a list of the serialized strokes for a page.
         /// </summary>
-        public ObservableCollection<string> StringStrokes
+        public ObservableCollection<byte[]> ByteStrokes
         {
-            get { return GetValue<ObservableCollection<string>>(StringStrokesProperty); }
-            set { SetValue(StringStrokesProperty, value); }
+            get { return GetValue<ObservableCollection<byte[]>>(ByteStrokesProperty); }
+            set { SetValue(ByteStrokesProperty, value); }
         }
 
         /// <summary>
-        /// Register the Strokes property so it is known in the class.
+        /// Register the ByteStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData StringStrokesProperty = RegisterProperty("StringStrokes", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<byte[]>), () => new ObservableCollection<byte[]>());
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -280,64 +281,52 @@ namespace CLP.Models
 
         #region Methods
 
-        public static Stroke StringToStroke(string stroke)
+        public static Stroke ByteToStroke(byte[] byteStroke)
         {
-            StrokeCollectionConverter converter = new StrokeCollectionConverter();
-            StrokeCollection sc = new StrokeCollection();
-            sc = (StrokeCollection)converter.ConvertFromString(stroke);
+            var m_stream = new MemoryStream(byteStroke);
+            StrokeCollection sc = new StrokeCollection(m_stream);
+
             return sc[0];
         }
 
-        public static string StrokeToString(Stroke stroke)
+        public static byte[] StrokeToByte(Stroke stroke)
         {
             StrokeCollection sc = new StrokeCollection();
             sc.Add(stroke);
-            StrokeCollectionConverter converter = new StrokeCollectionConverter();
-            string stringStroke = (string)converter.ConvertToString(sc);
-            return stringStroke;
+
+            var m_stream = new MemoryStream();
+            sc.Save(m_stream, true);
+            byte[] byteStroke = m_stream.ToArray();
+
+            return byteStroke;
         }
 
         /**
-         * Helper method that converts a ObservableCollection of strings to a StrokeCollection
+         * Helper method that converts a ObservableCollection of byte[] to a StrokeCollection
          */
-        public static StrokeCollection StringsToStrokes(ObservableCollection<string> strings)
+        public static StrokeCollection BytesToStrokes(ObservableCollection<byte[]> byteStrokes)
         {
             StrokeCollection strokes = new StrokeCollection();
-            foreach(string s in strings)
+            foreach(byte[] s in byteStrokes)
             {
-                strokes.Add(StringToStroke(s));
+                strokes.Add(ByteToStroke(s));
             }
+
             return strokes;
         }
 
         /**
-         * Helper method that converts a StrokeCollection to an ObservableCollection of strings
+         * Helper method that converts a StrokeCollection to an ObservableCollection of byte[]
          */
-        public static ObservableCollection<string> StrokesToStrings(StrokeCollection strokes)
+        public static ObservableCollection<byte[]> StrokesToBytes(StrokeCollection strokes)
         {
-            ObservableCollection<string> strings = new ObservableCollection<string>();
+            ObservableCollection<byte[]> byteStrokes = new ObservableCollection<byte[]>();
             foreach(Stroke stroke in strokes)
             {
-                strings.Add(StrokeToString(stroke));
+                byteStrokes.Add(StrokeToByte(stroke));
             }
 
-            //This will reduce size of strokes by more than half. convert to this method soon! - steve
-            //var m_stream = new MemoryStream();
-            //strokes.Save(m_stream, true);
-            //byte[] b_strokes = m_stream.ToArray();
-
-            //string s_allstrings = "";
-            //foreach (var strin in strings)
-            //{
-            //    s_allstrings += strin;
-            //}
-
-            //byte[] x = ASCIIEncoding.Unicode.GetBytes(s_allstrings);
-
-            //Console.WriteLine("obscoll byte length: " + (x.Length).ToString());
-            //Console.WriteLine("array byte length: " + (b_strokes.Length).ToString());
-
-            return strings;
+            return byteStrokes;
         }
 
         #endregion

@@ -105,8 +105,8 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<string> StrokesNoDuplicates = new ObservableCollection<string>(PageObjectStrokes.Distinct().ToList());
-            int[,] result = InkInterpretation.InterpretShading(CLPPage.StringsToStrokes(StrokesNoDuplicates), Width, Height, 15.0);
+            ObservableCollection<byte[]> StrokesNoDuplicates = new ObservableCollection<byte[]>(PageObjectByteStrokes.Distinct().ToList());
+            int[,] result = InkInterpretation.InterpretShading(CLPPage.BytesToStrokes(StrokesNoDuplicates), Width, Height, 15.0);
             double total_shaded = 0.0;
             double total = 0.0;
             foreach (int i in result)
