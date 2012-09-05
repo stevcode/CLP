@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
+using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -38,7 +38,7 @@ namespace Classroom_Learning_Partner.Views
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(stamp.PageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(stamp.PageObject);
         }
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Views
             }
 
             Point pt = new Point(x, y);
-            CLPServiceAgent.Instance.ChangePageObjectPosition(stamp.PageObject, pt);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(stamp.PageObject, pt);
         }
 
         private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.Views
                 newWidth = stamp.Width;
             }
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(stamp.PageObject, newHeight, newWidth);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectDimensions(stamp.PageObject, newHeight, newWidth);
         }
 
         private void PageObjectHitBox_MouseEnter(object sender, MouseEventArgs e)
