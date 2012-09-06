@@ -195,6 +195,7 @@
     <Compile Include="ViewModels\PageObjects\CLPStrokePathContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
+    <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
@@ -269,6 +270,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RibbonView.xaml.cs">
+      <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
@@ -396,6 +400,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPTextBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

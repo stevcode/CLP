@@ -117,9 +117,9 @@ namespace Classroom_Learning_Partner.Views
 
         private void UpdateToggleButtonState()
         {
-            UpdateItemCheckedState(ribbonView.BoldButton, TextElement.FontWeightProperty, FontWeights.Bold);
-            UpdateItemCheckedState(ribbonView.ItalicButton, TextElement.FontStyleProperty, FontStyles.Italic);
-            UpdateItemCheckedState(ribbonView.UnderlineButton, Inline.TextDecorationsProperty, TextDecorations.Underline);   
+            //UpdateItemCheckedState(ribbonView.BoldButton, TextElement.FontWeightProperty, FontWeights.Bold);
+            //UpdateItemCheckedState(ribbonView.ItalicButton, TextElement.FontStyleProperty, FontStyles.Italic);
+            //UpdateItemCheckedState(ribbonView.UnderlineButton, Inline.TextDecorationsProperty, TextDecorations.Underline);   
         }
 
         void UpdateItemCheckedState(ToggleButton button, DependencyProperty formattingProperty, object expectedValue)
@@ -134,18 +134,18 @@ namespace Classroom_Learning_Partner.Views
             FontFamily currentFontFamily = (FontFamily)((value == DependencyProperty.UnsetValue) ? null : value);
             if (currentFontFamily != null)
             {
-                ribbonView.FontFamilyComboBox.SelectedItem = currentFontFamily;
+                //ribbonView.FontFamilyComboBox.SelectedItem = currentFontFamily;
             }
             else
             {
-                ribbonView.FontFamilyComboBox.SelectedIndex = -1;
+                //ribbonView.FontFamilyComboBox.SelectedIndex = -1;
             }
         }
 
         private void UpdateSelectedFontSize()
         {
             object value = TextBox.Selection.GetPropertyValue(TextElement.FontSizeProperty);
-            ribbonView.FontSizeComboBox.SelectedValue = (value == DependencyProperty.UnsetValue) ? null : value;
+            //ribbonView.FontSizeComboBox.SelectedValue = (value == DependencyProperty.UnsetValue) ? null : value;
         }
 
         private void UpdateSelectedFontColor()
@@ -154,7 +154,7 @@ namespace Classroom_Learning_Partner.Views
             Brush currentFontColor = (Brush)((value == DependencyProperty.UnsetValue) ? null : value);
             if (currentFontColor != null)
             {
-                ribbonView.FontColorComboBox.SelectedItem = currentFontColor;
+                //ribbonView.FontColorComboBox.SelectedItem = currentFontColor;
             }
         }
 

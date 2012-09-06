@@ -1,0 +1,615 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.RibbonView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+
+    <UserControl.Resources>
+        <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
+    </UserControl.Resources>
+
+    <!--Ribbon-->
+    <Ribbon x:Name="Ribbon" IsMinimized="{Binding IsMinimized}">
+
+        <!--Contextual Tab Definitions-->
+        <Ribbon.ContextualTabGroups>
+            <RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
+            <RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
+        </Ribbon.ContextualTabGroups>
+
+        <!--Application Menu Button-->
+        <Ribbon.ApplicationMenu>
+            <RibbonApplicationMenu SmallImageSource="..\Images\File.png">
+
+                <RibbonApplicationMenuItem Header="New Notebook"
+                                                  KeyTip="N"
+                                                  ImageSource="..\Images\NewNotebook.png"
+                                                  Command="{Binding Path=NewNotebookCommand}"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Open Notebook"
+                                                  KeyTip="O"
+                                                  ImageSource="..\Images\OpenNotebook.png" 
+                                                  Command="{Binding Path=OpenNotebookCommand}"/>
+
+                <RibbonApplicationMenuItem Header="Edit Notebook"
+                                                  Command="{Binding Path=EditNotebookCommand}"
+                                                  KeyTip="E"
+                                                  ImageSource="..\Images\EditNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Done Editing Notebook"
+                                                  Command="{Binding Path=DoneEditingNotebookCommand}"
+                                                  KeyTip="E"
+                                                  ImageSource="..\Images\DoneEditingNotebook.png"
+                                                  Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Save Notebook"
+                                                  Command="{Binding Path=SaveNotebookCommand}"
+                                                  KeyTip="S"
+                                                  ImageSource="..\Images\SaveNotebook.png" />
+
+                <RibbonApplicationMenuItem Header="Save All Notebooks"
+                                                  Command="{Binding Path=SaveAllNotebooksCommand}"
+                                                  KeyTip="A"
+                                                  ImageSource="..\Images\SaveAllNotebooks.png" />
+
+                <RibbonApplicationMenuItem Header="Save Notebook Histories"
+                                                  Command="{Binding Path=SaveAllHistoriesCommand}"
+                                                  KeyTip="Bs"
+                                                  ImageSource="..\Images\SaveNotebookHistories.png" />
+
+                <RibbonApplicationMenuItem Header="Convert to XPS"
+                                                  Command="{Binding Path=ConvertToXPSCommand}"
+                                                  KeyTip="C"
+                                                  ImageSource="..\Images\ConvertToXPS.png" />
+                <RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
+                                                  Command="{Binding Path=ImportLocalNotebooksDBCommand}"
+                                                  KeyTip="I"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Visibility="{Binding Path=ServerVisibility}"/>
+
+                <RibbonSeparator />
+
+                <!--Bind header for toggle text: disconnect/reconnect to network-->
+                <RibbonApplicationMenuItem Header="Reconnect to Network"
+                                                  Command="{Binding Path=NetworkReconnectCommand}"
+                                                  ImageSource="..\Images\ReconnectToNetwork.png" />
+
+                <RibbonApplicationMenu.FooterPaneContent>
+                    <DockPanel LastChildFill="False">
+                        <RibbonButton Command="{Binding Path=ExitCommand}"
+                                         Label="Exit"
+                                         ToolTipTitle="Exit"
+                                         KeyTip="X"
+                                         DockPanel.Dock="Right"
+                                         Margin="2"
+                                         BorderBrush="#B8114EAF"
+                                         LargeImageSource="..\Images\Exit.png"
+                                         SmallImageSource="..\Images\Exit.png"
+                                         Height="60" Width="75"/>
+                    </DockPanel>
+                </RibbonApplicationMenu.FooterPaneContent>
+
+            </RibbonApplicationMenu>
+        </Ribbon.ApplicationMenu>
+
+        <!--Home Tab-->
+        <RibbonTab Header="Home">
+
+            <RibbonGroup Header="Notebook">
+
+                <RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
+                        LargeImageSource="..\Images\OpenNotebook.png"
+                        IsChecked="{Binding SideBarVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="Show Notebook Pages"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="Hide Notebook Pages"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Pen">
+                <RibbonGroup.Resources>
+                    <Style x:Name="PenWidthStyle" TargetType="{x:Type RibbonButton}">
+                        <Setter Property="Width" Value="25"/>
+                        <Setter Property="Height" Value="5"/>
+                        <Setter Property="Command">
+                            <Setter.Value>
+                                <Binding Path="SetPenWidthCommand"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="CommandParameter">
+                            <Setter.Value>
+                                <Binding RelativeSource="{RelativeSource Self}"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </RibbonGroup.Resources>
+                <RibbonToggleButton
+                        Label="Pen"
+                        LargeImageSource="..\Images\Pen.png"
+                        Command="{Binding Path=SetPenCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Pen'}" />
+
+                <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
+                <!--Header="Pen Thickness"-->
+                <RibbonMenuButton Label="Size" 
+                         LargeImageSource="..\Images\PenSize.png" >
+                    <RibbonGallery SelectedValuePath="StrokeThickness" SelectedValue="{Binding PenSize, Mode=TwoWay}"
+                                              ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <RibbonGalleryCategory>
+                            <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="1" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                            <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="3" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                            <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="5" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                            <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="7" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                            <Line Stretch="UniformToFill"
+                                      Width="150" Height="30" StrokeThickness="12" 
+                                      Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
+                        </RibbonGalleryCategory>
+                    </RibbonGallery>
+                </RibbonMenuButton>
+
+            </RibbonGroup>
+
+            <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
+            <RibbonGroup Header="Eraser">
+                <RibbonGroup.Resources>
+                    <Style x:Name="EraserButtonStyle" TargetType="{x:Type RibbonButton}">
+                        <Setter Property="Command">
+                            <Setter.Value>
+                                <Binding Path="SetEraserCommand"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="CommandParameter">
+                            <Setter.Value>
+                                <Binding Path="SetStrokeEraserCommand"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </RibbonGroup.Resources>
+
+                <!--Making RibbonSplitButton for Eraser and StrokeEraser-->
+                <RibbonSplitButton
+                    Label="Eraser"
+                    LargeImageSource="..\Images\Eraser.png">
+                    <RibbonButton LargeImageSource="..\Images\Eraser.png" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
+                    <RibbonButton LargeImageSource="..\Images\StrokeEraser.png" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
+                </RibbonSplitButton>
+            </RibbonGroup>
+
+            <RibbonGroup>
+                <RibbonToggleButton
+                        Label="SnapTile"
+                        LargeImageSource="..\Images\SnapTileIcon.png"
+                        Command="{Binding Path=SetSnapTileCommand}"
+                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='SnapTile'}"/>
+
+                <RibbonButton
+                        Label="Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
+
+                <RibbonButton
+                        Label="Audio"
+                        LargeImageSource="..\Images\mic_start.png"
+                        Command="{Binding Path=InsertAudioFileCommand}"/>
+
+                <RibbonButton
+                        Label="Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Pen Color">
+                <RibbonGroup.Resources>
+                    <Style x:Name="ColorButtonStyle" TargetType="{x:Type RibbonButton}">
+                        <Setter Property="Width" Value="25"/>
+                        <Setter Property="Height" Value="25"/>
+                        <Setter Property="Command">
+                            <Setter.Value>
+                                <Binding Path="SetPenColorCommand"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="CommandParameter">
+                            <Setter.Value>
+                                <Binding RelativeSource="{RelativeSource Self}"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </RibbonGroup.Resources>
+                <RibbonButton Background="Black"/>
+                <RibbonButton Background="White"/>
+                <RibbonButton Background="Red"/>
+                <RibbonButton Background="Bisque"/>
+                <RibbonButton Background="DarkOrange"/>
+                <RibbonButton Background="Tan"/>
+                <RibbonButton Background="Gold"/>
+                <RibbonButton Background="SaddleBrown"/>
+                <RibbonButton Background="DarkGreen"/>
+                <RibbonButton Background="MediumSeaGreen"/>
+                <RibbonButton Background="Blue"/>
+                <RibbonButton Background="HotPink"/>
+                <RibbonButton Background="BlueViolet"/>
+                <RibbonButton Background="Aquamarine"/>
+                <RibbonButton Background="SlateGray"/>
+                <RibbonButton Background="SkyBlue"/>
+                <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
+                    <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
+                </Border>
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="History">
+
+                <RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
+                        IsChecked="False"
+                        LargeImageSource="..\Images\video.png"
+                        Label="Enable Playback"
+                        Command="{Binding Path=EnablePlaybackCommand}" />
+
+                <RibbonButton
+                        Label="Undo"
+                        LargeImageSource="..\Images\Undo.png"
+                        Command="{Binding Path=UndoCommand}" />
+
+                <RibbonButton
+                        Label="Redo"
+                        LargeImageSource="..\Images\Redo.png"
+                        Command="{Binding Path=RedoCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
+
+                <RibbonButton
+                        LargeImageSource="..\Images\Send.png" 
+                        Command="{Binding Path=SubmitPageCommand}" 
+                        Label="Send To Teacher"
+                        Visibility="{Binding Path=SendButtonVisibility}"/>
+
+                <RibbonButton
+                        LargeImageSource="..\Images\Happy.png" 
+                        Label="Thank you!"
+                        IsEnabled="False"
+                        Visibility="{Binding Path=IsSentInfoVisibility}"/>
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+
+                <RibbonButton
+                        LargeImageSource="..\Images\Projector.png"
+                        Label="Send To Projector"
+                        Command="{Binding Path=SendDisplayToProjectorcommand}" />
+
+                <RibbonButton
+                        LargeImageSource="..\Images\SingleDisplay.png"
+                        Label="Linked Display"
+                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+
+                <RibbonButton
+                        LargeImageSource="..\Images\GridDisplay.png"
+                        Label="New Grid Display"
+                        Command="{Binding Path=CreateNewGridDisplayCommand}" />
+
+                <RibbonToggleButton x:Name="ShowGridDisplaysToggleButton"
+                        LargeImageSource="..\Images\OpenNotebook.png"
+                        IsChecked="{Binding GridDisplaysVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="Show Grid Displays"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="Hide Grid Displays"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+                <RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
+                        IsChecked="{Binding BroadcastInkToStudents}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="Send Ink to Students Off"/>
+                            <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOff.png"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="Send Ink to Students On"/>
+                                    <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOn.png"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+            </RibbonGroup>
+
+            <!--   <RibbonGroup Header="Visual" >
+                    <RibbonButton
+                        LargeImageSource="{Binding Path=VisualRecordImage}"
+                        Label="Record"
+                        Command="{Binding Path=RecordVisualCommand}" />
+                    <RibbonButton
+                        LargeImageSource="{Binding Path=PlayPauseVisualImage}"
+                        Label="Play"
+                        Command="{Binding Path=PlayPauseVisualCommand}" />
+                    <RibbonButton
+                        LargeImageSource="..\Images\stop.png"
+                        Label="Stop"
+                        Command="{Binding Path=StopVisualCommand}" />
+                </RibbonGroup> -->
+
+            <!--<RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">-->
+            <RibbonGroup Header="Review" FontStretch="Condensed" Visibility="Collapsed">
+                <RibbonButton
+                        Label="Audio"
+                        LargeImageSource="..\Images\mic_stop.png" 
+                        Command="{Binding Path=RecordAudioCommand}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                <!--    <RibbonButton
+                        Label="Play"
+                        LargeImageSource="{Binding Path=AudioPlayImage}"
+                        IsEnabled="{Binding Path=PageHasAudioFile}"
+                        Command="{Binding Path=PlayAudioCommand}" 
+                        Grid.Row="0"
+                        Grid.RowSpan="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"/> 
+                        <Slider Value="{Binding Path=CurrentSliderValue}" Height="22"
+         Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/> -->
+
+            </RibbonGroup>
+
+            <!--       <RibbonGroup Header="Visual and Audio" >
+                    <RibbonButton
+                        LargeImageSource="{Binding Path=RecordBothImage}"
+                        Label="Record"
+                        Command="{Binding Path=RecordBothCommand}" />
+                    <RibbonButton
+                        LargeImageSource="{Binding Path=PlayPauseBothImage}"
+                        Label="Play"
+                        Command="{Binding Path=PlayStopBothCommand}" /> 
+                </RibbonGroup> -->
+
+        </RibbonTab>
+
+        <!--Editing Tab-->
+        <RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
+
+            <RibbonGroup Header="Page">
+
+                <RibbonButton
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=AddNewPageCommand}" />
+
+                <RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
+
+                <!--<RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />-->
+
+                <RibbonButton
+                        Label="Add Page Topic to this Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=AddPageTopicCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Insert">
+
+                <RibbonButton
+                        Label="Insert Image"
+                        LargeImageSource="..\Images\AddImage.png"
+                        Command="{Binding Path=InsertImageCommand}" />
+
+                <RibbonButton
+                        Label="Insert Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
+                <RibbonButton
+                        Label="Insert Image Stamp"
+                        LargeImageSource="..\Images\PictureStamp.png"
+                        Command="{Binding Path=InsertImageStampCommand}" />
+
+                <RibbonButton
+                        Label="Insert Square"
+                        LargeImageSource="..\Images\AddSquare.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                <RibbonButton
+                        Label="Insert Circle"
+                        LargeImageSource="..\Images\AddCircle.png"
+                        Command="{Binding Path=InsertCircleShapeCommand}" />
+
+                <RibbonButton
+                        Label="Insert Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+
+                <RibbonButton
+                        Label="Insert Vertical Line"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}" />
+
+                <RibbonButton
+                        Label="Handwriting Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertHandwritingRegionCommand}" />
+
+                <RibbonButton
+                        Label="Ink Shape Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkShapeRegionCommand}" />
+
+                <RibbonButton
+                        Label="Data Table"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertDataTableCommand}" />
+
+                <RibbonButton
+                        Label="Shading Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertShadingRegionCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Text">
+
+                <RibbonButton
+                        Label="Insert Text Box"
+                        LargeImageSource="..\Images\AddText.png"
+                        Command="{Binding Path=InsertTextBoxCommand}" />
+
+                <RibbonControlGroup>
+                    <ComboBox x:Name="FontFamilyComboBox"
+                            ItemsSource="{Binding Path=Fonts}"
+                            SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
+                            Width="130"/>
+                    <ComboBox x:Name="FontSizeComboBox"
+                            ItemsSource="{Binding Path=FontSizes}"
+                            SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
+                            Width="45"/>
+                </RibbonControlGroup>
+
+                <RibbonControlGroup>
+
+                    <RibbonToggleButton
+                            x:Name="BoldButton"
+                            SmallImageSource="..\Images\Bold16.png"
+                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <RibbonToggleButton.ControlSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </RibbonToggleButton.ControlSizeDefinition>
+                    </RibbonToggleButton>
+
+                    <RibbonToggleButton
+                            x:Name="ItalicButton"
+                            SmallImageSource="..\Images\Italic16.png"
+                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <RibbonToggleButton.ControlSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </RibbonToggleButton.ControlSizeDefinition>
+                    </RibbonToggleButton>
+
+                    <RibbonToggleButton
+                            x:Name="UnderlineButton"
+                            SmallImageSource="..\Images\Underline16.png"
+                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                        <RibbonToggleButton.ControlSizeDefinition>
+                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                        </RibbonToggleButton.ControlSizeDefinition>
+                    </RibbonToggleButton>
+
+                    <Label Content="Font Color" />
+
+                    <ComboBox x:Name="FontColorComboBox"
+                            ItemsSource="{Binding Path=FontColors}"
+                            SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
+                            Width="45">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                </RibbonControlGroup>
+
+            </RibbonGroup>
+
+        </RibbonTab>
+
+        <!--Notebook Viewing Tab-->
+        <RibbonTab Header="Query Pages" ContextualTabGroupHeader="Server and Page Viewer">
+
+            <RibbonGroup Header="Page">
+
+                <RibbonButton
+                        Label="Add Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=QueryDatabaseCommand}" />
+
+                <RibbonButton
+                        Label="Delete This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=DeletePageCommand}" />
+
+                <RibbonButton
+                        Label="Copy This Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=CopyPageCommand}" />
+
+            </RibbonGroup>
+
+            <!--  <RibbonGroup Header="Insert">
+
+                    <RibbonButton
+                        Label="Insert Image"
+                        LargeImageSource="..\Images\AddImage.png"
+                        Command="{Binding Path=InsertImageCommand}" />
+
+                    <RibbonButton
+                        Label="Insert Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}" />
+
+                    <RibbonButton
+                        Label="Insert Image Stamp"
+                        LargeImageSource="..\Images\AddPictureStamp.jpg"
+                        Command="{Binding Path=InsertImageStampCommand}" />
+
+                    <RibbonButton
+                        Label="Insert Square"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}" />
+
+                    <RibbonButton
+                        Label="Insert Circle"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertCircleShapeCommand}" />
+
+                    <RibbonButton
+                        Label="Insert Ink Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertInkRegionCommand}" />
+
+                </RibbonGroup> -->
+
+        </RibbonTab>
+    </Ribbon>
+    
+</catel:UserControl>
