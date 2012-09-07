@@ -27,6 +27,7 @@ namespace CLP.Models
         DisplayTypes DisplayType { get; }
     }
 
+    [Serializable]
     abstract public class ACLPDisplayBase : DataObjectBase<ACLPDisplayBase>
     {
 
