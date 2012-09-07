@@ -22,7 +22,7 @@ namespace CLP.Models
     /// </summary>
     [Serializable]
     [AllowNonSerializableMembers]
-    public class CLPPage : DataObjectBase<CLPPage>, IParent
+    public class CLPPage : DataObjectBase<CLPPage>
     {
         #region Variables
 
