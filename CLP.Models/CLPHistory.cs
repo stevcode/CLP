@@ -23,7 +23,7 @@ namespace CLP.Models
             HistoryItems = new ObservableCollection<CLPHistoryItem>();
             UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
             TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
-            TrashedInkStrokes = new Dictionary<string, string>();
+            TrashedInkStrokes = new Dictionary<string, List<byte>>();
             IgnoreHistory = false;
         }
 
@@ -98,16 +98,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public Dictionary<string, string> TrashedInkStrokes
+        public Dictionary<string, List<byte>> TrashedInkStrokes
         {
-            get { return GetValue<Dictionary<string, string>>(TrashedInkStrokesProperty); }
+            get { return GetValue<Dictionary<string, List<byte>>>(TrashedInkStrokesProperty); }
             set { SetValue(TrashedInkStrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the TrashedInkStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, List<byte>>), () => new Dictionary<string, List<byte>>());
 
         #endregion
 
