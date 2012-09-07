@@ -116,7 +116,7 @@ namespace Classroom_Learning_Partner.Model
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
-                        App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
+                        App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
 
                         NameChooserLoop = false;
                         //Send empty notebook to db
@@ -407,54 +407,6 @@ namespace Classroom_Learning_Partner.Model
                 //log sizes
                 Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
             }
-        }
-
-        //Record Visual button pressed
-        public void StartRecordingVisual(CLP.Models.CLPPage page)
-        {
-            CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.StartRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
-        }
-        public void StopRecordingVisual(CLP.Models.CLPPage page)
-        {
-            CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.StopRecord, null, null, null);
-            page.PageHistory.HistoryItems.Add(item);
-        }
-
-        public void PlaybackRecording(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.StartRecordedPlayback();
-        }
-        public void PauseRecording(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.PausePlayback();
-        }
-        public void StopPlayback(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.StopPlayback();
-        }
-        public void RecordAudio(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.recordAudio();
-        }
-        public void StopAudio(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.stopAudio();
-        }
-        public void PlayAudio(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.playAudio();
-        }
-        public void StopAudioPlayback(CLP.Models.CLPPage page)
-        {
-            CLPPageViewModel pageVM = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            pageVM.stopAudioPlayback();
         }
 
         public void AddPageObjectToPage(CLP.Models.ICLPPageObject pageObject)

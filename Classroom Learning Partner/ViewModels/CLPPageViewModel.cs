@@ -48,8 +48,8 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PlaybackControlsVisibility = Visibility.Collapsed;
-            DefaultDA = App.MainWindowViewModel.DrawingAttributes;
-            EditingMode = App.MainWindowViewModel.EditingMode;
+            DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
+            EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
             Page = page;
 
@@ -379,7 +379,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            App.MainWindowViewModel.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             Console.WriteLine("adding page object to page with uniqueID: " + Page.UniqueID);
 
             //STEVE - Stamps add/remove too quicly and crash projector
@@ -407,8 +407,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
-        {            
-            App.MainWindowViewModel.CanSendToTeacher = true;
+        {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
             foreach(var stroke in e.Removed)
             {
@@ -521,23 +521,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 //EditingMode = (viewModel as MainWindowViewModel).EditingMode;
             }
 
-            if (propertyName == "IsPlaybackEnabled")
-            {
-                if ((viewModel as MainWindowViewModel).IsPlaybackEnabled)
-                {
-                    PlaybackControlsVisibility = Visibility.Visible;
-                }
-                else
-                {
-                    PlaybackControlsVisibility = Visibility.Collapsed;
-                }
-            }
-
             if(propertyName == "PenSize")
             {
                 if(viewModel is MainWindowViewModel)
                 {
-                    double x = (viewModel as MainWindowViewModel).PenSize;
+                    double x = (viewModel as MainWindowViewModel).Ribbon.PenSize;
                     EraserShape = new RectangleStylusShape(x, x);
                     DefaultDA.Height = x;
                     DefaultDA.Width = x;
@@ -617,15 +605,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 timer.Stop();
                 numRecordedSessions = 0;
                 InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
-                if (PlayingRecorded)
-                {
-                    inRecorded = false;
-                    PlayingRecorded = false;
-                    App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                    App.MainWindowViewModel.PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                    PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                    App.MainWindowViewModel.currentlyPlayingVisual = false;
-                }
             }
             lock(_locker)
             {
@@ -652,10 +631,6 @@ namespace Classroom_Learning_Partner.ViewModels
                    
                 }
                 i--;
-           }
-           if (PlayingRecorded && !inRecorded) 
-           {
-               timer.Interval = new TimeSpan(0);
            }
            try
            {
@@ -897,143 +872,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageHistory.IgnoreHistory = false;
         }
-        bool PlayingRecorded = false;
-        public void StartRecordedPlayback()
-        {
-            PlayingRecorded = true;
-            OnStartPlaybackCommandExecute();
-            
-        }
-        public void PausePlayback()
-        {
-            OnStartPlaybackCommandExecute();
-        }
-        public void StopPlayback()
-        {
-            OnStopPlaybackCommandExecute();
-        }
-        public void recordAudio()
-        {
-            try
-            {
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-                mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
-                mciSendString("record recsound", "", 0, 0);
-            }
-            catch (Exception e)
-            {
 
-            }
-        }
-        public void stopAudio()
-        {
-            try
-            {
-                mciSendString("save recsound " + path, "", 0, 0);
-                mciSendString("close recsound ", "", 0, 0);
-            }
-            catch (Exception e)
-            {
-            }
-        }
-        System.Media.SoundPlayer soundPlayer;
-        System.Timers.Timer audio_play_timer;
-        double seconds;
-        void audio_play_timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            App.MainWindowViewModel.CurrentSliderValue += (.5) / seconds * 10;
-            Console.WriteLine("Slider Position: " + App.MainWindowViewModel.CurrentSliderValue);
-            if (App.MainWindowViewModel.CurrentSliderValue >= 10)
-            {
-                audio_play_timer.Stop();
-                audio_play_timer.Dispose();
-                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
-                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
-            }
-        }
-        public void playAudio()
-        {
-            try
-            {
-
-                //get the size if the file to calculate the duration so we can show a progress bar
-                FileInfo file = new FileInfo(path);
-                long sizeKb = file.Length / (long)1024.0;
-                seconds = (Double)sizeKb / 11.0;
-                TimeSpan audioLength = new TimeSpan(0, 0, (int)seconds);
-                //initialize the timer
-                audio_play_timer = new System.Timers.Timer();
-                audio_play_timer.Interval = 500;
-                audio_play_timer.Elapsed += new ElapsedEventHandler(audio_play_timer_Elapsed);
-                audio_play_timer.Enabled = true;
-                //string[] files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID);
-                //DateTime mostRecent = DateTime.MinValue;
-                //if (!File.Exists(path))
-                //{
-                //    for (int i = 0; i < files.Length; i++)
-                //    {
-                //        if (files[i].Contains(Page.UniqueID))
-                //        {
-                //            if ((DateTime.Parse(files[i])).CompareTo(mostRecent) > 0)
-                //            {
-                //                mostRecent = DateTime.Parse(files[i]);
-                //            }
-                //        }
-
-                //    }
-                //}
-                //string playPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + Page.UniqueID + @"\" + mostRecent.ToString();
-                soundPlayer = new System.Media.SoundPlayer(path);
-                soundPlayer.LoadAsync();
-                soundPlayer.Play();
-            }
-            catch (Exception e)
-            {
-            }
-
-            ////\\\\ old way that works statically
-            //string s;
-           
-            //// access media file
-            //s = "open \"C:\\Users\\Claire\\"+path+" type waveaudio alias mysound";
-           
-            //mciSendString("open "+path+" type waveaudio alias mysound", null, 0, 0);
-
-            //// play from start
-            //s = "play mysound from 0 wait";     // append "wait" if you want blocking
-            //mciSendString(s, null, 0, 0);
-            ////System.Threading.Thread.Sleep(2000);
-            //// stop playback
-            //s = "stop mysound";         // if playing asynchronously
-            //mciSendString(s, null, 0, 0);
-
-            //// deallocate resources
-            //s = "close mysound";
-            //mciSendString(s, null, 0, 0);
-        
-        }
-
-        public void stopAudioPlayback()
-        {
-            try
-            {
-                if (soundPlayer != null)
-                {
-                    soundPlayer.Stop();
-                }
-                audio_play_timer.Stop();
-                audio_play_timer.Dispose();
-                App.MainWindowViewModel.CurrentSliderValue = 0;
-                App.MainWindowViewModel.PlayingAudioVisibility = Visibility.Collapsed;
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
         #endregion //Methods
 
         #region Commands
@@ -1090,15 +929,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             timer.Stop();
             numRecordedSessions = 0;
-            if (PlayingRecorded)
-            {
-                inRecorded = false;
-                PlayingRecorded = false;
-                App.MainWindowViewModel.PlayPauseVisualImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                App.MainWindowViewModel.PlayPauseBothImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
-                App.MainWindowViewModel.currentlyPlayingVisual = false;
-            }
-            PlaybackImage = new Uri("..\\Images\\play_green.png", UriKind.Relative);
         }
        
 

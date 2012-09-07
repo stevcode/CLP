@@ -37,7 +37,7 @@
             <RowDefinition  />
         </Grid.RowDefinitions>
 
-        <Views:RibbonView Grid.Row="0" />
+        <Views:RibbonView Grid.Row="0" DataContext="{Binding Ribbon}"/>
 
         <!-- Control that dynamically determines what Display to show -->
         <ContentControl Grid.Row="1" DataContext="{Binding SelectedWorkspace}">

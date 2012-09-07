@@ -42,14 +42,15 @@ namespace Classroom_Learning_Partner.Views
 
             if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
             {
-                switch (App.MainWindowViewModel.PageEraserInteractionMode)
-                {
-                    case PageEraserInteractionMode.ObjectEraser:
-                        VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraserHitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
-                        break;
-                    default:
-                        break;
-                }
+                //Steve - fix in bindable ink canvas
+                //switch (App.MainWindowViewModel.PageEraserInteractionMode)
+                //{
+                //    case PageEraserInteractionMode.ObjectEraser:
+                //        VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraserHitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+                //        break;
+                //    default:
+                //        break;
+                //}
             }
             else 
             {
@@ -313,7 +314,7 @@ namespace Classroom_Learning_Partner.Views
             // Don't want to add objects if in inverted mode
             if (!(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
-                switch (App.MainWindowViewModel.PageInteractionMode)
+                switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
                 {
                     case PageInteractionMode.None:
                         break;

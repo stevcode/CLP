@@ -122,7 +122,6 @@
       <HintPath>External Libraries\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
-    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />

@@ -17,8 +17,8 @@ using CLP.Models;
 //using Classroom_Learning_Partner.Resources;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using Microsoft.Windows.Controls.Ribbon;
 using System.Security.Cryptography;
+using System.Windows.Controls.Ribbon;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -65,6 +65,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the TitleBarText property so it is known in the class.
         /// </summary>
         public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof(string));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public RibbonViewModel Ribbon
+        {
+            get { return GetValue<RibbonViewModel>(RibbonProperty); }
+            set { SetValue(RibbonProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Ribbon property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof(RibbonViewModel), new RibbonViewModel());
 
         /// <summary>
         /// Gets or sets the current Workspace.
@@ -158,7 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            IsMinimized = false;
+            Ribbon.IsMinimized = false;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -169,7 +183,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
-                    IsMinimized = true;
+                    Ribbon.IsMinimized = true;
                     break;
                 case App.UserMode.Student:
                     SelectedWorkspace = new UserLoginWorkspaceViewModel();

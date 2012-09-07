@@ -287,19 +287,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             set
             {
-                if (CurrentPage != null)
-                {
-                    try
-                    {
-                        CurrentPage.stopAudioPlayback();
-                        CurrentPage.stopAudio();
-                        CurrentPage.StopPlayback();
-                        App.MainWindowViewModel.isRecordingAudio = false;
-                        
-                       }
-                    catch (Exception e)
-                    { }
-                }
                 SetValue(CurrentPageProperty, value);
                 if (LinkedDisplay == null)
                 {
@@ -307,22 +294,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 
                 SelectedDisplay.AddPageToDisplay(value);
-
-                String pageID = CurrentPage.Page.UniqueID;
-                String notebookID = CurrentPage.Page.ParentNotebookID.ToString();
-                App.MainWindowViewModel.PageHasAudioFile = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + notebookID + @" - " + pageID + ".wav");
-                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
-                App.MainWindowViewModel.AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
-
-                try
-                {
-                    App.MainWindowViewModel.record_timer.Stop();
-                    App.MainWindowViewModel.record_timer.Dispose();
-                }
-                catch (Exception)
-                { }
-
-                Console.WriteLine("CurrentPage Set");
             }
         }
 
@@ -382,12 +353,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     SelectedDisplay.IsOnProjector = false;
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
+                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                 }
                 else
                 {
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
 

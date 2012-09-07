@@ -22,10 +22,10 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
 
             ribbonView = Application.Current.MainWindow as MainWindowView;
-            App.MainWindowViewModel.LastFocusedTextBox = this;
+            App.MainWindowViewModel.Ribbon.LastFocusedTextBox = this;
 
-            TextBox.FontSize = App.MainWindowViewModel.CurrentFontSize;
-            TextBox.FontFamily = App.MainWindowViewModel.CurrentFontFamily;
+            TextBox.FontSize = App.MainWindowViewModel.Ribbon.CurrentFontSize;
+            TextBox.FontFamily = App.MainWindowViewModel.Ribbon.CurrentFontFamily;
         }
 
         protected override System.Type GetViewModelType()
@@ -86,7 +86,7 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
             // Reset the focus onto the richtextbox after selecting the font in a toolbar etc
-            if (App.MainWindowViewModel.LastFocusedTextBox == this)
+            if(App.MainWindowViewModel.Ribbon.LastFocusedTextBox == this)
             {
                 TextBox.Focus();
             }
@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.Views
         protected override void OnGotMouseCapture(MouseEventArgs e)
         {
             base.OnGotMouseCapture(e);
-            App.MainWindowViewModel.LastFocusedTextBox = this;
+            App.MainWindowViewModel.Ribbon.LastFocusedTextBox = this;
         }
 
         #endregion //Font Style Methods
