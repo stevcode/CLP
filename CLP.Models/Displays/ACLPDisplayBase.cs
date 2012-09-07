@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
-using Catel.Data;
 using System.Runtime.Serialization;
+using Catel.Data;
 
-namespace Classroom_Learning_Partner.Model.Displays
+namespace CLP.Models
 {
     public enum DisplayTypes
     {

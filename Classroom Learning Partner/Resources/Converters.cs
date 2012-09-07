@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using Classroom_Learning_Partner.Model;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Resources
 {

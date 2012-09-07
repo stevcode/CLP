@@ -148,29 +148,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\CLPHistory.cs" />
-    <Compile Include="Model\CLPHistoryItem.cs" />
-    <Compile Include="Model\CLPNamedInkSet.cs" />
     <Compile Include="Model\CLPMeshNetworkService.cs" />
-    <Compile Include="Model\CLPNotebook.cs" />
-    <Compile Include="Model\CLPPage.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPAudio.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPHandwritingRegion.cs" />
-    <Compile Include="Model\CLPPageObjects\ACLPInkRegion.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPPageObjectBase.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPImage.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPSnapTileContainer.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPShape.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPStamp.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPStrokePathContainer.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPTextBox.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPInkShapeRegion.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPDataTable.cs" />
-    <Compile Include="Model\CLPPageObjects\CLPShadingRegion.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
-    <Compile Include="Model\Displays\ACLPDisplayBase.cs" />
-    <Compile Include="Model\Displays\CLPGridDisplay.cs" />
-    <Compile Include="Model\Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />

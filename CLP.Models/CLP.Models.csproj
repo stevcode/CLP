@@ -96,6 +96,9 @@
     <Compile Include="CLPPageObjects\Ink Regions\CLPNamedInkSet.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPShadingRegion.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\InkInterpretation.cs" />
+    <Compile Include="Displays\ACLPDisplayBase.cs" />
+    <Compile Include="Displays\CLPGridDisplay.cs" />
+    <Compile Include="Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

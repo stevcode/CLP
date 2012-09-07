@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
