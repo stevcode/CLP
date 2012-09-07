@@ -14,13 +14,8 @@ namespace CLP.Models
         EraseInk,
         SnapTileSnap,
         SnapTileRemoveTile,
-        Send,
         Submit,
-        Copy,
-        Duplicate,
-        Save,
-        StartRecord,
-        StopRecord
+        Save
     }
 
     /// <summary>
@@ -38,7 +33,6 @@ namespace CLP.Models
         public CLPHistoryItem(HistoryItemType itemType, string objectID, string oldValue, string newValue)
         {
             CreationDate = DateTime.Now;
-            UniqueID = Guid.NewGuid().ToString();
             ItemType = itemType;
             ObjectID = objectID;
             OldValue = oldValue;
@@ -84,20 +78,6 @@ namespace CLP.Models
         /// Register the ObjectID property so it is known in the class.
         /// </summary>
         public static readonly PropertyData ObjectIDProperty = RegisterProperty("ObjectID", typeof(string), null);
-
-        /// <summary>
-        /// UniqueID of the historyItem.
-        /// </summary>
-        public string UniqueID
-        {
-            get { return GetValue<string>(UniqueIDProperty); }
-            set { SetValue(UniqueIDProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// Type of history item.
