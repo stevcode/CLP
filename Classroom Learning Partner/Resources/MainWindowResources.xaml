@@ -27,4 +27,11 @@
         </Setter>
     </Style>
 
+    <Style x:Key="StatusBarText" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="Segoe" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Margin" Value="10,0" />
+    </Style>
+
 </ResourceDictionary>

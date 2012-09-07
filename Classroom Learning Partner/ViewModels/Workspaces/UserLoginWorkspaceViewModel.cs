@@ -70,7 +70,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnLogInCommandExecute(string userName)
         {
             App.Peer.UserName = userName;
-            App.MainWindowViewModel.SetTitleBarText("");
             App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 

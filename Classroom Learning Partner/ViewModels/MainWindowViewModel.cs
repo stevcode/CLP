@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MainWindowViewModel : ViewModelBase
     {
-        public const string clpText = "Classroom Learning Partner - ";
+        public const string clpText = "Classroom Learning Partner";
 
         /// <summary>
         /// Initializes a new instance of the MainWindowViewModel class.
@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public MainWindowViewModel()
             : base()
         {
-            SetTitleBarText("Starting Up");
+            TitleBarText = clpText;
             InitializeCommands();
             IsAuthoring = false;
             
@@ -94,6 +94,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData SelectedWorkspaceProperty = RegisterProperty("SelectedWorkspace", typeof(IWorkspaceViewModel));
 
+        #region Status Bar Bindings
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string OnlineStatus
+        {
+            get { return GetValue<string>(OnlineStatusProperty); }
+            set { SetValue(OnlineStatusProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the OnlineStatus property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData OnlineStatusProperty = RegisterProperty("OnlineStatus", typeof(string), "DISCONNECTED");
+
+        #endregion //Status Bar Bindings
+
         #endregion //Bindings
 
         #region Properties
@@ -130,43 +148,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        //Sets the text in the title bar of the window, endText can add optional information
-        public void SetTitleBarText(string endText)
+        //Sets the text in the title bar of the window to inform the name of the open Notebook.
+        public void SetTitleBarText(string notebookName)
         {
-            string isOnline = "Disconnected";
-            string userName = "";
-            switch (App.CurrentUserMode)
+            if(notebookName == null || notebookName == "")
             {
-                case App.UserMode.Server:
-                    userName = "ServerMode";
-                    break;
-                case App.UserMode.Instructor:
-                    userName = "InstructorMode";
-                    break;
-                case App.UserMode.Projector:
-                    userName = "ProjectorMode";
-                    break;
-                case App.UserMode.Student:
-                    userName = "No One";
-                    break;
-                default:
-                    break;
+                TitleBarText = clpText;
             }
-            
-            if (App.Peer != null)
+            else
             {
-                if (App.Peer.OnlineStatusHandler != null)
-                {
-                    if (App.Peer.OnlineStatusHandler.IsOnline)
-                    {
-                        isOnline = "Connected";
-                    }
-                }
-
-                userName = App.Peer.UserName;
+                TitleBarText = notebookName + " - " + clpText;
             }
-
-            TitleBarText = clpText + "Logged In As: " + userName + ", Connection Status: " + isOnline + " | " + endText;
         }
 
         public void SetWorkspace()
