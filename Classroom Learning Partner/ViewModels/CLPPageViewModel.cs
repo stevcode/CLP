@@ -36,6 +36,11 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
+        public double PageAspectRatio
+        {
+            get { return Page.PageWidth / Page.PageHeight; }
+        }
+
         #region Constructors
 
         /// <summary>
@@ -54,6 +59,25 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Stroke stroke = CLPPage.ByteToStroke(b);
                 InkStrokes.Add(stroke);
+            }
+
+            foreach(var pageObject in PageObjects)
+            {
+                ACLPPageObjectBaseViewModel pageObjectVM;
+
+                switch(pageObject.PageObjectType)
+                {
+                    case "CLPShape":
+                        pageObjectVM = new CLPShapeViewModel(pageObject as CLPShape);
+                        PageObjectVMs.Add(pageObjectVM);
+                        break;
+                    case "CLPImage":
+                        pageObjectVM = new CLPImageViewModel(pageObject as CLPImage);
+                        PageObjectVMs.Add(pageObjectVM);
+                        break;
+                }
+
+                
             }
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
@@ -110,6 +134,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<ACLPPageObjectBaseViewModel> PageObjectVMs
+        {
+            get { return GetValue<ObservableCollection<ACLPPageObjectBaseViewModel>>(PageObjectVMsProperty); }
+            set { SetValue(PageObjectVMsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageObjectVMs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectVMsProperty = RegisterProperty("PageObjectVMs", typeof(ObservableCollection<ACLPPageObjectBaseViewModel>), () => new ObservableCollection<ACLPPageObjectBaseViewModel>());
 
         /// <summary>
         /// Gets or sets the property value.

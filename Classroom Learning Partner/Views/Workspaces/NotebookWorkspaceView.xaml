@@ -150,7 +150,7 @@
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
         
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl Margin="15" DataContext="{Binding SelectedDisplay, Mode=OneWay}"  x:Name="Display" Grid.Column="4">
+        <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Column="4">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">

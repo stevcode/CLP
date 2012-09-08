@@ -7,6 +7,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Classroom_Learning_Partner.Views
 {

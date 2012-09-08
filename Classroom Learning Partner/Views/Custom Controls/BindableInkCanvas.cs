@@ -1,13 +1,22 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using Catel.IoC;
+using Catel.Logging;
+using Catel.MVVM;
+using Catel.Windows.Controls;
+using Catel.Windows.Controls.MVVMProviders.Logic;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
     public class BindableInkCanvas : InkCanvas
     {
+
         public BindableInkCanvas()
             : base()
         {
@@ -92,5 +101,7 @@ namespace Classroom_Learning_Partner.Views
             //ret.SetBinding(InkCanvas.TopProperty, YBinding);
         }
 
+
+        
     }
 }
