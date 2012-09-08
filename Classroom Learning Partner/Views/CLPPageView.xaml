@@ -16,7 +16,7 @@
                 <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
                                                                                                 PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
                                                                                                 PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
-                    <ItemsControl x:Name="PageObjects"
+                    <!--<ItemsControl x:Name="PageObjects"
                                   ItemsSource="{Binding Path=PageObjects}"
                                   ItemContainerStyle="{StaticResource ContainerStyle}"
                                   HorizontalAlignment="Stretch"
@@ -40,8 +40,24 @@
                                EditingMode="{Binding Path=EditingMode}"
                                EditingModeInverted="EraseByStroke"
                                DefaultDrawingAttributes="{Binding Path=DefaultDA}">
-                    </InkCanvas>
+                    </InkCanvas>-->
+
+                    <Views:BindableInkCanvas x:Name="MainInkCanvas"
+                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
+                        Background="Transparent"
+                        Strokes="{Binding InkStrokes}"
+                        EditingMode="{Binding EditingMode}"
+                        EditingModeInverted="EraseByStroke"
+                        DefaultDrawingAttributes="{Binding DefaultDA}"
+                        Source="{Binding PageObjects}"
+                    >
+                        
+                            
+                        
+                    </Views:BindableInkCanvas>
                 </Canvas>
+
+                
             </Border>
         </Viewbox>
 

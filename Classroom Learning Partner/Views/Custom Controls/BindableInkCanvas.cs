@@ -2,33 +2,28 @@
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
     public class BindableInkCanvas : InkCanvas
     {
-
-        //static BindableInkCanvas()
-        //{
-        //    DefaultStyleKeyProperty.OverrideMetadata(typeof(BindableInkCanvas), new FrameworkPropertyMetadata(typeof(BindableInkCanvas)));
-        //}
-
         public BindableInkCanvas()
             : base()
         {
         }
 
-        public ObservableCollection<Catel.Windows.Controls.UserControl> Source
+        public ObservableCollection<PageObjectContainerView> Source
         {
-            get { return (ObservableCollection<Catel.Windows.Controls.UserControl>)GetValue(SourceProperty); }
+            get { return (ObservableCollection<PageObjectContainerView>)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source",
-            typeof(ObservableCollection<Catel.Windows.Controls.UserControl>),
+            typeof(ObservableCollection<PageObjectContainerView>),
             typeof(BindableInkCanvas),
-            new FrameworkPropertyMetadata(new ObservableCollection<Catel.Windows.Controls.UserControl>(),
+            new FrameworkPropertyMetadata(new ObservableCollection<PageObjectContainerView>(),
             new PropertyChangedCallback(SourceChanged)));
 
         //Called when a new value is set (through binding for example)
@@ -37,8 +32,10 @@ namespace Classroom_Learning_Partner.Views
             //Gets the instance that changed the "local" value
             var instance = sender as BindableInkCanvas;
 
-            ObservableCollection<Catel.Windows.Controls.UserControl> newCollection = args.NewValue as ObservableCollection<Catel.Windows.Controls.UserControl>;
-            ObservableCollection<Catel.Windows.Controls.UserControl> oldCollection = args.OldValue as ObservableCollection<Catel.Windows.Controls.UserControl>;
+
+
+            ObservableCollection<PageObjectContainerView> newCollection = args.NewValue as ObservableCollection<PageObjectContainerView>;
+            ObservableCollection<PageObjectContainerView> oldCollection = args.OldValue as ObservableCollection<PageObjectContainerView>;
 
             if(oldCollection != null)
             {
@@ -50,7 +47,7 @@ namespace Classroom_Learning_Partner.Views
 
             if(newCollection != null)
             {
-                foreach(Catel.Windows.Controls.UserControl item in newCollection)
+                foreach(PageObjectContainerView item in newCollection)
                 {
                     AddControl(item, instance);
                 }
@@ -62,18 +59,18 @@ namespace Classroom_Learning_Partner.Views
         //Append when an Item in the collection is changed
         protected void collection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            foreach(Catel.Windows.Controls.UserControl item in e.NewItems)
+            foreach(PageObjectContainerView item in e.NewItems)
             {
                 AddControl(item);
             }
         }
 
-        protected void AddControl(Catel.Windows.Controls.UserControl diagramItem)
+        protected void AddControl(PageObjectContainerView diagramItem)
         {
             AddControl(diagramItem, this);
         }
 
-        protected static void AddControl(Catel.Windows.Controls.UserControl diagramItem, InkCanvas parentControl)
+        protected static void AddControl(PageObjectContainerView diagramItem, InkCanvas parentControl)
         {
             Catel.Windows.Controls.UserControl ret = new Catel.Windows.Controls.UserControl();
 
