@@ -32,6 +32,7 @@
         <Setter Property="FontFamily" Value="Segoe" />
         <Setter Property="FontSize" Value="11" />
         <Setter Property="Margin" Value="10,0" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     </Style>
 
 </ResourceDictionary>

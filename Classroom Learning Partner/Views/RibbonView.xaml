@@ -145,23 +145,23 @@
                 <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
                 <!--Header="Pen Thickness"-->
                 <RibbonMenuButton Label="Size" 
-                         LargeImageSource="..\Images\PenSize.png" >
+                         LargeImageSource="..\Images\PenSize.png" SnapsToDevicePixels="True">
                     <RibbonGallery SelectedValuePath="StrokeThickness" SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>
-                            <Line Stretch="UniformToFill"
+                            <Line Stretch="Uniform"
                                       Width="150" Height="30" StrokeThickness="1" 
                                       Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
-                            <Line Stretch="UniformToFill"
+                            <Line Stretch="Uniform"
                                       Width="150" Height="30" StrokeThickness="3" 
                                       Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
-                            <Line Stretch="UniformToFill"
+                            <Line Stretch="Uniform"
                                       Width="150" Height="30" StrokeThickness="5" 
                                       Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
-                            <Line Stretch="UniformToFill"
+                            <Line Stretch="Uniform"
                                       Width="150" Height="30" StrokeThickness="7" 
                                       Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
-                            <Line Stretch="UniformToFill"
+                            <Line Stretch="Uniform"
                                       Width="150" Height="30" StrokeThickness="12" 
                                       Stroke="Black" X1="0" Y1="0" X2="1" Y2="0"/>
                         </RibbonGalleryCategory>

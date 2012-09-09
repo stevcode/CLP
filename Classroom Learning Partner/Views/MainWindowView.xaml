@@ -113,7 +113,7 @@
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
-            <TextBlock>PAGE X OF X</TextBlock>
+            <TextBlock>SLIDE 1 OF 1</TextBlock>
             <Separator />
             <TextBlock>CONNECTION STATUS:</TextBlock>
             <TextBlock Text="{Binding OnlineStatus}" />
