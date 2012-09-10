@@ -109,7 +109,7 @@
             </ContentControl.Style>
         </ContentControl>
 
-        <StatusBar Grid.Row="2" VerticalAlignment="Bottom" Background="BlueViolet" Height="23">
+        <StatusBar Grid.Row="2" VerticalAlignment="Bottom" Background="DarkViolet" Height="23">
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
@@ -138,16 +138,16 @@
                                                 <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0"/>
-                                            <TickBar x:Name="BottomTick" Visibility="Collapsed" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="0"/>
+                                            <TickBar x:Name="TopTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0"/>
+                                            <TickBar x:Name="BottomTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="2"/>
                                             <Border x:Name="TrackBackground"  
- BorderThickness="1" CornerRadius="1"
- Margin="5,0" VerticalAlignment="Center" Height="4.0" Grid.Row="1" >
+                                                     BorderThickness="1" CornerRadius="1"
+                                                     Margin="5,0" VerticalAlignment="Center" Height="4.0" Grid.Row="1" >
                                                 <Canvas Margin="-6,-1">
-                                                    <Rectangle Visibility="Hidden" x:Name="PART_SelectionRange" Height="4.0"
- Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
- Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
- StrokeThickness="1.0"/>
+                                                    <Rectangle Visibility="Visible" x:Name="PART_SelectionRange" Height="4.0"
+                                                     Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                                     Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                     StrokeThickness="1.0"/>
                                                 </Canvas>
                                             </Border>
                                             <Track x:Name="PART_Track" Grid.Row="1">
@@ -161,7 +161,7 @@
                                                                 <Setter Property="Template">
                                                                     <Setter.Value>
                                                                         <ControlTemplate TargetType="{x:Type RepeatButton}">
-                                                                            <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="6"/>
+                                                                            <Rectangle HorizontalAlignment="Left" SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="6"/>
                                                                         </ControlTemplate>
                                                                     </Setter.Value>
                                                                 </Setter>
@@ -179,7 +179,7 @@
                                                                 <Setter Property="Template">
                                                                     <Setter.Value>
                                                                         <ControlTemplate TargetType="{x:Type RepeatButton}">
-                                                                            <Grid>
+                                                                            <Grid HorizontalAlignment="Right">
                                                                                 <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="8"/>
                                                                                 <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="8" Width="2"/>
                                                                             </Grid>
