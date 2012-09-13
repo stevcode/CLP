@@ -113,11 +113,28 @@
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
-            <TextBlock>SLIDE 1 OF 1</TextBlock>
-            <Separator />
-            <TextBlock>CONNECTION STATUS:</TextBlock>
-            <TextBlock Text="{Binding OnlineStatus}" />
-            <Slider
+
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <TextBlock>PAGE 3 OF 10</TextBlock>
+            </StatusBarItem>
+                
+            <Separator Grid.Column="1" />
+
+            <StatusBarItem Grid.Column="2">
+                <Slider
                   x:Name="SliderFrom"
                   Width="200"
                   Height="50"
@@ -126,95 +143,104 @@
                   TickPlacement="None"
                   VerticalAlignment="Top"
                   Maximum="400" Minimum="10">
-                <Slider.Style>
-                    <Style TargetType="{x:Type Slider}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Slider}">
-                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <TickBar x:Name="TopTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0"/>
-                                            <TickBar x:Name="BottomTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="2"/>
-                                            <Border x:Name="TrackBackground"  
+                    <Slider.Style>
+                        <Style TargetType="{x:Type Slider}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Slider}">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <TickBar x:Name="TopTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0"/>
+                                                <TickBar x:Name="BottomTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="2"/>
+                                                <Border x:Name="TrackBackground"  
                                                      BorderThickness="1" CornerRadius="1"
                                                      Margin="5,0" VerticalAlignment="Center" Height="4.0" Grid.Row="1" >
-                                                <Canvas Margin="-6,-1">
-                                                    <Rectangle Visibility="Visible" x:Name="PART_SelectionRange" Height="4.0"
+                                                    <Canvas Margin="-6,-1">
+                                                        <Rectangle Visibility="Visible" x:Name="PART_SelectionRange" Height="4.0"
                                                      Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
                                                      Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
                                                      StrokeThickness="1.0"/>
-                                                </Canvas>
-                                            </Border>
-                                            <Track x:Name="PART_Track" Grid.Row="1">
-                                                <Track.DecreaseRepeatButton>
-                                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
-                                                        <RepeatButton.Style>
-                                                            <Style TargetType="{x:Type RepeatButton}">
-                                                                <Setter Property="OverridesDefaultStyle" Value="true"/>
-                                                                <Setter Property="IsTabStop" Value="false"/>
-                                                                <Setter Property="Focusable" Value="false"/>
-                                                                <Setter Property="Template">
-                                                                    <Setter.Value>
-                                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
-                                                                            <Rectangle HorizontalAlignment="Left" SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="6"/>
-                                                                        </ControlTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </Style>
-                                                        </RepeatButton.Style>
-                                                    </RepeatButton>
-                                                </Track.DecreaseRepeatButton>
-                                                <Track.IncreaseRepeatButton>
-                                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
-                                                        <RepeatButton.Style>
-                                                            <Style TargetType="{x:Type RepeatButton}">
-                                                                <Setter Property="OverridesDefaultStyle" Value="true"/>
-                                                                <Setter Property="IsTabStop" Value="false"/>
-                                                                <Setter Property="Focusable" Value="false"/>
-                                                                <Setter Property="Template">
-                                                                    <Setter.Value>
-                                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
-                                                                            <Grid HorizontalAlignment="Right">
-                                                                                <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="8"/>
-                                                                                <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="8" Width="2"/>
-                                                                            </Grid>
-                                                                        </ControlTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </Style>
-                                                        </RepeatButton.Style>
-                                                    </RepeatButton>
-                                                </Track.IncreaseRepeatButton>
-                                                <Track.Thumb>
-                                                    <Thumb x:Name="Thumb" Background="Black">
-                                                        <Thumb.Style>
-                                                            <Style TargetType="{x:Type Thumb}">
-                                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                                                <Setter Property="Template">
-                                                                    <Setter.Value>
-                                                                        <ControlTemplate TargetType="{x:Type Thumb}">
-                                                                            <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="10" Width="3"/>
-                                                                        </ControlTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </Style>
-                                                        </Thumb.Style>
-                                                    </Thumb>
-                                                </Track.Thumb>
-                                            </Track>
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Slider.Style>
-            </Slider>
+                                                    </Canvas>
+                                                </Border>
+                                                <Track x:Name="PART_Track" Grid.Row="1">
+                                                    <Track.DecreaseRepeatButton>
+                                                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
+                                                            <RepeatButton.Style>
+                                                                <Style TargetType="{x:Type RepeatButton}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                                                    <Setter Property="IsTabStop" Value="false"/>
+                                                                    <Setter Property="Focusable" Value="false"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                                                <Rectangle HorizontalAlignment="Left" SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="6"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </RepeatButton.Style>
+                                                        </RepeatButton>
+                                                    </Track.DecreaseRepeatButton>
+                                                    <Track.IncreaseRepeatButton>
+                                                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
+                                                            <RepeatButton.Style>
+                                                                <Style TargetType="{x:Type RepeatButton}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                                                    <Setter Property="IsTabStop" Value="false"/>
+                                                                    <Setter Property="Focusable" Value="false"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                                                <Grid HorizontalAlignment="Right">
+                                                                                    <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="8"/>
+                                                                                    <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="8" Width="2"/>
+                                                                                </Grid>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </RepeatButton.Style>
+                                                        </RepeatButton>
+                                                    </Track.IncreaseRepeatButton>
+                                                    <Track.Thumb>
+                                                        <Thumb x:Name="Thumb" Background="Black">
+                                                            <Thumb.Style>
+                                                                <Style TargetType="{x:Type Thumb}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                                                <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="10" Width="3"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Thumb.Style>
+                                                        </Thumb>
+                                                    </Track.Thumb>
+                                                </Track>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Slider.Style>
+                </Slider>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="3">
+                <TextBlock>CONNECTION STATUS:</TextBlock>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Text="{Binding OnlineStatus}" />
+            </StatusBarItem>
         </StatusBar>
 
     </Grid>
