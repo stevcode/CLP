@@ -97,25 +97,6 @@
         <!--Home Tab-->
         <RibbonTab Header="Home">
 
-            <RibbonGroup Header="Notebook">
-
-                <RibbonToggleButton x:Name="ShowNotebookPagesToggleButton"
-                        LargeImageSource="..\Images\OpenNotebook.png"
-                        IsChecked="{Binding SideBarVisibility}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Show Notebook Pages"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Hide Notebook Pages"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
-            </RibbonGroup>
-
             <RibbonGroup Header="Pen">
                 <RibbonGroup.Resources>
                     <Style x:Name="PenWidthStyle" TargetType="{x:Type RibbonButton}">

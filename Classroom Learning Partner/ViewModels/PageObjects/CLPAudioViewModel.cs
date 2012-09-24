@@ -186,6 +186,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     audio_play_timer.Enabled = true;
                     
                     wplayer = new MediaPlayer();
+                    
                     wplayer.Open(new Uri(path));
                     wplayer.Play();
                     

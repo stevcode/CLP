@@ -34,8 +34,6 @@ namespace CLP.Models
             //}
             this.File = new Byte[0];
             this.ID = ID;
-            XPosition = 10;
-            YPosition = 10;
             Height = 70;
             Width = 200;
             CanAcceptStrokes = false;
@@ -52,12 +50,14 @@ namespace CLP.Models
         #endregion
 
         #region Properties
-        
+
+       
        public string FilePath
         {
             get { return GetValue<string>(FilePathProperty); }
             private set { SetValue(FilePathProperty, value); }
         }
+
         public static readonly PropertyData FilePathProperty = RegisterProperty("FilePath", typeof(string), null);
         
         public byte[] File
@@ -65,6 +65,7 @@ namespace CLP.Models
             get { return GetValue<byte[]>(FileProperty); }
             set { SetValue(FileProperty, value); }
         }
+
         public static readonly PropertyData FileProperty = RegisterProperty("File", typeof(byte[]), null);
 
         public string ID
