@@ -143,8 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
-            SetEraserCommand = new Command<RibbonButton>(OnSetEraserCommandExecute);
-            SetStrokeEraserCommand = new Command<RibbonButton>(OnSetStrokeEraserCommandExecute);
+            SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
@@ -1035,49 +1034,27 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = PageInteractionMode.Pen;
         }
 
-        //*****SetEraserCommand with RibbonButton instead of RibbonToggleButton
         /// <summary>
         /// Gets the SetEraserCommand command.
         /// </summary>
-        public Command<RibbonButton> SetEraserCommand { get; private set; }
+        public Command<string> SetEraserCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetEraserCommand command is executed.
         /// </summary>
-        private void OnSetEraserCommandExecute(RibbonButton button)
+        private void OnSetEraserCommandExecute(string eraserStyle)
         {
-            EditingMode = InkCanvasEditingMode.EraseByPoint;
-            PageInteractionMode = PageInteractionMode.Eraser;
-        }
-
-        /// <summary>
-        /// Gets the SetStrokeEraserCommand command.
-        /// </summary>
-        public Command<RibbonButton> SetStrokeEraserCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetStrokeEraserCommand command is executed.
-        /// </summary>
-        private void OnSetStrokeEraserCommandExecute(RibbonButton button)
-        {
-            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if(display is LinkedDisplayViewModel)
+            if(eraserStyle == "EraseByPoint")
             {
-                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByStroke;
+                EditingMode = InkCanvasEditingMode.EraseByPoint;
+                PageInteractionMode = PageInteractionMode.Eraser;
             }
-            else if(display is GridDisplayViewModel)
+            else if(eraserStyle == "EraseByStroke")
             {
-                foreach(var page in (display as GridDisplayViewModel).DisplayedPages)
-                {
-                    page.EditingMode = InkCanvasEditingMode.EraseByStroke;
-                }
+                EditingMode = InkCanvasEditingMode.EraseByStroke;
+                PageInteractionMode = PageInteractionMode.StrokeEraser;
             }
-
-            //EditingMode = InkCanvasEditingMode.EraseByStroke;
-            PageInteractionMode = PageInteractionMode.StrokeEraser;
         }
-
-        //*****end of SetEraserCommand with RibbonButton instead of RibbonToggleButton
 
         /// <summary>
         /// Gets the SetPenColorCommand command.

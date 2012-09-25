@@ -97,13 +97,13 @@
         <!--Home Tab-->
         <RibbonTab Header="Home">
 
-            <RibbonGroup Header="Pen">
+            <RibbonGroup Header="Tools">
                 <RibbonToggleButton
                     Label="Pen"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding SetPenCommand}" />
 
-                <RibbonMenuButton Label="Size" 
+                <RibbonMenuButton Label="Pen Size" 
                          LargeImageSource="..\Images\PenSize.png" SnapsToDevicePixels="True">
                     <RibbonGallery SelectedValuePath="Content.Height" SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -127,32 +127,18 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-            </RibbonGroup>
+                <RibbonToggleButton
+                    Label="Point Eraser"
+                    LargeImageSource="..\Images\Eraser.png"
+                    Command="{Binding SetEraserCommand}" 
+                    CommandParameter="EraseByPoint" />
 
-            <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
-            <RibbonGroup Header="Eraser">
-                <RibbonGroup.Resources>
-                    <Style x:Name="EraserButtonStyle" TargetType="{x:Type RibbonSplitButton}">
-                        <Setter Property="Command">
-                            <Setter.Value>
-                                <Binding Path="SetEraserCommand"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="CommandParameter">
-                            <Setter.Value>
-                                <Binding Path="SetStrokeEraserCommand"/>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RibbonGroup.Resources>
+                <RibbonToggleButton
+                    Label="Stroke Eraser"
+                    LargeImageSource="..\Images\StrokeEraser.png"
+                    Command="{Binding SetEraserCommand}"
+                    CommandParameter="EraseByStroke" />
 
-                <!--Making RibbonSplitButton for Eraser and StrokeEraser-->
-                <RibbonSplitButton
-                    Label="Eraser"
-                    LargeImageSource="..\Images\Eraser.png">
-                    <RibbonButton LargeImageSource="..\Images\Eraser.png" Label ="Eraser" Command="{Binding Path=SetEraserCommand}"/>
-                    <RibbonButton LargeImageSource="..\Images\StrokeEraser.png" Label ="Stroke Eraser" Command="{Binding Path=SetStrokeEraserCommand}"/>
-                </RibbonSplitButton>
             </RibbonGroup>
 
             <RibbonGroup>
