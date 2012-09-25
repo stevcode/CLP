@@ -106,8 +106,8 @@
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding SetPenCommand}"/>
 
-                <RibbonMenuButton Label="Pen Size" 
-                         LargeImageSource="..\Images\PenSize.png" SnapsToDevicePixels="True">
+                <RibbonMenuButton Label="Pen Size"
+                         LargeImageSource="..\Images\PenSize-icon32.png">
                     <RibbonGallery SelectedValuePath="Content.Height" SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>

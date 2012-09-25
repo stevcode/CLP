@@ -539,6 +539,7 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\PenSize-icon32.png" />
     <Resource Include="Images\PenSize.png" />
     <Resource Include="Images\CLPIcon.ico" />
     <Resource Include="Images\CLPIcon256.png" />
