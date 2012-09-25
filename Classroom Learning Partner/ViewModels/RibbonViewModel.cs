@@ -43,7 +43,6 @@ namespace Classroom_Learning_Partner.ViewModels
             StudentVisibility = Visibility.Collapsed;
             ServerVisibility = Visibility.Collapsed;
             HistoryVisibility = Visibility.Collapsed;
-            SubmissionVisibility = Visibility.Collapsed;
 
             switch(App.CurrentUserMode)
             {
@@ -51,12 +50,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ServerVisibility = Visibility.Visible;
                     PageViewerVisibility = Visibility.Visible;
                     HistoryVisibility = Visibility.Visible;
-                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Instructor:
                     InstructorVisibility = Visibility.Visible;
                     HistoryVisibility = Visibility.Visible;
-                    SubmissionVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Projector:
                     break;
@@ -365,6 +362,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the AuthoringTabVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageViewerVisibilityProperty = RegisterProperty("PageViewerVisibility", typeof(Visibility));
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -393,21 +391,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the InstructorVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData HistoryVisibilityProperty = RegisterProperty("HistoryVisibility", typeof(Visibility));
-
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Visibility SubmissionVisibility
-        {
-            get { return GetValue<Visibility>(SubmissionVisibilityProperty); }
-            set { SetValue(SubmissionVisibilityProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the InstructorVisibility property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SubmissionVisibilityProperty = RegisterProperty("SubmissionVisibility", typeof(Visibility));
 
         /// <summary>
         /// Gets or sets the property value.

@@ -74,7 +74,7 @@
                                 </Border>
 
                                 <!--Where buttons that reveal submissions are located-->
-                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
+                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
@@ -132,7 +132,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Notebook Pages-->
-            <Border Grid.Column="0" Background="#F3F3F3">
+            <Border x:Name="NotebookPagesBorder" Grid.Column="0" Background="#F3F3F3">
                 <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
                             MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
                             ItemsSource="{Binding Path=NotebookPages}"
@@ -263,14 +263,14 @@
             </StatusBar.ItemsPanel>
 
             <StatusBarItem Grid.Column="0">
-                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100">
+                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100" Click="ShowNotebookPagesToggleButton_Click">
                     <ToggleButton.Style>
                         <Style TargetType="{x:Type ToggleButton}">
                             <Setter Property="FontSize" Value="11" />
-                            <Setter Property="Content" Value="SHOW PAGES"/>
+                            <Setter Property="Content" Value="HIDE PAGES"/>
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Content" Value="HIDE PAGES"/>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Content" Value="SHOW PAGES"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

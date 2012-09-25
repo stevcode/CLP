@@ -15,6 +15,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class NotebookWorkspaceView : Catel.Windows.Controls.UserControl
     {
+        public MainWindowViewModel MainWindow
+        {
+            get { return App.MainWindowViewModel; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceView"/> class.
         /// </summary>
@@ -42,6 +47,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 FilterSideBar.Visibility = Visibility.Visible;
                 SubmissionPagesSplitter.Visibility = Visibility.Visible;
+                submissionsVisibility = Visibility.Visible;
                 CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
@@ -55,6 +61,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 FilterSideBar.Visibility = Visibility.Collapsed;
                 SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
+                submissionsVisibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }
 
@@ -79,6 +86,34 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
             return child;
+        }
+
+        private Visibility submissionsVisibility = Visibility.Collapsed;
+
+        private void ShowNotebookPagesToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if((bool)(sender as ToggleButton).IsChecked)
+            {
+                NotebookPagesBorder.Visibility = Visibility.Visible;
+                NotebookPagesSplitter.Visibility = Visibility.Visible;
+
+                if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
+                {
+                    FilterSideBar.Visibility = submissionsVisibility;
+                    SubmissionPagesSplitter.Visibility = submissionsVisibility;
+                }
+            }
+            else
+            {
+                NotebookPagesBorder.Visibility = Visibility.Collapsed;
+                NotebookPagesSplitter.Visibility = Visibility.Collapsed;
+
+                if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
+                {
+                    FilterSideBar.Visibility = Visibility.Collapsed;
+                    SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
     }
