@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.Views
             currentToggledButton = button;
             if((bool)currentToggledButton.IsChecked)
             {
-                //SubmissionBorder.Visibility = Visibility.Visible;
+                FilterSideBar.Visibility = Visibility.Visible;
                 SubmissionPagesSplitter.Visibility = Visibility.Visible;
                 CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
@@ -53,6 +53,7 @@ namespace Classroom_Learning_Partner.Views
             }
             else
             {
+                FilterSideBar.Visibility = Visibility.Collapsed;
                 SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }

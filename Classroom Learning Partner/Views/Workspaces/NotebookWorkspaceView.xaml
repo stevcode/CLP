@@ -47,7 +47,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="itemGrid" Margin="1">
+                        <Grid x:Name="itemGrid" Margin="0,1,0,1">
                             
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -147,8 +147,8 @@
         <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
          HorizontalAlignment="Center" VerticalAlignment="Stretch"
          Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}"/>
-                
-        <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" />
+
+        <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed"/>
 
         <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="#D4D4D4" Width="5"
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
