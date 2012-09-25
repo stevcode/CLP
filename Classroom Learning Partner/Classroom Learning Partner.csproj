@@ -539,9 +539,9 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\PenSize.png" />
     <Resource Include="Images\CLPIcon.ico" />
     <Resource Include="Images\CLPIcon256.png" />
-    <Resource Include="Images\PenSize.png" />
     <Resource Include="Images\AddCircle.png" />
     <Resource Include="Images\AddSquare.png" />
     <Resource Include="Images\ReconnectToNetwork.png" />
