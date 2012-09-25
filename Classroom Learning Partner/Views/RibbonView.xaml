@@ -98,10 +98,12 @@
         <RibbonTab Header="Home">
 
             <RibbonGroup Header="Tools">
+
                 <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
                     Label="Pen"
                     LargeImageSource="..\Images\Pen.png"
-                    Command="{Binding SetPenCommand}" />
+                    Command="{Binding SetPenCommand}"/>
 
                 <RibbonMenuButton Label="Pen Size" 
                          LargeImageSource="..\Images\PenSize.png" SnapsToDevicePixels="True">
@@ -128,25 +130,28 @@
                 </RibbonMenuButton>
 
                 <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
                     LargeImageSource="..\Images\Eraser.png"
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />
 
                 <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
                     CommandParameter="EraseByStroke" />
 
+                <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
+                    Label="Tile"
+                    LargeImageSource="..\Images\SnapTileIcon.png"
+                    Command="{Binding Path=SetSnapTileCommand}" />
+
             </RibbonGroup>
 
-            <RibbonGroup>
-                <RibbonToggleButton
-                        Label="SnapTile"
-                        LargeImageSource="..\Images\SnapTileIcon.png"
-                        Command="{Binding Path=SetSnapTileCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='SnapTile'}"/>
+            <RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"

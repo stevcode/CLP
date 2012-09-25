@@ -1,4 +1,6 @@
-﻿using Catel.Windows.Controls;
+﻿using System.Windows.Controls.Ribbon;
+using System.Windows.Media;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -19,6 +21,19 @@ namespace Classroom_Learning_Partner.Views
         protected override System.Type GetViewModelType()
         {
             return typeof(RibbonViewModel);
+        }
+
+        private void ToolGroupToggle_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            foreach(var item in ((sender as RibbonToggleButton).Parent as RibbonGroup).Items)
+            {
+                if(item.GetType() == typeof(RibbonToggleButton))
+                {
+                    (item as RibbonToggleButton).IsChecked = false;
+                }
+            }
+
+            (sender as RibbonToggleButton).IsChecked = true;
         }
     }
 }
