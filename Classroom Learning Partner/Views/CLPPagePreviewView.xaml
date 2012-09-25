@@ -11,35 +11,34 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <Viewbox>
-            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="2" BorderBrush="Black">
-                <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" x:Name="TopCanvas">
-                    <ItemsControl x:Name="PageObjects"
-                                  ItemsSource="{Binding Path=PageObjects}"
-                                  ItemContainerStyle="{StaticResource ContainerStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Views:PageObjectContainerView DataContext="{Binding}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <InkPresenter Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="OtherInkPresenter" Strokes="{Binding Path=OtherStrokes}" />
-                    <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
-                               Background="Transparent" 
-                               Strokes="{Binding Path=InkStrokes}"
-                               EditingMode="None" >
-                    </InkCanvas>
-                </Canvas>
-            </Border>
-        </Viewbox>
-    </Grid>
+
+    <Viewbox Stretch="Uniform">
+        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas">
+            <ItemsControl x:Name="PageObjects"
+                        ItemsSource="{Binding Path=PageObjects}"
+                        ItemContainerStyle="{StaticResource ContainerStyle}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                    
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                    
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Views:PageObjectContainerView DataContext="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                    
+            </ItemsControl>
+                
+            <InkPresenter Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
+                    Strokes="{Binding Path=InkStrokes}">
+            </InkPresenter>
+            
+        </Canvas>
+    </Viewbox>
+
 </catel:UserControl>

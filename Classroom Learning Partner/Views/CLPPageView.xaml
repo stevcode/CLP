@@ -13,26 +13,28 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas" PreviewMouseMove="TopCanvas_PreviewMouseMove" 
-                                                                                        PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown"
-                                                                                        PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
+        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas" 
+                PreviewMouseMove="TopCanvas_PreviewMouseMove" PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
             <ItemsControl x:Name="PageObjects"
                             ItemsSource="{Binding Path=PageObjects}"
                             ItemContainerStyle="{StaticResource ContainerStyle}"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            >
+                            VerticalAlignment="Stretch">
+                
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Views:PageObjectContainerView DataContext="{Binding}" />
                     </DataTemplate>  
                 </ItemsControl.ItemTemplate>
+                
             </ItemsControl>
+            
             <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
                         Background="Transparent" 
                         Strokes="{Binding Path=InkStrokes}"

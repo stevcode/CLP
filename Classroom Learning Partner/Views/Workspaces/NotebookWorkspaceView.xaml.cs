@@ -48,14 +48,11 @@ namespace Classroom_Learning_Partner.Views
                 if(viewModel.Notebook.Submissions.ContainsKey(pageID))
                 {
                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
-                    Debug.WriteLine("Hey");
-                    Debug.WriteLineIf(viewModel.SubmissionPages != null, "viewModel.SubmissionPages is not null");
                 }
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }
             else
             {
-                //SubmissionBorder.Visibility = Visibility.Collapsed;
                 SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Transparent);
             }

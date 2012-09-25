@@ -5,7 +5,7 @@
              xmlns:catel="http://catel.codeplex.com">
     <Grid>
         <ScrollViewer Name="VisualisationScroller">
-            <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="Gray" Background="Transparent">
+            <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
                 <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
             </Border>
         </ScrollViewer>

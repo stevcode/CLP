@@ -59,9 +59,7 @@
                             <!--Blank Notebook pages (far left)-->
                             <Border Grid.Column="0"
                                     BorderBrush="Transparent"
-                                    Background="White"
-                                    CornerRadius="8"
-                                    BorderThickness="3"
+                                    BorderThickness="2"
                                     x:Name="IconBorder"
                                     Margin="8,4,4,4">
                                 <ContentPresenter />
@@ -84,7 +82,7 @@
                         
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
+                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -95,7 +93,7 @@
     </UserControl.Resources>
 
     <!-- Content -->
-    <Grid Background="{Binding WorkspaceBackgroundColor}">
+    <Grid Background="#F3F3F3">
         <Grid.ColumnDefinitions>
             <!--Column for NotebookPages and Show Submissions Buttons-->
             <ColumnDefinition MinWidth="150" Width="250" />
@@ -117,16 +115,16 @@
         </Grid.ColumnDefinitions>
 
         <!-- Notebook Pages-->
-        <Border BorderThickness="0,0,2,0" BorderBrush="Black" Background="White" Grid.Column="0" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}">
-            <ListBox x:Name="NotebookPageListBox"  Grid.Row="0" Grid.Column="0"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                         MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
-                         ItemsSource="{Binding Path=NotebookPages}"
-                         ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
-                         SelectionMode="Single">
+        <Border Grid.Column="0" Background="#F3F3F3">
+            <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=NotebookPages}"
+                            ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
+                            SelectionMode="Single">
                 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border>
+                        <Border BorderThickness="1" BorderBrush="#9FA6AD">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDown">
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
@@ -140,13 +138,13 @@
             </ListBox>
         </Border>
 
-        <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="Black" Width="5"
+        <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
          HorizontalAlignment="Center" VerticalAlignment="Stretch"
          Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}"/>
                 
         <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" />
 
-        <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="Black" Width="5"
+        <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="#D4D4D4" Width="5"
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
         
         <!-- Control that dynamically determines what Display to show -->
@@ -154,11 +152,11 @@
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="LinkedDisplayTemplate">
-                    <Views:LinkedDisplayView  />
+                    <Views:LinkedDisplayView Background="{Binding WorkspaceBackgroundColor}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
-                    <Views:GridDisplayView  />
+                    <Views:GridDisplayView Background="{Binding WorkspaceBackgroundColor}" />
                 </ControlTemplate>
 
             </ContentControl.Resources>
