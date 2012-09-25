@@ -142,7 +142,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
-            SetPenCommand = new Command<RibbonToggleButton>(OnSetPenCommandExecute);
+            SetPenCommand = new Command(OnSetPenCommandExecute);
             SetEraserCommand = new Command<RibbonButton>(OnSetEraserCommandExecute);
             SetStrokeEraserCommand = new Command<RibbonButton>(OnSetStrokeEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
@@ -249,13 +249,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        private bool _currentlyPlayingVisual;
-        public bool currentlyPlayingVisual
-        {
-            get { return _currentlyPlayingVisual; }
-            set { _currentlyPlayingVisual = value; }
-        }
-
         /// <summary>
         /// Register the EditingMode property so it is known in the class.
         /// </summary>
@@ -289,6 +282,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData PageEraserInteractionModeProperty = RegisterProperty("PageEraserInteractionMode", typeof(PageEraserInteractionMode));
 
+        private bool _currentlyPlayingVisual;
+        public bool currentlyPlayingVisual
+        {
+            get { return _currentlyPlayingVisual; }
+            set { _currentlyPlayingVisual = value; }
+        }
 
         #endregion //Properties
 
@@ -1025,28 +1024,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
-        public Command<RibbonToggleButton> SetPenCommand { get; private set; }
+        public Command SetPenCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the SetPenCommand command is executed.
         /// </summary>
-        private void OnSetPenCommandExecute(RibbonToggleButton button)
+        private void OnSetPenCommandExecute()
         {
-
-            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if(display is LinkedDisplayViewModel)
-            {
-                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.Ink;
-            }
-            else if(display is GridDisplayViewModel)
-            {
-                foreach(var page in (display as GridDisplayViewModel).DisplayedPages)
-                {
-                    page.EditingMode = InkCanvasEditingMode.Ink;
-                }
-            }
-
-            //EditingMode = InkCanvasEditingMode.Ink;
+            EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
         }
 
@@ -1061,20 +1046,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSetEraserCommandExecute(RibbonButton button)
         {
-            IDisplayViewModel display = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay;
-            if(display is LinkedDisplayViewModel)
-            {
-                (display as LinkedDisplayViewModel).DisplayedPage.EditingMode = InkCanvasEditingMode.EraseByPoint;
-            }
-            else if(display is GridDisplayViewModel)
-            {
-                foreach(var page in (display as GridDisplayViewModel).DisplayedPages)
-                {
-                    page.EditingMode = InkCanvasEditingMode.EraseByPoint;
-                }
-            }
-
-            //EditingMode = InkCanvasEditingMode.EraseByPoint;
+            EditingMode = InkCanvasEditingMode.EraseByPoint;
             PageInteractionMode = PageInteractionMode.Eraser;
         }
 

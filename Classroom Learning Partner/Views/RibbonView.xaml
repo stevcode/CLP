@@ -98,33 +98,11 @@
         <RibbonTab Header="Home">
 
             <RibbonGroup Header="Pen">
-                <RibbonGroup.Resources>
-                    <Style x:Name="PenWidthStyle" TargetType="{x:Type RibbonButton}">
-                        <Setter Property="Width" Value="25"/>
-                        <Setter Property="Height" Value="5"/>
-                        <Setter Property="Command">
-                            <Setter.Value>
-                                <Binding Path="SetPenWidthCommand"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="CommandParameter">
-                            <Setter.Value>
-                                <Binding RelativeSource="{RelativeSource Self}"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Margin" Value="1"/>
-                        <Setter Property="BorderBrush" Value="White"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                    </Style>
-                </RibbonGroup.Resources>
                 <RibbonToggleButton
-                        Label="Pen"
-                        LargeImageSource="..\Images\Pen.png"
-                        Command="{Binding Path=SetPenCommand}"
-                        IsChecked="{Binding Converter={StaticResource PageInteractionModeConverter},Path=PageInteractionMode, ConverterParameter='Pen'}" />
+                    Label="Pen"
+                    LargeImageSource="..\Images\Pen.png"
+                    Command="{Binding SetPenCommand}" />
 
-                <!--Changing Marker button into drop-down menu for pen widths, modeling drop-down after pen color drop-down-->
-                <!--Header="Pen Thickness"-->
                 <RibbonMenuButton Label="Size" 
                          LargeImageSource="..\Images\PenSize.png" SnapsToDevicePixels="True">
                     <RibbonGallery SelectedValuePath="Content.Height" SelectedValue="{Binding PenSize, Mode=TwoWay}"
@@ -154,7 +132,7 @@
             <!--Made new RibbonGroup just for RibbonSplit Button, modeling settings and style after color block-->
             <RibbonGroup Header="Eraser">
                 <RibbonGroup.Resources>
-                    <Style x:Name="EraserButtonStyle" TargetType="{x:Type RibbonButton}">
+                    <Style x:Name="EraserButtonStyle" TargetType="{x:Type RibbonSplitButton}">
                         <Setter Property="Command">
                             <Setter.Value>
                                 <Binding Path="SetEraserCommand"/>
@@ -165,9 +143,6 @@
                                 <Binding Path="SetStrokeEraserCommand"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Margin" Value="1"/>
-                        <Setter Property="BorderBrush" Value="White"/>
-                        <Setter Property="BorderThickness" Value="0"/>
                     </Style>
                 </RibbonGroup.Resources>
 
