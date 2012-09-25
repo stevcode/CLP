@@ -112,22 +112,14 @@
         <!-- Content -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <!--Column for NotebookPages and Show Submissions Buttons-->
-                <ColumnDefinition MinWidth="150" Width="250" />
+                <ColumnDefinition MinWidth="150" Width="250" x:Name="NotebookPageColumn" />
+                <ColumnDefinition Width="Auto" x:Name="NotebookPageSplitterColumn"/>
 
-                <!--Column for Gridsplitter-->
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition MinWidth="150" Width="Auto" x:Name="SubmissionColumn"/>
+                <ColumnDefinition Width="Auto" x:Name="SubmissionSplitterColumn" />
 
-                <!--Column Submissions-->
-                <ColumnDefinition MinWidth="150" Width="Auto"/>
-
-                <!--Column for Gridsplitter-->
-                <ColumnDefinition Width="Auto" />
-
-                <!--Column for Main Content-->
                 <ColumnDefinition Width="*" MinWidth="150"/>
 
-                <!--Column for GridDisplays-->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -263,7 +255,7 @@
             </StatusBar.ItemsPanel>
 
             <StatusBarItem Grid.Column="0">
-                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100" Click="ShowNotebookPagesToggleButton_Click">
+                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100" Click="ShowNotebookPagesToggleButton_Click" IsChecked="True">
                     <ToggleButton.Style>
                         <Style TargetType="{x:Type ToggleButton}">
                             <Setter Property="FontSize" Value="11" />
