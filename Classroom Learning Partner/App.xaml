@@ -14,9 +14,6 @@
         <Style TargetType="{x:Type Views:MainWindowView}"
                BasedOn="{StaticResource {x:Type Window}}"/>
         
-        <!--<Style TargetType="{x:Type Border}">
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-        </Style>-->
     </Application.Resources>
     
 </Application>

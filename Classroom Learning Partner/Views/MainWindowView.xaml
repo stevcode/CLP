@@ -10,7 +10,8 @@
         WindowStyle="None"
         WindowState="Maximized"
         Closing="RibbonWindow_Closing"
-        Title="{Binding Path=TitleBarText}">
+        Title="{Binding Path=TitleBarText}"
+        UseLayoutRounding="True">
 
     <Window.Resources>
         <ResourceDictionary>

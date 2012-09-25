@@ -47,7 +47,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="itemGrid">
+                        <Grid x:Name="itemGrid" Margin="1">
                             
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -55,13 +55,15 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Grid.Column="0" Content="{Binding PageIndex}" />
+                            <Label x:Name="PageIndex"  Grid.Column="0" 
+                                   Content="{Binding PageIndex}"
+                                   Margin="8,0,0,0"
+                                   Foreground="Black" FontSize="12" />
 
                             <!--Notebook Page-->
-                            <Border Grid.Column="1"
+                            <Border x:Name="IconBorder" Grid.Column="1"
                                     BorderBrush="#9FA6AD"
                                     BorderThickness="1"
-                                    x:Name="IconBorder"
                                     Margin="4">
                                 <ContentPresenter />
                             </Border>
@@ -85,6 +87,8 @@
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
                                 <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
+                                <Setter TargetName="PageIndex" Property="Foreground" Value="DarkViolet" />
+                                <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
