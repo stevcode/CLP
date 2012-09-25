@@ -50,23 +50,24 @@
                         <Grid x:Name="itemGrid">
                             
                             <Grid.ColumnDefinitions>
-                                <!--Column for NotebookPages-->
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
-                                <!--Column for Show Submissions Button-->
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!--Blank Notebook pages (far left)-->
-                            <Border Grid.Column="0"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="2"
+                            <Label Grid.Column="0" Content="{Binding PageIndex}" />
+
+                            <!--Notebook Page-->
+                            <Border Grid.Column="1"
+                                    BorderBrush="#9FA6AD"
+                                    BorderThickness="1"
                                     x:Name="IconBorder"
-                                    Margin="8,4,4,4">
+                                    Margin="4">
                                 <ContentPresenter />
                             </Border>
                          
                             <!--Where buttons that reveal submissions are located-->
-                            <Grid Margin="0,0,8,0"  Grid.Column="1" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" > 
+                            <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" > 
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
@@ -83,6 +84,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
+                                <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -124,7 +126,7 @@
                 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderThickness="1" BorderBrush="#9FA6AD">
+                        <Border BorderThickness="0">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDown">
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
