@@ -13,29 +13,21 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid DockPanel.Dock="Left">
-                            <Grid.ColumnDefinitions>
-                                <!--Column for Student Submissions-->
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
 
-                            <!--Display of Student Submissions-->
-                            <Border Grid.Column="0"
-                                    BorderBrush="Transparent"
-                                    Background="White"
-                                    CornerRadius="8"
-                                    BorderThickness="3"
-                                    x:Name="IconBorder"
-                                    Width="{Binding ElementName=content, Path=Width}"
-                                    Margin="8,4,8,4">
-                                <ContentPresenter x:Name="content"/>
-                            </Border>
+                        <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
+                        <Border x:Name="IconBorder"
+                                BorderBrush="#9FA6AD"
+                                BorderThickness="1"
+                                Width="{Binding ElementName=content, Path=Width}"
+                                Margin="4">
+                            <ContentPresenter x:Name="content"/>
+                        </Border>
 
-                        </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
+                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
+                                <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -121,7 +113,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate x:Name="SortTrigger">
                     <!--ListBoxBorder Width must be bound to Slider value-->
-                    <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}">
+                    <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />

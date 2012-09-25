@@ -395,8 +395,10 @@ namespace Classroom_Learning_Partner.Model
                 string s_page_pb = Convert.ToBase64String(stream.ToArray());
                 double pbPageSize = (s_page_pb.Length / 1024.0);
 
+                string sPage = ObjectSerializer.ToString(page);
+
                 //Submit Page using PB
-                App.Peer.Channel.SubmitFullPage(s_page_pb, App.Peer.UserName, notebookName);
+                App.Peer.Channel.SubmitFullPage(sPage, App.Peer.UserName, notebookName);
 
                 //put the history back into the page
                 CLP.Models.CLPHistory.replaceHistoryInPage(tempHistory, page);

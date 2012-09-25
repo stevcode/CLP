@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 //SubmissionBorder.Visibility = Visibility.Visible;
                 SubmissionPagesSplitter.Visibility = Visibility.Visible;
-                CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[0] as Border).Child as ContentPresenter).Content as CLPPage;
+                CLPPage page = (((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
                 if(viewModel.Notebook.Submissions.ContainsKey(pageID))

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 using ProtoBuf;
 
 namespace Classroom_Learning_Partner.Model
@@ -127,11 +128,11 @@ namespace Classroom_Learning_Partner.Model
                     if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
                         //Deserialize Using Protobuf
-                        Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
-                        CLP.Models.CLPPage page = new CLP.Models.CLPPage();
-                        page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
+                        //Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
+                        //CLP.Models.CLPPage page = new CLP.Models.CLPPage();
+                        //page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
 
-                        //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+                        CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //interpolate the history to make it bigger again - claire
                         //History is sent separately- Jessie
                         //CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(page.PageHistory);
