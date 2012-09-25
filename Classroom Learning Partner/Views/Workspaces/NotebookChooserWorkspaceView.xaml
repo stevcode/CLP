@@ -5,8 +5,21 @@
              xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
              Background="CadetBlue">
 
-    <Grid x:Name="grid">
-        <ListBox ItemsSource="{Binding Path=NotebookNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="#F3F3F3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <ListBox Grid.Row="0" ItemsSource="{Binding Path=NotebookNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:NotebookChooserWorkspaceView}}}" CommandParameter="{Binding}" 
@@ -26,5 +39,32 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
+
+        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="DarkViolet" Height="23" Padding="0" Margin="0" BorderThickness="0">
+            <StatusBar.Resources>
+                <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
+            </StatusBar.Resources>
+
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+
+            <StatusBarItem Grid.Column="1">
+                <TextBlock>CONNECTION STATUS:</TextBlock>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding MainWindow.OnlineStatus}" />
+            </StatusBarItem>
+        </StatusBar>
+        
     </Grid>
 </catel:UserControl>

@@ -7,6 +7,11 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class NotebookChooserWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
+        public MainWindowViewModel MainWindow
+        {
+            get { return App.MainWindowViewModel; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the NotebookChooserWorkspaceViewModel class.
         /// </summary>

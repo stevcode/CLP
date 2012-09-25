@@ -20,6 +20,11 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
+        public MainWindowViewModel MainWindow
+        {
+            get { return App.MainWindowViewModel; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>

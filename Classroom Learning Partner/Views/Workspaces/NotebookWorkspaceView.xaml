@@ -10,224 +10,394 @@
     <!--xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"-->
     
     <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
-        <catel:IntToStringConverter x:Key="IntToString" />
-        <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
-        <conv:LastItemInCollectionConverter x:Key="LastItem" />
-                
-        <!-- GridDisplay with the Trigger for Selected -->
-        <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-                        <!--Border that will appear on GridDisplay when Show Grid Display option is selected-->
-                        <Border BorderBrush="White"
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
+            <catel:IntToStringConverter x:Key="IntToString" />
+            <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
+            <conv:LastItemInCollectionConverter x:Key="LastItem" />
+
+            <!-- GridDisplay with the Trigger for Selected -->
+            <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+
+                            <!--Border that will appear on GridDisplay when Show Grid Display option is selected-->
+                            <Border BorderBrush="White"
                             Background="{Binding IsOnProjector, Converter={StaticResource BackgroundConverter}}"
                             CornerRadius="8"
                             BorderThickness="3"
                             x:Name="IconBorder"
                             Margin="8,4,8,4">
-                            <ContentPresenter />
-                        </Border>
+                                <ContentPresenter />
+                            </Border>
 
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                        
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
 
-        <!-- NotebookPage with the Trigger for Selected -->
-        <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid x:Name="itemGrid" Margin="0,1,0,1">
-                            
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-                            <Label x:Name="PageIndex"  Grid.Column="0" 
+            <!-- NotebookPage with the Trigger for Selected -->
+            <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Grid x:Name="itemGrid" Margin="0,2,0,2">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label x:Name="PageIndex"  Grid.Column="0" 
                                    Content="{Binding PageIndex}"
                                    Margin="8,0,0,0"
                                    Foreground="Black" FontSize="12" />
 
-                            <!--Notebook Page-->
-                            <Border x:Name="IconBorder" Grid.Column="1"
+                                <!--Notebook Page-->
+                                <Border x:Name="IconBorder" Grid.Column="1"
                                     BorderBrush="#9FA6AD"
                                     BorderThickness="1"
                                     Margin="4">
-                                <ContentPresenter />
-                            </Border>
-                         
-                            <!--Where buttons that reveal submissions are located-->
-                            <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" > 
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                              
-                                <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
-                                    <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
-                                </ToggleButton>
-                                <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
-                            </Grid>
-                            
-                        </Grid>
-                        
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
-                                <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                                <Setter TargetName="PageIndex" Property="Foreground" Value="DarkViolet" />
-                                <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                                    <ContentPresenter />
+                                </Border>
 
+                                <!--Where buttons that reveal submissions are located-->
+                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SubmissionVisibility}" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
+                                        <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
+                                    </ToggleButton>
+                                    <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+                                </Grid>
+
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
+                                    <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="DarkViolet" />
+                                    <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <!-- Content -->
     <Grid Background="#F3F3F3">
-        <Grid.ColumnDefinitions>
-            <!--Column for NotebookPages and Show Submissions Buttons-->
-            <ColumnDefinition MinWidth="150" Width="250" />
-            
-            <!--Column for Gridsplitter-->
-            <ColumnDefinition Width="Auto" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <!--Column Submissions-->
-            <ColumnDefinition MinWidth="150" Width="Auto"/>
+        <!-- Content -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <!--Column for NotebookPages and Show Submissions Buttons-->
+                <ColumnDefinition MinWidth="150" Width="250" />
 
-            <!--Column for Gridsplitter-->
-            <ColumnDefinition Width="Auto" />
+                <!--Column for Gridsplitter-->
+                <ColumnDefinition Width="Auto" />
 
-            <!--Column for Main Content-->
-            <ColumnDefinition Width="*" MinWidth="150"/>
-            
-            <!--Column for GridDisplays-->
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+                <!--Column Submissions-->
+                <ColumnDefinition MinWidth="150" Width="Auto"/>
 
-        <!-- Notebook Pages-->
-        <Border Grid.Column="0" Background="#F3F3F3">
-            <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                <!--Column for Gridsplitter-->
+                <ColumnDefinition Width="Auto" />
+
+                <!--Column for Main Content-->
+                <ColumnDefinition Width="*" MinWidth="150"/>
+
+                <!--Column for GridDisplays-->
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Notebook Pages-->
+            <Border Grid.Column="0" Background="#F3F3F3">
+                <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
                             MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
                             ItemsSource="{Binding Path=NotebookPages}"
                             ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                             SelectionMode="Single">
-                
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="0">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                
-            </ListBox>
-        </Border>
 
-        <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </Border>
+
+            <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
          HorizontalAlignment="Center" VerticalAlignment="Stretch"
          Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}"/>
 
-        <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed"/>
+            <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
 
-        <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="#D4D4D4" Width="5"
+            <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="#D4D4D4" Width="5"
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
-        
-        <!-- Control that dynamically determines what Display to show -->
-        <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Column="4">
-            <ContentControl.Resources>
 
-                <ControlTemplate x:Key="LinkedDisplayTemplate">
-                    <Views:LinkedDisplayView Background="{Binding WorkspaceBackgroundColor}" />
-                </ControlTemplate>
+            <!-- Control that dynamically determines what Display to show -->
+            <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Column="4">
+                <ContentControl.Resources>
 
-                <ControlTemplate x:Key="GridDisplayTemplate">
-                    <Views:GridDisplayView Background="{Binding WorkspaceBackgroundColor}" />
-                </ControlTemplate>
+                    <ControlTemplate x:Key="LinkedDisplayTemplate">
+                        <Views:LinkedDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                    </ControlTemplate>
 
-            </ContentControl.Resources>
+                    <ControlTemplate x:Key="GridDisplayTemplate">
+                        <Views:GridDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                    </ControlTemplate>
 
-            <ContentControl.Style>
-                <Style TargetType="{x:Type ContentControl}">
-                    <Style.Triggers>
+                </ContentControl.Resources>
 
-                        <!-- LinkedDisplay trigger -->
-                        <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                            <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
-                        </DataTrigger>
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
 
-                        <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                            <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
-                        </DataTrigger>
+                            <!-- LinkedDisplay trigger -->
+                            <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
+                                <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
+                            </DataTrigger>
 
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
+                            <!-- GridDisplay trigger -->
+                            <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
+                                <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                            </DataTrigger>
 
-        <!-- SideBar that displays projected displays -->
-        <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+
+            <!-- SideBar that displays projected displays -->
+            <Border BorderBrush="Black" BorderThickness="2,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
               Grid.Column="5" HorizontalAlignment="Right" Margin="0">
-            
-            <ListBox VirtualizingStackPanel.VirtualizationMode="Recycling"
+
+                <ListBox VirtualizingStackPanel.VirtualizationMode="Recycling"
                 x:Name="GridDisplaysListBox"
                 MinWidth="150" Width="150" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ItemsSource="{Binding Path=GridDisplays, UpdateSourceTrigger=PropertyChanged}"
                 ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
                 SelectionMode="Single">
-            
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border MinHeight="100">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
 
-                            <ItemsControl Margin="10" Background="Transparent"
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border MinHeight="100">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                                <ItemsControl Margin="10" Background="Transparent"
                                 x:Name="itemsControl" Grid.Column="1"
                                 ItemsSource="{Binding Path=DisplayedPages}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>                                    
-                                        <!--Grid Display-->
-                                        <Views:CLPPagePreviewView Margin="2" Background="White" DataContext="{Binding}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!--Grid Display-->
+                                            <Views:CLPPagePreviewView Margin="2" Background="White" DataContext="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
-        
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+        </Grid>
+
+        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="DarkViolet" Height="23" Padding="0" Margin="0" BorderThickness="0">
+            <StatusBar.Resources>
+                <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
+            </StatusBar.Resources>
+
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+
+            <StatusBarItem Grid.Column="0">
+                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100">
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="FontSize" Value="11" />
+                            <Setter Property="Content" Value="SHOW PAGES"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Content" Value="HIDE PAGES"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="1">
+                <TextBlock>
+                    <Run Text="PAGE " />
+                    <Run Text="{Binding CurrentPage.Page.PageIndex}" />
+                    <Run Text=" OF " />
+                    <Run Text="{Binding NotebookPages.Count, Mode=OneWay}" />
+                </TextBlock>
+            </StatusBarItem>
+
+            <Separator Grid.Column="2" />
+
+            <StatusBarItem Grid.Column="3">
+                <Slider
+                  x:Name="SliderFrom"
+                  Width="200"
+                  Height="50"
+                  TickFrequency="10"
+                  IsSnapToTickEnabled="False"
+                  TickPlacement="None"
+                  VerticalAlignment="Top"
+                  Maximum="400" Minimum="10">
+                    <Slider.Style>
+                        <Style TargetType="{x:Type Slider}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Slider}">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <TickBar x:Name="TopTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0"/>
+                                                <TickBar x:Name="BottomTick" Visibility="Hidden" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="2"/>
+                                                <Border x:Name="TrackBackground"  
+                                                     BorderThickness="1" CornerRadius="1"
+                                                     Margin="5,0" VerticalAlignment="Center" Height="4.0" Grid.Row="1" >
+                                                    <Canvas Margin="-6,-1">
+                                                        <Rectangle Visibility="Visible" x:Name="PART_SelectionRange" Height="4.0"
+                                                     Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                                     Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                     StrokeThickness="1.0"/>
+                                                    </Canvas>
+                                                </Border>
+                                                <Track x:Name="PART_Track" Grid.Row="1">
+                                                    <Track.DecreaseRepeatButton>
+                                                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
+                                                            <RepeatButton.Style>
+                                                                <Style TargetType="{x:Type RepeatButton}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                                                    <Setter Property="IsTabStop" Value="false"/>
+                                                                    <Setter Property="Focusable" Value="false"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                                                <Rectangle HorizontalAlignment="Left" SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="6"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </RepeatButton.Style>
+                                                        </RepeatButton>
+                                                    </Track.DecreaseRepeatButton>
+                                                    <Track.IncreaseRepeatButton>
+                                                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
+                                                            <RepeatButton.Style>
+                                                                <Style TargetType="{x:Type RepeatButton}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="true"/>
+                                                                    <Setter Property="IsTabStop" Value="false"/>
+                                                                    <Setter Property="Focusable" Value="false"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                                                <Grid HorizontalAlignment="Right">
+                                                                                    <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="2" Width="8"/>
+                                                                                    <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="8" Width="2"/>
+                                                                                </Grid>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </RepeatButton.Style>
+                                                        </RepeatButton>
+                                                    </Track.IncreaseRepeatButton>
+                                                    <Track.Thumb>
+                                                        <Thumb x:Name="Thumb" Background="Black">
+                                                            <Thumb.Style>
+                                                                <Style TargetType="{x:Type Thumb}">
+                                                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                                                <Rectangle SnapsToDevicePixels="True" Fill="White" StrokeThickness="0" Height="10" Width="3"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Thumb.Style>
+                                                        </Thumb>
+                                                    </Track.Thumb>
+                                                </Track>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Slider.Style>
+                </Slider>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="4">
+                <TextBlock>CONNECTION STATUS:</TextBlock>
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="5">
+                <TextBlock Text="{Binding MainWindow.OnlineStatus}" />
+            </StatusBarItem>
+        </StatusBar>
+
     </Grid>
 </catel:UserControl>
