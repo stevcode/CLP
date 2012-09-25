@@ -101,6 +101,7 @@
 
                 <RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
+                    IsChecked="True"
                     Label="Pen"
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding SetPenCommand}"/>
@@ -255,10 +256,10 @@
                         Label="Send To Projector"
                         Command="{Binding Path=SendDisplayToProjectorcommand}" />
 
-                <RibbonButton
+                <!--<RibbonButton
                         LargeImageSource="..\Images\SingleDisplay.png"
                         Label="Linked Display"
-                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
+                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />-->
 
                 <RibbonButton
                         LargeImageSource="..\Images\GridDisplay.png"
