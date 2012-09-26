@@ -558,6 +558,10 @@
                 </RibbonGroup> -->
 
         </RibbonTab>
+
+        <Ribbon.HelpPaneContent>
+            <ToggleButton Content="^" />
+        </Ribbon.HelpPaneContent>
     </Ribbon>
     
 </catel:UserControl>
