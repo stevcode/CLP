@@ -135,17 +135,11 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
-            <!--<Grid>-->
-                <!--<Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>-->
-                   <!-- <ColumnDefinition Width="Auto"/> -->
-                <!--</Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="35"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions> Grid.Row="0"
-                                Grid.RowSpan="1"-->
             <Grid>
+                
+            </Grid>
+
+                <!--<Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="35"/>
                     <RowDefinition Height="Auto"/>
@@ -157,19 +151,11 @@
                     <Rectangle Name="PageObjectHitBox" Tag="0" Fill="Transparent" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Stretch="Fill" />
                 </Grid>
             </Button>
-
-             <!--   <Button
-            
-                    IsEnabled="{Binding Path=PageHasAudioFile}"
-                                Command="{Binding Path=PlayAudioCommand}" 
-                                Grid.Row="0"
-                                Grid.RowSpan="1"
-                                Grid.Column="1"
-                                HorizontalAlignment="Center" > 
-                    <Image Source="{Binding AudioPlayImage}" /> 
-                </Button> -->
                 <Slider Value="{Binding Path=CurrentSliderValue}" Height="22" Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" Grid.RowSpan="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/>
-           </Grid>
+           </Grid>-->
+        
+        
+        
         
     </ac:AdornedControl>
         
