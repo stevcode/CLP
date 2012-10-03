@@ -15,7 +15,7 @@
         <Ribbon.ContextualTabGroups>
             <RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
             <RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
-            <RibbonContextualTabGroup Header="Debugging Tools" Visibility="{Binding Path=DebugTabVisibility}" Background="Violet" />
+            <RibbonContextualTabGroup Header="Debugging" Visibility="{Binding Path=DebugTabVisibility}" Background="Violet" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
@@ -524,39 +524,19 @@
 
             </RibbonGroup>
 
-            <!--  <RibbonGroup Header="Insert">
+        </RibbonTab>
 
-                    <RibbonButton
-                        Label="Insert Image"
-                        LargeImageSource="..\Images\AddImage.png"
-                        Command="{Binding Path=InsertImageCommand}" />
+        <!--Debug Tab-->
+        <RibbonTab Header="General Debug" ContextualTabGroupHeader="Debugging">
 
-                    <RibbonButton
-                        Label="Insert Stamp"
-                        LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}" />
+            <RibbonGroup Header="Interpret">
 
-                    <RibbonButton
-                        Label="Insert Image Stamp"
-                        LargeImageSource="..\Images\AddPictureStamp.jpg"
-                        Command="{Binding Path=InsertImageStampCommand}" />
-
-                    <RibbonButton
-                        Label="Insert Square"
+                <RibbonButton
+                        Label="Interpret Page"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertSquareShapeCommand}" />
+                        Command="{Binding Path=InterpretPageCommand}" />
 
-                    <RibbonButton
-                        Label="Insert Circle"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertCircleShapeCommand}" />
-
-                    <RibbonButton
-                        Label="Insert Ink Region"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertInkRegionCommand}" />
-
-                </RibbonGroup> -->
+            </RibbonGroup>
 
         </RibbonTab>
 

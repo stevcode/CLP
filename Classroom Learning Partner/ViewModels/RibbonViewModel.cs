@@ -396,6 +396,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData InstructorVisibilityProperty = RegisterProperty("InstructorVisibility", typeof(Visibility));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility DebugTabVisibility
+        {
+            get { return GetValue<Visibility>(DebugTabVisibilityProperty); }
+            set { SetValue(DebugTabVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the DebugTabVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DebugTabVisibilityProperty = RegisterProperty("DebugTabVisibility", typeof(Visibility), null);
 
         /// <summary>
         /// Gets or sets the property value.
