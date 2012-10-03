@@ -46,6 +46,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SetStudentCommand = new Command(OnSetStudentCommandExecute);
             SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
             SetServerCommand = new Command(OnSetServerCommandExecute);
+
+            ToggleDebugCommand = new Command(OnToggleDebugCommandExecute);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -241,6 +243,26 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.CurrentUserMode = App.UserMode.Server;
             SetWorkspace();
+        }
+
+        /// <summary>
+        /// Gets the ToggleDebugCommand command.
+        /// </summary>
+        public Command ToggleDebugCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ToggleDebugCommand command is executed.
+        /// </summary>
+        private void OnToggleDebugCommandExecute()
+        {
+            if(Ribbon.DebugTabVisibility == Visibility.Collapsed)
+            {
+                Ribbon.DebugTabVisibility = Visibility.Visible;
+            }
+            else
+            {
+                Ribbon.DebugTabVisibility = Visibility.Collapsed;
+            }
         }
 
         #endregion //Commands

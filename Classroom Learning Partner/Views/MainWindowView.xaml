@@ -30,6 +30,8 @@
               Gesture="CTRL+SHIFT+P" />
         <KeyBinding Command="{Binding Path=SetServerCommand}"
               Gesture="CTRL+SHIFT+D" />
+        <KeyBinding Command="{Binding Path=ToggleDebugCommand}"
+              Gesture="CTRL+SHIFT+K" />
     </Window.InputBindings>
 
     <Grid x:Name="LayoutRoot">
