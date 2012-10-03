@@ -46,6 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetStudentCommand = new Command(OnSetStudentCommandExecute);
             SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
             SetServerCommand = new Command(OnSetServerCommandExecute);
+            SetDebugCommand = new Command(OnSetDebugCommandExecute);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -241,6 +242,29 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.CurrentUserMode = App.UserMode.Server;
             SetWorkspace();
+        }
+
+        /// <summary>
+        /// Gets the SetDebugCommand command.
+        /// </summary>
+        public Command SetDebugCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the SetDebugCommand command is executed.
+        /// </summary>
+        private void OnSetDebugCommandExecute()
+        {
+            Console.WriteLine("Here3");
+            if (Ribbon.DebugTabVisibility.Equals(Visibility.Collapsed))
+            {
+                Ribbon.DebugTabVisibility = Visibility.Visible;
+                Console.WriteLine("Here");
+            }
+            else
+            {
+                Ribbon.DebugTabVisibility = Visibility.Collapsed;
+                Console.WriteLine("Here2");
+            }
         }
 
         #endregion //Commands

@@ -15,7 +15,7 @@
         <Ribbon.ContextualTabGroups>
             <RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
             <RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
-            <RibbonContextualTabGroup Header="Debugging Tools" Visibility="{Binding Path=DebuggingTabVisibility}" Background="Violet" />
+            <RibbonContextualTabGroup Header="Debugging Tools" Visibility="{Binding Path=DebugTabVisibility}" Background="Violet" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
@@ -561,8 +561,7 @@
         </RibbonTab>
 
         <!--Debugging Tab-->
-        <RibbonTab Header="Debugging">
-            <!--ContextualTabGroupHeader="Debugging Tools" >-->
+        <RibbonTab Header="Debugging" ContextualTabGroupHeader="Debugging Tools">
 
             <RibbonGroup Header="Interpret">
                 <RibbonButton

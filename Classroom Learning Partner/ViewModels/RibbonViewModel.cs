@@ -181,6 +181,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //DB
             QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
+
+            //Debug
+            InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+
         }
 
         /// <summary>
@@ -359,7 +363,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Register the AuthoringTabVisibility property so it is known in the class.
+        /// Register the DebugTabVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData DebugTabVisibilityProperty = RegisterProperty("DebugTabVisibility", typeof(Visibility));
 
@@ -374,7 +378,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Register the AuthoringTabVisibility property so it is known in the class.
+        /// Register the PageViewerVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageViewerVisibilityProperty = RegisterProperty("PageViewerVisibility", typeof(Visibility));
 
@@ -1804,7 +1808,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Insert Commands
 
-        #region Interpret Commands
+        #region Debug Commands
 
         /// <summary>
         /// Gets the InterpretPageCommand command.
@@ -1814,7 +1818,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Method to invoke when the InterpretPageCommand command is executed.
         /// </summary>
-        private void OnInterpetPageCommandExecute()
+        private void OnInterpretPageCommandExecute()
         {
             CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             foreach (CLP.Models.ICLPPageObject pageObject in currentPage.PageObjects)
@@ -1826,7 +1830,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #endregion //Interpret Commands
+        #endregion //Debug Commands
 
         #endregion //Commands
 
