@@ -150,6 +150,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\MongoDB.Driver.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.480, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\protobuf-net.dll</HintPath>
@@ -540,6 +544,7 @@
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="External Libraries\NAudio.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Resource Include="Images\PenSize-icon32.png" />
     <Resource Include="Images\PenSize.png" />
