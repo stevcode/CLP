@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
             StudentVisibility = Visibility.Collapsed;
             ServerVisibility = Visibility.Collapsed;
             HistoryVisibility = Visibility.Collapsed;
+            DebugTabVisibility = Visibility.Collapsed;
 
             switch(App.CurrentUserMode)
             {
@@ -347,6 +348,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the AuthoringTabVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData AuthoringTabVisibilityProperty = RegisterProperty("AuthoringTabVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility DebugTabVisibility
+        {
+            get { return GetValue<Visibility>(DebugTabVisibilityProperty); }
+            set { SetValue(DebugTabVisibilityProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AuthoringTabVisibility property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DebugTabVisibilityProperty = RegisterProperty("DebugTabVisibility", typeof(Visibility));
 
 
         /// <summary>
@@ -1788,6 +1803,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Insert Commands
+
+        #region Interpret Commands
+
+        /// <summary>
+        /// Gets the InterpretPageCommand command.
+        /// </summary>
+        public Command InterpretPageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InterpretPageCommand command is executed.
+        /// </summary>
+        private void OnInterpetPageCommandExecute()
+        {
+            CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            foreach (CLP.Models.ICLPPageObject pageObject in currentPage.PageObjects)
+            {
+                if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
+                {
+                    (pageObject as ACLPInkRegion).InterpretStrokes();
+                }
+            }
+        }
+
+        #endregion //Interpret Commands
 
         #endregion //Commands
 
