@@ -15,12 +15,23 @@ using NAudio.Wave;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum AudioState
+    {
+        Blank,
+        Recording,
+        HasAudio,
+        Playing,
+        Paused
+    }
+
     public class CLPAudioViewModel : ACLPPageObjectBaseViewModel, IDisposable
     {
         //Declarations required for audio out and the MP3 stream
-        IWavePlayer waveOutDevice;
-        WaveStream mainOutputStream;
-        WaveChannel32 volumeStream;
+        private IWavePlayer waveOutDevice;
+        private WaveStream mainOutputStream;
+        private WaveChannel32 volumeStream;
+
+        private AudioState currentAudioState;
 
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
@@ -28,12 +39,38 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPAudioViewModel(CLPAudio audio)
             : base()
         {
+            AudioCommand = new Command(OnAudioCommandExecute);
+
             PageObject = audio;
+            if(audio.ByteSource.Length == 0)
+            {
+                AudioImage = new BitmapImage(new Uri("..\\..\\Images\\mic_start.png", UriKind.Relative));
+                currentAudioState = AudioState.Blank;
+            }
+            else
+            {
+                AudioImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+                currentAudioState = AudioState.HasAudio;
+            }
         }
 
         public override string Title { get { return "AudioVM"; } }
 
         #region Bindings
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ImageSource AudioImage
+        {
+            get { return GetValue<ImageSource>(AudioImageProperty); }
+            set { SetValue(AudioImageProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AudioImage property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AudioImageProperty = RegisterProperty("AudioImage", typeof(ImageSource), null);
         
         public double CurrentSliderValue
         {
@@ -60,6 +97,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private void Record()
+        {
+
+        }
+
         private void Play()
         {
             waveOutDevice = new WaveOut();
@@ -70,8 +112,6 @@ namespace Classroom_Learning_Partner.ViewModels
             mainOutputStream = volumeStream;
             waveOutDevice.Init(mainOutputStream);
             waveOutDevice.Play();
-
-            
         }
 
         #endregion //Methods
@@ -103,5 +143,37 @@ namespace Classroom_Learning_Partner.ViewModels
                 waveOutDevice = null;
             }
         }
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the AudioCommand command.
+        /// </summary>
+        public Command AudioCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AudioCommand command is executed.
+        /// </summary>
+        private void OnAudioCommandExecute()
+        {
+            switch(currentAudioState)
+            {
+                case AudioState.Blank:
+                    Record();
+                    break;
+                case AudioState.Recording:
+                    break;
+                case AudioState.HasAudio:
+                    break;
+                case AudioState.Playing:
+                    break;
+                case AudioState.Paused:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        #endregion //Commands
     }
 }

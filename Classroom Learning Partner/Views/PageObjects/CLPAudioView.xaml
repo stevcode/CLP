@@ -139,9 +139,9 @@
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Button Command="{Binding Path=RecordAudioCommand}" HorizontalAlignment="Center" Grid.Row="0">
+            <Button Command="{Binding Path=AudioCommand}" HorizontalAlignment="Center" Grid.Row="0">
                 <Grid>
-                    <Image Source="{Binding AudioRecordImage}"/>
+                    <Image Source="{Binding AudioImage}"/>
                     <Rectangle Name="PageObjectHitBox" Tag="0" Fill="Transparent" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Stretch="Fill" />
                 </Grid>
             </Button>
