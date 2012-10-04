@@ -168,8 +168,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
-            //InsertAudioFileCommand = new Command(OnInsertAudioFileCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
+            InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
@@ -184,7 +184,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
-
         }
 
         /// <summary>
@@ -1652,6 +1651,20 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetPenCommand.Execute();
             }
+        }
+
+        /// <summary>
+        /// Gets the InsertAudioCommand command.
+        /// </summary>
+        public Command InsertAudioCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertAudioCommand command is executed.
+        /// </summary>
+        private void OnInsertAudioCommandExecute()
+        {
+            CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(audio);
         }
 
         /// <summary>

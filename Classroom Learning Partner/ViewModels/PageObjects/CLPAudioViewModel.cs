@@ -15,11 +15,8 @@ using NAudio.Wave;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPAudioViewModel : ACLPPageObjectBaseViewModel
+    public class CLPAudioViewModel : ACLPPageObjectBaseViewModel, IDisposable
     {
-        [DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        private static extern int mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr callback);
-
         //Declarations required for audio out and the MP3 stream
         IWavePlayer waveOutDevice;
         WaveStream mainOutputStream;
@@ -32,7 +29,6 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = audio;
-            waveOutDevice = new WaveOut();
         }
 
         public override string Title { get { return "AudioVM"; } }
@@ -66,18 +62,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void Play()
         {
-            WaveChannel32 inputStream;
+            waveOutDevice = new WaveOut();
 
             MemoryStream m_stream = new MemoryStream((PageObject as CLPAudio).ByteSource);
             WaveStream mp3Reader = new Mp3FileReader(m_stream);
-            inputStream = new WaveChannel32(mp3Reader);
-            volumeStream = inputStream;
+            volumeStream = new WaveChannel32(mp3Reader);
             mainOutputStream = volumeStream;
             waveOutDevice.Init(mainOutputStream);
             waveOutDevice.Play();
+
+            
         }
 
         #endregion //Methods
 
+
+        public void Dispose()
+        {
+            CloseWaveOut();
+        }
+
+        private void CloseWaveOut()
+        {
+            if(waveOutDevice != null)
+            {
+                waveOutDevice.Stop();
+            }
+            if(mainOutputStream != null)
+            {
+                // this one really closes the file and ACM conversion
+                volumeStream.Close();
+                volumeStream = null;
+                // this one does the metering stream
+                mainOutputStream.Close();
+                mainOutputStream = null;
+            }
+            if(waveOutDevice != null)
+            {
+                waveOutDevice.Dispose();
+                waveOutDevice = null;
+            }
+        }
     }
 }

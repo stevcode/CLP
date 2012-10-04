@@ -163,7 +163,7 @@
                 <RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
-                        Command="{Binding Path=InsertAudioFileCommand}"/>
+                        Command="{Binding Path=InsertAudioCommand}"/>
 
                 <RibbonButton
                         Label="Horizontal Line"
