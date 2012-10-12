@@ -159,7 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
-            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
+            AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
@@ -1447,17 +1447,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the AddPageCommand command.
         /// </summary>
-        public Command AddNewPageCommand { get; private set; }
+        public Command<string> AddNewPageCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the AddPageCommand command is executed.
         /// </summary>
-        private void OnAddNewPageCommandExecute()
+        private void OnAddNewPageCommandExecute(string pageOrientation)
         {
             //Steve - clpserviceagent
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
             index++;
             CLPPage page = new CLPPage();
+            if(pageOrientation == "Portrait")
+            {
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
         }

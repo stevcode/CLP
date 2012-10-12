@@ -356,9 +356,16 @@
             <RibbonGroup Header="Page">
 
                 <RibbonButton
-                        Label="Add Page Here"
+                        Label="Add Landscape Page Here"
                         LargeImageSource="..\Images\AddPage.png"
-                        Command="{Binding Path=AddNewPageCommand}" />
+                        Command="{Binding Path=AddNewPageCommand}"
+                        CommandParameter="Landscape" />
+
+                <RibbonButton
+                        Label="Add Portrait Page Here"
+                        LargeImageSource="..\Images\AddPage.png"
+                        Command="{Binding Path=AddNewPageCommand}" 
+                        CommandParameter="Portrait" />
 
                 <RibbonButton
                         Label="Delete This Page"
