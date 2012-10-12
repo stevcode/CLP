@@ -9,7 +9,7 @@
     </UserControl.Resources>
 
     <!--Ribbon-->
-    <Ribbon x:Name="Ribbon" IsMinimized="{Binding IsMinimized}">
+    <Ribbon x:Name="Ribbon" IsMinimized="False">
 
         <!--Contextual Tab Definitions-->
         <Ribbon.ContextualTabGroups>
@@ -544,12 +544,22 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=IncreasePageHeightCommand}" />
 
+                <RibbonButton
+                        Label="Page Width"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=ZoomToPageWidthCommand}" />
+
+                <RibbonButton
+                        Label="Whole Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=ZoomToWholePageCommand}" />
+
             </RibbonGroup>
 
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>
-            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent"/>
+            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
     

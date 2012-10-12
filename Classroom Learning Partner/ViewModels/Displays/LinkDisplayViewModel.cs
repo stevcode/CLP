@@ -149,6 +149,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double), null);
 
+        public bool ZoomToWholePage = true;
+
         #endregion //Page Resizing
 
         #endregion //Bindings
@@ -163,10 +165,13 @@ namespace Classroom_Learning_Partner.ViewModels
             double borderWidth = DisplayWidthHeight.Item1 - 20;
             double borderHeight = borderWidth / pageAspectRatio;
 
-            if(borderHeight > DisplayWidthHeight.Item2 - 20)
+            if(ZoomToWholePage)
             {
-                borderHeight = DisplayWidthHeight.Item2 - 20;
-                borderWidth = borderHeight * pageAspectRatio;
+                if(borderHeight > DisplayWidthHeight.Item2 - 20)
+                {
+                    borderHeight = DisplayWidthHeight.Item2 - 20;
+                    borderWidth = borderHeight * pageAspectRatio;
+                }
             }
 
             BorderHeight = borderHeight;

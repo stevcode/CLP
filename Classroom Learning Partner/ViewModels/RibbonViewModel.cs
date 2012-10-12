@@ -185,6 +185,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
             IncreasePageHeightCommand = new Command(OnIncreasePageHeightCommandExecute);
+            ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
+            ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
         }
 
         /// <summary>
@@ -1855,6 +1857,34 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             currentPage.PageHeight *= 2;
+            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+        }
+
+        /// <summary>
+        /// Gets the ZoomToPageWidthCommand command.
+        /// </summary>
+        public Command ZoomToPageWidthCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ZoomToPageWidthCommand command is executed.
+        /// </summary>
+        private void OnZoomToPageWidthCommandExecute()
+        {
+            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ZoomToWholePage = false;
+            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+        }
+
+        /// <summary>
+        /// Gets the ZoomToWholePageCommand command.
+        /// </summary>
+        public Command ZoomToWholePageCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ZoomToWholePageCommand command is executed.
+        /// </summary>
+        private void OnZoomToWholePageCommandExecute()
+        {
+            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ZoomToWholePage = true;
             ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
         }
 
