@@ -22,12 +22,12 @@ namespace Classroom_Learning_Partner.Views
         {
             double pageAspectRatio = (ViewModel as LinkedDisplayViewModel).DisplayedPage.PageAspectRatio;
 
-            double borderWidth = ActualWidth - 50;
+            double borderWidth = ActualWidth - 20;
             double borderHeight = borderWidth / pageAspectRatio;
 
-            if(borderHeight > ActualHeight - 50)
+            if(borderHeight > ActualHeight - 20)
             {
-                borderHeight = ActualHeight - 50;
+                borderHeight = ActualHeight - 20;
                 borderWidth = borderHeight * pageAspectRatio;
             }
 

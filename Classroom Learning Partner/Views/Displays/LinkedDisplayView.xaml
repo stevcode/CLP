@@ -3,11 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:catel="http://catel.codeplex.com">
-    <Grid>
-        <ScrollViewer Name="VisualisationScroller">
-            <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
-                <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
-            </Border>
-        </ScrollViewer>
-    </Grid>
+    <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
+        <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
+    </Border>
 </catel:UserControl>
