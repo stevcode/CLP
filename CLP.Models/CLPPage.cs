@@ -52,6 +52,7 @@ namespace CLP.Models
             PageIndex = -1;
             PageTopics = new ObservableCollection<string>();
             NumberOfSubmissions = 0;
+            PageAspectRatio = PageWidth / PageHeight;
         }
 
         /// <summary>
@@ -110,6 +111,20 @@ namespace CLP.Models
         /// Register the PageWidth property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double PageAspectRatio
+        {
+            get { return GetValue<double>(PageAspectRatioProperty); }
+            set { SetValue(PageAspectRatioProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageAspectRatio property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double), LANDSCAPE_WIDTH / LANDSCAPE_HEIGHT);
 
         /// <summary>
         /// Gets or sets the property value.

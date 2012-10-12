@@ -36,10 +36,6 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
-        public double PageAspectRatio
-        {
-            get { return Page.PageWidth / Page.PageHeight; }
-        }
 
         #region Constructors
 
@@ -193,6 +189,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageWidth property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public double PageAspectRatio
+        {
+            get { return GetValue<double>(PageAspectRatioProperty); }
+            set { SetValue(PageAspectRatioProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageAspectRatio property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double));
 
         //Steve - Replace with User's UniqueID to match against Person Model
         /// <summary>
