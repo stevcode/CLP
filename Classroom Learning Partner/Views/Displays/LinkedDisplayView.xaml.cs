@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Views
     {
         public LinkedDisplayView()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
         protected override System.Type GetViewModelType()
@@ -18,9 +18,20 @@ namespace Classroom_Learning_Partner.Views
             return typeof(LinkedDisplayViewModel);
         }
 
+        //ar = w / h
         protected override void OnRenderSizeChanged(System.Windows.SizeChangedInfo sizeInfo)
         {
+            ResizePage();
+
+            base.OnRenderSizeChanged(sizeInfo);
+        }
+
+        private void ResizePage()
+        {
             double pageAspectRatio = (ViewModel as LinkedDisplayViewModel).DisplayedPage.PageAspectRatio;
+            double pageHeight = (ViewModel as LinkedDisplayViewModel).DisplayedPage.PageHeight;
+            double pageWidth = (ViewModel as LinkedDisplayViewModel).DisplayedPage.PageWidth;
+            double scrolledAspectRatio = pageWidth / pageHeight;
 
             double borderWidth = ActualWidth - 20;
             double borderHeight = borderWidth / pageAspectRatio;
@@ -34,10 +45,13 @@ namespace Classroom_Learning_Partner.Views
             PageBorder.Height = borderHeight;
             PageBorder.Width = borderWidth;
 
-            DimensionBorder.Width = borderWidth;
-            DimensionBorder.Height = borderHeight * 2;
+            DimensionBorder.Width = borderWidth - 2;
+            DimensionBorder.Height = DimensionBorder.Width / scrolledAspectRatio;
+        }
 
-            base.OnRenderSizeChanged(sizeInfo);
+        private void CLPPageView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            ResizePage();
         }
     }
 }

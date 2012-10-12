@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:catel="http://catel.codeplex.com">
-    <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
-            <Border x:Name="DimensionBorder" BorderBrush="Pink" BorderThickness="2">
-                <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
-            </Border>
-        </ScrollViewer>
-    </Border>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <Border x:Name="DimensionBorder" BorderThickness="0">
+                    <Views:CLPPageView DataContext="{Binding DisplayedPage}" DataContextChanged="CLPPageView_DataContextChanged" />
+                </Border>
+            </ScrollViewer>
+        </Border>
+    </ScrollViewer>
 </catel:UserControl>
