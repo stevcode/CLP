@@ -1855,6 +1855,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
             currentPage.PageHeight *= 2;
+            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
         }
 
         #endregion //Debug Commands

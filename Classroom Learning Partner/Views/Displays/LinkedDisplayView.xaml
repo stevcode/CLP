@@ -4,10 +4,10 @@
              xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
              xmlns:catel="http://catel.codeplex.com">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <Border x:Name="PageBorder" BorderThickness="1" BorderBrush="#C6C6C6">
+        <Border BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <Border x:Name="DimensionBorder" BorderThickness="0">
-                    <Views:CLPPageView DataContext="{Binding DisplayedPage}" DataContextChanged="CLPPageView_DataContextChanged" />
+                <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
+                    <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
                 </Border>
             </ScrollViewer>
         </Border>
