@@ -184,6 +184,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+            IncreasePageHeightCommand = new Command(OnIncreasePageHeightCommandExecute);
         }
 
         /// <summary>
@@ -1840,6 +1841,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     (pageObject as ACLPInkRegion).InterpretStrokes();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the IncreasePageHeightCommand command.
+        /// </summary>
+        public Command IncreasePageHeightCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the IncreasePageHeightCommand command is executed.
+        /// </summary>
+        private void OnIncreasePageHeightCommandExecute()
+        {
+            CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page;
+            currentPage.PageHeight *= 2;
         }
 
         #endregion //Debug Commands

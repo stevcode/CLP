@@ -538,18 +538,14 @@
 
             </RibbonGroup>
 
-        </RibbonTab>
-
-        <!--Debugging Tab-->
-        <RibbonTab Header="Debugging" ContextualTabGroupHeader="Debugging Tools">
-
-            <RibbonGroup Header="Interpret">
+            <RibbonGroup Header="Page">
                 <RibbonButton
-                        Label="Interpret Page"
+                        Label="Double Page Height"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InterpretPageCommand}" />
+                        Command="{Binding Path=IncreasePageHeightCommand}" />
 
             </RibbonGroup>
+
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>

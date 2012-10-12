@@ -34,6 +34,9 @@ namespace Classroom_Learning_Partner.Views
             PageBorder.Height = borderHeight;
             PageBorder.Width = borderWidth;
 
+            DimensionBorder.Width = borderWidth;
+            DimensionBorder.Height = borderHeight * 2;
+
             base.OnRenderSizeChanged(sizeInfo);
         }
     }
