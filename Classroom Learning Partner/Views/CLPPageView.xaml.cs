@@ -9,6 +9,7 @@ using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using Catel.MVVM.Views;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -30,7 +31,37 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
+
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         }
+
+        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Console.WriteLine("PO collection changed");
+            foreach(ICLPPageObject pageObject in e.NewItems)
+            {
+                PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
+                pageObjectContainerView.DataContext = pageObject;
+                MainInkCanvas.Children.Add(pageObjectContainerView);
+            }
+        }
+
+        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
+        public ObservableCollection<ICLPPageObject> PageObjects
+        {
+            get { return (ObservableCollection<ICLPPageObject>)GetValue(PageObjectsProperty); }
+            set 
+            {
+                PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+                SetValue(PageObjectsProperty, value);
+                PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            }
+        }
+        // Using a DependencyProperty as the backing store
+        // for MyDependencyProperty. This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PageObjectsProperty =
+            DependencyProperty.Register("PageObjects",
+            typeof(ObservableCollection<ICLPPageObject>), typeof(CLPPageView), new UIPropertyMetadata(new ObservableCollection<ICLPPageObject>()));
 
         protected override System.Type GetViewModelType()
         {
@@ -58,7 +89,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 if (!(isMouseDown))
                 {
-                    VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
+                    ////VisualTreeHelper.HitTest(TopCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(TopCanvas)));
                 }
             }
         }
@@ -309,9 +340,9 @@ namespace Classroom_Learning_Partner.Views
         {
             isMouseDown = false;
 
-            Point pt = e.GetPosition(this.TopCanvas);
-            if (pt.X > 1056) pt.X = 1056;
-            if (pt.Y > 816) pt.Y = 816;
+            ////Point pt = e.GetPosition(this.TopCanvas);
+            ////if (pt.X > 1056) pt.X = 1056;
+            ////if (pt.Y > 816) pt.Y = 816;
 
             // Don't want to add objects if in inverted mode
             if (!(e.StylusDevice != null && e.StylusDevice.Inverted))
@@ -321,8 +352,8 @@ namespace Classroom_Learning_Partner.Views
                     case PageInteractionMode.None:
                         break;
                     case PageInteractionMode.SnapTile:
-                        CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt, (this.DataContext as CLPPageViewModel).Page);
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(snapTile);
+                        ////CLPSnapTileContainer snapTile = new CLPSnapTileContainer(pt, (this.DataContext as CLPPageViewModel).Page);
+                       //// Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(snapTile);
                         break;
                     default:
                         break;

@@ -13,9 +13,9 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas" 
-                PreviewMouseMove="TopCanvas_PreviewMouseMove" PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
-            <ItemsControl x:Name="PageObjects"
+        <!--<Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas" 
+                PreviewMouseMove="TopCanvas_PreviewMouseMove" PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">-->
+            <!--<ItemsControl x:Name="PageObjects"
                             ItemsSource="{Binding Path=PageObjects}"
                             ItemContainerStyle="{StaticResource ContainerStyle}"
                             HorizontalAlignment="Stretch"
@@ -33,17 +33,16 @@
                     </DataTemplate>  
                 </ItemsControl.ItemTemplate>
                 
-            </ItemsControl>
-            
-            <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
-                        Background="Transparent" 
+            </ItemsControl>-->
+
+        <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
+                        Background="White" 
                         Strokes="{Binding Path=InkStrokes}"
                         EditingMode="{Binding Path=EditingMode}"
                         EditingModeInverted="EraseByStroke"
-                        DefaultDrawingAttributes="{Binding Path=DefaultDA}">
-            </InkCanvas>
+                        DefaultDrawingAttributes="{Binding Path=DefaultDA}" />
 
-            <!--<Views:BindableInkCanvas x:Name="MainInkCanvas"
+        <!--<Views:BindableInkCanvas x:Name="MainInkCanvas"
                 Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                 Background="Transparent"
                 Strokes="{Binding InkStrokes}"
@@ -51,7 +50,7 @@
                 EditingModeInverted="EraseByStroke"
                 DefaultDrawingAttributes="{Binding DefaultDA}">
             </Views:BindableInkCanvas>-->
-        </Canvas>
+        <!--</Canvas>-->
     </Viewbox>
     
 </catel:UserControl>
