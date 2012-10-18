@@ -42,6 +42,8 @@ namespace Classroom_Learning_Partner.Views
             {
                 PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
                 pageObjectContainerView.DataContext = pageObject;
+                Console.WriteLine((pageObjectContainerView.ViewModel as CLPStampViewModel).XPosition);
+                Console.WriteLine(pageObjectContainerView.GetValue(InkCanvas.LeftProperty));
                 MainInkCanvas.Children.Add(pageObjectContainerView);
             }
         }

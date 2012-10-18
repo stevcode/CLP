@@ -6,7 +6,7 @@
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              xmlns:catel="http://catel.codeplex.com"
              xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-             x:Name="PageObjectContainerRoot">
+             x:Name="PageObjectContainerRoot" InkCanvas.Left="{Binding XPosition, Mode=OneWay}" InkCanvas.Top="{Binding YPosition, Mode=OneWay}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid x:Name="ContainerHitBox" Background="Transparent">
+    <Grid   x:Name="ContainerHitBox" Background="Transparent">
 
         <ac:AdornedControl
             x:Name="adornedControl"
