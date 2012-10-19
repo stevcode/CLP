@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel(CLPPageViewModel page)
+        public LinkedDisplayViewModel(CLPPage page)
             : base()
         {
             DisplayedPage = page;
@@ -56,9 +56,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel DisplayedPage
+        public CLPPage DisplayedPage
         {
-            get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
+            get { return GetValue<CLPPage>(DisplayedPageProperty); }
             set 
             { 
                 SetValue(DisplayedPageProperty, value);
@@ -66,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
 
         #region Page Resizing
 
@@ -167,25 +167,25 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         //From Interface IDisplayViewModel
-        public void AddPageToDisplay(CLPPageViewModel page)
+        public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
             if (IsOnProjector && App.Peer.Channel != null)
             {
-                if (page.IsSubmission)
+                if(DisplayedPage.IsSubmission)
                 {
-                    App.Peer.Channel.AddPageToDisplay(page.Page.SubmissionID);
+                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.SubmissionID);
                 }
                 else
                 {
-                    App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.UniqueID);
                 }
             }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
 
         #endregion //Methods
