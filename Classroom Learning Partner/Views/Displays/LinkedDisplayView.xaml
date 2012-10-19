@@ -5,7 +5,7 @@
              xmlns:catel="http://catel.codeplex.com">
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
         <Border BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
                 <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
                     <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
                 </Border>

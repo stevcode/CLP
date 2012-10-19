@@ -22,8 +22,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        #region Interface
+
+        public string DisplayName
+        {
+            get { return "LinkedDisplay"; }
+        }
+
         /// <summary>
-        /// Gets or sets the property value.
+        /// Unique ID of Display. Not really applicable for MirrorDisplay as a notebook should only need 1 MirrorDisplay.
         /// </summary>
         public string DisplayID
         {
@@ -31,10 +38,20 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DisplayIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DisplayID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
+
+        /// <summary>
+        /// If Display is currently being projected.
+        /// </summary>
+        public bool IsOnProjector
+        {
+            get { return GetValue<bool>(IsOnProjectorProperty); }
+            set { SetValue(IsOnProjectorProperty, value); }
+        }
+
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+
+        #endregion //Interface
 
         /// <summary>
         /// Gets or sets the property value.
@@ -49,34 +66,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the DisplayedPage property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPageViewModel));
-
-        public string DisplayName
-        {
-            get { return "LinkedDisplay"; }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsOnProjector
-        {
-            get { return GetValue<bool>(IsOnProjectorProperty); }
-            set { SetValue(IsOnProjectorProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsOnProjector property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
 
         #region Page Resizing
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire MirrorDisplay.
+        /// DataBinding done from Dependency Property in the View.
         /// </summary>
         public Tuple<double, double> DisplayWidthHeight
         {
@@ -88,13 +84,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the DisplayWidthHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Width of the visible border around a page.
+        /// Scales based on zoom leve.
         /// </summary>
         public double BorderWidth
         {
@@ -102,13 +96,11 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(BorderWidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the BorderWidth property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof(double), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Height of the visible border around a page.
+        /// Scales based on zoom leve.
         /// </summary>
         public double BorderHeight
         {
@@ -116,13 +108,10 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(BorderHeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the BorderHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Physical Width of Page
         /// </summary>
         public double DimensionWidth
         {
@@ -130,13 +119,10 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DimensionWidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DimensionWidth property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Physical Height of Page
         /// </summary>
         public double DimensionHeight
         {
@@ -144,9 +130,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DimensionHeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DimensionHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double), null);
 
         public bool ZoomToWholePage = true;
@@ -154,6 +137,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Resizing
 
         #endregion //Bindings
+
+        #region Methods
 
         public void ResizePage()
         {
@@ -181,7 +166,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DimensionHeight = DimensionWidth / scrolledAspectRatio;
         }
 
-
+        //From Interface IDisplayViewModel
         public void AddPageToDisplay(CLPPageViewModel page)
         {
             DisplayedPage = page;
@@ -202,6 +187,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
         }
+
+        #endregion //Methods
 
     }
 }

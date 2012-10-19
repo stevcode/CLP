@@ -8,6 +8,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -57,27 +59,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 InkStrokes.Add(stroke);
             }
 
-            foreach(var pageObject in PageObjects)
-            {
-                ACLPPageObjectBaseViewModel pageObjectVM;
-
-                switch(pageObject.PageObjectType)
-                {
-                    case "CLPShape":
-                        pageObjectVM = new CLPShapeViewModel(pageObject as CLPShape);
-                        PageObjectVMs.Add(pageObjectVM);
-                        break;
-                    case "CLPImage":
-                        pageObjectVM = new CLPImageViewModel(pageObject as CLPImage);
-                        PageObjectVMs.Add(pageObjectVM);
-                        break;
-                }
-
-                
-            }
-
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+        
+            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
+            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
+            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -130,20 +117,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<ACLPPageObjectBaseViewModel> PageObjectVMs
-        {
-            get { return GetValue<ObservableCollection<ACLPPageObjectBaseViewModel>>(PageObjectVMsProperty); }
-            set { SetValue(PageObjectVMsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the PageObjectVMs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageObjectVMsProperty = RegisterProperty("PageObjectVMs", typeof(ObservableCollection<ACLPPageObjectBaseViewModel>), () => new ObservableCollection<ACLPPageObjectBaseViewModel>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -313,7 +286,81 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        #region Commands
+
+        private bool IsMouseDown = false;
+        public InkCanvas MainInkCanvas = null;
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseMoveCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseMoveCommandExecute(MouseEventArgs e)
+        {
+            if(!IsMouseDown && MainInkCanvas != null)
+            {
+                VisualTreeHelper.HitTest(MainInkCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(MainInkCanvas)));
+            }
+        }
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseDownCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseDownCommandExecute(MouseEventArgs e)
+        {
+            IsMouseDown = true;
+        }
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseUpCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseUpCommandExecute(MouseEventArgs e)
+        {
+            IsMouseDown = false;
+        }
+
+        #endregion //Commands
+
         #region Methods
+
+        private HitTestFilterBehavior HitFilter(DependencyObject o)
+        {
+            Console.WriteLine(o.GetType().ToString());
+            if(o.GetType() != typeof(Grid))
+            {
+                return HitTestFilterBehavior.ContinueSkipSelf;
+            }
+            else if((o as Grid).Name != "ContainerHitBox")
+            {
+                return HitTestFilterBehavior.ContinueSkipSelf;
+            }
+            else
+            {
+                return HitTestFilterBehavior.Continue;
+            }
+        }
+
+        private HitTestResultBehavior HitResult(HitTestResult result)
+        {
+            Console.WriteLine("In Result");
+            EditingMode = InkCanvasEditingMode.None;
+
+            return HitTestResultBehavior.Stop;
+        }
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

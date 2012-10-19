@@ -1,17 +1,30 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPPageView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:catel="http://catel.codeplex.com"
-             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <Viewbox Stretch="Uniform">
 
         <InkCanvas x:Name="MainInkCanvas" Background="White"
                    Width="{Binding PageWidth}" Height="{Binding PageHeight}"                  
-                   Strokes="{Binding Path=InkStrokes}"
-                   EditingMode="{Binding Path=EditingMode}"
+                   Strokes="{Binding InkStrokes}"
+                   EditingMode="{Binding EditingMode}"
                    EditingModeInverted="EraseByStroke"
-                   DefaultDrawingAttributes="{Binding Path=DefaultDA}" />
+                   DefaultDrawingAttributes="{Binding DefaultDA}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseMove">
+                    <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                    <catel:EventToCommand Command="{Binding MouseDownCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <catel:EventToCommand Command="{Binding MouseUpCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </InkCanvas>
 
     </Viewbox>
     

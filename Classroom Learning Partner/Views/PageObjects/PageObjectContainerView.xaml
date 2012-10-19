@@ -16,7 +16,12 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid   x:Name="ContainerHitBox" Background="Transparent">
+    <Grid x:Name="ContainerHitBox" Background="Transparent">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewMouseMove">
+                <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
 
         <ac:AdornedControl
             x:Name="adornedControl"

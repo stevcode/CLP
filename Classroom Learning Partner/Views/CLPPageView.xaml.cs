@@ -10,6 +10,7 @@ using Classroom_Learning_Partner.ViewModels;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Catel.MVVM.Views;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -37,14 +38,33 @@ namespace Classroom_Learning_Partner.Views
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Console.WriteLine("PO collection changed");
-            foreach(ICLPPageObject pageObject in e.NewItems)
+            if(e.NewItems != null)
             {
-                PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
-                pageObjectContainerView.DataContext = pageObject;
-                Console.WriteLine((pageObjectContainerView.ViewModel as CLPStampViewModel).XPosition);
-                Console.WriteLine(pageObjectContainerView.GetValue(InkCanvas.LeftProperty));
-                MainInkCanvas.Children.Add(pageObjectContainerView);
+                foreach(ICLPPageObject pageObject in e.NewItems)
+                {
+                    PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
+                    pageObjectContainerView.DataContext = pageObject;
+                    MainInkCanvas.Children.Add(pageObjectContainerView);
+                }
+            }
+
+            if(e.OldItems != null)
+            {
+                List<PageObjectContainerView> viewsToRemove = new List<PageObjectContainerView>();
+                foreach(ICLPPageObject pageObject in e.OldItems)
+                {
+                    foreach(PageObjectContainerView pageObjectView in MainInkCanvas.Children)
+                    {
+                        if(pageObject.UniqueID == (pageObjectView.ViewModel as ACLPPageObjectBaseViewModel).PageObject.UniqueID)
+                        {
+                            viewsToRemove.Add(pageObjectView);
+                        }
+                    }
+                }
+                foreach(PageObjectContainerView pageObjectView in viewsToRemove)
+                {
+                    MainInkCanvas.Children.Remove(pageObjectView);
+                }
             }
         }
 
@@ -55,12 +75,21 @@ namespace Classroom_Learning_Partner.Views
             set 
             {
                 PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+                MainInkCanvas.Children.Clear();
                 SetValue(PageObjectsProperty, value);
+                foreach(ICLPPageObject pageObject in PageObjects)
+                {
+                    PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
+                    pageObjectContainerView.DataContext = pageObject;
+                    MainInkCanvas.Children.Add(pageObjectContainerView);
+                }
+                (ViewModel as CLPPageViewModel).MainInkCanvas = MainInkCanvas;
                 PageObjects.CollectionChanged += PageObjects_CollectionChanged;
             }
         }
-        // Using a DependencyProperty as the backing store
-        // for MyDependencyProperty. This enables animation, styling, binding, etc...
+
+        // Using a DependencyProperty as the backing store for PageObjectsProperty.
+        // This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PageObjectsProperty =
             DependencyProperty.Register("PageObjects",
             typeof(ObservableCollection<ICLPPageObject>), typeof(CLPPageView), new UIPropertyMetadata(new ObservableCollection<ICLPPageObject>()));
@@ -72,8 +101,6 @@ namespace Classroom_Learning_Partner.Views
 
         private void TopCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            //Console.WriteLine("ViewModel: " + (ViewModel as CLPPageViewModel).EditingMode.ToString());
-            //Console.WriteLine("View:" + MainInkCanvas.EditingMode.ToString());
 
             if (isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted)
             {

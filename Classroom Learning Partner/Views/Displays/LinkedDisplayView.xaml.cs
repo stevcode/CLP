@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.Views
             get { return (Tuple<double, double>)GetValue(DisplayWidthHeightProperty); }
             set { SetValue(DisplayWidthHeightProperty, value); }
         }
+
         // Using a DependencyProperty as the backing store
         // for MyDependencyProperty. This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayWidthHeightProperty =
