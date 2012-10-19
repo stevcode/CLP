@@ -340,7 +340,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            Console.WriteLine(o.GetType().ToString());
             if(o.GetType() != typeof(Grid))
             {
                 return HitTestFilterBehavior.ContinueSkipSelf;

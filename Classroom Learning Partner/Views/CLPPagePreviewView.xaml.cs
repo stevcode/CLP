@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner.Views
         public CLPPagePreviewView()
         {
             InitializeComponent();
-            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         }
 
         protected override System.Type GetViewModelType()
@@ -63,7 +62,6 @@ namespace Classroom_Learning_Partner.Views
             set
             {
                 PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-                MainInkCanvas.Children.Clear();
                 SetValue(PageObjectsProperty, value);
                 foreach(ICLPPageObject pageObject in PageObjects)
                 {
