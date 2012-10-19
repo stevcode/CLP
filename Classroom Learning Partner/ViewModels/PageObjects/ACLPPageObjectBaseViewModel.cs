@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
@@ -12,6 +14,14 @@ namespace Classroom_Learning_Partner.ViewModels
         protected ACLPPageObjectBaseViewModel() : base()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
+
+            DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
+            DragStartPageObjectCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectCommandExecute);
+            DragStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnDragStopPageObjectCommandExecute);
+
+            ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
+            ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
+            ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -133,6 +143,123 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRemovePageObjectCommandExecute()
         {
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+        }
+
+        /// <summary>
+        /// Gets the DragPageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> DragPageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the DragPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
+        {
+            double x = PageObject.XPosition + e.HorizontalChange;
+            double y = PageObject.YPosition + e.VerticalChange;
+            if(x < 0)
+            {
+                x = 0;
+            }
+            if(y < 0)
+            {
+                y = 0;
+            }
+            if(x > 1056 - PageObject.Width)
+            {
+                x = 1056 - PageObject.Width;
+            }
+            if(y > 816 - PageObject.Height)
+            {
+                y = 816 - PageObject.Height;
+            }
+
+            Point pt = new Point(x, y);
+            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+        }
+
+        /// <summary>
+        /// Gets the DragStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+            Console.WriteLine("drag start");
+        }
+
+        /// <summary>
+        /// Gets the DragStopPageObjectCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStopPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
+        {
+            Console.WriteLine("drag stop");
+        }
+
+        /// <summary>
+        /// Gets the ResizePageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizePageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
+        {
+            double newHeight = PageObject.Height + e.VerticalChange;
+            double newWidth = PageObject.Width + e.HorizontalChange;
+            if(newHeight < 10)
+            {
+                newHeight = 10;
+            }
+            if(newWidth < 10)
+            {
+                newWidth = 10;
+            }
+            if(newHeight + PageObject.YPosition > 816)
+            {
+                newHeight = PageObject.Height;
+            }
+            if(newWidth + PageObject.XPosition > 1056)
+            {
+                newWidth = PageObject.Width;
+            }
+
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+        }
+
+        /// <summary>
+        /// Gets the ResizeStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizeStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+            Console.WriteLine("resize start");
+        }
+
+        /// <summary>
+        /// Gets the ResizeStopPageObjectCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizeStopPageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
+        {
+            Console.WriteLine("resize stop");
         }
 
         #endregion //Default Adorners
