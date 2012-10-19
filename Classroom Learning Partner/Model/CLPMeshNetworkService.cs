@@ -413,7 +413,7 @@ namespace Classroom_Learning_Partner.Model
 
                             if (page != null)
                             {
-                            	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(new CLPPageViewModel(page));
+                            	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
                                 break;
                             }
                         }

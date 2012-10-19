@@ -14,8 +14,6 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             DisplayedPage = page;
-            DisplayID = Guid.NewGuid().ToString();
-            IsOnProjector = false;
         }
 
         public override string Title { get { return "LinkDisplayVM"; } }
@@ -38,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DisplayIDProperty, value); }
         }
 
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// If Display is currently being projected.
@@ -49,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsOnProjectorProperty, value); }
         }
 
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
 
         #endregion //Interface
 
