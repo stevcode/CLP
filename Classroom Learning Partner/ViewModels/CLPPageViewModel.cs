@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -340,11 +341,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(o.GetType() != typeof(Grid))
+            if(o.GetType() != typeof(Rectangle))
             {
                 return HitTestFilterBehavior.ContinueSkipSelf;
             }
-            else if((o as Grid).Name != "ContainerHitBox")
+            else if((o as Rectangle).Name != "PageObjectHitBox")
             {
                 return HitTestFilterBehavior.ContinueSkipSelf;
             }

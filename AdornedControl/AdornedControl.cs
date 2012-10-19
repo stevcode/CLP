@@ -564,7 +564,6 @@ namespace AdornedControl
             return null;
         }
 
-
         /// <summary>
         /// Internal method to show the adorner.
         /// </summary>

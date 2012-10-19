@@ -130,8 +130,10 @@ namespace Classroom_Learning_Partner.Views
 
         private void PageObjectContainer_MouseMove(object sender, MouseEventArgs e)
         {
-            if (App.MainWindowViewModel.IsAuthoring)
-                VisualTreeHelper.HitTest(PageObjectContainer, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(PageObjectContainer)));
+            if(App.MainWindowViewModel.IsAuthoring)
+            {
+                ////VisualTreeHelper.HitTest(PageObjectContainer, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(PageObjectContainer)));
+            }
         }
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
@@ -157,7 +159,7 @@ namespace Classroom_Learning_Partner.Views
                 if ((result.VisualHit as Shape).DataContext is CLPStamp)
                 {
                     if (!isStampAdornerSet)
-                        adornerCanvas.Visibility = Visibility.Hidden;
+                        ////adornerCanvas.Visibility = Visibility.Hidden;
                         isStampAdornerSet = true;
                     if (!timer.IsEnabled)
                         timer.Start();
@@ -171,7 +173,7 @@ namespace Classroom_Learning_Partner.Views
         {
             timer.Stop();
             CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            adornerCanvas.Visibility = Visibility.Visible;
+            ////adornerCanvas.Visibility = Visibility.Visible;
         }
     }
 }

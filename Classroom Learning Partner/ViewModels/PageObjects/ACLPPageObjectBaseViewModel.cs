@@ -2,6 +2,7 @@
 using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -10,6 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         protected ACLPPageObjectBaseViewModel() : base()
         {
+            RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -115,6 +117,27 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
 
         #endregion //Model
+
+        #region Commands
+
+        #region Default Adorners
+
+        /// <summary>
+        /// Gets the RemovePageObjectCommand command.
+        /// </summary>
+        public Command RemovePageObjectCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RemovePageObjectCommand command is executed.
+        /// </summary>
+        private void OnRemovePageObjectCommandExecute()
+        {
+            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+        }
+
+        #endregion //Default Adorners
+
+        #endregion //Commands
 
     }
 }

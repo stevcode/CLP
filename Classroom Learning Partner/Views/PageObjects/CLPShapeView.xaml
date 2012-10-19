@@ -20,7 +20,7 @@
 
     <Grid>
         
-        <Control IsHitTestVisible="True" x:Name="ShapeView" >
+        <Control>
             <Control.Resources>
 
                 <ControlTemplate x:Key="RectangleTemplate">
@@ -77,58 +77,33 @@
                 </Style>
             </Control.Style>
         </Control>
-    
-        <ac:AdornedControl
-                x:Name="adornedControl"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                HorizontalAdornerPlacement="Outside"
-                VerticalAdornerPlacement="Outside"
-                >
+
+        <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                           HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside">
             <ac:AdornedControl.AdornerContent >
                 <!--This is the adorner-->
-                <Canvas
-                        x:Name="adornerCanvas"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Width="{Binding Path=Width}"
-                        Height="{Binding Path=Height}"                    
-                        >
+                <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Width="{Binding Path=Width}" Height="{Binding Path=Height}">
 
-                    <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
+                    <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
+                               RadiusX="10" RadiusY="10"
                                Canvas.Top="-5" Canvas.Left="-5"
                                Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}"
-                               />
+                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
 
                     <!--Close Button-->
-                    <Button
-                            x:Name="closeButton"
-                            Width="40"
-                            Height="40"
-                            Canvas.Left="-50"
-                            Canvas.Top="-25"
-                            Click="closeButton_Click"
+                    <Button Command="{Binding RemovePageObjectCommand}"
+                            Width="40" Height="40"
+                            Canvas.Left="-50" Canvas.Top="-25"
                             Cursor="Hand">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                        x:Name="grid"
-                                        >
-                                    <Ellipse
-                                            Stroke="Black"
-                                            StrokeThickness="3"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Fill="White"
-                                            />
-                                    <Path 
-                                            Data="M0,0 L1,1 M0,1 L1,0" 
-                                            Stretch="Fill" 
-                                            Stroke="Red" 
-                                            StrokeThickness="3" 
-                                            Margin="5" 
-                                            />
+                                <Grid>
+                                    <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                    <Path Data="M0,0 L1,1 M0,1 L1,0" 
+                                          Stretch="Fill" Margin="5"
+                                          Stroke="Red" StrokeThickness="3" />
                                 </Grid>
                             </ControlTemplate>
                         </Button.Template>
@@ -240,7 +215,8 @@
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
 
-            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Stretch="Fill" />
+            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
+                       Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
 
         </ac:AdornedControl>
 
