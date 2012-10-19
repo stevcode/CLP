@@ -93,9 +93,6 @@ namespace CLP.Models
             set { SetValue(PageHeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double), LANDSCAPE_HEIGHT);
 
         /// <summary>
@@ -107,9 +104,6 @@ namespace CLP.Models
             set { SetValue(PageWidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageWidth property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
 
         /// <summary>
@@ -126,9 +120,6 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double), LANDSCAPE_WIDTH / LANDSCAPE_HEIGHT);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public int NumberOfSubmissions
         {
             get { return GetValue<int>(NumberOfSubmissionsProperty); }
@@ -163,10 +154,23 @@ namespace CLP.Models
             set { SetValue(ByteStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ByteStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the InkStrokes property so it is known in the class.
+        /// </summary>
+        [NonSerialized]
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), null, includeInSerialization:false);
+
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
