@@ -14,6 +14,7 @@ using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -163,6 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -184,7 +186,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
-            IncreasePageHeightCommand = new Command(OnIncreasePageHeightCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
         }
@@ -1509,6 +1510,30 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the MakePageLongerCommand command.
+        /// </summary>
+        public Command MakePageLongerCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MakePageLongerCommand command is executed.
+        /// </summary>
+        private void OnMakePageLongerCommandExecute()
+        {
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.PageHeight += 200;
+                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+            
+                double yDifference = page.PageHeight - CLPPage.LANDSCAPE_HEIGHT;
+
+                double times = yDifference / 200;
+
+                Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
+            }
+        }
+
         #endregion //Page Commands
 
         #region Insert Commands
@@ -1831,21 +1856,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     (pageObject as ACLPInkRegion).InterpretStrokes();
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets the IncreasePageHeightCommand command.
-        /// </summary>
-        public Command IncreasePageHeightCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the IncreasePageHeightCommand command is executed.
-        /// </summary>
-        private void OnIncreasePageHeightCommandExecute()
-        {
-            CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
-            currentPage.PageHeight *= 2;
-            ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
         }
 
         /// <summary>

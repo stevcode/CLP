@@ -31,7 +31,8 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
+    <!-- Used for page Zooming, Not active in this first test -->
+    <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">-->
         <Border BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
                 <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
@@ -39,5 +40,5 @@
                 </Border>
             </ScrollViewer>
         </Border>
-    </ScrollViewer>
+    <!--</ScrollViewer>-->
 </catel:UserControl>

@@ -349,6 +349,18 @@
                 </RibbonGroup> -->
 
         </RibbonTab>
+        
+        <RibbonTab Header="Page">
+
+            <RibbonGroup Header="Page Size">
+
+                <RibbonButton Label="Make Page Longer"
+                              LargeImageSource="..\Images\MakePageLonger.png"
+                              Command="{Binding Path=MakePageLongerCommand}"/>
+
+            </RibbonGroup>
+
+        </RibbonTab>
 
         <!--Editing Tab-->
         <RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
@@ -546,10 +558,6 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
-                <RibbonButton
-                        Label="Double Page Height"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=IncreasePageHeightCommand}" />
 
                 <RibbonButton
                         Label="Page Width"
@@ -566,7 +574,7 @@
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>
-            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}"/>
+            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
     
