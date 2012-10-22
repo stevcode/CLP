@@ -11,6 +11,7 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -33,6 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
 
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
@@ -266,6 +268,30 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
             SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+        }
+
+        /// <summary>
+        /// Gets the MakePageLongerCommand command.
+        /// </summary>
+        public Command MakePageLongerCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MakePageLongerCommand command is executed.
+        /// </summary>
+        private void OnMakePageLongerCommandExecute()
+        {
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.PageHeight += 200;
+                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+
+                double yDifference = page.PageHeight - CLPPage.LANDSCAPE_HEIGHT;
+
+                double times = yDifference / 200;
+
+                Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
+            }
         }
 
         #region Methods
