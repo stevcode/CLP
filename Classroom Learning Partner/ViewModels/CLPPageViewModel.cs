@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -40,6 +41,9 @@ namespace Classroom_Learning_Partner.ViewModels
     public class CLPPageViewModel : ViewModelBase
     {
 
+        private DispatcherTimer timer = null;
+        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner disappears
+
         #region Constructors
 
         /// <summary>
@@ -66,6 +70,10 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
+            timer.Tick += new EventHandler(timer_Tick);
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -341,26 +349,43 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(o.GetType() != typeof(Rectangle))
+            //if(o.GetType() != typeof(FrameworkElement))
+            //{
+            //    return HitTestFilterBehavior.ContinueSkipSelf;
+            //}
+            //else 
+            if(o is FrameworkElement)
             {
-                return HitTestFilterBehavior.ContinueSkipSelf;
-            }
-            else if((o as Rectangle).Name != "PageObjectHitBox")
-            {
-                return HitTestFilterBehavior.ContinueSkipSelf;
+                Console.WriteLine((o as FrameworkElement).Name);
+                if((o as FrameworkElement).Name == "PageObjectHitBox" || (o as FrameworkElement).Name == "AdornerDrag")
+                {
+                    
+                    return HitTestFilterBehavior.Continue;
+                }
+                else
+                {
+                    return HitTestFilterBehavior.ContinueSkipSelf;
+                }
             }
             else
             {
-                return HitTestFilterBehavior.Continue;
+                return HitTestFilterBehavior.ContinueSkipSelf;
             }
+            
         }
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            Console.WriteLine("In Result");
+            timer.Start();
             EditingMode = InkCanvasEditingMode.None;
 
             return HitTestResultBehavior.Stop;
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            EditingMode = InkCanvasEditingMode.Ink;
         }
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

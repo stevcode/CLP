@@ -93,7 +93,8 @@
                                Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
 
                     <!--Close Button-->
-                    <Button Command="{Binding RemovePageObjectCommand}"
+                    <Button x:Name="AdornerClose"
+                            Command="{Binding RemovePageObjectCommand}"
                             Width="40" Height="40"
                             Canvas.Left="-50" Canvas.Top="-25"
                             Cursor="Hand">
@@ -111,7 +112,8 @@
                     </Button>
 
                     <!--Drag Thumb-->
-                    <Thumb Canvas.Right="-50" Canvas.Top="-25"
+                    <Thumb x:Name="AdornerDrag"
+                           Canvas.Right="-50" Canvas.Top="-25"
                            Width="40" Height="40"
                            Cursor="ScrollAll">
                         <i:Interaction.Triggers>
@@ -148,7 +150,8 @@
                     </Thumb>
 
                     <!--Resize Thumb-->
-                    <Thumb Canvas.Right="-50" Canvas.Bottom="-50"
+                    <Thumb x:Name="AdornerResize"
+                           Canvas.Right="-50" Canvas.Bottom="-50"
                            Width="40" Height="40"
                            Cursor="SizeNWSE">
                         <i:Interaction.Triggers>

@@ -1,12 +1,18 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjectContainerView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:catel="http://catel.codeplex.com"
-             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-             InkCanvas.Left="{Binding XPosition, Mode=OneWay}" 
-             InkCanvas.Top="{Binding YPosition, Mode=OneWay}">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   InkCanvas.Left="{Binding XPosition, Mode=OneWay}" 
+                   InkCanvas.Top="{Binding YPosition, Mode=OneWay}">
 
     <Control x:Name="PageObjectView">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseLeave">
+                <catel:EventToCommand Command="{Binding MouseLeaveCommand}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <Control.Resources>
 
             <ControlTemplate x:Key="CLPAudioTemplate">

@@ -175,5 +175,10 @@ namespace Classroom_Learning_Partner.Views
             CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
             ////adornerCanvas.Visibility = Visibility.Visible;
         }
+
+        private void PageObjectView_MouseLeave_1(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("mousey leavey");
+        }
     }
 }

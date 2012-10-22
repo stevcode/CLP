@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
@@ -22,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
+
+            MouseLeaveCommand = new Command(OnMouseLeaveCommandExecute);
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -260,6 +263,19 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
             Console.WriteLine("resize stop");
+        }
+
+        /// <summary>
+        /// Gets the MouseLeaveCommand command.
+        /// </summary>
+        public Command MouseLeaveCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseLeaveCommand command is executed.
+        /// </summary>
+        private void OnMouseLeaveCommandExecute()
+        {
+            App.MainWindowViewModel.Ribbon.EditingMode = InkCanvasEditingMode.Ink;
         }
 
         #endregion //Default Adorners

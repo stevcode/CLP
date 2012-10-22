@@ -92,7 +92,9 @@ namespace Classroom_Learning_Partner.Views
         // This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PageObjectsProperty =
             DependencyProperty.Register("PageObjects",
-            typeof(ObservableCollection<ICLPPageObject>), typeof(CLPPageView), new UIPropertyMetadata(new ObservableCollection<ICLPPageObject>()));
+            typeof(ObservableCollection<ICLPPageObject>), 
+            typeof(CLPPageView), 
+            new UIPropertyMetadata(new ObservableCollection<ICLPPageObject>()));
 
         protected override System.Type GetViewModelType()
         {
