@@ -11,6 +11,7 @@ using System.Collections;
 using System.Windows.Threading;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace AdornedControl
 {
@@ -18,7 +19,7 @@ namespace AdornedControl
     /// A content control that allows an adorner for the content to
     /// be defined in XAML.
     /// </summary>
-    public class AdornedControl : ContentControl
+    public class AdornedControl : ContentControl, INotifyPropertyChanged
     {
         #region Dependency Properties
 
@@ -528,6 +529,7 @@ namespace AdornedControl
         /// </summary>
         private void ShowOrHideAdornerInternal()
         {
+            NotifyPropertyChanged("IsAdornerVisible");
             if (IsAdornerVisible)
             {
                 ShowAdornerInternal();
@@ -732,5 +734,15 @@ namespace AdornedControl
         }
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if(PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }

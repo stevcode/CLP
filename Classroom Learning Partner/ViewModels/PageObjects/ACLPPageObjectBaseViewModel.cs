@@ -131,6 +131,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        #region Bindings
+
+        public bool IsAdornerVisible
+        {
+            get { return GetValue<bool>(IsAdornerVisibleProperty); }
+            set { 
+                SetValue(IsAdornerVisibleProperty, value);
+                if(!value)
+                {
+                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
+                    {
+                        pageVM.EditingMode = InkCanvasEditingMode.Ink;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Register the ShapeType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
+
+        #endregion //Bindings
+
         #region Commands
 
         #region Default Adorners

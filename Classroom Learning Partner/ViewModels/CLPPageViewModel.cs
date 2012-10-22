@@ -40,10 +40,6 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
-
-        private DispatcherTimer timer = null;
-        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner disappears
-
         #region Constructors
 
         /// <summary>
@@ -70,10 +66,6 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
-            timer.Tick += new EventHandler(timer_Tick);
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -301,6 +293,24 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool IsMouseDown = false;
         public InkCanvas MainInkCanvas = null;
 
+        public T GetVisualChild<T>(Visual parent) where T : Visual
+        {
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for(int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if(child == null)
+                {
+                    child = GetVisualChild<T>(v);
+                }
+                if(child != null)
+                    break;
+            }
+            return child;
+        }
+
         /// <summary>
         /// Gets the MouseMoveCommand command.
         /// </summary>
@@ -313,7 +323,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(!IsMouseDown && MainInkCanvas != null)
             {
-                VisualTreeHelper.HitTest(MainInkCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(MainInkCanvas)));
+                InkPresenter inkPresenter = GetVisualChild<InkPresenter>(MainInkCanvas);
+
+                VisualTreeHelper.HitTest(inkPresenter, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(inkPresenter)));
             }
         }
 
@@ -349,43 +361,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            //if(o.GetType() != typeof(FrameworkElement))
-            //{
-            //    return HitTestFilterBehavior.ContinueSkipSelf;
-            //}
-            //else 
-            if(o is FrameworkElement)
+            if(o.GetType() == typeof(Rectangle))
             {
-                Console.WriteLine((o as FrameworkElement).Name);
-                if((o as FrameworkElement).Name == "PageObjectHitBox" || (o as FrameworkElement).Name == "AdornerDrag")
+                if((o as Rectangle).Name == "PageObjectHitBox")
                 {
-                    
                     return HitTestFilterBehavior.Continue;
                 }
-                else
-                {
-                    return HitTestFilterBehavior.ContinueSkipSelf;
-                }
             }
-            else
-            {
-                return HitTestFilterBehavior.ContinueSkipSelf;
-            }
-            
+
+            return HitTestFilterBehavior.ContinueSkipSelf;
         }
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            timer.Start();
             EditingMode = InkCanvasEditingMode.None;
 
-            return HitTestResultBehavior.Stop;
-        }
-
-        void timer_Tick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            EditingMode = InkCanvasEditingMode.Ink;
+            return HitTestResultBehavior.Continue;
         }
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
