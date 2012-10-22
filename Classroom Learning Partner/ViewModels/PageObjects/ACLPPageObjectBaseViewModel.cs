@@ -165,13 +165,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 y = 0;
             }
-            if(x > 1056 - PageObject.Width)
+            if(x > PageObject.ParentPage.PageWidth - PageObject.Width)
             {
-                x = 1056 - PageObject.Width;
+                x = PageObject.ParentPage.PageWidth - PageObject.Width;
             }
-            if(y > 816 - PageObject.Height)
+            if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
             {
-                y = 816 - PageObject.Height;
+                y = PageObject.ParentPage.PageHeight - PageObject.Height;
             }
 
             Point pt = new Point(x, y);
@@ -224,11 +224,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 newWidth = 10;
             }
-            if(newHeight + PageObject.YPosition > 816)
+            if(newHeight + PageObject.YPosition > PageObject.ParentPage.PageHeight)
             {
                 newHeight = PageObject.Height;
             }
-            if(newWidth + PageObject.XPosition > 1056)
+            if(newWidth + PageObject.XPosition > PageObject.ParentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
             }
