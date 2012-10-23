@@ -534,7 +534,7 @@
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>
-            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
+            <ToggleButton Content="^" VerticalContentAlignment="Center" Height="22" Width="40" Padding="0" Margin="0" Background="CornflowerBlue" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
     
