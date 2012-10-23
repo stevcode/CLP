@@ -153,14 +153,14 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <!--<RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
                         Command="{Binding Path=InsertAudioCommand}"/>
@@ -168,9 +168,9 @@
                 <RibbonButton
                         Label="Horizontal Line"
                         LargeImageSource="..\Images\HorizontalLineIcon.png"
-                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />-->
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
