@@ -8,14 +8,7 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <catel:ValueConverterGroup x:Key="showAdorners">
-                <catel:BooleanToOppositeBooleanConverter  />
-                <catel:BooleanToHidingVisibilityConverter />
-            </catel:ValueConverterGroup>
             <conv:LengthConverter x:Key="LengthConverter"/>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -182,7 +175,7 @@
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
 
-            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
+            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill" Visibility="{Binding AllowAdorner}"
                        Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
 
         </ac:AdornedControl>

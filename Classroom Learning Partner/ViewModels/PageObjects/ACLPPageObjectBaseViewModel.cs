@@ -23,8 +23,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
-
-            MouseLeaveCommand = new Command(OnMouseLeaveCommandExecute);
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -148,10 +146,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the ShapeType property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
+
+        public Visibility AllowAdorner
+        {
+            get { return GetValue<Visibility>(AllowAdornerProperty); }
+            set { SetValue(AllowAdornerProperty, value); }
+        }
+
+        public static readonly PropertyData AllowAdornerProperty = RegisterProperty("AllowAdorner", typeof(Visibility), Visibility.Visible);
 
         #endregion //Bindings
 
@@ -169,6 +172,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnRemovePageObjectCommandExecute()
         {
+            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
+            {
+                pageVM.EditingMode = InkCanvasEditingMode.Ink;
+            }
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 
@@ -215,7 +222,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            Console.WriteLine("drag start");
         }
 
         /// <summary>
@@ -228,7 +234,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            Console.WriteLine("drag stop");
         }
 
         /// <summary>
@@ -273,7 +278,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            Console.WriteLine("resize start");
         }
 
         /// <summary>
@@ -286,20 +290,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            Console.WriteLine("resize stop");
-        }
-
-        /// <summary>
-        /// Gets the MouseLeaveCommand command.
-        /// </summary>
-        public Command MouseLeaveCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the MouseLeaveCommand command is executed.
-        /// </summary>
-        private void OnMouseLeaveCommandExecute()
-        {
-            App.MainWindowViewModel.Ribbon.EditingMode = InkCanvasEditingMode.Ink;
         }
 
         #endregion //Default Adorners

@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System.Windows;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -13,6 +14,14 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = shape;
+            if(App.MainWindowViewModel.IsAuthoring)
+            {
+                AllowAdorner = Visibility.Visible;
+            }
+            else
+            {
+                AllowAdorner = Visibility.Hidden;
+            }
         }
 
         /// <summary>
@@ -31,5 +40,22 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(CLPShape.CLPShapeType));
 
         public override string Title { get { return "ShapeVM"; } }
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "IsAuthoring")
+            {
+                if((viewModel as MainWindowViewModel).IsAuthoring)
+                {
+                    AllowAdorner = Visibility.Visible;
+                }
+                else
+                {
+                    AllowAdorner = Visibility.Hidden;
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
     }
 }

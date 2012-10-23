@@ -440,20 +440,20 @@ namespace Classroom_Learning_Partner.Model
         {
             if (page != null)
             {
-                //page.PageObjects.Remove(pageObject);
-                foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
-                {
-                    if (po.UniqueID == pageObject.UniqueID)
-                    {
-                        page.PageObjects.Remove(po);
-                        break;
-                    }
-                }
-                if (!page.PageHistory.IgnoreHistory)
-                {
-                    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-                    page.PageHistory.HistoryItems.Add(item);
-                }
+                page.PageObjects.Remove(pageObject);
+                //foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
+                //{
+                //    if (po.UniqueID == pageObject.UniqueID)
+                //    {
+                //        page.PageObjects.Remove(po);
+                //        break;
+                //    }
+                //}
+                //if (!page.PageHistory.IgnoreHistory)
+                //{
+                //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
+                //    page.PageHistory.HistoryItems.Add(item);
+                //}
             }
         }
 

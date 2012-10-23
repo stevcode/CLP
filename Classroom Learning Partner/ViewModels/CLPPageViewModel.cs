@@ -374,7 +374,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            EditingMode = InkCanvasEditingMode.None;
+            if((result.VisualHit as Rectangle).IsVisible)
+            {
+                EditingMode = InkCanvasEditingMode.None;
+            }
 
             return HitTestResultBehavior.Continue;
         }

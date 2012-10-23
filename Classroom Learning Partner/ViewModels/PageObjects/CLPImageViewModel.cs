@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
@@ -8,6 +9,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPImageViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
@@ -18,6 +20,14 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = image;
             List<byte> ByteSource = PageObject.ParentPage.ImagePool[image.ImageID];
             LoadImageFromByteSource(ByteSource.ToArray());
+            if(App.MainWindowViewModel.IsAuthoring)
+            {
+                AllowAdorner = Visibility.Visible;
+            }
+            else
+            {
+                AllowAdorner = Visibility.Hidden;
+            }
         }
 
         public override string Title { get { return "ImageVM"; } }
@@ -56,6 +66,23 @@ namespace Classroom_Learning_Partner.ViewModels
             memoryStream = null;
 
             SourceImage = genBmpImage;
+        }
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "IsAuthoring")
+            {
+                if((viewModel as MainWindowViewModel).IsAuthoring)
+                {
+                    AllowAdorner = Visibility.Visible;
+                }
+                else
+                {
+                    AllowAdorner = Visibility.Hidden;
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
     }
