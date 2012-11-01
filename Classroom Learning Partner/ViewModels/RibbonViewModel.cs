@@ -178,6 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
+            InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
 
             //DB
             QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
@@ -1768,6 +1769,20 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the InsertGroupingRegionCommand command.
+        /// </summary>
+        public Command InsertGroupingRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertGroupingRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertGroupingRegionCommandExecute()
+        {
+            CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+        }
+
+        /// <summary>
         /// Gets the InsertDataTableCommand command.
         /// </summary>
         public Command InsertDataTableCommand { get; private set; }
@@ -1847,6 +1862,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
                 {
                     (pageObject as ACLPInkRegion).InterpretStrokes();
+                }
+                else if (pageObject.GetType().IsSubclassOf(typeof(CLPGroupingRegion)))
+                {
+                    (pageObject as CLPGroupingRegion).DoInterpretation();
                 }
             }
         }

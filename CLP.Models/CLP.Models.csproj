@@ -84,6 +84,7 @@
     <Compile Include="CLPNotebook.cs" />
     <Compile Include="CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPImage.cs" />
+    <Compile Include="CLPPageObjects\CLPGroupingRegion.cs" />
     <Compile Include="CLPPageObjects\CLPShape.cs" />
     <Compile Include="CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="CLPPageObjects\CLPStamp.cs" />

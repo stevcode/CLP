@@ -432,6 +432,11 @@
                         Command="{Binding Path=InsertInkShapeRegionCommand}" />
 
                 <RibbonButton
+                        Label="Grouping Region"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=InsertGroupingRegionCommand}" />
+
+                <RibbonButton
                         Label="Data Table"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InsertDataTableCommand}" />
