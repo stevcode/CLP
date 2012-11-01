@@ -96,7 +96,7 @@ namespace Classroom_Learning_Partner.Views
         private void PageObjectHitBox_MouseEnter(object sender, MouseEventArgs e)
         {
             (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
-            adornerCanvas.Visibility = Visibility.Hidden;
+            //adornerCanvas.Visibility = Visibility.Hidden;
         }
 
         private void PageObjectHitBox_MouseLeave(object sender, MouseEventArgs e)
@@ -118,7 +118,7 @@ namespace Classroom_Learning_Partner.Views
         {
             timer.Stop();
             CLPStampViewModel stamp = (this.ViewModel as CLPStampViewModel);
-            adornerCanvas.Visibility = Visibility.Visible;
+            //adornerCanvas.Visibility = Visibility.Visible;
         }
 
         private void StampObject_MouseMove(object sender, MouseEventArgs e)
@@ -126,11 +126,11 @@ namespace Classroom_Learning_Partner.Views
             CLPStampViewModel stamp = (this.ViewModel as CLPStampViewModel);
             if (!stamp.PageObject.IsBackground)
             {
-                VisualTreeHelper.HitTest(StampObject, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(StampObject)));
+                ////VisualTreeHelper.HitTest(StampObject, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(StampObject)));
             }
             else if (stamp.PageObject.IsBackground && !App.MainWindowViewModel.IsAuthoring)
             {
-                adornerCanvas.Visibility = Visibility.Hidden;
+                ////adornerCanvas.Visibility = Visibility.Hidden;
             }
         }
 

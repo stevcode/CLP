@@ -361,9 +361,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(o.GetType() == typeof(Rectangle))
+            if(o is Shape)
             {
-                if((o as Rectangle).Name == "PageObjectHitBox")
+                if((o as Shape).Name.Contains("PageObjectHitBox"))
                 {
                     return HitTestFilterBehavior.Continue;
                 }
@@ -374,7 +374,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            if((result.VisualHit as Rectangle).IsVisible)
+            if((result.VisualHit as Shape).IsVisible)
             {
                 EditingMode = InkCanvasEditingMode.None;
             }
