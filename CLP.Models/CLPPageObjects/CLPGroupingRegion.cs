@@ -27,7 +27,6 @@ namespace CLP.Models
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPGroupingRegion(SerializationInfo info, StreamingContext context)
             : base(info, context) {
-                Console.WriteLine("constructor deserialize");
         }
 
         #endregion // Constructors

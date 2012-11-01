@@ -201,6 +201,10 @@
                             <Views:CLPHandwritingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
+                        <ControlTemplate x:Key="CLPGroupingRegionTemplate">
+                            <Views:CLPGroupingRegionView DataContext="{Binding}" />
+                        </ControlTemplate>
+
                         <ControlTemplate x:Key="CLPImageTemplate">
                             <Views:CLPImageView DataContext="{Binding}" />
                         </ControlTemplate>
@@ -252,6 +256,11 @@
                                 <!-- CLPHandwritingRegion trigger -->
                                 <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
                                     <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPGroupingRegion trigger -->
+                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPGroupingRegion">
+                                    <Setter Property="Template" Value="{StaticResource CLPGroupingRegionTemplate}" />
                                 </DataTrigger>
 
                                 <!-- CLPImage trigger -->
