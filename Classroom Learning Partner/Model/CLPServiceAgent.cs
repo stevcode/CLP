@@ -52,9 +52,7 @@ namespace Classroom_Learning_Partner.Model
                 
                 DateTime end = DateTime.Now;
                 TimeSpan span = end.Subtract(start);
-                Logger.Instance.WriteToLog("Time to open notebook (In Milliseconds): " + span.TotalMilliseconds);
                 Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
-                Logger.Instance.WriteToLog("Time to open notebook (In Minutes): " + span.TotalMinutes);
                 if (notebook != null)
                 {
                     notebook.NotebookName = notebookName;
