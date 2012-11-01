@@ -69,8 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "NotebookWorkspace"; }
         }
 
-        
-
         public override string Title { get { return "NotebookWorkspaceVM"; } }
 
         #region Model

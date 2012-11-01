@@ -27,8 +27,6 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
-
-           // InkCanvas.SetTop(
         }
 
         protected override System.Type GetViewModelType()
