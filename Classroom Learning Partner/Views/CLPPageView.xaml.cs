@@ -356,12 +356,10 @@ namespace Classroom_Learning_Partner.Views
         {
             timer.Stop();
             MainInkCanvas.IsHitTestVisible = false;
-
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             isMouseDown = true;
             timer.Stop();
             //STeve - if inUpMode clpservice.up(pos)
