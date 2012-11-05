@@ -155,20 +155,20 @@
 
             <RibbonGroup Header="Insert">
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <RibbonButton
+                <!--<RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
-                        Command="{Binding Path=InsertAudioCommand}"/>-->
+                        Command="{Binding Path=InsertAudioCommand}"/>
 
                 <RibbonButton
                         Label="Horizontal Line"
                         LargeImageSource="..\Images\HorizontalLineIcon.png"
-                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />-->
 
             </RibbonGroup>
 
@@ -344,10 +344,10 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Copy This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />-->
+                        Command="{Binding Path=CopyPageCommand}" />
 
                 <RibbonButton
                         Label="Add Page Topic to this Page"

@@ -5,44 +5,17 @@
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:catel="http://catel.codeplex.com">
 
-    <UserControl.Resources>
-        <Style TargetType="{x:Type ScrollViewer}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Rectangle x:Name="Corner" Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Grid.Column="1" Grid.Row="1"/>
-                            <AdornerDecorator Grid.Column="0" Grid.Row="0">
-                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False"/>
-                            </AdornerDecorator>
-                            <ScrollBar x:Name="PART_VerticalScrollBar" Cursor="Arrow" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="1" Grid.Row="0" ViewportSize="{TemplateBinding ViewportHeight}" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" AutomationProperties.AutomationId="VerticalScrollBar"/>
-                            <ScrollBar x:Name="PART_HorizontalScrollBar" Cursor="Arrow" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" ViewportSize="{TemplateBinding ViewportWidth}" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Value="{Binding Path=HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" AutomationProperties.AutomationId="HorizontalScrollBar"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
     <!-- Used for page Zooming, Not active in this first test -->
     <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">-->
         <Border BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
+            <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
                 <ScrollViewer.Resources>
                     <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                </ScrollViewer.Resources>
+                </ScrollViewer.Resources>-->
                 <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
                     <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
                 </Border>
-            </ScrollViewer>
+            <!--</ScrollViewer>-->
         </Border>
     <!--</ScrollViewer>-->
 </catel:UserControl>

@@ -378,7 +378,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(o is Shape)
             {
-                if((o as Shape).Name.Contains("PageObjectHitBox"))
+                if((o as Shape).Name.Contains("HitBox"))
                 {
                     return HitTestFilterBehavior.Continue;
                 }

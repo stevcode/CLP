@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -46,17 +48,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer));
 
+        #region Commands
+
         /// <summary>
         /// Gets the CopyStampCommand command.
         /// </summary>
         public Command CopyStampCommand { get; private set; }
+
+
+        private bool dragStarted = false;
+        private bool copyMade = false;
 
         /// <summary>
         /// Method to invoke when the CopyStampCommand command is executed.
         /// </summary>
         private void OnCopyStampCommandExecute()
         {
-            CopyStamp();
+            dragStarted = true;
+            
             //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
             //    (DispatcherOperationCallback)delegate(object arg)
             //    {
@@ -67,8 +76,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //        return null;
             //    }, null);
             
-            StrokePathContainer.PageObjectByteStrokes = PageObject.PageObjectByteStrokes;
-            StrokePathContainer.IsStrokePathsVisible = true;
+            //StrokePathContainer.PageObjectByteStrokes = PageObject.PageObjectByteStrokes;
+            //StrokePathContainer.IsStrokePathsVisible = true;
         }
 
         double originalX;
@@ -79,13 +88,14 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                leftBehindStamp.UniqueID = PageObject.UniqueID;
+                //leftBehindStamp.UniqueID = PageObject.UniqueID;
 
                 originalX = leftBehindStamp.Position.X;
                 originalY = leftBehindStamp.Position.Y;
 
+                int originalIndex = PageObject.ParentPage.PageObjects.IndexOf(PageObject);
 
-                    PageObject.ParentPage.PageObjects.Add(leftBehindStamp);
+                PageObject.ParentPage.PageObjects.Insert(originalIndex, leftBehindStamp);
 
                     //if (!page.PageHistory.IgnoreHistory)
                     //{
@@ -133,6 +143,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+
+            copyMade = false;
         }
 
         /// <summary>
@@ -145,6 +157,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
+            if(!copyMade)
+            {
+
+
+
+                        CopyStamp();
+
+                copyMade = true;
+            }
+
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
             if (x < 0)
@@ -167,5 +189,30 @@ namespace Classroom_Learning_Partner.ViewModels
             Point pt = new Point(x, y);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
+
+        #endregion //Commands
+
+        #region Methods
+
+        public override InkCanvasEditingMode GetEditingMode(string hitBoxTag, string hitBoxName, InkCanvasEditingMode currentInkCanvasEditingMode, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsBackground)
+            {
+                if(App.MainWindowViewModel.IsAuthoring)
+                {
+                    return InkCanvasEditingMode.None;
+                }
+                else
+                {
+                    return InkCanvasEditingMode.Ink;
+                }
+            }
+            else
+            {
+                return InkCanvasEditingMode.None;
+            }
+        }
+
+        #endregion //Methods
     }
 }

@@ -121,7 +121,7 @@
             <Thumb>
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="PageObjectHitBoxHandle" Grid.Row="0" 
+                        <Polygon x:Name="StampHandleHitBox" Grid.Row="0" 
                                  Width="{Binding Width}" MinWidth="50"  
                                  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
                                  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
@@ -131,14 +131,14 @@
                     </ControlTemplate>
                 </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseDown">
-                        <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
-                    </i:EventTrigger>
                     <i:EventTrigger EventName="DragDelta">
                         <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>

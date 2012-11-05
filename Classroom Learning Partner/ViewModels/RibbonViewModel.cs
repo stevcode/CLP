@@ -1481,7 +1481,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCopyPageCommandExecute()
         {
-            // TODO: Handle command logic here
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            index++;
+
+            CLPPage newPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.DuplicatePage();
+
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, newPage);
         }
 
         /// <summary>

@@ -118,8 +118,8 @@
             
             <Grid>
 
-                <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill" Visibility="{Binding AllowAdorner}"
-                               Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
+                <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
+                           Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
 
                 <Views:BindableRichTextBox x:Name="TextBox" Background="Transparent"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
