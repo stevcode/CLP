@@ -296,5 +296,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Commands
 
+        #region Methods
+
+        public virtual InkCanvasEditingMode GetEditingMode(string hitBoxTag, string hitBoxName, InkCanvasEditingMode currentInkCanvasEditingMode, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsBackground)
+            {
+                if(App.MainWindowViewModel.IsAuthoring)
+	            {
+                    return InkCanvasEditingMode.None;
+	            }
+                else
+                {
+                    return InkCanvasEditingMode.Ink;
+                }  
+            }
+            else
+            {
+                return InkCanvasEditingMode.None;
+            }
+        }
+
+        #endregion //Methods
+
     }
 }

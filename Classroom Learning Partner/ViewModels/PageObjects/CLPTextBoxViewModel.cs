@@ -11,14 +11,6 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = textBox;
-            if(App.MainWindowViewModel.IsAuthoring)
-            {
-                AllowAdorner = Visibility.Visible;
-            }
-            else
-            {
-                AllowAdorner = Visibility.Hidden;
-            }
         }
 
         public override string Title { get { return "TextBoxVM"; } }
@@ -34,22 +26,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if(propertyName == "IsAuthoring")
-            {
-                if((viewModel as MainWindowViewModel).IsAuthoring)
-                {
-                    AllowAdorner = Visibility.Visible;
-                }
-                else
-                {
-                    AllowAdorner = Visibility.Hidden;
-                }
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-        }
     }
 }

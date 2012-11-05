@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -311,6 +312,20 @@ namespace Classroom_Learning_Partner.ViewModels
             return child;
         }
 
+        public T GetVisualParent<T>(Visual child) where T : Visual
+        {
+            T parent = default(T);
+
+            Visual p = (Visual)VisualTreeHelper.GetParent(child);
+            parent = p as T;
+            if(parent == null)
+            {
+                parent = GetVisualParent<T>(p);
+            }
+
+            return parent;
+        }
+
         /// <summary>
         /// Gets the MouseMoveCommand command.
         /// </summary>
@@ -374,10 +389,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            if((result.VisualHit as Shape).IsVisible)
-            {
-                EditingMode = InkCanvasEditingMode.None;
-            }
+            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+            EditingMode = pageObjectViewModel.GetEditingMode((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, EditingMode, IsMouseDown, false, false);
 
             return HitTestResultBehavior.Continue;
         }

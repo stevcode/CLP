@@ -438,7 +438,16 @@ namespace Classroom_Learning_Partner.Model
         {
             if (page != null)
             {
-                page.PageObjects.Remove(pageObject);
+                //STEVE - uncomment try/catch with Catel symbol library in place to find thrown exceptions
+                //try
+                //{
+                    page.PageObjects.Remove(pageObject);
+                //}
+                //catch(System.ArgumentException e)
+                //{
+                //    throw;
+                //}
+                
                 //foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
                 //{
                 //    if (po.UniqueID == pageObject.UniqueID)

@@ -20,14 +20,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = image;
             List<byte> ByteSource = PageObject.ParentPage.ImagePool[image.ImageID];
             LoadImageFromByteSource(ByteSource.ToArray());
-            if(App.MainWindowViewModel.IsAuthoring)
-            {
-                AllowAdorner = Visibility.Visible;
-            }
-            else
-            {
-                AllowAdorner = Visibility.Hidden;
-            }
         }
 
         public override string Title { get { return "ImageVM"; } }
@@ -67,23 +59,5 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SourceImage = genBmpImage;
         }
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if(propertyName == "IsAuthoring")
-            {
-                if((viewModel as MainWindowViewModel).IsAuthoring)
-                {
-                    AllowAdorner = Visibility.Visible;
-                }
-                else
-                {
-                    AllowAdorner = Visibility.Hidden;
-                }
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-        }
-
     }
 }

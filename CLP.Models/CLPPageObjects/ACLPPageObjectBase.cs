@@ -45,7 +45,7 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The page the pageObject is on.
         /// </summary>
         public CLPPage ParentPage
         {
@@ -53,13 +53,10 @@ namespace CLP.Models
             set { SetValue(ParentPageProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentPage property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// UniqueID of the pageObject's parent pageObject, if it has one.
         /// </summary>
         public string ParentID
         {
@@ -67,9 +64,6 @@ namespace CLP.Models
             set { SetValue(ParentIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
 
         /// <summary>
@@ -81,9 +75,6 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
 
         /// <summary>
@@ -95,13 +86,10 @@ namespace CLP.Models
             set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Serialized inkStrokes the pageObject has accepted.
         /// </summary>
         public ObservableCollection<List<byte>> PageObjectByteStrokes
         {
@@ -109,13 +97,10 @@ namespace CLP.Models
             set { SetValue(PageObjectByteStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObjectByteStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageObjectByteStrokesProperty = RegisterProperty("PageObjectByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Whether or not the pageObject can accept strokes
         /// </summary>
         public bool CanAcceptStrokes
         {
@@ -123,13 +108,10 @@ namespace CLP.Models
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanAcceptStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
 
         /// <summary>
-        /// xPosition of pageObject on page, used for serialization.
+        /// xPosition of pageObject on page
         /// </summary>
         public double XPosition
         {
@@ -137,13 +119,10 @@ namespace CLP.Models
             set { SetValue(XPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the XPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
 
         /// <summary>
-        /// YPosition of pageObject on page, used for serialization.
+        /// YPosition of pageObject on page
         /// </summary>
         public double YPosition
         {
@@ -151,9 +130,6 @@ namespace CLP.Models
             set { SetValue(YPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the YPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
 
         /// <summary>
@@ -165,9 +141,6 @@ namespace CLP.Models
             set { SetValue(HeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Height property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 100);
 
         /// <summary>
@@ -179,13 +152,11 @@ namespace CLP.Models
             set { SetValue(WidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Width property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 100);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// True if placed while in Authoring Mode.
+        /// 
         /// </summary>
         public bool IsBackground
         {
@@ -193,9 +164,6 @@ namespace CLP.Models
             set { SetValue(IsBackgroundProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsBackground property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
         #endregion
