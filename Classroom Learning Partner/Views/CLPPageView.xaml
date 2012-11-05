@@ -5,14 +5,17 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Viewbox Stretch="Uniform">
 
-        <InkCanvas x:Name="MainInkCanvas" Background="White"
-                   Width="{Binding PageWidth}" Height="{Binding PageHeight}"                  
-                   Strokes="{Binding InkStrokes}"
-                   EditingMode="{Binding EditingMode}"
-                   EditingModeInverted="EraseByStroke"
-                   DefaultDrawingAttributes="{Binding DefaultDA}">
+        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseMove">
                     <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
@@ -24,8 +27,38 @@
                     <catel:EventToCommand Command="{Binding MouseUpCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-        </InkCanvas>
+
+            <ItemsControl x:Name="PageObjects"
+                            ItemsSource="{Binding Path=PageObjects}"
+                          
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Views:PageObjectContainerView DataContext="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+            <InkCanvas x:Name="MainInkCanvas" Background="Transparent"
+                   Width="{Binding PageWidth}" Height="{Binding PageHeight}"
+                   Strokes="{Binding InkStrokes}"
+                   EditingMode="{Binding EditingMode}"
+                   EditingModeInverted="EraseByStroke"
+                   DefaultDrawingAttributes="{Binding DefaultDA}">
+
+            </InkCanvas>
+
+        </Canvas>
 
     </Viewbox>
-    
+
 </catel:UserControl>

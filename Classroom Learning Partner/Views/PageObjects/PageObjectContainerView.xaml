@@ -3,8 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-                   InkCanvas.Left="{Binding XPosition, Mode=OneWay}" 
-                   InkCanvas.Top="{Binding YPosition, Mode=OneWay}">
+                   Canvas.Left="{Binding XPosition, Mode=OneWay}" 
+                   Canvas.Top="{Binding YPosition, Mode=OneWay}">
 
     <Control x:Name="PageObjectView">
         <Control.Resources>

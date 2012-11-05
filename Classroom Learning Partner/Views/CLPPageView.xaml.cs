@@ -32,69 +32,7 @@ namespace Classroom_Learning_Partner.Views
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
             timer.Tick += new EventHandler(timer_Tick);
-
-            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         }
-
-        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if(e.NewItems != null)
-            {
-                foreach(ICLPPageObject pageObject in e.NewItems)
-                {
-                    PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
-                    pageObjectContainerView.DataContext = pageObject;
-                    MainInkCanvas.Children.Add(pageObjectContainerView);
-                }
-            }
-
-            if(e.OldItems != null)
-            {
-                List<PageObjectContainerView> viewsToRemove = new List<PageObjectContainerView>();
-                foreach(ICLPPageObject pageObject in e.OldItems)
-                {
-                    foreach(PageObjectContainerView pageObjectView in MainInkCanvas.Children)
-                    {
-                        if(pageObject.UniqueID == (pageObjectView.ViewModel as ACLPPageObjectBaseViewModel).PageObject.UniqueID)
-                        {
-                            viewsToRemove.Add(pageObjectView);
-                        }
-                    }
-                }
-                foreach(PageObjectContainerView pageObjectView in viewsToRemove)
-                {
-                    MainInkCanvas.Children.Remove(pageObjectView);
-                }
-            }
-        }
-
-        [ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-        public ObservableCollection<ICLPPageObject> PageObjects
-        {
-            get { return (ObservableCollection<ICLPPageObject>)GetValue(PageObjectsProperty); }
-            set 
-            {
-                PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-                MainInkCanvas.Children.Clear();
-                SetValue(PageObjectsProperty, value);
-                foreach(ICLPPageObject pageObject in PageObjects)
-                {
-                    PageObjectContainerView pageObjectContainerView = new PageObjectContainerView();
-                    pageObjectContainerView.DataContext = pageObject;
-                    MainInkCanvas.Children.Add(pageObjectContainerView);
-                }
-                (ViewModel as CLPPageViewModel).MainInkCanvas = MainInkCanvas;
-                PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for PageObjectsProperty.
-        // This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty PageObjectsProperty =
-            DependencyProperty.Register("PageObjects",
-            typeof(ObservableCollection<ICLPPageObject>), 
-            typeof(CLPPageView), 
-            new UIPropertyMetadata(new ObservableCollection<ICLPPageObject>()));
 
         protected override System.Type GetViewModelType()
         {
