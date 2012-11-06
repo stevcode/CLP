@@ -142,6 +142,32 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsStamped)
+            {
+                if(IsBackground)
+                {
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         #endregion //Methods
 
     }
