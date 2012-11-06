@@ -411,7 +411,9 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLP.Models.ICLPPageObject pageObject)
         {
-            AddPageObjectToPage(pageObject.ParentPage, pageObject);
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
+
+            AddPageObjectToPage(parentPage, pageObject);
         }
 
         public void AddPageObjectToPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
@@ -431,7 +433,9 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageObjectFromPage(CLP.Models.ICLPPageObject pageObject)
         {
-            RemovePageObjectFromPage(pageObject.ParentPage, pageObject);
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
+
+            RemovePageObjectFromPage(parentPage, pageObject);
         }
 
         public void RemovePageObjectFromPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)

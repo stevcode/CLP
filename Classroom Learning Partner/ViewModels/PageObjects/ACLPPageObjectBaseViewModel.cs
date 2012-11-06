@@ -138,7 +138,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(IsAdornerVisibleProperty, value);
                 if(!value)
                 {
-                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
+                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
                     {
                         pageVM.IsInkCanvasHitTestVisible = true;
                     }
@@ -165,14 +167,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the RemovePageObjectCommand command.
         /// </summary>
-        public Command RemovePageObjectCommand { get; private set; }
+        public Command RemovePageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the RemovePageObjectCommand command is executed.
         /// </summary>
         private void OnRemovePageObjectCommandExecute()
         {
-            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
+            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
             {
                 pageVM.IsInkCanvasHitTestVisible = true;
             }
@@ -182,13 +187,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the DragPageObjectCommand command.
         /// </summary>
-        public Command<DragDeltaEventArgs> DragPageObjectCommand { get; private set; }
+        public Command<DragDeltaEventArgs> DragPageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the DragPageObjectCommand command is executed.
         /// </summary>
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
             if(x < 0)
@@ -199,13 +207,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 y = 0;
             }
-            if(x > PageObject.ParentPage.PageWidth - PageObject.Width)
+            if(x > parentPage.PageWidth - PageObject.Width)
             {
-                x = PageObject.ParentPage.PageWidth - PageObject.Width;
+                x = parentPage.PageWidth - PageObject.Width;
             }
-            if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
+            if(y > parentPage.PageHeight - PageObject.Height)
             {
-                y = PageObject.ParentPage.PageHeight - PageObject.Height;
+                y = parentPage.PageHeight - PageObject.Height;
             }
 
             Point pt = new Point(x, y);
@@ -215,7 +223,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the DragStartPageObjectCommand command.
         /// </summary>
-        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; private set; }
+        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the DragStartPageObjectCommand command is executed.
@@ -227,7 +235,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the DragStopPageObjectCommand command.
         /// </summary>
-        public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; private set; }
+        public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the DragStopPageObjectCommand command is executed.
@@ -239,13 +247,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
         /// </summary>
-        public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; private set; }
+        public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the ResizePageObjectCommand command is executed.
         /// </summary>
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;
             if(newHeight < 10)
@@ -256,11 +267,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 newWidth = 10;
             }
-            if(newHeight + PageObject.YPosition > PageObject.ParentPage.PageHeight)
+            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
             {
                 newHeight = PageObject.Height;
             }
-            if(newWidth + PageObject.XPosition > PageObject.ParentPage.PageWidth)
+            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
             }
@@ -271,7 +282,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the ResizeStartPageObjectCommand command.
         /// </summary>
-        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; private set; }
+        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the ResizeStartPageObjectCommand command is executed.
@@ -283,7 +294,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the ResizeStopPageObjectCommand command.
         /// </summary>
-        public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; private set; }
+        public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; set; }
 
         /// <summary>
         /// Method to invoke when the ResizeStopPageObjectCommand command is executed.

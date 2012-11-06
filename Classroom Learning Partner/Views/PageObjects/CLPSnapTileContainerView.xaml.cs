@@ -97,7 +97,8 @@ namespace Classroom_Learning_Partner.Views
             newSnapTile.XPosition = x;
             newSnapTile.YPosition = y;
 
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(pageObject.ParentPage, newSnapTile);
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, newSnapTile);
         }
     }
 }

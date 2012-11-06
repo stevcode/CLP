@@ -8,7 +8,8 @@ namespace CLP.Models
 {
     public interface ICLPPageObject
     {
-        CLPPage ParentPage { get; set; }
+        //CLPPage ParentPage { get; set; }
+        string ParentPageID { get; set; }
         string ParentID { get; set; }
         string UniqueID { get; set; }
         DateTime CreationDate { get; set; }

@@ -279,14 +279,14 @@
             <Separator Grid.Column="2" />
 
             <StatusBarItem Grid.Column="3">
-                <Button Width="150" Command="{Binding MakePageLongerCommand}">
+                <!--<Button Width="150" Command="{Binding MakePageLongerCommand}">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
                             <Setter Property="FontSize" Value="11" />
                             <Setter Property="Content" Value="MAKE PAGE LONGER"/>
                         </Style>
                     </Button.Style>
-                </Button>
+                </Button>-->
                 
                 <!-- Styled Slider for Zooming. No longer necessary? -->
                 <!--<Slider

@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSnapCommandExecute()
         {
 
-            CLPPage currentPage = PageObject.ParentPage;
+            CLPPage currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             foreach (var pageObject in currentPage.PageObjects)
             {

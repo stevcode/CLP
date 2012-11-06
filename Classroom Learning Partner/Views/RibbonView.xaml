@@ -234,13 +234,13 @@
 
             </RibbonGroup>-->
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 

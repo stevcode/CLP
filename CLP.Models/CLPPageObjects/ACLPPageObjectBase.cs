@@ -10,7 +10,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject, IParent
+    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
     {
         #region Constructor
 
@@ -19,7 +19,7 @@ namespace CLP.Models
         /// </summary>
         public CLPPageObjectBase(CLPPage page)
         {
-            ParentPage = page;
+            ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
@@ -44,16 +44,30 @@ namespace CLP.Models
 
         #region Properties
 
+        ///// <summary>
+        ///// The page the pageObject is on.
+        ///// </summary>
+        //public CLPPage ParentPage
+        //{
+        //    get { return GetValue<CLPPage>(ParentPageProperty); }
+        //    set { SetValue(ParentPageProperty, value); }
+        //}
+
+        //public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
+
         /// <summary>
-        /// The page the pageObject is on.
+        /// Gets or sets the property value.
         /// </summary>
-        public CLPPage ParentPage
+        public string ParentPageID
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            get { return GetValue<string>(ParentPageIDProperty); }
+            set { SetValue(ParentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
+        /// <summary>
+        /// Register the ParentPageID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof(string), "");
 
         /// <summary>
         /// UniqueID of the pageObject's parent pageObject, if it has one.
@@ -221,10 +235,5 @@ namespace CLP.Models
         }
 
         #endregion
-
-        IParent IParent.Parent
-        {
-            get { return ParentPage; }
-        }
     }
 }
