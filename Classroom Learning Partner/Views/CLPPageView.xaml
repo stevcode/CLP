@@ -28,11 +28,9 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ItemsControl x:Name="PageObjects"
-                            ItemsSource="{Binding Path=PageObjects}"
-                          
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
+            <ItemsControl ItemsSource="{Binding Path=PageObjects}"
+                          ItemContainerStyle="{StaticResource ContainerStyle}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -48,14 +46,11 @@
 
             </ItemsControl>
 
-            <InkCanvas x:Name="MainInkCanvas" Background="Transparent"
-                   Width="{Binding PageWidth}" Height="{Binding PageHeight}"
-                   Strokes="{Binding InkStrokes}"
-                   EditingMode="{Binding EditingMode}"
-                   EditingModeInverted="EraseByStroke"
-                   DefaultDrawingAttributes="{Binding DefaultDA}">
-
-            </InkCanvas>
+            <InkCanvas Strokes="{Binding InkStrokes}" Background="Transparent"
+                       Width="{Binding PageWidth}" Height="{Binding PageHeight}"
+                       EditingMode="{Binding EditingMode}"
+                       EditingModeInverted="EraseByStroke"
+                       DefaultDrawingAttributes="{Binding DefaultDA}" />
 
         </Canvas>
 

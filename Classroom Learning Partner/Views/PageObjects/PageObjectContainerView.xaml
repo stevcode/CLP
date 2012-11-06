@@ -2,9 +2,7 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-                   Canvas.Left="{Binding XPosition, Mode=OneWay}" 
-                   Canvas.Top="{Binding YPosition, Mode=OneWay}">
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <Control x:Name="PageObjectView">
         <Control.Resources>

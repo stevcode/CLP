@@ -4,13 +4,41 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Viewbox Stretch="Uniform">
 
-        <InkCanvas x:Name="MainInkCanvas" Background="White" IsEnabled="False"
-                   Width="{Binding PageWidth}" Height="{Binding PageHeight}"                  
-                   Strokes="{Binding InkStrokes}"
-                   EditingMode="None"
-                   EditingModeInverted="None" />
+        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+
+            <ItemsControl IsHitTestVisible="False"
+                          ItemsSource="{Binding Path=PageObjects}"
+                          ItemContainerStyle="{StaticResource ContainerStyle}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Views:PageObjectContainerView DataContext="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+            <InkPresenter Strokes="{Binding InkStrokes}" ClipToBounds="True"
+                          Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
+
+        </Canvas>
 
     </Viewbox>
 

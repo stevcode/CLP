@@ -99,7 +99,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 if ((result.VisualHit as Grid).DataContext is CLPStamp)
                 {
-                    MainInkCanvas.IsHitTestVisible = false;
+                    ////MainInkCanvas.IsHitTestVisible = false;
                 }
                 if ((result.VisualHit as Grid).Name == "ContainerHitBox")
                 {
@@ -171,7 +171,7 @@ namespace Classroom_Learning_Partner.Views
                 if (DirtyHitbox > 3 || isMouseDown)
                 {
                     timer.Stop();
-                    MainInkCanvas.IsHitTestVisible = true;
+                    ////MainInkCanvas.IsHitTestVisible = true;
                 }
                 
                 return HitTestResultBehavior.Continue;
@@ -293,7 +293,7 @@ namespace Classroom_Learning_Partner.Views
         void timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
-            MainInkCanvas.IsHitTestVisible = false;
+            ////MainInkCanvas.IsHitTestVisible = false;
         }
 
         private void TopCanvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
