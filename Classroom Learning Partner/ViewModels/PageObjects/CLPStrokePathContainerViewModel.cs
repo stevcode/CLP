@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -122,6 +123,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ScribblesToStrokePaths()
         {
+            Console.WriteLine("h" + Height);
+            Console.WriteLine("w" + Width);
             foreach (Stroke stroke in PageObjectStrokes)
             {
                 StylusPoint firstPoint = stroke.StylusPoints[0];

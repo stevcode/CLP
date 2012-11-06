@@ -263,9 +263,6 @@
     <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
-      <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
       <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
     </Compile>
@@ -274,6 +271,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
       <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
+      <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -387,10 +387,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -402,6 +398,10 @@
     <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>

@@ -1,26 +1,19 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for CLPStrokePathContainerView.xaml.
+    /// Interaction logic for CLPStrokePathContainerView.xaml
     /// </summary>
     public partial class CLPStrokePathContainerView : Catel.Windows.Controls.UserControl
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CLPStrokePathContainerView"/> class.
-        /// </summary>
         public CLPStrokePathContainerView()
         {
-            //InitializeComponent();
+            InitializeComponent();
         }
 
         protected override System.Type GetViewModelType()
@@ -41,19 +34,19 @@ namespace Classroom_Learning_Partner.Views
 
             double x = pageObject.XPosition + e.HorizontalChange;
             double y = pageObject.YPosition + e.VerticalChange;
-            if (x < 0)
+            if(x < 0)
             {
                 x = 0;
             }
-            if (y < 0)
+            if(y < 0)
             {
                 y = 0;
             }
-            if (x > 1056 - pageObject.Width)
+            if(x > 1056 - pageObject.Width)
             {
                 x = 1056 - pageObject.Width;
             }
-            if (y > 816 - pageObject.Height)
+            if(y > 816 - pageObject.Height)
             {
                 y = 816 - pageObject.Height;
             }
@@ -61,5 +54,6 @@ namespace Classroom_Learning_Partner.Views
             Point pt = new Point(x, y);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
         }
+
     }
 }

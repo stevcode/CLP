@@ -104,9 +104,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 originalX = leftBehindStamp.Position.X;
                 originalY = leftBehindStamp.Position.Y;
 
-                int originalIndex = PageObject.ParentPage.PageObjects.IndexOf(PageObject);
+                //int originalIndex = PageObject.ParentPage.PageObjects.  .IndexOf(PageObject);
 
-                PageObject.ParentPage.PageObjects.Insert(originalIndex, leftBehindStamp);
+                PageObject.ParentPage.PageObjects.Add(leftBehindStamp);
 
                     //if (!page.PageHistory.IgnoreHistory)
                     //{

@@ -25,7 +25,7 @@
 
                 <!--Close Button-->
                 <Button x:Name="AdornerClose"
-                            Command="{Binding RemovePageObjectCommand}"
+                        Click="AdornerClose_Click"
                             Width="40" Height="40"
                             Canvas.Left="-50" Canvas.Top="-25"
                             Cursor="Hand">
@@ -118,7 +118,11 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Thumb>
+            <Thumb DragDelta="StampHandleHitBox_DragDelta"
+                   DragStarted="StampHandleHitBox_DragStarted"
+                   DragCompleted="StampHandleHitBox_DragCompleted"
+                   MouseEnter="StampHandleHitBox_MouseEnter"
+                   MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon x:Name="StampHandleHitBox" Grid.Row="0" 
@@ -130,17 +134,17 @@
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
+                <!--<i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
                         <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
                         <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseUp">
+                    <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
                     </i:EventTrigger>
-                </i:Interaction.Triggers>
+                </i:Interaction.Triggers>-->
             </Thumb>
             <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2"
                     Width="{Binding Width, Mode=TwoWay}" 
