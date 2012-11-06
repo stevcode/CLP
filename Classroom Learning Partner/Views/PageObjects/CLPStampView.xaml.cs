@@ -40,6 +40,7 @@ namespace Classroom_Learning_Partner.Views
             if(ViewModel != null)
             {
                 (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+                (ViewModel as CLPStampViewModel).timer.Stop();
             }
         }
 
@@ -54,6 +55,8 @@ namespace Classroom_Learning_Partner.Views
 
         private void StampHandleHitBox_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            (ViewModel as CLPStampViewModel).IsAdornerVisible = false;
+            (ViewModel as CLPStampViewModel).timer.Stop();
             CLPStamp PageObject = (ViewModel as CLPStampViewModel).PageObject as CLPStamp;
 
             double x = PageObject.XPosition + e.HorizontalChange;

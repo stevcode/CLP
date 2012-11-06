@@ -24,9 +24,19 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = stamp;
             StrokePathContainer.IsStrokePathsVisible = false;
 
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(800);
+            timer.Tick += timer_Tick;
+
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            IsAdornerVisible = true;
         }
 
         /// <summary>
@@ -194,23 +204,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
+        public DispatcherTimer timer = null;
+
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
             if(IsBackground)
             {
                 if(App.MainWindowViewModel.IsAuthoring)
                 {
-                    return false;
-                }
-                else
-                {
-                    return true;
+                    IsAdornerVisible = true;
                 }
             }
             else
             {
-                return false;
+                if(isMouseDown)
+                {
+                    timer.Stop();
+                }
+                else
+                {
+                    timer.Start();
+                }
             }
+
+            return false;
         }
 
         #endregion //Methods

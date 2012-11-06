@@ -140,7 +140,7 @@ namespace AdornedControl
         }
 
         /// <summary>
-        /// Fade the adorner out and make it visible.
+        /// Fade the adorner out and make it invisible.
         /// </summary>
         public void FadeOutAdorner()
         {
@@ -679,7 +679,7 @@ namespace AdornedControl
         /// </summary>
         private void MouseEnterLogic()
         {
-            if (!IsMouseOverShowEnabled)
+            if (!IsMouseOverShowEnabled && !IsAdornerVisible)
             {
                 return;
             }
@@ -694,10 +694,10 @@ namespace AdornedControl
         /// </summary>
         private void MouseLeaveLogic()
         {
-            if (!IsMouseOverShowEnabled)
-            {
-                return;
-            }
+            //if(!IsMouseOverShowEnabled)
+            //{
+            //    return;
+            //}
 
             closeAdornerTimer.Start();
         }
