@@ -31,7 +31,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 InternalType = container.InternalPageObject.PageObjectType;
             }
 
-            ScribblesToStrokePaths();
+            if(IsStamped)
+            {
+                ScribblesToStrokePaths();
+            }
+            
         }
 
         /// <summary>
@@ -65,9 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsStrokePathsVisibleProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsStrokePathsVisible property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false, (sender, e) => ((CLPStrokePathContainerViewModel)sender).OnStrokePathsVisibilityChanged());
 
         /// <summary>
@@ -113,8 +114,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-
-        //put in VM
         private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
         public ObservableCollection<StrokePathViewModel> StrokePathViewModels
         {
@@ -123,8 +122,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ScribblesToStrokePaths()
         {
-            Console.WriteLine("h" + Height);
-            Console.WriteLine("w" + Width);
             foreach (Stroke stroke in PageObjectStrokes)
             {
                 StylusPoint firstPoint = stroke.StylusPoints[0];

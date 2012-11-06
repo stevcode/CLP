@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
+            ICLPPageObject pageObject = (ViewModel as CLPStrokePathContainerViewModel).PageObject;
 
             double x = pageObject.XPosition + e.HorizontalChange;
             double y = pageObject.YPosition + e.VerticalChange;

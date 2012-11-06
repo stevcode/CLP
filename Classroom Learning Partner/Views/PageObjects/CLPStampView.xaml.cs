@@ -98,6 +98,7 @@ namespace Classroom_Learning_Partner.Views
         private void StampHandleHitBox_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+            (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = false;
             
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 (DispatcherOperationCallback)delegate(object arg)

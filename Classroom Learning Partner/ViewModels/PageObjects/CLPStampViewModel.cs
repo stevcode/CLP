@@ -22,6 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = stamp;
+            StrokePathContainer.IsStrokePathsVisible = false;
 
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);

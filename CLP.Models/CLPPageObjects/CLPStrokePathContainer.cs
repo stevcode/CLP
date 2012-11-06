@@ -62,9 +62,6 @@ namespace CLP.Models
             set { SetValue(IsStrokePathsVisibleProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsStrokePathsVisible property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false);
 
         /// <summary>
