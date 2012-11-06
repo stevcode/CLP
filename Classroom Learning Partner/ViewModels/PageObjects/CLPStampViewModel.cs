@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -43,10 +44,21 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StrokePathContainerProperty, value); }
         }
 
-        /// <summary>
-        /// Register the StrokePathContainer property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public SolidColorBrush StampHandleColor
+        {
+            get { return GetValue<SolidColorBrush>(StampHandleColorProperty); }
+            set { SetValue(StampHandleColorProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the StampHandleColor property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData StampHandleColorProperty = RegisterProperty("StampHandleColor", typeof(SolidColorBrush), new SolidColorBrush(Colors.Black));
 
         #region Commands
 
@@ -64,20 +76,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCopyStampCommandExecute()
         {
-            dragStarted = true;
-            
+            StampHandleColor = new SolidColorBrush(Colors.Green);
             //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
             //    (DispatcherOperationCallback)delegate(object arg)
             //    {
 
 
-            //        CopyStamp();
+                   CopyStamp();
 
             //        return null;
             //    }, null);
-            
-            //StrokePathContainer.PageObjectByteStrokes = PageObject.PageObjectByteStrokes;
-            //StrokePathContainer.IsStrokePathsVisible = true;
+
+            StrokePathContainer.PageObjectByteStrokes = PageObject.PageObjectByteStrokes;
+            StrokePathContainer.IsStrokePathsVisible = true;
         }
 
         double originalX;
@@ -88,7 +99,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                //leftBehindStamp.UniqueID = PageObject.UniqueID;
+                leftBehindStamp.UniqueID = PageObject.UniqueID;
 
                 originalX = leftBehindStamp.Position.X;
                 originalY = leftBehindStamp.Position.Y;
@@ -120,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-
+            StampHandleColor = new SolidColorBrush(Colors.Black);
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
             droppedContainer.XPosition = PageObject.XPosition;
             droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
@@ -143,8 +154,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-
-            copyMade = false;
         }
 
         /// <summary>
@@ -157,16 +166,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
-            if(!copyMade)
-            {
-
-
-
-                        CopyStamp();
-
-                copyMade = true;
-            }
-
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
             if (x < 0)

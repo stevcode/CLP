@@ -406,16 +406,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
+        Type lastType = null;
+
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(o is Shape)
+            if(lastType == typeof(Canvas) && o is Canvas)
             {
-                if((o as Shape).Name.Contains("HitBox"))
+                IsInkCanvasHitTestVisible = true;
+            }
+            else
+            {
+                if(o is Shape)
                 {
-                    return HitTestFilterBehavior.Continue;
+                    if((o as Shape).Name.Contains("HitBox"))
+                    {
+                        lastType = o.GetType();
+                        return HitTestFilterBehavior.Continue;
+                    }
                 }
             }
 
+            lastType = o.GetType();
             return HitTestFilterBehavior.ContinueSkipSelf;
         }
 

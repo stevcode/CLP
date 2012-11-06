@@ -125,19 +125,19 @@
                                  Width="{Binding Width}" MinWidth="50"  
                                  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
                                  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
-                                 Stroke="Black" StrokeThickness="0" Fill="Black" 
+                                 Stroke="Black" StrokeThickness="0" Fill="{Binding StampHandleColor}" 
                                  Points="0,0 3,0 2,1 1,1" >
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="DragDelta">
+                    <i:EventTrigger EventName="MouseDown">
                         <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
                         <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="DragCompleted">
+                    <i:EventTrigger EventName="MouseUp">
                         <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
