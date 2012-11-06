@@ -268,9 +268,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DefaultDAProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DefaultDA property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
 
         /// <summary>
@@ -282,17 +279,25 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EraserShapeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EraserShape property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EraserShapeProperty = RegisterProperty("EraserShape", typeof(StylusShape), new RectangleStylusShape(5,5));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsInkCanvasHitTestVisible
+        {
+            get { return GetValue<bool>(IsInkCanvasHitTestVisibleProperty); }
+            set { SetValue(IsInkCanvasHitTestVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsInkCanvasHitTestVisibleProperty = RegisterProperty("IsInkCanvasHitTestVisible", typeof(bool), true);
+        
         #endregion //Bindings
 
         #region Commands
 
         private bool IsMouseDown = false;
-        public InkCanvas MainInkCanvas = null;
+        public Canvas TopCanvas = null;
 
         public T GetVisualChild<T>(Visual parent) where T : Visual
         {
@@ -326,6 +331,33 @@ namespace Classroom_Learning_Partner.ViewModels
             return parent;
         }
 
+        public T FindNamedChild<T>(FrameworkElement obj, string name)
+        {
+            DependencyObject dep = obj as DependencyObject;
+            T ret = default(T);
+
+            if(dep != null)
+            {
+                int childcount = VisualTreeHelper.GetChildrenCount(dep);
+                for(int i = 0; i < childcount; i++)
+                {
+                    DependencyObject childDep = VisualTreeHelper.GetChild(dep, i);
+                    FrameworkElement child = childDep as FrameworkElement;
+
+                    if(child.GetType() == typeof(T) && child.Name == name)
+                    {
+                        ret = (T)Convert.ChangeType(child, typeof(T));
+                        break;
+                    }
+
+                    ret = FindNamedChild<T>(child, name);
+                    if(ret != null)
+                        break;
+                }
+            }
+            return ret;
+        }
+
         /// <summary>
         /// Gets the MouseMoveCommand command.
         /// </summary>
@@ -336,11 +368,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            if(!IsMouseDown && MainInkCanvas != null)
+            if(!IsMouseDown && TopCanvas != null)
             {
-                InkPresenter inkPresenter = GetVisualChild<InkPresenter>(MainInkCanvas);
+                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
 
-                VisualTreeHelper.HitTest(inkPresenter, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(inkPresenter)));
+                VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
             }
         }
 
@@ -391,7 +423,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
-            EditingMode = pageObjectViewModel.GetEditingMode((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, EditingMode, IsMouseDown, false, false);
+            //EditingMode = pageObjectViewModel.GetEditingMode((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, EditingMode, IsMouseDown, false, false);
+
+            IsInkCanvasHitTestVisible = false;
 
             return HitTestResultBehavior.Continue;
         }

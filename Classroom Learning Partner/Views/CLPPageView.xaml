@@ -15,7 +15,7 @@
 
     <Viewbox Stretch="Uniform">
 
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+        <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseMove">
                     <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
@@ -34,7 +34,8 @@
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                        <Canvas x:Name="PageObjectCanvas" Background="Transparent"
+                                Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -47,6 +48,7 @@
             </ItemsControl>
 
             <InkCanvas Strokes="{Binding InkStrokes}" Background="Transparent"
+                       IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                        EditingMode="{Binding EditingMode}"
                        EditingModeInverted="EraseByStroke"

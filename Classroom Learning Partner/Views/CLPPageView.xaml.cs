@@ -28,5 +28,15 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(CLPPageViewModel);
         }
+
+        protected override void OnViewModelChanged()
+        {
+            if(ViewModel is CLPPageViewModel)
+            {
+                (ViewModel as CLPPageViewModel).TopCanvas = TopCanvas;
+            }
+            
+            base.OnViewModelChanged();
+        }
     }
 }
