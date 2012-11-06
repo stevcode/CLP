@@ -194,22 +194,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public override InkCanvasEditingMode GetEditingMode(string hitBoxTag, string hitBoxName, InkCanvasEditingMode currentInkCanvasEditingMode, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
             if(IsBackground)
             {
                 if(App.MainWindowViewModel.IsAuthoring)
                 {
-                    return InkCanvasEditingMode.None;
+                    return false;
                 }
                 else
                 {
-                    return InkCanvasEditingMode.Ink;
+                    return true;
                 }
             }
             else
             {
-                return InkCanvasEditingMode.None;
+                return false;
             }
         }
 

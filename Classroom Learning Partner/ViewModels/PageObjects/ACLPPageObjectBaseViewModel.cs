@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
                     {
-                        pageVM.EditingMode = InkCanvasEditingMode.Ink;
+                        pageVM.IsInkCanvasHitTestVisible = true;
                     }
                 }
             }
@@ -174,7 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
             {
-                pageVM.EditingMode = InkCanvasEditingMode.Ink;
+                pageVM.IsInkCanvasHitTestVisible = true;
             }
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
@@ -298,26 +298,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public virtual InkCanvasEditingMode GetEditingMode(string hitBoxTag, string hitBoxName, InkCanvasEditingMode currentInkCanvasEditingMode, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
             if(IsBackground)
             {
                 if(App.MainWindowViewModel.IsAuthoring)
 	            {
-                    return InkCanvasEditingMode.None;
+                    return false;
 	            }
                 else
                 {
-                    return InkCanvasEditingMode.Ink;
+                    return true;
                 }  
             }
             else
             {
-                return InkCanvasEditingMode.None;
+                return true;
             }
         }
 
         #endregion //Methods
-
     }
 }
