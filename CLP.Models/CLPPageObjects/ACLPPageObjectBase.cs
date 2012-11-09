@@ -44,23 +44,35 @@ namespace CLP.Models
 
         #region Properties
 
-        ///// <summary>
-        ///// The page the pageObject is on.
-        ///// </summary>
-        //public CLPPage ParentPage
-        //{
-        //    get { return GetValue<CLPPage>(ParentPageProperty); }
-        //    set { SetValue(ParentPageProperty, value); }
-        //}
+        /// <summary>
+        /// The page the pageObject is on.
+        /// </summary>
+        public CLPPage ParentPage
+        {
+            get { return GetValue<CLPPage>(ParentPageProperty); }
+            set { SetValue(ParentPageProperty, value); }
+        }
 
-        //public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public string ParentPageID
         {
-            get { return GetValue<string>(ParentPageIDProperty); }
+            get 
+            {                 
+                string tempValue = GetValue<string>(ParentPageIDProperty);
+                if(tempValue != "")
+                {
+                    return tempValue;
+                }
+                else
+                {
+                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                    return ParentPage.UniqueID;
+                }
+            }
             set { SetValue(ParentPageIDProperty, value); }
         }
 
