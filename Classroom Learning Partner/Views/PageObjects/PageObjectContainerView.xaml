@@ -1,314 +1,129 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjectContainerView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-             xmlns:catel="http://catel.codeplex.com"
-             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-             x:Name="PageObjectContainerRoot">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>              
-            </ResourceDictionary.MergedDictionaries>
-            <conv:LengthConverter x:Key="LengthConverter"/>
-        </ResourceDictionary>
-    </UserControl.Resources>
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
-    <Grid x:Name="ContainerHitBox" Background="Transparent">
+    <Control x:Name="PageObjectView">
+        <Control.Resources>
 
-        <ac:AdornedControl
-            x:Name="adornedControl"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalAdornerPlacement="Outside"
-            VerticalAdornerPlacement="Outside"
-            >
-            <ac:AdornedControl.AdornerContent >
-                <!--This is the adorner-->
-                <Canvas Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}"
-                    x:Name="adornerCanvas"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Width="{Binding Path=Width}"
-                    Height="{Binding Path=Height}">
+            <ControlTemplate x:Key="CLPAudioTemplate">
+                <Views:CLPAudioView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                    <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
-                           Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                           Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}"
-                           />
+            <ControlTemplate x:Key="CLPDataTableTemplate">
+                <Views:CLPDataTableView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                    <!--Close Button-->
-                    <Button
-                        x:Name="closeButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-50"
-                        Canvas.Top="-25"
-                        Click="closeButton_Click"
-                        Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid
-                                    x:Name="grid"
-                                    >
-                                    <Ellipse
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="White"
-                                        />
-                                    <Path 
-                                        Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" 
-                                        Stroke="Red" 
-                                        StrokeThickness="3" 
-                                        Margin="5" 
-                                        />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <!--Drag Thumb-->
-                    <Grid
-                        x:Name="dragButton"
-                        Canvas.Right="-50"
-                        Canvas.Top="-25"
-                        Width="40"
-                        Height="40"
-                        Cursor="ScrollAll"
-                        >
-                        <Ellipse
-                            Stroke="Black"
-                            StrokeThickness="3"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            Fill="White"
-                            />
-                        <Grid
-                            >
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 5,20 L 10,15 L 10,25 L 5,20"
-                              Fill="Black"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 35,20 L 30,15 L 30,25 L 35,20"
-                              Fill="Black"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 20,5 L 20,35"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 20,35 L 15,30 L 25,30 L 20,35"
-                              Fill="Black"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 20,5 L 15,10 L 25,10 L 20,5"
-                              Fill="Black"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 5,20 L 35,20"
-                              />
-
-                        </Grid>
-                        <Thumb DragDelta="MoveThumb_DragDelta">
-                            <Thumb.Template>
-                                <ControlTemplate>
-                                    <Rectangle
-                                        Fill="Transparent"
-                                        />
-                                </ControlTemplate>
-                            </Thumb.Template>
-                        </Thumb>
-                    </Grid>
-
-                    <!--Resize Thumb-->
-                    <Grid
-                        x:Name="resizeButton"
-                        Canvas.Right="-50"
-                        Canvas.Bottom="-50"
-                        Width="40"
-                        Height="40"
-                        Cursor="SizeNWSE">
-                        <Ellipse
-                            Stroke="Black"
-                            StrokeThickness="3"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            Fill="White"
-                            />
-                        <Grid>
-
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 8,23 L 23,23 L 23,8"
-                              />
-                            <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 12,27 L 27,27 L 27,12"
-                              />
-
-                        </Grid>
-                        <Thumb DragDelta="ResizeThumb_DragDelta">
-                            <Thumb.Template>
-                                <ControlTemplate>
-                                    <Rectangle
-                                        Fill="Transparent"
-                                        />
-                                </ControlTemplate>
-                            </Thumb.Template>
-                        </Thumb>
-                    </Grid>
-                </Canvas>
-            </ac:AdornedControl.AdornerContent>
-            <Grid
-                x:Name="PageObjectContainer"
-                MouseMove="PageObjectContainer_MouseMove"
-                MouseLeave="PageObjectContainer_MouseLeave">
-            <Rectangle Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
-                <!-- Control that dynamically determines what PageObject to show -->
-
-                <Control IsHitTestVisible="True" x:Name="PageObjectView">
-                    <Control.Resources>
-
-                        <ControlTemplate x:Key="CLPAudioTemplate">
-                            <Views:CLPAudioView DataContext="{Binding}" />
-                        </ControlTemplate>
-
-                        <ControlTemplate x:Key="CLPDataTableTemplate">
-                            <Views:CLPDataTableView DataContext="{Binding}" />
-                        </ControlTemplate>
-
-                        <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
-                            <Views:CLPHandwritingRegionView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPHandwritingRegionTemplate">
+                <Views:CLPHandwritingRegionView DataContext="{Binding}" />
+            </ControlTemplate>
 
                         <ControlTemplate x:Key="CLPGroupingRegionTemplate">
                             <Views:CLPGroupingRegionView DataContext="{Binding}" />
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPImageTemplate">
-                            <Views:CLPImageView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPImageTemplate">
+                <Views:CLPImageView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
-                            <Views:CLPInkShapeRegionView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
+                <Views:CLPInkShapeRegionView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPShadingRegionTemplate">
-                            <Views:CLPShadingRegionView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPShadingRegionTemplate">
+                <Views:CLPShadingRegionView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPShapeTemplate">
-                            <Views:CLPShapeView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPShapeTemplate">
+                <Views:CLPShapeView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                            <Views:CLPSnapTileContainerView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
+                <Views:CLPSnapTileContainerView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPStampTemplate">
-                            <Views:CLPStampView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPStampTemplate">
+                <Views:CLPStampView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
-                            <Views:CLPStrokePathContainerView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
+                <Views:CLPStrokePathContainerView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPTextBoxTemplate">
-                            <Views:CLPTextBoxView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPTextBoxTemplate">
+                <Views:CLPTextBoxView DataContext="{Binding}" />
+            </ControlTemplate>
 
-                    </Control.Resources>
+        </Control.Resources>
 
-                    <Control.Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Style.Triggers>
+        <Control.Style>
+            <Style TargetType="{x:Type Control}">
+                <Style.Triggers>
 
-                                <!-- CLPAudio trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPAudio">
-                                    <Setter Property="Template" Value="{StaticResource CLPAudioTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPAudio trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPAudio">
+                        <Setter Property="Template" Value="{StaticResource CLPAudioTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPDataTable trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPDataTable">
-                                    <Setter Property="Template" Value="{StaticResource CLPDataTableTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPDataTable trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPDataTable">
+                        <Setter Property="Template" Value="{StaticResource CLPDataTableTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPHandwritingRegion trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
-                                    <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
+                    <!-- CLPHandwritingRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
+                        <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
                                 </DataTrigger>
 
                                 <!-- CLPGroupingRegion trigger -->
                                 <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPGroupingRegion">
                                     <Setter Property="Template" Value="{StaticResource CLPGroupingRegionTemplate}" />
-                                </DataTrigger>
+                    </DataTrigger>
 
-                                <!-- CLPImage trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
-                                    <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPImage trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
+                        <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPInkShapeRegion trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPInkShapeRegion">
-                                    <Setter Property="Template" Value="{StaticResource CLPInkShapeRegionTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPInkShapeRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPInkShapeRegion">
+                        <Setter Property="Template" Value="{StaticResource CLPInkShapeRegionTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPShadingRegion trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShadingRegion">
-                                    <Setter Property="Template" Value="{StaticResource CLPShadingRegionTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPShadingRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShadingRegion">
+                        <Setter Property="Template" Value="{StaticResource CLPShadingRegionTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPShape trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShape">
-                                    <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPShape trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShape">
+                        <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPSnapTileContainer trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSnapTileContainer">
-                                    <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPSnapTileContainer trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSnapTileContainer">
+                        <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPStamp trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStamp">
-                                    <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPStamp trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStamp">
+                        <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPStrokePathContainer trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStrokePathContainer">
-                                    <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPStrokePathContainer trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStrokePathContainer">
+                        <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
+                    </DataTrigger>
 
-                                <!-- CLPTextBox trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
-                                    <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
-                                </DataTrigger>
+                    <!-- CLPTextBox trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
+                        <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                    </DataTrigger>
 
-                            </Style.Triggers>
-                        </Style>
-                    </Control.Style>
-                </Control>
+                </Style.Triggers>
+            </Style>
+        </Control.Style>
+    </Control>
 
-            </Grid>
-        </ac:AdornedControl>      
-    </Grid>
 </catel:UserControl>

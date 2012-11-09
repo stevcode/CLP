@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -30,7 +31,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 InternalType = container.InternalPageObject.PageObjectType;
             }
 
-            ScribblesToStrokePaths();
+            if(IsStamped)
+            {
+                ScribblesToStrokePaths();
+            }
+            
         }
 
         /// <summary>
@@ -64,9 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsStrokePathsVisibleProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsStrokePathsVisible property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false, (sender, e) => ((CLPStrokePathContainerViewModel)sender).OnStrokePathsVisibilityChanged());
 
         /// <summary>
@@ -112,8 +114,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-
-        //put in VM
         private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
         public ObservableCollection<StrokePathViewModel> StrokePathViewModels
         {
@@ -139,6 +139,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
                 StrokePathViewModels.Add(strokePathViewModel);
+            }
+        }
+
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsStamped)
+            {
+                if(IsBackground)
+                {
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
 

@@ -79,13 +79,10 @@ namespace CLP.Models
             set { SetValue(ImagePoolProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ImagePool property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string,List<byte>>), () => new Dictionary<string, List<byte>>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Height of the page in pixels.
         /// </summary>
         public double PageHeight
         {
@@ -93,13 +90,10 @@ namespace CLP.Models
             set { SetValue(PageHeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double), LANDSCAPE_HEIGHT);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Width of the page in pixels.
         /// </summary>
         public double PageWidth
         {
@@ -107,13 +101,10 @@ namespace CLP.Models
             set { SetValue(PageWidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageWidth property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Aspect Ratio of page = PageWidth / PageHeight.
         /// </summary>
         public double PageAspectRatio
         {
@@ -121,13 +112,10 @@ namespace CLP.Models
             set { SetValue(PageAspectRatioProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageAspectRatio property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double), LANDSCAPE_WIDTH / LANDSCAPE_HEIGHT);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Number of Student Submissions associated with this page.
         /// </summary>
         public int NumberOfSubmissions
         {
@@ -135,13 +123,10 @@ namespace CLP.Models
             set { SetValue(NumberOfSubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NumberOfSubmissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// UniqueID of the Notebook this page is part of.
         /// </summary>
         public string ParentNotebookID
         {
@@ -149,9 +134,6 @@ namespace CLP.Models
             set { SetValue(ParentNotebookIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentNotebookID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), null);
 
         /// <summary>
@@ -163,10 +145,20 @@ namespace CLP.Models
             set { SetValue(ByteStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ByteStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        [NonSerialized]
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), null, includeInSerialization:false);
+
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -177,9 +169,6 @@ namespace CLP.Models
             set { SetValue(PageObjectsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObjects property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
@@ -191,13 +180,10 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageHistory property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), new CLPHistory());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Whether or note the page is a submissions from a student.
         /// </summary>
         public bool IsSubmission
         {
@@ -205,9 +191,6 @@ namespace CLP.Models
             set { SetValue(IsSubmissionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsSubmissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSubmissionProperty = RegisterProperty("IsSubmission", typeof(bool), false);
 
         /// <summary>
@@ -219,13 +202,10 @@ namespace CLP.Models
             set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Index of page in notebook.
         /// </summary>
         public int PageIndex
         {
@@ -233,13 +213,10 @@ namespace CLP.Models
             set { SetValue(PageIndexProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageIndex property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageIndexProperty = RegisterProperty("PageIndex", typeof(int), -1);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Author created pageTopics associated with the page.
         /// </summary>
         public ObservableCollection<string> PageTopics
         {
@@ -247,9 +224,6 @@ namespace CLP.Models
             set { SetValue(PageTopicsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageTopics property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageTopicsProperty = RegisterProperty("PageTopics", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
@@ -261,9 +235,6 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
 
         /// <summary>
@@ -275,9 +246,6 @@ namespace CLP.Models
             set { SetValue(SubmissionIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SubmissionID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
@@ -289,9 +257,6 @@ namespace CLP.Models
             set { SetValue(SubmitterNameProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SubmitterName property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
 
         /// <summary>
@@ -303,14 +268,46 @@ namespace CLP.Models
             set { SetValue(SubmissionTimeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SubmissionTime property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
 
         #endregion
 
         #region Methods
+
+        public CLPPage DuplicatePage()
+        {
+            CLPPage newPage = new CLPPage();
+            newPage.PageTopics = PageTopics;
+            newPage.PageHeight = PageHeight;
+            newPage.PageWidth = PageWidth;
+            newPage.PageAspectRatio = PageAspectRatio;
+            newPage.ImagePool = ImagePool;
+            newPage.ParentNotebookID = ParentNotebookID;
+
+            StrokeCollection strokes = BytesToStrokes(ByteStrokes);
+            foreach(Stroke stroke in strokes)
+            {
+                Stroke s = stroke.Clone();
+                s.RemovePropertyData(CLPPage.StrokeIDKey);
+                s.RemovePropertyData(CLPPage.ParentPageID);
+
+                string newUniqueID = Guid.NewGuid().ToString();
+                s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                s.AddPropertyData(CLPPage.ParentPageID, newPage.UniqueID);
+
+                List<byte> b = CLPPage.StrokeToByte(s);
+
+                newPage.ByteStrokes.Add(b);
+            }
+
+            foreach(ICLPPageObject pageObject in PageObjects)
+            {
+                ICLPPageObject clonedPageObject = pageObject.Duplicate();
+                newPage.PageObjects.Add(clonedPageObject);
+            }
+
+            return newPage;
+        }
 
         public static Stroke ByteToStroke(List<byte> byteStroke)
         {

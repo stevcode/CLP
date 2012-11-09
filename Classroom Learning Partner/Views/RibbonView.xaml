@@ -145,11 +145,11 @@
                     Command="{Binding SetEraserCommand}"
                     CommandParameter="EraseByStroke" />
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Tile"
                     LargeImageSource="..\Images\SnapTileIcon.png"
-                    Command="{Binding Path=SetSnapTileCommand}" />
+                    Command="{Binding Path=SetSnapTileCommand}" />-->
 
             </RibbonGroup>
 
@@ -160,7 +160,7 @@
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <RibbonButton
+                <!--<RibbonButton
                         Label="Audio"
                         LargeImageSource="..\Images\mic_start.png"
                         Command="{Binding Path=InsertAudioCommand}"/>
@@ -168,7 +168,7 @@
                 <RibbonButton
                         Label="Horizontal Line"
                         LargeImageSource="..\Images\HorizontalLineIcon.png"
-                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />-->
 
             </RibbonGroup>
 
@@ -214,7 +214,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
 
                 <RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
                         IsChecked="False"
@@ -232,7 +232,15 @@
                         LargeImageSource="..\Images\Redo.png"
                         Command="{Binding Path=RedoCommand}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
+
+            <!--<RibbonGroup Header="Page Size">
+
+                <RibbonButton Label="Make Page Longer"
+                              LargeImageSource="..\Images\MakePageLonger.png"
+                              Command="{Binding Path=MakePageLongerCommand}"/>
+
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
@@ -257,10 +265,10 @@
                         Label="Send To Projector"
                         Command="{Binding Path=SendDisplayToProjectorcommand}" />
 
-                <!--<RibbonButton
+                <RibbonButton
                         LargeImageSource="..\Images\SingleDisplay.png"
                         Label="Linked Display"
-                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />-->
+                        Command="{Binding Path=SwitchToLinkedDisplayCommand}" />
 
                 <RibbonButton
                         LargeImageSource="..\Images\GridDisplay.png"
@@ -300,55 +308,19 @@
 
             </RibbonGroup>
 
-            <!--   <RibbonGroup Header="Visual" >
-                    <RibbonButton
-                        LargeImageSource="{Binding Path=VisualRecordImage}"
-                        Label="Record"
-                        Command="{Binding Path=RecordVisualCommand}" />
-                    <RibbonButton
-                        LargeImageSource="{Binding Path=PlayPauseVisualImage}"
-                        Label="Play"
-                        Command="{Binding Path=PlayPauseVisualCommand}" />
-                    <RibbonButton
-                        LargeImageSource="..\Images\stop.png"
-                        Label="Stop"
-                        Command="{Binding Path=StopVisualCommand}" />
-                </RibbonGroup> -->
+        </RibbonTab>
+        
+        <!--<RibbonTab Header="Page">
 
-            <!--<RibbonGroup Header="Review" FontStretch="Condensed" Visibility="{Binding Path=InstructorVisibility}">-->
-            <RibbonGroup Header="Review" FontStretch="Condensed" Visibility="Collapsed">
-                <RibbonButton
-                        Label="Audio"
-                        LargeImageSource="..\Images\mic_stop.png" 
-                        Command="{Binding Path=RecordAudioCommand}"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"/>
-                <!--    <RibbonButton
-                        Label="Play"
-                        LargeImageSource="{Binding Path=AudioPlayImage}"
-                        IsEnabled="{Binding Path=PageHasAudioFile}"
-                        Command="{Binding Path=PlayAudioCommand}" 
-                        Grid.Row="0"
-                        Grid.RowSpan="1"
-                        Grid.Column="1"
-                        HorizontalAlignment="Center"/> 
-                        <Slider Value="{Binding Path=CurrentSliderValue}" Height="22"
-         Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/> -->
+            <RibbonGroup Header="Page Size">
+
+                <RibbonButton Label="Make Page Longer"
+                              LargeImageSource="..\Images\MakePageLonger.png"
+                              Command="{Binding Path=MakePageLongerCommand}"/>
 
             </RibbonGroup>
 
-            <!--       <RibbonGroup Header="Visual and Audio" >
-                    <RibbonButton
-                        LargeImageSource="{Binding Path=RecordBothImage}"
-                        Label="Record"
-                        Command="{Binding Path=RecordBothCommand}" />
-                    <RibbonButton
-                        LargeImageSource="{Binding Path=PlayPauseBothImage}"
-                        Label="Play"
-                        Command="{Binding Path=PlayStopBothCommand}" /> 
-                </RibbonGroup> -->
-
-        </RibbonTab>
+        </RibbonTab>-->
 
         <!--Editing Tab-->
         <RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
@@ -372,10 +344,10 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Copy This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=CopyPageCommand}" />-->
+                        Command="{Binding Path=CopyPageCommand}" />
 
                 <RibbonButton
                         Label="Add Page Topic to this Page"
@@ -551,10 +523,6 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
-                <RibbonButton
-                        Label="Double Page Height"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=IncreasePageHeightCommand}" />
 
                 <RibbonButton
                         Label="Page Width"
@@ -571,7 +539,7 @@
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>
-            <ToggleButton Content="^" VerticalAlignment="Stretch" Width="20" Background="Transparent" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}"/>
+            <ToggleButton Content="^" VerticalContentAlignment="Center" Height="22" Width="40" Padding="0" Margin="0" Background="CornflowerBlue" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
     

@@ -4,10 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
-
-    <!--xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"-->
     
     <UserControl.Resources>
         <ResourceDictionary>
@@ -135,7 +132,7 @@
                         <DataTemplate>
                             <Border BorderThickness="0">
                                 <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDown">
+                                    <i:EventTrigger EventName="PreviewMouseDown">
                                         <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
@@ -273,7 +270,7 @@
             <StatusBarItem Grid.Column="1">
                 <TextBlock>
                     <Run Text="PAGE " />
-                    <Run Text="{Binding CurrentPage.Page.PageIndex}" />
+                    <Run Text="{Binding CurrentPage.PageIndex}" />
                     <Run Text=" OF " />
                     <Run Text="{Binding NotebookPages.Count, Mode=OneWay}" />
                 </TextBlock>
@@ -282,7 +279,17 @@
             <Separator Grid.Column="2" />
 
             <StatusBarItem Grid.Column="3">
-                <Slider
+                <!--<Button Width="150" Command="{Binding MakePageLongerCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="FontSize" Value="11" />
+                            <Setter Property="Content" Value="MAKE PAGE LONGER"/>
+                        </Style>
+                    </Button.Style>
+                </Button>-->
+                
+                <!-- Styled Slider for Zooming. No longer necessary? -->
+                <!--<Slider
                   x:Name="SliderFrom"
                   Width="200"
                   Height="50"
@@ -379,7 +386,7 @@
                             </Setter>
                         </Style>
                     </Slider.Style>
-                </Slider>
+                </Slider>-->
             </StatusBarItem>
 
             <StatusBarItem Grid.Column="4">

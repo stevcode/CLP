@@ -26,13 +26,14 @@ namespace Classroom_Learning_Partner.Views
             get { return (Tuple<double, double>)GetValue(DisplayWidthHeightProperty); }
             set { SetValue(DisplayWidthHeightProperty, value); }
         }
-        // Using a DependencyProperty as the backing store
-        // for MyDependencyProperty. This enables animation, styling, binding, etc...
+
+        // Using a DependencyProperty as the backing store for DisplayWidthHeightProperty. 
+        // This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DisplayWidthHeightProperty =
             DependencyProperty.Register("DisplayWidthHeight",
             typeof(Tuple<double, double>), typeof(LinkedDisplayView), new UIPropertyMetadata(new Tuple<double, double>(0.0, 0.0)));
 
-        //ar = w / h
+        //AspectRatio = w / h
         protected override void OnRenderSizeChanged(System.Windows.SizeChangedInfo sizeInfo)
         {
             DisplayWidthHeight = new Tuple<double,double>(ActualWidth,ActualHeight);

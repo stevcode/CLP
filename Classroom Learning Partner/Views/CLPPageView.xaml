@@ -1,9 +1,10 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPPageView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:catel="http://catel.codeplex.com"
-             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views" 
-             >
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -13,45 +14,48 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas" 
-                PreviewMouseMove="TopCanvas_PreviewMouseMove" PreviewMouseLeftButtonDown="TopCanvas_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="TopCanvas_PreviewMouseLeftButtonUp">
-            <ItemsControl x:Name="PageObjects"
-                            ItemsSource="{Binding Path=PageObjects}"
-                            ItemContainerStyle="{StaticResource ContainerStyle}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
-                
+
+        <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseMove">
+                    <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                    <catel:EventToCommand Command="{Binding MouseDownCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <catel:EventToCommand Command="{Binding MouseUpCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <ItemsControl ItemsSource="{Binding Path=PageObjects}"
+                          ItemContainerStyle="{StaticResource ContainerStyle}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                        <Canvas x:Name="PageObjectCanvas" Background="Transparent"
+                                Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Views:PageObjectContainerView DataContext="{Binding}" />
-                    </DataTemplate>  
+                    </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                
-            </ItemsControl>
-            
-            <InkCanvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
-                        Background="Transparent" 
-                        Strokes="{Binding Path=InkStrokes}"
-                        EditingMode="{Binding Path=EditingMode}"
-                        EditingModeInverted="EraseByStroke"
-                        DefaultDrawingAttributes="{Binding Path=DefaultDA}">
-            </InkCanvas>
 
-            <!--<Views:BindableInkCanvas x:Name="MainInkCanvas"
-                Width="{Binding PageWidth}" Height="{Binding PageHeight}"
-                Background="Transparent"
-                Strokes="{Binding InkStrokes}"
-                EditingMode="{Binding EditingMode}"
-                EditingModeInverted="EraseByStroke"
-                DefaultDrawingAttributes="{Binding DefaultDA}">
-            </Views:BindableInkCanvas>-->
+            </ItemsControl>
+
+            <InkCanvas Strokes="{Binding InkStrokes}" Background="Transparent"
+                       IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
+                       Width="{Binding PageWidth}" Height="{Binding PageHeight}"
+                       EditingMode="{Binding EditingMode}"
+                       EditingModeInverted="EraseByStroke"
+                       DefaultDrawingAttributes="{Binding DefaultDA}" />
+
         </Canvas>
+
     </Viewbox>
-    
+
 </catel:UserControl>

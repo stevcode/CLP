@@ -1,9 +1,9 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPPagePreviewView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:catel="http://catel.codeplex.com"
-             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-             x:Name="CLPPagePreview">
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -13,32 +13,33 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White" x:Name="TopCanvas">
-            <ItemsControl x:Name="PageObjects"
-                        ItemsSource="{Binding Path=PageObjects}"
-                        ItemContainerStyle="{StaticResource ContainerStyle}"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
-                    
+
+        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+
+            <ItemsControl IsHitTestVisible="False"
+                          ItemsSource="{Binding Path=PageObjects}"
+                          ItemContainerStyle="{StaticResource ContainerStyle}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                    
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Views:PageObjectContainerView DataContext="{Binding}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                    
+
             </ItemsControl>
-                
-            <InkPresenter Width="{Binding PageWidth}" Height="{Binding PageHeight}" x:Name="MainInkCanvas"
-                    Strokes="{Binding Path=InkStrokes}">
-            </InkPresenter>
-            
+
+            <InkPresenter Strokes="{Binding InkStrokes}" ClipToBounds="True"
+                          Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
+
         </Canvas>
+
     </Viewbox>
 
 </catel:UserControl>

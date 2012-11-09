@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -13,13 +14,77 @@ namespace Classroom_Learning_Partner.ViewModels
         public GridDisplayViewModel()
             : base()
         {
-            DisplayedPages = new ObservableCollection<CLPPageViewModel>();
+            DisplayedPages = new ObservableCollection<CLPPage>();
             DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
-            DisplayID = Guid.NewGuid().ToString();
-            IsOnProjector = false;
-            UGridRows = 1;
 
-            RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
+            RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+        }
+
+        public override string Title { get { return "GridDisplayVM"; } }
+
+        #region Bindings
+
+        #region Interface
+
+        public string DisplayName
+        {
+            get { return "GridDisplay"; }
+        }
+
+        /// <summary>
+        /// Unique ID of Display.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
+
+        /// <summary>
+        /// If Display is currently being projected.
+        /// </summary>
+        public bool IsOnProjector
+        {
+            get { return GetValue<bool>(IsOnProjectorProperty); }
+            set { SetValue(IsOnProjectorProperty, value); }
+        }
+
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
+
+        #endregion //Interface
+
+        /// <summary>
+        /// Number of Rows in the UniformGrid
+        /// </summary>
+        public int UGridRows
+        {
+            get { return GetValue<int>(UGridRowsProperty); }
+            set { SetValue(UGridRowsProperty, value); }
+        }
+
+        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
+
+        /// <summary>
+        /// Currently Displayed pages in the GridDisplay.
+        /// </summary>
+        public ObservableCollection<CLPPage> DisplayedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            set { SetValue(DisplayedPagesProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>));
+
+        #endregion //Bindings
+
+        #region Methods
+
+        //From Interface IDisplayViewModel
+        public void AddPageToDisplay(CLPPage page)
+        {
+            DisplayedPages.Add(page);
         }
 
         void DisplayedPages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -34,85 +99,24 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public override string Title { get { return "GridDisplayVM"; } }
+        #endregion //Methods
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string DisplayID
-        {
-            get { return GetValue<string>(DisplayIDProperty); }
-            set { SetValue(DisplayIDProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the DisplayID property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> DisplayedPages
-        {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(DisplayedPagesProperty); }
-            set { SetValue(DisplayedPagesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the DisplayedPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPageViewModel>));
+        #region Commands
 
         /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.
         /// </summary>
-        public Command<CLPPageViewModel> RemovePageFromGridDisplayCommand { get; private set; }
+        public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>
-        public void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
+        public void OnRemovePageFromGridDisplayCommandExecute(CLPPage page)
         {
             DisplayedPages.Remove(page);
         }
 
-        public string DisplayName
-        {
-            get { return "GridDisplay"; }
-        }
+        #endregion //Commands
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsOnProjector
-        {
-            get { return GetValue<bool>(IsOnProjectorProperty); }
-            set { SetValue(IsOnProjectorProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsOnProjector property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public int UGridRows
-        {
-            get { return GetValue<int>(UGridRowsProperty); }
-            set { SetValue(UGridRowsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the UGridRows property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), null);
-
-        public void AddPageToDisplay(CLPPageViewModel page)
-        {
-            DisplayedPages.Add(page);
-        }
     }
 }

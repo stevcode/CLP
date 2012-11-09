@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
@@ -8,6 +9,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPImageViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
@@ -16,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPImageViewModel(CLPImage image) : base()
         {
             PageObject = image;
+            //CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
             List<byte> ByteSource = PageObject.ParentPage.ImagePool[image.ImageID];
             LoadImageFromByteSource(ByteSource.ToArray());
         }
@@ -57,6 +60,5 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SourceImage = genBmpImage;
         }
-
     }
 }

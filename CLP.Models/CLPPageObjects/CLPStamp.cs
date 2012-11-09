@@ -28,8 +28,8 @@ namespace CLP.Models
         public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
             : base()
         {
-            ParentPage = page;
-            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, ParentPage);
+            ParentPageID = page.UniqueID;
+            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
 
             Position = new Point(100, 100);
 
@@ -144,10 +144,30 @@ namespace CLP.Models
             set { SetValue(ParentPageProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentPage property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string ParentPageID
+        {
+            get
+            {
+                string tempValue = GetValue<string>(ParentPageIDProperty);
+                if(tempValue != "")
+                {
+                    return tempValue;
+                }
+                else
+                {
+                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                    return ParentPage.UniqueID;
+                }
+            }
+            set { SetValue(ParentPageIDProperty, value); }
+        }
+
+        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof(string), "");
 
         /// <summary>
         /// Gets or sets the property value.

@@ -110,15 +110,15 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Catel.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Catel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.Extensions.Controls, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Catel.Extensions.Controls, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Catel.Extensions.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="Catel.MVVM, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Catel.MVVM, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Catel.MVVM.dll</HintPath>
     </Reference>
@@ -264,9 +264,6 @@
     <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
-      <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
       <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
     </Compile>
@@ -278,6 +275,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPGroupingRegionView.xaml.cs">
       <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
+      <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -391,10 +391,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -410,6 +406,10 @@
     <Page Include="Views\PageObjects\CLPGroupingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>
@@ -554,6 +554,7 @@
     </Content>
     <Content Include="External Libraries\NAudio.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\MakePageLonger.png" />
     <Resource Include="Images\PenSize-icon32.png" />
     <Resource Include="Images\PenSize.png" />
     <Resource Include="Images\CLPIcon.ico" />

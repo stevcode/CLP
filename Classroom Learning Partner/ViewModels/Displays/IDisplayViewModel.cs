@@ -1,11 +1,13 @@
-﻿namespace Classroom_Learning_Partner.ViewModels
+﻿using CLP.Models;
+
+namespace Classroom_Learning_Partner.ViewModels
 {
     public interface IDisplayViewModel
     {
-        string DisplayName { get; }
-        string DisplayID { get; }
-        bool IsOnProjector { get; set; }
+        string DisplayName { get; }             //Type of Display.
+        string DisplayID { get; }               //Unique ID of Display.
+        bool IsOnProjector { get; set; }        //If Display is currently being projected.
 
-        void AddPageToDisplay(CLPPageViewModel page);
+        void AddPageToDisplay(CLPPage page);    //Method to add a new page to this display.
     }
 }

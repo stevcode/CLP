@@ -52,9 +52,7 @@ namespace Classroom_Learning_Partner.Model
                 
                 DateTime end = DateTime.Now;
                 TimeSpan span = end.Subtract(start);
-                Logger.Instance.WriteToLog("Time to open notebook (In Milliseconds): " + span.TotalMilliseconds);
                 Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
-                Logger.Instance.WriteToLog("Time to open notebook (In Minutes): " + span.TotalMinutes);
                 if (notebook != null)
                 {
                     notebook.NotebookName = notebookName;
@@ -413,7 +411,9 @@ namespace Classroom_Learning_Partner.Model
 
         public void AddPageObjectToPage(CLP.Models.ICLPPageObject pageObject)
         {
-            AddPageObjectToPage(pageObject.ParentPage, pageObject);
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
+
+            AddPageObjectToPage(parentPage, pageObject);
         }
 
         public void AddPageObjectToPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
@@ -433,27 +433,38 @@ namespace Classroom_Learning_Partner.Model
 
         public void RemovePageObjectFromPage(CLP.Models.ICLPPageObject pageObject)
         {
-            RemovePageObjectFromPage(pageObject.ParentPage, pageObject);
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
+
+            RemovePageObjectFromPage(parentPage, pageObject);
         }
 
         public void RemovePageObjectFromPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
         {
             if (page != null)
             {
-                //page.PageObjects.Remove(pageObject);
-                foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
-                {
-                    if (po.UniqueID == pageObject.UniqueID)
-                    {
-                        page.PageObjects.Remove(po);
-                        break;
-                    }
-                }
-                if (!page.PageHistory.IgnoreHistory)
-                {
-                    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-                    page.PageHistory.HistoryItems.Add(item);
-                }
+                //STEVE - uncomment try/catch with Catel symbol library in place to find thrown exceptions
+                //try
+                //{
+                    page.PageObjects.Remove(pageObject);
+                //}
+                //catch(System.ArgumentException e)
+                //{
+                //    throw;
+                //}
+                
+                //foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
+                //{
+                //    if (po.UniqueID == pageObject.UniqueID)
+                //    {
+                //        page.PageObjects.Remove(po);
+                //        break;
+                //    }
+                //}
+                //if (!page.PageHistory.IgnoreHistory)
+                //{
+                //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
+                //    page.PageHistory.HistoryItems.Add(item);
+                //}
             }
         }
 

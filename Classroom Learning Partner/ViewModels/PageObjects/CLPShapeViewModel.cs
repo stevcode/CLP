@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System.Windows;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 

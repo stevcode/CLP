@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System.Windows;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -24,9 +25,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TextProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Text property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
     }
 }

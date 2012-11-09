@@ -7,10 +7,15 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -36,7 +41,6 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
-
         #region Constructors
 
         /// <summary>
@@ -57,27 +61,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 InkStrokes.Add(stroke);
             }
 
-            foreach(var pageObject in PageObjects)
-            {
-                ACLPPageObjectBaseViewModel pageObjectVM;
-
-                switch(pageObject.PageObjectType)
-                {
-                    case "CLPShape":
-                        pageObjectVM = new CLPShapeViewModel(pageObject as CLPShape);
-                        PageObjectVMs.Add(pageObjectVM);
-                        break;
-                    case "CLPImage":
-                        pageObjectVM = new CLPImageViewModel(pageObject as CLPImage);
-                        PageObjectVMs.Add(pageObjectVM);
-                        break;
-                }
-
-                
-            }
-
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+        
+            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
+            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
+            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -130,20 +119,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PageObjects property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<ACLPPageObjectBaseViewModel> PageObjectVMs
-        {
-            get { return GetValue<ObservableCollection<ACLPPageObjectBaseViewModel>>(PageObjectVMsProperty); }
-            set { SetValue(PageObjectVMsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the PageObjectVMs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageObjectVMsProperty = RegisterProperty("PageObjectVMs", typeof(ObservableCollection<ACLPPageObjectBaseViewModel>), () => new ObservableCollection<ACLPPageObjectBaseViewModel>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -243,6 +218,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("Page")]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -292,9 +268,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DefaultDAProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DefaultDA property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
 
         /// <summary>
@@ -306,14 +279,165 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EraserShapeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EraserShape property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EraserShapeProperty = RegisterProperty("EraserShape", typeof(StylusShape), new RectangleStylusShape(5,5));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsInkCanvasHitTestVisible
+        {
+            get { return GetValue<bool>(IsInkCanvasHitTestVisibleProperty); }
+            set { SetValue(IsInkCanvasHitTestVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsInkCanvasHitTestVisibleProperty = RegisterProperty("IsInkCanvasHitTestVisible", typeof(bool), true);
+        
         #endregion //Bindings
 
+        #region Commands
+
+        private bool IsMouseDown = false;
+        public Canvas TopCanvas = null;
+
+        public T GetVisualChild<T>(Visual parent) where T : Visual
+        {
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for(int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if(child == null)
+                {
+                    child = GetVisualChild<T>(v);
+                }
+                if(child != null)
+                    break;
+            }
+            return child;
+        }
+
+        public T GetVisualParent<T>(Visual child) where T : Visual
+        {
+            T parent = default(T);
+
+            Visual p = (Visual)VisualTreeHelper.GetParent(child);
+            parent = p as T;
+            if(parent == null)
+            {
+                parent = GetVisualParent<T>(p);
+            }
+
+            return parent;
+        }
+
+        public T FindNamedChild<T>(FrameworkElement obj, string name)
+        {
+            DependencyObject dep = obj as DependencyObject;
+            T ret = default(T);
+
+            if(dep != null)
+            {
+                int childcount = VisualTreeHelper.GetChildrenCount(dep);
+                for(int i = 0; i < childcount; i++)
+                {
+                    DependencyObject childDep = VisualTreeHelper.GetChild(dep, i);
+                    FrameworkElement child = childDep as FrameworkElement;
+
+                    if(child.GetType() == typeof(T) && child.Name == name)
+                    {
+                        ret = (T)Convert.ChangeType(child, typeof(T));
+                        break;
+                    }
+
+                    ret = FindNamedChild<T>(child, name);
+                    if(ret != null)
+                        break;
+                }
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseMoveCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseMoveCommandExecute(MouseEventArgs e)
+        {
+            if(!IsMouseDown && TopCanvas != null)
+            {
+                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+
+                VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+            }
+        }
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseDownCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseDownCommandExecute(MouseEventArgs e)
+        {
+            IsMouseDown = true;
+        }
+
+        /// <summary>
+        /// Gets the MouseMoveCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> MouseUpCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MouseMoveCommand command is executed.
+        /// </summary>
+        private void OnMouseUpCommandExecute(MouseEventArgs e)
+        {
+            IsMouseDown = false;
+        }
+
+        #endregion //Commands
+
         #region Methods
+
+        Type lastType = null;
+
+        private HitTestFilterBehavior HitFilter(DependencyObject o)
+        {
+            if(lastType == typeof(Canvas) && o is Canvas)
+            {
+                IsInkCanvasHitTestVisible = true;
+            }
+            else
+            {
+                if(o is Shape)
+                {
+                    if((o as Shape).Name.Contains("HitBox"))
+                    {
+                        lastType = o.GetType();
+                        return HitTestFilterBehavior.Continue;
+                    }
+                }
+            }
+
+            lastType = o.GetType();
+            return HitTestFilterBehavior.ContinueSkipSelf;
+        }
+
+        private HitTestResultBehavior HitResult(HitTestResult result)
+        {
+            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+            IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
+
+            return HitTestResultBehavior.Continue;
+        }
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

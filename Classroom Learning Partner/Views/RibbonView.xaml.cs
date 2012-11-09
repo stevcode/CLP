@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls.Ribbon;
 using System.Windows.Media;
 using Catel.Windows.Controls;
+using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -34,6 +35,18 @@ namespace Classroom_Learning_Partner.Views
             }
 
             (sender as RibbonToggleButton).IsChecked = true;
+        }
+
+        private int minimizeClick = 0;
+        private void MinimizeButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            minimizeClick++;
+            Logger.Instance.WriteToLog("[METRICS LOGGING]: Ribbon minimized " + minimizeClick + " times.");
+        }
+
+        private void MinimizeButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Logger.Instance.WriteToLog("[METRICS LOGGING]: Ribbon restored " + minimizeClick + " times.");
         }
     }
 }

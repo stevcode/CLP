@@ -1,7 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -10,6 +14,15 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         protected ACLPPageObjectBaseViewModel() : base()
         {
+            RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
+
+            DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
+            DragStartPageObjectCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectCommandExecute);
+            DragStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnDragStopPageObjectCommandExecute);
+
+            ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
+            ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
+            ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -116,5 +129,205 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        #region Bindings
+
+        public bool IsAdornerVisible
+        {
+            get { return GetValue<bool>(IsAdornerVisibleProperty); }
+            set { 
+                SetValue(IsAdornerVisibleProperty, value);
+                if(!value)
+                {
+                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                    {
+                        pageVM.IsInkCanvasHitTestVisible = true;
+                    }
+                }
+            }
+        }
+
+        public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
+
+        public Visibility AllowAdorner
+        {
+            get { return GetValue<Visibility>(AllowAdornerProperty); }
+            set { SetValue(AllowAdornerProperty, value); }
+        }
+
+        public static readonly PropertyData AllowAdornerProperty = RegisterProperty("AllowAdorner", typeof(Visibility), Visibility.Visible);
+
+        #endregion //Bindings
+
+        #region Commands
+
+        #region Default Adorners
+
+        /// <summary>
+        /// Gets the RemovePageObjectCommand command.
+        /// </summary>
+        public Command RemovePageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the RemovePageObjectCommand command is executed.
+        /// </summary>
+        private void OnRemovePageObjectCommandExecute()
+        {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
+            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+            {
+                pageVM.IsInkCanvasHitTestVisible = true;
+            }
+            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+        }
+
+        /// <summary>
+        /// Gets the DragPageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> DragPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the DragPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
+        {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
+            double x = PageObject.XPosition + e.HorizontalChange;
+            double y = PageObject.YPosition + e.VerticalChange;
+            if(x < 0)
+            {
+                x = 0;
+            }
+            if(y < 0)
+            {
+                y = 0;
+            }
+            if(x > parentPage.PageWidth - PageObject.Width)
+            {
+                x = parentPage.PageWidth - PageObject.Width;
+            }
+            if(y > parentPage.PageHeight - PageObject.Height)
+            {
+                y = parentPage.PageHeight - PageObject.Height;
+            }
+
+            Point pt = new Point(x, y);
+            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+        }
+
+        /// <summary>
+        /// Gets the DragStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Gets the DragStopPageObjectCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStopPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Gets the ResizePageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizePageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
+        {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+
+            double newHeight = PageObject.Height + e.VerticalChange;
+            double newWidth = PageObject.Width + e.HorizontalChange;
+            if(newHeight < 10)
+            {
+                newHeight = 10;
+            }
+            if(newWidth < 10)
+            {
+                newWidth = 10;
+            }
+            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+            {
+                newHeight = PageObject.Height;
+            }
+            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+            {
+                newWidth = PageObject.Width;
+            }
+
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+        }
+
+        /// <summary>
+        /// Gets the ResizeStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizeStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Gets the ResizeStopPageObjectCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizeStopPageObjectCommand command is executed.
+        /// </summary>
+        private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
+        {
+        }
+
+        #endregion //Default Adorners
+
+        #endregion //Commands
+
+        #region Methods
+
+        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsBackground)
+            {
+                if(App.MainWindowViewModel.IsAuthoring)
+	            {
+                    return false;
+	            }
+                else
+                {
+                    return true;
+                }  
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        #endregion //Methods
     }
 }
