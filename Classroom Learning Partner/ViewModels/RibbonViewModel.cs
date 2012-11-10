@@ -1790,7 +1790,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertGroupingRegionCommandExecute()
         {
-            CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.Page);
+            CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
         }
 
