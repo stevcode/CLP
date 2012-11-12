@@ -19,6 +19,7 @@ namespace CLP.Models
         /// </summary>
         public CLPPageObjectBase(CLPPage page)
         {
+            ParentPage = page;
             ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
