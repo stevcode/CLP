@@ -30,6 +30,8 @@ namespace CLP.Models
         {
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
+            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
+            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.WORDS, page);
 
             Position = new Point(100, 100);
 
@@ -68,6 +70,30 @@ namespace CLP.Models
         /// Register the InternalPageObject property so it is known in the class.
         /// </summary>
         public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer), null);
+
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CLPHandwritingRegion HandwritingRegionParts
+        {
+            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
+            set { SetValue(HandwritingRegionPartsProperty, value); }
+        }
+
+        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CLPHandwritingRegion HandwritingRegionTypeOfParts
+        {
+            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionTypeOfPartsProperty); }
+            set { SetValue(HandwritingRegionTypeOfPartsProperty, value); }
+        }
+
+        public static readonly PropertyData HandwritingRegionTypeOfPartsProperty = RegisterProperty("HandwritingRegionTypeOfParts", typeof(CLPHandwritingRegion));
+
 
         #endregion //Properties
 

@@ -118,7 +118,12 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Thumb DragDelta="StampHandleHitBox_DragDelta"
                    DragStarted="StampHandleHitBox_DragStarted"
                    DragCompleted="StampHandleHitBox_DragCompleted"
@@ -154,6 +159,14 @@
                 <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" 
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
+            </Border>
+            <Border Grid.Row="2" BorderBrush="Black" BorderThickness="0,0,0,2"
+                    Height="50" Width="50" HorizontalAlignment="Left">
+                <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" />
+            </Border>
+            <Border Grid.Row="2" BorderBrush="Black" BorderThickness="0,0,0,2" 
+                    Height="50" Width="150" Margin="60,0,0,0">
+                <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionTypeOfParts}" />
             </Border>
         </Grid>
 
