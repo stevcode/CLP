@@ -1,6 +1,6 @@
-﻿using Classroom_Learning_Partner.ViewModels.Workspaces;
+﻿using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.Workspaces
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for BlankWorkspaceView.xaml
@@ -10,7 +10,6 @@ namespace Classroom_Learning_Partner.Views.Workspaces
         public BlankWorkspaceView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

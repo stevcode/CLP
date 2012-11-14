@@ -1,19 +1,19 @@
-﻿using System.Collections.ObjectModel;
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
-{
-    using Catel.MVVM;
-    using Classroom_Learning_Partner.Model.CLPPageObjects;
-    using Classroom_Learning_Partner.Model;
-    using Catel.Data;
-    using System.Windows.Media;
-    using System.Windows.Ink;
-    using System.Windows.Input;
-    using System.Windows;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using Catel.Data;
+using Catel.MVVM;
+using CLP.Models;
 
+namespace Classroom_Learning_Partner.ViewModels
+{
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPStrokePathContainerViewModel : CLPPageObjectBaseViewModel
+    public class CLPStrokePathContainerViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPStrokePathContainerViewModel"/> class.
@@ -31,7 +31,11 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
                 InternalType = container.InternalPageObject.PageObjectType;
             }
 
-            ScribblesToStrokePaths();
+            if(IsStamped)
+            {
+                ScribblesToStrokePaths();
+            }
+            
         }
 
         /// <summary>
@@ -65,9 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             set { SetValue(IsStrokePathsVisibleProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsStrokePathsVisible property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsStrokePathsVisibleProperty = RegisterProperty("IsStrokePathsVisible", typeof(bool), false, (sender, e) => ((CLPStrokePathContainerViewModel)sender).OnStrokePathsVisibilityChanged());
 
         /// <summary>
@@ -113,8 +114,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
         #region Methods
 
-
-        //put in VM
         private ObservableCollection<StrokePathViewModel> _strokePathViewModels = new ObservableCollection<StrokePathViewModel>();
         public ObservableCollection<StrokePathViewModel> StrokePathViewModels
         {
@@ -140,6 +139,32 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
 
                 StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
                 StrokePathViewModels.Add(strokePathViewModel);
+            }
+        }
+
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsStamped)
+            {
+                if(IsBackground)
+                {
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
 

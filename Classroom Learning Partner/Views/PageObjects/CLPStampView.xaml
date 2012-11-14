@@ -1,223 +1,162 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPStampView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPStampView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
-                   xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects"
-                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   mc:Ignorable="d" 
-                   d:DesignHeight="300" d:DesignWidth="300">
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <catel:ValueConverterGroup x:Key="showAdorners">
-                <catel:BooleanToOppositeBooleanConverter  />
-                <catel:BooleanToHidingVisibilityConverter />
-            </catel:ValueConverterGroup>
-            <conv:LengthConverter x:Key="LengthConverter"/>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <conv:LengthConverter x:Key="LengthConverter"/>
     </UserControl.Resources>
 
-    <ac:AdornedControl
-            x:Name="adornedControl"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalAdornerPlacement="Outside"
-            VerticalAdornerPlacement="Outside"
-            >
+    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center" IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
+                           HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+                       IsMouseOverShowEnabled="False">
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
-            <Canvas
-                    Visibility="Hidden"
-                    x:Name="adornerCanvas"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Width="{Binding Path=Width}"
-                    Height="{Binding Path=Height}"                    
-                    >
+            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Width="{Binding Path=Width}" Height="{Binding Path=Height}">
 
-                <Rectangle StrokeDashArray="0.5 1.0 0.3" Stroke="Black" StrokeThickness="2" RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
-                           Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                           Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}"
-                           />
+                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
+                               RadiusX="10" RadiusY="10"
+                               Canvas.Top="-5" Canvas.Left="-5"
+                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
+                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
 
                 <!--Close Button-->
-                <Button
-                        x:Name="closeButton"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-50"
-                        Canvas.Top="-25"
-                        Click="closeButton_Click"
-                        Cursor="Hand">
+                <Button x:Name="AdornerClose"
+                        Click="AdornerClose_Click"
+                            Width="40" Height="40"
+                            Canvas.Left="-50" Canvas.Top="-25"
+                            Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid
-                                    x:Name="grid"
-                                    >
-                                <Ellipse
-                                        Stroke="Black"
-                                        StrokeThickness="3"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalAlignment="Stretch"
-                                        Fill="White"
-                                        />
-                                <Path 
-                                        Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" 
-                                        Stroke="Red" 
-                                        StrokeThickness="3" 
-                                        Margin="5" 
-                                        />
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M0,0 L1,1 M0,1 L1,0" 
+                                          Stretch="Fill" Margin="5"
+                                          Stroke="Red" StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
 
                 <!--Drag Thumb-->
-                <Grid
-                        x:Name="dragButton"
-                        Canvas.Right="-50"
-                        Canvas.Top="-25"
-                        Width="40"
-                        Height="40"
-                        Cursor="ScrollAll"
-                        >
-                    <Ellipse
-                            Stroke="Black"
-                            StrokeThickness="3"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            Fill="White"
-                            />
-                    <Grid
-                            >
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 5,20 L 10,15 L 10,25 L 5,20"
-                              Fill="Black"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 35,20 L 30,15 L 30,25 L 35,20"
-                              Fill="Black"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 20,5 L 20,35"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 20,35 L 15,30 L 25,30 L 20,35"
-                              Fill="Black"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="1"
-                              Data="M 20,5 L 15,10 L 25,10 L 20,5"
-                              Fill="Black"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 5,20 L 35,20"
-                              />
-
-                    </Grid>
-                    <Thumb DragDelta="MoveThumb_DragDelta">
-                        <Thumb.Template>
-                            <ControlTemplate>
-                                <Rectangle
-                                        Fill="Transparent"
-                                        />
-                            </ControlTemplate>
-                        </Thumb.Template>
-                    </Thumb>
-                </Grid>
+                <Thumb x:Name="AdornerDrag"
+                           Canvas.Right="-50" Canvas.Top="-25"
+                           Width="40" Height="40"
+                           Cursor="ScrollAll">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragStarted">
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragCompleted">
+                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 5,20 L 10,15 L 10,25 L 5,20" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 35,20 L 30,15 L 30,25 L 35,20" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 20,5 L 20,35" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 20,35 L 15,30 L 25,30 L 20,35" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 20,5 L 15,10 L 25,10 L 20,5" />
+                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                          Data="M 5,20 L 35,20" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
 
                 <!--Resize Thumb-->
-                <Grid
-                        x:Name="resizeButton"
-                        Canvas.Right="-50"
-                        Canvas.Bottom="-50"
-                        Width="40"
-                        Height="40"
-                        Cursor="SizeNWSE">
-                    <Ellipse
-                            Stroke="Black"
-                            StrokeThickness="3"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            Fill="White"
-                            />
-                    <Grid>
+                <Thumb x:Name="AdornerResize"
+                           Canvas.Right="-50" Canvas.Bottom="-50"
+                           Width="40" Height="40"
+                           Cursor="SizeNWSE">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizePageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragStarted">
+                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragCompleted">
+                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                          Data="M 8,23 L 23,23 L 23,8" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                          Data="M 12,27 L 27,27 L 27,12" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
 
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 8,23 L 23,23 L 23,8"
-                              />
-                        <Path
-                              Stroke="Black"
-                              StrokeThickness="2"
-                              Data="M 12,27 L 27,27 L 27,12"
-                              />
-                    </Grid>
-                    <Thumb DragDelta="ResizeThumb_DragDelta">
-                        <Thumb.Template>
-                            <ControlTemplate>
-                                <Rectangle
-                                        Fill="Transparent"
-                                        />
-                            </ControlTemplate>
-                        </Thumb.Template>
-                    </Thumb>
-                </Grid>
             </Canvas>
         </ac:AdornedControl.AdornerContent>
-        <Grid
-            x:Name="StampObject"
-            MouseMove="StampObject_MouseMove">
+
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Thumb>
+            <Thumb DragDelta="StampHandleHitBox_DragDelta"
+                   DragStarted="StampHandleHitBox_DragStarted"
+                   DragCompleted="StampHandleHitBox_DragCompleted"
+                   MouseEnter="StampHandleHitBox_MouseEnter"
+                   MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="PageObjectHitBox" Tag="0"  Grid.Row="0" Width="{Binding Width}" MinWidth="50"  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
-                                  Stroke="Black" StrokeThickness="0" Fill="Black" MouseEnter="PageObjectHitBox_MouseEnter" MouseLeave="PageObjectHitBox_MouseLeave"
-                                  Points="0,0 3,0 2,1 1,1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0">
+                        <Polygon x:Name="StampHandleHitBox" Grid.Row="0" 
+                                 Width="{Binding Width}" MinWidth="50"  
+                                 Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
+                                 HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
+                                 Stroke="Black" StrokeThickness="0" Fill="{Binding StampHandleColor}" 
+                                 Points="0,0 3,0 2,1 1,1" >
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseDown">
-                        <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
-                    </i:EventTrigger>
+                <!--<i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
                         <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
-                </i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>-->
             </Thumb>
-            <Border Grid.Row="1" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" VerticalAlignment="Top" BorderBrush="Black" BorderThickness="2" Margin="0">
-                <vwpo:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" />
+            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2"
+                    Width="{Binding Width, Mode=TwoWay}" 
+                    Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
+                    VerticalAlignment="Top" Margin="0">
+                <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" 
+                                                  Width="{Binding Width, Mode=TwoWay}" 
+                                                  Height="{Binding Height, Mode=TwoWay}" />
             </Border>
         </Grid>
+
     </ac:AdornedControl>
 
 </catel:UserControl>

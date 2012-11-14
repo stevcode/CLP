@@ -1,6 +1,9 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
+﻿using System.Windows;
+using System.Windows.Controls.Primitives;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.
@@ -13,12 +16,12 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPShapeView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()
         {
             return typeof(CLPShapeViewModel);
         }
+
     }
 }

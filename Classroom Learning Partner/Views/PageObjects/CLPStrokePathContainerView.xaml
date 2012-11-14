@@ -1,48 +1,17 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageObjects.CLPStrokePathContainerView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPStrokePathContainerView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:vmpo="clr-namespace:Classroom_Learning_Partner.ViewModels.PageObjects"
-                   xmlns:vwpo="clr-namespace:Classroom_Learning_Partner.Views.PageObjects">
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+
     <UserControl.Resources>
-        <conv:LengthConverter x:Key="LengthConverter"/>
-        <catel:BooleanToHidingVisibilityConverter x:Key="BoolConverter"/>
-        <Style TargetType="{x:Type ContentControl}" x:Key="InternalStyle">
-            <Style.Triggers>
-
-                <!-- CLPImage trigger -->
-                <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <vwpo:CLPImageView DataContext="{Binding InternalPageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-                <!-- CLPShape trigger -->
-                <DataTrigger Binding="{Binding InternalType}" Value="CLPShape">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <vwpo:CLPShapeView DataContext="{Binding InternalPageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-                <!-- Blank trigger -->
-                <DataTrigger Binding="{Binding InternalType}" Value="Blank">
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <Rectangle Fill="Transparent" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-
-            </Style.Triggers>
-        </Style>
-
+        <ResourceDictionary>
+            <conv:LengthConverter x:Key="LengthConverter"/>
+            <catel:BooleanToHidingVisibilityConverter x:Key="BoolConverter"/>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <ac:AdornedControl
@@ -165,12 +134,42 @@
                     </Thumb>
                 </Grid>
 
-                
             </Canvas>
         </ac:AdornedControl.AdornerContent>
         <Grid>
             <Rectangle x:Name="PageObjectHitBox" Tag="0"  Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
-            <ContentControl IsHitTestVisible="True" Style="{StaticResource InternalStyle}"  x:Name="InternalView"  />
+
+            <Control IsHitTestVisible="True" x:Name="InternalView">
+                <Control.Resources>
+
+                    <ControlTemplate x:Key="CLPImageTemplate">
+                        <Views:CLPImageView DataContext="{Binding InternalPageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="BlankTemplate">
+                        <Rectangle Fill="Transparent" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+                    </ControlTemplate>
+
+                </Control.Resources>
+
+                <Control.Style>
+                    <Style TargetType="{x:Type Control}">
+                        <Style.Triggers>
+
+                            <!-- CLPImage trigger -->
+                            <DataTrigger Binding="{Binding InternalType}" Value="CLPImage">
+                                <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Blank trigger -->
+                            <DataTrigger Binding="{Binding InternalType}" Value="Blank">
+                                <Setter Property="Template" Value="{StaticResource BlankTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Control.Style>
+            </Control>
 
             <ItemsControl ClipToBounds="True"
                                   ItemsSource="{Binding Path=StrokePathViewModels}"
@@ -189,4 +188,5 @@
             </ItemsControl>
         </Grid>
     </ac:AdornedControl>
+
 </catel:UserControl>

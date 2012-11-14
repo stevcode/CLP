@@ -1,10 +1,8 @@
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.ViewModels.Displays;
-using Catel.Data;
-using System;
-using Classroom_Learning_Partner.Model;
+﻿using Catel.Data;
+using Catel.MVVM;
+using CLP.Models;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class ProjectorWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
@@ -14,7 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public ProjectorWorkspaceViewModel()
             : base()
         {   
-            LinkedDisplay = new LinkedDisplayViewModel(new CLPPageViewModel(new CLPPage()));
+            
+            LinkedDisplay = new LinkedDisplayViewModel(new CLPPage());
             GridDisplay = new GridDisplayViewModel();
             SelectedDisplay = LinkedDisplay;
         }

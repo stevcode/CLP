@@ -1,38 +1,28 @@
-﻿namespace Classroom_Learning_Partner.Views.PageObjects
-{
-    using Catel.Windows.Controls;
-    using Classroom_Learning_Partner.ViewModels.PageObjects;
-    using Classroom_Learning_Partner.Model;
-    using Classroom_Learning_Partner.Model.CLPPageObjects;
-    using System.Windows;
-    using System.Windows.Input;
-    using System;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-    using System.Windows.Threading;
-    using System.Threading;
-    using System.Windows.Controls;
+using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+using CLP.Models;
+using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Model;
+using System.Threading;
 
+namespace Classroom_Learning_Partner.Views
+{
     /// <summary>
     /// Interaction logic for CLPStampView.xaml.
     /// </summary>
     public partial class CLPStampView : Catel.Windows.Controls.UserControl
     {
-        private const double PAGE_OBJECT_CONTAINER_ADORNER_DELAY = 800; //time to wait until adorner appears
-        private DispatcherTimer timer = null;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPStampView"/> class.
         /// </summary>
         public CLPStampView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(PAGE_OBJECT_CONTAINER_ADORNER_DELAY);
-            timer.Tick += new EventHandler(timer_Tick);
         }
 
         protected override System.Type GetViewModelType()
@@ -40,146 +30,137 @@
             return typeof(CLPStampViewModel);
         }
 
-        private void closeButton_Click(object sender, RoutedEventArgs e)
+        private void StampHandleHitBox_MouseEnter(object sender, MouseEventArgs e)
         {
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(stamp.PageObject);
+            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
         }
 
-        private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void StampHandleHitBox_MouseLeave(object sender, MouseEventArgs e)
         {
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
+            if(ViewModel != null)
+            {
+                (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+                (ViewModel as CLPStampViewModel).timer.Stop();
+            }
+        }
 
-            double x = stamp.Position.X + e.HorizontalChange;
-            double y = stamp.Position.Y + e.VerticalChange;
-            if (x < 0)
+        private void AdornerClose_Click(object sender, RoutedEventArgs e)
+        {
+            //foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
+            //{
+            //    pageVM.IsInkCanvasHitTestVisible = true;
+            //}
+            CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
+        }
+
+        private void StampHandleHitBox_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            (ViewModel as CLPStampViewModel).IsAdornerVisible = false;
+            (ViewModel as CLPStampViewModel).timer.Stop();
+            CLPStamp PageObject = (ViewModel as CLPStampViewModel).PageObject as CLPStamp;
+
+            double x = PageObject.XPosition + e.HorizontalChange;
+            double y = PageObject.YPosition + e.VerticalChange;
+            if(x < 0)
             {
                 x = 0;
             }
-            if (y < 0)
+            if(y < -CLPStamp.HANDLE_HEIGHT)
             {
-                y = 0;
+                y = -CLPStamp.HANDLE_HEIGHT;
             }
-            if (x > 1056 - stamp.Width)
+            if(x > 1056 - PageObject.Width)
             {
-                x = 1056 - stamp.Width;
+                x = 1056 - PageObject.Width;
             }
-            if (y > 816 - stamp.Height)
+            if(y > 816 - PageObject.Height)
             {
-                y = 816 - stamp.Height;
+                y = 816 - PageObject.Height;
             }
 
             Point pt = new Point(x, y);
-            CLPServiceAgent.Instance.ChangePageObjectPosition(stamp.PageObject, pt);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
-        private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void StampHandleHitBox_DragStarted(object sender, DragStartedEventArgs e)
         {
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            double newHeight = stamp.Height + e.VerticalChange;
-            double newWidth = stamp.Width + e.HorizontalChange;
-            if (newHeight < 10)
-            {
-                newHeight = 10;
-            }
-            if (newWidth < 10)
-            {
-                newWidth = 10;
-            }
-            if (newHeight + stamp.Position.Y > 816)
-            {
-                newHeight = stamp.Height;
-            }
-            if (newWidth + stamp.Position.X > 1056)
-            {
-                newWidth = stamp.Width;
-            }
+            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(stamp.PageObject, newHeight, newWidth);
-        }
-
-        private void PageObjectHitBox_MouseEnter(object sender, MouseEventArgs e)
-        {
-            (sender as Polygon).Fill = new SolidColorBrush(Colors.Green);
-            adornerCanvas.Visibility = Visibility.Hidden;
-        }
-
-        private void PageObjectHitBox_MouseLeave(object sender, MouseEventArgs e)
-        {
-            (sender as Polygon).Fill = new SolidColorBrush(Colors.Black);
-        }
-
-        private void StrokeContainerMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            timer.Stop();
-        }
-
-        private void StrokeContainerwMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            timer.Start();
-        }
-
-        void timer_Tick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            adornerCanvas.Visibility = Visibility.Visible;
-        }
-
-        private void StampObject_MouseMove(object sender, MouseEventArgs e)
-        {
-            CLPStampViewModel stamp = (this.DataContext as CLPStampViewModel);
-            if (!stamp.PageObject.IsBackground)
-            {
-                VisualTreeHelper.HitTest(StampObject, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(StampObject)));
-            }
-            else if (stamp.PageObject.IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            {
-                adornerCanvas.Visibility = Visibility.Hidden;
-            }
-        }
-
-        private HitTestFilterBehavior HitFilter(DependencyObject o)
-        {
-            if (o.GetType().BaseType == typeof(Shape))
-            {
-                if ((o as Shape).Name == "PageObjectHitBox")
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                (DispatcherOperationCallback)delegate(object arg)
                 {
-                    return HitTestFilterBehavior.ContinueSkipChildren;
-                }
-                else
-                {
-                    return HitTestFilterBehavior.Continue;
-                }
-            }
-            else
-            {
-                return HitTestFilterBehavior.Continue;
-            }
+                    CopyStamp();
+
+                    return null;
+                }, null);
+
+            (ViewModel as CLPStampViewModel).StrokePathContainer.PageObjectByteStrokes = (ViewModel as CLPStampViewModel).PageObject.PageObjectByteStrokes;
+            (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = true;
         }
 
-        private HitTestResultBehavior HitResult(HitTestResult result)
+        private void StampHandleHitBox_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (result.VisualHit.GetType().BaseType == typeof(Shape))
+            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+            (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = false;
+            
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+
+                    CLPStrokePathContainer droppedContainer = (ViewModel as CLPStampViewModel).StrokePathContainer.Duplicate() as CLPStrokePathContainer;
+                    droppedContainer.XPosition = (ViewModel as CLPStampViewModel).PageObject.XPosition;
+                    droppedContainer.YPosition = (ViewModel as CLPStampViewModel).PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
+                    droppedContainer.ParentID = (ViewModel as CLPStampViewModel).PageObject.UniqueID;
+                    droppedContainer.IsStamped = true;
+
+                    double deltaX = Math.Abs((ViewModel as CLPStampViewModel).PageObject.XPosition - originalX);
+                    double deltaY = Math.Abs((ViewModel as CLPStampViewModel).PageObject.YPosition - originalY);
+
+                    if(deltaX > (ViewModel as CLPStampViewModel).PageObject.Width + 5 || deltaY > (ViewModel as CLPStampViewModel).PageObject.Height)
+                    {
+                        if((ViewModel as CLPStampViewModel).StrokePathContainer.InternalPageObject != null || (ViewModel as CLPStampViewModel).PageObjectStrokes.Count > 0)
+                        {
+                            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID((ViewModel as CLPStampViewModel).PageObject.ParentPageID);
+                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                        }
+                    }
+
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
+
+                    return null;
+                }, null);
+        }
+
+        double originalX;
+        double originalY;
+        private void CopyStamp()
+        {
+            try
             {
-                if ((result.VisualHit as Shape).DataContext is CLPStampViewModel)
-                {
-                    if (!timer.IsEnabled)
-                        timer.Start();
-                    return HitTestResultBehavior.Stop;
-                }
-                else if ((result.VisualHit as Shape).DataContext is CLPStrokePathContainerViewModel)
-                {
-                    timer.Stop();
-                    return HitTestResultBehavior.Stop;
-                }
-                else
-                {
-                    timer.Stop();
-                    return HitTestResultBehavior.Continue;
-                }
+                CLPStamp PageObject = (ViewModel as CLPStampViewModel).PageObject as CLPStamp;
+                CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
+                leftBehindStamp.UniqueID = PageObject.UniqueID;
+
+                originalX = leftBehindStamp.Position.X;
+                originalY = leftBehindStamp.Position.Y;
+
+                //int originalIndex = PageObject.ParentPage.PageObjects.  .IndexOf(PageObject);
+
+                CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                parentPage.PageObjects.Add(leftBehindStamp);
+
+                //if (!page.PageHistory.IgnoreHistory)
+                //{
+                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
+                //    page.PageHistory.HistoryItems.Add(item);
+                //}
+
             }
-            return HitTestResultBehavior.Continue;
+            catch(System.Exception ex)
+            {
+                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
+            }
         }
     }
 }

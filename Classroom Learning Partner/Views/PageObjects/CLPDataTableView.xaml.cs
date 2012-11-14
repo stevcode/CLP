@@ -1,10 +1,8 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Shapes;
-using System;
-using System.Windows;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.
@@ -17,21 +15,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPDataTableView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
-
-        }
-
-        private void SetupGrid(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            //Console.WriteLine("DIMENSIONS: " + this.Grid.Columns + " , " + this.Grid.Rows + " , " + this.Grid.Width);
-            for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
-            {
-                //Console.WriteLine("DOING THIS");
-                Rectangle rect = new Rectangle();
-                rect.Stroke = System.Windows.Media.Brushes.Black;
-                rect.StrokeThickness = 0.5;
-                this.Grid.Children.Add(rect);
-            }
         }
 
         public void ShowContentsCommand(object sender, RoutedEventArgs e)
@@ -43,6 +26,19 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         protected override System.Type GetViewModelType()
         {
             return typeof(CLPDataTableViewModel);
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Console.WriteLine("DIMENSIONS: " + this.Grid.Columns + " , " + this.Grid.Rows + " , " + this.Grid.Width);
+            for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
+            {
+                //Console.WriteLine("DOING THIS");
+                Rectangle rect = new Rectangle();
+                rect.Stroke = System.Windows.Media.Brushes.Black;
+                rect.StrokeThickness = 0.5;
+                this.Grid.Children.Add(rect);
+            }
         }
     }
 }

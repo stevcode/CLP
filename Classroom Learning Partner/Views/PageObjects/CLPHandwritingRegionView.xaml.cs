@@ -1,11 +1,10 @@
-﻿namespace Classroom_Learning_Partner.Views.PageObjects
-{
-    using Catel.Windows.Controls;
-    using System.Windows;
-    using System;
-    using Classroom_Learning_Partner.Views.Modal_Windows;
-    using Classroom_Learning_Partner.ViewModels.PageObjects;
+﻿using System.Windows;
+using Catel.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
+namespace Classroom_Learning_Partner.Views
+{
     /// <summary>
     /// Interaction logic for CLPHandwritingRegionView.xaml.
     /// </summary>
@@ -17,7 +16,6 @@
         public CLPHandwritingRegionView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

@@ -1,13 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Windows.Data;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
+using Classroom_Learning_Partner.Model;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Resources
 {
+    public class ProjectedDisplayBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if ((bool)value)
+            {
+                return new SolidColorBrush(Colors.PaleGreen);
+            }
+            else
+            {
+                return new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,
@@ -67,6 +94,27 @@ namespace Classroom_Learning_Partner.Resources
                 return true;
             }
             return false;
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return false;
+        }
+    }
+
+    public class LastItemInCollectionConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            ReadOnlyCollection<object> items = value as ReadOnlyCollection<object>;
+            CLPPage page = items.Last() as CLPPage;
+            return page;
         }
 
         public object ConvertBack(object value,

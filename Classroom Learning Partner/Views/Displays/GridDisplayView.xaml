@@ -1,60 +1,50 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.Displays.GridDisplayView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.GridDisplayView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="301" d:DesignWidth="302"
              xmlns:catel="http://catel.codeplex.com"
-             xmlns:vmd="clr-namespace:Classroom_Learning_Partner.ViewModels.Displays"
-             xmlns:vw="clr-namespace:Classroom_Learning_Partner.Views">
-    <Grid>
-        <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Path=DisplayedPages}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <vw:CLPPageView DataContext="{Binding}" />
-                        <Button
+             xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+    
+    <ItemsControl x:Name="itemsControl" Background="Transparent" ItemsSource="{Binding DisplayedPages}">
+            
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid Rows="{Binding UGridRows}" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+            
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="{Binding ElementName=CanvasBorder,Path=Height}" Width="{Binding ElementName=CanvasBorder,Path=Width}">
+                    <Views:CLPPageView HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="5" x:Name="page" DataContext="{Binding}" />
+                    <Button Width="30" Height="30" Cursor="Hand"
                             Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
-                            x:Name="closeButton"
-                            Width="40"
-                            Height="40"
-                            Cursor="Hand"
-                            Command="{Binding ElementName=itemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
-                            CommandParameter="{Binding}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top">
-                            <Button.Template>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Grid
-                                        x:Name="grid"
-                                        >
-                                        <Ellipse
-                                            Stroke="Black"
-                                            StrokeThickness="3"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Fill="White"
-                                            />
-                                        <Path 
-                                            Data="M0,0 L1,1 M0,1 L1,0" 
-                                            Stretch="Fill" 
-                                            Stroke="Red" 
-                                            StrokeThickness="3" 
-                                            Margin="5" 
-                                            />
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Command="{Binding ElementName=itemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}" CommandParameter="{Binding}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Grid>
+                                    <Ellipse
+                                        Stroke="Black"
+                                        StrokeThickness="3"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        Fill="White"
+                                        />
+                                    <Path 
+                                        Data="M0,0 L1,1 M0,1 L1,0" 
+                                        Stretch="Fill" 
+                                        Stroke="Red" 
+                                        StrokeThickness="3" 
+                                        Margin="5" 
+                                        />
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+            
+    </ItemsControl>
+    
 </catel:UserControl>

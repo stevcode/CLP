@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
-using System.ServiceModel.PeerResolvers;
 using System.Xml;
 
 namespace Classroom_Learning_Partner.Model
@@ -26,7 +22,7 @@ namespace Classroom_Learning_Partner.Model
         {
             MachineName = Environment.MachineName;
             UserName = MachineName;
-            App.MainWindowViewModel.SetTitleBarText("Connecting...");
+            App.MainWindowViewModel.OnlineStatus = "CONNECTING...";
         }
 
         public void Run()
@@ -86,10 +82,7 @@ namespace Classroom_Learning_Partner.Model
             OnlineStatusHandler.Offline += new EventHandler(OnlineStatusHandler_Offline);
             if (OnlineStatusHandler.IsOnline)
             {
-                //Writing line to log is down below
-                //This caused a race condition where two threads tried to write at the same time
-                //Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
-                App.MainWindowViewModel.SetTitleBarText("");
+                SetConnectionStatus();
                 if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
                 {
                     Channel.Connect(MachineName);  
@@ -100,17 +93,34 @@ namespace Classroom_Learning_Partner.Model
         void OnlineStatusHandler_Offline(object sender, EventArgs e)
         {
             Logger.Instance.WriteToLog("Disconnected from Mesh: " + DateTime.Now.ToLongTimeString());
-            App.MainWindowViewModel.SetTitleBarText("");
+            SetConnectionStatus();
         }
 
         void OnlineStatusHandler_Online(object sender, EventArgs e)
         {
             Logger.Instance.WriteToLog("Connected to Mesh: " + DateTime.Now.ToLongTimeString());
-            App.MainWindowViewModel.SetTitleBarText("");
+            SetConnectionStatus();
             if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
             {
                 Channel.Connect(MachineName);
             }
+        }
+
+        private void SetConnectionStatus()
+        {
+            string isOnline = "DISCONNECTED";
+            if(App.Peer != null)
+            {
+                if(App.Peer.OnlineStatusHandler != null)
+                {
+                    if(App.Peer.OnlineStatusHandler.IsOnline)
+                    {
+                        isOnline = "CONNECTED";
+                    }
+                }
+            }
+
+            App.MainWindowViewModel.OnlineStatus = isOnline;
         }
 
         public void Stop()

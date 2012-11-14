@@ -1,6 +1,6 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
+﻿using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for CLPImageView.xaml
@@ -10,7 +10,6 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         public CLPImageView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

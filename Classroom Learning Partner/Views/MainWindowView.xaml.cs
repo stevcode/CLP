@@ -1,6 +1,5 @@
 ﻿using System.Windows;
-using Microsoft.Windows.Controls.Ribbon;
-using Classroom_Learning_Partner.ViewModels;
+using System.Windows.Controls.Ribbon;
 using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
@@ -29,11 +28,6 @@ namespace Classroom_Learning_Partner.Views
             {
                 CLPServiceAgent.Instance.Exit();
             }
-        }
-
-        private void RibbonWindow_Closed(object sender, System.EventArgs e)
-        {
-            (DataContext as MainWindowViewModel).SaveAndCloseViewModel();
         }
     }
 }

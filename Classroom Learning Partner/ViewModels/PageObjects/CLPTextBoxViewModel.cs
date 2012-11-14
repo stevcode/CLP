@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Windows.Media;
-using Catel.MVVM;
+﻿using System.Windows;
 using Catel.Data;
+using Catel.MVVM;
+using CLP.Models;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPTextBoxViewModel : CLPPageObjectBaseViewModel
+    public class CLPTextBoxViewModel : ACLPPageObjectBaseViewModel
     {
         public CLPTextBoxViewModel(CLPTextBox textBox)
             : base()
@@ -29,9 +25,6 @@ namespace Classroom_Learning_Partner.ViewModels.PageObjects
             set { SetValue(TextProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Text property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
     }
 }

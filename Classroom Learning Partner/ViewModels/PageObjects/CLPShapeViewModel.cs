@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+﻿using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
+using CLP.Models;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPShapeViewModel : CLPPageObjectBaseViewModel
+    public class CLPShapeViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.

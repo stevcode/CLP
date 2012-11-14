@@ -1,51 +1,26 @@
-﻿using Classroom_Learning_Partner.Model;
-using Catel.MVVM;
+﻿using System;
 using Catel.Data;
-using System;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
+using Catel.MVVM;
+using CLP.Models;
 
-namespace Classroom_Learning_Partner.ViewModels.Displays
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel(CLPPageViewModel page)
+        public LinkedDisplayViewModel(CLPPage page)
             : base()
         {
             DisplayedPage = page;
-            DisplayID = Guid.NewGuid().ToString();
-            IsOnProjector = false;
         }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string DisplayID
-        {
-            get { return GetValue<string>(DisplayIDProperty); }
-            set { SetValue(DisplayIDProperty, value); }
-        }
+        public override string Title { get { return "LinkDisplayVM"; } }
 
-        /// <summary>
-        /// Register the DisplayID property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
+        #region Bindings
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public CLPPageViewModel DisplayedPage
-        {
-            get { return GetValue<CLPPageViewModel>(DisplayedPageProperty); }
-            set { SetValue(DisplayedPageProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the DisplayedPage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPageViewModel));
+        #region Interface
 
         public string DisplayName
         {
@@ -53,7 +28,18 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         }
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Unique ID of Display. Not really applicable for MirrorDisplay as a notebook should only need 1 MirrorDisplay.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
+
+        /// <summary>
+        /// If Display is currently being projected.
         /// </summary>
         public bool IsOnProjector
         {
@@ -61,34 +47,146 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             set { SetValue(IsOnProjectorProperty, value); }
         }
 
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
+
+        #endregion //Interface
+
         /// <summary>
-        /// Register the IsOnProjector property so it is known in the class.
+        /// Gets or sets the property value.
         /// </summary>
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+        public CLPPage DisplayedPage
+        {
+            get { return GetValue<CLPPage>(DisplayedPageProperty); }
+            set 
+            { 
+                SetValue(DisplayedPageProperty, value);
+                ResizePage();
+            }
+        }
 
-        public override string Title { get { return "LinkDisplayVM"; } }
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
 
+        #region Page Resizing
 
-        public void AddPageToDisplay(CLPPageViewModel page)
+        /// <summary>
+        /// Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire MirrorDisplay.
+        /// DataBinding done from Dependency Property in the View.
+        /// </summary>
+        public Tuple<double, double> DisplayWidthHeight
+        {
+            get { return GetValue<Tuple<double, double>>(DisplayWidthHeightProperty); }
+            set 
+            { 
+                SetValue(DisplayWidthHeightProperty, value);
+                ResizePage();
+            }
+        }
+
+        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
+
+        /// <summary>
+        /// Width of the visible border around a page.
+        /// Scales based on zoom leve.
+        /// </summary>
+        public double BorderWidth
+        {
+            get { return GetValue<double>(BorderWidthProperty); }
+            set { SetValue(BorderWidthProperty, value); }
+        }
+
+        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof(double), null);
+
+        /// <summary>
+        /// Height of the visible border around a page.
+        /// Scales based on zoom leve.
+        /// </summary>
+        public double BorderHeight
+        {
+            get { return GetValue<double>(BorderHeightProperty); }
+            set { SetValue(BorderHeightProperty, value); }
+        }
+
+        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double), null);
+
+        /// <summary>
+        /// Physical Width of Page
+        /// </summary>
+        public double DimensionWidth
+        {
+            get { return GetValue<double>(DimensionWidthProperty); }
+            set { SetValue(DimensionWidthProperty, value); }
+        }
+
+        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double), null);
+
+        /// <summary>
+        /// Physical Height of Page
+        /// </summary>
+        public double DimensionHeight
+        {
+            get { return GetValue<double>(DimensionHeightProperty); }
+            set { SetValue(DimensionHeightProperty, value); }
+        }
+
+        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double), null);
+
+        public bool ZoomToWholePage = true;
+
+        #endregion //Page Resizing
+
+        #endregion //Bindings
+
+        #region Methods
+
+        public void ResizePage()
+        {
+            double pageAspectRatio = DisplayedPage.PageAspectRatio;
+            double pageHeight = DisplayedPage.PageHeight;
+            double pageWidth = DisplayedPage.PageWidth;
+            double scrolledAspectRatio = pageWidth / pageHeight;
+
+            double borderWidth = DisplayWidthHeight.Item1 - 20;
+            double borderHeight = borderWidth / pageAspectRatio;
+
+            if(ZoomToWholePage)
+            {
+                if(borderHeight > DisplayWidthHeight.Item2 - 20)
+                {
+                    borderHeight = DisplayWidthHeight.Item2 - 20;
+                    borderWidth = borderHeight * pageAspectRatio;
+                }
+            }
+
+            BorderHeight = borderHeight;
+            BorderWidth = borderWidth;
+
+            DimensionWidth = BorderWidth - 2;
+            DimensionHeight = DimensionWidth / scrolledAspectRatio;
+        }
+
+        //From Interface IDisplayViewModel
+        public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
             if (IsOnProjector && App.Peer.Channel != null)
             {
-                if (page.IsSubmission)
+                if(DisplayedPage.IsSubmission)
                 {
-                    App.Peer.Channel.AddPageToDisplay(page.Page.SubmissionID);
+                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.SubmissionID);
                 }
                 else
                 {
-                    App.Peer.Channel.AddPageToDisplay(page.Page.UniqueID);
+                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.UniqueID);
                 }
             }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage.Page, pageObject);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
+
+        #endregion //Methods
 
     }
 }

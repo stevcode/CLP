@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Ink;
-using Microsoft.Ink;
 using System.Windows;
+using System.Windows.Ink;
 using System.Windows.Input;
+using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.Resources
 {
@@ -144,6 +142,5 @@ namespace Classroom_Learning_Partner.Resources
             }
             return null;
         }
-
     }
 }

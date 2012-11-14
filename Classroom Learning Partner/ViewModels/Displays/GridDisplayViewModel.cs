@@ -1,11 +1,10 @@
-﻿using Catel.MVVM;
+﻿using System;
 using System.Collections.ObjectModel;
-using Classroom_Learning_Partner.Model;
 using Catel.Data;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
-using System;
+using Catel.MVVM;
+using CLP.Models;
 
-namespace Classroom_Learning_Partner.ViewModels.Displays
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
@@ -15,67 +14,17 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         public GridDisplayViewModel()
             : base()
         {
-            DisplayedPages = new ObservableCollection<CLPPageViewModel>();
-            DisplayID = Guid.NewGuid().ToString();
-            IsOnProjector = false;
+            DisplayedPages = new ObservableCollection<CLPPage>();
+            DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
 
-            RemovePageFromGridDisplayCommand = new Command<CLPPageViewModel>(OnRemovePageFromGridDisplayCommandExecute);
+            RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string DisplayID
-        {
-            get { return GetValue<string>(DisplayIDProperty); }
-            set { SetValue(DisplayIDProperty, value); }
-        }
+        #region Bindings
 
-        /// <summary>
-        /// Register the DisplayID property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<CLPPageViewModel> DisplayedPages
-        {
-            get { return GetValue<ObservableCollection<CLPPageViewModel>>(DisplayedPagesProperty); }
-            set { SetValue(DisplayedPagesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the DisplayedPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPageViewModel>));
-
-        /// <summary>
-        /// Gets the RemovePageFromGridDisplayCommand command.
-        /// </summary>
-        public Command<CLPPageViewModel> RemovePageFromGridDisplayCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
-        /// </summary>
-        private void OnRemovePageFromGridDisplayCommandExecute(CLPPageViewModel page)
-        {
-            DisplayedPages.Remove(page);
-
-            //if (App.CurrentUserMode == App.UserMode.Instructor)
-            //{
-            //    if (App.Peer.Channel != null)
-            //    {
-            //        if (this.IsOnProjector)
-            //        {
-            //            string pageString = ObjectSerializer.ToString(pageViewModel.Page);
-            //            App.Peer.Channel.RemovePageFromGridDisplay(pageString);
-            //        }
-            //    }
-            //}
-        }
+        #region Interface
 
         public string DisplayName
         {
@@ -83,7 +32,18 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
         }
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Unique ID of Display.
+        /// </summary>
+        public string DisplayID
+        {
+            get { return GetValue<string>(DisplayIDProperty); }
+            set { SetValue(DisplayIDProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
+
+        /// <summary>
+        /// If Display is currently being projected.
         /// </summary>
         public bool IsOnProjector
         {
@@ -91,15 +51,72 @@ namespace Classroom_Learning_Partner.ViewModels.Displays
             set { SetValue(IsOnProjectorProperty, value); }
         }
 
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
+
+        #endregion //Interface
+
         /// <summary>
-        /// Register the IsOnProjector property so it is known in the class.
+        /// Number of Rows in the UniformGrid
         /// </summary>
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool));
+        public int UGridRows
+        {
+            get { return GetValue<int>(UGridRowsProperty); }
+            set { SetValue(UGridRowsProperty, value); }
+        }
 
+        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
 
-        public void AddPageToDisplay(CLPPageViewModel page)
+        /// <summary>
+        /// Currently Displayed pages in the GridDisplay.
+        /// </summary>
+        public ObservableCollection<CLPPage> DisplayedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            set { SetValue(DisplayedPagesProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>));
+
+        #endregion //Bindings
+
+        #region Methods
+
+        //From Interface IDisplayViewModel
+        public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPages.Add(page);
         }
+
+        void DisplayedPages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (DisplayedPages.Count < 3)
+            {
+                UGridRows = 1;
+            }
+            else
+            {
+                UGridRows = 0;
+            }
+        }
+
+        #endregion //Methods
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the RemovePageFromGridDisplayCommand command.
+        /// </summary>
+        public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
+        /// </summary>
+        public void OnRemovePageFromGridDisplayCommandExecute(CLPPage page)
+        {
+            DisplayedPages.Remove(page);
+        }
+
+        #endregion //Commands
+
     }
 }

@@ -1,29 +1,31 @@
-﻿using Catel.MVVM;
-using Classroom_Learning_Partner.ViewModels.Displays;
-using Catel.Data;
-using System.Windows.Media;
-using System;
-using Classroom_Learning_Partner.Model;
-using System.Windows;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Windows.Input;
-using Classroom_Learning_Partner.Views;
-using System.Windows.Data;
 using System.ComponentModel;
 using System.IO;
-using Classroom_Learning_Partner.Views.Displays;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using Catel.Data;
+using Catel.MVVM;
+using CLP.Models;
+using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Model;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     /// <summary>
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
-    [InterestedIn(typeof(IDisplayViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
+        public MainWindowViewModel MainWindow
+        {
+            get { return App.MainWindowViewModel; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
@@ -32,27 +34,17 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
 
             WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
-            FilteredSubmissions = new CollectionViewSource();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
-
-            Notebook.GeneratePageIndexes();
-
-            //InitializeLinkedDisplay();
-        }
-
-        public void InitializeLinkedDisplay()
-        {
-            Console.WriteLine("LinkedDisplay Initialization Started");
-
-            LinkedDisplay = new LinkedDisplayViewModel(CurrentPage);
-
+            LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
+            CurrentPage = Notebook.Pages[0];
 
-            if (App.CurrentUserMode == App.UserMode.Instructor)
+            if(App.CurrentUserMode == App.UserMode.Instructor)
             {
                 SelectedDisplay.IsOnProjector = true;
                 WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
@@ -62,13 +54,19 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                 SelectedDisplay.IsOnProjector = false;
             }
 
-            Console.WriteLine("LinkedDisplay Initialization Ended");
+            Notebook.GeneratePageIndexes();
+
+            FilteredSubmissions = new CollectionViewSource();
+            FilterTypes = new ObservableCollection<string>();
+            FilterTypes.Add("Student Name - Ascending");
+            FilterTypes.Add("Student Name - Descending");
+            FilterTypes.Add("Time In - Ascending");
+            FilterTypes.Add("Time In - Descending");
         }
 
-        protected override void Close()
+        public string WorkspaceName
         {
-            Console.WriteLine(Title + " closed");
-            base.Close();
+            get { return "NotebookWorkspace"; }
         }
 
         public override string Title { get { return "NotebookWorkspaceVM"; } }
@@ -76,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         #region Model
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Model
         /// </summary>
         [Model(SupportIEditableObject = false)]
         public CLPNotebook Notebook
@@ -85,13 +83,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set { SetValue(NotebookProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Notebook property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Notebook Model Property
         /// </summary>
         [ViewModelToModel("Notebook","Pages")]
         public ObservableCollection<CLPPage> NotebookPages
@@ -100,15 +95,16 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set { SetValue(NotebookPagesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NotebookPages property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
 
+        #region Bindings
+
+        #region Displays
+
         /// <summary>
-        /// Gets or sets the property value.
+        /// Collection of all available GridDisplays.
         /// </summary>
         public ObservableCollection<GridDisplayViewModel> GridDisplays
         {
@@ -116,13 +112,10 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set { SetValue(GridDisplaysProperty, value); }
         }
 
-        /// <summary>
-        /// Register the GridDisplays property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData GridDisplaysProperty = RegisterProperty("GridDisplays", typeof(ObservableCollection<GridDisplayViewModel>));
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The MirrorDisplay of the Notebook.
         /// </summary>
         public LinkedDisplayViewModel LinkedDisplay
         {
@@ -136,21 +129,32 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The Currently Selected Display.
         /// </summary>
         public IDisplayViewModel SelectedDisplay
         {
             get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
-            set { SetValue(SelectedDisplayProperty, value); }
+            set
+            {
+                SetValue(SelectedDisplayProperty, value);
+                if (SelectedDisplay != null)
+                {
+                    if (SelectedDisplay.IsOnProjector)
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+                    }
+                    else
+                    {
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    }
+                }
+            }
         }
 
-        /// <summary>
-        /// Register the SelectedDisplay property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Color of Dispaly Background.
         /// </summary>
         public Brush WorkspaceBackgroundColor
         {
@@ -158,11 +162,27 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set { SetValue(WorkspaceBackgroundColorProperty, value); }
         }
 
-        /// <summary>
-        /// Register the WorkspaceBackgroundColor property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
+        #endregion //Displays
+
+        #region Submissions SideBar
+
+        /// <summary>
+        /// All the submissions for the desired page.
+        /// </summary>
+        public ObservableCollection<CLPPage> SubmissionPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
+            set 
+            { 
+                SetValue(SubmissionPagesProperty, value);
+                SelectedFilterType = "Student Name - Ascending"; 
+                FilterSubmissions("Student Name - Ascending");
+            } 
+        }
+
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -173,81 +193,54 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             set { SetValue(FilteredSubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the FilteredSubmissions property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource));
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Types of Filters for sorting SubmissionPages
+        /// STEVE - Change to PageTags. All PageTags should be sortable/filterable.
         /// </summary>
-        public ObservableCollection<CLPPage> SubmissionPages
+        public ObservableCollection<string> FilterTypes
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
-            set { SetValue(SubmissionPagesProperty, value);
-            FilteredSubmissions = new CollectionViewSource();
-            FilteredSubmissions.Source = SubmissionPages;
-            FilteredSubmissions.SortDescriptions.Add(new SortDescription("SubmitterName", ListSortDirection.Ascending));
+            get { return GetValue<ObservableCollection<string>>(FilterTypesProperty); }
+            set { SetValue(FilterTypesProperty, value); }
+        }
+
+        public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>), null);
+
+        /// <summary>
+        /// The Current SubmissionPages Filter.
+        /// </summary>
+        public string SelectedFilterType
+        {
+            get { return GetValue<string>(SelectedFilterTypeProperty); }
+            set
+            {
+                SetValue(SelectedFilterTypeProperty, value);
+                FilterSubmissions(SelectedFilterType);
             }
         }
 
-        /// <summary>
-        /// Register the SubmissionPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string), null);
+
+        #endregion Submissions SideBar
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPageViewModel CurrentPage
+        public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPageViewModel>(CurrentPageProperty); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
 
             set
             {
-                if (CurrentPage != null)
-                {
-                    try
-                    {
-                        CurrentPage.stopAudioPlayback();
-                        CurrentPage.stopAudio();
-                        CurrentPage.StopPlayback();
-                        App.MainWindowViewModel.isRecordingAudio = false;
-                        
-                       }
-                    catch (Exception e)
-                    { }
-                }
                 SetValue(CurrentPageProperty, value);
-                if (LinkedDisplay == null)
-                {
-                    InitializeLinkedDisplay();
-                }
-                
                 SelectedDisplay.AddPageToDisplay(value);
-
-                String pageID = CurrentPage.Page.UniqueID;
-                String notebookID = CurrentPage.Page.ParentNotebookID.ToString();
-                App.MainWindowViewModel.PageHasAudioFile = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Audio_Files\" + notebookID + @" - " + pageID + ".wav");
-                App.MainWindowViewModel.AudioPlayImage = new Uri("..\\Images\\play2.png", UriKind.Relative);
-                App.MainWindowViewModel.AudioRecordImage = new Uri("..\\Images\\mic_start.png", UriKind.Relative);
-
-                try
-                {
-                    App.MainWindowViewModel.record_timer.Stop();
-                    App.MainWindowViewModel.record_timer.Dispose();
-                }
-                catch (Exception e)
-                { }
-
-                Console.WriteLine("CurrentPage Set");
             }
         }
 
-        /// <summary>
-        /// Register the CurrentPage property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPageViewModel));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #endregion //Bindings
 
         /// <summary>
         /// Gets the SetCurrentPageCommand command.
@@ -259,11 +252,8 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
-            CurrentPage = ((e.Source as CLPPagePreviewView).DataContext as CLPPageViewModel);
+            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
         }
-
-
-        
 
         /// <summary>
         /// Gets the SetCurrentPageCommand command.
@@ -278,52 +268,89 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
             SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
         }
 
+        /// <summary>
+        /// Gets the MakePageLongerCommand command.
+        /// </summary>
+        public Command MakePageLongerCommand { get; private set; }
 
-        public string WorkspaceName
+        /// <summary>
+        /// Method to invoke when the MakePageLongerCommand command is executed.
+        /// </summary>
+        private void OnMakePageLongerCommandExecute()
         {
-            get { return "NotebookWorkspace"; }
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.PageHeight += 200;
+                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+
+                double yDifference = page.PageHeight - CLPPage.LANDSCAPE_HEIGHT;
+
+                double times = yDifference / 200;
+
+                Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
+            }
         }
+
+        #region Methods
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
             if (propertyName == "IsAuthoring")
-            {
-                if (LinkedDisplay == null)
-                {
-                    InitializeLinkedDisplay();
-                }
+            {                
                 SelectedDisplay = LinkedDisplay;
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {
                     SelectedDisplay.IsOnProjector = false;
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Visible;
+                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                 }
                 else
                 {
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-                    App.MainWindowViewModel.AuthoringTabVisibility = Visibility.Collapsed;
+                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
-            }
-
-            if (propertyName == "IsOnProjector")
-            {
-                if ((viewModel as IDisplayViewModel).DisplayID == SelectedDisplay.DisplayID)
-                {
-                    if (SelectedDisplay.IsOnProjector)
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-                    }
-                    else
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
-                    }
-                }   
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
+
+        public void FilterSubmissions(string Sort)
+        {
+            FilteredSubmissions = new CollectionViewSource();
+            FilteredSubmissions.Source = SubmissionPages;
+            FilteredSubmissions.SortDescriptions.Clear();
+
+            PropertyGroupDescription gd = new PropertyGroupDescription();
+            gd.PropertyName = "SubmitterName";
+
+            if(Sort == "Student Name - Ascending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdAA);
+            }
+            else if(Sort == "Student Name - Descending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdAD);
+            }
+            else if(Sort == "Time In - Ascending")
+            {
+                SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdTA);
+            }
+            else if(Sort == "Time In - Descending")
+            {
+                SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdTD);
+            }
+        }
+
+        #endregion //Methods
+
     }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

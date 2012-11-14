@@ -1,6 +1,7 @@
-﻿using Classroom_Learning_Partner.ViewModels.Displays;
+﻿using System.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.Displays
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for GridDisplayView.xaml
@@ -10,7 +11,6 @@ namespace Classroom_Learning_Partner.Views.Displays
         public GridDisplayView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
 
         protected override System.Type GetViewModelType()

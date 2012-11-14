@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
-namespace Classroom_Learning_Partner.ViewModels.PageObjects
+namespace Classroom_Learning_Partner.ViewModels
 {
-    public class StrokePathViewModel : CLPPageObjectBaseViewModel
+    public class StrokePathViewModel : ACLPPageObjectBaseViewModel
     {
         #region Constructor
 

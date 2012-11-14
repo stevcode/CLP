@@ -1,18 +1,13 @@
-using System.Windows;
 using System;
-using Classroom_Learning_Partner.ViewModels;
-using Classroom_Learning_Partner.Model.CLPPageObjects;
-using System.Collections.ObjectModel;
-using Classroom_Learning_Partner.Model;
-using System.IO;
-using Classroom_Learning_Partner.ViewModels.Workspaces;
-using MongoDB.Driver;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
+using CLP.Models;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using Catel.Logging;
-using ProtoBuf;
+using MongoDB.Driver;
 using ProtoBuf.Meta;
-
+using Catel.Logging;
 
 namespace Classroom_Learning_Partner
 {
@@ -37,17 +32,21 @@ namespace Classroom_Learning_Partner
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 
-            CurrentUserMode = UserMode.Student;
+            //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
+            Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
+
+            CurrentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
-            Logger.Instance.InitializeLog();
-            CLPServiceAgent.Instance.Initialize();
+            Classroom_Learning_Partner.Model.Logger.Instance.InitializeLog();
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
             
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
             {
@@ -63,15 +62,44 @@ namespace Classroom_Learning_Partner
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
            
             JoinMeshNetwork();
-            ProtoBufferSetup();
+            //ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
         #region Methods
 
+        void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+#if DEBUG   // In debug mode do not custom-handle the exception, let Visual Studio handle it
+            e.Handled = false;
+#else
+            ShowUnhandeledException(e);
+#endif
+        }
+
+        void ShowUnhandeledException(DispatcherUnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+
+            string errorMessage = string.Format("An application error occurred.\nPlease check whether your data is correct and repeat the action. If this error occurs again there seems to be a more serious malfunction in the application, and you better close it.\n\nError:{0}\n\nDo you want to continue?\n(if you click Yes you will continue with your work, if you click No the application will close)",
+
+            e.Exception.Message + (e.Exception.InnerException != null ? "\n" +
+            e.Exception.InnerException.Message : null));
+
+            Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
+
+            if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
+            {
+                if (MessageBox.Show("WARNING: The application will close. Any changes will not be saved!\nDo you really want to close it?", "Close the application!", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    Application.Current.Shutdown();
+                }
+            }
+        }
+
         public void JoinMeshNetwork()
         {
-            _peer = new PeerNode();
+            _peer = new Classroom_Learning_Partner.Model.PeerNode();
             _peerThread = new Thread(_peer.Run) { IsBackground = true };
             PeerThread.Start();
         }
@@ -84,7 +112,7 @@ namespace Classroom_Learning_Partner
 
         protected void ConnectToDB()
         {
-            string ConnectionString = "mongodb://jessmilmbp.local/?connect=direct;slaveok=true";
+            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
             _databaseServer = MongoServer.Create(ConnectionString);
             Console.WriteLine("Connected to DB");
         }
@@ -95,7 +123,7 @@ namespace Classroom_Learning_Partner
             //var model = TypeModel.Create();
             model[typeof(CLPPage)]
                 .Add(1, "ParentNotebookID")
-                .Add(2, "Strokes")
+                //.Add(2, "Strokes")
                 .Add(3, "PageObjects")
                 .Add(4, "PageHistory")
                 .Add(5, "IsSubmission")
@@ -105,8 +133,8 @@ namespace Classroom_Learning_Partner
                 .Add(9, "CreationDate")
                 .Add(10, "SubmissionID")
                 .Add(11, "SubmitterName")
-                .Add(12, "SubmissionTime")
-                .Add(17, "PageObjectsSer");
+                .Add(12, "SubmissionTime");
+                //.Add(17, "PageObjectsSer");
 
 
             model[typeof(CLPPage)][17].AsReference = true;
@@ -115,7 +143,7 @@ namespace Classroom_Learning_Partner
 
             
             //Page Object hierarchy 
-            model[typeof(ICLPPageObject)]
+            model[typeof(CLP.Models.ICLPPageObject)]
                 .Add(1, "PageID")
                 .Add(2, "ParentID")
                 .Add(3, "CreationDate")
@@ -126,11 +154,11 @@ namespace Classroom_Learning_Partner
                 .Add(8, "Width")
                 .Add(9, "XPosition")
                 .Add(10, "YPosition")
-                .AddSubType(15, typeof(CLPPageObjectBase))
-                .AddSubType(16, typeof(CLPStamp));
-            model[typeof(CLPPageObjectBase)]
+                .AddSubType(15, typeof(CLP.Models.CLPPageObjectBase))
+                .AddSubType(16, typeof(CLP.Models.CLPStamp));
+            model[typeof(CLP.Models.CLPPageObjectBase)]
                 .AddSubType(7, typeof(CLPImage))
-                .AddSubType(8, typeof(CLPInkRegion))
+                .AddSubType(8, typeof(ACLPInkRegion))
                 .AddSubType(9, typeof(CLPShape))
                 .AddSubType(10, typeof(CLPSnapTileContainer))
                 .AddSubType(11, typeof(CLPStrokePathContainer))
@@ -141,7 +169,7 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
 
-            model[typeof(CLPInkRegion)]
+            model[typeof(ACLPInkRegion)]
                 .AddSubType(1, typeof(CLPInkShapeRegion))
                 .AddSubType(2, typeof(CLPHandwritingRegion))
                 .AddSubType(3, typeof(CLPDataTable))
@@ -157,7 +185,8 @@ namespace Classroom_Learning_Partner
             model[typeof(CLPShadingRegion)]
                 .Add(1, "PercentFilled")
                 .Add(2, "Rows")
-                .Add(3, "Cols");
+                .Add(3, "Cols")
+                .Add(4, "FeatureVector");
             model[typeof(CLPInkShapeRegion)]
                 .Add(1, "InkShapesString")
                 .Add(2, "InkShapes");
@@ -224,8 +253,8 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private static PeerNode _peer;
-        public static PeerNode Peer
+        private static Classroom_Learning_Partner.Model.PeerNode _peer;
+        public static Classroom_Learning_Partner.Model.PeerNode Peer
         {
             get
             {

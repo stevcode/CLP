@@ -1,16 +1,15 @@
-﻿using Classroom_Learning_Partner.ViewModels.PageObjects;
-using System.Windows;
-using Classroom_Learning_Partner.Model;
+﻿using System.Windows;
 using System.Windows.Controls.Primitives;
+using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.PageObjects
+namespace Classroom_Learning_Partner.Views
 {
     public partial class CLPAudioView : Catel.Windows.Controls.UserControl
     {
         public CLPAudioView()
         {
             InitializeComponent();
-            SkipSearchingForInfoBarMessageControl = true;
         }
         protected override System.Type GetViewModelType()
         {
@@ -27,8 +26,8 @@ namespace Classroom_Learning_Partner.Views.PageObjects
         {
             CLPAudioViewModel audio = (this.DataContext as CLPAudioViewModel);
 
-            double x = audio.Position.X + e.HorizontalChange;
-            double y = audio.Position.Y + e.VerticalChange;
+            double x = audio.XPosition + e.HorizontalChange;
+            double y = audio.YPosition + e.VerticalChange;
             if (x < 0)
             {
                 x = 0;

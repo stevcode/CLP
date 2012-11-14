@@ -1,10 +1,10 @@
-﻿using Catel.MVVM;
-using System;
-using System.IO;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using Catel.Data;
+using Catel.MVVM;
 
-namespace Classroom_Learning_Partner.ViewModels.Workspaces
+namespace Classroom_Learning_Partner.ViewModels
 {
     public class UserLoginWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
@@ -29,6 +29,13 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
                     UserNames.Add(name);
                 }
                 reader.Dispose();
+            }
+            else
+            {
+                for(int i = 1; i < 26; i++)
+                {
+                    UserNames.Add("Guest " + i.ToString());
+                }
             }
         }
 
@@ -63,7 +70,6 @@ namespace Classroom_Learning_Partner.ViewModels.Workspaces
         private void OnLogInCommandExecute(string userName)
         {
             App.Peer.UserName = userName;
-            App.MainWindowViewModel.SetTitleBarText("");
             App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 
