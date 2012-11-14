@@ -223,8 +223,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (PageObject.CanAcceptStrokes)
             {
-                double xDelta = PageObject.XPosition - x;
-                double yDelta = PageObject.YPosition - y;
+                double xDelta = x - PageObject.XPosition;
+                double yDelta = y - PageObject.YPosition;
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
                 foreach (Stroke stroke in parentPage.InkStrokes)
@@ -233,8 +233,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
                         {
-                            moveStroke.Translate(x, y);
-                            stroke.Transform(moveStroke, false);
+                           stroke.Transform(moveStroke, false);
                         }
                     }
                 }
