@@ -100,7 +100,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="#F3F3F3">
+    <!-- Background="#F3F3F3" -->
+    <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -158,11 +159,11 @@
                 <ContentControl.Resources>
 
                     <ControlTemplate x:Key="LinkedDisplayTemplate">
-                        <Views:LinkedDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                        <Views:LinkedDisplayView />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="GridDisplayTemplate">
-                        <Views:GridDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                        <Views:GridDisplayView />
                     </ControlTemplate>
 
                 </ContentControl.Resources>

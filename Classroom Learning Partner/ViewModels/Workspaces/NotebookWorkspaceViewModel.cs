@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
 
-            WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+            WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
@@ -145,7 +145,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                        WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
                     }
                 }
             }
@@ -302,12 +302,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {
                     SelectedDisplay.IsOnProjector = false;
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Pink);
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                 }
                 else
                 {
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
