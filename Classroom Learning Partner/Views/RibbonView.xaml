@@ -327,17 +327,29 @@
 
             <RibbonGroup Header="Page">
 
-                <RibbonButton
-                        Label="Add Landscape Page Here"
-                        LargeImageSource="..\Images\AddPage.png"
-                        Command="{Binding Path=AddNewPageCommand}"
-                        CommandParameter="Landscape" />
+                <RibbonMenuButton Label="Add Page"
+                         LargeImageSource="..\Images\AddPage.png">
+                    <RibbonMenuButton.ItemContainerStyle>
+                        <Style TargetType="RibbonGalleryItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </RibbonMenuButton.ItemContainerStyle>
+                    <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <Button Content="Landscape Page" Height="60" Width="200"
+                                        Command="{Binding Path=AddNewPageCommand}"
+                                        CommandParameter="Landscape" />
+                        <Button Content="Portrait Page" Height="60" Width="200"
+                                    Command="{Binding Path=AddNewPageCommand}"
+                                    CommandParameter="Portrait" />
 
-                <RibbonButton
-                        Label="Add Portrait Page Here"
-                        LargeImageSource="..\Images\AddPage.png"
-                        Command="{Binding Path=AddNewPageCommand}" 
-                        CommandParameter="Portrait" />
+                    </RibbonGallery>
+                </RibbonMenuButton>
 
                 <RibbonButton
                         Label="Delete This Page"
@@ -373,45 +385,103 @@
                         LargeImageSource="..\Images\PictureStamp.png"
                         Command="{Binding Path=InsertImageStampCommand}" />
 
-                <RibbonButton
-                        Label="Insert Square"
-                        LargeImageSource="..\Images\AddSquare.png"
-                        Command="{Binding Path=InsertSquareShapeCommand}" />
+                <RibbonMenuButton Label="Shapes"
+                         LargeImageSource="..\Images\LargeIcon.png">
+                    <RibbonMenuButton.ItemContainerStyle>
+                        <Style TargetType="RibbonGalleryItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </RibbonMenuButton.ItemContainerStyle>
+                    <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertSquareShapeCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\AddSquare.png" />
+                                <Label>Square</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Insert Circle"
-                        LargeImageSource="..\Images\AddCircle.png"
-                        Command="{Binding Path=InsertCircleShapeCommand}" />
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertCircleShapeCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\AddCircle.png" />
+                                <Label>Circle</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Insert Horizontal Line"
-                        LargeImageSource="..\Images\HorizontalLineIcon.png"
-                        Command="{Binding Path=InsertHorizontalLineShapeCommand}" />
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertHorizontalLineShapeCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\HorizontalLineIcon.png" />
+                                <Label>Horizontal Line</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Insert Vertical Line"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertVerticalLineShapeCommand}" />
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertVerticalLineShapeCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Vertical Line</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Handwriting Region"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertHandwritingRegionCommand}" />
+                    </RibbonGallery>
+                </RibbonMenuButton>
 
-                <RibbonButton
-                        Label="Ink Shape Region"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertInkShapeRegionCommand}" />
+                <RibbonMenuButton Label="Recognition Regions"
+                         LargeImageSource="..\Images\LargeIcon.png">
+                    <RibbonMenuButton.ItemContainerStyle>
+                        <Style TargetType="RibbonGalleryItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </RibbonMenuButton.ItemContainerStyle>
+                    <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertHandwritingRegionCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Handwriting Region</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Data Table"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertDataTableCommand}" />
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertInkShapeRegionCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Ink Shape Region</Label>
+                            </StackPanel>
+                        </Button>
 
-                <RibbonButton
-                        Label="Shading Region"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertShadingRegionCommand}" />
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertDataTableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Data Table</Label>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Height="60" Width="200"
+                                Command="{Binding Path=InsertShadingRegionCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Shading Region</Label>
+                            </StackPanel>
+                        </Button>
+
+                    </RibbonGallery>
+                </RibbonMenuButton>
 
             </RibbonGroup>
 
