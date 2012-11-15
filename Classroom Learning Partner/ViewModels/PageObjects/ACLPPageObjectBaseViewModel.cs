@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
@@ -199,6 +200,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
+            double xStrokeOffset = e.HorizontalChange;
+            double yStrokeOffset = e.VerticalChange;
             if(x < 0)
             {
                 x = 0;
@@ -217,6 +220,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Point pt = new Point(x, y);
+
+            if (PageObject.CanAcceptStrokes)
+            {
+                double xDelta = x - PageObject.XPosition;
+                double yDelta = y - PageObject.YPosition;
+                Matrix moveStroke = new Matrix();
+                moveStroke.Translate(xDelta, yDelta);
+                foreach (Stroke stroke in parentPage.InkStrokes)
+                {
+                    foreach (Stroke vmStroke in PageObjectStrokes)
+                    {
+                        if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
+                        {
+                           stroke.Transform(moveStroke, false);
+                        }
+                    }
+                }
+            }
+
             CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
