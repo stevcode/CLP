@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
@@ -113,6 +115,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private ObservableCollection<ICLPPageObject> _pageObjectObjects = new ObservableCollection<ICLPPageObject>();
+        public ObservableCollection<ICLPPageObject> PageObjectObjects
+        {
+            get { return _pageObjectObjects; }
+        }
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -197,7 +205,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
             double xStrokeOffset = e.HorizontalChange;
@@ -218,7 +225,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 y = parentPage.PageHeight - PageObject.Height;
             }
-
             Point pt = new Point(x, y);
 
             if (PageObject.CanAcceptStrokes)
@@ -234,6 +240,25 @@ namespace Classroom_Learning_Partner.ViewModels
                         if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
                         {
                            stroke.Transform(moveStroke, false);
+                        }
+                    }
+                }
+            }
+
+            if (PageObject.CanAcceptObjects)
+            {
+                double xDelta = x - PageObject.XPosition;
+                double yDelta = y - PageObject.YPosition;
+                Matrix moveStroke = new Matrix();
+                moveStroke.Translate(xDelta, yDelta);
+                foreach (ICLPPageObject pageObject in parentPage.PageObjects)
+                {
+                    foreach (ICLPPageObject vmPageObject in PageObjectObjects)
+                    {
+                        if (pageObject.UniqueID.Equals(vmPageObject.UniqueID))
+                        {
+                            Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
                         }
                     }
                 }

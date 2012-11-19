@@ -31,6 +31,8 @@ namespace CLP.Models
             XPosition = 10;
             YPosition = 10;
             IsBackground = false;
+            CanAcceptObjects = false;
+            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
         }
 
         /// <summary>
@@ -136,6 +138,29 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
+        
+        /// <summary>
+        /// Serialized pageObjects the pageObject has accepted.
+        /// </summary>
+        public ObservableCollection<ICLPPageObject> PageObjectObjects
+        {
+            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectObjectsProperty); }
+            set { SetValue(PageObjectObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
+
+
+        /// <summary>
+        /// Whether or not the pageObject can accept objects
+        /// </summary>
+        public bool CanAcceptObjects
+        {
+            get { return GetValue<bool>(CanAcceptObjectsProperty); }
+            set { SetValue(CanAcceptObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptObjectsProperty = RegisterProperty("CanAcceptObjects", typeof(bool), false);
 
         /// <summary>
         /// xPosition of pageObject on page
@@ -245,6 +270,19 @@ namespace CLP.Models
 
                 PageObjectByteStrokes.Add(CLPPage.StrokeToByte(newStroke));
             }
+        }
+
+        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage) {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
         #endregion

@@ -480,6 +480,30 @@ namespace Classroom_Learning_Partner.Model
 
             pageObject.XPosition = pt.X;
             pageObject.YPosition = pt.Y;
+
+            if (!pageObject.GetType().Equals(typeof(CLPStamp)))
+            {
+                var stampQuery = from po in pageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
+                foreach (CLPStamp stamp in stampQuery)
+                {
+                    if (!pageObject.ParentID.Equals(stamp.UniqueID) && stamp.HitTest(pageObject, .50))
+                    {
+                        if (!stamp.PageObjectObjects.Contains(pageObject))
+                        {
+                            stamp.PageObjectObjects.Add(pageObject);
+                            Console.WriteLine("Success Add Move  " + pageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                        }
+                    }
+                    else
+                    {
+                        if (stamp.PageObjectObjects.Contains(pageObject))
+                        {
+                            stamp.PageObjectObjects.Remove(pageObject);
+                            Console.WriteLine("Success Remove Move " + pageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                        }
+                    }
+                }
+            }
         }
 
         public void ChangePageObjectDimensions(CLP.Models.ICLPPageObject pageObject, double height, double width)

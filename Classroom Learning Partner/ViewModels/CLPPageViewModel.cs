@@ -442,6 +442,39 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            
+            var stampQuery = from po in PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
+
+            if (e.NewItems != null) {
+                foreach (var item in e.NewItems) {
+                    // Do not allow stamps to contain stamps
+                    if (!item.GetType().Equals(typeof(CLPStamp))) {
+                        foreach (CLPStamp stamp in stampQuery)
+                        {
+                            if (!(item.GetType().Equals(typeof(CLPStrokePathContainer)) && (item as CLPStrokePathContainer).ParentID.Equals(stamp.UniqueID))
+                                && stamp.HitTest(item as ICLPPageObject, .50) && !stamp.PageObjectObjects.Contains(item as ICLPPageObject) ){
+                                stamp.PageObjectObjects.Add(item as ICLPPageObject);
+                                Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            }
+                        }
+                    }
+                }
+            }
+            if (e.OldItems != null) {
+                foreach (var item in e.OldItems) {
+                    if (!item.GetType().Equals(typeof(CLPStamp)))
+                    {
+                        foreach (CLPStamp stamp in stampQuery)
+                        {
+                            if (stamp.PageObjectObjects.Contains(item as ICLPPageObject))
+                            {
+                                stamp.PageObjectObjects.Remove(item as ICLPPageObject);
+                                Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            }
+                        }
+                    }
+                }
+            }
 
             //STEVE - Stamps add/remove too quicly and crash projector
             //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
