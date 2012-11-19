@@ -26,6 +26,5 @@ namespace CLP.Models
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
-        bool HitTest(ICLPPageObject pageObject, double percentage);
     }
 }

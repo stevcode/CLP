@@ -135,22 +135,15 @@ namespace CLP.Models
             }
         }
 
-        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
-        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
+        public void AcceptObject(ICLPPageObject pageObject)
         {
-            double areaObject = pageObject.Height * pageObject.Width;
-            double top = Math.Max(YPosition, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
-            double left = Math.Max(XPosition, pageObject.XPosition);
-            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
-            double deltaY = bottom - top;
-            double deltaX = right - left;
-            double intersectionArea = deltaY * deltaX;
-            /*Console.WriteLine("left: " + XPosition + "; right: " + (XPosition + Width) + "; top: " + YPosition + "; bottom: " + (YPosition + Height));
-            Console.WriteLine("po left: " + pageObject.XPosition + "; po right: " + (pageObject.XPosition + pageObject.Width) + "; po top: " + pageObject.YPosition + "; po bottom: " + (pageObject.YPosition + pageObject.Height));
-            Console.WriteLine("Top: " + top + "; Bottom: " + bottom + "; left: " + left + "; right: " + right + " delta X: " + deltaX + " deltaY: " + deltaY + "; intersectionArea: " + intersectionArea + "; areaObject" + areaObject);
-            Console.WriteLine("DeltaY: " + (deltaY >= 0) + "; DeltaX: " + (deltaX >= 0) + "; Area: " + (intersectionArea / areaObject >= percentage));*/
-            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+            this.PageObjectObjects.Add(pageObject);
+            
+        }
+
+        public void RemoveObject(ICLPPageObject pageObject)
+        {
+            this.PageObjectObjects.Add(pageObject);
         }
 
         #endregion //Methods
@@ -271,7 +264,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the PageObjectObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<List<byte>>());
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
 
 
         /// <summary>

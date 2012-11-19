@@ -453,7 +453,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if (!(item.GetType().Equals(typeof(CLPStrokePathContainer)) && (item as CLPStrokePathContainer).ParentID.Equals(stamp.UniqueID))
                                 && stamp.HitTest(item as ICLPPageObject, .50) && !stamp.PageObjectObjects.Contains(item as ICLPPageObject) ){
-                                stamp.PageObjectObjects.Add(item as ICLPPageObject);
+                                stamp.AcceptObject(item as ICLPPageObject);
                                 Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
                             }
                         }
@@ -468,7 +468,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if (stamp.PageObjectObjects.Contains(item as ICLPPageObject))
                             {
-                                stamp.PageObjectObjects.Remove(item as ICLPPageObject);
+                                stamp.RemoveObject(item as ICLPPageObject);
                                 Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
                             }
                         }

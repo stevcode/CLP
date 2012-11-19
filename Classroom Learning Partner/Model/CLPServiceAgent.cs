@@ -490,7 +490,7 @@ namespace Classroom_Learning_Partner.Model
                     {
                         if (!stamp.PageObjectObjects.Contains(pageObject))
                         {
-                            stamp.PageObjectObjects.Add(pageObject);
+                            stamp.AcceptObject(pageObject);
                             Console.WriteLine("Success Add Move  " + pageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
                         }
                     }
@@ -498,7 +498,7 @@ namespace Classroom_Learning_Partner.Model
                     {
                         if (stamp.PageObjectObjects.Contains(pageObject))
                         {
-                            stamp.PageObjectObjects.Remove(pageObject);
+                            stamp.RemoveObject(pageObject);
                             Console.WriteLine("Success Remove Move " + pageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
                         }
                     }
