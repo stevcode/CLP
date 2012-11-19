@@ -135,6 +135,17 @@ namespace CLP.Models
             }
         }
 
+        public void AcceptObject(ICLPPageObject pageObject)
+        {
+            this.PageObjectObjects.Add(pageObject);
+            
+        }
+
+        public void RemoveObject(ICLPPageObject pageObject)
+        {
+            this.PageObjectObjects.Add(pageObject);
+        }
+
         // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
         public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
         {
@@ -271,7 +282,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the PageObjectObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<List<byte>>());
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
 
 
         /// <summary>

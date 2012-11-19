@@ -273,7 +273,8 @@ namespace CLP.Models
         }
 
         // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
-        public virtual bool HitTest(ICLPPageObject pageObject, double percentage) {
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
+        {
             double areaObject = pageObject.Height * pageObject.Width;
             double top = Math.Max(YPosition, pageObject.YPosition);
             double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
@@ -282,6 +283,10 @@ namespace CLP.Models
             double deltaY = bottom - top;
             double deltaX = right - left;
             double intersectionArea = deltaY * deltaX;
+            /*Console.WriteLine("left: " + XPosition + "; right: " + (XPosition + Width) + "; top: " + YPosition + "; bottom: " + (YPosition + Height));
+            Console.WriteLine("po left: " + pageObject.XPosition + "; po right: " + (pageObject.XPosition + pageObject.Width) + "; po top: " + pageObject.YPosition + "; po bottom: " + (pageObject.YPosition + pageObject.Height));
+            Console.WriteLine("Top: " + top + "; Bottom: " + bottom + "; left: " + left + "; right: " + right + " delta X: " + deltaX + " deltaY: " + deltaY + "; intersectionArea: " + intersectionArea + "; areaObject" + areaObject);
+            Console.WriteLine("DeltaY: " + (deltaY >= 0) + "; DeltaX: " + (deltaX >= 0) + "; Area: " + (intersectionArea / areaObject >= percentage));*/
             return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 

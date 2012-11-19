@@ -23,9 +23,9 @@ namespace CLP.Models
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
+        bool HitTest(ICLPPageObject pageObject, double percentage);
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
-        bool HitTest(ICLPPageObject pageObject, double percentage);
     }
 }

@@ -15,7 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     abstract public class ACLPPageObjectBaseViewModel : ViewModelBase
     {
-        protected ACLPPageObjectBaseViewModel() : base()
+        protected ACLPPageObjectBaseViewModel()
+            : base()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
 
@@ -35,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model(SupportIEditableObject=false)]
+        [Model(SupportIEditableObject = false)]
         public ICLPPageObject PageObject
         {
             get { return GetValue<ICLPPageObject>(PageObjectProperty); }
@@ -106,24 +107,30 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the YPosition property so it is known in the class.
         /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
-        
+
         private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {
-            get { _pageObjectStrokes = CLPPage.BytesToStrokes(PageObject.PageObjectByteStrokes);
-            return _pageObjectStrokes;
+            get
+            {
+                _pageObjectStrokes = CLPPage.BytesToStrokes(PageObject.PageObjectByteStrokes);
+                return _pageObjectStrokes;
             }
         }
 
-        private ObservableCollection<ICLPPageObject> _pageObjectObjects = new ObservableCollection<ICLPPageObject>();
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public ObservableCollection<ICLPPageObject> PageObjectObjects
         {
-            get
-            {
-                _pageObjectObjects = PageObject.PageObjectObjects;
-                return _pageObjectObjects;
-            }
+            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectObjectsProperty); }
+            set { SetValue(PageObjectObjectsProperty, value); }
         }
+
+        /// <summary>
+        /// Register the PageObjectObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -147,13 +154,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsAdornerVisible
         {
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
-            set { 
+            set
+            {
                 SetValue(IsAdornerVisibleProperty, value);
-                if(!value)
+                if (!value)
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                    foreach (CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
                     {
                         pageVM.IsInkCanvasHitTestVisible = true;
                     }
@@ -190,7 +198,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
 
-            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+            foreach (CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
             {
                 pageVM.IsInkCanvasHitTestVisible = true;
             }
@@ -213,19 +221,19 @@ namespace Classroom_Learning_Partner.ViewModels
             double y = PageObject.YPosition + e.VerticalChange;
             double xStrokeOffset = e.HorizontalChange;
             double yStrokeOffset = e.VerticalChange;
-            if(x < 0)
+            if (x < 0)
             {
                 x = 0;
             }
-            if(y < 0)
+            if (y < 0)
             {
                 y = 0;
             }
-            if(x > parentPage.PageWidth - PageObject.Width)
+            if (x > parentPage.PageWidth - PageObject.Width)
             {
                 x = parentPage.PageWidth - PageObject.Width;
             }
-            if(y > parentPage.PageHeight - PageObject.Height)
+            if (y > parentPage.PageHeight - PageObject.Height)
             {
                 y = parentPage.PageHeight - PageObject.Height;
             }
@@ -243,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
                         {
-                           stroke.Transform(moveStroke, false);
+                            stroke.Transform(moveStroke, false);
                         }
                     }
                 }
@@ -293,6 +301,29 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            if (!GetType().Equals(typeof(CLPStampViewModel)))
+            {
+                var stampQuery = from po in this.PageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
+                foreach (CLPStamp stamp in stampQuery)
+                {
+                    if (!this.PageObject.ParentID.Equals(stamp.UniqueID) && stamp.HitTest(this.PageObject, .50))
+                    {
+                        if (!stamp.PageObjectObjects.Contains(this.PageObject))
+                        {
+                            stamp.AcceptObject(this.PageObject);
+                            Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                        }
+                    }
+                    else
+                    {
+                        if (stamp.PageObjectObjects.Contains(this.PageObject))
+                        {
+                            stamp.RemoveObject(this.PageObject);
+                            Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -310,19 +341,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;
-            if(newHeight < 10)
+            if (newHeight < 10)
             {
                 newHeight = 10;
             }
-            if(newWidth < 10)
+            if (newWidth < 10)
             {
                 newWidth = 10;
             }
-            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+            if (newHeight + PageObject.YPosition > parentPage.PageHeight)
             {
                 newHeight = PageObject.Height;
             }
-            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+            if (newWidth + PageObject.XPosition > parentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
             }
@@ -362,21 +393,35 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(IsBackground)
+            if (IsBackground)
             {
-                if(App.MainWindowViewModel.IsAuthoring)
-	            {
+                if (App.MainWindowViewModel.IsAuthoring)
+                {
                     return false;
-	            }
+                }
                 else
                 {
                     return true;
-                }  
+                }
             }
             else
             {
                 return true;
             }
+        }
+
+        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
         #endregion //Methods
