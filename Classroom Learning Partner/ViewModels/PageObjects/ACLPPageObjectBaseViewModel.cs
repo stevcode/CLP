@@ -118,7 +118,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private ObservableCollection<ICLPPageObject> _pageObjectObjects = new ObservableCollection<ICLPPageObject>();
         public ObservableCollection<ICLPPageObject> PageObjectObjects
         {
-            get { return _pageObjectObjects; }
+            get
+            {
+                _pageObjectObjects = PageObject.PageObjectObjects;
+                return _pageObjectObjects;
+            }
         }
 
         /// <summary>
