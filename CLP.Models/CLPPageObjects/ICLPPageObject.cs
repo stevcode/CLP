@@ -17,7 +17,7 @@ namespace CLP.Models
         ObservableCollection<List<byte>> PageObjectByteStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
         ObservableCollection<ICLPPageObject> PageObjectObjects { get; set; }
-        bool CanAcceptObjects { get; set; }
+        bool CanAcceptPageObjects { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
         double Height { get; set; }

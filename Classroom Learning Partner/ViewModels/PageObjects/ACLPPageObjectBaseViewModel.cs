@@ -121,20 +121,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<ICLPPageObject> PageObjectObjects
-        {
-            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectObjectsProperty); }
-            set { SetValue(PageObjectObjectsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the PageObjectObjects property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         [ViewModelToModel("PageObject")]
         public bool IsBackground
         {
@@ -257,7 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if (PageObject.CanAcceptObjects)
+            if (PageObject.CanAcceptPageObjects)
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
@@ -265,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 moveStroke.Translate(xDelta, yDelta);
                 foreach (ICLPPageObject pageObject in parentPage.PageObjects)
                 {
-                    foreach (ICLPPageObject vmPageObject in PageObjectObjects)
+                    foreach (ICLPPageObject vmPageObject in PageObject.PageObjectObjects)
                     {
                         if (pageObject.UniqueID.Equals(vmPageObject.UniqueID))
                         {

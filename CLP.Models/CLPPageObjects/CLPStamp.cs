@@ -41,8 +41,6 @@ namespace CLP.Models
             ParentID = "";
             PageObjectByteStrokes = new ObservableCollection<List<byte>>();
             CanAcceptStrokes = true;
-            CanAcceptObjects = true;
-            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
         }
 
         /// <summary>
@@ -278,22 +276,21 @@ namespace CLP.Models
         /// <summary>
         /// Register the PageObjectObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
-
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool CanAcceptObjects
+        public bool CanAcceptPageObjects
         {
-            get { return GetValue<bool>(CanAcceptObjectsProperty); }
-            set { SetValue(CanAcceptObjectsProperty, value); }
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
         }
 
         /// <summary>
-        /// Register the CanAcceptObjects property so it is known in the class.
+        /// Register the CanAcceptPageObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData CanAcceptObjectsProperty = RegisterProperty("CanAcceptObjects", typeof(bool), false);
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
 
         /// <summary>
         /// Position of pageObject on page.

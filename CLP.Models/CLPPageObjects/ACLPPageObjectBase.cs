@@ -31,8 +31,6 @@ namespace CLP.Models
             XPosition = 10;
             YPosition = 10;
             IsBackground = false;
-            CanAcceptObjects = false;
-            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
         }
 
         /// <summary>
@@ -138,9 +136,9 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
-        
+
         /// <summary>
-        /// Serialized pageObjects the pageObject has accepted.
+        /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<ICLPPageObject> PageObjectObjects
         {
@@ -148,19 +146,24 @@ namespace CLP.Models
             set { SetValue(PageObjectObjectsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
-
+        /// <summary>
+        /// Register the PageObjectObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
-        /// Whether or not the pageObject can accept objects
+        /// Gets or sets the property value.
         /// </summary>
-        public bool CanAcceptObjects
+        public bool CanAcceptPageObjects
         {
-            get { return GetValue<bool>(CanAcceptObjectsProperty); }
-            set { SetValue(CanAcceptObjectsProperty, value); }
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptObjectsProperty = RegisterProperty("CanAcceptObjects", typeof(bool), false);
+        /// <summary>
+        /// Register the CanAcceptPageObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
 
         /// <summary>
         /// xPosition of pageObject on page
