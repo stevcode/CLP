@@ -443,7 +443,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
             IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-            Console.WriteLine(IsInEditSession.ToString());
+            Console.WriteLine(IsInkCanvasHitTestVisible.ToString());
             return HitTestResultBehavior.Continue;
         }
 

@@ -9,7 +9,6 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof(MainWindowViewModel))]
     public class CLPImageViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>

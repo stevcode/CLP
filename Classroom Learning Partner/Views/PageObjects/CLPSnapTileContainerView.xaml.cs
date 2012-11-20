@@ -60,13 +60,6 @@ namespace Classroom_Learning_Partner.Views
             if ((this.DataContext as CLPSnapTileContainerViewModel).Tiles.Count > 1)
             {
                 (this.DataContext as CLPSnapTileContainerViewModel).NumberOfTiles--;
-                //add the snapTileRemoveTile history item here
-                //CLPHistory pageHistory = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID((this.DataContext as CLPSnapTileContainerViewModel).PageObject.PageID).PageHistory;
-                //if (!pageHistory.IgnoreHistory)
-                //{
-                //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (this.DataContext as CLPSnapTileContainerViewModel).PageObject.UniqueID, null, null);
-                //    pageHistory.HistoryItems.Add(item);
-                //}
             }
         }
 
