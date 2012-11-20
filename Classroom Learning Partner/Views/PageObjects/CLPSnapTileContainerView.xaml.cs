@@ -21,9 +21,9 @@ namespace Classroom_Learning_Partner.Views
             return typeof(CLPSnapTileContainerViewModel);
         }
 
-        private void closeButton_Click(object sender, RoutedEventArgs e)
+        private void AdornerClose_Click(object sender, RoutedEventArgs e)
         {
-            ICLPPageObject pageObject = (this.DataContext as CLPSnapTileContainerViewModel).PageObject;
+            ICLPPageObject pageObject = (ViewModel as CLPSnapTileContainerViewModel).PageObject;
 
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
         }
