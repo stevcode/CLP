@@ -451,7 +451,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (!item.GetType().Equals(typeof(CLPStamp))) {
                         foreach (CLPStamp stamp in stampQuery)
                         {
-                            if (!(item.GetType().Equals(typeof(CLPStrokePathContainer)) && (item as CLPStrokePathContainer).ParentID.Equals(stamp.UniqueID))
+                            if (!(item as ICLPPageObject).ParentID.Equals(stamp.UniqueID)
                                 && stamp.HitTest(item as ICLPPageObject, .50) && !stamp.PageObjectObjects.Contains(item as ICLPPageObject) ){
                                 stamp.AcceptObject(item as ICLPPageObject);
                                 Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);

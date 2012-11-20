@@ -292,20 +292,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 var stampQuery = from po in this.PageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
                 foreach (CLPStamp stamp in stampQuery)
                 {
-                    if (!this.PageObject.ParentID.Equals(stamp.UniqueID) && stamp.HitTest(this.PageObject, .50))
-                    {
-                        if (!stamp.PageObjectObjects.Contains(this.PageObject))
-                        {
-                            stamp.AcceptObject(this.PageObject);
-                            Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
-                        }
-                    }
-                    else
-                    {
-                        if (stamp.PageObjectObjects.Contains(this.PageObject))
-                        {
-                            stamp.RemoveObject(this.PageObject);
-                            Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                    if (!this.PageObject.ParentID.Equals(stamp.UniqueID)) {
+                        if (stamp.HitTest(this.PageObject, .50)) {
+                            if (!stamp.PageObjectObjects.Contains(this.PageObject)) {
+                                stamp.AcceptObject(this.PageObject);
+                                Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            }
+                        } else {
+                            if (stamp.PageObjectObjects.Contains(this.PageObject)) {
+                                stamp.RemoveObject(this.PageObject);
+                                Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            }
                         }
                     }
                 }

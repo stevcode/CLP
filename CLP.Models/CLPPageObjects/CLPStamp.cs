@@ -141,7 +141,7 @@ namespace CLP.Models
 
         public void RemoveObject(ICLPPageObject pageObject)
         {
-            this.PageObjectObjects.Add(pageObject);
+            this.PageObjectObjects.Remove(pageObject);
         }
 
         // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
@@ -276,7 +276,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the PageObjectObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
