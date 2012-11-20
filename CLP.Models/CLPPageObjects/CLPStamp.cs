@@ -136,7 +136,6 @@ namespace CLP.Models
         }
 
         public void AcceptObject(ICLPPageObject pageObject)
-        public void AcceptObject(ICLPPageObject pageObject)
         {
             this.PageObjectObjects.Add(pageObject);
             
@@ -147,14 +146,18 @@ namespace CLP.Models
             this.PageObjectObjects.Add(pageObject);
         }
 
+        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
         {
-            this.PageObjectObjects.Add(pageObject);
-            
-        }
-
-        public void RemoveObject(ICLPPageObject pageObject)
-        {
-            this.PageObjectObjects.Add(pageObject);
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
         #endregion //Methods
