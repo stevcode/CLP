@@ -249,16 +249,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 double yDelta = y - PageObject.YPosition;
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
-                foreach (ICLPPageObject pageObject in parentPage.PageObjects)
+                var pageObjectsInPageObjectObjects = from po in parentPage.PageObjects
+                                                     join vmPo in PageObject.PageObjectObjects on po.UniqueID equals vmPo.UniqueID
+                                                     select po;
+                foreach (ICLPPageObject poipoo in pageObjectsInPageObjectObjects)
                 {
-                    foreach (ICLPPageObject vmPageObject in PageObject.PageObjectObjects)
-                    {
-                        if (pageObject.UniqueID.Equals(vmPageObject.UniqueID))
-                        {
-                            Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
-                        }
-                    }
+                    Point pageObjectPt = new Point((xDelta + poipoo.XPosition), (yDelta + poipoo.YPosition));
+                    CLPServiceAgent.Instance.ChangePageObjectPosition(poipoo, pageObjectPt);
                 }
             }
 
@@ -289,19 +286,33 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (!GetType().Equals(typeof(CLPStampViewModel)))
             {
-                var stampQuery = from po in this.PageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
-                foreach (CLPStamp stamp in stampQuery)
+                //var stampQuery = from po in PageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
+                //foreach (CLPStamp stamp in stampQuery)
+                foreach (ICLPPageObject stamp in PageObject.ParentPage.PageObjects)
                 {
-                    if (!this.PageObject.ParentID.Equals(stamp.UniqueID)) {
-                        if (stamp.HitTest(this.PageObject, .50)) {
-                            if (!stamp.PageObjectObjects.Contains(this.PageObject)) {
-                                stamp.AcceptObject(this.PageObject);
-                                Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                    if (stamp.GetType().Equals(typeof(CLPStamp))){
+                        if (!this.PageObject.ParentID.Equals(stamp.UniqueID))
+                        {
+                            if (stamp.HitTest(this.PageObject, .50))
+                            {
+                                if (!stamp.PageObjectObjects.Contains(this.PageObject))
+                                {
+                                    (stamp as CLPStamp).AcceptObject(this.PageObject);
+                                    foreach (ICLPPageObject pos in stamp.PageObjectObjects)
+                                    {
+                                        Console.Write(pos.UniqueID + " ");
+                                        Console.WriteLine("objects");
+                                    }
+                                    Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                                }
                             }
-                        } else {
-                            if (stamp.PageObjectObjects.Contains(this.PageObject)) {
-                                stamp.RemoveObject(this.PageObject);
-                                Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            else
+                            {
+                                if (stamp.PageObjectObjects.Contains(this.PageObject))
+                                {
+                                    (stamp as CLPStamp).RemoveObject(this.PageObject);
+                                    Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                                }
                             }
                         }
                     }

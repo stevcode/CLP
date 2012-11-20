@@ -23,6 +23,7 @@ namespace CLP.Models
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
+        int Parts { get; set; }
         bool HitTest(ICLPPageObject pageObject, double percentage);
 
         ICLPPageObject Duplicate();

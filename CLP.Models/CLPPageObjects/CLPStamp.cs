@@ -41,6 +41,9 @@ namespace CLP.Models
             ParentID = "";
             PageObjectByteStrokes = new ObservableCollection<List<byte>>();
             CanAcceptStrokes = true;
+            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
+            CanAcceptPageObjects = true;
+            Parts = -1;
         }
 
         /// <summary>
@@ -135,13 +138,17 @@ namespace CLP.Models
 
         public void AcceptObject(ICLPPageObject pageObject)
         {
-            this.PageObjectObjects.Add(pageObject);
+            if (pageObject.Parts > 1) {
+                PageObjectObjects.Add(pageObject);
+                Parts += pageObject.Parts;
+            }
             
         }
 
         public void RemoveObject(ICLPPageObject pageObject)
         {
-            this.PageObjectObjects.Remove(pageObject);
+            PageObjectObjects.Remove(pageObject);
+            Parts -= pageObject.Parts;
         }
 
         // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
@@ -387,5 +394,19 @@ namespace CLP.Models
         /// Register the IsBackground property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Parts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
     }
 }

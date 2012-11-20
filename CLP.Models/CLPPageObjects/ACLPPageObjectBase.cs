@@ -31,6 +31,9 @@ namespace CLP.Models
             XPosition = 10;
             YPosition = 10;
             IsBackground = false;
+            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
+            CanAcceptPageObjects = true;
+            Parts = -1;
         }
 
         /// <summary>
@@ -149,7 +152,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the PageObjectObjects property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), new ObservableCollection<ICLPPageObject>());
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -220,6 +223,20 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Parts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
 
         #endregion
 

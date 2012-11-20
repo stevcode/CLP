@@ -30,6 +30,7 @@ namespace CLP.Models
             NumberOfTiles = 1;
             Height = TILE_HEIGHT * NumberOfTiles;
             Width = TILE_HEIGHT;
+            Parts = NumberOfTiles;
         }
 
         /// <summary>

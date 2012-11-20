@@ -150,6 +150,7 @@ namespace Classroom_Learning_Partner.ViewModels
             droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
+            droppedContainer.Parts = PageObject.Parts;
             
             double deltaX = Math.Abs(PageObject.XPosition - originalX);
             double deltaY = Math.Abs(PageObject.YPosition - originalY);
