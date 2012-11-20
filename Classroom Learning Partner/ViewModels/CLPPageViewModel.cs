@@ -387,6 +387,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = true;
+            if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
+            {
+                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+                Point pt = e.GetPosition(pageObjectCanvas);
+                CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
+                Page.PageObjects.Add(tile);
+            }
         }
 
         /// <summary>

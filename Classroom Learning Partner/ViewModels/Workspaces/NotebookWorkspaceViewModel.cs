@@ -302,7 +302,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {
                     SelectedDisplay.IsOnProjector = false;
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Pink);
+                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                 }
                 else

@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="DarkViolet" Height="23" Padding="0" Margin="0" BorderThickness="0">
+        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="#2F64B9" Height="23" Padding="0" Margin="0" BorderThickness="0">
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
@@ -36,24 +36,6 @@
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-
-            <StatusBarItem Grid.Column="0">
-                <ToggleButton x:Name="ShowNotebookPagesToggleButton"
-                    IsChecked="{Binding SideBarVisibility}">
-                    <ToggleButton.Style>
-                        <Style TargetType="{x:Type ToggleButton}">
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="Content" Value="Show Pages"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Content" Value="Hide Pages"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ToggleButton.Style>
-                </ToggleButton>
-            </StatusBarItem>
 
             <StatusBarItem Grid.Column="1">
                 <TextBlock>PAGE 3 OF 10</TextBlock>
