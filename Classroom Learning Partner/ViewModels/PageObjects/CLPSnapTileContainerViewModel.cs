@@ -56,8 +56,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnNumberOfTilesChanged()
         {
-            //Claire, HistoryItems stuff here
-            //CLPPage currentPage = Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetPageFromID(PageObject.PageID);
             int diff = NumberOfTiles - Tiles.Count;
 
             if (diff > 0)
@@ -65,11 +63,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 for (int i = diff - 1; i >= 0; i--)
                 {
                     Tiles.Add("SpringGreen");
-                    //if (!currentPage.PageHistory.IgnoreHistory)
-                    //{
-                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, (PageObject as CLPSnapTileContainer).UniqueID, null, null);
-                    //    currentPage.PageHistory.HistoryItems.Add(item);
-                    //}
                 }
             }
             else
@@ -78,11 +71,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 for (int i = diff - 1; i >= 0; i--)
                 {
                     Tiles.RemoveAt(Tiles.Count - 1);
-                    //if (!currentPage.PageHistory.IgnoreHistory)
-                    //{
-                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileRemoveTile, (PageObject as CLPSnapTileContainer).UniqueID, null, null);
-                    //    currentPage.PageHistory.HistoryItems.Add(item);
-                    //}
                 }
             }
 
@@ -201,6 +189,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
+        }
+
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            return isMouseDown;
         }
 
     }

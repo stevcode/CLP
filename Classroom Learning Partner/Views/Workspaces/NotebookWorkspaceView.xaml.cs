@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Model; //Steve - No Model in View?
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
@@ -104,15 +105,37 @@ namespace Classroom_Learning_Partner.Views
             return child;
         }
 
+        [ViewToViewModel("IsSideBarVisible", MappingType = ViewToViewModelMappingType.ViewModelToView)]
+        public bool IsSideBarVisible
+        {
+            get { return (bool)GetValue(IsSideBarVisibleProperty); }
+            set { SetValue(IsSideBarVisibleProperty, value);
+            ToggleNotebooks(value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsSideBarVisible property so it is known in the class.
+        /// </summary>
+        public static readonly DependencyProperty IsSideBarVisibleProperty = DependencyProperty.Register("IsSideBarVisible", typeof(bool), typeof(NotebookWorkspaceView));
+
         private Visibility submissionsVisibility = Visibility.Collapsed;
-        private double submissionColumnWidth;
-        private double submissionColumnMinWidth;
-        private double notebookPageColumnWidth;
-        private double notebookPageColumnMinWidth;
+        private double submissionColumnWidth = 200;
+        private double submissionColumnMinWidth = 150;
+        private double notebookPageColumnWidth = 250;
+        private double notebookPageColumnMinWidth = 150;
 
         private void ShowNotebookPagesToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            if((bool)(sender as ToggleButton).IsChecked)
+            bool isChecked = (bool)(sender as ToggleButton).IsChecked;
+
+            ToggleNotebooks(isChecked);
+            
+        }
+
+        private void ToggleNotebooks(bool isChecked)
+        {
+            if(isChecked)
             {
                 NotebookPagesBorder.Visibility = Visibility.Visible;
                 NotebookPagesSplitter.Visibility = Visibility.Visible;
@@ -163,6 +186,5 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
         }
-
     }
 }

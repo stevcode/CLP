@@ -303,7 +303,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool SideBarVisibility
         {
             get { return GetValue<bool>(SideBarVisibilityProperty); }
-            set { SetValue(SideBarVisibilityProperty, value); }
+            set 
+            { 
+                SetValue(SideBarVisibilityProperty, value);
+            }
         }
 
         /// <summary>

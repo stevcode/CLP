@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com">
 
-    <Grid Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.AuthoringTabVisibility}">
+    <Grid Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}">
         <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Transparent" Stroke="Gray" StrokeThickness="4" StrokeDashArray="2" />
         <Grid Margin="15">
             <Grid.RowDefinitions>

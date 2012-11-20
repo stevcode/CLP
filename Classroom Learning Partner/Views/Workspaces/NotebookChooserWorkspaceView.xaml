@@ -40,7 +40,7 @@
             </ListBox.ItemsPanel>
         </ListBox>
 
-        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="DarkViolet" Height="23" Padding="0" Margin="0" BorderThickness="0">
+        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="#2F64B9" Height="23" Padding="0" Margin="0" BorderThickness="0">
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
