@@ -482,7 +482,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var stroke in e.Removed)
             {
                 List<byte> b = CLPPage.StrokeToByte(stroke);
-
+                Console.WriteLine(b.ToString());
                 /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
                  * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
                  * This predicate searches for the first sequence match, instead of the first identical object, then removes

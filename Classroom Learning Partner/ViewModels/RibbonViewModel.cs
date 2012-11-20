@@ -303,7 +303,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool SideBarVisibility
         {
             get { return GetValue<bool>(SideBarVisibilityProperty); }
-            set { SetValue(SideBarVisibilityProperty, value); }
+            set 
+            { 
+                SetValue(SideBarVisibilityProperty, value);
+            }
         }
 
         /// <summary>
@@ -317,71 +320,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool GridDisplaysVisibility
         {
             get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
-            set 
-            { 
-                SetValue(GridDisplaysVisibilityProperty, value);
-                ToggleSideBarVisibility();
-            }
+            set { SetValue(GridDisplaysVisibilityProperty, value); }
         }
 
         /// <summary>
         /// Register the GridDisplaysVisibility property so it is known in the class.
         /// </summary>
         public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool));
-
-        private void ToggleSideBarVisibility()
-        {
-            //if((bool)(sender as ToggleButton).IsChecked)
-            //{
-            //    NotebookPagesBorder.Visibility = Visibility.Visible;
-            //    NotebookPagesSplitter.Visibility = Visibility.Visible;
-
-            //    NotebookPageColumn.MinWidth = notebookPageColumnMinWidth;
-            //    NotebookPageColumn.Width = new GridLength(notebookPageColumnWidth);
-            //    NotebookPageSplitterColumn.Width = new GridLength(5);
-
-            //    if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
-            //    {
-            //        FilterSideBar.Visibility = submissionsVisibility;
-            //        SubmissionPagesSplitter.Visibility = submissionsVisibility;
-
-            //        if(submissionsVisibility == Visibility.Visible)
-            //        {
-            //            SubmissionColumn.MinWidth = submissionColumnMinWidth;
-            //            SubmissionColumn.Width = new GridLength(submissionColumnWidth);
-            //            SubmissionSplitterColumn.Width = new GridLength(5);
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    NotebookPagesBorder.Visibility = Visibility.Collapsed;
-            //    NotebookPagesSplitter.Visibility = Visibility.Collapsed;
-
-            //    notebookPageColumnWidth = NotebookPageColumn.Width.Value;
-            //    notebookPageColumnMinWidth = NotebookPageColumn.MinWidth;
-
-            //    NotebookPageColumn.MinWidth = 0;
-            //    NotebookPageColumn.Width = new GridLength(0);
-            //    NotebookPageSplitterColumn.Width = new GridLength(0);
-
-            //    if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
-            //    {
-            //        FilterSideBar.Visibility = Visibility.Collapsed;
-            //        SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
-
-            //        if(submissionsVisibility == Visibility.Visible)
-            //        {
-            //            submissionColumnWidth = SubmissionColumn.Width.Value;
-            //            submissionColumnMinWidth = SubmissionColumn.MinWidth;
-
-            //            SubmissionColumn.MinWidth = 0;
-            //            SubmissionColumn.Width = new GridLength(0);
-            //            SubmissionSplitterColumn.Width = new GridLength(0);
-            //        }
-            //    }
-            //}
-        }
 
         /// <summary>
         /// Gets or sets the property value.

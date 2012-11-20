@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
+    [InterestedIn(typeof(RibbonViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         public MainWindowViewModel MainWindow
@@ -311,10 +312,25 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
+            if (propertyName == "SideBarVisibility")
+            {
+                IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
+            }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsSideBarVisible
+        {
+            get { return GetValue<bool>(IsSideBarVisibleProperty); }
+            set { SetValue(IsSideBarVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsSideBarVisibleProperty = RegisterProperty("IsSideBarVisible", typeof(bool), true);
 
         public void FilterSubmissions(string Sort)
         {
