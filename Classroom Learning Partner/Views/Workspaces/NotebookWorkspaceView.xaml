@@ -87,9 +87,9 @@
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
+                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="#2F64B9" />
                                     <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                                    <Setter TargetName="PageIndex" Property="Foreground" Value="DarkViolet" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="#2F64B9" />
                                     <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -188,7 +188,7 @@
             </ContentControl>
 
             <!-- SideBar that displays projected displays -->
-            <Border BorderBrush="#D4D4D4" BorderThickness="5,0,0,0" Background="#F3F3F3"
+            <Border BorderBrush="#D4D4D4" BorderThickness="5,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
               Grid.Column="5" HorizontalAlignment="Right" Margin="0">
 
