@@ -159,7 +159,7 @@ namespace Classroom_Learning_Partner.Views
             }
             catch(System.Exception ex)
             {
-                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
+                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
         }
     }

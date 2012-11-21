@@ -138,10 +138,10 @@ namespace CLP.Models
 
         public void AcceptObject(ICLPPageObject pageObject)
         {
-            if (pageObject.Parts > 1) {
+            //if (pageObject.Parts > 1) {
                 PageObjectObjects.Add(pageObject);
                 Parts += pageObject.Parts;
-            }
+            //}
             
         }
 

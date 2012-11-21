@@ -284,40 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            if (!GetType().Equals(typeof(CLPStampViewModel)))
-            {
-                //var stampQuery = from po in PageObject.ParentPage.PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
-                //foreach (CLPStamp stamp in stampQuery)
-                foreach (ICLPPageObject stamp in PageObject.ParentPage.PageObjects)
-                {
-                    if (stamp.GetType().Equals(typeof(CLPStamp))){
-                        if (!this.PageObject.ParentID.Equals(stamp.UniqueID))
-                        {
-                            if (stamp.HitTest(this.PageObject, .50))
-                            {
-                                if (!stamp.PageObjectObjects.Contains(this.PageObject))
-                                {
-                                    (stamp as CLPStamp).AcceptObject(this.PageObject);
-                                    foreach (ICLPPageObject pos in stamp.PageObjectObjects)
-                                    {
-                                        Console.Write(pos.UniqueID + " ");
-                                        Console.WriteLine("objects");
-                                    }
-                                    Console.WriteLine("Success Add Move  " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
-                                }
-                            }
-                            else
-                            {
-                                if (stamp.PageObjectObjects.Contains(this.PageObject))
-                                {
-                                    (stamp as CLPStamp).RemoveObject(this.PageObject);
-                                    Console.WriteLine("Success Remove Move " + this.PageObject.UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            ProcessPageObjectObject();
         }
 
         /// <summary>
@@ -379,6 +346,41 @@ namespace Classroom_Learning_Partner.ViewModels
         {
         }
 
+        protected void ProcessPageObjectObject() {
+            Console.WriteLine("PageObject: " + PageObject.GetType() + " CanAccept: " + PageObject.CanAcceptPageObjects);
+            if (!PageObject.CanAcceptPageObjects)
+            {
+                var containerQuery = from po in PageObject.ParentPage.PageObjects where (po.CanAcceptPageObjects == true) select po;
+                foreach (ICLPPageObject container in containerQuery)
+                {
+                    if (!PageObject.ParentID.Equals(container.UniqueID))
+                    {
+                        if (container.HitTest(this.PageObject, .50))
+                        {
+                            if (!container.PageObjectObjects.Contains(this.PageObject))
+                            {
+                                container.AcceptObject(PageObject);
+                                foreach (ICLPPageObject pos in container.PageObjectObjects)
+                                {
+                                    Console.Write(pos.UniqueID + " ");
+                                    Console.WriteLine("objects");
+                                }
+                                Console.WriteLine("Success Add Move  " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
+                            }
+                        }
+                        else
+                        {
+                            if (container.PageObjectObjects.Contains(PageObject))
+                            {
+                                container.RemoveObject(PageObject);
+                                Console.WriteLine("Success Remove Move " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion //Default Adorners
 
         #endregion //Commands
@@ -402,20 +404,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return true;
             }
-        }
-
-        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
-        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
-        {
-            double areaObject = pageObject.Height * pageObject.Width;
-            double top = Math.Max(YPosition, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
-            double left = Math.Max(XPosition, pageObject.XPosition);
-            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
-            double deltaY = bottom - top;
-            double deltaX = right - left;
-            double intersectionArea = deltaY * deltaX;
-            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
         #endregion //Methods

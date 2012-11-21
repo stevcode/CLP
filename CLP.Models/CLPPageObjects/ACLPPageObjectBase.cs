@@ -160,7 +160,7 @@ namespace CLP.Models
         public bool CanAcceptPageObjects
         {
             get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
-            set { SetValue(CanAcceptPageObjectsProperty, value); }
+            set { SetValue(CanAcceptPageObjectsProperty, false); }
         }
 
         /// <summary>
@@ -308,6 +308,20 @@ namespace CLP.Models
             Console.WriteLine("Top: " + top + "; Bottom: " + bottom + "; left: " + left + "; right: " + right + " delta X: " + deltaX + " deltaY: " + deltaY + "; intersectionArea: " + intersectionArea + "; areaObject" + areaObject);
             Console.WriteLine("DeltaY: " + (deltaY >= 0) + "; DeltaX: " + (deltaX >= 0) + "; Area: " + (intersectionArea / areaObject >= percentage));*/
             return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+        }
+
+        public void AcceptObject(ICLPPageObject pageObject)
+        {
+            //if (pageObject.Parts > 1) {
+            PageObjectObjects.Add(pageObject);
+            Parts += pageObject.Parts;
+            //}
+        }
+
+        public void RemoveObject(ICLPPageObject pageObject)
+        {
+            PageObjectObjects.Remove(pageObject);
+            Parts -= pageObject.Parts;
         }
 
         #endregion

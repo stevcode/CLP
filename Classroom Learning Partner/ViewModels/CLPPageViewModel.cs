@@ -423,7 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                Console.WriteLine(o.GetType().ToString());
+                //Console.WriteLine(o.GetType().ToString());
                 if(o is Shape)
                 {
                     if((o as Shape).Name.Contains("HitBox"))
@@ -443,26 +443,26 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
             IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-            Console.WriteLine(IsInkCanvasHitTestVisible.ToString());
+            //Console.WriteLine(IsInkCanvasHitTestVisible.ToString());
             return HitTestResultBehavior.Continue;
         }
 
         void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            
-            var stampQuery = from po in PageObjects where (po.GetType().Equals(typeof(CLPStamp))) select po;
+
+            var containerQuery = from po in PageObjects where (po.CanAcceptPageObjects == true) select po;
 
             if (e.NewItems != null) {
                 foreach (var item in e.NewItems) {
                     // Do not allow stamps to contain stamps
-                    if (!item.GetType().Equals(typeof(CLPStamp))) {
-                        foreach (CLPStamp stamp in stampQuery)
+                    if (!(item as ICLPPageObject).CanAcceptPageObjects) {
+                        foreach (ICLPPageObject container in containerQuery)
                         {
-                            if (!(item as ICLPPageObject).ParentID.Equals(stamp.UniqueID)
-                                && stamp.HitTest(item as ICLPPageObject, .50) && !stamp.PageObjectObjects.Contains(item as ICLPPageObject) ){
-                                stamp.AcceptObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                            if (!(item as ICLPPageObject).ParentID.Equals(container.UniqueID)
+                                && container.HitTest(item as ICLPPageObject, .50) && !container.PageObjectObjects.Contains(item as ICLPPageObject) ){
+                                container.AcceptObject(item as ICLPPageObject);
+                                Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
                             }
                         }
                     }
@@ -470,14 +470,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if (e.OldItems != null) {
                 foreach (var item in e.OldItems) {
-                    if (!item.GetType().Equals(typeof(CLPStamp)))
+                    if (!(item as ICLPPageObject).CanAcceptPageObjects)
                     {
-                        foreach (CLPStamp stamp in stampQuery)
+                        foreach (ICLPPageObject container in containerQuery)
                         {
-                            if (stamp.PageObjectObjects.Contains(item as ICLPPageObject))
+                            if (container.PageObjectObjects.Contains(item as ICLPPageObject))
                             {
-                                stamp.RemoveObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + stamp.UniqueID + " length: " + stamp.PageObjectObjects.Count);
+                                container.RemoveObject(item as ICLPPageObject);
+                                Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
                             }
                         }
                     }
@@ -515,7 +515,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var stroke in e.Removed)
             {
                 List<byte> b = CLPPage.StrokeToByte(stroke);
-                Console.WriteLine(b.ToString());
+                //Console.WriteLine(b.ToString());
                 /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
                  * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
                  * This predicate searches for the first sequence match, instead of the first identical object, then removes

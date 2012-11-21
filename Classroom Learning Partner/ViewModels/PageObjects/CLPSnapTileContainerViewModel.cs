@@ -183,8 +183,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //}
                                 break;
                             }
-
-
                         }
                     }
                 }
