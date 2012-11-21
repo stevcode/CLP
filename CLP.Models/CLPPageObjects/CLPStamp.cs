@@ -43,6 +43,9 @@ namespace CLP.Models
             ParentID = "";
             PageObjectByteStrokes = new ObservableCollection<List<byte>>();
             CanAcceptStrokes = true;
+            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
+            CanAcceptPageObjects = true;
+            Parts = -1;
         }
 
         /// <summary>
@@ -159,6 +162,35 @@ namespace CLP.Models
             }
         }
 
+        public void AcceptObject(ICLPPageObject pageObject)
+        {
+            //if (pageObject.Parts > 1) {
+                PageObjectObjects.Add(pageObject);
+                Parts += pageObject.Parts;
+            //}
+            
+        }
+
+        public void RemoveObject(ICLPPageObject pageObject)
+        {
+            PageObjectObjects.Remove(pageObject);
+            Parts -= pageObject.Parts;
+        }
+
+        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+        }
+
         #endregion //Methods
 
         /// <summary>
@@ -266,6 +298,34 @@ namespace CLP.Models
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<ICLPPageObject> PageObjectObjects
+        {
+            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectObjectsProperty); }
+            set { SetValue(PageObjectObjectsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageObjectObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAcceptPageObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
+
+        /// <summary>
         /// Position of pageObject on page.
         /// </summary>
         public Point Position
@@ -360,5 +420,19 @@ namespace CLP.Models
         /// Register the IsBackground property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Parts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
     }
 }

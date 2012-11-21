@@ -154,6 +154,9 @@ namespace Classroom_Learning_Partner
                 .Add(8, "Width")
                 .Add(9, "XPosition")
                 .Add(10, "YPosition")
+                .Add(11, "PageObjectObjects")
+                .Add(12, "CanAcceptObjects")
+                .Add(13, "Parts")
                 .AddSubType(15, typeof(CLP.Models.CLPPageObjectBase))
                 .AddSubType(16, typeof(CLP.Models.CLPStamp));
             model[typeof(CLP.Models.CLPPageObjectBase)]

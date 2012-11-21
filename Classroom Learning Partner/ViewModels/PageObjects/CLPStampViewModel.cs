@@ -154,7 +154,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch (System.Exception ex)
             {
-                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind stamp. " + ex.Message);
+                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
         }
 
@@ -174,6 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
             droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
+            droppedContainer.Parts = PageObject.Parts;
             
             double deltaX = Math.Abs(PageObject.XPosition - originalX);
             double deltaY = Math.Abs(PageObject.YPosition - originalY);

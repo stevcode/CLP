@@ -31,6 +31,9 @@ namespace CLP.Models
             XPosition = 10;
             YPosition = 10;
             IsBackground = false;
+            PageObjectObjects = new ObservableCollection<ICLPPageObject>();
+            CanAcceptPageObjects = true;
+            Parts = -1;
         }
 
         /// <summary>
@@ -138,6 +141,34 @@ namespace CLP.Models
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<ICLPPageObject> PageObjectObjects
+        {
+            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectObjectsProperty); }
+            set { SetValue(PageObjectObjectsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PageObjectObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PageObjectObjectsProperty = RegisterProperty("PageObjectObjects", typeof(ObservableCollection<ICLPPageObject>), () => new ObservableCollection<ICLPPageObject>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, false); }
+        }
+
+        /// <summary>
+        /// Register the CanAcceptPageObjects property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
+
+        /// <summary>
         /// xPosition of pageObject on page
         /// </summary>
         public double XPosition
@@ -193,6 +224,20 @@ namespace CLP.Models
 
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Parts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
+
         #endregion
 
         #region Methods
@@ -245,6 +290,38 @@ namespace CLP.Models
 
                 PageObjectByteStrokes.Add(CLPPage.StrokeToByte(newStroke));
             }
+        }
+
+        // Returns a boolean stating if the @percentage of the @pageObject is contained within the item.
+        public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            /*Console.WriteLine("left: " + XPosition + "; right: " + (XPosition + Width) + "; top: " + YPosition + "; bottom: " + (YPosition + Height));
+            Console.WriteLine("po left: " + pageObject.XPosition + "; po right: " + (pageObject.XPosition + pageObject.Width) + "; po top: " + pageObject.YPosition + "; po bottom: " + (pageObject.YPosition + pageObject.Height));
+            Console.WriteLine("Top: " + top + "; Bottom: " + bottom + "; left: " + left + "; right: " + right + " delta X: " + deltaX + " deltaY: " + deltaY + "; intersectionArea: " + intersectionArea + "; areaObject" + areaObject);
+            Console.WriteLine("DeltaY: " + (deltaY >= 0) + "; DeltaX: " + (deltaX >= 0) + "; Area: " + (intersectionArea / areaObject >= percentage));*/
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+        }
+
+        public void AcceptObject(ICLPPageObject pageObject)
+        {
+            //if (pageObject.Parts > 1) {
+            PageObjectObjects.Add(pageObject);
+            Parts += pageObject.Parts;
+            //}
+        }
+
+        public void RemoveObject(ICLPPageObject pageObject)
+        {
+            PageObjectObjects.Remove(pageObject);
+            Parts -= pageObject.Parts;
         }
 
         #endregion

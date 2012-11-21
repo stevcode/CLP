@@ -376,12 +376,6 @@
                         Command="{Binding Path=AddPageTopicCommand}" />
 
             </RibbonGroup>
-
-                        Label="Grouping Region"
-                        LargeImageSource="..\Images\LargeIcon.png"
-                        Command="{Binding Path=InsertGroupingRegionCommand}" />
-
-                <RibbonButton
             <RibbonGroup Header="Text">
 
                 <RibbonButton
@@ -583,7 +577,13 @@
                                 <Label>Shading Region</Label>
                             </StackPanel>
                         </Button>
-
+                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                                Command="{Binding Path=InsertGroupingRegionCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Grouping Region</Label>
+                            </StackPanel>
+                        </Button>
                     </RibbonGallery>
                 </RibbonMenuButton>
 

@@ -16,11 +16,17 @@ namespace CLP.Models
         string PageObjectType { get; }
         ObservableCollection<List<byte>> PageObjectByteStrokes { get; set; }
         bool CanAcceptStrokes { get; set; }
+        ObservableCollection<ICLPPageObject> PageObjectObjects { get; set; }
+        bool CanAcceptPageObjects { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
+        int Parts { get; set; }
+        bool HitTest(ICLPPageObject pageObject, double percentage);
+        void AcceptObject(ICLPPageObject pageObject);
+        void RemoveObject(ICLPPageObject pageObject);
 
         ICLPPageObject Duplicate();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
