@@ -87,9 +87,9 @@
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
+                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="#2F64B9" />
                                     <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                                    <Setter TargetName="PageIndex" Property="Foreground" Value="DarkViolet" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="#2F64B9" />
                                     <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -100,7 +100,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="#F3F3F3">
+    <!-- Background="#F3F3F3" -->
+    <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -146,7 +147,7 @@
 
             <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
          HorizontalAlignment="Center" VerticalAlignment="Stretch"
-         Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SideBarVisibility, Converter={StaticResource BoolConverter}}"/>
+         />
 
             <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
 
@@ -158,11 +159,11 @@
                 <ContentControl.Resources>
 
                     <ControlTemplate x:Key="LinkedDisplayTemplate">
-                        <Views:LinkedDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                        <Views:LinkedDisplayView />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="GridDisplayTemplate">
-                        <Views:GridDisplayView Background="{Binding WorkspaceBackgroundColor}" />
+                        <Views:GridDisplayView />
                     </ControlTemplate>
 
                 </ContentControl.Resources>
@@ -187,7 +188,7 @@
             </ContentControl>
 
             <!-- SideBar that displays projected displays -->
-            <Border BorderBrush="#D4D4D4" BorderThickness="5,0,0,0" Background="#F3F3F3"
+            <Border BorderBrush="#D4D4D4" BorderThickness="5,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
               Grid.Column="5" HorizontalAlignment="Right" Margin="0">
 
@@ -231,7 +232,7 @@
 
         </Grid>
 
-        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="DarkViolet" Height="23" Padding="0" Margin="0" BorderThickness="0">
+        <StatusBar Grid.Row="1" VerticalAlignment="Bottom" Background="#2F64B9" Height="23" Padding="0" Margin="0" BorderThickness="0">
             <StatusBar.Resources>
                 <Style BasedOn="{StaticResource StatusBarText}" TargetType="{x:Type TextBlock}" />
             </StatusBar.Resources>
@@ -240,7 +241,6 @@
                 <ItemsPanelTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -252,22 +252,6 @@
             </StatusBar.ItemsPanel>
 
             <StatusBarItem Grid.Column="0">
-                <ToggleButton x:Name="ShowNotebookPagesToggleButton" Width="100" Click="ShowNotebookPagesToggleButton_Click" IsChecked="True">
-                    <ToggleButton.Style>
-                        <Style TargetType="{x:Type ToggleButton}">
-                            <Setter Property="FontSize" Value="11" />
-                            <Setter Property="Content" Value="HIDE PAGES"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="False">
-                                    <Setter Property="Content" Value="SHOW PAGES"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ToggleButton.Style>
-                </ToggleButton>
-            </StatusBarItem>
-
-            <StatusBarItem Grid.Column="1">
                 <TextBlock>
                     <Run Text="PAGE " />
                     <Run Text="{Binding CurrentPage.PageIndex}" />
@@ -276,9 +260,9 @@
                 </TextBlock>
             </StatusBarItem>
 
-            <Separator Grid.Column="2" />
+            <Separator Grid.Column="1" />
 
-            <StatusBarItem Grid.Column="3">
+            <StatusBarItem Grid.Column="2">
                 <!--<Button Width="150" Command="{Binding MakePageLongerCommand}">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -389,11 +373,11 @@
                 </Slider>-->
             </StatusBarItem>
 
-            <StatusBarItem Grid.Column="4">
+            <StatusBarItem Grid.Column="3">
                 <TextBlock>CONNECTION STATUS:</TextBlock>
             </StatusBarItem>
 
-            <StatusBarItem Grid.Column="5">
+            <StatusBarItem Grid.Column="4">
                 <TextBlock Text="{Binding MainWindow.OnlineStatus}" />
             </StatusBarItem>
         </StatusBar>

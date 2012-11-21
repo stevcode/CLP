@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
+    [InterestedIn(typeof(RibbonViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         public MainWindowViewModel MainWindow
@@ -36,7 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
 
-            WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+            WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
             SubmissionPages = new ObservableCollection<CLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
@@ -145,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                        WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
                     }
                 }
             }
@@ -307,14 +308,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.AliceBlue);
+                    WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
+            }
+            if (propertyName == "SideBarVisibility")
+            {
+                IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsSideBarVisible
+        {
+            get { return GetValue<bool>(IsSideBarVisibleProperty); }
+            set { SetValue(IsSideBarVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsSideBarVisibleProperty = RegisterProperty("IsSideBarVisible", typeof(bool), true);
 
         public void FilterSubmissions(string Sort)
         {

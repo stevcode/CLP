@@ -14,8 +14,10 @@
             
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="{Binding ElementName=CanvasBorder,Path=Height}" Width="{Binding ElementName=CanvasBorder,Path=Width}">
-                    <Views:CLPPageView HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="5" x:Name="page" DataContext="{Binding}" />
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border BorderThickness="1" BorderBrush="#C6C6C6" Margin="5">
+                        <Views:CLPPageView HorizontalAlignment="Right" VerticalAlignment="Top"   x:Name="page" DataContext="{Binding}" />
+                    </Border>
                     <Button Width="30" Height="30" Cursor="Hand"
                             Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
                             HorizontalAlignment="Right" VerticalAlignment="Top"

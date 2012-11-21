@@ -387,6 +387,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = true;
+            if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
+            {
+                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+                Point pt = e.GetPosition(pageObjectCanvas);
+                CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
+                Page.PageObjects.Add(tile);
+            }
         }
 
         /// <summary>
@@ -416,6 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
+                Console.WriteLine(o.GetType().ToString());
                 if(o is Shape)
                 {
                     if((o as Shape).Name.Contains("HitBox"))
@@ -435,7 +443,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
             IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-
+            Console.WriteLine(IsInkCanvasHitTestVisible.ToString());
             return HitTestResultBehavior.Continue;
         }
 
@@ -474,7 +482,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var stroke in e.Removed)
             {
                 List<byte> b = CLPPage.StrokeToByte(stroke);
-
+                Console.WriteLine(b.ToString());
                 /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
                  * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
                  * This predicate searches for the first sequence match, instead of the first identical object, then removes

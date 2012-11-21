@@ -76,9 +76,13 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get { return GetValue<Tuple<double, double>>(DisplayWidthHeightProperty); }
             set 
-            { 
+            {
                 SetValue(DisplayWidthHeightProperty, value);
-                ResizePage();
+
+                if(value != null)
+                {
+                    ResizePage();
+                }
             }
         }
 
