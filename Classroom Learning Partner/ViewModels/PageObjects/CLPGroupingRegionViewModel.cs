@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Catel.Data;
+﻿using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -11,9 +10,10 @@ namespace Classroom_Learning_Partner.ViewModels
     public class CLPGroupingRegionViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPGroupingRegionViewModel"/> class.
+        /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.
         /// </summary>
-        public CLPGroupingRegionViewModel(CLPGroupingRegion groupingRegion) : base()
+        public CLPGroupingRegionViewModel(CLPGroupingRegion groupingRegion)
+            : base()
         {
             PageObject = groupingRegion;
         }
@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets the title of the view model.
         /// </summary>
         /// <value>The title.</value>
-        public override string Title { get { return "GroupingRegionVM"; } }
+        public override string Title { get { return "HandwritingRegionVM"; } }
 
         #region Model
 
@@ -30,16 +30,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public string GroupsString
+        public string StoredAnswer
         {
-            get { return GetValue<string>(GroupsStringProperty); }
-            set { SetValue(GroupsStringProperty, value); }
+            get { return GetValue<string>(StoredAnswerProperty); }
+            set { SetValue(StoredAnswerProperty, value); }
         }
 
         /// <summary>
-        /// Register the GroupsString property so it is known in the class.
+        /// Register the StoredAnswer property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData GroupsStringProperty = RegisterProperty("GroupsString", typeof(string));
+        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string));
 
         #endregion //Model
 
