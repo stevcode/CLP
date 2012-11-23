@@ -100,6 +100,7 @@ namespace CLP.Models
             string result = InkInterpretation.InterpretHandwriting(CLPPage.BytesToStrokes(StrokesNoDuplicates), AnalysisType);
             if (result != null)
                 StoredAnswer = result;
+            Console.WriteLine("HW regions: " + StoredAnswer);
         }
 
         #endregion // Methods

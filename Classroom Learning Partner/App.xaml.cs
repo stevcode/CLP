@@ -169,8 +169,7 @@ namespace Classroom_Learning_Partner
                 .AddSubType(13, typeof(CLPAudio));
             model[typeof(CLPStamp)]
                 .Add(1, "StrokePathContainer")
-                .Add(1, "HandwritingRegionParts")
-                .Add(1, "HandwritingRegionTypeOfParts");
+                .Add(1, "HandwritingRegionParts");
             model[typeof(CLPImage)]
                 .Add(1, "ByteSource");
 
