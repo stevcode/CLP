@@ -16,6 +16,8 @@ namespace CLP.Models
             VerticalLine
         }
 
+        public static string Type = "CLPShape";
+
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
@@ -54,7 +56,7 @@ namespace CLP.Models
 
         public override string PageObjectType
         {
-            get { return "CLPShape"; }
+            get { return Type; }
         }
 
         public override ICLPPageObject Duplicate()

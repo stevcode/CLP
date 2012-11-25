@@ -59,12 +59,13 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            BasicGrouping();
-            StoredAnswer = "Hmm";
+            StoredAnswer = BasicGrouping();
+            DistanceClustering();
         }
 
-        private void BasicGrouping() {
+        private string BasicGrouping() {
             Dictionary<String, int> groups = new Dictionary<String, int>();
+            String answer = "Basic Grouping: ";
             foreach (ICLPPageObject po in ParentPage.PageObjects) {
                 if (po.UniqueID != UniqueID && HitTest(po, .8)) {
                     String key;
@@ -92,11 +93,61 @@ namespace CLP.Models
                 }
             }
 
-            Console.WriteLine(groups.Keys.Count + " Groups");
+            answer += groups.Keys.Count + " Groups - ";
             foreach (String key in groups.Keys)
             {
-                Console.WriteLine(key +" : " + groups[key]);
+                answer += key +" : " + groups[key] + "; ";
             }
+            return answer;
+        }
+
+        private void DistanceClustering() {
+            foreach (ICLPPageObject po1 in ParentPage.PageObjects)
+            {
+                if (validOption.Contains(po1.PageObjectType)) {
+                    Console.WriteLine("PO1: " + po1.GetType() + " X: " + po1.XPosition + " Y: " + po1.YPosition);
+                    foreach (ICLPPageObject po2 in ParentPage.PageObjects) {
+                        if (validOption.Contains(po2.PageObjectType)) {
+                            Console.WriteLine("PO2: " + po2.GetType() + " X: " + po2.XPosition + " Y: " + po2.YPosition);
+                            Console.WriteLine("distance: " + getDistanceBetweenPageObjects(po1, po2));
+                        }
+                    }
+                }
+            }
+        }
+
+        private static readonly HashSet<string> validOption = new HashSet<string> {
+            {CLPSnapTileContainer.Type},
+            {CLPStrokePathContainer.Type},
+            {CLPShape.Type}
+        };
+
+        private double getDistanceBetweenPageObjects(ICLPPageObject pageObject1, ICLPPageObject pageObject2) {
+            double x = pageObject2.XPosition - pageObject1.XPosition;
+            if (x > 0)
+            {
+                x -= pageObject1.Width;
+                x = (x < 0) ? 0 : x;
+            } else if (x < 0) {
+                x *= -1;
+                x -= pageObject2.Width;
+                x = (x < 0) ? 0 : x;
+            }
+
+            double y = pageObject2.YPosition - pageObject1.YPosition;
+            if (y > 0)
+            {
+                y -= pageObject1.Height;
+                y = (y < 0) ? 0 : y;
+            }
+            else if (y < 0)
+            {
+                y *= -1;
+                y -= pageObject2.Height;
+                y = (y < 0) ? 0 : y;
+            }
+
+            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
         }
 
         #endregion // Methods

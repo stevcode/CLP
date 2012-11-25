@@ -16,6 +16,8 @@ namespace CLP.Models
 
         public const int TILE_HEIGHT = 45;
 
+        public static string Type = "CLPSnapTileContainer";
+
         #endregion
 
         #region Constructor & destructor
@@ -65,7 +67,7 @@ namespace CLP.Models
 
         public override string PageObjectType
         {
-            get { return "CLPSnapTileContainer"; }
+            get { return Type; }
         }
 
         public override ICLPPageObject Duplicate()
