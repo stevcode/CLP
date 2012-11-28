@@ -57,10 +57,10 @@ namespace CLP.Models
         /// </summary>
         public string ParentPageID
         {
-            get 
-            {                 
+            get
+            {
                 string tempValue = GetValue<string>(ParentPageIDProperty);
-                if(tempValue != "")
+                if (tempValue != "")
                 {
                     return tempValue;
                 }
@@ -118,7 +118,7 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData PageObjectStrokeParentIDsProperty = RegisterProperty("PageObjectStrokeParentIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
-        
+
         /// <summary>
         /// Whether or not the pageObject can accept strokes
         /// </summary>
@@ -237,15 +237,15 @@ namespace CLP.Models
 
         public virtual void RefreshStrokeParentIDs()
         {
-            if(CanAcceptStrokes)
+            if (CanAcceptStrokes)
             {
                 PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
                 StrokeCollection addedStrokesOverObject = new StrokeCollection();
-                foreach(Stroke stroke in ParentPage.InkStrokes)
+                foreach (Stroke stroke in ParentPage.InkStrokes)
                 {
-                    if(stroke.HitTest(rect, 3))
+                    if (stroke.HitTest(rect, 3))
                     {
                         addedStrokesOverObject.Add(stroke);
                     }
@@ -259,20 +259,20 @@ namespace CLP.Models
         {
             if (CanAcceptStrokes)
             {
-                foreach(Stroke stroke in removedStrokes)
+                foreach (Stroke stroke in removedStrokes)
                 {
                     string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
                     try
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
                     }
-                    catch(System.Exception ex)
+                    catch (System.Exception ex)
                     {
                         Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                     }
                 }
 
-                foreach(Stroke stroke in addedStrokes)
+                foreach (Stroke stroke in addedStrokes)
                 {
                     string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
                     PageObjectStrokeParentIDs.Add(strokeID);
@@ -294,7 +294,6 @@ namespace CLP.Models
                 select stroke;
 
             return new StrokeCollection(strokes.ToList());
-        }
         }
 
         public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
@@ -322,7 +321,7 @@ namespace CLP.Models
         {
             PageObjectObjects.Remove(pageObject);
             Parts -= pageObject.Parts;
-
+        }
         #endregion
     }
 }

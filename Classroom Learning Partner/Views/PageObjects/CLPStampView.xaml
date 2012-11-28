@@ -119,7 +119,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Thumb DragDelta="StampHandleHitBox_DragDelta" Grid.Row="0"
                    DragStarted="StampHandleHitBox_DragStarted"
@@ -157,7 +157,14 @@
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
             </Border>
-            <Border Grid.Row="2" BorderBrush="Black" BorderThickness="0,0,0,2"
+            <Rectangle x:Name="BottomBarHitBox" Grid.Row="2" Fill="Black" StrokeThickness="0" Margin="0" Width="{Binding Width}" Height="{Binding PageObject.BOTTOM_BAR_HEIGHT}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <catel:EventToCommand Command="{Binding Path=BottomBarClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+            <Border x:Name="PartsHandwritingBox" Grid.Row="3" BorderBrush="Black" BorderThickness="0,0,0,2"
                     Width="{Binding HandwritingRegionParts.Width, Mode=TwoWay}" MinWidth="{Binding PageObject.PARTS_SIDE}"
                     Height="{Binding HandwritingRegionParts.Height, Mode=TwoWay}" MinHeight="{Binding PageObject.PARTS_SIDE}"
                     HorizontalAlignment="Left" Margin="0">
@@ -166,13 +173,6 @@
                                                 Width="{Binding PageObject.PARTS_SIDE}"
                                                 MaxWidth="{Binding Width}"/>
             </Border>
-            <Rectangle x:Name="BottomBarHitBox" Grid.Row="2" Fill="Black" StrokeThickness="0" Margin="0" Width="{Binding Width}" Height="{Binding PageObject.BOTTOM_BAR_HEIGHT}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
-                        <catel:EventToCommand Command="{Binding Path=BottomBarClickCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Rectangle>
 
         </Grid>
 
