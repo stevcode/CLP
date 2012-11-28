@@ -108,13 +108,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
 
-        private StrokeCollection _pageObjectStrokes = new StrokeCollection();
         public StrokeCollection PageObjectStrokes
         {
-            get
-            {
-                _pageObjectStrokes = CLPPage.BytesToStrokes(PageObject.PageObjectByteStrokes);
-                return _pageObjectStrokes;
+            get 
+            { 
+                return PageObject.GetStrokesOverPageObject();
             }
         }
 
@@ -231,16 +229,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 double yDelta = y - PageObject.YPosition;
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
-                foreach (Stroke stroke in parentPage.InkStrokes)
-                {
-                    foreach (Stroke vmStroke in PageObjectStrokes)
+
+                    foreach (Stroke stroke in PageObjectStrokes)
                     {
-                        if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
-                        {
+                      
                             stroke.Transform(moveStroke, false);
-                        }
+                        
                     }
-                }
+                
             }
 
             if (PageObject.CanAcceptPageObjects)

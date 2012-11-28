@@ -14,7 +14,7 @@ namespace CLP.Models
         string UniqueID { get; set; }
         DateTime CreationDate { get; set; }
         string PageObjectType { get; }
-        ObservableCollection<List<byte>> PageObjectByteStrokes { get; set; }
+        ObservableCollection<string> PageObjectStrokeParentIDs { get; set; }
         bool CanAcceptStrokes { get; set; }
         ObservableCollection<ICLPPageObject> PageObjectObjects { get; set; }
         bool CanAcceptPageObjects { get; set; }
@@ -29,6 +29,8 @@ namespace CLP.Models
         void RemoveObject(ICLPPageObject pageObject);
 
         ICLPPageObject Duplicate();
+        void RefreshStrokeParentIDs();
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+        StrokeCollection GetStrokesOverPageObject();
     }
 }

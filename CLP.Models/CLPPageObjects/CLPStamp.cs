@@ -29,25 +29,32 @@ namespace CLP.Models
                 return 50;
             }
         }
+        
+        public static double BOTTOM_BAR_HEIGHT
+        {
+            get
+            {
+                return 25;
+            }
+        }
+    
 
         #region Constructors
 
         public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
             : base()
         {
+            ParentPage = page;
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
 
-            Position = new Point(100, 100);
-
-            Height = StrokePathContainer.Height + HANDLE_HEIGHT;
+            Height = StrokePathContainer.Height + HANDLE_HEIGHT + BOTTOM_BAR_HEIGHT;
             Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
-            PageObjectByteStrokes = new ObservableCollection<List<byte>>();
             CanAcceptStrokes = true;
             PageObjectObjects = new ObservableCollection<ICLPPageObject>();
             CanAcceptPageObjects = true;
@@ -75,9 +82,6 @@ namespace CLP.Models
             set { SetValue(StrokePathContainerProperty, value); }
         }
 
-        /// <summary>
-        /// Register the InternalPageObject property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer), null);
 
         /// <summary>
@@ -111,51 +115,62 @@ namespace CLP.Models
             return newStamp;
         }
 
-        public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public virtual void RefreshStrokeParentIDs()
         {
-            this.ProcessStrokes(addedStrokes, removedStrokes);
-        }
-
-        protected void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
-        {
-            StrokeCollection strokesToRemove = new StrokeCollection();
-            StrokeCollection PageObjectActualStrokes = CLPPage.BytesToStrokes(PageObjectByteStrokes);
-            foreach(Stroke objectStroke in PageObjectActualStrokes)
+            if(CanAcceptStrokes)
             {
-                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                foreach(Stroke pageStroke in removedStrokes)
+                PageObjectStrokeParentIDs.Clear();
+
+                Rect rect = new Rect(XPosition, YPosition, Width, Height);
+                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                foreach(Stroke stroke in ParentPage.InkStrokes)
                 {
-                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                    if(objectStrokeUniqueID == pageStrokeUniqueID)
+                    if(stroke.HitTest(rect, 3))
                     {
-                        strokesToRemove.Add(objectStroke);
+                        addedStrokesOverObject.Add(stroke);
                     }
                 }
+
+                AcceptStrokes(addedStrokesOverObject, new StrokeCollection());
             }
+        }
 
-            foreach(Stroke stroke in strokesToRemove)
-            {
-                List<byte> b = CLPPage.StrokeToByte(stroke);
+        public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            foreach(Stroke stroke in removedStrokes)
+                {
+                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    try
+                    {
+                        PageObjectStrokeParentIDs.Remove(strokeID);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                    }
+                }
 
-                /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
-                 * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
-                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
-                 * that List<byte> array, which references the exact same object. */
-                Func<List<byte>, bool> pred = (x) => { return x.SequenceEqual(b); };
-                List<byte> eq = PageObjectByteStrokes.First<List<byte>>(pred);
+                foreach(Stroke stroke in addedStrokes)
+                {
+                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    PageObjectStrokeParentIDs.Add(strokeID);
 
-                PageObjectByteStrokes.Remove(eq);
-            }
+                    //Stroke newStroke = stroke.Clone();
+                    //Matrix transform = new Matrix();
+                    //transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
+                    //newStroke.Transform(transform, true);
+                }
+        }
 
-            foreach(Stroke stroke in addedStrokes)
-            {
-                Stroke newStroke = stroke.Clone();
-                Matrix transform = new Matrix();
-                transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
-                newStroke.Transform(transform, true);
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var strokes =
+                from strokeID in PageObjectStrokeParentIDs
+                from stroke in ParentPage.InkStrokes
+                where stroke.GetPropertyData(CLPPage.StrokeIDKey) == strokeID
+                select stroke;
 
-                PageObjectByteStrokes.Add(CLPPage.StrokeToByte(newStroke));
-            }
+            return new StrokeCollection(strokes.ToList());
         }
 
         public void AcceptObject(ICLPPageObject pageObject)
@@ -232,9 +247,6 @@ namespace CLP.Models
             set { SetValue(ParentIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
 
         /// <summary>
@@ -246,9 +258,6 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
 
         /// <summary>
@@ -260,25 +269,19 @@ namespace CLP.Models
             set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<List<byte>> PageObjectByteStrokes
+        public ObservableCollection<string> PageObjectStrokeParentIDs
         {
-            get { return GetValue<ObservableCollection<List<byte>>>(PageObjectByteStrokesProperty); }
-            set { SetValue(PageObjectByteStrokesProperty, value); }
+	        get { return GetValue<ObservableCollection<string>>(PageObjectStrokeParentIDsProperty); }
+	        set { SetValue(PageObjectStrokeParentIDsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObjectByteStrokes property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageObjectByteStrokesProperty = RegisterProperty("PageObjectByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
-
+        public static readonly PropertyData PageObjectStrokeParentIDsProperty = RegisterProperty("PageObjectStrokeParentIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -288,12 +291,7 @@ namespace CLP.Models
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanAcceptStrokes property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
-
-        /// <summary>
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
         /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<ICLPPageObject> PageObjectObjects
@@ -322,18 +320,6 @@ namespace CLP.Models
         public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
 
         /// <summary>
-        /// Position of pageObject on page.
-        /// </summary>
-        public Point Position
-        {
-            get { return GetValue<Point>(PositionProperty); }
-            set { SetValue(PositionProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the Position property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(Point), new Point(10, 10));
 
         /// <summary>
         /// xPosition of pageObject on page, used for serialization.
@@ -344,9 +330,6 @@ namespace CLP.Models
             set { SetValue(XPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the XPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
 
         /// <summary>
@@ -358,9 +341,6 @@ namespace CLP.Models
             set { SetValue(YPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the YPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
 
         /// <summary>
@@ -370,7 +350,7 @@ namespace CLP.Models
         {
             get { return GetValue<double>(HeightProperty); }
             set { SetValue(HeightProperty, value);
-            StrokePathContainer.Height = Height - HANDLE_HEIGHT;
+            StrokePathContainer.Height = Height - HANDLE_HEIGHT - BOTTOM_BAR_HEIGHT;
             if (StrokePathContainer.InternalPageObject != null)
             {
                 StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
@@ -378,9 +358,6 @@ namespace CLP.Models
             }
         }
 
-        /// <summary>
-        /// Register the Height property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 100);
 
         /// <summary>
@@ -398,9 +375,6 @@ namespace CLP.Models
             }
         }
 
-        /// <summary>
-        /// Register the Width property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 100);
 
         /// <summary>
@@ -412,9 +386,6 @@ namespace CLP.Models
             set { SetValue(IsBackgroundProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsBackground property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
         /// <summary>

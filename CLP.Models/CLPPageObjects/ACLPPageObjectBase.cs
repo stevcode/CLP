@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
@@ -23,14 +24,6 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            ParentID = "";
-            PageObjectByteStrokes = new ObservableCollection<List<byte>>();
-            CanAcceptStrokes = false;
-            Height = 10;
-            Width = 10;
-            XPosition = 10;
-            YPosition = 10;
-            IsBackground = false;
             PageObjectObjects = new ObservableCollection<ICLPPageObject>();
             CanAcceptPageObjects = true;
             Parts = -1;
@@ -60,7 +53,7 @@ namespace CLP.Models
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The UniqueID of the ParentPage
         /// </summary>
         public string ParentPageID
         {
@@ -80,9 +73,6 @@ namespace CLP.Models
             set { SetValue(ParentPageIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentPageID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof(string), "");
 
         /// <summary>
@@ -119,16 +109,16 @@ namespace CLP.Models
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// Serialized inkStrokes the pageObject has accepted.
+        /// UniqueIDs of the strokes above a pageObject.
         /// </summary>
-        public ObservableCollection<List<byte>> PageObjectByteStrokes
+        public ObservableCollection<string> PageObjectStrokeParentIDs
         {
-            get { return GetValue<ObservableCollection<List<byte>>>(PageObjectByteStrokesProperty); }
-            set { SetValue(PageObjectByteStrokesProperty, value); }
+            get { return GetValue<ObservableCollection<string>>(PageObjectStrokeParentIDsProperty); }
+            set { SetValue(PageObjectStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectByteStrokesProperty = RegisterProperty("PageObjectByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
-
+        public static readonly PropertyData PageObjectStrokeParentIDsProperty = RegisterProperty("PageObjectStrokeParentIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        
         /// <summary>
         /// Whether or not the pageObject can accept strokes
         /// </summary>
@@ -199,7 +189,7 @@ namespace CLP.Models
             set { SetValue(HeightProperty, value); }
         }
 
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 100);
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 10.0);
 
         /// <summary>
         /// Width of pageObject.
@@ -210,11 +200,10 @@ namespace CLP.Models
             set { SetValue(WidthProperty, value); }
         }
 
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 100);
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 10.0);
 
         /// <summary>
         /// True if placed while in Authoring Mode.
-        /// 
         /// </summary>
         public bool IsBackground
         {
@@ -246,50 +235,66 @@ namespace CLP.Models
 
         public abstract ICLPPageObject Duplicate();
 
-        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public virtual void RefreshStrokeParentIDs()
         {
-        }
-
-        protected virtual void ProcessStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
-        {
-            StrokeCollection strokesToRemove = new StrokeCollection();
-            StrokeCollection PageObjectActualStrokes = CLPPage.BytesToStrokes(PageObjectByteStrokes);
-            foreach(Stroke objectStroke in PageObjectActualStrokes)
+            if(CanAcceptStrokes)
             {
-                string objectStrokeUniqueID = objectStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                foreach(Stroke pageStroke in removedStrokes)
+                PageObjectStrokeParentIDs.Clear();
+
+                Rect rect = new Rect(XPosition, YPosition, Width, Height);
+                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                foreach(Stroke stroke in ParentPage.InkStrokes)
                 {
-                    string pageStrokeUniqueID = pageStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString();
-                    if(objectStrokeUniqueID == pageStrokeUniqueID)
+                    if(stroke.HitTest(rect, 3))
                     {
-                        strokesToRemove.Add(objectStroke);
+                        addedStrokesOverObject.Add(stroke);
                     }
                 }
-            }
 
-            foreach(Stroke stroke in strokesToRemove)
+                AcceptStrokes(addedStrokesOverObject, new StrokeCollection());
+            }
+        }
+
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            if (CanAcceptStrokes)
             {
-                List<byte> b = CLPPage.StrokeToByte(stroke);
+                foreach(Stroke stroke in removedStrokes)
+                {
+                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    try
+                    {
+                        PageObjectStrokeParentIDs.Remove(strokeID);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                    }
+                }
 
-                /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
-                 * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
-                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
-                 * that List<byte> array, which references the exact same object. */
-                Func<List<byte>, bool> pred = (x) => { return x.SequenceEqual(b); };
-                List<byte> eq = PageObjectByteStrokes.First<List<byte>>(pred);
+                foreach(Stroke stroke in addedStrokes)
+                {
+                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    PageObjectStrokeParentIDs.Add(strokeID);
 
-                PageObjectByteStrokes.Remove(eq);
+                    //Stroke newStroke = stroke.Clone();
+                    //Matrix transform = new Matrix();
+                    //transform.Translate(-XPosition, -YPosition);
+                    //newStroke.Transform(transform, true);
+                }
             }
+        }
 
-            foreach(Stroke stroke in addedStrokes)
-            {
-                Stroke newStroke = stroke.Clone();
-                Matrix transform = new Matrix();
-                transform.Translate(-XPosition, -YPosition);
-                newStroke.Transform(transform, true);
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var strokes =
+                from strokeID in PageObjectStrokeParentIDs
+                from stroke in ParentPage.InkStrokes
+                where stroke.GetPropertyData(CLPPage.StrokeIDKey) == strokeID
+                select stroke;
 
-                PageObjectByteStrokes.Add(CLPPage.StrokeToByte(newStroke));
-            }
+            return new StrokeCollection(strokes.ToList());
+        }
         }
 
         public virtual bool HitTest(ICLPPageObject pageObject, double percentage)
@@ -317,7 +322,6 @@ namespace CLP.Models
         {
             PageObjectObjects.Remove(pageObject);
             Parts -= pageObject.Parts;
-        }
 
         #endregion
     }

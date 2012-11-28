@@ -116,18 +116,19 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Thumb DragDelta="StampHandleHitBox_DragDelta"
+            <Thumb DragDelta="StampHandleHitBox_DragDelta" Grid.Row="0"
                    DragStarted="StampHandleHitBox_DragStarted"
                    DragCompleted="StampHandleHitBox_DragCompleted"
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="StampHandleHitBox" Grid.Row="0" 
+                        <Polygon x:Name="StampHandleHitBox"  
                                  Width="{Binding Width}" MinWidth="50"  
                                  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
                                  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
@@ -165,6 +166,14 @@
                                                 Width="{Binding PageObject.PARTS_SIDE}"
                                                 MaxWidth="{Binding Width}"/>
             </Border>
+            <Rectangle x:Name="BottomBarHitBox" Grid.Row="2" Fill="Black" StrokeThickness="0" Margin="0" Width="{Binding Width}" Height="{Binding PageObject.BOTTOM_BAR_HEIGHT}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <catel:EventToCommand Command="{Binding Path=BottomBarClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
         </Grid>
 
     </ac:AdornedControl>

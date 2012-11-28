@@ -1472,6 +1472,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
                 //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
+
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages[index];
             }
         }
 

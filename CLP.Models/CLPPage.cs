@@ -28,7 +28,6 @@ namespace CLP.Models
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
-        public static Guid ParentPageID = new Guid("00000000-0000-0000-0000-000000000003");
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
@@ -148,7 +147,7 @@ namespace CLP.Models
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Deserialized Ink Strokes.
         /// </summary>
         public StrokeCollection InkStrokes
         {
@@ -158,7 +157,6 @@ namespace CLP.Models
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), null, includeInSerialization:false);
-
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -289,11 +287,9 @@ namespace CLP.Models
             {
                 Stroke s = stroke.Clone();
                 s.RemovePropertyData(CLPPage.StrokeIDKey);
-                s.RemovePropertyData(CLPPage.ParentPageID);
 
                 string newUniqueID = Guid.NewGuid().ToString();
                 s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                s.AddPropertyData(CLPPage.ParentPageID, newPage.UniqueID);
 
                 List<byte> b = CLPPage.StrokeToByte(s);
 
@@ -359,6 +355,19 @@ namespace CLP.Models
             }
 
             return byteStrokes;
+        }
+
+        protected override void OnDeserialized()
+        {
+            InkStrokes = BytesToStrokes(ByteStrokes);
+
+            base.OnDeserialized();
+        }
+
+        [OnSerializing]
+        void OnSerializing(StreamingContext sc)
+        {
+            ByteStrokes = StrokesToBytes(InkStrokes);
         }
 
         #endregion

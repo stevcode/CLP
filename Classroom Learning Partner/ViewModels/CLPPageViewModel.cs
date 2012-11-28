@@ -225,9 +225,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(InkStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the InkStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
 
         /// <summary>
@@ -240,9 +237,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberOfSubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NumberOfSubmissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
 
         /// <summary>
@@ -512,40 +506,34 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            foreach(var stroke in e.Removed)
+            List<string> removedStrokeIDs = new List<string>();
+            foreach(Stroke stroke in e.Removed)
             {
-                List<byte> b = CLPPage.StrokeToByte(stroke);
-                //Console.WriteLine(b.ToString());
-                /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
-                 * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
-                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
-                 * that List<byte> array, which references the exact same object. */
-                Func<List<byte>, bool> pred = (x) => { return x.SequenceEqual(b); };
-                List<byte> eq = ByteStrokes.First<List<byte>>(pred);
-
-                ByteStrokes.Remove(eq);
+                removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
             }
 
-            StrokeCollection addedStrokes = new StrokeCollection();
             foreach (Stroke stroke in e.Added)
             {
                 if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
                     string newUniqueID = Guid.NewGuid().ToString();
                     stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                    stroke.AddPropertyData(CLPPage.ParentPageID, Page.UniqueID);
                 }
+                foreach(string id in removedStrokeIDs)
+                {
+                    if(id == stroke.GetPropertyData(CLPPage.StrokeIDKey) as string)
+                    {
+                        stroke.RemovePropertyData(CLPPage.StrokeIDKey);
 
-                addedStrokes.Add(stroke);
-
-                List<byte> b = CLPPage.StrokeToByte(stroke);
-
-                ByteStrokes.Add(b);
+                        string newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    }
+                }
             }
 
             if (App.CurrentUserMode == App.UserMode.Instructor)
             {
-                List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(addedStrokes));
+                List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
                 List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
 
                 ////Steve - re-write BroadcastInk (add, remove, uniqueID, submissionID)
@@ -572,7 +560,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
 
                     StrokeCollection addedStrokesOverObject = new StrokeCollection();
-                    foreach (Stroke stroke in addedStrokes)
+                    foreach (Stroke stroke in e.Added)
                     {
                         if (stroke.HitTest(rect, 3))
                         {

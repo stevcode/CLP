@@ -73,8 +73,8 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
-            ContextNodeCollection shapes = InkInterpretation.InterpretShapes(CLPPage.BytesToStrokes(StrokesNoDuplicates));
+            //ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
+            ContextNodeCollection shapes = InkInterpretation.InterpretShapes(GetStrokesOverPageObject());
             if (shapes != null)
             {
                 StringBuilder text = new StringBuilder();
