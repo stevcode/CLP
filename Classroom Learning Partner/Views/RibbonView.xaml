@@ -267,7 +267,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+            <!--<RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
 
                 <RibbonButton
                         LargeImageSource="..\Images\Projector.png"
@@ -299,7 +299,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <!--<RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
+                <RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
                         IsChecked="{Binding BroadcastInkToStudents}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -313,9 +313,9 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>-->
+                </RibbonToggleButton>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
         </RibbonTab>
         

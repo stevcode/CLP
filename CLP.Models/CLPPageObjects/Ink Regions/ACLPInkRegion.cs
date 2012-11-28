@@ -103,13 +103,6 @@ namespace CLP.Models
 
         private DispatcherTimer timer = null;
 
-        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
-        {
-            //timer.Stop();
-            this.ProcessStrokes(addedStrokes, removedStrokes);
-            //timer.Start();
-        }
-
         #endregion
     }
 }

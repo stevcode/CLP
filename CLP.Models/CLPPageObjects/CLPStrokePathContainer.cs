@@ -73,9 +73,6 @@ namespace CLP.Models
             set { SetValue(IsStampedProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsStamped property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool), false);
 
         public override string PageObjectType

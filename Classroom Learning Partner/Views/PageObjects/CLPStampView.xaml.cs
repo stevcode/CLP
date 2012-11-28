@@ -94,7 +94,7 @@ namespace Classroom_Learning_Partner.Views
                     return null;
                 }, null);
 
-            (ViewModel as CLPStampViewModel).StrokePathContainer.PageObjectByteStrokes = (ViewModel as CLPStampViewModel).PageObject.PageObjectByteStrokes;
+            (ViewModel as CLPStampViewModel).StrokePathContainer.PageObjectStrokeParentIDs = (ViewModel as CLPStampViewModel).PageObject.PageObjectStrokeParentIDs;
             (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = true;
         }
 
@@ -141,8 +141,8 @@ namespace Classroom_Learning_Partner.Views
                 CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
                 leftBehindStamp.UniqueID = PageObject.UniqueID;
 
-                originalX = leftBehindStamp.Position.X;
-                originalY = leftBehindStamp.Position.Y;
+                originalX = leftBehindStamp.XPosition;
+                originalY = leftBehindStamp.YPosition;
 
                 //int originalIndex = PageObject.ParentPage.PageObjects.  .IndexOf(PageObject);
 
