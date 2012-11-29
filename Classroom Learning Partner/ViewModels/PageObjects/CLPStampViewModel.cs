@@ -60,20 +60,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPHandwritingRegion HandwritingRegionParts
-        {
-            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
-            set { SetValue(HandwritingRegionPartsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the HandwritingRegionParts property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion), null);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public SolidColorBrush StampHandleColor
         {
             get { return GetValue<SolidColorBrush>(StampHandleColorProperty); }

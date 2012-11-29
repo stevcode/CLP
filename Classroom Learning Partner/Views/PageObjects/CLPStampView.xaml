@@ -8,6 +8,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
+        <conv:PartsStringConverter x:Key="PartsStringConverter"/>
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center" IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
@@ -173,7 +174,9 @@
                                                 Width="{Binding PageObject.PARTS_SIDE}"
                                                 MaxWidth="{Binding Width}"/>
             </Border>
-
+            <TextBlock x:Name="PartsAuto" Grid.Row="3"
+                       FontFamily="SketchFlow Print" FontSize="24"
+                       Text="{Binding Converter={StaticResource PartsStringConverter}, Path=PageObject.Parts, Mode=TwoWay}" />
         </Grid>
 
     </ac:AdornedControl>

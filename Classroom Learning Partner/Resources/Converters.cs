@@ -35,6 +35,25 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class PartsStringConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return ((int)value > 0) ? value : "";
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,

@@ -58,7 +58,7 @@ namespace CLP.Models
             CanAcceptStrokes = true;
             PageObjectObjects = new ObservableCollection<ICLPPageObject>();
             CanAcceptPageObjects = true;
-            Parts = -1;
+            Parts = 0;
         }
 
         /// <summary>
@@ -175,10 +175,10 @@ namespace CLP.Models
 
         public void AcceptObject(ICLPPageObject pageObject)
         {
-            //if (pageObject.Parts > 1) {
+            if (pageObject.Parts > 0) {
                 PageObjectObjects.Add(pageObject);
                 Parts += pageObject.Parts;
-            //}
+            }
             
         }
 

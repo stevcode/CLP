@@ -85,51 +85,57 @@ namespace Classroom_Learning_Partner.Views
 
         private void StampHandleHitBox_DragStarted(object sender, DragStartedEventArgs e)
         {
-            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
+            if (HasParts()) {
+                (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    CopyStamp();
-
-                    return null;
-                }, null);
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        CopyStamp();
+                        return null;
+                    }, null);
 
             (ViewModel as CLPStampViewModel).StrokePathContainer.PageObjectStrokeParentIDs = (ViewModel as CLPStampViewModel).PageObject.PageObjectStrokeParentIDs;
-            (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = true;
+                (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = true;
+            } else {
+                MessageBox.Show("You must write parts before you copy a stamp", "No Parts");
+            }
         }
 
         private void StampHandleHitBox_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
-            (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = false;
-            
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+            if (HasParts())
+            {
+                (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+                (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = false;
 
-                    CLPStrokePathContainer droppedContainer = (ViewModel as CLPStampViewModel).StrokePathContainer.Duplicate() as CLPStrokePathContainer;
-                    droppedContainer.XPosition = (ViewModel as CLPStampViewModel).PageObject.XPosition;
-                    droppedContainer.YPosition = (ViewModel as CLPStampViewModel).PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
-                    droppedContainer.ParentID = (ViewModel as CLPStampViewModel).PageObject.UniqueID;
-                    droppedContainer.IsStamped = true;
-
-                    double deltaX = Math.Abs((ViewModel as CLPStampViewModel).PageObject.XPosition - originalX);
-                    double deltaY = Math.Abs((ViewModel as CLPStampViewModel).PageObject.YPosition - originalY);
-
-                    if(deltaX > (ViewModel as CLPStampViewModel).PageObject.Width + 5 || deltaY > (ViewModel as CLPStampViewModel).PageObject.Height)
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                    (DispatcherOperationCallback)delegate(object arg)
                     {
-                        if((ViewModel as CLPStampViewModel).StrokePathContainer.InternalPageObject != null || (ViewModel as CLPStampViewModel).PageObjectStrokes.Count > 0)
+
+                        CLPStrokePathContainer droppedContainer = (ViewModel as CLPStampViewModel).StrokePathContainer.Duplicate() as CLPStrokePathContainer;
+                        droppedContainer.XPosition = (ViewModel as CLPStampViewModel).PageObject.XPosition;
+                        droppedContainer.YPosition = (ViewModel as CLPStampViewModel).PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
+                        droppedContainer.ParentID = (ViewModel as CLPStampViewModel).PageObject.UniqueID;
+                        droppedContainer.IsStamped = true;
+
+                        double deltaX = Math.Abs((ViewModel as CLPStampViewModel).PageObject.XPosition - originalX);
+                        double deltaY = Math.Abs((ViewModel as CLPStampViewModel).PageObject.YPosition - originalY);
+
+                        if (deltaX > (ViewModel as CLPStampViewModel).PageObject.Width + 5 || deltaY > (ViewModel as CLPStampViewModel).PageObject.Height)
                         {
-                            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID((ViewModel as CLPStampViewModel).PageObject.ParentPageID);
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                            if ((ViewModel as CLPStampViewModel).StrokePathContainer.InternalPageObject != null || (ViewModel as CLPStampViewModel).PageObjectStrokes.Count > 0)
+                            {
+                                CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID((ViewModel as CLPStampViewModel).PageObject.ParentPageID);
+                                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                            }
                         }
-                    }
 
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
+                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
 
-                    return null;
-                }, null);
+                        return null;
+                    }, null);
+            }
         }
 
         double originalX;
@@ -162,6 +168,17 @@ namespace Classroom_Learning_Partner.Views
             {
                 Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
+        }
+
+        private bool HasParts() {
+            int num;
+            ((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.DoInterpretation();
+            Console.WriteLine(((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.StoredAnswer);
+            bool success = int.TryParse(((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.StoredAnswer, out num);
+            if (success) {
+                (ViewModel as CLPStampViewModel).PageObject.Parts = num;
+            }
+            return success;
         }
     }
 }

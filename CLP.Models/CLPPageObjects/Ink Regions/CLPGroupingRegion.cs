@@ -59,13 +59,16 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            StoredAnswer = BasicGrouping();
-            DistanceClustering();
+            StringBuilder interpretation = new StringBuilder();
+            interpretation.AppendLine(InkGrouping());
+            interpretation.AppendLine(DistanceClustering());
+            interpretation.AppendLine(BasicGrouping());
+            StoredAnswer = interpretation.ToString();
         }
 
         private string BasicGrouping() {
             Dictionary<String, int> groups = new Dictionary<String, int>();
-            String answer = "Basic Grouping: ";
+            StringBuilder answer = new StringBuilder("Basic Grouping: ");
             foreach (ICLPPageObject po in ParentPage.PageObjects) {
                 if (po.UniqueID != UniqueID && HitTest(po, .8)) {
                     String key;
@@ -93,25 +96,132 @@ namespace CLP.Models
                 }
             }
 
-            answer += groups.Keys.Count + " Groups - ";
+            answer.Append(groups.Keys.Count);
+            answer.Append(" Groups - ");
             foreach (String key in groups.Keys)
             {
-                answer += key +" : " + groups[key] + "; ";
+                answer.Append(key);
+                answer.Append(" : ");
+                answer.Append(groups[key]);
+                answer.Append("; ");
             }
-            return answer;
+            return answer.ToString();
         }
 
-        private void DistanceClustering() {
-            foreach (ICLPPageObject po1 in ParentPage.PageObjects)
+        private string InkGrouping()
+        {
+            StringBuilder answer = new StringBuilder("Ink Grouping: ");
+            //CLPInkShapeRegion inkShapeRegion = new CLPInkShapeRegion(ParentPage);
+            return answer.ToString();
+        }
+
+        #region Distance Grouping
+
+        private string DistanceClustering() {
+            HashSet<DistanceGroup> groups = new HashSet<DistanceGroup>();
+            foreach (ICLPPageObject po in ParentPage.PageObjects)
             {
-                if (validOption.Contains(po1.PageObjectType)) {
-                    Console.WriteLine("PO1: " + po1.GetType() + " X: " + po1.XPosition + " Y: " + po1.YPosition);
-                    foreach (ICLPPageObject po2 in ParentPage.PageObjects) {
-                        if (validOption.Contains(po2.PageObjectType)) {
-                            Console.WriteLine("PO2: " + po2.GetType() + " X: " + po2.XPosition + " Y: " + po2.YPosition);
-                            Console.WriteLine("distance: " + getDistanceBetweenPageObjects(po1, po2));
+                if (validOption.Contains(po.PageObjectType)) {
+                    groups.Add(new DistanceGroup(po));
+                }
+            }
+            Boolean canCombine = true;
+            while (canCombine && groups.Count > 1) {
+                canCombine = combineGroups(groups);
+            }
+            StringBuilder answer = new StringBuilder("Distance Grouping: ");
+            answer.Append(groups.Count);
+            answer.Append(" Groups - ");
+            foreach (DistanceGroup group in groups)
+            {
+                answer.Append(group.groupToString());
+                answer.Append("; ");
+            }
+            return answer.ToString();
+        }
+
+        private Boolean combineGroups(HashSet<DistanceGroup> groups) {
+            double smallestDistanceGroups = Double.MaxValue;
+            List<DistanceGroup> combineTheseGroups = new List<DistanceGroup>(2);
+            foreach (DistanceGroup groupA in groups) {
+                foreach (DistanceGroup groupB in groups)
+                {
+                    if (!groupA.Equals(groupB)) {
+                        double smallestDistance = Double.MaxValue;
+                        foreach (ICLPPageObject poA in groupA.groupObjects) {
+                            foreach (ICLPPageObject poB in groupB.groupObjects)
+                            {
+                                double distance = getDistanceBetweenPageObjects(poA, poB);
+                                smallestDistance = (distance < smallestDistance) ? distance : smallestDistance;
+                            }
+                        }
+                        if (smallestDistance < smallestDistanceGroups) {
+                            smallestDistanceGroups = smallestDistance;
+                            combineTheseGroups = new List<DistanceGroup>(2);
+                            combineTheseGroups.Add(groupA);
+                            combineTheseGroups.Add(groupB);
                         }
                     }
+                }
+            }
+
+            double threshold = 2;
+            if (combineTheseGroups[0].average() * threshold > smallestDistanceGroups &&
+                combineTheseGroups[1].average() * threshold > smallestDistanceGroups)
+            {
+                DistanceGroup removeGroup = combineTheseGroups[0];
+                groups.Remove(removeGroup);
+                combineTheseGroups[1].combineGroup(removeGroup, smallestDistanceGroups);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private class DistanceGroup {
+            public List<ICLPPageObject> groupObjects;
+            public List<double> metrics = new List<double>();
+
+            public DistanceGroup(ICLPPageObject po) {
+                groupObjects = new List<ICLPPageObject>();
+                groupObjects.Add(po);
+            }
+
+            public void printGroup() {
+                foreach (ICLPPageObject po in groupObjects)
+                {
+                    Console.Write((po as CLPShape).ShapeType.ToString() + ", ");
+                }
+                Console.WriteLine(" ");
+            }
+
+            public string groupToString() {
+                string groupString = "";
+                foreach (ICLPPageObject po in groupObjects)
+                {
+                    groupString += (po as CLPShape).ShapeType.ToString() + ", ";
+                }
+                groupString = groupString.Substring(0, groupString.Length - 2);
+                return groupString;
+            }
+
+            public void combineGroup(DistanceGroup group, double metricBetween) {
+                foreach (ICLPPageObject po in group.groupObjects)
+                {
+                    groupObjects.Add(po);
+                    metrics.Add(metricBetween);
+                }
+            }
+
+            public double average() {
+                if (metrics.Count > 0)
+                {
+                    return metrics.Average();
+                }
+                else {
+                    return double.MaxValue;
                 }
             }
         }
@@ -122,7 +232,8 @@ namespace CLP.Models
             {CLPShape.Type}
         };
 
-        private double getDistanceBetweenPageObjects(ICLPPageObject pageObject1, ICLPPageObject pageObject2) {
+        private double getDistanceBetweenPageObjects(ICLPPageObject pageObject1, ICLPPageObject pageObject2)
+        {
             double x = pageObject2.XPosition - pageObject1.XPosition;
             if (x > 0)
             {
@@ -151,5 +262,7 @@ namespace CLP.Models
         }
 
         #endregion // Methods
+
+        #endregion
     }
 }
