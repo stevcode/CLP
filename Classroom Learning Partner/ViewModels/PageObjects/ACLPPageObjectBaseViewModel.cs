@@ -208,8 +208,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(xDelta, yDelta);
                 var pageObjectsInPageObjectObjects = from po in parentPage.PageObjects
                                                      join vmPo in PageObject.PageObjectObjects on po.UniqueID equals vmPo.UniqueID
                                                      select po;

@@ -131,7 +131,6 @@ namespace CLP.Models
             CLPStamp newStamp = this.Clone() as CLPStamp;
             newStamp.UniqueID = Guid.NewGuid().ToString();
             newStamp.ParentPage = ParentPage;
-
             return newStamp;
         }
 
@@ -196,7 +195,7 @@ namespace CLP.Models
                 }
                 else
                 {
-                    if (stroke.HitTest(rectParts, 3))
+                    if (stroke.HitTest(rectContainer, 3))
                     {
                         ResetParts();
                     }
