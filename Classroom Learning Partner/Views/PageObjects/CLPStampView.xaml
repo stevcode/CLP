@@ -120,9 +120,7 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Thumb DragDelta="StampHandleHitBox_DragDelta" Grid.Row="0"
-                   DragStarted="StampHandleHitBox_DragStarted"
-                   DragCompleted="StampHandleHitBox_DragCompleted"
+            <Thumb Grid.Row="0" 
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
@@ -136,7 +134,7 @@
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>
-                <!--<i:Interaction.Triggers>
+                <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
                         <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
@@ -146,7 +144,7 @@
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
                     </i:EventTrigger>
-                </i:Interaction.Triggers>-->
+                </i:Interaction.Triggers>
             </Thumb>
             <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2"
                     Width="{Binding Width, Mode=TwoWay}" 

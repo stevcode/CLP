@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.Data;
@@ -66,38 +67,39 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
-        /// Gets the CopyStampCommand command.
+        /// Places copy of stamp below and displays StrokePathViews for dragging stamp.
         /// </summary>
         public Command CopyStampCommand { get; private set; }
 
+        private void OnCopyStampCommandExecute()
+        {
+            StampHandleColor = new SolidColorBrush(Colors.Green);
+
+            CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
+
+            StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
+            StrokeCollection clonedStrokes = new StrokeCollection();
+
+            foreach(Stroke stroke in originalStrokes)
+            {
+                Stroke newStroke = stroke.Clone();
+                Matrix transform = new Matrix();
+                transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
+                newStroke.Transform(transform, true);
+                clonedStrokes.Add(newStroke);
+            }
+
+            StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
+            StrokePathContainer.IsStrokePathsVisible = true;
+        }
 
         private bool dragStarted = false;
         private bool copyMade = false;
 
-        /// <summary>
-        /// Method to invoke when the CopyStampCommand command is executed.
-        /// </summary>
-        private void OnCopyStampCommandExecute()
-        {
-            StampHandleColor = new SolidColorBrush(Colors.Green);
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-            //    (DispatcherOperationCallback)delegate(object arg)
-            //    {
-
-
-            CopyStamp();
-
-            //        return null;
-            //    }, null);
-
-            StrokePathContainer.PageObjectStrokeParentIDs = PageObject.PageObjectStrokeParentIDs;
-            StrokePathContainer.IsStrokePathsVisible = true;
-        }
-
         double originalX;
         double originalY;
 
-        private void CopyStamp()
+        private void CopyStamp(int stampIndex)
         {
             try
             {
@@ -107,18 +109,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 originalX = leftBehindStamp.XPosition;
                 originalY = leftBehindStamp.YPosition;
 
-                //int originalIndex = PageObject.ParentPage.PageObjects.  .IndexOf(PageObject);
-
                 CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                parentPage.PageObjects.Add(leftBehindStamp);
-
-                    //if (!page.PageHistory.IgnoreHistory)
-                    //{
-                    //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.AddPageObject, leftBehindStamp.UniqueID, null, null);
-                    //    page.PageHistory.HistoryItems.Add(item);
-                    //}
-                
+                if (stampIndex > -1)
+                {
+                    parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
+                }
+                else
+                {
+                    parentPage.PageObjects.Add(leftBehindStamp);
+                }            
             }
             catch (System.Exception ex)
             {
@@ -126,29 +126,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-                /// <summary>
-        /// Gets the PlaceStampCommand command.
+        /// <summary>
+        /// Copies StrokePathContainer to page on Stamp Placed (DragCompleted Event)
         /// </summary>
         public Command PlaceStampCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the PlaceStampCommand command is executed.
-        /// </summary>
         private void OnPlaceStampCommandExecute()
         {
-            StampHandleColor = new SolidColorBrush(Colors.Black);
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
             droppedContainer.XPosition = PageObject.XPosition;
             droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
             droppedContainer.ParentID = PageObject.UniqueID;
             droppedContainer.IsStamped = true;
-            
+
             double deltaX = Math.Abs(PageObject.XPosition - originalX);
             double deltaY = Math.Abs(PageObject.YPosition - originalY);
 
-            if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
+            if(deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
             {
-                if (StrokePathContainer.InternalPageObject != null || PageObjectStrokes.Count > 0)
+                if(StrokePathContainer.InternalPageObject != null || PageObjectStrokes.Count > 0)
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
@@ -160,15 +156,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the DragStampCommand command.
+        /// Stamp Dragged By Adorner
         /// </summary>
         public Command<DragDeltaEventArgs> DragStampCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the DragStampCommand command is executed.
-        /// </summary>
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
+            IsAdornerVisible = false;
+
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
             if (x < 0)
@@ -191,7 +186,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Point pt = new Point(x, y);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
-
 
         /// <summary>
         /// Shows/Hides Adorners

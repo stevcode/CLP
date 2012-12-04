@@ -40,9 +40,6 @@ namespace Classroom_Learning_Partner.ViewModels
             protected set { SetValue(PageObjectProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObject property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject));
 
         /// <summary>
@@ -55,9 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Height property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double));
 
         /// <summary>
@@ -70,9 +64,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(WidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Width property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double));
 
         /// <summary>
@@ -85,9 +76,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(XPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the XPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double));
 
         /// <summary>
@@ -100,9 +88,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(YPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the YPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
         
         public StrokeCollection PageObjectStrokes
@@ -123,9 +108,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsBackgroundProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsBackground property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
 
         #endregion //Model
@@ -177,7 +159,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-
             foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
             {
                 pageVM.IsInkCanvasHitTestVisible = true;
@@ -196,7 +177,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
@@ -228,13 +208,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
 
-                    foreach (Stroke stroke in PageObjectStrokes)
-                    {
-                      
-                           stroke.Transform(moveStroke, false);
-                        
-                    }
-                
+                foreach (Stroke stroke in PageObjectStrokes)
+                {  
+                    stroke.Transform(moveStroke, false);  
+                }
             }
 
             CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
@@ -275,7 +252,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;
