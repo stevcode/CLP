@@ -343,7 +343,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         protected void ProcessPageObjectObject() {
-            Console.WriteLine("PageObject: " + PageObject.GetType() + " CanAccept: " + PageObject.CanAcceptPageObjects);
             if (!PageObject.CanAcceptPageObjects)
             {
                 var containerQuery = from po in PageObject.ParentPage.PageObjects where (po.CanAcceptPageObjects == true) select po;

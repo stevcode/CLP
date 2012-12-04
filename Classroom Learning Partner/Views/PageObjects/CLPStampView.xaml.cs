@@ -169,17 +169,8 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private bool HasParts() {
-            Console.WriteLine("CLPStamp X: " + (ViewModel as CLPStampViewModel).PageObject.XPosition + "; Y: " + (ViewModel as CLPStampViewModel).PageObject.YPosition + 
-                "; Height: " + (ViewModel as CLPStampViewModel).PageObject.Height + "; Width: " + (ViewModel as CLPStampViewModel).PageObject.Width);
-            ((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.DoInterpretation();
-            Console.WriteLine(((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.StoredAnswer);
             ((ViewModel as CLPStampViewModel).PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
             return (ViewModel as CLPStampViewModel).PageObject.Parts > 0;
-        }
-
-        private void BottomBarHitBox_MouseDown_1(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("Merrrr");
         }
     }
 }
