@@ -26,7 +26,7 @@ namespace CLP.Models
         {
             get
             {
-                return 25;
+                return 23;
             }
         }
     
