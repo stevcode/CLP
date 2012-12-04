@@ -219,10 +219,11 @@ namespace CLP.Models
             var strokes =
                 from strokeID in PageObjectStrokeParentIDs
                 from stroke in ParentPage.InkStrokes
-                where stroke.GetPropertyData(CLPPage.StrokeIDKey) == strokeID
+                where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == strokeID
                 select stroke;
 
-            return new StrokeCollection(strokes.ToList());
+            StrokeCollection inkStrokes = new StrokeCollection(strokes.ToList());
+            return inkStrokes;
         }
 
         public void UpdatePartsFromHandwritingRegion() {

@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Catel.Data;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace CLP.Models
 {
@@ -77,6 +78,17 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<List<byte>> ByteStrokes
+        {
+            get { return GetValue<ObservableCollection<List<byte>>>(ByteStrokesProperty); }
+            set { SetValue(ByteStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         public override string PageObjectType
         {

@@ -107,9 +107,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(InternalTypeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the InternalType property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData InternalTypeProperty = RegisterProperty("InternalType", typeof(string));
 
         #region Methods
@@ -122,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ScribblesToStrokePaths()
         {
-            foreach (Stroke stroke in PageObjectStrokes)
+            foreach (Stroke stroke in CLPPage.BytesToStrokes((PageObject as CLPStrokePathContainer).ByteStrokes))
             {
                 StylusPoint firstPoint = stroke.StylusPoints[0];
 
