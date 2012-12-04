@@ -17,8 +17,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPImageViewModel(CLPImage image) : base()
         {
             PageObject = image;
-            //CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-            List<byte> ByteSource = PageObject.ParentPage.ImagePool[image.ImageID];
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            List<byte> ByteSource = parentPage.ImagePool[image.ImageID];
             LoadImageFromByteSource(ByteSource.ToArray());
         }
 
