@@ -96,44 +96,42 @@ namespace CLP.Models
                 PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
-                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                List<string> addedStrokeIDsOverObject = new List<string>();
                 foreach(Stroke stroke in ParentPage.InkStrokes)
                 {
                     if(stroke.HitTest(rect, 3))
                     {
-                        addedStrokesOverObject.Add(stroke);
+                        addedStrokeIDsOverObject.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
                     }
                 }
 
-                AcceptStrokes(addedStrokesOverObject, new StrokeCollection());
+                AcceptStrokes(addedStrokeIDsOverObject, new List<string>());
             }
         }
 
-        public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public void AcceptStrokes(List<string> addedStrokes, List<string> removedStrokes)
         {
-            foreach(Stroke stroke in removedStrokes)
+            foreach(string strokeID in removedStrokes)
+            {
+                try
                 {
-                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    try
-                    {
-                        PageObjectStrokeParentIDs.Remove(strokeID);
-                    }
-                    catch(System.Exception ex)
-                    {
-                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
-                    }
+                    PageObjectStrokeParentIDs.Remove(strokeID);
                 }
-
-                foreach(Stroke stroke in addedStrokes)
+                catch(System.Exception ex)
                 {
-                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    PageObjectStrokeParentIDs.Add(strokeID);
-
-                    //Stroke newStroke = stroke.Clone();
-                    //Matrix transform = new Matrix();
-                    //transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
-                    //newStroke.Transform(transform, true);
+                    Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }
+            }
+
+            foreach(string strokeID in addedStrokes)
+            {
+                PageObjectStrokeParentIDs.Add(strokeID);
+
+                //Stroke newStroke = stroke.Clone();
+                //Matrix transform = new Matrix();
+                //transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
+                //newStroke.Transform(transform, true);
+            }
         }
 
         public StrokeCollection GetStrokesOverPageObject()
