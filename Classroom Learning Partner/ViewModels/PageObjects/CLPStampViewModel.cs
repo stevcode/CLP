@@ -60,6 +60,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("PageObject")]
+        public CLPHandwritingRegion HandwritingRegionParts
+        {
+            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
+            set { SetValue(HandwritingRegionPartsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HandwritingRegionParts property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public SolidColorBrush StampHandleColor
         {
             get { return GetValue<SolidColorBrush>(StampHandleColorProperty); }
@@ -200,7 +215,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Point pt = new Point(x, y);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
-
+        
         #endregion //Commands
 
         #region Methods

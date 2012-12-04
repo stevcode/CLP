@@ -98,7 +98,7 @@ namespace Classroom_Learning_Partner.Views
             (ViewModel as CLPStampViewModel).StrokePathContainer.PageObjectStrokeParentIDs = (ViewModel as CLPStampViewModel).PageObject.PageObjectStrokeParentIDs;
                 (ViewModel as CLPStampViewModel).StrokePathContainer.IsStrokePathsVisible = true;
             } else {
-                MessageBox.Show("You must write parts before you copy a stamp", "No Parts");
+                MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
             }
         }
 
@@ -171,14 +171,17 @@ namespace Classroom_Learning_Partner.Views
         }
 
         private bool HasParts() {
-            int num;
+            Console.WriteLine("CLPStamp X: " + (ViewModel as CLPStampViewModel).PageObject.XPosition + "; Y: " + (ViewModel as CLPStampViewModel).PageObject.YPosition + 
+                "; Height: " + (ViewModel as CLPStampViewModel).PageObject.Height + "; Width: " + (ViewModel as CLPStampViewModel).PageObject.Width);
             ((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.DoInterpretation();
             Console.WriteLine(((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.StoredAnswer);
-            bool success = int.TryParse(((ViewModel as CLPStampViewModel).PageObject as CLPStamp).HandwritingRegionParts.StoredAnswer, out num);
-            if (success) {
-                (ViewModel as CLPStampViewModel).PageObject.Parts = num;
-            }
-            return success;
+            ((ViewModel as CLPStampViewModel).PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
+            return (ViewModel as CLPStampViewModel).PageObject.Parts > 0;
+        }
+
+        private void BottomBarHitBox_MouseDown_1(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("Merrrr");
         }
     }
 }
