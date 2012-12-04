@@ -242,26 +242,25 @@ namespace CLP.Models
                 PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
-                StrokeCollection addedStrokesOverObject = new StrokeCollection();
+                List<string> addedStrokeIDsOverObject = new List<string>();
                 foreach (Stroke stroke in ParentPage.InkStrokes)
                 {
                     if (stroke.HitTest(rect, 3))
                     {
-                        addedStrokesOverObject.Add(stroke);
+                        addedStrokeIDsOverObject.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
                     }
                 }
 
-                AcceptStrokes(addedStrokesOverObject, new StrokeCollection());
+                AcceptStrokes(addedStrokeIDsOverObject, new List<string>());
             }
         }
 
-        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public virtual void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs)
         {
             if (CanAcceptStrokes)
             {
-                foreach (Stroke stroke in removedStrokes)
+                foreach(string strokeID in removedStrokeIDs)
                 {
-                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
                     try
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
@@ -272,9 +271,8 @@ namespace CLP.Models
                     }
                 }
 
-                foreach (Stroke stroke in addedStrokes)
+                foreach(string strokeID in addedStrokeIDs)
                 {
-                    string strokeID = stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
                     PageObjectStrokeParentIDs.Add(strokeID);
 
                     //Stroke newStroke = stroke.Clone();

@@ -30,7 +30,7 @@ namespace CLP.Models
 
         ICLPPageObject Duplicate();
         void RefreshStrokeParentIDs();
-        void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+        void AcceptStrokes(List<string> addedStrokes, List<string> removedStrokes);
         StrokeCollection GetStrokesOverPageObject();
     }
 }
