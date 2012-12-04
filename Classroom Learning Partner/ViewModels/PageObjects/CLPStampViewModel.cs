@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             StampHandleColor = new SolidColorBrush(Colors.Green);
 
-            //CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
+            CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
 
             StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
             StrokeCollection clonedStrokes = new StrokeCollection();
@@ -252,9 +252,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool HasParts()
         {
-            //(PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
-            //return PageObject.Parts > 0;
-            return true;
+            (PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
+            return PageObject.Parts > 0;
         }
 
         #endregion //Methods

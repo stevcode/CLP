@@ -57,6 +57,21 @@ namespace Classroom_Learning_Partner.Model
                 {
                     notebook.NotebookName = notebookName;
 
+                    foreach(CLPPage page in notebook.Pages)
+                    {
+                        foreach(ICLPPageObject pageObject in page.PageObjects)
+                        {
+                            pageObject.ParentPage = page;
+                        }
+                        foreach (CLPPage submission in notebook.Submissions[page.UniqueID])
+                        {
+                            foreach(ICLPPageObject pageObject in submission.PageObjects)
+                            {
+                                pageObject.ParentPage = submission;
+                            }
+                        }
+                    }
+
                     int count = 0;
                     foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
                     {
