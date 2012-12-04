@@ -63,11 +63,14 @@ namespace Classroom_Learning_Partner.Model
                         {
                             pageObject.ParentPage = page;
                         }
-                        foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
+                        if(notebook.Submissions.ContainsKey(page.UniqueID))
                         {
-                            foreach(ICLPPageObject pageObject in submission.PageObjects)
+                            foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
                             {
-                                pageObject.ParentPage = submission;
+                                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                                {
+                                    pageObject.ParentPage = submission;
+                                }
                             }
                         }
                     }
