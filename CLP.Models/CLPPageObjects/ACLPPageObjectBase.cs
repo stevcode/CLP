@@ -288,7 +288,7 @@ namespace CLP.Models
             var strokes =
                 from strokeID in PageObjectStrokeParentIDs
                 from stroke in ParentPage.InkStrokes
-                where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == strokeID
+                where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string).Equals(strokeID)
                 select stroke;
 
             StrokeCollection inkStrokes = new StrokeCollection(strokes.ToList());
@@ -310,10 +310,10 @@ namespace CLP.Models
 
         public void AcceptObject(ICLPPageObject pageObject)
         {
-            //if (pageObject.Parts > 1) {
-            PageObjectObjects.Add(pageObject);
-            Parts += pageObject.Parts;
-            //}
+            if (pageObject.Parts > 0) {
+                PageObjectObjects.Add(pageObject);
+                Parts += pageObject.Parts;
+            }
         }
 
         public void RemoveObject(ICLPPageObject pageObject)

@@ -52,21 +52,5 @@ namespace Classroom_Learning_Partner.Views
             //}
             CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
         }
-        /*
-            if (HasParts()) {
-                (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        CopyStamp();
-                        return null;
-                    }, null);
-            } else {
-                MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
-            }
-            if (HasParts())
-            {
-        }
-            }*/
     }
 }
