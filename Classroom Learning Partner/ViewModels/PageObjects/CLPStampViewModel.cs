@@ -24,19 +24,11 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = stamp;
             StrokePathContainer.IsStrokePathsVisible = false;
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(800);
-            timer.Tick += timer_Tick;
-
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
-        }
 
-        void timer_Tick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            IsAdornerVisible = true;
+            BottomBarClickCommand = new Command(OnBottomBarClickCommandExecute);
         }
 
         /// <summary>
@@ -216,34 +208,38 @@ namespace Classroom_Learning_Partner.ViewModels
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
         
+
+        /// <summary>
+        /// Shows/Hides Adorners
+        /// </summary>
+        public Command BottomBarClickCommand { get; private set; }
+
+        private void OnBottomBarClickCommandExecute()
+        {
+            IsAdornerVisible = !IsAdornerVisible;
+        }
+
         #endregion //Commands
 
         #region Methods
 
-        public DispatcherTimer timer = null;
-
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(IsBackground)
+            if(hitBoxName == "BottomBarHitBox")
             {
-                if(App.MainWindowViewModel.IsAuthoring)
+                if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
                 {
-                    IsAdornerVisible = true;
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             else
             {
-                if(isMouseDown)
-                {
-                    timer.Stop();
-                }
-                else
-                {
-                    timer.Start();
-                }
+                return false;
             }
-
-            return false;
         }
 
         #endregion //Methods
