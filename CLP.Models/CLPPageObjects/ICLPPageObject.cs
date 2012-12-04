@@ -16,7 +16,7 @@ namespace CLP.Models
         string PageObjectType { get; }
         ObservableCollection<string> PageObjectStrokeParentIDs { get; set; }
         bool CanAcceptStrokes { get; set; }
-        ObservableCollection<ICLPPageObject> PageObjectObjects { get; set; }
+        ObservableCollection<string> PageObjectObjectParentIDs { get; set; }
         bool CanAcceptPageObjects { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
@@ -24,13 +24,14 @@ namespace CLP.Models
         double Width { get; set; }
         bool IsBackground { get; set; }
         int Parts { get; set; }
-        bool HitTest(ICLPPageObject pageObject, double percentage);
-        void AcceptObject(ICLPPageObject pageObject);
-        void RemoveObject(ICLPPageObject pageObject);
 
         ICLPPageObject Duplicate();
         void RefreshStrokeParentIDs();
-        void AcceptStrokes(List<string> addedStrokes, List<string> removedStrokes);
+        void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs);
         StrokeCollection GetStrokesOverPageObject();
+
+        bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
+        void AcceptObjects(List<string> addedPageObjectIDs, List<string> removedPageObjectIDs);
+        ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
     }
 }

@@ -87,7 +87,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSnapCommandExecute()
         {
-
             CLPPage currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             foreach (var pageObject in currentPage.PageObjects)
@@ -187,7 +186,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            ProcessPageObjectObject();
         }
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)

@@ -128,7 +128,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                    if (stampIndex > -1)
+                    if(stampIndex > -1)
                     {
                         parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
                     }
@@ -137,7 +137,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         parentPage.PageObjects.Add(leftBehindStamp);
                     }
                 }
-                catch (System.Exception ex)
+                catch(System.Exception ex)
                 {
                     Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
                 }

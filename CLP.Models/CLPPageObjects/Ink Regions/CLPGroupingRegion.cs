@@ -70,7 +70,7 @@ namespace CLP.Models
             Dictionary<String, int> groups = new Dictionary<String, int>();
             StringBuilder answer = new StringBuilder("Basic Grouping: ");
             foreach (ICLPPageObject po in ParentPage.PageObjects) {
-                if (po.UniqueID != UniqueID && HitTest(po, .8)) {
+                if (po.UniqueID != UniqueID && PageObjectIsOver(po, .8)) {
                     String key;
                     if (po.GetType().Equals(typeof(CLPStrokePathContainer))) {
                         key = "CLPStamp" + (po as CLPStrokePathContainer).ParentID;

@@ -170,8 +170,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
-            double xStrokeOffset = e.HorizontalChange;
-            double yStrokeOffset = e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -208,15 +206,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(xDelta, yDelta);
-                var pageObjectsInPageObjectObjects = from po in parentPage.PageObjects
-                                                     join vmPo in PageObject.PageObjectObjects on po.UniqueID equals vmPo.UniqueID
-                                                     select po;
-                foreach (ICLPPageObject poipoo in pageObjectsInPageObjectObjects)
+
+                ObservableCollection<ICLPPageObject> pageObjectsOverPageObject = PageObject.GetPageObjectsOverPageObject();
+                foreach(ICLPPageObject pageObject in pageObjectsOverPageObject)
                 {
-                    Point pageObjectPt = new Point((xDelta + poipoo.XPosition), (yDelta + poipoo.YPosition));
-                    CLPServiceAgent.Instance.ChangePageObjectPosition(poipoo, pageObjectPt);
+                    Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
                 }
             }
 
@@ -245,7 +240,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            ProcessPageObjectObject();
         }
 
         /// <summary>
@@ -253,9 +247,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizePageObjectCommand command is executed.
-        /// </summary>
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
@@ -287,9 +278,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizeStartPageObjectCommand command is executed.
-        /// </summary>
         private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
         }
@@ -299,45 +287,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizeStopPageObjectCommand command is executed.
-        /// </summary>
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-        }
-
-        protected void ProcessPageObjectObject() {
-            if (!PageObject.CanAcceptPageObjects)
-            {
-                var containerQuery = from po in PageObject.ParentPage.PageObjects where (po.CanAcceptPageObjects == true) select po;
-                foreach (ICLPPageObject container in containerQuery)
-                {
-                    if (!PageObject.ParentID.Equals(container.UniqueID))
-                    {
-                        if (container.HitTest(this.PageObject, .50))
-                        {
-                            if (!container.PageObjectObjects.Contains(this.PageObject))
-                            {
-                                container.AcceptObject(PageObject);
-                                foreach (ICLPPageObject pos in container.PageObjectObjects)
-                                {
-                                    Console.Write(pos.UniqueID + " ");
-                                    Console.WriteLine("objects");
-                                }
-                                Console.WriteLine("Success Add Move  " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                        else
-                        {
-                            if (container.PageObjectObjects.Contains(PageObject))
-                            {
-                                container.RemoveObject(PageObject);
-                                Console.WriteLine("Success Remove Move " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         #endregion //Default Adorners
