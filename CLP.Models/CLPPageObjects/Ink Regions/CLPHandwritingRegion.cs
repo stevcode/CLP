@@ -96,7 +96,8 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            string result = InkInterpretation.InterpretHandwriting(GetStrokesOverPageObject(), AnalysisType);
+            StrokeCollection strokes = GetStrokesOverPageObject();
+            string result = InkInterpretation.InterpretHandwriting(strokes, AnalysisType);
             if (result != null)
                 StoredAnswer = result;
             Console.WriteLine("HW regions: " + StoredAnswer);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -64,7 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
-            PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+            Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -443,42 +444,63 @@ namespace Classroom_Learning_Partner.ViewModels
             return HitTestResultBehavior.Continue;
         }
 
-        void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            var containerQuery = from po in PageObjects where (po.CanAcceptPageObjects == true) select po;
+            Console.Write("pageObjectChanged");
 
-            if (e.NewItems != null) {
-                foreach (var item in e.NewItems) {
-                    // Do not allow stamps to contain stamps
-                    if (!(item as ICLPPageObject).CanAcceptPageObjects) {
-                        foreach (ICLPPageObject container in containerQuery)
-                        {
-                            if (!(item as ICLPPageObject).ParentID.Equals(container.UniqueID)
-                                && container.HitTest(item as ICLPPageObject, .50) && !container.PageObjectObjects.Contains(item as ICLPPageObject) ){
-                                container.AcceptObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                    }
-                }
-            }
-            if (e.OldItems != null) {
-                foreach (var item in e.OldItems) {
-                    if (!(item as ICLPPageObject).CanAcceptPageObjects)
+            //TODO: Steve - Catel? causing this to be called twice
+            //Task.Factory.StartNew( () =>
+            //    {
+                    try
                     {
-                        foreach (ICLPPageObject container in containerQuery)
+                        foreach(ICLPPageObject pageObject in PageObjects)
                         {
-                            if (container.PageObjectObjects.Contains(item as ICLPPageObject))
+                            if(pageObject.CanAcceptPageObjects)
                             {
-                                container.RemoveObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
+                                List<string> removedPageObjectIDs = new List<string>();
+                                if(e.OldItems != null)
+                                {
+                                    //TODO: Steve/Eryn - this doesn't work.
+                                    //need to compare current contained pageObjects with e.OldItems,
+                                    //find the difference and add it's uniqueID to removedPageObjectIDs
+                                    //removedPageObjectIDs =
+                                    //    (from removedPageObject in e.OldItems as List<ICLPPageObject>
+                                    //     where pageObject.PageObjectIsOver(removedPageObject, .50)
+                                    //     select removedPageObject.UniqueID).ToList();
+                                }
+
+                                List<string> addedPageObjectIDs = new List<string>();
+                                if(e.NewItems != null)
+                                {
+                                    foreach(ICLPPageObject addedPageObject in e.NewItems)
+                                    {
+                                        if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                            && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                            && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                            && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                        {
+                                            addedPageObjectIDs.Add(addedPageObject.UniqueID);
+                                        }
+                                    }
+                                }
+
+                                //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                //    (DispatcherOperationCallback)delegate(object arg)
+                                //    {
+                                        pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjectIDs);
+
+                                    //    return null;
+                                    //}, null);
                             }
                         }
                     }
-                }
-            }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                    }
+                //});
 
             //TODO: Steve - Stamps add/remove too quickly and crash projector
             //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
