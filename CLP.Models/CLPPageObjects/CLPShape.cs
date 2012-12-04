@@ -63,6 +63,7 @@ namespace CLP.Models
         {
             CLPShape newShape = this.Clone() as CLPShape;
             newShape.UniqueID = Guid.NewGuid().ToString();
+            newShape.ParentPage = ParentPage;
 
             return newShape;
         }

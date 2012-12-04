@@ -99,6 +99,7 @@ namespace CLP.Models
         {
             CLPStrokePathContainer newContainer = this.Clone() as CLPStrokePathContainer;
             newContainer.UniqueID = Guid.NewGuid().ToString();
+            newContainer.ParentPage = ParentPage;
 
             return newContainer;
         }

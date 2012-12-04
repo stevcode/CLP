@@ -74,6 +74,7 @@ namespace CLP.Models
         {
             CLPSnapTileContainer newSnapTile = this.Clone() as CLPSnapTileContainer;
             newSnapTile.UniqueID = Guid.NewGuid().ToString();
+            newSnapTile.ParentPage = ParentPage;
 
             return newSnapTile;
         }

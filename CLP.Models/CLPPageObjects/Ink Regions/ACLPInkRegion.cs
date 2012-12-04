@@ -97,6 +97,8 @@ namespace CLP.Models
             {
                 ACLPInkRegion newInkRegion = this.Clone() as ACLPInkRegion;
                 newInkRegion.UniqueID = Guid.NewGuid().ToString();
+                newInkRegion.ParentPage = ParentPage;
+
                 return newInkRegion;
             }
         }
