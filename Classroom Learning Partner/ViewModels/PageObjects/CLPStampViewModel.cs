@@ -184,14 +184,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
                 {
-                if(StrokePathContainer.InternalPageObject != null || PageObject.GetStrokesOverPageObject().Count > 0)
+                    if (StrokePathContainer.InternalPageObject != null || PageObject.GetStrokesOverPageObject().Count > 0)
                     {
                         CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
                         Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
                     }
-                foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject()) { 
-                    po.
+                }
+                    // Stamp not placed
+                else {
+                    foreach (ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
+                    {
+                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
                     }
                 }
 

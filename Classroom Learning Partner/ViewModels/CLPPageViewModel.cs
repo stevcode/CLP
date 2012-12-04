@@ -462,13 +462,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                 List<string> removedPageObjectIDs = new List<string>();
                                 if(e.OldItems != null)
                                 {
-                                    //TODO: Steve/Eryn - this doesn't work.
-                                    //need to compare current contained pageObjects with e.OldItems,
-                                    //find the difference and add it's uniqueID to removedPageObjectIDs
-                                    //removedPageObjectIDs =
-                                    //    (from removedPageObject in e.OldItems as List<ICLPPageObject>
-                                    //     where pageObject.PageObjectIsOver(removedPageObject, .50)
-                                    //     select removedPageObject.UniqueID).ToList();
+                                    foreach (ICLPPageObject removedPageObject in e.OldItems) {
+                                        Console.WriteLine("Old: " + removedPageObject.GetType());
+                                    }
+                                    removedPageObjectIDs =
+                                        (from removedPageObject in e.OldItems as List<ICLPPageObject>
+                                        from pageObjectID in pageObject.PageObjectObjectParentIDs
+                                        where (pageObjectID as string).Equals(removedPageObject.UniqueID)
+                                        select (pageObjectID as string)).ToList();
                                 }
 
                                 List<string> addedPageObjectIDs = new List<string>();
