@@ -153,7 +153,8 @@ namespace CLP.Models
             set { SetValue(ParentPageProperty, value); }
         }
 
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null);
+        [NonSerialized]
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null, includeInSerialization:false);
 
         /// <summary>
         /// Gets or sets the property value.
