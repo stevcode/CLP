@@ -71,6 +71,7 @@ namespace CLP.Models
         {
             CLPTextBox newTextBox = this.Clone() as CLPTextBox;
             newTextBox.UniqueID = Guid.NewGuid().ToString();
+            newTextBox.ParentPage = ParentPage;
 
             return newTextBox;
         }

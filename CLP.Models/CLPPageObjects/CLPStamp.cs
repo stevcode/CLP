@@ -85,6 +85,7 @@ namespace CLP.Models
         {
             CLPStamp newStamp = this.Clone() as CLPStamp;
             newStamp.UniqueID = Guid.NewGuid().ToString();
+            newStamp.ParentPage = ParentPage;
 
             return newStamp;
         }
@@ -126,11 +127,6 @@ namespace CLP.Models
             foreach(string strokeID in addedStrokes)
             {
                 PageObjectStrokeParentIDs.Add(strokeID);
-
-                //Stroke newStroke = stroke.Clone();
-                //Matrix transform = new Matrix();
-                //transform.Translate(-XPosition, -YPosition - HANDLE_HEIGHT);
-                //newStroke.Transform(transform, true);
             }
         }
 

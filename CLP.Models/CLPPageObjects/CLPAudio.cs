@@ -56,7 +56,11 @@ namespace CLP.Models
 
         public override ICLPPageObject Duplicate()
         {
-            return this.Duplicate();
+            CLPAudio newAudio = this.Clone() as CLPAudio;
+            newAudio.UniqueID = Guid.NewGuid().ToString();
+            newAudio.ParentPage = ParentPage;
+
+            return newAudio;
         }
 
         #endregion

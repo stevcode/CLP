@@ -89,14 +89,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
-        
-        public StrokeCollection PageObjectStrokes
-        {
-            get 
-            { 
-                return PageObject.GetStrokesOverPageObject();
-            }
-        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -152,9 +144,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the RemovePageObjectCommand command is executed.
-        /// </summary>
         private void OnRemovePageObjectCommandExecute()
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
@@ -171,9 +160,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragDeltaEventArgs> DragPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the DragPageObjectCommand command is executed.
-        /// </summary>
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
@@ -208,9 +194,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
 
-                foreach (Stroke stroke in PageObjectStrokes)
+                StrokeCollection strokesToMove = PageObject.GetStrokesOverPageObject();
+                foreach(Stroke stroke in strokesToMove)
                 {  
-                    stroke.Transform(moveStroke, false);  
+                    stroke.Transform(moveStroke, true);  
                 }
             }
 

@@ -72,6 +72,7 @@ namespace CLP.Models
         {
             CLPImage newImage = this.Clone() as CLPImage;
             newImage.UniqueID = Guid.NewGuid().ToString();
+            newImage.ParentPage = ParentPage;
 
             return newImage;
         }
