@@ -152,7 +152,14 @@ namespace CLP.Models
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
+            set
+            {
+                if (InkStrokes != null)
+                {
+                	ByteStrokes = StrokesToBytes(InkStrokes);
+                }
+                SetValue(InkStrokesProperty, value);
+            }
         }
 
         [NonSerialized]
