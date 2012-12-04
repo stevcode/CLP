@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastInkToStudents = false;
             CanSendToTeacher = true;
             IsSending = false;
-            PenSize = 5;
+            PenSize = 3;
             DrawingAttributes = new DrawingAttributes();
             DrawingAttributes.Height = PenSize;
             DrawingAttributes.Width = PenSize;
