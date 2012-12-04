@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -89,23 +92,32 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyStampCommandExecute()
         {
             StampHandleColor = new SolidColorBrush(Colors.Green);
-
-            CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
-
-            StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
-            StrokeCollection clonedStrokes = new StrokeCollection();
-
-            foreach(Stroke stroke in originalStrokes)
+            if (HasParts())
             {
-                Stroke newStroke = stroke.Clone();
-                Matrix transform = new Matrix();
-                transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
-                newStroke.Transform(transform, true);
-                clonedStrokes.Add(newStroke);
-            }
+                CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
 
-            StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
-            StrokePathContainer.IsStrokePathsVisible = true;
+                StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
+                StrokeCollection clonedStrokes = new StrokeCollection();
+
+                foreach (Stroke stroke in originalStrokes)
+                {
+                    Stroke newStroke = stroke.Clone();
+                    Matrix transform = new Matrix();
+                    transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
+                    newStroke.Transform(transform, true);
+                    clonedStrokes.Add(newStroke);
+                }
+
+                StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
+                StrokePathContainer.IsStrokePathsVisible = true;
+            } else {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+               (DispatcherOperationCallback)delegate(object arg)
+               {
+                   MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
+                   return null;
+               }, null);
+            }
         }
 
         private bool dragStarted = false;
@@ -116,8 +128,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CopyStamp(int stampIndex)
         {
-            if (HasParts())
-            {
                 try
                 {
                     CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
@@ -128,6 +138,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
+                    PageObject.CanAcceptPageObjects = false;
+                    foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
+                    {
+                        ICLPPageObject newObject = pageObject.Duplicate();
+                        pageObject.Parts = 0;
+                        parentPage.PageObjects.Add(newObject);
+                    }
+
                     if(stampIndex > -1)
                     {
                         parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
@@ -136,20 +154,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         parentPage.PageObjects.Add(leftBehindStamp);
                     }
+                    leftBehindStamp.Parts = PageObject.Parts;
                 }
                 catch(System.Exception ex)
                 {
                     Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
                 }
-            }
-            else {
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-               (DispatcherOperationCallback)delegate(object arg)
-               {
-                   MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
-                   return null;
-               }, null);
-            }
         }
 
         /// <summary>
@@ -167,6 +177,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 droppedContainer.ParentID = PageObject.UniqueID;
                 droppedContainer.IsStamped = true;
                 droppedContainer.Parts = PageObject.Parts;
+                droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
 
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
@@ -178,6 +189,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
                         Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                    }
+                foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject()) { 
+                    po.
                     }
                 }
 
@@ -211,6 +225,14 @@ namespace Classroom_Learning_Partner.ViewModels
             if (y > 816 - PageObject.Height)
             {
                 y = 816 - PageObject.Height;
+            }
+
+            double xDelta = x - PageObject.XPosition;
+            double yDelta = y - PageObject.YPosition;
+
+            foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
+                Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             Point pt = new Point(x, y);

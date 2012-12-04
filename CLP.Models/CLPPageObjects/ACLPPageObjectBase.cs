@@ -307,7 +307,7 @@ namespace CLP.Models
                     }
                     catch(System.Exception ex)
                     {
-                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + pageObjectID);
+                        Console.WriteLine("pageObject not found in PageObjectStrokeParentIDs. StrokeID: " + pageObjectID);
                     }
                 }
 
