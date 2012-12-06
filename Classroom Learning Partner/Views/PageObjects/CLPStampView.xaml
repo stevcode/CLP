@@ -118,7 +118,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
-                <RowDefinition />
             </Grid.RowDefinitions>
             <Thumb Grid.Row="0" 
                    MouseEnter="StampHandleHitBox_MouseEnter"
@@ -154,16 +153,6 @@
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
             </Border>
-            <Rectangle x:Name="BottomBarHitBox" Grid.Row="2" 
-                       Fill="Black" StrokeThickness="0" Margin="0" 
-                       Width="{Binding Width}" Height="{Binding PageObject.BOTTOM_BAR_HEIGHT}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
-                        <catel:EventToCommand Command="{Binding BottomBarClickCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Rectangle>
-
         </Grid>
 
     </ac:AdornedControl>

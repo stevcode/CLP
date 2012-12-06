@@ -25,11 +25,13 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = stamp;
             StrokePathContainer.IsStrokePathsVisible = false;
 
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            timer.Tick += timer_Tick;
+
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
-
-            BottomBarClickCommand = new Command(OnBottomBarClickCommandExecute);
         }
 
         /// <summary>
@@ -92,9 +94,6 @@ namespace Classroom_Learning_Partner.ViewModels
             StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
             StrokePathContainer.IsStrokePathsVisible = true;
         }
-
-        private bool dragStarted = false;
-        private bool copyMade = false;
 
         double originalX;
         double originalY;
@@ -163,6 +162,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
             IsAdornerVisible = false;
+            timer.Stop();
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
@@ -187,37 +187,41 @@ namespace Classroom_Learning_Partner.ViewModels
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
-        /// <summary>
-        /// Shows/Hides Adorners
-        /// </summary>
-        public Command BottomBarClickCommand { get; private set; }
-
-        private void OnBottomBarClickCommandExecute()
-        {
-            IsAdornerVisible = !IsAdornerVisible;
-        }
-
         #endregion //Commands
 
         #region Methods
 
+        private DispatcherTimer timer = null;
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            IsAdornerVisible = true;
+        }
+
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(hitBoxName == "BottomBarHitBox")
+            if(IsBackground) 
             {
-                if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+                if(App.MainWindowViewModel.IsAuthoring) //Adorners pop-up immediately while in Authoring Mode
                 {
-                    return true;
+                    IsAdornerVisible = true;
+                }
+            }
+            else //If not a background object, adorners pop up after a delay
+            {
+                if (isMouseDown)
+                {
+                    timer.Stop();
+                    IsAdornerVisible = false;
                 }
                 else
                 {
-                    return false;
+                    timer.Start();
                 }
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         #endregion //Methods

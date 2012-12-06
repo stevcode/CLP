@@ -20,16 +20,7 @@ namespace CLP.Models
             {
                 return 35;
             }
-        }
-
-        public static double BOTTOM_BAR_HEIGHT
-        {
-            get
-            {
-                return 22;
-            }
-        }
-    
+        }    
 
         #region Constructors
 
@@ -40,7 +31,7 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
 
-            Height = StrokePathContainer.Height + HANDLE_HEIGHT + BOTTOM_BAR_HEIGHT;
+            Height = StrokePathContainer.Height + HANDLE_HEIGHT;
             Width = StrokePathContainer.Width;
 
             CreationDate = DateTime.Now;
@@ -263,7 +254,7 @@ namespace CLP.Models
         {
             get { return GetValue<double>(HeightProperty); }
             set { SetValue(HeightProperty, value);
-            StrokePathContainer.Height = Height - HANDLE_HEIGHT - BOTTOM_BAR_HEIGHT;
+            StrokePathContainer.Height = Height - HANDLE_HEIGHT;
             if (StrokePathContainer.InternalPageObject != null)
             {
                 StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
