@@ -115,6 +115,14 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Previous Page"
+                              LargeImageSource="..\Images\NextPage.png"
+                              Command="{Binding Path=PreviousPageCommand}"/>
+
+                <RibbonButton Label="Next Page"
+                              LargeImageSource="..\Images\NextPage.png"
+                              Command="{Binding Path=NextPageCommand}"/>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Tools">
