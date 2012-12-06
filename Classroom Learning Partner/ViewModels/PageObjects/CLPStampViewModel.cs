@@ -132,11 +132,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
+            StrokePathContainer.IsStamped = true;
             CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
             droppedContainer.XPosition = PageObject.XPosition;
             droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
             droppedContainer.ParentID = PageObject.UniqueID;
-            droppedContainer.IsStamped = true;
+            //droppedContainer.IsStamped = true;
 
             double deltaX = Math.Abs(PageObject.XPosition - originalX);
             double deltaY = Math.Abs(PageObject.YPosition - originalY);

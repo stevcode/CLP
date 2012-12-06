@@ -83,9 +83,12 @@ namespace CLP.Models
 
         public void OnRemoved()
         {
-            foreach (Stroke stroke in GetStrokesOverPageObject())
+            if(!StrokePathContainer.IsStamped)
             {
-                ParentPage.InkStrokes.Remove(stroke);
+                foreach(Stroke stroke in GetStrokesOverPageObject())
+                {
+                    ParentPage.InkStrokes.Remove(stroke);
+                }
             }
         }
 
