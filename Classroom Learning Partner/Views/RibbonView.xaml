@@ -369,6 +369,11 @@
                 </RibbonMenuButton>
 
                 <RibbonButton
+                        Label="Switch Page Layout"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=SwitchPageLayoutCommand}" />
+
+                <RibbonButton
                         Label="Delete This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />

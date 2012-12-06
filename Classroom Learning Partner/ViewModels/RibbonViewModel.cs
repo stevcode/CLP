@@ -163,6 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
@@ -1462,6 +1463,53 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+        }
+
+        /// <summary>
+        /// Gets the SwitchPageLayoutCommand command.
+        /// </summary>
+        public Command SwitchPageLayoutCommand { get; private set; }
+
+        private void OnSwitchPageLayoutCommandExecute()
+        {
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+            if(page.PageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.PORTRAIT_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            else if(page.PageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.LANDSCAPE_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.LANDSCAPE_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
+                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
         }
 
         /// <summary>
