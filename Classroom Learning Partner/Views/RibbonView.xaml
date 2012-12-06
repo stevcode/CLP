@@ -267,7 +267,7 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
 
                 <RibbonButton
                         LargeImageSource="..\Images\Projector.png"
@@ -315,7 +315,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
         </RibbonTab>
         

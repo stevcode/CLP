@@ -163,7 +163,7 @@ namespace CLP.Models
         }
 
         [NonSerialized]
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), null, includeInSerialization:false);
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -289,14 +289,16 @@ namespace CLP.Models
             newPage.ImagePool = ImagePool;
             newPage.ParentNotebookID = ParentNotebookID;
 
-            StrokeCollection strokes = BytesToStrokes(ByteStrokes);
-            foreach(Stroke stroke in strokes)
+            
+            foreach(Stroke stroke in InkStrokes)
             {
                 Stroke s = stroke.Clone();
                 s.RemovePropertyData(CLPPage.StrokeIDKey);
 
                 string newUniqueID = Guid.NewGuid().ToString();
                 s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+
+                newPage.InkStrokes.Add(s);
 
                 List<byte> b = CLPPage.StrokeToByte(s);
 
@@ -306,7 +308,10 @@ namespace CLP.Models
             foreach(ICLPPageObject pageObject in PageObjects)
             {
                 ICLPPageObject clonedPageObject = pageObject.Duplicate();
+                clonedPageObject.ParentPage = newPage;
+                clonedPageObject.ParentPageID = clonedPageObject.ParentPage.UniqueID;
                 newPage.PageObjects.Add(clonedPageObject);
+                clonedPageObject.RefreshStrokeParentIDs();
             }
 
             return newPage;
