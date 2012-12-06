@@ -174,13 +174,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 y = -CLPStamp.HANDLE_HEIGHT;
             }
-            if (x > 1056 - PageObject.Width)
+            if (x > PageObject.ParentPage.PageWidth - PageObject.Width)
             {
-                x = 1056 - PageObject.Width;
+                x = PageObject.ParentPage.PageWidth - PageObject.Width;
             }
-            if (y > 816 - PageObject.Height)
+            if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
             {
-                y = 816 - PageObject.Height;
+                y = PageObject.ParentPage.PageHeight - PageObject.Height;
             }
 
             Point pt = new Point(x, y);
