@@ -81,6 +81,14 @@ namespace CLP.Models
             return newStamp;
         }
 
+        public void OnRemoved()
+        {
+            foreach (Stroke stroke in GetStrokesOverPageObject())
+            {
+                ParentPage.InkStrokes.Remove(stroke);
+            }
+        }
+
         public virtual void RefreshStrokeParentIDs()
         {
             if(CanAcceptStrokes)

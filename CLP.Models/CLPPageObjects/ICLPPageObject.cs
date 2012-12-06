@@ -23,6 +23,8 @@ namespace CLP.Models
         bool IsBackground { get; set; }
 
         ICLPPageObject Duplicate();
+        void OnRemoved();
+
         void RefreshStrokeParentIDs();
         void AcceptStrokes(List<string> addedStrokes, List<string> removedStrokes);
         StrokeCollection GetStrokesOverPageObject();

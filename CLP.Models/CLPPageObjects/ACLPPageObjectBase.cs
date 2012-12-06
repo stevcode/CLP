@@ -191,6 +191,8 @@ namespace CLP.Models
 
         public abstract ICLPPageObject Duplicate();
 
+        public virtual void OnRemoved() { }
+
         public virtual void RefreshStrokeParentIDs()
         {
             if(CanAcceptStrokes)
