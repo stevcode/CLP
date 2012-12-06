@@ -38,6 +38,8 @@ namespace CLP.Models
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
             CanAcceptStrokes = true;
+
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>
