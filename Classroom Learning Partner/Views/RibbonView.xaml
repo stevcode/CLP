@@ -115,6 +115,14 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Previous Page"
+                              LargeImageSource="..\Images\NextPage.png"
+                              Command="{Binding Path=PreviousPageCommand}"/>
+
+                <RibbonButton Label="Next Page"
+                              LargeImageSource="..\Images\NextPage.png"
+                              Command="{Binding Path=NextPageCommand}"/>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Tools">
@@ -267,7 +275,7 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
 
                 <RibbonButton
                         LargeImageSource="..\Images\Projector.png"
@@ -315,7 +323,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
         </RibbonTab>
         
@@ -359,6 +367,11 @@
 
                     </RibbonGallery>
                 </RibbonMenuButton>
+
+                <RibbonButton
+                        Label="Switch Page Layout"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=SwitchPageLayoutCommand}" />
 
                 <RibbonButton
                         Label="Delete This Page"

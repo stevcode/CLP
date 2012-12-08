@@ -20,7 +20,7 @@ namespace CLP.Models
             {
                 return 35;
             }
-        }
+        }    
 
         public static double PARTS_SIDE
         {
@@ -30,13 +30,6 @@ namespace CLP.Models
             }
         }
         
-        public static double BOTTOM_BAR_HEIGHT
-        {
-            get
-            {
-                return 22;
-            }
-        }
 
         #region Constructors
 
@@ -61,6 +54,7 @@ namespace CLP.Models
             ParentID = "";
             CanAcceptStrokes = true;
             CanAcceptPageObjects = true;
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>
@@ -133,8 +127,19 @@ namespace CLP.Models
             return newStamp;
         }
 
-        public void RefreshStrokeParentIDs()
+        public void OnRemoved()
         {
+            if(!StrokePathContainer.IsStamped)
+            {
+                foreach(Stroke stroke in GetStrokesOverPageObject())
+                {
+                    ParentPage.InkStrokes.Remove(stroke);
+                }
+            }
+        }
+
+        public virtual void RefreshStrokeParentIDs()
+         {
             if(CanAcceptStrokes)
             {
                 PageObjectStrokeParentIDs.Clear();

@@ -27,6 +27,8 @@ namespace CLP.Models
         bool CanAdornersShow { get; set; }
 
         ICLPPageObject Duplicate();
+        void OnRemoved();
+
         void RefreshStrokeParentIDs();
         void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs);
         StrokeCollection GetStrokesOverPageObject();

@@ -160,7 +160,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
@@ -720,13 +723,42 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Notebook Commands
 
         /// <summary>
+        /// Gets the PreviousPageCommand command.
+        /// </summary>
+        public Command PreviousPageCommand { get; private set; }
+
+        private void OnPreviousPageCommandExecute()
+        {
+            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
+
+            if (index > 0)
+            {
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index - 1];
+            }
+        }
+
+        /// <summary>
+        /// Gets the NextPageCommand command.
+        /// </summary>
+        public Command NextPageCommand { get; private set; }
+
+        private void OnNextPageCommandExecute()
+        {
+            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
+
+            if(index < (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Count - 1)
+            {
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index + 1];
+            }
+        }
+
+        /// <summary>
         /// Gets the NewNotebookCommand command.
         /// </summary>
         public Command NewNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the NewNotebookCommand command is executed.
-        /// </summary>
         private void OnNewNotebookCommandExecute()
         {
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.OpenNewNotebook();
@@ -738,9 +770,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command OpenNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the OpenNotebookCommand command is executed.
-        /// </summary>
         private void OnOpenNotebookCommandExecute()
         {
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
@@ -751,9 +780,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command EditNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the EditNotebookCommand command is executed.
-        /// </summary>
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;
@@ -764,9 +790,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command DoneEditingNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the DoneEditingNotebookCommand command is executed.
-        /// </summary>
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
@@ -786,9 +809,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveNotebookCommand command is executed.
-        /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
@@ -808,9 +828,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveAllHistoriesCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveNotebookCommand command is executed.
-        /// </summary>
         private void OnSaveAllHistoriesCommandExecute()
         {
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
@@ -826,9 +843,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveAllNotebooksCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
-        /// </summary>
         private void OnSaveAllNotebooksCommandExecute()
         {
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
@@ -872,9 +886,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command ConvertToXPSCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the ConvertToXPS command is executed.
-        /// </summary>
         private void OnConvertToXPSCommandExecute()
         {
             CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
@@ -1453,6 +1464,53 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+        }
+
+        /// <summary>
+        /// Gets the SwitchPageLayoutCommand command.
+        /// </summary>
+        public Command SwitchPageLayoutCommand { get; private set; }
+
+        private void OnSwitchPageLayoutCommandExecute()
+        {
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+            if(page.PageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.PORTRAIT_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            else if(page.PageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.LANDSCAPE_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.LANDSCAPE_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
+                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
         }
 
         /// <summary>

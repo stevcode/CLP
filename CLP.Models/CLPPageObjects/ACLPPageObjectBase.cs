@@ -241,6 +241,8 @@ namespace CLP.Models
 
         public abstract ICLPPageObject Duplicate();
 
+        public virtual void OnRemoved() { }
+
         public virtual void RefreshStrokeParentIDs()
         {
             if (CanAcceptStrokes)
@@ -347,5 +349,58 @@ namespace CLP.Models
         }
 
         #endregion
+
+        #region Utility Methods
+
+        public static void ApplyDistinctPosition(ICLPPageObject placedPageObject)
+        {
+            bool isAtHorizontalEdge = false;
+            bool isAtVerticalEdge = false;
+
+            foreach(ICLPPageObject pageObject in placedPageObject.ParentPage.PageObjects)
+            {
+                if (pageObject.GetType() == placedPageObject.GetType() && pageObject.GetType() != null && pageObject.UniqueID != placedPageObject.UniqueID)
+                {
+                    double xDelta = Math.Abs(pageObject.XPosition - placedPageObject.XPosition);
+                    double yDelta = Math.Abs(pageObject.YPosition - placedPageObject.YPosition);
+
+                    if (xDelta < 20 && yDelta <20)
+                    {
+                        if(xDelta < 20)
+                        {
+                            if (placedPageObject.XPosition + 21 + placedPageObject.Width < placedPageObject.ParentPage.PageWidth)
+                            {
+                                placedPageObject.XPosition += 21;
+                            }
+                            else
+                            {
+                                placedPageObject.XPosition = placedPageObject.ParentPage.PageWidth - placedPageObject.Width;
+                                isAtHorizontalEdge = true;
+                            }
+                        }
+
+                        if(yDelta < 20)
+                        {
+                            if(placedPageObject.YPosition + 21 + placedPageObject.Height < placedPageObject.ParentPage.PageHeight)
+                            {
+                                placedPageObject.YPosition += 21;
+                            }
+                            else
+                            {
+                                placedPageObject.YPosition = placedPageObject.ParentPage.PageHeight - placedPageObject.Height;
+                                isAtVerticalEdge = true;
+                            }
+                        }
+
+                        if (!isAtHorizontalEdge && !isAtVerticalEdge)
+                        {
+                            ApplyDistinctPosition(placedPageObject);
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion //Utility Methods
     }
 }

@@ -61,10 +61,10 @@ namespace AdornedControl
             DependencyProperty.Register("FadeOutTime", typeof(double), typeof(AdornedControl),
                 new FrameworkPropertyMetadata(0.5));
 
-        //default was originally 2.0, changed to 1.5, maybe change later?
+        //default was originally 2.0, changed to 1.0, maybe change later?
         public static readonly DependencyProperty CloseAdornerTimeOutProperty =
             DependencyProperty.Register("CloseAdornerTimeOut", typeof(double), typeof(AdornedControl),
-                new FrameworkPropertyMetadata(1.5, CloseAdornerTimeOut_PropertyChanged));
+                new FrameworkPropertyMetadata(1.0, CloseAdornerTimeOut_PropertyChanged));
 
         public static readonly DependencyProperty AdornedTemplatePartNameProperty =
             DependencyProperty.Register("AdornedTemplatePartName", typeof(string), typeof(AdornedControl),

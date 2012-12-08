@@ -28,11 +28,13 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = stamp;
             StrokePathContainer.IsStrokePathsVisible = false;
 
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            timer.Tick += timer_Tick;
+
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
-
-            BottomBarClickCommand = new Command(OnBottomBarClickCommandExecute);
         }
 
         /// <summary>
@@ -120,9 +122,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private bool dragStarted = false;
-        private bool copyMade = false;
-
         double originalX;
         double originalY;
 
@@ -174,11 +173,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (HasParts())
             {
+                StrokePathContainer.IsStamped = true;
                 CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
                 droppedContainer.XPosition = PageObject.XPosition;
                 droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
                 droppedContainer.ParentID = PageObject.UniqueID;
-                droppedContainer.IsStamped = true;
+                //droppedContainer.IsStamped = true;
                 droppedContainer.Parts = PageObject.Parts;
                 droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
 
@@ -213,6 +213,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
             IsAdornerVisible = false;
+            timer.Stop();
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
@@ -224,13 +225,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 y = -CLPStamp.HANDLE_HEIGHT;
             }
-            if (x > 1056 - PageObject.Width)
+            if (x > PageObject.ParentPage.PageWidth - PageObject.Width)
             {
-                x = 1056 - PageObject.Width;
+                x = PageObject.ParentPage.PageWidth - PageObject.Width;
             }
-            if (y > 816 - PageObject.Height)
+            if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
             {
-                y = 816 - PageObject.Height;
+                y = PageObject.ParentPage.PageHeight - PageObject.Height;
             }
 
             double xDelta = x - PageObject.XPosition;
@@ -245,36 +246,38 @@ namespace Classroom_Learning_Partner.ViewModels
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
         
-        /// <summary>
-        /// Shows/Hides Adorners
-        /// </summary>
-        public Command BottomBarClickCommand { get; private set; }
-
-        private void OnBottomBarClickCommandExecute()
-        {
-            IsAdornerVisible = !IsAdornerVisible;
-        }
-
         #endregion //Commands
 
         #region Methods
 
+        private DispatcherTimer timer = null;
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            IsAdornerVisible = true;
+        }
+
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(hitBoxName == "BottomBarHitBox")
+            if(IsBackground) 
             {
-                if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+                if(App.MainWindowViewModel.IsAuthoring) //Adorners pop-up immediately while in Authoring Mode
                 {
-                    return true;
+                    IsAdornerVisible = true;
+                }
+            }
+            else //If not a background object, adorners pop up after a delay
+            {
+                if (isMouseDown)
+                {
+                    timer.Stop();
+                    IsAdornerVisible = false;
                 }
                 else
                 {
-                    return false;
+                    timer.Start();
                 }
-            }
-            else
-            {
-                return false;
             }
         }
 
