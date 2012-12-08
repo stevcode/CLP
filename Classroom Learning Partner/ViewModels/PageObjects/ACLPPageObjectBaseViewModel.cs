@@ -105,6 +105,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool CanAdornersShow
+        {
+            get { return GetValue<bool>(CanAdornersShowProperty); }
+            set { SetValue(CanAdornersShowProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAdornersShow property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool));
+
+
         #endregion //Model
 
         #region Bindings
@@ -156,6 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pageVM.IsInkCanvasHitTestVisible = true;
             }
+
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 
@@ -202,13 +219,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if (PageObject.CanAcceptPageObjects)
+            if (PageObject.PageObjectObjectParentIDs.Count > 0)
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
 
-                ObservableCollection<ICLPPageObject> pageObjectsOverPageObject = PageObject.GetPageObjectsOverPageObject();
-                foreach(ICLPPageObject pageObject in pageObjectsOverPageObject)
+                foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
                 {
                     Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
                     CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);

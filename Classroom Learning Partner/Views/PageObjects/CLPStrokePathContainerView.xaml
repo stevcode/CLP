@@ -20,6 +20,7 @@
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
             VerticalAdornerPlacement="Outside"
+            IsHitTestVisible="{Binding Path=CanAdornersShow}"
             >
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->

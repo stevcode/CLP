@@ -37,7 +37,7 @@
         </ListView>
 
         <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center" IsAdornerVisible="{Binding IsAdornerVisible, Mode=OneWayToSource}"
-                               HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside">
+                               HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside" IsHitTestVisible="{Binding Path=CanAdornersShow}">
             <ac:AdornedControl.AdornerContent >
                 <!--This is the adorner-->
                 <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"

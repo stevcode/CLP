@@ -100,6 +100,7 @@ namespace CLP.Models
             string result = InkInterpretation.InterpretHandwriting(strokes, AnalysisType);
             if (result != null)
                 StoredAnswer = result;
+            Console.WriteLine("hw REGION # strokes : " + strokes.Count);
             Console.WriteLine("HW regions: " + StoredAnswer);
         }
 

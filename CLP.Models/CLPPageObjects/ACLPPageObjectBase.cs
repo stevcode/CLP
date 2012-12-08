@@ -205,6 +205,20 @@ namespace CLP.Models
             set { SetValue(IsBackgroundProperty, value); }
         }
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAdornersShow
+        {
+            get { return GetValue<bool>(CanAdornersShowProperty); }
+            set { SetValue(CanAdornersShowProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAdornersShow property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
+
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
         /// <summary>

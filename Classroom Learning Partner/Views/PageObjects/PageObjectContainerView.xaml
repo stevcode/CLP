@@ -19,9 +19,9 @@
                 <Views:CLPHandwritingRegionView DataContext="{Binding}" />
             </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPGroupingRegionTemplate">
-                            <Views:CLPGroupingRegionView DataContext="{Binding}" />
-                        </ControlTemplate>
+            <ControlTemplate x:Key="CLPGroupingRegionTemplate">
+                <Views:CLPGroupingRegionView DataContext="{Binding}" />
+            </ControlTemplate>
 
             <ControlTemplate x:Key="CLPImageTemplate">
                 <Views:CLPImageView DataContext="{Binding}" />

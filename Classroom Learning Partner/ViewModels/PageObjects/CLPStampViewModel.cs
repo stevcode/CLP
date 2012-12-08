@@ -139,11 +139,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
                     PageObject.CanAcceptPageObjects = false;
+                    leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
                     foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
                     {
                         ICLPPageObject newObject = pageObject.Duplicate();
                         pageObject.Parts = 0;
                         parentPage.PageObjects.Add(newObject);
+                        pageObject.CanAdornersShow = false;
+                        leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
                     }
 
                     if(stampIndex > -1)
@@ -182,16 +185,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
 
-                if (deltaX > PageObject.Width + 5 || deltaY > PageObject.Height)
+                if ((deltaX > PageObject.Width + 5 || deltaY > PageObject.Height) &&
+                    (StrokePathContainer.InternalPageObject != null || PageObject.GetStrokesOverPageObject().Count > 0 ||
+                     PageObject.PageObjectObjectParentIDs.Count > 0))
                 {
-                    if (StrokePathContainer.InternalPageObject != null || PageObject.GetStrokesOverPageObject().Count > 0)
-                    {
-                        CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
-                    }
+                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                    Console.WriteLine("containers objects: " + droppedContainer.PageObjectObjectParentIDs.Count);
                 }
-                    // Stamp not placed
+                // Stamp not placed
                 else {
                     foreach (ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                     {

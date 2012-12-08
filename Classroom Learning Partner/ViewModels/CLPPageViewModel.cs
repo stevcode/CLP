@@ -465,11 +465,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                     foreach (ICLPPageObject removedPageObject in e.OldItems) {
                                         Console.WriteLine("Old: " + removedPageObject.GetType());
                                     }
-                                    removedPageObjectIDs =
+                                    /*removedPageObjectIDs =
                                         (from removedPageObject in e.OldItems as List<ICLPPageObject>
                                         from pageObjectID in pageObject.PageObjectObjectParentIDs
                                         where (pageObjectID as string).Equals(removedPageObject.UniqueID)
-                                        select (pageObjectID as string)).ToList();
+                                        select (pageObjectID as string)).ToList();*/
                                 }
 
                                 List<string> addedPageObjectIDs = new List<string>();

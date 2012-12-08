@@ -24,6 +24,7 @@ namespace CLP.Models
         double Width { get; set; }
         bool IsBackground { get; set; }
         int Parts { get; set; }
+        bool CanAdornersShow { get; set; }
 
         ICLPPageObject Duplicate();
         void RefreshStrokeParentIDs();
