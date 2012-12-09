@@ -179,6 +179,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
+
+            AddRemovePageObjectFromOtherObjects();
         }
 
         /// <summary>

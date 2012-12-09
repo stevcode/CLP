@@ -315,16 +315,13 @@ namespace CLP.Models
         {
             if (CanAcceptPageObjects)
             {
-
-                var pageObjectsRemove =
-                from pageObjectID in PageObjectObjectParentIDs
-                from pageObject in removedPageObjects
-                where (pageObject.UniqueID).Equals(pageObjectID)
-                select pageObject;
-                foreach (ICLPPageObject pageObject in pageObjectsRemove)
+                foreach (ICLPPageObject pageObject in removedPageObjects)
                 {
-                    Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                    PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    if (PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    }
                 }
 
                 var pageObjectsAdd =
@@ -334,8 +331,11 @@ namespace CLP.Models
                     select pageObject;
                 foreach (ICLPPageObject pageObject in pageObjectsAdd)
                 {
-                    Parts += pageObject.Parts;
-                    PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    if (!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts += pageObject.Parts;
+                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
                 }
             }
         }

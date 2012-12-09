@@ -257,7 +257,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            Console.WriteLine("PageObject: " + PageObject.GetType() + " CanAccept: " + PageObject.CanAcceptPageObjects);
+            AddRemovePageObjectFromOtherObjects();
+        }
+
+        protected void AddRemovePageObjectFromOtherObjects() {
             if (!PageObject.CanAcceptPageObjects)
             {
                 var containerQuery = from po in PageObject.ParentPage.PageObjects
