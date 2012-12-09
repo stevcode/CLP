@@ -311,28 +311,32 @@ namespace CLP.Models
             return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
-        public virtual void AcceptObjects(List<string> addedPageObjectIDs, List<string> removedPageObjectIDs)
+        public virtual void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects)
         {
             if (CanAcceptPageObjects)
             {
-                foreach(string pageObjectID in removedPageObjectIDs)
+
+                var pageObjectsRemove =
+                from pageObjectID in PageObjectObjectParentIDs
+                from pageObject in removedPageObjects
+                where (pageObject.UniqueID).Equals(pageObjectID)
+                select pageObject;
+                foreach (ICLPPageObject pageObject in pageObjectsRemove)
                 {
-                    try
-                    {
-                        PageObjectObjectParentIDs.Remove(pageObjectID);
-                    }
-                    catch(System.Exception ex)
-                    {
-                        Console.WriteLine("pageObject not found in PageObjectStrokeParentIDs. StrokeID: " + pageObjectID);
-                    }
+                    Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                    PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
                 }
 
-                foreach(string pageObjectID in addedPageObjectIDs)
+                var pageObjectsAdd =
+                    from pageObjectID in addedPageObjectIDs
+                    from pageObject in ParentPage.PageObjects
+                    where (pageObject.UniqueID).Equals(pageObjectID) && !pageObject.GetType().Equals(typeof(CLPStamp))
+                    select pageObject;
+                foreach (ICLPPageObject pageObject in pageObjectsAdd)
                 {
-                    PageObjectObjectParentIDs.Add(pageObjectID);
+                    Parts += pageObject.Parts;
+                    PageObjectObjectParentIDs.Add(pageObject.UniqueID);
                 }
-
-                Parts = PageObjectObjectParentIDs.Count;
             }
         }
         

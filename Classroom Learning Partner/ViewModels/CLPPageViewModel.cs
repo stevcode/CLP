@@ -452,8 +452,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            Console.Write("pageObjectChanged");
-
             //TODO: Steve - Catel? causing this to be called twice
             //Task.Factory.StartNew( () =>
             //    {
@@ -463,17 +461,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject.CanAcceptPageObjects)
                             {
-                                List<string> removedPageObjectIDs = new List<string>();
+                                ObservableCollection<ICLPPageObject> removedPageObjects = new ObservableCollection<ICLPPageObject>();
                                 if(e.OldItems != null)
                                 {
                                     foreach (ICLPPageObject removedPageObject in e.OldItems) {
-                                        Console.WriteLine("Old: " + removedPageObject.GetType());
+                                        removedPageObjects.Add(removedPageObject);
                                     }
-                                    /*removedPageObjectIDs =
-                                        (from removedPageObject in e.OldItems as List<ICLPPageObject>
-                                        from pageObjectID in pageObject.PageObjectObjectParentIDs
-                                        where (pageObjectID as string).Equals(removedPageObject.UniqueID)
-                                        select (pageObjectID as string)).ToList();*/
                                 }
 
                                 List<string> addedPageObjectIDs = new List<string>();
@@ -494,7 +487,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                 //    (DispatcherOperationCallback)delegate(object arg)
                                 //    {
-                                        pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjectIDs);
+                                        pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjects);
 
                                     //    return null;
                                     //}, null);
