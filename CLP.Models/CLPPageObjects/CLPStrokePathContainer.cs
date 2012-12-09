@@ -103,5 +103,14 @@ namespace CLP.Models
 
             return newContainer;
         }
+
+        public void OnRemoved()
+        {
+            foreach (ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
+            }
+        }
     }
 }

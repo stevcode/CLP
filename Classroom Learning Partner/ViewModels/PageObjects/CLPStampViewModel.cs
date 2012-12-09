@@ -181,6 +181,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //droppedContainer.IsStamped = true;
                 droppedContainer.Parts = PageObject.Parts;
                 droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
+                PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
@@ -260,9 +261,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(IsBackground) 
+            if (IsBackground)
             {
-                if(App.MainWindowViewModel.IsAuthoring) //Adorners pop-up immediately while in Authoring Mode
+                if (App.MainWindowViewModel.IsAuthoring) //Adorners pop-up immediately while in Authoring Mode
                 {
                     IsAdornerVisible = true;
                 }
@@ -279,6 +280,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     timer.Start();
                 }
             }
+
+            return false;
         }
 
         private bool HasParts()

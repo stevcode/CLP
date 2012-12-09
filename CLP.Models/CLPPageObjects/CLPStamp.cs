@@ -40,7 +40,7 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
 
-            Height = StrokePathContainer.Height + HANDLE_HEIGHT + BOTTOM_BAR_HEIGHT + PARTS_SIDE;
+            Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_SIDE;
             Width = StrokePathContainer.Width;
 
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
@@ -135,6 +135,12 @@ namespace CLP.Models
                 {
                     ParentPage.InkStrokes.Remove(stroke);
                 }
+            }
+
+            foreach (ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
             }
         }
 
@@ -452,7 +458,7 @@ namespace CLP.Models
             set 
             { 
                 SetValue(HeightProperty, value);
-                StrokePathContainer.Height = Height - HANDLE_HEIGHT - BOTTOM_BAR_HEIGHT - PARTS_SIDE;
+                StrokePathContainer.Height = Height - HANDLE_HEIGHT - PARTS_SIDE;
                 if (StrokePathContainer.InternalPageObject != null)
                 {
                     StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;

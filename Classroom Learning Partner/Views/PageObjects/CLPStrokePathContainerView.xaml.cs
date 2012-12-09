@@ -27,11 +27,6 @@ namespace Classroom_Learning_Partner.Views
         {
             ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
 
-            foreach (ICLPPageObject po in pageObject.GetPageObjectsOverPageObject())
-            {
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
-            }
-
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
         }
 
