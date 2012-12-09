@@ -10,6 +10,7 @@ using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using CLP.Models;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -256,6 +257,29 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            Console.WriteLine("PageObject: " + PageObject.GetType() + " CanAccept: " + PageObject.CanAcceptPageObjects);
+            if (!PageObject.CanAcceptPageObjects)
+            {
+                var containerQuery = from po in PageObject.ParentPage.PageObjects
+                                     where (po.CanAcceptPageObjects == true && !PageObject.ParentID.Equals(po.UniqueID))
+                                     select po;
+
+                foreach (ICLPPageObject container in containerQuery)
+                {
+                    if (container.PageObjectIsOver(this.PageObject, .50))
+                    {
+                        List<string> addObject = new List<string>();
+                        addObject.Add(this.PageObject.UniqueID);
+                        container.AcceptObjects(addObject, new ObservableCollection<ICLPPageObject>());
+                    }
+                    else
+                    {
+                        ObservableCollection<ICLPPageObject> removeObject = new ObservableCollection<ICLPPageObject>();
+                        removeObject.Add(this.PageObject);
+                        container.AcceptObjects(new List<string>(), removeObject);
+                    }
+                }
+            }
         }
 
         /// <summary>

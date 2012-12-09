@@ -246,7 +246,7 @@ namespace CLP.Models
 
         public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
-            return StrokePathContainer.PageObjectIsOver(pageObject, .50);
+            return StrokePathContainer.PageObjectIsOver(pageObject, percentage);
         }
 
         public void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects)
@@ -258,16 +258,14 @@ namespace CLP.Models
                     UpdatePartsFromHandwritingRegion();
                 }
 
-                var pageObjectsRemove =
-                from pageObjectID in PageObjectObjectParentIDs
-                from pageObject in removedPageObjects
-                where (pageObject.UniqueID).Equals(pageObjectID)
-                select pageObject;
-                foreach(ICLPPageObject pageObject in pageObjectsRemove)
+                foreach(ICLPPageObject pageObject in removedPageObjects)
                 {
-                    changed = true;
-                    Parts = (Parts-pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                    PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    if (PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        changed = true;
+                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    }
                 }
 
                 var pageObjectsAdd =
@@ -277,9 +275,12 @@ namespace CLP.Models
                     select pageObject;
                 foreach (ICLPPageObject pageObject in pageObjectsAdd)
                 {
-                    changed = true;
-                    Parts += pageObject.Parts;                   
-                    PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    if (!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        changed = true;
+                        Parts += pageObject.Parts;
+                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
                 }
                 if (changed)
                 {
