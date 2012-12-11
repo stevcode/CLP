@@ -116,7 +116,7 @@
                 </RibbonToggleButton>
 
                 <RibbonButton Label="Previous Page"
-                              LargeImageSource="..\Images\NextPage.png"
+                              LargeImageSource="..\Images\PreviousPage.png"
                               Command="{Binding Path=PreviousPageCommand}"/>
 
                 <RibbonButton Label="Next Page"
