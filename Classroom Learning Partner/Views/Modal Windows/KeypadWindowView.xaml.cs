@@ -17,18 +17,24 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         public static readonly DependencyProperty PartsPropertyKey = DependencyProperty.Register(
                "Parts", typeof(String), typeof(KeypadWindowView), new FrameworkPropertyMetadata(" "));
 
-
-        public String Parts
-        {
-            get { return (String)GetValue(PartsPropertyKey); }
-            set { SetValue(PartsPropertyKey, value); }
-        }
-
         private void ValueButton_Click(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
-            this.SetValue(PartsPropertyKey, btn.Content);
+            NumbersEntered.Text = NumbersEntered.Text + btn.Content;
+        }
+
+        private void EnterButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
             this.DialogResult = true;
+        }
+
+        private void BackspaceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NumbersEntered.Text.Length > 0)
+            {
+                NumbersEntered.Text = NumbersEntered.Text.Substring(0, NumbersEntered.Text.Length - 1);
+            }
         }
     }
 }

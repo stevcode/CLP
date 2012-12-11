@@ -157,11 +157,12 @@
                                                   Height="{Binding Height, Mode=TwoWay}" />
             </Border>
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
+                
                 <Border x:Name="PartsHandwritingBox"
                             BorderBrush="Black" BorderThickness="0,0,0,2"
                             Width="{Binding HandwritingRegionParts.Width}"
                             Height="{Binding HandwritingRegionParts.Height}"
-                            HorizontalAlignment="Center" Margin="0">
+                            HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False">
                     <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" 
                                                 Width="{Binding Width, Mode=TwoWay}" 
                                                 Height="{Binding Height, Mode=TwoWay}"
@@ -184,9 +185,10 @@
                 </TextBlock>
                 <TextBlock x:Name="PartsDetected"
                        FontFamily="SketchFlow Print" FontSize="24"
-                       Width="{Binding Width}"
-                       Height="{Binding HandwritingRegionParts.Height}"
-                       HorizontalAlignment="Center"
+                       Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                       Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
                        TextAlignment="Left"
                        Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=PageObject.PartsInterpreted, Mode=TwoWay}">
                     <TextBlock.Text>
@@ -196,6 +198,17 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
+                <Rectangle x:Name="PartsHitBox" Fill="Transparent"
+                        Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                        Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding Path=ShowKeyPadCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Rectangle>
             </Grid>
         </Grid>
 

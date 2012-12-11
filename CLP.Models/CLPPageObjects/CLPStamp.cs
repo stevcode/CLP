@@ -29,7 +29,13 @@ namespace CLP.Models
                 return 75;
             }
         }
-        
+
+        public static double DETECTED_PARTS_SIDE {
+            get
+            {
+                return 25;
+            }
+        }
 
         #region Constructors
 
@@ -254,7 +260,7 @@ namespace CLP.Models
             }
         }
 
-        private void ClearHandWritingPartsStrokes() {
+        public void ClearHandWritingPartsStrokes() {
             Console.WriteLine("hw strokes : " + HandwritingRegionParts.GetStrokesOverPageObject().Count);
             foreach (Stroke stroke in HandwritingRegionParts.GetStrokesOverPageObject())
             {
