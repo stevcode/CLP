@@ -35,18 +35,27 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
-    public class PartsStringConverter : IValueConverter
+    public class PartsStringConverter : IMultiValueConverter
     {
-        public object Convert(object value,
+        public object Convert(object[] value,
             Type targetType,
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            return ((int)value > 0) ? value : "";
+            if (!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
+            {
+                int parts = (int)value[0];
+                bool interpreted = (bool)value[1];
+                if (parts <= 0)
+                {
+                    return (interpreted) ? "?" : "";
+                }
+            }
+            return value[0].ToString();
         }
 
-        public object ConvertBack(object value,
-            Type targetType,
+        public object[] ConvertBack(object value,
+            Type[] targetType,
             object parameter,
             System.Globalization.CultureInfo culture)
         {
