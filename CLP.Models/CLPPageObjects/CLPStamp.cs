@@ -22,7 +22,7 @@ namespace CLP.Models
             }
         }    
 
-        public static double PARTS_SIDE
+        public static double PARTS_HEIGHT
         {
             get
             {
@@ -40,14 +40,14 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
 
-            Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_SIDE;
+            Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
 
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
-            HandwritingRegionParts.Height = PARTS_SIDE;
-            HandwritingRegionParts.Width = PARTS_SIDE;
+            HandwritingRegionParts.Height = PARTS_HEIGHT;
+            HandwritingRegionParts.Width = Width;
             HandwritingRegionParts.XPosition = XPosition;
-            HandwritingRegionParts.YPosition = YPosition + Height - PARTS_SIDE;
+            HandwritingRegionParts.YPosition = YPosition + Height - PARTS_HEIGHT;
 
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
@@ -441,7 +441,7 @@ namespace CLP.Models
             set
             {
                 SetValue(YPositionProperty, value);
-                HandwritingRegionParts.YPosition = value + Height - PARTS_SIDE;
+                HandwritingRegionParts.YPosition = value + Height - PARTS_HEIGHT;
                 StrokePathContainer.YPosition = value + HANDLE_HEIGHT;
             }
         }
@@ -457,7 +457,7 @@ namespace CLP.Models
             set 
             { 
                 SetValue(HeightProperty, value);
-                StrokePathContainer.Height = Height - HANDLE_HEIGHT - PARTS_SIDE;
+                StrokePathContainer.Height = Height - HANDLE_HEIGHT - PARTS_HEIGHT;
                 if (StrokePathContainer.InternalPageObject != null)
                 {
                     StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
