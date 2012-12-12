@@ -45,6 +45,7 @@ namespace CLP.Models
             ParentPage = page;
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
+            StrokePathContainer.YPosition = YPosition + HANDLE_HEIGHT;
 
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
