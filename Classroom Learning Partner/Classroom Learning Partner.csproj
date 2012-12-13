@@ -211,7 +211,9 @@
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStrokePathContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
+    <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
