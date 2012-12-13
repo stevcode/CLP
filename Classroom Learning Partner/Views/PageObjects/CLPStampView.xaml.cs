@@ -3,6 +3,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -45,6 +46,5 @@ namespace Classroom_Learning_Partner.Views
             //}
             CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
         }
-
     }
 }

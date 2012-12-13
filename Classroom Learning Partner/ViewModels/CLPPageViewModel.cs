@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -64,7 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
-            PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+            Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -447,9 +448,57 @@ namespace Classroom_Learning_Partner.ViewModels
             return HitTestResultBehavior.Continue;
         }
 
-        void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+
+            //TODO: Steve - Catel? causing this to be called twice
+            //Task.Factory.StartNew( () =>
+            //    {
+                    try
+                    {
+                        foreach(ICLPPageObject pageObject in PageObjects)
+                        {
+                            if(pageObject.CanAcceptPageObjects)
+                            {
+                                ObservableCollection<ICLPPageObject> removedPageObjects = new ObservableCollection<ICLPPageObject>();
+                                if(e.OldItems != null)
+                                {
+                                    foreach (ICLPPageObject removedPageObject in e.OldItems) {
+                                        removedPageObjects.Add(removedPageObject);
+                                    }
+                                }
+
+                                List<string> addedPageObjectIDs = new List<string>();
+                                if(e.NewItems != null)
+                                {
+                                    foreach(ICLPPageObject addedPageObject in e.NewItems)
+                                    {
+                                        if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                            && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                            && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                            && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                        {
+                                            addedPageObjectIDs.Add(addedPageObject.UniqueID);
+                                        }
+                                    }
+                                }
+
+                                //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                //    (DispatcherOperationCallback)delegate(object arg)
+                                //    {
+                                        pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjects);
+
+                                    //    return null;
+                                    //}, null);
+                            }
+                        }
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                    }
+                //});
 
             //TODO: Steve - Stamps add/remove too quickly and crash projector
             //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)

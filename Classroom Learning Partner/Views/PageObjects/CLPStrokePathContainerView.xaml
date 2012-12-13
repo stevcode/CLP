@@ -20,6 +20,7 @@
             VerticalAlignment="Center"
             HorizontalAdornerPlacement="Outside"
             VerticalAdornerPlacement="Outside"
+            IsHitTestVisible="{Binding Path=CanAdornersShow}"
             >
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
@@ -124,6 +125,11 @@
 
                     </Grid>
                     <Thumb DragDelta="MoveThumb_DragDelta">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="DragCompleted">
+                                <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Rectangle

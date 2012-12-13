@@ -17,7 +17,9 @@ namespace Classroom_Learning_Partner.ViewModels
             Tiles = new ObservableCollection<string>();
             PageObject = tile;
 
-            SnapCommand = new Command(OnSnapCommandExecute);   
+            SnapCommand = new Command(OnSnapCommandExecute);
+            RemoveTileCommand = new Command(OnRemoveTileCommandExecute);
+            DuplicateContainerCommand = new Command(OnDuplicateContainerCommandExecute);
         }
 
         public override string Title { get { return "SnapTileContainerVM"; } }
@@ -31,9 +33,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TilesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Tiles property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData TilesProperty = RegisterProperty("Tiles", typeof(ObservableCollection<string>));
 
         /// <summary>
@@ -46,9 +45,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberOfTilesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NumberOfTiles property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NumberOfTilesProperty = RegisterProperty("NumberOfTiles", typeof(int), 0, (sender, e) => ((CLPSnapTileContainerViewModel)sender).OnNumberOfTilesChanged());
 
         /// <summary>
@@ -82,12 +78,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SnapCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SnapCommand command is executed.
-        /// </summary>
         private void OnSnapCommandExecute()
         {
-
             CLPPage currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             foreach (var pageObject in currentPage.PageObjects)
@@ -183,12 +175,58 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //}
                                 break;
                             }
-
-
                         }
                     }
                 }
             }
+
+            AddRemovePageObjectFromOtherObjects();
+        }
+
+        /// <summary>
+        /// Gets the RemoveTileCommand command.
+        /// </summary>
+        public Command RemoveTileCommand { get; private set; }
+
+        private void OnRemoveTileCommandExecute()
+        {
+            if(Tiles.Count > 1)
+            {
+                NumberOfTiles--;
+            }
+        }
+
+        /// <summary>
+        /// Gets the DuplicateContainerCommand command.
+        /// </summary>
+        public Command DuplicateContainerCommand { get; private set; }
+
+        private void OnDuplicateContainerCommandExecute()
+        {
+            CLPSnapTileContainer newSnapTile = PageObject.Duplicate() as CLPSnapTileContainer;
+            double x = newSnapTile.XPosition + 80;
+            double y = newSnapTile.YPosition;
+            if(x > PageObject.ParentPage.PageWidth - PageObject.Width)
+            {
+                /* Want some distinguishable change in location. 
+                 * Check to see if on the edge already or near the edge.
+                 * If on the edge, also move down if possible.
+                 */
+                if(newSnapTile.XPosition == PageObject.ParentPage.PageWidth - PageObject.Width)
+                {
+                    y = newSnapTile.YPosition + 20;
+                    if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
+                    {
+                        y = PageObject.ParentPage.PageHeight - PageObject.Height;
+                    }
+                }
+                x = PageObject.ParentPage.PageWidth - PageObject.Width;
+            }
+
+            newSnapTile.XPosition = x;
+            newSnapTile.YPosition = y;
+
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.ParentPage, newSnapTile);
         }
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)

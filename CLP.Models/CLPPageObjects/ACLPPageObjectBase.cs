@@ -24,6 +24,8 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
+            CanAcceptPageObjects = true;
+            Parts = -1;
         }
 
         /// <summary>
@@ -55,10 +57,10 @@ namespace CLP.Models
         /// </summary>
         public string ParentPageID
         {
-            get 
-            {                 
+            get
+            {
                 string tempValue = GetValue<string>(ParentPageIDProperty);
-                if(tempValue != "")
+                if (tempValue != "")
                 {
                     return tempValue;
                 }
@@ -116,7 +118,7 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData PageObjectStrokeParentIDsProperty = RegisterProperty("PageObjectStrokeParentIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
-        
+
         /// <summary>
         /// Whether or not the pageObject can accept strokes
         /// </summary>
@@ -127,6 +129,28 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), false);
+
+        /// <summary>
+        /// UniqueIDs of the pageObjects above a pageObject.
+        /// </summary>
+        public ObservableCollection<string> PageObjectObjectParentIDs
+        {
+            get { return GetValue<ObservableCollection<string>>(PageObjectObjectParentIDsProperty); }
+            set { SetValue(PageObjectObjectParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectObjectParentIDsProperty = RegisterProperty("PageObjectObjectParentIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, false); }
+        }
+
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
 
         /// <summary>
         /// xPosition of pageObject on page
@@ -181,7 +205,33 @@ namespace CLP.Models
             set { SetValue(IsBackgroundProperty, value); }
         }
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanAdornersShow
+        {
+            get { return GetValue<bool>(CanAdornersShowProperty); }
+            set { SetValue(CanAdornersShowProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAdornersShow property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
+
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
+
+        /// <summary>
+        /// Represents the number of "parts" a pageObject represents.
+        /// -1 for undefined.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
 
         #endregion
 
@@ -195,15 +245,15 @@ namespace CLP.Models
 
         public virtual void RefreshStrokeParentIDs()
         {
-            if(CanAcceptStrokes)
+            if (CanAcceptStrokes)
             {
                 PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
                 List<string> addedStrokeIDsOverObject = new List<string>();
-                foreach(Stroke stroke in ParentPage.InkStrokes)
+                foreach (Stroke stroke in ParentPage.InkStrokes)
                 {
-                    if(stroke.HitTest(rect, 3))
+                    if (stroke.HitTest(rect, 3))
                     {
                         addedStrokeIDsOverObject.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
                     }
@@ -223,7 +273,7 @@ namespace CLP.Models
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
                     }
-                    catch(System.Exception ex)
+                    catch (System.Exception ex)
                     {
                         Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                     }
@@ -232,16 +282,11 @@ namespace CLP.Models
                 foreach(string strokeID in addedStrokeIDs)
                 {
                     PageObjectStrokeParentIDs.Add(strokeID);
-
-                    //Stroke newStroke = stroke.Clone();
-                    //Matrix transform = new Matrix();
-                    //transform.Translate(-XPosition, -YPosition);
-                    //newStroke.Transform(transform, true);
                 }
             }
         }
 
-        public StrokeCollection GetStrokesOverPageObject()
+        public virtual StrokeCollection GetStrokesOverPageObject()
         {
             var strokes =
                 from strokeID in PageObjectStrokeParentIDs
@@ -251,6 +296,60 @@ namespace CLP.Models
 
             StrokeCollection inkStrokes = new StrokeCollection(strokes.ToList());
             return inkStrokes;
+        }
+
+        public virtual bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double top = Math.Max(YPosition, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition, pageObject.XPosition);
+            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+        }
+
+        public virtual void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects)
+        {
+            if (CanAcceptPageObjects)
+            {
+                foreach (ICLPPageObject pageObject in removedPageObjects)
+                {
+                    if (PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    }
+                }
+
+                var pageObjectsAdd =
+                    from pageObjectID in addedPageObjectIDs
+                    from pageObject in ParentPage.PageObjects
+                    where (pageObject.UniqueID).Equals(pageObjectID) && !pageObject.GetType().Equals(typeof(CLPStamp))
+                    select pageObject;
+                foreach (ICLPPageObject pageObject in pageObjectsAdd)
+                {
+                    if (!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts += pageObject.Parts;
+                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
+                }
+            }
+        }
+        
+        public virtual ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject()
+        {
+            var pageObjects =
+                from pageObjectID in PageObjectObjectParentIDs
+                from pageObject in ParentPage.PageObjects
+                where pageObject.UniqueID == pageObjectID
+                select pageObject;
+
+            ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.ToList());
+            return pageObjectsOver;
         }
 
         #endregion

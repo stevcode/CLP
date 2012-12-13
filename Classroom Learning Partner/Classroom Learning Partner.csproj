@@ -194,6 +194,7 @@
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -271,6 +272,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
       <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPGroupingRegionView.xaml.cs">
+      <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
       <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
@@ -396,6 +400,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPGroupingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

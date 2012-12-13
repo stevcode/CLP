@@ -9,6 +9,9 @@ namespace CLP.Models
     [Serializable]
     public class CLPStrokePathContainer : CLPPageObjectBase
     {
+
+        public static string Type = "CLPStrokePathContainer";
+
         #region Constructors
 
         public CLPStrokePathContainer(ICLPPageObject internalPageObject, CLPPage page)
@@ -89,7 +92,7 @@ namespace CLP.Models
 
         public override string PageObjectType
         {
-            get { return "CLPStrokePathContainer"; }
+            get { return Type; }
         }
 
         public override ICLPPageObject Duplicate()
@@ -99,6 +102,15 @@ namespace CLP.Models
             newContainer.ParentPage = ParentPage;
 
             return newContainer;
+        }
+
+        public void OnRemoved()
+        {
+            foreach (ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
+            }
         }
     }
 }

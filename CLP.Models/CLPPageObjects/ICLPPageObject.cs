@@ -16,17 +16,25 @@ namespace CLP.Models
         string PageObjectType { get; }
         ObservableCollection<string> PageObjectStrokeParentIDs { get; set; }
         bool CanAcceptStrokes { get; set; }
+        ObservableCollection<string> PageObjectObjectParentIDs { get; set; }
+        bool CanAcceptPageObjects { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
         double Height { get; set; }
         double Width { get; set; }
         bool IsBackground { get; set; }
+        int Parts { get; set; }
+        bool CanAdornersShow { get; set; }
 
         ICLPPageObject Duplicate();
         void OnRemoved();
 
         void RefreshStrokeParentIDs();
-        void AcceptStrokes(List<string> addedStrokes, List<string> removedStrokes);
+        void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs);
         StrokeCollection GetStrokesOverPageObject();
+
+        bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
+        void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects);
+        ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
     }
 }
