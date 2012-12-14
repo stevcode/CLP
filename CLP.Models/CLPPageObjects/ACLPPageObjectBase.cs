@@ -81,7 +81,22 @@ namespace CLP.Models
         public string ParentID
         {
             get { return GetValue<string>(ParentIDProperty); }
-            set { SetValue(ParentIDProperty, value); }
+            set
+            {
+                SetValue(ParentIDProperty, value);
+                if (Parts == 0)
+                {
+                    var parentObject =
+                    from pageObject in ParentPage.PageObjects
+                    where (pageObject.ParentID.Equals(ParentID)
+                    select pageObject;
+                    
+                    //Should only be one
+                    foreach (ICLPPageObject po in parentObject) {
+                        Parts = po.Parts;
+                    }
+                }
+            }
         }
 
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
