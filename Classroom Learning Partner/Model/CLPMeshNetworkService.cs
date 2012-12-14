@@ -373,19 +373,38 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = null;
-
                         if (displayType == "LinkedDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
 
                             AddPageToDisplay(displayPages[0]);
                         }
                         else
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
-                            foreach (var pageID in displayPages)
+                            bool isNewDisplay = true;
+                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                            {
+                                if (gridDisplay.DisplayID == displayType)
+                                {
+                                    gridDisplay.DisplayedPages.Clear();
+                                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+
+                                    isNewDisplay = false;
+                                    break;
+                                }
+                            }
+
+                            if (isNewDisplay)
+                            {
+                                GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
+                                newGridDisplay.DisplayID = displayType;
+                                newGridDisplay.DisplayedPages.Clear();
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
+
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
+                            }
+
+                            foreach(var pageID in displayPages)
                             {
                                 AddPageToDisplay(pageID);
                             }
@@ -413,7 +432,7 @@ namespace Classroom_Learning_Partner.Model
 
                             if (page != null)
                             {
-                            	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
+                            	(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
                                 break;
                             }
                         }

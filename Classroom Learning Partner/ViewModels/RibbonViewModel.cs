@@ -18,6 +18,7 @@ using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
+using System.Windows.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -172,6 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
+            ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
@@ -815,11 +817,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Catel.Windows.PleaseWaitHelper.Show(() =>
                     Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
-            }
-            else if(App.MainWindowViewModel.SelectedWorkspace is ProjectorWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    OnSaveAllNotebooksCommandExecute(), null, "Saving Notebook", 0.0 / 0.0);
             }
         }
 
@@ -1667,6 +1664,46 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     MessageBox.Show("Error opening image file. Please try again.");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the ToggleWebcamPanelCommand command.
+        /// </summary>
+        public Command<bool> ToggleWebcamPanelCommand { get; private set; }
+
+        DispatcherTimer panelCloserTimer = new DispatcherTimer();
+
+        private void OnToggleWebcamPanelCommandExecute(bool isButtonChecked)
+        {
+            if(!isButtonChecked) //ClosePanel
+            {
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
+                panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
+                panelCloserTimer.Tick += panelCloserTimer_Tick;
+                panelCloserTimer.Start();
+            }
+            else //OpenPanel
+            {
+                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel == null)
+                {
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
+                }
+                else
+                {
+                    panelCloserTimer.Stop();
+                }
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
+            }
+        }
+
+        void panelCloserTimer_Tick(object sender, EventArgs e)
+        {
+            if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel != null)
+            {
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
+                panelCloserTimer.Stop();
             }
         }
 

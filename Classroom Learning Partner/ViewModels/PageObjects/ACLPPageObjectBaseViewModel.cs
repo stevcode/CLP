@@ -1,16 +1,14 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using CLP.Models;
-using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -355,7 +353,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                return true;
+                return false;
             }
         }
 

@@ -89,15 +89,10 @@ namespace Classroom_Learning_Partner.Model
                     if (count == 0)
                     {
                         App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                        if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student)
+                        if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Projector)
                         {
                             App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
                         }
-                        else
-                        {
-                            App.MainWindowViewModel.SelectedWorkspace = new ProjectorWorkspaceViewModel();
-                        }
-
                     }
                 }
                 else

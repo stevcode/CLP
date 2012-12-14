@@ -4,7 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
 
-    <UserControl.Resources> 
+    <UserControl.Resources>
         <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
     </UserControl.Resources>
 
@@ -187,6 +187,11 @@
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
+                <RibbonToggleButton Label="Webcam"
+                                    LargeImageSource="..\Images\camera.png"
+                                    Command="{Binding ToggleWebcamPanelCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+
             </RibbonGroup>
 
             <RibbonGroup Header="Pen Color">
@@ -326,7 +331,7 @@
             </RibbonGroup>
 
         </RibbonTab>
-        
+
         <!--<RibbonTab Header="Page">
 
             <RibbonGroup Header="Page Size">
@@ -474,7 +479,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertBlankStampCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -508,7 +513,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertSquareShapeCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -558,7 +563,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertHandwritingRegionCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -601,8 +606,6 @@
                 </RibbonMenuButton>
 
             </RibbonGroup>
-
-            
 
         </RibbonTab>
 
@@ -662,5 +665,5 @@
             <ToggleButton Content="^" VerticalContentAlignment="Center" Height="22" Width="40" Padding="0" Margin="0" Background="CornflowerBlue" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
-    
+
 </catel:UserControl>
