@@ -12,6 +12,7 @@
         /// </summary>
         public WebcamPanelView()
         {
+            CloseViewModelOnUnloaded = false;
             InitializeComponent();
         }
     }

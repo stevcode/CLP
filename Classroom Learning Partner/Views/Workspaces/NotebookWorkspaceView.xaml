@@ -192,7 +192,7 @@
                 <ContentControl.Resources>
 
                     <ControlTemplate x:Key="WebcamPanelTemplate">
-                        <Views:WebcamPanelView />
+                        <Views:WebcamPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
                     </ControlTemplate>
 
                 </ContentControl.Resources>

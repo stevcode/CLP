@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
 
-            RightPanel = new WebcamPanelViewModel();
+            
         }
 
         public string WorkspaceName

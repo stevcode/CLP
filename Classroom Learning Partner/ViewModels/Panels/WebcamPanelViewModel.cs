@@ -28,6 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CaptureImageCommand = new Command<CapPlayer>(OnCaptureImageCommandExecute);
             AddImageCommand = new Command(OnAddImageCommandExecute);
+
+            
         }
 
         /// <summary>
@@ -35,6 +37,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         /// <value>The title.</value>
         public override string Title { get { return "WebcamPanelVM"; } }
+
+        protected override void Close()
+        {
+            SelectedWebcam.Dispose();
+            SelectedWebcam = null;
+
+            base.Close();
+        }
 
         #region Bindings
 
@@ -139,6 +149,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        
 
         #region IPanel Members
 
