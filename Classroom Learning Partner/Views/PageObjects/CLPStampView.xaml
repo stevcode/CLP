@@ -166,7 +166,7 @@
                     <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" 
                                                 Width="{Binding Width, Mode=TwoWay}" 
                                                 Height="{Binding Height, Mode=TwoWay}"
-                                                IsHitTestVisible="False"/>
+                                                IsHitTestVisible="False" />
                 </Border>
                 <TextBlock x:Name="PartsAuto"
                        FontFamily="SketchFlow Print" FontSize="72"
