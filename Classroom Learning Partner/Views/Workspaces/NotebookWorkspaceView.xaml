@@ -187,7 +187,31 @@
                 </ContentControl.Style>
             </ContentControl>
 
-            <!-- SideBar that displays projected displays -->
+            <ContentControl Grid.Column="5"
+                            DataContext="{Binding RightPanel, Mode=OneWay}">
+                <ContentControl.Resources>
+
+                    <ControlTemplate x:Key="WebcamPanelTemplate">
+                        <Views:WebcamPanelView />
+                    </ControlTemplate>
+
+                </ContentControl.Resources>
+
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+
+                            <!-- WebcamPanel trigger -->
+                            <DataTrigger Binding="{Binding PanelName}" Value="WebcamPanel">
+                                <Setter Property="Template" Value="{StaticResource WebcamPanelTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+            
+            <!-- SideBar that displays projected displays
             <Border BorderBrush="#D4D4D4" BorderThickness="5,0,0,0" Background="White"
               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.GridDisplaysVisibility, Converter={StaticResource BoolConverter}}"
               Grid.Column="5" HorizontalAlignment="Right" Margin="0">
@@ -218,7 +242,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <!--Grid Display-->
+
                                             <Views:CLPPagePreviewView Margin="2" Background="White" DataContext="{Binding}" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -228,7 +252,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Border>
+            </Border>-->
 
         </Grid>
 

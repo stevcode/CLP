@@ -1,0 +1,43 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.WebcamPanelView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com">
+    
+    <!-- Resources -->
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <!-- Content -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--Webcam-->
+
+        <Button Grid.Row="1"
+                Height="50" Width="300">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="..\..\Images\camera.png" />
+                <TextBlock VerticalAlignment="Center" Text="Take Picture" Margin="10" />
+            </StackPanel>
+        </Button>
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding CapturedImages}"
+                 SelectedItem="{Binding SelectedImage}"
+                 VerticalAlignment="Stretch">
+            
+        </ListBox>
+
+        <Button Grid.Row="3"
+                Height="50" Width="300">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="..\..\Images\AddImage.png" />
+                <TextBlock VerticalAlignment="Center" Text="Use Selected Picture" Margin="10" />
+            </StackPanel>
+        </Button>
+    </Grid>
+</catel:UserControl>

@@ -17,8 +17,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public interface IPanel
     {
+        string PanelName { get; }
         bool IsPinned { get; set; }
         bool IsVisible { get; set; }
+        bool IsResizable { get; set; }
         PanelLocation Location { get; set; }
         IPanel LinkedPanel { get; set; }
     }
