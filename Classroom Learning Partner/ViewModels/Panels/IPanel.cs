@@ -20,5 +20,6 @@ namespace Classroom_Learning_Partner.ViewModels
         bool IsPinned { get; set; }
         bool IsVisible { get; set; }
         PanelLocation Location { get; set; }
+        IPanel LinkedPanel { get; set; }
     }
 }
