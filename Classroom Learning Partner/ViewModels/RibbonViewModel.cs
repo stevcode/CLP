@@ -818,11 +818,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 Catel.Windows.PleaseWaitHelper.Show(() =>
                     Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
             }
-            else if(App.MainWindowViewModel.SelectedWorkspace is ProjectorWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    OnSaveAllNotebooksCommandExecute(), null, "Saving Notebook", 0.0 / 0.0);
-            }
         }
 
         /// <summary>

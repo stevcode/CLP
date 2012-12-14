@@ -50,6 +50,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 SelectedDisplay.IsOnProjector = true;
                 WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
             }
+            else if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                IsSideBarVisible = false;
+            }
             else
             {
                 SelectedDisplay.IsOnProjector = false;

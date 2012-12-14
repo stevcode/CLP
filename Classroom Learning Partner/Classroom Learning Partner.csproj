@@ -227,7 +227,6 @@
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableInkCanvas.cs" />
@@ -318,9 +317,6 @@
     </Compile>
     <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
       <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\ProjectorWorkspaceView.xaml.cs">
-      <DependentUpon>ProjectorWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\ServerWorkspaceView.xaml.cs">
       <DependentUpon>ServerWorkspaceView.xaml</DependentUpon>
@@ -461,10 +457,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\NotebookWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\ProjectorWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
