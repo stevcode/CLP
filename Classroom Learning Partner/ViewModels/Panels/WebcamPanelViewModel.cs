@@ -1,7 +1,16 @@
-﻿namespace Classroom_Learning_Partner.ViewModels
+﻿using CLP.Models;
+using System.Collections.ObjectModel;
+using System.Windows.Media.Imaging;
+using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.ViewModels.Controls.WebcamPlayer;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System;
+using System.IO;
+
+namespace Classroom_Learning_Partner.ViewModels
 {
-    using Catel.Data;
-    using Catel.MVVM;
 
     /// <summary>
     /// UserControl view model.
@@ -13,6 +22,12 @@
         /// </summary>
         public WebcamPanelViewModel()
         {
+
+            SelectedWebcam = new CapDevice("");
+            SelectedWebcam.MonikerString = CapDevice.DeviceMonikers[CapDevice.DeviceMonikers.Length - 1].MonikerString;
+
+            CaptureImageCommand = new Command<CapPlayer>(OnCaptureImageCommandExecute);
+            AddImageCommand = new Command(OnAddImageCommandExecute);
         }
 
         /// <summary>
@@ -21,6 +36,109 @@
         /// <value>The title.</value>
         public override string Title { get { return "WebcamPanelVM"; } }
 
+        #region Bindings
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CapDevice SelectedWebcam
+        {
+            get { return GetValue<CapDevice>(SelectedWebcamProperty); }
+            set { SetValue(SelectedWebcamProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedWebcamProperty = RegisterProperty("SelectedWebcam", typeof(CapDevice), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public double WebcamRotation
+        {
+            get { return GetValue<double>(WebcamRotationProperty); }
+            set { SetValue(WebcamRotationProperty, value); }
+        }
+
+        public static readonly PropertyData WebcamRotationProperty = RegisterProperty("WebcamRotation", typeof(double), 180d);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<BitmapSource> CapturedImages
+        {
+            get { return GetValue<ObservableCollection<BitmapSource>>(CapturedImagesProperty); }
+            set { SetValue(CapturedImagesProperty, value); }
+        }
+
+        public static readonly PropertyData CapturedImagesProperty = RegisterProperty("CapturedImages", typeof(ObservableCollection<BitmapSource>), () => new ObservableCollection<BitmapSource>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public BitmapSource SelectedImage
+        {
+            get { return GetValue<BitmapSource>(SelectedImageProperty); }
+            set { SetValue(SelectedImageProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedImageProperty = RegisterProperty("SelectedImage", typeof(BitmapSource), null);
+
+        #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the CaptureImageCommand command.
+        /// </summary>
+        public Command<CapPlayer> CaptureImageCommand { get; private set; }
+
+        private void OnCaptureImageCommandExecute(CapPlayer webcamPlayer)
+        {
+            //// Store current image in the webcam
+            BitmapSource bitmap = webcamPlayer.CurrentBitmap;
+            if(bitmap != null)
+            {
+                CapturedImages.Add(bitmap);
+            }
+        }
+
+        /// <summary>
+        /// Gets the AddImageCommand command.
+        /// </summary>
+        public Command AddImageCommand { get; private set; }
+
+        private void OnAddImageCommandExecute()
+        {
+            CLPPage currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
+            encoder.QualityLevel = 100;
+            byte[] byteSource = new byte[0];
+            using (MemoryStream stream = new MemoryStream())
+            {               
+                encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
+                encoder.Save(stream);
+                byteSource = stream.ToArray(); 
+                stream.Close();               
+            }
+
+            List<byte> ByteSource = new List<byte>(byteSource);
+
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] hash = md5.ComputeHash(byteSource);
+            string imageID = Convert.ToBase64String(hash);
+
+            if(!currentPage.ImagePool.ContainsKey(imageID))
+            {
+                currentPage.ImagePool.Add(imageID, ByteSource);
+            }
+            CLPImage image = new CLPImage(imageID, currentPage);
+            image.IsBackground = App.MainWindowViewModel.IsAuthoring;
+
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(image);
+        }
+
+        #endregion //Commands
 
         #region IPanel Members
 
@@ -64,6 +182,14 @@
         }
 
         public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), false);
+
+        /// <summary>
+        /// Initial Width of the Panel, before any resizing.
+        /// </summary>
+        public double InitialWidth
+        {
+            get { return 300; }
+        }
 
         /// <summary>
         /// The Panel's Location relative to the Workspace.

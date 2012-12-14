@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
         bool IsPinned { get; set; }
         bool IsVisible { get; set; }
         bool IsResizable { get; set; }
+        double InitialWidth { get; }
         PanelLocation Location { get; set; }
         IPanel LinkedPanel { get; set; }
     }
