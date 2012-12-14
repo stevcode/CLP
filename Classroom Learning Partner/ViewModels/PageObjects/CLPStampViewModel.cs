@@ -227,7 +227,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
                 droppedContainer.ParentID = PageObject.UniqueID;
                 //droppedContainer.IsStamped = true;
-                droppedContainer.Parts = PageObject.Parts;
+                //droppedContainer.Parts = PageObject.Parts;
                 droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
                 PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
@@ -355,7 +355,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool HasParts()
         {
-            (PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
             return PageObject.Parts > 0;
         }
 
