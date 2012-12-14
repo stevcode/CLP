@@ -88,7 +88,7 @@ namespace CLP.Models
                 {
                     var parentObject =
                     from pageObject in ParentPage.PageObjects
-                    where (pageObject.ParentID.Equals(ParentID)
+                    where (pageObject.ParentID.Equals(ParentID))
                     select pageObject;
                     
                     //Should only be one
