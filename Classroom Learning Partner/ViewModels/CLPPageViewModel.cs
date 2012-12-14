@@ -360,6 +360,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
+            
             if(!IsMouseDown && TopCanvas != null)
             {
                 Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
@@ -373,9 +374,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseDownCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MouseMoveCommand command is executed.
-        /// </summary>
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = true;
@@ -393,9 +391,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseUpCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MouseMoveCommand command is executed.
-        /// </summary>
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = false;

@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
             StrokePathContainer.IsStrokePathsVisible = false;
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            timer.Interval = TimeSpan.FromMilliseconds(800);
             timer.Tick += timer_Tick;
 
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
