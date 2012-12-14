@@ -31,6 +31,7 @@ namespace CLP.Models
             YPosition = 10;
             Height = 300;
             Width = 300;
+            Parts = 1;
         }
 
         /// <summary>
