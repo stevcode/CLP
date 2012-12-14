@@ -45,7 +45,6 @@ namespace CLP.Models
             ParentPage = page;
             ParentPageID = page.UniqueID;
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
-            StrokePathContainer.YPosition = YPosition + HANDLE_HEIGHT;
 
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
@@ -54,7 +53,11 @@ namespace CLP.Models
             HandwritingRegionParts.Height = PARTS_HEIGHT;
             HandwritingRegionParts.Width = Width;
             HandwritingRegionParts.XPosition = XPosition;
-            HandwritingRegionParts.YPosition = YPosition + Height - PARTS_HEIGHT;
+            HandwritingRegionParts.IsBackground = true;
+
+            /* To minimize logic, HandwritingRegionParts and StrokePathContainer YPosition are updated
+             * by setting the YPosition. */ 
+            YPosition = YPosition;
 
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
@@ -269,6 +272,7 @@ namespace CLP.Models
             {
                 ParentPage.InkStrokes.Remove(stroke);
             }
+            PartsInterpreted = false;
         }
 
         public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
