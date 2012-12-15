@@ -81,7 +81,8 @@ namespace CLP.Models
         public string ParentID
         {
             get { return GetValue<string>(ParentIDProperty); }
-            set { SetValue(ParentIDProperty, value); }
+            set
+            { SetValue(ParentIDProperty, value);}
         }
 
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
@@ -227,7 +228,22 @@ namespace CLP.Models
         /// </summary>
         public int Parts
         {
-            get { return GetValue<int>(PartsProperty); }
+            get {
+                int parts = GetValue<int>(PartsProperty);
+                Console.WriteLine("Parts: " + parts + " parentID: " + ParentID);
+                if (parts < 1 && !ParentID.Equals(""))
+                {
+                    //Should only be one
+                    foreach (ICLPPageObject po in ParentPage.PageObjects)
+                    {
+                        Console.WriteLine("UniqueID: " + po.UniqueID);
+                        if (po.UniqueID.Equals(ParentID)) {
+                            Parts = po.Parts;
+                        }
+                    }
+                }
+                return GetValue<int>(PartsProperty);
+            }
             set { SetValue(PartsProperty, value); }
         }
 

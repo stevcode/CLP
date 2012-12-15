@@ -229,7 +229,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //droppedContainer.IsStamped = true;
                 droppedContainer.Parts = PageObject.Parts;
                 droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
-                PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
+
 
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
@@ -240,7 +240,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
                     Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
-                    Console.WriteLine("containers objects: " + droppedContainer.PageObjectObjectParentIDs.Count);
+                    PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
                 }
                 // Stamp not placed
                 else {
@@ -249,7 +249,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
                     }
                 }
-
                 Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
@@ -355,7 +354,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool HasParts()
         {
-            (PageObject as CLPStamp).UpdatePartsFromHandwritingRegion();
             return PageObject.Parts > 0;
         }
 
