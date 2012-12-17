@@ -46,19 +46,14 @@ namespace CLP.Models
         {
             ParentPage = page;
             ParentPageID = page.UniqueID;
+
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
             HandwritingRegionParts.IsBackground = true;
+            HandwritingRegionParts.Height = PARTS_HEIGHT;
 
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
-
-            HandwritingRegionParts.Height = PARTS_HEIGHT;
-            HandwritingRegionParts.XPosition = XPosition;
-
-            /* To minimize logic, HandwritingRegionParts and StrokePathContainer YPosition are updated
-             * by setting the YPosition. */ 
-            YPosition = YPosition;
 
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
@@ -135,7 +130,14 @@ namespace CLP.Models
         public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            set 
+            { 
+                SetValue(ParentPageProperty, value);
+                StrokePathContainer.ParentPage = value;
+                StrokePathContainer.ParentPageID = value.UniqueID;
+                HandwritingRegionParts.ParentPage = value;
+                HandwritingRegionParts.ParentPageID = value.UniqueID;
+            }
         }
 
         [NonSerialized]
@@ -242,33 +244,23 @@ namespace CLP.Models
         public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
 
         /// <summary>
-        /// xPosition of pageObject on page, used for serialization.
+        /// xPosition of pageObject on page.
         /// </summary>
         public double XPosition
         {
             get { return GetValue<double>(XPositionProperty); }
-            set
-            {
-                SetValue(XPositionProperty, value);
-                HandwritingRegionParts.XPosition = value;
-                StrokePathContainer.XPosition = value;
-            }
+            set { SetValue(XPositionProperty, value); }
         }
 
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
 
         /// <summary>
-        /// YPosition of pageObject on page, used for serialization.
+        /// YPosition of pageObject on page.
         /// </summary>
         public double YPosition
         {
             get { return GetValue<double>(YPositionProperty); }
-            set
-            {
-                SetValue(YPositionProperty, value);
-                HandwritingRegionParts.YPosition = value + Height - PARTS_HEIGHT;
-                StrokePathContainer.YPosition = value + HANDLE_HEIGHT;
-            }
+            set { SetValue(YPositionProperty, value); }
         }
 
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
@@ -425,10 +417,10 @@ namespace CLP.Models
                 where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string).Equals(strokeID)
                 select stroke;
 
-            Rect rectParts = new Rect(HandwritingRegionParts.XPosition, HandwritingRegionParts.YPosition,
+            Rect rectParts = new Rect(XPosition, YPosition + CLPStamp.HANDLE_HEIGHT + StrokePathContainer.Height,
                 HandwritingRegionParts.Width, HandwritingRegionParts.Height);
 
-            Rect container = new Rect(StrokePathContainer.XPosition, StrokePathContainer.YPosition,
+            Rect container = new Rect(XPosition, YPosition + CLPStamp.HANDLE_HEIGHT,
                 StrokePathContainer.Width, StrokePathContainer.Height);
 
             List<string> handwritingRegionStrokeIDsAdd = new List<string>();
