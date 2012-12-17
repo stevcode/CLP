@@ -43,10 +43,7 @@ namespace CLP.Models
 
         public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
             : base()
-        {
-            ParentPage = page;
-            ParentPageID = page.UniqueID;
-
+        { 
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
             HandwritingRegionParts.IsBackground = true;
@@ -55,6 +52,8 @@ namespace CLP.Models
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
 
+            ParentPage = page;
+            ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             ParentID = "";
