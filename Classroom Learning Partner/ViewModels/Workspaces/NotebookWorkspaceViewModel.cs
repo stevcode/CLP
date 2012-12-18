@@ -67,8 +67,6 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Student Name - Descending");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
-
-            
         }
 
         public string WorkspaceName
@@ -269,9 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetCurrentPageCommand command is executed.
-        /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
@@ -282,9 +277,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetCurrentPageCommand command is executed.
-        /// </summary>
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
             SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
@@ -295,9 +287,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MakePageLongerCommand command is executed.
-        /// </summary>
         private void OnMakePageLongerCommandExecute()
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)

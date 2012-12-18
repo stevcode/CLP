@@ -43,7 +43,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Image Source="{Binding}" 
-                               Width="250"  />
+                               Width="175"  />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

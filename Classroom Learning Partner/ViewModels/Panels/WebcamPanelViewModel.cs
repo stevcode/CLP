@@ -22,14 +22,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public WebcamPanelViewModel()
         {
-
             SelectedWebcam = new CapDevice("");
             SelectedWebcam.MonikerString = CapDevice.DeviceMonikers[CapDevice.DeviceMonikers.Length - 1].MonikerString;
 
             CaptureImageCommand = new Command<CapPlayer>(OnCaptureImageCommandExecute);
             AddImageCommand = new Command(OnAddImageCommandExecute);
-
-            
         }
 
         /// <summary>
@@ -150,8 +147,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Commands
 
-        
-
         #region IPanel Members
 
         public string PanelName
@@ -200,7 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public double InitialWidth
         {
-            get { return 300; }
+            get { return 250; }
         }
 
         /// <summary>

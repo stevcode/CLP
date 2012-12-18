@@ -1623,9 +1623,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertImageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertImageCommand command is executed.
-        /// </summary>
         private void OnInsertImageCommandExecute()
         {
             // Configure open file dialog box
@@ -1679,9 +1676,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if(!isButtonChecked) //ClosePanel
             {
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
-                panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
-                panelCloserTimer.Tick += panelCloserTimer_Tick;
-                panelCloserTimer.Start();
+                //panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
+                //panelCloserTimer.Tick += panelCloserTimer_Tick;
+                //panelCloserTimer.Start();
             }
             else //OpenPanel
             {
@@ -1691,7 +1688,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    panelCloserTimer.Stop();
+                    //panelCloserTimer.Stop();
                 }
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
             }
