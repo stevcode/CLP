@@ -27,11 +27,13 @@ namespace CLP.Models
             : base(page)
         {
             ImageID = imageID;
-            XPosition = 10;
-            YPosition = 10;
+            XPosition = 50;
+            YPosition = 50;
             Height = 300;
             Width = 300;
             Parts = 1;
+
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>

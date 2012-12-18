@@ -251,7 +251,7 @@ namespace CLP.Models
             set { SetValue(XPositionProperty, value); }
         }
 
-        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 50.0);
 
         /// <summary>
         /// YPosition of pageObject on page.
@@ -262,7 +262,7 @@ namespace CLP.Models
             set { SetValue(YPositionProperty, value); }
         }
 
-        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 50.0);
 
         /// <summary>
         /// Height of pageObject.

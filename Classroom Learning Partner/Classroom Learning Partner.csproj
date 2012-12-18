@@ -493,6 +493,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\Fonts\SketchFlow Print.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AddImage.png" />

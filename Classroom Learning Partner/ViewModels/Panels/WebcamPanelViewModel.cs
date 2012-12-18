@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System;
 using System.IO;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -23,7 +24,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public WebcamPanelViewModel()
         {
             SelectedWebcam = new CapDevice("");
-            SelectedWebcam.MonikerString = CapDevice.DeviceMonikers[CapDevice.DeviceMonikers.Length - 1].MonikerString;
+            SelectedWebcam.MonikerString = CapDevice.DeviceMonikers[0].MonikerString;
+
+            foreach(var device in CapDevice.DeviceMonikers)
+            {
+                if(device.Name.ToUpper().Contains("V"))
+                {
+                    SelectedWebcam.MonikerString = device.MonikerString;
+                    break;
+                }
+            }
 
             CaptureImageCommand = new Command<CapPlayer>(OnCaptureImageCommandExecute);
             AddImageCommand = new Command(OnAddImageCommandExecute);
@@ -104,7 +114,8 @@ namespace Classroom_Learning_Partner.ViewModels
             BitmapSource bitmap = webcamPlayer.CurrentBitmap;
             if(bitmap != null)
             {
-                CapturedImages.Add(bitmap);
+                CapturedImages.Insert(0,bitmap);
+                SelectedImage = CapturedImages[0];
             }
         }
 

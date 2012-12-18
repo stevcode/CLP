@@ -30,6 +30,8 @@ namespace CLP.Models
             Height = 100;
             Width = 100;
             Parts = 1;
+
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>
