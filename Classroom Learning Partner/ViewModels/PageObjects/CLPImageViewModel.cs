@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -14,12 +15,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image) : base()
+        public CLPImageViewModel(CLPImage image)
+            : base()
         {
             PageObject = image;
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-            List<byte> ByteSource = parentPage.ImagePool[image.ImageID];
-            LoadImageFromByteSource(ByteSource.ToArray());
+            //CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            try
+            {
+                List<byte> ByteSource = image.ParentPage.ImagePool[image.ImageID];
+                LoadImageFromByteSource(ByteSource.ToArray());
+            }
+            catch(System.Exception ex)
+            {
+                Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
+            }
         }
 
         public override string Title { get { return "ImageVM"; } }

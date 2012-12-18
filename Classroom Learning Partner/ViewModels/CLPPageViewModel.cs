@@ -582,20 +582,20 @@ namespace Classroom_Learning_Partner.ViewModels
 	                        List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
 	
 	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
-	                        //if (Page.IsSubmission)
-	                        //{
-	                        //    if (App.Peer.Channel != null)
-	                        //    {
-	                        //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.BroadcastInkToStudents);
-	                        //    }
-	                        //}
-	                        //else
-	                        //{
-	                        //    if (App.Peer.Channel != null)
-	                        //    {
-	                        //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.BroadcastInkToStudents);
-	                        //    }
-	                        //}
+	                        if (Page.IsSubmission)
+	                        {
+	                            if (App.Peer.Channel != null)
+	                            {
+	                                App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+	                            }
+	                        }
+	                        else
+	                        {
+	                            if (App.Peer.Channel != null)
+	                            {
+                                    App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+	                            }
+	                        }
 	                    }
                     }
                     catch (System.Exception ex)
