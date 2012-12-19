@@ -628,7 +628,10 @@ namespace AdornedControl
         {
             openAdornerTimer.Stop();
 
-            FadeInAdorner();
+            if (IsMouseOverShowEnabled)
+            {
+            	FadeInAdorner();
+            }
         }
 
         /// <summary>

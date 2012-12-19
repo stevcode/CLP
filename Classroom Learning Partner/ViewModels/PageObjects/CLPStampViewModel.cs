@@ -30,10 +30,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = stamp;
             StrokePathContainer.IsStrokePathsVisible = false;
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(800);
-            timer.Tick += timer_Tick;
-
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
@@ -175,6 +171,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CopyStamp(int stampIndex)
         {
+            IsAdornerVisible = false;
+            IsMouseOverShowEnabled = false;
+
                 try
                 {
                     CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
@@ -261,7 +260,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
             IsAdornerVisible = false;
-            timer.Stop();
+            IsMouseOverShowEnabled = false;
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
@@ -295,13 +294,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the ShowKeyPadCommand command.
+        /// Shows Modal Window Keypad to input Parts manually.
         /// </summary>
         public Command ShowKeyPadCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the ShowKeyPadCommand command is executed.
-        /// </summary>
+        
         private void OnShowKeyPadCommandExecute()
         {
             KeypadWindowView keyPad = new KeypadWindowView();
@@ -318,14 +314,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
-
-        private DispatcherTimer timer = null;
-
-        void timer_Tick(object sender, EventArgs e)
-        {
-            timer.Stop();
-            IsAdornerVisible = true;
-        }
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
