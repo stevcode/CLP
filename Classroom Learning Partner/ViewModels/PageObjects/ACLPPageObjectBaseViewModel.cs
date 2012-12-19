@@ -207,6 +207,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public virtual void EraserHitTest(string hitBoxName)
+        {
+            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            {
+                //don't erase
+            }
+            else
+            {
+                OnRemovePageObjectCommandExecute();
+            }
+        }
+
 
         #endregion //IPageObjectAdorners
 

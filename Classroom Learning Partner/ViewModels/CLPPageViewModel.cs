@@ -360,12 +360,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            
-            if(!IsMouseDown && TopCanvas != null)
+            if(TopCanvas != null)
             {
                 Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+                if(!IsMouseDown)
+                {
+                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                }
 
-                VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                if((IsMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (IsMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
+                {
+                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraseResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                }
+                
             }
         }
 
@@ -430,10 +437,19 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
 
+            //TODO: Steve - First Parameter, Tag, not needed
+            IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
 
-                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-            
-            
+            return HitTestResultBehavior.Stop;
+        }
+
+        private HitTestResultBehavior EraseResult(HitTestResult result)
+        {
+            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+
+            pageObjectViewModel.EraserHitTest((result.VisualHit as Shape).Name);
+
             return HitTestResultBehavior.Stop;
         }
 
