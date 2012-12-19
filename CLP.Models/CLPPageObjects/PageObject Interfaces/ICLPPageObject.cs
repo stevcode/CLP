@@ -24,6 +24,7 @@ namespace CLP.Models
         bool IsBackground { get; set; }
         int Parts { get; set; }
         bool CanAdornersShow { get; set; }
+        bool IsInternalPageObject { get; set; }
 
         ICLPPageObject Duplicate();
         void OnRemoved();

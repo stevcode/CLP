@@ -29,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 InternalType = container.InternalPageObject.PageObjectType;
+                container.InternalPageObject.ParentPage = PageObject.ParentPage;
+                container.InternalPageObject.IsInternalPageObject = true;
             }
 
             if(IsStamped)

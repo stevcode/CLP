@@ -30,6 +30,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override string Title { get { return "APageObjectBaseVM"; } }
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsInternalPageObject
+        {
+            get { return GetValue<bool>(IsInternalPageObjectProperty); }
+            set { SetValue(IsInternalPageObjectProperty, value); }
+        }
+
+        public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool));
+
+
         #region Model
 
         /// <summary>

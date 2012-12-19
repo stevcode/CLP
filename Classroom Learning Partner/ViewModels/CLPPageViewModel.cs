@@ -438,9 +438,13 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
 
             //TODO: Steve - First Parameter, Tag, not needed
-            IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-
-            return HitTestResultBehavior.Stop;
+            if (!pageObjectViewModel.IsInternalPageObject)
+            {
+                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
+                return HitTestResultBehavior.Stop;
+            }
+            
+            return HitTestResultBehavior.Continue;
         }
 
         private HitTestResultBehavior EraseResult(HitTestResult result)
@@ -448,9 +452,13 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
 
-            pageObjectViewModel.EraserHitTest((result.VisualHit as Shape).Name);
+            if(!pageObjectViewModel.IsInternalPageObject)
+            {
+                pageObjectViewModel.EraserHitTest((result.VisualHit as Shape).Name);
+                return HitTestResultBehavior.Stop;
+            }
 
-            return HitTestResultBehavior.Stop;
+            return HitTestResultBehavior.Continue;
         }
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

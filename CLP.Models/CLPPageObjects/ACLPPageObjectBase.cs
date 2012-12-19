@@ -249,6 +249,17 @@ namespace CLP.Models
 
         public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsInternalPageObject
+        {
+            get { return GetValue<bool>(IsInternalPageObjectProperty); }
+            set { SetValue(IsInternalPageObjectProperty, value); }
+        }
+
+        public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool), false);
+
         #endregion
 
         #region Methods

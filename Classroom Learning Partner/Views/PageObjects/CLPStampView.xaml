@@ -155,7 +155,7 @@
                     Width="{Binding Width, Mode=TwoWay}" 
                     Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
                     VerticalAlignment="Top" Margin="0">
-                <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" 
+                <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" IsHitTestVisible="False"
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
             </Border>

@@ -45,7 +45,9 @@ namespace CLP.Models
             : base()
         { 
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
+            StrokePathContainer.IsInternalPageObject = true;
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
+            HandwritingRegionParts.IsInternalPageObject = true;
             HandwritingRegionParts.IsBackground = true;
             HandwritingRegionParts.Height = PARTS_HEIGHT;
 
@@ -335,6 +337,20 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsInternalPageObject
+        {
+            get { return GetValue<bool>(IsInternalPageObjectProperty); }
+            set { SetValue(IsInternalPageObjectProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsInternalPageObject property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool), false);
 
         #endregion //Properties
 

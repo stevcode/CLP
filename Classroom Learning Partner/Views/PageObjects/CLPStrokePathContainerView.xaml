@@ -143,15 +143,15 @@
         <Grid>
             <Rectangle x:Name="PageObjectHitBox" Tag="0"  Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" Fill="Transparent" />
 
-            <Control IsHitTestVisible="True" x:Name="InternalView">
+            <Control IsHitTestVisible="False" x:Name="InternalView">
                 <Control.Resources>
 
                     <ControlTemplate x:Key="CLPImageTemplate">
-                        <Views:CLPImageView DataContext="{Binding InternalPageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+                        <Views:CLPImageView IsHitTestVisible="False" DataContext="{Binding InternalPageObject}" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="BlankTemplate">
-                        <Rectangle Fill="Transparent" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
+                        <Rectangle IsHitTestVisible="False" Fill="Transparent" Height="{Binding Path=Height, Mode=TwoWay}" Width="{Binding Path=Width, Mode=TwoWay}" />
                     </ControlTemplate>
 
                 </Control.Resources>
@@ -175,7 +175,7 @@
                 </Control.Style>
             </Control>
 
-            <ItemsControl ClipToBounds="True"
+            <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
                                   ItemsSource="{Binding Path=StrokePathViewModels}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">

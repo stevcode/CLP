@@ -12,6 +12,7 @@ using Catel.MVVM;
 using CLP.Models;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using Classroom_Learning_Partner.Model;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -183,6 +184,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     originalY = leftBehindStamp.YPosition;
 
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                    leftBehindStamp.ParentPage = parentPage;
+                    leftBehindStamp.StrokePathContainer.ParentPage = parentPage;
+                    if(leftBehindStamp.StrokePathContainer.InternalPageObject != null)
+                    {
+                        leftBehindStamp.StrokePathContainer.InternalPageObject.ParentPage = parentPage;
+                    }
+                    
+
 
                     PageObject.CanAcceptPageObjects = false;
                     leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
@@ -228,6 +237,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 //droppedContainer.IsStamped = true;
                 droppedContainer.Parts = PageObject.Parts;
                 droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
+                if(droppedContainer.InternalPageObject != null)
+                {
+                    droppedContainer.InternalPageObject.ParentPage = droppedContainer.ParentPage;
+                }
+                
 
 
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
@@ -313,6 +327,7 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #endregion //Commands
 
+        
         #region Methods
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
@@ -342,6 +357,25 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsMouseOverShowEnabled = false;
                 return false;
+            }
+        }
+
+        public override void EraserHitTest(string hitBoxName)
+        {
+            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            {
+                //don't erase
+            }
+            else if(hitBoxName == "StampHandleHitBox")
+            {
+                CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                {
+                    pageVM.IsInkCanvasHitTestVisible = true;
+                }
+
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
 

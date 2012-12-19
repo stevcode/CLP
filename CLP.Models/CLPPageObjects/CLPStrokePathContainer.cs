@@ -28,6 +28,7 @@ namespace CLP.Models
             }
             else
             {
+                InternalPageObject.IsInternalPageObject = true;
                 Height = InternalPageObject.Height;
                 Width = InternalPageObject.Width;
             }
@@ -40,6 +41,15 @@ namespace CLP.Models
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPStrokePathContainer(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+
+        //[OnDeserialized]
+        //private void OnDeserialized()
+        //{
+        //    if (InternalPageObject != null)
+        //    {
+        //        InternalPageObject.ParentPage = ParentPage;
+        //    }
+        //}
 
         #endregion //Constructors
 
