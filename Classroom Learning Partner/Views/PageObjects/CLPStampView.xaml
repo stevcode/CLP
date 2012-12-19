@@ -12,9 +12,12 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
-    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center" IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
-                           HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
-                       IsMouseOverShowEnabled="False">
+    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+                       IsAdornerVisible="{Binding IsAdornerVisible}"
+                       IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
+                       OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"

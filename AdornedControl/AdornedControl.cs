@@ -54,6 +54,11 @@ namespace AdornedControl
         private FrameworkElementAdorner adorner = null;
 
         /// <summary>
+        /// This timer is used to fade in and open the adorner.
+        /// </summary>
+        private DispatcherTimer openAdornerTimer = new DispatcherTimer();
+
+        /// <summary>
         /// This timer is used to fade out and close the adorner.
         /// </summary>
         private DispatcherTimer closeAdornerTimer = new DispatcherTimer();
@@ -67,6 +72,9 @@ namespace AdornedControl
             this.Focusable = false; // By default don't want 'AdornedControl' to be focusable.
 
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(AdornedControl_DataContextChanged);
+
+            openAdornerTimer.Tick += new EventHandler(openAdornerTimer_Tick);
+            openAdornerTimer.Interval = TimeSpan.FromSeconds(OpenAdornerTimeOut);
 
             closeAdornerTimer.Tick += new EventHandler(closeAdornerTimer_Tick);
             closeAdornerTimer.Interval = TimeSpan.FromSeconds(CloseAdornerTimeOut);
@@ -193,7 +201,7 @@ namespace AdornedControl
         /// <summary>
         /// Set to 'true' to make the adorner automatically fade-in and become visible when the mouse is hovered
         /// over the adorned control.  Also the adorner automatically fades-out when the mouse cursor is moved
-        /// aware from the adorned control (and the adorner).
+        /// away from the adorned control (and the adorner).
         /// </summary>
         public bool IsMouseOverShowEnabled
         {
@@ -226,6 +234,27 @@ namespace AdornedControl
                 new FrameworkPropertyMetadata(0.25));
 
         /// <summary>
+        /// Specifies the time (in seconds) after the mouse cursor moves over the 
+        /// adorned control (or the adorner) when the adorner begins to fade in.
+        /// </summary>
+        public double OpenAdornerTimeOut
+        {
+            get { return (double)GetValue(OpenAdornerTimeOutProperty); }
+            set { SetValue(OpenAdornerTimeOutProperty, value); }
+        }
+
+        public static readonly DependencyProperty OpenAdornerTimeOutProperty =
+            DependencyProperty.Register("OpenAdornerTimeOut", typeof(double), typeof(AdornedControl),
+                new FrameworkPropertyMetadata(0.0, OpenAdornerTimeOut_PropertyChanged));
+
+        private static void OpenAdornerTimeOut_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            AdornedControl c = (AdornedControl)o;
+            c.openAdornerTimer.Stop();
+            c.openAdornerTimer.Interval = TimeSpan.FromSeconds(c.OpenAdornerTimeOut);
+        }
+
+        /// <summary>
         /// Specifies the time (in seconds) it takes to fade out the adorner.
         /// </summary>
         public double FadeOutTime
@@ -255,6 +284,7 @@ namespace AdornedControl
         private static void CloseAdornerTimeOut_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             AdornedControl c = (AdornedControl)o;
+            c.closeAdornerTimer.Stop();
             c.closeAdornerTimer.Interval = TimeSpan.FromSeconds(c.CloseAdornerTimeOut);
         }
 
@@ -550,7 +580,7 @@ namespace AdornedControl
 
             closeAdornerTimer.Stop();
 
-            FadeInAdorner();
+            openAdornerTimer.Start();
         }
 
         /// <summary>
@@ -562,6 +592,8 @@ namespace AdornedControl
             //{
             //    return;
             //}
+
+            openAdornerTimer.Stop();
 
             closeAdornerTimer.Start();
         }
@@ -586,6 +618,17 @@ namespace AdornedControl
 
             MouseLeaveLogic();
             e.Handled = false;
+        }
+
+        /// <summary>
+        /// Called when the open adorner time-out has ellapsed, the mouse has moved
+        /// over from the adorned control and the adorner and it is time to open the adorner.
+        /// </summary>
+        private void openAdornerTimer_Tick(object sender, EventArgs e)
+        {
+            openAdornerTimer.Stop();
+
+            FadeInAdorner();
         }
 
         /// <summary>

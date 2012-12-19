@@ -329,27 +329,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if (IsBackground)
+            if(hitBoxName == "StampHandleHitBox")
             {
-                if (App.MainWindowViewModel.IsAuthoring) //Adorners pop-up immediately while in Authoring Mode
+                if(IsBackground)
                 {
-                    IsAdornerVisible = true;
-                }
-            }
-            else //If not a background object, adorners pop up after a delay
-            {
-                if (isMouseDown)
-                {
-                    timer.Stop();
-                    IsAdornerVisible = false;
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        OpenAdornerTimeOut = 0.0;
+                        IsMouseOverShowEnabled = true;
+                    }
+                    else
+                    {
+                        IsMouseOverShowEnabled = false;
+                    }
                 }
                 else
                 {
-                    timer.Start();
+                    OpenAdornerTimeOut = 0.8;
+                    IsMouseOverShowEnabled = true;
                 }
+                return false;
             }
-
-            return false;
+            else
+            {
+                IsMouseOverShowEnabled = false;
+                return false;
+            }
         }
 
         private bool HasParts()

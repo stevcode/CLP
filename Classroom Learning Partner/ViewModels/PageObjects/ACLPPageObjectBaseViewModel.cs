@@ -12,7 +12,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase
+    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
         protected ACLPPageObjectBaseViewModel()
             : base()
@@ -122,8 +122,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
-        #region Bindings
+        #region IPageObjectAdorners
 
+        /// <summary>
+        /// Shows or hides the adorner.
+        /// Set to 'true' to show the adorner or 'false' to hide the adorner.
+        /// </summary>
         public bool IsAdornerVisible
         {
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
@@ -144,15 +148,67 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
 
-        public Visibility AllowAdorner
+        /// <summary>
+        /// Set to 'true' to make the adorner automatically fade-in and become visible when the mouse is hovered
+        /// over the adorned control.  Also the adorner automatically fades-out when the mouse cursor is moved
+        /// away from the adorned control (and the adorner).
+        /// </summary>
+        public bool IsMouseOverShowEnabled
         {
-            get { return GetValue<Visibility>(AllowAdornerProperty); }
-            set { SetValue(AllowAdornerProperty, value); }
+            get { return GetValue<bool>(IsMouseOverShowEnabledProperty); }
+            set { SetValue(IsMouseOverShowEnabledProperty, value); }
         }
 
-        public static readonly PropertyData AllowAdornerProperty = RegisterProperty("AllowAdorner", typeof(Visibility), Visibility.Visible);
+        public static readonly PropertyData IsMouseOverShowEnabledProperty = RegisterProperty("IsMouseOverShowEnabled", typeof(bool), false);
 
-        #endregion //Bindings
+        /// <summary>
+        /// Specifies the time (in seconds) after the mouse cursor moves over the 
+        /// adorned control (or the adorner) when the adorner begins to fade in.
+        /// </summary>
+        public double OpenAdornerTimeOut
+        {
+            get { return GetValue<double>(OpenAdornerTimeOutProperty); }
+            set { SetValue(OpenAdornerTimeOutProperty, value); }
+        }
+
+        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.0);
+
+        /// <summary>
+        /// Specifies the time (in seconds) after the mouse cursor moves away from the 
+        /// adorned control (or the adorner) when the adorner begins to fade out.
+        /// </summary>
+        public double CloseAdornerTimeOut
+        {
+            get { return GetValue<double>(CloseAdornerTimeOutProperty); }
+            set { SetValue(CloseAdornerTimeOutProperty, value); }
+        }
+
+        public static readonly PropertyData CloseAdornerTimeOutProperty = RegisterProperty("CloseAdornerTimeOut", typeof(double), 1.0);
+
+        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsBackground)
+            {
+                if(App.MainWindowViewModel.IsAuthoring)
+                {
+                    IsMouseOverShowEnabled = true;
+                    return false;
+                }
+                else
+                {
+                    IsMouseOverShowEnabled = false;
+                    return true;
+                }
+            }
+            else
+            {
+                IsMouseOverShowEnabled = true;
+                return false;
+            }
+        }
+
+
+        #endregion //IPageObjectAdorners
 
         #region Commands
 
@@ -338,24 +394,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if (IsBackground)
-            {
-                if (App.MainWindowViewModel.IsAuthoring)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
+        
 
         #endregion //Methods
     }

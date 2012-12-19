@@ -20,6 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SnapCommand = new Command(OnSnapCommandExecute);
             RemoveTileCommand = new Command(OnRemoveTileCommandExecute);
             DuplicateContainerCommand = new Command(OnDuplicateContainerCommandExecute);
+
+            IsMouseOverShowEnabled = true;
         }
 
         public override string Title { get { return "SnapTileContainerVM"; } }

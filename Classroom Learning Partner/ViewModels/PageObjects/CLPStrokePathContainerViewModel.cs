@@ -147,20 +147,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if(App.MainWindowViewModel.IsAuthoring)
                     {
+                        IsMouseOverShowEnabled = true;
                         return false;
                     }
                     else
                     {
+                        IsMouseOverShowEnabled = false;
                         return true;
                     }
                 }
                 else
                 {
+                    IsMouseOverShowEnabled = true;
                     return false;
                 }
             }
             else
             {
+                IsMouseOverShowEnabled = false;
                 return true;
             }
         }

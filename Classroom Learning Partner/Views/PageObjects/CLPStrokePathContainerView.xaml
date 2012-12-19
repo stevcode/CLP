@@ -14,14 +14,12 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ac:AdornedControl
-            x:Name="adornedControl"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalAdornerPlacement="Outside"
-            VerticalAdornerPlacement="Outside"
-            IsHitTestVisible="{Binding Path=CanAdornersShow}"
-            >
+    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+                       IsAdornerVisible="{Binding IsAdornerVisible}"
+                       IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
+                       OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
             <Canvas Visibility="{Binding IsStamped, Converter={StaticResource BoolConverter}}"
