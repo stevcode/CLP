@@ -11,12 +11,54 @@ using System.Windows.Threading;
 namespace AdornedControl
 {
     /// <summary>
+    /// Specifies the placement of the adorner in related to the adorned control.
+    /// </summary>
+    public enum AdornerPlacement
+    {
+        Inside,
+        Outside
+    }
+
+    /// <summary>
     /// A content control that allows an adorner for the content to
     /// be defined in XAML.
     /// </summary>
     public class AdornedControl : ContentControl, INotifyPropertyChanged
     {
-        
+        /// <summary>
+        /// Specifies the current show/hide state of the adorner.
+        /// </summary>
+        private enum AdornerShowState
+        {
+            Visible,
+            Hidden,
+            FadingIn,
+            FadingOut,
+        }
+
+        #region Private Data Members
+
+        /// <summary>
+        /// Specifies the current show/hide state of the adorner.
+        /// </summary>
+        private AdornerShowState adornerShowState = AdornerShowState.Hidden;
+
+        /// <summary>
+        /// Caches the adorner layer.
+        /// </summary>
+        private AdornerLayer adornerLayer = null;
+
+        /// <summary>
+        /// The actual adorner create to contain our 'adorner UI content'.
+        /// </summary>
+        private FrameworkElementAdorner adorner = null;
+
+        /// <summary>
+        /// This timer is used to fade out and close the adorner.
+        /// </summary>
+        private DispatcherTimer closeAdornerTimer = new DispatcherTimer();
+
+        #endregion //Private Data Members
 
         #region Constructor
 
@@ -240,6 +282,7 @@ namespace AdornedControl
         #region Commands
 
         public static readonly RoutedCommand ShowAdornerCommand = new RoutedCommand("ShowAdorner", typeof(AdornedControl));
+        private static readonly CommandBinding ShowAdornerCommandBinding = new CommandBinding(ShowAdornerCommand, ShowAdornerCommand_Executed);
 
         private static void ShowAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
@@ -248,6 +291,7 @@ namespace AdornedControl
         }
 
         public static readonly RoutedCommand FadeInAdornerCommand = new RoutedCommand("FadeInAdorner", typeof(AdornedControl));
+        private static readonly CommandBinding FadeInAdornerCommandBinding = new CommandBinding(FadeInAdornerCommand, FadeInAdornerCommand_Executed);
 
         private static void FadeInAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
@@ -256,6 +300,7 @@ namespace AdornedControl
         }
         
         public static readonly RoutedCommand HideAdornerCommand = new RoutedCommand("HideAdorner", typeof(AdornedControl));
+        private static readonly CommandBinding HideAdornerCommandBinding = new CommandBinding(HideAdornerCommand, HideAdornerCommand_Executed);
 
         private static void HideAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
@@ -264,6 +309,7 @@ namespace AdornedControl
         }
         
         public static readonly RoutedCommand FadeOutAdornerCommand = new RoutedCommand("FadeOutAdorner", typeof(AdornedControl));
+        private static readonly CommandBinding FadeOutAdornerCommandBinding = new CommandBinding(FadeInAdornerCommand, FadeOutAdornerCommand_Executed);
 
         private static void FadeOutAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
@@ -349,9 +395,56 @@ namespace AdornedControl
             adornerShowState = AdornerShowState.FadingOut;
         }
 
+        /// <summary>
+        /// Called to build the visual tree.
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            ShowOrHideAdornerInternal();
+        }
+
+        /// <summary>
+        /// Finds a child element in the visual tree that has the specified name.
+        /// Returns null if no child with that name exists.
+        /// </summary>
+        public static FrameworkElement FindNamedChild(FrameworkElement rootElement, string childName)
+        {
+            int numChildren = VisualTreeHelper.GetChildrenCount(rootElement);
+            for(int i = 0; i < numChildren; ++i)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(rootElement, i);
+                FrameworkElement childElement = child as FrameworkElement;
+                if(childElement != null && childElement.Name == childName)
+                {
+                    return childElement;
+                }
+
+                FrameworkElement foundElement = FindNamedChild(childElement, childName);
+                if(foundElement != null)
+                {
+                    return foundElement;
+                }
+            }
+
+            return null;
+        }
+
         #endregion //Public Methods
 
         #region Private Methods
+
+        /// <summary>
+        /// Update the DataContext of the adorner from the adorned control.
+        /// </summary>
+        private void UpdateAdornerDataContext()
+        {
+            if(this.AdornerContent != null)
+            {
+                this.AdornerContent.DataContext = this.DataContext;
+            }
+        }
 
         /// <summary>
         /// Internal method to show or hide the adorner based on the value of IsAdornerVisible.
@@ -369,180 +462,29 @@ namespace AdornedControl
             }
         }
 
-        #endregion //Private Methods
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if(PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #endregion //Events
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        #region Private Data Members
-
-        /// <summary>
-        /// Command bindings.
-        /// </summary>
-        private static readonly CommandBinding ShowAdornerCommandBinding = new CommandBinding(ShowAdornerCommand, ShowAdornerCommand_Executed);
-        private static readonly CommandBinding FadeInAdornerCommandBinding = new CommandBinding(FadeInAdornerCommand, FadeInAdornerCommand_Executed);
-        private static readonly CommandBinding HideAdornerCommandBinding = new CommandBinding(HideAdornerCommand, HideAdornerCommand_Executed);
-        private static readonly CommandBinding FadeOutAdornerCommandBinding = new CommandBinding(FadeInAdornerCommand, FadeOutAdornerCommand_Executed);
-
-        /// <summary>
-        /// Specifies the current show/hide state of the adorner.
-        /// </summary>
-        private enum AdornerShowState
-        {
-            Visible,
-            Hidden,
-            FadingIn,
-            FadingOut,
-        }
-
-        /// <summary>
-        /// Specifies the current show/hide state of the adorner.
-        /// </summary>
-        private AdornerShowState adornerShowState = AdornerShowState.Hidden;
-
-        /// <summary>
-        /// Caches the adorner layer.
-        /// </summary>
-        private AdornerLayer adornerLayer = null;
-
-        /// <summary>
-        /// The actual adorner create to contain our 'adorner UI content'.
-        /// </summary>
-        private FrameworkElementAdorner adorner = null;
-
-        /// <summary>
-        /// This timer is used to fade out and close the adorner.
-        /// </summary>
-        private DispatcherTimer closeAdornerTimer = new DispatcherTimer();
-        
-        #endregion
-
-        #region Private/Internal Functions
-
-        
-
-        /// <summary>
-        /// Event raised when the DataContext of the adorned control changes.
-        /// </summary>
-        private void AdornedControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            UpdateAdornerDataContext();
-        }
-
-        /// <summary>
-        /// Update the DataContext of the adorner from the adorned control.
-        /// </summary>
-        private void UpdateAdornerDataContext()
-        {
-            if (this.AdornerContent != null)
-            {
-                this.AdornerContent.DataContext = this.DataContext;
-            }
-        }
-
-        
-        
-
-        /// <summary>
-        /// Event raised when the mouse cursor enters the area of the adorner.
-        /// </summary>
-        private void adornerContent_MouseEnter(object sender, MouseEventArgs e)
-        {
-            MouseEnterLogic();
-            e.Handled = false;
-        }
-
-        /// <summary>
-        /// Event raised when the mouse cursor leaves the area of the adorner.
-        /// </summary>
-        private void adornerContent_MouseLeave(object sender, MouseEventArgs e)
-        {
-            MouseLeaveLogic();
-            e.Handled = false;
-        }
-
-        
-
-        /// <summary>
-        /// Finds a child element in the visual tree that has the specified name.
-        /// Returns null if no child with that name exists.
-        /// </summary>
-        public static FrameworkElement FindNamedChild(FrameworkElement rootElement, string childName)
-        {
-            int numChildren = VisualTreeHelper.GetChildrenCount(rootElement);
-            for (int i = 0; i < numChildren; ++i)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(rootElement, i);
-                FrameworkElement childElement = child as FrameworkElement;
-                if (childElement != null && childElement.Name == childName)
-                {
-                    return childElement;
-                }
-
-                FrameworkElement foundElement = FindNamedChild(childElement, childName);
-                if (foundElement != null)
-                {
-                    return foundElement;
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Internal method to show the adorner.
         /// </summary>
         private void ShowAdornerInternal()
         {
-            if (this.adorner != null)
+            if(this.adorner != null)
             {
                 // Already adorned.
                 return;
             }
 
-            if (this.AdornerContent != null)
+            if(this.AdornerContent != null)
             {
-                if (this.adornerLayer == null)
+                if(this.adornerLayer == null)
                 {
                     this.adornerLayer = AdornerLayer.GetAdornerLayer(this);
                 }
 
-                if (this.adornerLayer != null)
+                if(this.adornerLayer != null)
                 {
                     FrameworkElement adornedControl = this; // The control to be adorned defaults to 'this'.
 
-                    if (!string.IsNullOrEmpty(this.AdornedTemplatePartName))
+                    if(!string.IsNullOrEmpty(this.AdornedTemplatePartName))
                     {
                         //
                         // If 'AdornedTemplatePartName' is set to a valid string then search the visual-tree
@@ -550,13 +492,13 @@ namespace AdornedControl
                         // adorned control, otherwise throw an exception.
                         //
                         adornedControl = FindNamedChild(this, this.AdornedTemplatePartName);
-                        if (adornedControl == null)
+                        if(adornedControl == null)
                         {
                             throw new ApplicationException("Failed to find a FrameworkElement in the visual-tree with the part name '" + this.AdornedTemplatePartName + "'.");
                         }
                     }
 
-                    this.adorner = new FrameworkElementAdorner(this.AdornerContent, adornedControl, 
+                    this.adorner = new FrameworkElementAdorner(this.AdornerContent, adornedControl,
                                                                this.HorizontalAdornerPlacement, this.VerticalAdornerPlacement,
                                                                this.AdornerOffsetX, this.AdornerOffsetY);
                     this.adornerLayer.Add(this.adorner);
@@ -573,7 +515,7 @@ namespace AdornedControl
         /// </summary>
         private void HideAdornerInternal()
         {
-            if (this.adornerLayer == null || this.adorner == null)
+            if(this.adornerLayer == null || this.adorner == null)
             {
                 // Not already adorned.
                 return;
@@ -597,13 +539,31 @@ namespace AdornedControl
         }
 
         /// <summary>
-        /// Called to build the visual tree.
+        /// Shared mouse enter code.
         /// </summary>
-        public override void OnApplyTemplate()
+        private void MouseEnterLogic()
         {
-            base.OnApplyTemplate();
+            if(!IsMouseOverShowEnabled && !IsAdornerVisible)
+            {
+                return;
+            }
 
-            ShowOrHideAdornerInternal();
+            closeAdornerTimer.Stop();
+
+            FadeInAdorner();
+        }
+
+        /// <summary>
+        /// Shared mouse leave code.
+        /// </summary>
+        private void MouseLeaveLogic()
+        {
+            //if(!IsMouseOverShowEnabled)
+            //{
+            //    return;
+            //}
+
+            closeAdornerTimer.Start();
         }
 
         /// <summary>
@@ -629,34 +589,6 @@ namespace AdornedControl
         }
 
         /// <summary>
-        /// Shared mouse enter code.
-        /// </summary>
-        private void MouseEnterLogic()
-        {
-            if (!IsMouseOverShowEnabled && !IsAdornerVisible)
-            {
-                return;
-            }
-
-            closeAdornerTimer.Stop();
-
-            FadeInAdorner();
-        }
-
-        /// <summary>
-        /// Shared mouse leave code.
-        /// </summary>
-        private void MouseLeaveLogic()
-        {
-            //if(!IsMouseOverShowEnabled)
-            //{
-            //    return;
-            //}
-
-            closeAdornerTimer.Start();
-        }
-
-        /// <summary>
         /// Called when the close adorner time-out has ellapsed, the mouse has moved
         /// away from the adorned control and the adorner and it is time to close the adorner.
         /// </summary>
@@ -665,6 +597,36 @@ namespace AdornedControl
             closeAdornerTimer.Stop();
 
             FadeOutAdorner();
+        }
+
+        #endregion //Private Methods
+
+        #region Events
+
+        /// <summary>
+        /// Event raised when the DataContext of the adorned control changes.
+        /// </summary>
+        private void AdornedControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateAdornerDataContext();
+        }
+
+        /// <summary>
+        /// Event raised when the mouse cursor enters the area of the adorner.
+        /// </summary>
+        private void adornerContent_MouseEnter(object sender, MouseEventArgs e)
+        {
+            MouseEnterLogic();
+            e.Handled = false;
+        }
+
+        /// <summary>
+        /// Event raised when the mouse cursor leaves the area of the adorner.
+        /// </summary>
+        private void adornerContent_MouseLeave(object sender, MouseEventArgs e)
+        {
+            MouseLeaveLogic();
+            e.Handled = false;
         }
 
         /// <summary>
@@ -680,15 +642,28 @@ namespace AdornedControl
         /// </summary>
         private void fadeOutAnimation_Completed(object sender, EventArgs e)
         {
-            if (adornerShowState == AdornerShowState.FadingOut)
+            if(adornerShowState == AdornerShowState.FadingOut)
             {
                 // Still fading out, eg it wasn't aborted.
                 this.HideAdorner();
             }
         }
 
-        #endregion
+        #endregion //Events
 
-        
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if(PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion //INotifyPropertyChanged
+  
     }
 }
