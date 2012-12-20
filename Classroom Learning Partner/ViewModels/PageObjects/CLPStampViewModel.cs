@@ -13,6 +13,7 @@ using CLP.Models;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Views;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -315,6 +316,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnShowKeyPadCommandExecute()
         {
             KeypadWindowView keyPad = new KeypadWindowView();
+            keyPad.Owner = Application.Current.MainWindow;
+            keyPad.WindowStartupLocation = WindowStartupLocation.Manual;
+            keyPad.Top = 100;
+            keyPad.Left = 100;
             keyPad.ShowDialog();
             if (keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
             {

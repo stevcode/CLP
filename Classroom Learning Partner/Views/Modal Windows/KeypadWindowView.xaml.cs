@@ -25,16 +25,24 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
             this.DialogResult = true;
         }
 
         private void BackspaceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NumbersEntered.Text.Length > 0)
+            if(NumbersEntered.Text.Length > 0)
             {
                 NumbersEntered.Text = NumbersEntered.Text.Substring(0, NumbersEntered.Text.Length - 1);
             }
         }
+
+        //void OnClosing(System.ComponentModel.CancelEventArgs e)
+        //{
+        //    base.OnClosing(e);
+        //    if(Owner != null)
+        //    {
+        //        Owner.Activate();
+        //    }
+        //}
     }
 }
