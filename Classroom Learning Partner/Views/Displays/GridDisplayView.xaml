@@ -19,7 +19,7 @@
                         <Views:CLPPageView HorizontalAlignment="Right" VerticalAlignment="Top"   x:Name="page" DataContext="{Binding}" />
                     </Border>
                     <Button Width="30" Height="30" Cursor="Hand"
-                            Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.InstructorVisibility}"
+                            Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}"
                             HorizontalAlignment="Right" VerticalAlignment="Top"
                             Command="{Binding ElementName=itemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}" CommandParameter="{Binding}">
                         <Button.Template>

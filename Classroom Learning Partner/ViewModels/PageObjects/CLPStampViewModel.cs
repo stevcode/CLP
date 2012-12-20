@@ -377,6 +377,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
+            else if (hitBoxName == "")
+            {
+            }
         }
 
         private bool HasParts()

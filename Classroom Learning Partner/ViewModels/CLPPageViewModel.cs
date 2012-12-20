@@ -497,13 +497,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                     }
                                 }
 
-                                //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                //    (DispatcherOperationCallback)delegate(object arg)
-                                //    {
-                                        pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjects);
+                                pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjects);
 
-                                    //    return null;
-                                    //}, null);
                             }
                         }
                     }

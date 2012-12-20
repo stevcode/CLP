@@ -201,7 +201,7 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <Rectangle x:Name="PartsHitBox" Fill="Transparent"
+                <Rectangle x:Name="PartsHitBox" Fill="Transparent" StrokeThickness="1" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
                         Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
                         Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
                         HorizontalAlignment="Left"

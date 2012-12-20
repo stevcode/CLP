@@ -184,7 +184,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(OpenAdornerTimeOutProperty, value); }
         }
 
-        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.0);
+        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.8);
 
         /// <summary>
         /// Specifies the time (in seconds) after the mouse cursor moves away from the 

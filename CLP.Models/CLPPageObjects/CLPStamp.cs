@@ -525,6 +525,7 @@ namespace CLP.Models
                     from pageObject in ParentPage.PageObjects
                     where (pageObject.UniqueID).Equals(pageObjectID) && !pageObject.GetType().Equals(typeof(CLPStamp))
                     select pageObject;
+                
                 foreach(ICLPPageObject pageObject in pageObjectsAdd)
                 {
                     if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
