@@ -543,7 +543,7 @@ namespace Classroom_Learning_Partner.ViewModels
 	                    List<string> removedStrokeIDs = new List<string>();
 	                    foreach(Stroke stroke in e.Removed)
 	                    {
-	                        removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+	                        removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
 	                    }
 	
 	                    foreach(Stroke stroke in e.Added)
@@ -556,9 +556,10 @@ namespace Classroom_Learning_Partner.ViewModels
 	                            //TODO: Steve - Add Property for Mutability.
 	                            //TODO: Steve - Add Property for UserName of person who created the stroke.
 	                        }
+                            //Ensures truly uniqueIDs
 	                        foreach(string id in removedStrokeIDs)
 	                        {
-	                            if(id == stroke.GetPropertyData(CLPPage.StrokeIDKey) as string)
+	                            if(id == stroke.GetStrokeUniqueID())
 	                            {
 	                                stroke.RemovePropertyData(CLPPage.StrokeIDKey);
 	
@@ -574,20 +575,20 @@ namespace Classroom_Learning_Partner.ViewModels
 	                        {
 	                            Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
 	
-	                            var addedStrokeIDsOverObject = 
+	                            var addedStrokesOverObject = 
 	                                from stroke in e.Added
 	                                where stroke.HitTest(rect, 3)
-	                                select stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+	                                select stroke;
 	
-	                            var removedStrokeIDsOverObject =
+	                            var removedStrokesOverObject =
 	                                from stroke in e.Removed
 	                                where stroke.HitTest(rect, 3)
-	                                select stroke.GetPropertyData(CLPPage.StrokeIDKey) as string;
+	                                select stroke;
 
                                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                     (DispatcherOperationCallback)delegate(object arg)
                                     {
-                                        pageObject.AcceptStrokes(new List<string>(addedStrokeIDsOverObject.ToList()), new List<string>(removedStrokeIDsOverObject.ToList()));
+                                        pageObject.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
 
                                         return null;
                                     }, null);

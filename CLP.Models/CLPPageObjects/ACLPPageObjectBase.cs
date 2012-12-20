@@ -206,6 +206,8 @@ namespace CLP.Models
             set { SetValue(IsBackgroundProperty, value); }
         }
 
+        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -215,12 +217,7 @@ namespace CLP.Models
             set { SetValue(CanAdornersShowProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanAdornersShow property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
-
-        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
         /// <summary>
         /// Represents the number of "parts" a pageObject represents.
@@ -272,43 +269,40 @@ namespace CLP.Models
 
         public virtual void RefreshStrokeParentIDs()
         {
-            if (CanAcceptStrokes)
+            if(CanAcceptStrokes)
             {
                 PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
-                List<string> addedStrokeIDsOverObject = new List<string>();
-                foreach (Stroke stroke in ParentPage.InkStrokes)
-                {
-                    if (stroke.HitTest(rect, 3))
-                    {
-                        addedStrokeIDsOverObject.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
-                    }
-                }
+                var strokesOverObject =
+                    from stroke in ParentPage.InkStrokes
+                    where stroke.HitTest(rect, 3)
+                    select stroke;
 
-                AcceptStrokes(addedStrokeIDsOverObject, new List<string>());
+                AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
             }
         }
 
-        public virtual void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs)
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             if (CanAcceptStrokes)
             {
-                foreach(string strokeID in removedStrokeIDs)
+                foreach(Stroke s in removedStrokes)
                 {
+                    string strokeID = s.GetStrokeUniqueID();
                     try
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
                     }
-                    catch (System.Exception ex)
+                    catch(System.Exception ex)
                     {
                         Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                     }
                 }
 
-                foreach(string strokeID in addedStrokeIDs)
+                foreach(Stroke s in addedStrokes)
                 {
-                    PageObjectStrokeParentIDs.Add(strokeID);
+                    PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
                 }
             }
         }
@@ -318,7 +312,7 @@ namespace CLP.Models
             var strokes =
                 from strokeID in PageObjectStrokeParentIDs
                 from stroke in ParentPage.InkStrokes
-                where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == strokeID
+                where stroke.GetStrokeUniqueID() == strokeID
                 select stroke;
 
             StrokeCollection inkStrokes = new StrokeCollection(strokes.ToList());

@@ -298,7 +298,7 @@ namespace Classroom_Learning_Partner.Model
                                 var strokes =
                                     from externalStroke in strokesToRemove
                                     from stroke in page.InkStrokes
-                                    where (stroke.GetPropertyData(CLPPage.StrokeIDKey) as string) == (externalStroke.GetPropertyData(CLPPage.StrokeIDKey) as string)
+                                    where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
                                     select stroke;
 
                                 StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());

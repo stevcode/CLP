@@ -30,7 +30,7 @@ namespace CLP.Models
         void OnRemoved();
 
         void RefreshStrokeParentIDs();
-        void AcceptStrokes(List<string> addedStrokeIDs, List<string> removedStrokeIDs);
+        void AcceptStrokes(StrokeCollection addedStrokeIDs, StrokeCollection removedStrokeIDs);
         StrokeCollection GetStrokesOverPageObject();
 
         bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);

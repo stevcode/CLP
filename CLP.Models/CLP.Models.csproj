@@ -106,6 +106,7 @@
     <Compile Include="Displays\ACLPDisplayBase.cs" />
     <Compile Include="Displays\CLPGridDisplay.cs" />
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
+    <Compile Include="Extension Methods\StokeExtension.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
