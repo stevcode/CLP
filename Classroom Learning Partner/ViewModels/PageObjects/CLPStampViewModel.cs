@@ -386,7 +386,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
-            else if(hitBoxName == "HandwritingHitBox")
+            
+            if(hitBoxName == "HandwritingHitBox")
             {
                 (PageObject as CLPStamp).ResetParts();
             }
