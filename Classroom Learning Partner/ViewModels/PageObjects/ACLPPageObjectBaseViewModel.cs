@@ -30,6 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
 
+            //TODO: Steve - move this to Adorner.cs and expand adorner API
             hoverTimer = new Timer();
             hoverTimer.Interval = 500;
             hoverTimer.Elapsed += hoverTimer_Elapsed;
