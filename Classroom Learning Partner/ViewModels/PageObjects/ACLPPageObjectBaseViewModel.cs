@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //TODO: Steve - move this to Adorner.cs and expand adorner API
             hoverTimer = new Timer();
-            hoverTimer.Interval = 500;
+            hoverTimer.Interval = 800;
             hoverTimer.Elapsed += hoverTimer_Elapsed;
         }
 
