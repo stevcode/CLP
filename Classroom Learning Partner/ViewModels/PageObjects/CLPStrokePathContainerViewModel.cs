@@ -150,19 +150,31 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(App.MainWindowViewModel.IsAuthoring)
                     {
                         IsMouseOverShowEnabled = true;
-                        return false;
+                        if(!timerRunning)
+                        {
+                            timerRunning = true;
+                            hoverTimer.Start();
+                        }
                     }
                     else
                     {
                         IsMouseOverShowEnabled = false;
-                        return true;
+                        hoverTimer.Stop();
+                        timerRunning = false;
+                        hoverTimeElapsed = false;
                     }
                 }
                 else
                 {
                     IsMouseOverShowEnabled = true;
-                    return false;
+                    if(!timerRunning)
+                    {
+                        timerRunning = true;
+                        hoverTimer.Start();
+                    }
                 }
+
+                return !hoverTimeElapsed;
             }
             else
             {

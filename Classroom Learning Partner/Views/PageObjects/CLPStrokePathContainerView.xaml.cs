@@ -53,7 +53,7 @@ namespace Classroom_Learning_Partner.Views
                 y = 816 - pageObject.Height;
             }
 
-            Console.WriteLine("PageObject pageObjects moving: " + pageObject.PageObjectObjectParentIDs.Count);
+            //Console.WriteLine("PageObject pageObjects moving: " + pageObject.PageObjectObjectParentIDs.Count);
             if (pageObject.PageObjectObjectParentIDs.Count > 0)
             {
                 double xDelta = x - pageObject.XPosition;

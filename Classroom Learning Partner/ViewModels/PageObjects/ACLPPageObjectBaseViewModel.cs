@@ -9,6 +9,9 @@ using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using CLP.Models;
+using System.Windows.Threading;
+using System;
+using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -26,6 +29,10 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
+
+            hoverTimer = new Timer();
+            hoverTimer.Interval = 500;
+            hoverTimer.Elapsed += hoverTimer_Elapsed;
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
@@ -155,6 +162,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         pageVM.IsInkCanvasHitTestVisible = true;
                     }
+
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
                 }
             }
         }
@@ -184,7 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(OpenAdornerTimeOutProperty, value); }
         }
 
-        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.8);
+        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.0);
 
         /// <summary>
         /// Specifies the time (in seconds) after the mouse cursor moves away from the 
@@ -198,6 +209,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CloseAdornerTimeOutProperty = RegisterProperty("CloseAdornerTimeOut", typeof(double), 1.0);
 
+        protected Timer hoverTimer;
+
+        protected bool hoverTimeElapsed = false;
+
+        protected bool timerRunning = false;
+        void hoverTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            hoverTimer.Stop();
+            timerRunning = false;
+            hoverTimeElapsed = true;
+        }
+
         public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
             if(IsBackground)
@@ -205,19 +228,31 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(App.MainWindowViewModel.IsAuthoring)
                 {
                     IsMouseOverShowEnabled = true;
-                    return false;
+                    if(!timerRunning)
+                    {
+                        timerRunning = true;
+                        hoverTimer.Start();
+                    }
                 }
                 else
                 {
                     IsMouseOverShowEnabled = false;
-                    return true;
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
                 }
             }
             else
             {
                 IsMouseOverShowEnabled = true;
-                return false;
+                if(!timerRunning)
+                {
+                    timerRunning = true;
+                    hoverTimer.Start();
+                }
             }
+
+            return !hoverTimeElapsed;
         }
 
         public virtual void EraserHitTest(string hitBoxName)

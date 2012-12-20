@@ -12,7 +12,7 @@
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
-                       IsAdornerVisible="{Binding IsAdornerVisible}"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">

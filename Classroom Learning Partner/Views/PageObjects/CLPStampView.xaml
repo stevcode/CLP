@@ -14,7 +14,7 @@
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
-                       IsAdornerVisible="{Binding IsAdornerVisible}"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
@@ -141,7 +141,8 @@
                 </Thumb.Template>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
+                        <catel:EventToCommand Command="{Binding Path=DragStampCommand}" 
+                                              PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
                         <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
@@ -155,9 +156,14 @@
                     Width="{Binding Width, Mode=TwoWay}" 
                     Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
                     VerticalAlignment="Top" Margin="0">
-                <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" IsHitTestVisible="False"
+                <Grid x:Name="StampBodyGrid">
+                    <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}"
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
+                    <Rectangle x:Name="StampBodyHitBox" Fill="Transparent"
+                            Width="{Binding ElementName=StampBodyGrid, Path=Width}" 
+                            Height="{Binding ElementName=StampBodyGrid, Path=Height}" />
+                </Grid>
             </Border>
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
                 
@@ -168,8 +174,7 @@
                             HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False">
                     <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" 
                                                 Width="{Binding Width, Mode=TwoWay}" 
-                                                Height="{Binding Height, Mode=TwoWay}"
-                                                IsHitTestVisible="False" />
+                                                Height="{Binding Height, Mode=TwoWay}" />
                 </Border>
                 <TextBlock x:Name="PartsAuto"
                        FontFamily="SketchFlow Print" FontSize="72"
@@ -186,6 +191,9 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
+                <Rectangle x:Name="HandwritingHitBox" Fill="Transparent"
+                            Width="{Binding HandwritingRegionParts.Width}" 
+                            Height="{Binding HandwritingRegionParts.Height}" />
                 <TextBlock x:Name="PartsDetected"
                        FontFamily="SketchFlow Print" FontSize="24"
                        Width="{Binding PageObject.DETECTED_PARTS_SIDE}"

@@ -242,8 +242,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     droppedContainer.InternalPageObject.ParentPage = droppedContainer.ParentPage;
                 }
-                
 
+                droppedContainer.IsInternalPageObject = false;
 
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
@@ -357,6 +357,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     IsMouseOverShowEnabled = true;
                 }
                 return false;
+            }
+            else if(hitBoxName == "StampBodyHitBox" || hitBoxName == "HandwritingHitBox")
+            {
+                return true;
             }
             else
             {

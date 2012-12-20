@@ -15,14 +15,12 @@ namespace Classroom_Learning_Partner.ViewModels
         bool IsMouseOverShowEnabled { get; set; }
 
         /// <summary>
-        /// Specifies the time (in seconds) after the mouse cursor moves over the 
-        /// adorned control (or the adorner) when the adorner begins to fade in.
+        /// Time (in seconds) after MouseEnter event when the adorner begins to fade in. 
         /// </summary>
         double OpenAdornerTimeOut { get; set; }
 
         /// <summary>
-        /// Specifies the time (in seconds) after the mouse cursor moves away from the 
-        /// adorned control (or the adorner) when the adorner begins to fade out.
+        /// Time (in seconds) after MouseLeave event when the adorner begins to fade out. 
         /// </summary>
         double CloseAdornerTimeOut { get; set; }
 
