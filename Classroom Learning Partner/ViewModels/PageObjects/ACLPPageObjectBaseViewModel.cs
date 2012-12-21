@@ -367,9 +367,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the DragStopPageObjectCommand command is executed.
-        /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
             AddRemovePageObjectFromOtherObjects();
@@ -378,23 +375,23 @@ namespace Classroom_Learning_Partner.ViewModels
         protected void AddRemovePageObjectFromOtherObjects() {
             if (!PageObject.CanAcceptPageObjects)
             {
-                var containerQuery = from po in PageObject.ParentPage.PageObjects
-                                     where (po.CanAcceptPageObjects == true && !PageObject.ParentID.Equals(po.UniqueID))
-                                     select po;
-
-                foreach (ICLPPageObject container in containerQuery)
+                foreach(ICLPPageObject container in PageObject.ParentPage.PageObjects)
                 {
-                    if (container.PageObjectIsOver(this.PageObject, .50))
+                    if(container.CanAcceptPageObjects && !PageObject.ParentID.Equals(container.UniqueID))
                     {
-                        List<string> addObject = new List<string>();
-                        addObject.Add(this.PageObject.UniqueID);
-                        container.AcceptObjects(addObject, new ObservableCollection<ICLPPageObject>());
-                    }
-                    else
-                    {
-                        ObservableCollection<ICLPPageObject> removeObject = new ObservableCollection<ICLPPageObject>();
-                        removeObject.Add(this.PageObject);
-                        container.AcceptObjects(new List<string>(), removeObject);
+                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
+                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
+                        
+                        if(container.PageObjectIsOver(this.PageObject, .50))
+                        {
+                            addObjects.Add(this.PageObject);
+                        }
+                        else
+                        {
+                            removeObjects.Add(this.PageObject);
+                        }
+
+                        container.AcceptObjects(addObjects, removeObjects);
                     }
                 }
             }

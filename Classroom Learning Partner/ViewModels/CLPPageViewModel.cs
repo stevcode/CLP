@@ -482,7 +482,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     }
                                 }
 
-                                List<string> addedPageObjectIDs = new List<string>();
+                                ObservableCollection<ICLPPageObject> addedPageObjects = new ObservableCollection<ICLPPageObject>();
                                 if(e.NewItems != null)
                                 {
                                     foreach(ICLPPageObject addedPageObject in e.NewItems)
@@ -492,13 +492,12 @@ namespace Classroom_Learning_Partner.ViewModels
                                             && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
                                             && pageObject.PageObjectIsOver(addedPageObject, .50))
                                         {
-                                            addedPageObjectIDs.Add(addedPageObject.UniqueID);
+                                            addedPageObjects.Add(addedPageObject);
                                         }
                                     }
                                 }
 
-                                pageObject.AcceptObjects(addedPageObjectIDs, removedPageObjects);
-
+                                pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
                             }
                         }
                     }

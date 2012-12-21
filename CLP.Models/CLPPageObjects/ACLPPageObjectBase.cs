@@ -315,7 +315,7 @@ namespace CLP.Models
                 where stroke.GetStrokeUniqueID() == strokeID
                 select stroke;
 
-            StrokeCollection inkStrokes = new StrokeCollection(strokes.ToList());
+            StrokeCollection inkStrokes = new StrokeCollection(strokes);
             return inkStrokes;
         }
 
@@ -332,7 +332,7 @@ namespace CLP.Models
             return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
         }
 
-        public virtual void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects)
+        public virtual void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
         {
             if (CanAcceptPageObjects)
             {
@@ -345,12 +345,8 @@ namespace CLP.Models
                     }
                 }
 
-                var pageObjectsAdd =
-                    from pageObjectID in addedPageObjectIDs
-                    from pageObject in ParentPage.PageObjects
-                    where (pageObject.UniqueID).Equals(pageObjectID) && !pageObject.GetType().Equals(typeof(CLPStamp))
-                    select pageObject;
-                foreach (ICLPPageObject pageObject in pageObjectsAdd)
+
+                foreach(ICLPPageObject pageObject in addedPageObjects)
                 {
                     if (!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
                     {
@@ -369,7 +365,7 @@ namespace CLP.Models
                 where pageObject.UniqueID == pageObjectID
                 select pageObject;
 
-            ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.ToList());
+            ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
             return pageObjectsOver;
         }
 

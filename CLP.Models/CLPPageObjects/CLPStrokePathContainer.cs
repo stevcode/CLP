@@ -114,7 +114,7 @@ namespace CLP.Models
             return newContainer;
         }
 
-        public void OnRemoved()
+        public override void OnRemoved()
         {
             foreach (ICLPPageObject po in GetPageObjectsOverPageObject())
             {

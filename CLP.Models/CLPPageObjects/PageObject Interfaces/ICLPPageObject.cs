@@ -34,7 +34,7 @@ namespace CLP.Models
         StrokeCollection GetStrokesOverPageObject();
 
         bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
-        void AcceptObjects(List<string> addedPageObjectIDs, ObservableCollection<ICLPPageObject> removedPageObjects);
+        void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects);
         ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
     }
 }
