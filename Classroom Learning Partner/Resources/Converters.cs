@@ -64,6 +64,32 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class PartsLineVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if((bool)value && !App.MainWindowViewModel.IsAuthoring)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,

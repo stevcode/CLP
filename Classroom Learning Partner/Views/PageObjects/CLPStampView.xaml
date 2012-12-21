@@ -10,6 +10,7 @@
         <conv:LengthConverter x:Key="LengthConverter"/>
         <conv:PartsStringConverter x:Key="PartsStringConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <conv:PartsLineVisibilityConverter x:Key="PartsLineVisibilityConverter" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -166,8 +167,8 @@
                 </Grid>
             </Border>
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
-                
-                <Border x:Name="PartsHandwritingBox"
+
+                <Border x:Name="PartsHandwritingBox" Visibility="{Binding Converter={StaticResource PartsLineVisibilityConverter}, Path=PageObject.PartsAuthorGenerated}"
                             BorderBrush="Black" BorderThickness="0,0,0,2"
                             Width="{Binding HandwritingRegionParts.Width}"
                             Height="{Binding HandwritingRegionParts.Height}"
