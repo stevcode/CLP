@@ -60,14 +60,27 @@ namespace CLP.Models
         public override void DoInterpretation()
         {
             List<Grouping> groupings = new List<Grouping>();
-            groupings.Add(InkGrouping());
-            groupings.Add(DistanceClustering());
-            groupings.Add(BasicGrouping());
+            //AddGrouping(InkGrouping(), true, groupings);
+            AddGrouping(DistanceClustering(), true, groupings);
+            AddGrouping(BasicGrouping(), false, groupings);
             StringBuilder interpretation = new StringBuilder();
             foreach (Grouping grouping in groupings) {
                 interpretation.AppendLine(grouping.toString());
             }
             StoredAnswer = interpretation.ToString();
+        }
+
+        private void AddGrouping(Grouping group, bool checkForContainers, List<Grouping> groupingCollection) {
+            if (group.getGroups().Count > 0) {
+                groupingCollection.Add(group);
+                if (checkForContainers) {
+                    List<Grouping> containerGroups = DetectContainer(group);
+                    if (containerGroups != null)
+                    {
+                        groupingCollection.AddRange(containerGroups);
+                    }
+                }
+            }
         }
 
         #region GenericGrouping
@@ -76,31 +89,57 @@ namespace CLP.Models
         {
             private string type;
             private List<Dictionary<string, List<ICLPPageObject>>> groups;
+            private bool hasContainer;
+            private string container;
 
-            public Grouping(string typeOfGrouping) {
+            public Grouping(string typeOfGrouping, string container)  {
                 type = typeOfGrouping;
                 groups = new List<Dictionary<string, List<ICLPPageObject>>>();
+                hasContainer = (container.Length > 0) ? true : false;
+                this.container = container;
+            }
+
+            public Grouping(string typeOfGrouping) : this(typeOfGrouping, "")
+            {
             }
 
             public void AddGroup(List<ICLPPageObject> group) {
                 groups.Add(OrganizeGroupOfPageObjectsByType(group));
             }
 
+            public void AddAllOrganizedGroups(List<Dictionary<string, List<ICLPPageObject>>> organizedGroups) {
+                groups.AddRange(organizedGroups);
+            }
+
+            public string getTypeOfGroup() {
+                return type;
+            }
+
+            public List<Dictionary<string, List<ICLPPageObject>>> getGroups() {
+                return groups;
+            }
+
             public string toString() {
                 StringBuilder answer = new StringBuilder(type);
                 answer.Append(": ");
                 answer.Append(groups.Count);
-                answer.Append(" Groups - ");
+                answer.AppendLine(" Groups - ");
+                if (hasContainer) {
+                    answer.Append("\t Container: ");
+                    answer.AppendLine(container);
+                }
                 foreach (Dictionary<string, List<ICLPPageObject>> dicOfGroup in groups) {
+                    answer.AppendLine("\t Group:");
                     foreach (string key in dicOfGroup.Keys) {
                         List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
+                        answer.Append("\t\t");
                         answer.Append(objectsOfGroup.Count);
                         answer.Append(" ");
                         answer.Append(key);
                         answer.Append(" of ");
                         answer.Append(objectsOfGroup[0].Parts);
                         answer.Append(" Parts");
-                        answer.Append("; ");
+                        answer.AppendLine("; ");
                     }
                 }
                 return answer.ToString();
@@ -110,9 +149,11 @@ namespace CLP.Models
         private static Dictionary<string, List<ICLPPageObject>> OrganizeGroupOfPageObjectsByType(List<ICLPPageObject> group) {
                 Dictionary<string, List<ICLPPageObject>> groupOrganized =
                     new Dictionary<string, List<ICLPPageObject>>();
+                Console.WriteLine("Original Number Of Objects: " + group.Count);
                 foreach (ICLPPageObject po in group)
                 {
                     String key = GetObjectGroupingType(po);
+                    Console.WriteLine("Key: " + key);
                     List<ICLPPageObject> objectsInGroup;
                     if (groupOrganized.ContainsKey(key))
                     {
@@ -125,6 +166,9 @@ namespace CLP.Models
                     }
                     objectsInGroup.Add(po);
                     groupOrganized.Add(key, objectsInGroup);
+                }
+                foreach (string key in groupOrganized.Keys) {
+                    Console.WriteLine("Key:" + key + " - Number of items: " + groupOrganized[key].Count);
                 }
                 return groupOrganized;
             }
@@ -153,6 +197,71 @@ namespace CLP.Models
         private bool ValidObjectForGrouping(ICLPPageObject po) {
             return PageObjectIsOver(po, .8) && po.Parts >= 0 && po.GetType() != typeof(CLPStamp);
         }
+
+        #endregion
+
+        #region Containers
+        private List<Grouping> DetectContainer(Grouping group)
+        {
+            List<string> possibleContainers = new List<string>();
+            List<Dictionary<string, List<ICLPPageObject>>> groups = group.getGroups();
+            // Go through first group to make a base of possible containers
+            foreach (string key in groups[0].Keys)
+            {
+                List<ICLPPageObject> objectsOfGroup = groups[0][key];
+                if (IsContainer(objectsOfGroup)) {
+                    possibleContainers.Add(key);
+                }
+            }
+
+            // Check if more groups, otherwise index error
+            if (groups.Count > 1)
+            {
+                //Check all other groups to see if they support the same containers.
+                foreach (Dictionary<string, List<ICLPPageObject>> dictOfGroup in groups.GetRange(1, groups.Count - 2))
+                {
+                    // Since we want to iterate through the possible containers, we must create a new list since
+                    // we can't edit the list that we are looping through.
+                    List<string> newPossibleContainers = new List<string>();
+                    foreach (string possibleContainer in possibleContainers)
+                    {
+                        if (dictOfGroup.ContainsKey(possibleContainer) &&
+                            IsContainer(dictOfGroup[possibleContainer]))
+                        {
+                            newPossibleContainers.Add(possibleContainer);
+                        }
+                    }
+                    possibleContainers = newPossibleContainers;
+                }
+            }
+
+            if (possibleContainers.Count > 0)
+            {
+                // Usually this list will only be one item, but we consider that multiple might occasionally
+                // occur.
+                List<Grouping> containerGroups = new List<Grouping>();
+                foreach (String containerKey in possibleContainers) {
+                    Grouping containerGroup = new Grouping("Container" + group.GetType(), containerKey);
+                    List<Dictionary<string, List<ICLPPageObject>>> groupsAugmented = new List<Dictionary<string, List<ICLPPageObject>>>(groups);
+                    foreach (Dictionary<string, List<ICLPPageObject>> grouping in groupsAugmented) {
+                        grouping.Remove(containerKey);
+                    }
+                    containerGroup.AddAllOrganizedGroups(groupsAugmented);
+                    containerGroups.Add(containerGroup);
+                }  
+                return containerGroups;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private bool IsContainer(List<ICLPPageObject> possibleContainer){
+            return (possibleContainer.Count == 1 &&
+                (possibleContainer[0].Parts == 0 || possibleContainer[0].Parts == 1));
+        }
+
         #endregion
 
         private Grouping BasicGrouping() {
@@ -187,7 +296,8 @@ namespace CLP.Models
             HashSet<DistanceGroup> groups = new HashSet<DistanceGroup>();
             foreach (ICLPPageObject po in ParentPage.PageObjects)
             {
-                if (validOption.Contains(po.PageObjectType)) {
+                if (ValidObjectForGrouping(po))
+                {
                     groups.Add(new DistanceGroup(po));
                 }
             }
@@ -275,12 +385,6 @@ namespace CLP.Models
                 }
             }
         }
-
-        private static readonly HashSet<string> validOption = new HashSet<string> {
-            {CLPSnapTileContainer.Type},
-            {CLPStrokePathContainer.Type},
-            {CLPShape.Type}
-        };
 
         private double getDistanceBetweenPageObjects(ICLPPageObject pageObject1, ICLPPageObject pageObject2)
         {
