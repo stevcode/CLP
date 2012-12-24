@@ -174,51 +174,56 @@ namespace Classroom_Learning_Partner.ViewModels
         private void CopyStamp(int stampIndex)
         {
             IsAdornerVisible = false;
-            IsMouseOverShowEnabled = false;
+            IsMouseOverShowEnabled = false;            
 
-                try
+            try
+            {
+                CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
+                leftBehindStamp.UniqueID = PageObject.UniqueID;
+
+                originalX = leftBehindStamp.XPosition;
+                originalY = leftBehindStamp.YPosition;
+
+                CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                leftBehindStamp.ParentPage = parentPage;
+                leftBehindStamp.StrokePathContainer.ParentPage = parentPage;
+                if(leftBehindStamp.StrokePathContainer.InternalPageObject != null)
                 {
-                    CLPStamp leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                    leftBehindStamp.UniqueID = PageObject.UniqueID;
-
-                    originalX = leftBehindStamp.XPosition;
-                    originalY = leftBehindStamp.YPosition;
-
-                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                    leftBehindStamp.ParentPage = parentPage;
-                    leftBehindStamp.StrokePathContainer.ParentPage = parentPage;
-                    if(leftBehindStamp.StrokePathContainer.InternalPageObject != null)
-                    {
-                        leftBehindStamp.StrokePathContainer.InternalPageObject.ParentPage = parentPage;
-                    }
+                    leftBehindStamp.StrokePathContainer.InternalPageObject.ParentPage = parentPage;
+                }
                     
 
 
-                    PageObject.CanAcceptPageObjects = false;
-                    leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
-                    foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-                    {
-                        ICLPPageObject newObject = pageObject.Duplicate();
-                        pageObject.Parts = 0;
-                        parentPage.PageObjects.Add(newObject);
-                        pageObject.CanAdornersShow = false;
-                        leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
-                    }
-
-                    if(stampIndex > -1)
-                    {
-                        parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
-                    }
-                    else
-                    {
-                        parentPage.PageObjects.Add(leftBehindStamp);
-                    }
-                    leftBehindStamp.Parts = PageObject.Parts;
-                }
-                catch(System.Exception ex)
+                PageObject.CanAcceptPageObjects = false;
+                leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
+                foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
                 {
-                    Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
+                    ICLPPageObject newObject = pageObject.Duplicate();
+                    pageObject.Parts = 0;
+                    parentPage.PageObjects.Add(newObject);
+                    pageObject.CanAdornersShow = false;
+                    leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
                 }
+
+                if(stampIndex > -1)
+                {
+                    parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
+                    foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
+                    {
+                        int pageObjectIndex = PageObject.ParentPage.PageObjects.IndexOf(pageObject);
+                        PageObject.ParentPage.PageObjects.Move(pageObjectIndex, stampIndex + 1);
+                    }
+                }
+                else
+                {
+                    parentPage.PageObjects.Add(leftBehindStamp);
+                }
+                leftBehindStamp.Parts = PageObject.Parts;
+            }
+            catch(System.Exception ex)
+            {
+                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -228,7 +233,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
-            if (HasParts())
+            if(HasParts())
             {
                 StrokePathContainer.IsStamped = true;
                 CLPStrokePathContainer droppedContainer = StrokePathContainer.Duplicate() as CLPStrokePathContainer;
@@ -248,17 +253,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 double deltaX = Math.Abs(PageObject.XPosition - originalX);
                 double deltaY = Math.Abs(PageObject.YPosition - originalY);
 
-                if ((deltaX > PageObject.Width + 5 || deltaY > PageObject.Height) &&
-                    (StrokePathContainer.InternalPageObject != null || PageObject.GetStrokesOverPageObject().Count > 0 ||
-                     PageObject.PageObjectObjectParentIDs.Count > 0))
+                if((deltaX > PageObject.Width + 5 || deltaY > PageObject.Height) 
+                    && (StrokePathContainer.InternalPageObject != null 
+                    || PageObject.GetStrokesOverPageObject().Count > 0 
+                    || PageObject.PageObjectObjectParentIDs.Count > 0))
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
                     Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
                     PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
+
+                    foreach(ICLPPageObject pageObject in droppedContainer.GetPageObjectsOverPageObject())
+                    {
+                        pageObject.IsInternalPageObject = true;
+                        int pageObjectIndex = PageObject.ParentPage.PageObjects.IndexOf(pageObject);
+                        PageObject.ParentPage.PageObjects.Move(pageObjectIndex, PageObject.ParentPage.PageObjects.Count - 1);
+                    }
                 }
                 // Stamp not placed
-                else {
-                    foreach (ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
+                else
+                {
+                    foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                     {
                         Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
                     }
@@ -315,18 +329,25 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnShowKeyPadCommandExecute()
         {
-            KeypadWindowView keyPad = new KeypadWindowView();
-            keyPad.Owner = Application.Current.MainWindow;
-            keyPad.WindowStartupLocation = WindowStartupLocation.Manual;
-            keyPad.Top = 100;
-            keyPad.Left = 100;
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+            if(App.MainWindowViewModel.IsAuthoring || !(PageObject as CLPStamp).PartsAuthorGenerated)
             {
-                PageObject.Parts = Int32.Parse(keyPad.NumbersEntered.Text);
-                (PageObject as CLPStamp).PartsAutoGenerated = true;
-                (PageObject as CLPStamp).PartsInterpreted = false;
-                (PageObject as CLPStamp).ClearHandWritingPartsStrokes();
+                KeypadWindowView keyPad = new KeypadWindowView();
+                keyPad.Owner = Application.Current.MainWindow;
+                keyPad.WindowStartupLocation = WindowStartupLocation.Manual;
+                keyPad.Top = 100;
+                keyPad.Left = 100;
+                keyPad.ShowDialog();
+                if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+                {
+                    PageObject.Parts = Int32.Parse(keyPad.NumbersEntered.Text);
+                    (PageObject as CLPStamp).PartsAutoGenerated = true;
+                    (PageObject as CLPStamp).PartsInterpreted = false;
+                    (PageObject as CLPStamp).ClearHandWritingPartsStrokes();
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        (PageObject as CLPStamp).PartsAuthorGenerated = true;
+                    }
+                }
             }
         }
         
@@ -395,6 +416,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool HasParts()
         {
+            if ((PageObject as CLPStamp).PartsAuthorGenerated)
+            {
+                return true;
+            }
             return PageObject.Parts > 0;
         }
 
