@@ -16,6 +16,8 @@ namespace CLP.Models
             VerticalLine
         }
 
+        public static string Type = "CLPShape";
+
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
@@ -28,6 +30,8 @@ namespace CLP.Models
             Height = 100;
             Width = 100;
             Parts = 1;
+
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>
@@ -54,13 +58,14 @@ namespace CLP.Models
 
         public override string PageObjectType
         {
-            get { return "CLPShape"; }
+            get { return Type; }
         }
 
         public override ICLPPageObject Duplicate()
         {
             CLPShape newShape = this.Clone() as CLPShape;
             newShape.UniqueID = Guid.NewGuid().ToString();
+            newShape.ParentPage = ParentPage;
 
             return newShape;
         }

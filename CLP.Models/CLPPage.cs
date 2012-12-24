@@ -28,7 +28,6 @@ namespace CLP.Models
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
-        public static Guid ParentPageID = new Guid("00000000-0000-0000-0000-000000000003");
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
@@ -148,17 +147,23 @@ namespace CLP.Models
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Deserialized Ink Strokes.
         /// </summary>
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
+            set
+            {
+                if (InkStrokes != null)
+                {
+                	ByteStrokes = StrokesToBytes(InkStrokes);
+                }
+                SetValue(InkStrokesProperty, value);
+            }
         }
 
         [NonSerialized]
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), null, includeInSerialization:false);
-
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -284,16 +289,16 @@ namespace CLP.Models
             newPage.ImagePool = ImagePool;
             newPage.ParentNotebookID = ParentNotebookID;
 
-            StrokeCollection strokes = BytesToStrokes(ByteStrokes);
-            foreach(Stroke stroke in strokes)
+            
+            foreach(Stroke stroke in InkStrokes)
             {
                 Stroke s = stroke.Clone();
                 s.RemovePropertyData(CLPPage.StrokeIDKey);
-                s.RemovePropertyData(CLPPage.ParentPageID);
 
                 string newUniqueID = Guid.NewGuid().ToString();
                 s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                s.AddPropertyData(CLPPage.ParentPageID, newPage.UniqueID);
+
+                newPage.InkStrokes.Add(s);
 
                 List<byte> b = CLPPage.StrokeToByte(s);
 
@@ -303,7 +308,10 @@ namespace CLP.Models
             foreach(ICLPPageObject pageObject in PageObjects)
             {
                 ICLPPageObject clonedPageObject = pageObject.Duplicate();
+                clonedPageObject.ParentPage = newPage;
+                clonedPageObject.ParentPageID = clonedPageObject.ParentPage.UniqueID;
                 newPage.PageObjects.Add(clonedPageObject);
+                clonedPageObject.RefreshStrokeParentIDs();
             }
 
             return newPage;
@@ -359,6 +367,19 @@ namespace CLP.Models
             }
 
             return byteStrokes;
+        }
+
+        protected override void OnDeserialized()
+        {
+            InkStrokes = BytesToStrokes(ByteStrokes);
+
+            base.OnDeserialized();
+        }
+
+        [OnSerializing]
+        void OnSerializing(StreamingContext sc)
+        {
+            ByteStrokes = StrokesToBytes(InkStrokes);
         }
 
         #endregion

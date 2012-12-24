@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Documents;
-using System.Windows;
-using System.Windows.Media;
 using System.Collections;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 //
 // This code based on code available here:

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Ink;
 
 namespace CLP.Models
@@ -14,9 +13,9 @@ namespace CLP.Models
         string UniqueID { get; set; }
         DateTime CreationDate { get; set; }
         string PageObjectType { get; }
-        ObservableCollection<List<byte>> PageObjectByteStrokes { get; set; }
+        ObservableCollection<string> PageObjectStrokeParentIDs { get; set; }
         bool CanAcceptStrokes { get; set; }
-        ObservableCollection<ICLPPageObject> PageObjectObjects { get; set; }
+        ObservableCollection<string> PageObjectObjectParentIDs { get; set; }
         bool CanAcceptPageObjects { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
@@ -24,11 +23,18 @@ namespace CLP.Models
         double Width { get; set; }
         bool IsBackground { get; set; }
         int Parts { get; set; }
-        bool HitTest(ICLPPageObject pageObject, double percentage);
-        void AcceptObject(ICLPPageObject pageObject);
-        void RemoveObject(ICLPPageObject pageObject);
+        bool CanAdornersShow { get; set; }
+        bool IsInternalPageObject { get; set; }
 
         ICLPPageObject Duplicate();
-        void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+        void OnRemoved();
+
+        void RefreshStrokeParentIDs();
+        void AcceptStrokes(StrokeCollection addedStrokeIDs, StrokeCollection removedStrokeIDs);
+        StrokeCollection GetStrokesOverPageObject();
+
+        bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
+        void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects);
+        ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
     }
 }

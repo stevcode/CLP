@@ -13,17 +13,20 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="#F3F3F3">
+    <Grid x:Name="TopGrid" Background="#F3F3F3">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         
-        <ListBox Grid.Row="0" ItemsSource="{Binding Path=NotebookNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <ListBox Grid.Row="0" 
+                 ItemsSource="{Binding Path=NotebookNames}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:NotebookChooserWorkspaceView}}}" CommandParameter="{Binding}" 
-                            Margin="10" Height="90" Width="175">
+                    <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:NotebookChooserWorkspaceView}}}" 
+                            CommandParameter="{Binding}" 
+                            Margin="10" Height="90" Width="200">
                         <DockPanel LastChildFill="True">
                             <Label DockPanel.Dock="Bottom" Height="30" 
                                    Content="{Binding}" FontWeight="Bold" FontSize="12"
@@ -35,7 +38,7 @@
             </ListBox.ItemTemplate>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel  Margin="20" Width="{Binding ElementName=grid,Path=ActualWidth}" />
+                    <WrapPanel  Margin="20" Width="{Binding ElementName=TopGrid,Path=ActualWidth}" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>

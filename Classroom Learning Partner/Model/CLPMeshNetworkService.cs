@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Ink;
@@ -43,7 +44,7 @@ namespace Classroom_Learning_Partner.Model
         void ReceiveNotebook(string page, string userName);
 
         [OperationContract(IsOneWay = true)]
-        void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID, bool broadcastInkToStudents);
+        void BroadcastInk(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID, bool broadcastInkToStudents);
 
         [OperationContract(IsOneWay = true)]
         void SwitchProjectorDisplay(string displayType, List<string> displayPages);
@@ -133,6 +134,11 @@ namespace Classroom_Learning_Partner.Model
                         //page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
 
                         CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
+
+                        foreach(ICLPPageObject pageObject in page.PageObjects)
+                        {
+                            pageObject.ParentPage = page;
+                        }
                         //interpolate the history to make it bigger again - claire
                         //History is sent separately- Jessie
                         //CLPHistory interpolatedHistory = CLPHistory.InterpolateHistory(page.PageHistory);
@@ -269,7 +275,7 @@ namespace Classroom_Learning_Partner.Model
             }
         }
 
-        public void BroadcastInk(List<string> strokesAdded, List<string> strokesRemoved, string pageID, bool broadcastInkToStudents)
+        public void BroadcastInk(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID, bool broadcastInkToStudents)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
@@ -283,6 +289,24 @@ namespace Classroom_Learning_Partner.Model
                             if (page == null)
                             {
                                 page = notebook.GetSubmissionByID(pageID);
+                            }
+
+                            if(page != null)
+                            {
+                                StrokeCollection strokesToRemove = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesRemoved));
+
+                                var strokes =
+                                    from externalStroke in strokesToRemove
+                                    from stroke in page.InkStrokes
+                                    where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
+                                    select stroke;
+
+                                StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+
+                                page.InkStrokes.Remove(actualStrokesToRemove);
+
+                                StrokeCollection strokesToAdd = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesAdded));
+                                page.InkStrokes.Add(strokesToAdd);
                             }
 
 
@@ -373,19 +397,38 @@ namespace Classroom_Learning_Partner.Model
                 {
                     if (App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        //(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = null;
-
                         if (displayType == "LinkedDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).LinkedDisplay;
+                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
 
                             AddPageToDisplay(displayPages[0]);
                         }
                         else
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay.DisplayedPages.Clear();
-                            (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).GridDisplay;
-                            foreach (var pageID in displayPages)
+                            bool isNewDisplay = true;
+                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                            {
+                                if (gridDisplay.DisplayID == displayType)
+                                {
+                                    gridDisplay.DisplayedPages.Clear();
+                                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+
+                                    isNewDisplay = false;
+                                    break;
+                                }
+                            }
+
+                            if (isNewDisplay)
+                            {
+                                GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
+                                newGridDisplay.DisplayID = displayType;
+                                newGridDisplay.DisplayedPages.Clear();
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
+
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
+                            }
+
+                            foreach(var pageID in displayPages)
                             {
                                 AddPageToDisplay(pageID);
                             }
@@ -413,7 +456,7 @@ namespace Classroom_Learning_Partner.Model
 
                             if (page != null)
                             {
-                            	(App.MainWindowViewModel.SelectedWorkspace as ProjectorWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
+                            	(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
                                 break;
                             }
                         }

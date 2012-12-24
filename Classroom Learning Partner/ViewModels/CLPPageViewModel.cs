@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Timers;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -15,7 +14,6 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -62,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
-            PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+            Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -225,9 +223,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(InkStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the InkStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
 
         /// <summary>
@@ -240,9 +235,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberOfSubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NumberOfSubmissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
 
         /// <summary>
@@ -368,11 +360,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            if(!IsMouseDown && TopCanvas != null)
+            if(TopCanvas != null)
             {
                 Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+                if(!IsMouseDown)
+                {
+                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                }
 
-                VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                if((IsMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (IsMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
+                {
+                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraseResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+                }
+                
             }
         }
 
@@ -381,9 +381,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseDownCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MouseMoveCommand command is executed.
-        /// </summary>
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = true;
@@ -401,9 +398,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseUpCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MouseMoveCommand command is executed.
-        /// </summary>
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
             IsMouseDown = false;
@@ -442,49 +436,78 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
             ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
-            IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-            //Console.WriteLine(IsInkCanvasHitTestVisible.ToString());
+
+            //TODO: Steve - First Parameter, Tag, not needed
+            if (!pageObjectViewModel.IsInternalPageObject)
+            {
+                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
+                return HitTestResultBehavior.Stop;
+            }
+            
             return HitTestResultBehavior.Continue;
         }
 
-        void PageObjects_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private HitTestResultBehavior EraseResult(HitTestResult result)
+        {
+            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+
+            if(!pageObjectViewModel.IsInternalPageObject)
+            {
+                pageObjectViewModel.EraserHitTest((result.VisualHit as Shape).Name);
+                return HitTestResultBehavior.Stop;
+            }
+
+            return HitTestResultBehavior.Continue;
+        }
+
+        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            var containerQuery = from po in PageObjects where (po.CanAcceptPageObjects == true) select po;
-
-            if (e.NewItems != null) {
-                foreach (var item in e.NewItems) {
-                    // Do not allow stamps to contain stamps
-                    if (!(item as ICLPPageObject).CanAcceptPageObjects) {
-                        foreach (ICLPPageObject container in containerQuery)
-                        {
-                            if (!(item as ICLPPageObject).ParentID.Equals(container.UniqueID)
-                                && container.HitTest(item as ICLPPageObject, .50) && !container.PageObjectObjects.Contains(item as ICLPPageObject) ){
-                                container.AcceptObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Add New Object " + (item as ICLPPageObject).UniqueID + "to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                    }
-                }
-            }
-            if (e.OldItems != null) {
-                foreach (var item in e.OldItems) {
-                    if (!(item as ICLPPageObject).CanAcceptPageObjects)
+            //TODO: Steve - Catel? causing this to be called twice
+            //Task.Factory.StartNew( () =>
+            //    {
+                    try
                     {
-                        foreach (ICLPPageObject container in containerQuery)
+                        foreach(ICLPPageObject pageObject in PageObjects)
                         {
-                            if (container.PageObjectObjects.Contains(item as ICLPPageObject))
+                            if(pageObject.CanAcceptPageObjects)
                             {
-                                container.RemoveObject(item as ICLPPageObject);
-                                Console.WriteLine("Success Remove Object " + (item as ICLPPageObject).UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
+                                ObservableCollection<ICLPPageObject> removedPageObjects = new ObservableCollection<ICLPPageObject>();
+                                if(e.OldItems != null)
+                                {
+                                    foreach (ICLPPageObject removedPageObject in e.OldItems) {
+                                        removedPageObjects.Add(removedPageObject);
+                                    }
+                                }
+
+                                ObservableCollection<ICLPPageObject> addedPageObjects = new ObservableCollection<ICLPPageObject>();
+                                if(e.NewItems != null)
+                                {
+                                    foreach(ICLPPageObject addedPageObject in e.NewItems)
+                                    {
+                                        if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                            && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                            && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                            && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                        {
+                                            addedPageObjects.Add(addedPageObject);
+                                        }
+                                    }
+                                }
+
+                                pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
                             }
                         }
                     }
-                }
-            }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                    }
+                //});
 
-            //STEVE - Stamps add/remove too quicly and crash projector
+            //TODO: Steve - Stamps add/remove too quickly and crash projector
             //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
             //{
             //    List<string> added = new List<string>();
@@ -512,86 +535,92 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            foreach(var stroke in e.Removed)
-            {
-                List<byte> b = CLPPage.StrokeToByte(stroke);
-                //Console.WriteLine(b.ToString());
-                /* Converting equal strokes to List<byte> arrays create List<byte> arrays with the same sequence of elements.
-                 * The List<byte> arrays, however, are difference referenced objects, so the ByteStrokes.Remove will not work.
-                 * This predicate searches for the first sequence match, instead of the first identical object, then removes
-                 * that List<byte> array, which references the exact same object. */
-                Func<List<byte>, bool> pred = (x) => { return x.SequenceEqual(b); };
-                List<byte> eq = ByteStrokes.First<List<byte>>(pred);
-
-                ByteStrokes.Remove(eq);
-            }
-
-            StrokeCollection addedStrokes = new StrokeCollection();
-            foreach (Stroke stroke in e.Added)
-            {
-                if (!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+            Task.Factory.StartNew( () =>
                 {
-                    string newUniqueID = Guid.NewGuid().ToString();
-                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                    stroke.AddPropertyData(CLPPage.ParentPageID, Page.UniqueID);
-                }
-
-                addedStrokes.Add(stroke);
-
-                List<byte> b = CLPPage.StrokeToByte(stroke);
-
-                ByteStrokes.Add(b);
-            }
-
-            if (App.CurrentUserMode == App.UserMode.Instructor)
-            {
-                List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(addedStrokes));
-                List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
-
-                ////Steve - re-write BroadcastInk (add, remove, uniqueID, submissionID)
-                //if (Page.IsSubmission)
-                //{
-                //    if (App.Peer.Channel != null)
-                //    {
-                //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.BroadcastInkToStudents);
-                //    }
-                //}
-                //else
-                //{
-                //    if (App.Peer.Channel != null)
-                //    {
-                //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.BroadcastInkToStudents);
-                //    }
-                //}
-            }
-
-            foreach (ICLPPageObject pageObject in PageObjects)
-            {
-                if (pageObject.CanAcceptStrokes)
-                {
-                    Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
-
-                    StrokeCollection addedStrokesOverObject = new StrokeCollection();
-                    foreach (Stroke stroke in addedStrokes)
+                    try
                     {
-                        if (stroke.HitTest(rect, 3))
-                        {
-                            addedStrokesOverObject.Add(stroke);
-                        }
-                    }
+	                    List<string> removedStrokeIDs = new List<string>();
+	                    foreach(Stroke stroke in e.Removed)
+	                    {
+	                        removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
+	                    }
+	
+	                    foreach(Stroke stroke in e.Added)
+	                    {
+	                        if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+	                        {
+	                            string newUniqueID = Guid.NewGuid().ToString();
+	                            stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+	                            //TODO: Steve - Add Property for time created if necessary.
+	                            //TODO: Steve - Add Property for Mutability.
+	                            //TODO: Steve - Add Property for UserName of person who created the stroke.
+	                        }
+                            //Ensures truly uniqueIDs
+	                        foreach(string id in removedStrokeIDs)
+	                        {
+	                            if(id == stroke.GetStrokeUniqueID())
+	                            {
+	                                stroke.RemovePropertyData(CLPPage.StrokeIDKey);
+	
+	                                string newUniqueID = Guid.NewGuid().ToString();
+	                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+	                            }
+	                        }
+	                    }
+	
+	                    foreach(ICLPPageObject pageObject in PageObjects)
+	                    {
+	                        if(pageObject.CanAcceptStrokes)
+	                        {
+	                            Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
+	
+	                            var addedStrokesOverObject = 
+	                                from stroke in e.Added
+	                                where stroke.HitTest(rect, 3)
+	                                select stroke;
+	
+	                            var removedStrokesOverObject =
+	                                from stroke in e.Removed
+	                                where stroke.HitTest(rect, 3)
+	                                select stroke;
 
-                    StrokeCollection removedStrokesOverObject = new StrokeCollection();
-                    foreach (Stroke stroke in e.Removed)
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                    (DispatcherOperationCallback)delegate(object arg)
+                                    {
+                                        pageObject.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+
+                                        return null;
+                                    }, null);
+	                        }
+	                    }
+	
+	                    if(App.CurrentUserMode == App.UserMode.Instructor)
+	                    {
+	                        List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
+	                        List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
+	
+	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
+	                        if (Page.IsSubmission)
+	                        {
+	                            if (App.Peer.Channel != null)
+	                            {
+	                                App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+	                            }
+	                        }
+	                        else
+	                        {
+	                            if (App.Peer.Channel != null)
+	                            {
+                                    App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+	                            }
+	                        }
+	                    }
+                    }
+                    catch (System.Exception ex)
                     {
-                        if (stroke.HitTest(rect, 3))
-                        {
-                            removedStrokesOverObject.Add(stroke);
-                        }
+                        Console.WriteLine("InkStrokeCollectionChanged Exception: " + ex.Message);
                     }
-
-                    pageObject.AcceptStrokes(addedStrokesOverObject, removedStrokesOverObject);
-                }
-            }
+                });
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -675,7 +704,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.ResizePageObject:
                         break;
                     case HistoryItemType.AddInk:
-                        //steve - fix for no Page.InkStrokes
+                        //TODO: Steve - fix for no Page.InkStrokes
                         //foreach (Stroke s in Page.InkStrokes )
                         //{
                         //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)

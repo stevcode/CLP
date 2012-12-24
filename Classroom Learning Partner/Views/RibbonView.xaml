@@ -4,7 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
 
-    <UserControl.Resources> 
+    <UserControl.Resources>
         <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
     </UserControl.Resources>
 
@@ -115,6 +115,14 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Previous Page"
+                              LargeImageSource="..\Images\PreviousPage.png"
+                              Command="{Binding Path=PreviousPageCommand}"/>
+
+                <RibbonButton Label="Next Page"
+                              LargeImageSource="..\Images\NextPage.png"
+                              Command="{Binding Path=NextPageCommand}"/>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Tools">
@@ -178,6 +186,11 @@
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
+
+                <!--<RibbonToggleButton Label="Webcam"
+                                    LargeImageSource="..\Images\camera.png"
+                                    Command="{Binding ToggleWebcamPanelCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
 
             </RibbonGroup>
 
@@ -243,13 +256,13 @@
 
             </RibbonGroup>-->
 
-            <!--<RibbonGroup Header="Page Size">
+            <RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
@@ -299,7 +312,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <!--<RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
+                <RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
                         IsChecked="{Binding BroadcastInkToStudents}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -313,12 +326,12 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>-->
+                </RibbonToggleButton>
 
             </RibbonGroup>
 
         </RibbonTab>
-        
+
         <!--<RibbonTab Header="Page">
 
             <RibbonGroup Header="Page Size">
@@ -361,6 +374,11 @@
                 </RibbonMenuButton>
 
                 <RibbonButton
+                        Label="Switch Page Layout"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding Path=SwitchPageLayoutCommand}" />
+
+                <RibbonButton
                         Label="Delete This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=DeletePageCommand}" />
@@ -376,7 +394,6 @@
                         Command="{Binding Path=AddPageTopicCommand}" />
 
             </RibbonGroup>
-
             <RibbonGroup Header="Text">
 
                 <RibbonButton
@@ -462,7 +479,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertBlankStampCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -496,7 +513,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertSquareShapeCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -546,7 +563,7 @@
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
+
                         <Button Height="60" Width="200" HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertHandwritingRegionCommand}">
                             <StackPanel Orientation="Horizontal">
@@ -578,13 +595,17 @@
                                 <Label>Shading Region</Label>
                             </StackPanel>
                         </Button>
-
+                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                                Command="{Binding Path=InsertGroupingRegionCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\LargeIcon.png" />
+                                <Label>Grouping Region</Label>
+                            </StackPanel>
+                        </Button>
                     </RibbonGallery>
                 </RibbonMenuButton>
 
             </RibbonGroup>
-
-            
 
         </RibbonTab>
 
@@ -644,5 +665,5 @@
             <ToggleButton Content="^" VerticalContentAlignment="Center" Height="22" Width="40" Padding="0" Margin="0" Background="CornflowerBlue" IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" Checked="MinimizeButton_Checked" Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
     </Ribbon>
-    
+
 </catel:UserControl>

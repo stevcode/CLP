@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -23,6 +24,60 @@ namespace Classroom_Learning_Partner.Resources
             else
             {
                 return new SolidColorBrush(Colors.AliceBlue);
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PartsStringConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if (!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
+            {
+                int parts = (int)value[0];
+                bool interpreted = (bool)value[1];
+                if (parts <= 0)
+                {
+                    return (interpreted) ? "?" : "";
+                }
+            }
+            return value[0].ToString();
+        }
+
+        public object[] ConvertBack(object value,
+            Type[] targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PartsLineVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if((bool)value && !App.MainWindowViewModel.IsAuthoring)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
             }
         }
 
@@ -123,6 +178,41 @@ namespace Classroom_Learning_Partner.Resources
             System.Globalization.CultureInfo culture)
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Converts a double to 3/4 of its value
+    /// </summary>
+    [ValueConversion(typeof(double), typeof(double))]
+    public class ThreeFourthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Declare variables
+            double width = 0;
+
+            try
+            {
+                // Get value
+                width = (double)value;
+            }
+            catch(Exception)
+            {
+                // Trace
+                Trace.TraceError("Failed to cast '{0}' to Double", value);
+
+                // Return 0
+                return 0;
+            }
+
+            // Convert
+            return (width > 0) ? (width / 4) * 3 : 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 

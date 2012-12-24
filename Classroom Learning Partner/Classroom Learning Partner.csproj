@@ -193,7 +193,16 @@
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapInterfaces.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapPlayer.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\CapStructures.cs" />
+    <Compile Include="Views\Controls\WebcamPlayer\FilterInfo.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -210,18 +219,19 @@
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStrokePathContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
+    <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\ProjectorWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
-    <Compile Include="Views\Custom Controls\BindableInkCanvas.cs" />
-    <Compile Include="Views\Custom Controls\BindableRichTextBox.cs" />
-    <Compile Include="Views\Custom Controls\FilteredPagesSideBar.xaml.cs">
+    <Compile Include="Views\Controls\BindableInkCanvas.cs" />
+    <Compile Include="Views\Controls\BindableRichTextBox.cs" />
+    <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
@@ -272,6 +282,9 @@
     <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
       <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\CLPGroupingRegionView.xaml.cs">
+      <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
       <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
     </Compile>
@@ -286,6 +299,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
+      <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
@@ -302,16 +318,13 @@
     <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
       <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Workspaces\ProjectorWorkspaceView.xaml.cs">
-      <DependentUpon>ProjectorWorkspaceView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Workspaces\ServerWorkspaceView.xaml.cs">
       <DependentUpon>ServerWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\Custom Controls\FilteredPagesSideBar.xaml">
+    <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -399,6 +412,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\PageObjects\CLPGroupingRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -419,6 +436,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\WebcamPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\RibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -436,10 +457,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\NotebookWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\ProjectorWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -476,6 +493,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\Fonts\SketchFlow Print.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AddImage.png" />

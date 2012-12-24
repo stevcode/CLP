@@ -61,7 +61,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <Views:ProjectorWorkspaceView DataContext="{Binding }" />
+                    <Views:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ServerWorkspaceTemplate">

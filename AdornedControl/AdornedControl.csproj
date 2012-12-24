@@ -129,7 +129,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdornedControl.cs" />
-    <Compile Include="AdornerPlacement.cs" />
     <Compile Include="FrameworkElementAdorner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

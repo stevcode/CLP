@@ -1,0 +1,60 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.WebcamPanelView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:webcam="clr-namespace:Classroom_Learning_Partner.ViewModels.Controls.WebcamPlayer"
+                   Width="{Binding InitialWidth}">
+    
+    <!-- Resources -->
+    <UserControl.Resources>
+        <conv:ThreeFourthConverter x:Key="ThreeFourthConverter" />
+    </UserControl.Resources>
+
+    <!-- Content -->
+    <Border Background="#F3F3F3"
+            BorderBrush="#D4D4D4" BorderThickness="5,0,0,0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--Webcam-->
+            <webcam:CapPlayer x:Name="webcamPlayer" Grid.Row="0" Stretch="Fill" Margin="6"
+                          Height="{Binding ElementName=webcamPlayer, Path=ActualWidth, Converter={StaticResource ThreeFourthConverter}}"
+                          Rotation="{Binding WebcamRotation}"
+                          Device="{Binding SelectedWebcam}" />
+
+            <Button Grid.Row="1" Command="{Binding CaptureImageCommand}" CommandParameter="{Binding ElementName=webcamPlayer}"
+                Height="50" HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="..\..\Images\camera.png" />
+                    <TextBlock VerticalAlignment="Center" Text="Take Picture" Margin="10" />
+                </StackPanel>
+            </Button>
+
+            <ListBox Grid.Row="2" IsSynchronizedWithCurrentItem="True"
+                 ItemsSource="{Binding CapturedImages}"
+                 SelectedItem="{Binding SelectedImage}"
+                 VerticalAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding}" 
+                               Width="175"  />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button Grid.Row="3" Command="{Binding AddImageCommand}"
+                Height="50" HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="..\..\Images\AddImage.png" />
+                    <TextBlock VerticalAlignment="Center" Text="Use Selected Picture" Margin="10" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Border>
+</catel:UserControl>

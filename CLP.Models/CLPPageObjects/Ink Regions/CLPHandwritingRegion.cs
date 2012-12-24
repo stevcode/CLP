@@ -96,10 +96,12 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
-            string result = InkInterpretation.InterpretHandwriting(CLPPage.BytesToStrokes(StrokesNoDuplicates), AnalysisType);
+            StrokeCollection strokes = GetStrokesOverPageObject();
+            string result = InkInterpretation.InterpretHandwriting(strokes, AnalysisType);
             if (result != null)
                 StoredAnswer = result;
+            Console.WriteLine("hw REGION # strokes : " + strokes.Count);
+            Console.WriteLine("HW regions: " + StoredAnswer);
         }
 
         #endregion // Methods

@@ -57,50 +57,23 @@ namespace Classroom_Learning_Partner.Model
                 {
                     notebook.NotebookName = notebookName;
 
-                //Convert Machine Names to Student Names
-
-                foreach (var submissionID in notebook.Submissions.Keys)
-                {
-                    foreach (var page in notebook.Submissions[submissionID])
+                    foreach(CLPPage page in notebook.Pages)
                     {
-                        if (page.SubmitterName == "CLP6")
+                        foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
-                            page.SubmitterName = "Nael";
+                            pageObject.ParentPage = page;
                         }
-                        else if (page.SubmitterName == "CLP7")
+                        if(notebook.Submissions.ContainsKey(page.UniqueID))
                         {
-                            page.SubmitterName = "Kelvin";
-                        }
-                        else if (page.SubmitterName == "CLP8")
-                        {
-                            page.SubmitterName = "Michael";
-                        }
-                        else if (page.SubmitterName == "CLP10")
-                        {
-                            page.SubmitterName = "Alex";
-                        }
-                        else if (page.SubmitterName == "CLP11")
-                        {
-                            page.SubmitterName = "Kaelin";
-                        }
-                        else if (page.SubmitterName == "CLP12")
-                        {
-                            page.SubmitterName = "Nick";
-                        }
-                        else if (page.SubmitterName == "CLP13")
-                        {
-                            page.SubmitterName = "Elyse";
-                        }
-                        else if (page.SubmitterName == "CLP14")
-                        {
-                            page.SubmitterName = "Henry";
+                            foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
+                            {
+                                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                                {
+                                    pageObject.ParentPage = submission;
+                                }
+                            }
                         }
                     }
-                }
-
-
-
-
 
                     int count = 0;
                     foreach (var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
@@ -116,15 +89,10 @@ namespace Classroom_Learning_Partner.Model
                     if (count == 0)
                     {
                         App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                        if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student)
+                        if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Projector)
                         {
                             App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
                         }
-                        else
-                        {
-                            App.MainWindowViewModel.SelectedWorkspace = new ProjectorWorkspaceViewModel();
-                        }
-
                     }
                 }
                 else
@@ -487,24 +455,9 @@ namespace Classroom_Learning_Partner.Model
         {
             if (page != null)
             {
-                //STEVE - uncomment try/catch with Catel symbol library in place to find thrown exceptions
-                //try
-                //{
-                    page.PageObjects.Remove(pageObject);
-                //}
-                //catch(System.ArgumentException e)
-                //{
-                //    throw;
-                //}
-                
-                //foreach(CLP.Models.ICLPPageObject po in page.PageObjects)
-                //{
-                //    if (po.UniqueID == pageObject.UniqueID)
-                //    {
-                //        page.PageObjects.Remove(po);
-                //        break;
-                //    }
-                //}
+                pageObject.OnRemoved();
+                page.PageObjects.Remove(pageObject);
+
                 //if (!page.PageHistory.IgnoreHistory)
                 //{
                 //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);

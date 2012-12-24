@@ -27,10 +27,13 @@ namespace CLP.Models
             : base(page)
         {
             ImageID = imageID;
-            XPosition = 10;
-            YPosition = 10;
+            XPosition = 50;
+            YPosition = 50;
             Height = 300;
             Width = 300;
+            Parts = 1;
+
+            CLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>
@@ -72,6 +75,7 @@ namespace CLP.Models
         {
             CLPImage newImage = this.Clone() as CLPImage;
             newImage.UniqueID = Guid.NewGuid().ToString();
+            newImage.ParentPage = ParentPage;
 
             return newImage;
         }

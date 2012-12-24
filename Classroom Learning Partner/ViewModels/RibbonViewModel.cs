@@ -18,6 +18,7 @@ using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
+using System.Windows.Threading;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -71,7 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastInkToStudents = false;
             CanSendToTeacher = true;
             IsSending = false;
-            PenSize = 5;
+            PenSize = 3;
             DrawingAttributes = new DrawingAttributes();
             DrawingAttributes.Height = PenSize;
             DrawingAttributes.Width = PenSize;
@@ -160,7 +161,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
@@ -169,6 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
+            ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
@@ -180,6 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
+            InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
 
             //DB
             QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
@@ -719,13 +725,42 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Notebook Commands
 
         /// <summary>
+        /// Gets the PreviousPageCommand command.
+        /// </summary>
+        public Command PreviousPageCommand { get; private set; }
+
+        private void OnPreviousPageCommandExecute()
+        {
+            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
+
+            if (index > 0)
+            {
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index - 1];
+            }
+        }
+
+        /// <summary>
+        /// Gets the NextPageCommand command.
+        /// </summary>
+        public Command NextPageCommand { get; private set; }
+
+        private void OnNextPageCommandExecute()
+        {
+            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
+
+            if(index < (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Count - 1)
+            {
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index + 1];
+            }
+        }
+
+        /// <summary>
         /// Gets the NewNotebookCommand command.
         /// </summary>
         public Command NewNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the NewNotebookCommand command is executed.
-        /// </summary>
         private void OnNewNotebookCommandExecute()
         {
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.OpenNewNotebook();
@@ -737,9 +772,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command OpenNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the OpenNotebookCommand command is executed.
-        /// </summary>
         private void OnOpenNotebookCommandExecute()
         {
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
@@ -750,9 +782,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command EditNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the EditNotebookCommand command is executed.
-        /// </summary>
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;
@@ -763,9 +792,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command DoneEditingNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the DoneEditingNotebookCommand command is executed.
-        /// </summary>
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
@@ -785,20 +811,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveNotebookCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveNotebookCommand command is executed.
-        /// </summary>
         private void OnSaveNotebookCommandExecute()
         {
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 Catel.Windows.PleaseWaitHelper.Show(() =>
                     Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
-            }
-            else if(App.MainWindowViewModel.SelectedWorkspace is ProjectorWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    OnSaveAllNotebooksCommandExecute(), null, "Saving Notebook", 0.0 / 0.0);
             }
         }
 
@@ -807,9 +825,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveAllHistoriesCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveNotebookCommand command is executed.
-        /// </summary>
         private void OnSaveAllHistoriesCommandExecute()
         {
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
@@ -825,9 +840,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SaveAllNotebooksCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SaveAllNotebooksCommand command is executed.
-        /// </summary>
         private void OnSaveAllNotebooksCommandExecute()
         {
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
@@ -871,9 +883,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command ConvertToXPSCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the ConvertToXPS command is executed.
-        /// </summary>
         private void OnConvertToXPSCommandExecute()
         {
             CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
@@ -1455,6 +1464,53 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the SwitchPageLayoutCommand command.
+        /// </summary>
+        public Command SwitchPageLayoutCommand { get; private set; }
+
+        private void OnSwitchPageLayoutCommandExecute()
+        {
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+            if(page.PageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.PORTRAIT_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            else if(page.PageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            {
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
+                    {
+                        pageObject.XPosition = CLPPage.LANDSCAPE_WIDTH - pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
+                    {
+                        pageObject.YPosition = CLPPage.LANDSCAPE_HEIGHT - pageObject.Height;
+                    }
+                }
+
+                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
+                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+        }
+
+        /// <summary>
         /// Gets the DeletePageCommand command.
         /// </summary>
         public Command DeletePageCommand { get; private set; }
@@ -1471,6 +1527,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
                 //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
+
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages[index];
             }
         }
 
@@ -1565,9 +1623,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertImageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertImageCommand command is executed.
-        /// </summary>
         private void OnInsertImageCommandExecute()
         {
             // Configure open file dialog box
@@ -1606,6 +1661,46 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     MessageBox.Show("Error opening image file. Please try again.");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the ToggleWebcamPanelCommand command.
+        /// </summary>
+        public Command<bool> ToggleWebcamPanelCommand { get; private set; }
+
+        DispatcherTimer panelCloserTimer = new DispatcherTimer();
+
+        private void OnToggleWebcamPanelCommandExecute(bool isButtonChecked)
+        {
+            if(!isButtonChecked) //ClosePanel
+            {
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
+                //panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
+                //panelCloserTimer.Tick += panelCloserTimer_Tick;
+                //panelCloserTimer.Start();
+            }
+            else //OpenPanel
+            {
+                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel == null)
+                {
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
+                }
+                else
+                {
+                    //panelCloserTimer.Stop();
+                }
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
+            }
+        }
+
+        void panelCloserTimer_Tick(object sender, EventArgs e)
+        {
+            if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel != null)
+            {
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
+                panelCloserTimer.Stop();
             }
         }
 
@@ -1783,6 +1878,20 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the InsertGroupingRegionCommand command.
+        /// </summary>
+        public Command InsertGroupingRegionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertGroupingRegionCommand command is executed.
+        /// </summary>
+        private void OnInsertGroupingRegionCommandExecute()
+        {
+            CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+        }
+
+        /// <summary>
         /// Gets the InsertDataTableCommand command.
         /// </summary>
         public Command InsertDataTableCommand { get; private set; }
@@ -1862,6 +1971,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
                 {
                     (pageObject as ACLPInkRegion).InterpretStrokes();
+                }
+                else if (pageObject.GetType().IsSubclassOf(typeof(CLPGroupingRegion)))
+                {
+                    (pageObject as CLPGroupingRegion).DoInterpretation();
                 }
             }
         }

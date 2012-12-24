@@ -97,18 +97,13 @@ namespace CLP.Models
             {
                 ACLPInkRegion newInkRegion = this.Clone() as ACLPInkRegion;
                 newInkRegion.UniqueID = Guid.NewGuid().ToString();
+                newInkRegion.ParentPage = ParentPage;
+
                 return newInkRegion;
             }
         }
 
         private DispatcherTimer timer = null;
-
-        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
-        {
-            //timer.Stop();
-            this.ProcessStrokes(addedStrokes, removedStrokes);
-            //timer.Start();
-        }
 
         #endregion
     }

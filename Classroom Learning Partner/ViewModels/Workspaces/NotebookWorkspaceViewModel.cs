@@ -50,6 +50,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 SelectedDisplay.IsOnProjector = true;
                 WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
             }
+            else if (App.CurrentUserMode == App.UserMode.Projector)
+            {
+                IsSideBarVisible = false;
+            }
             else
             {
                 SelectedDisplay.IsOnProjector = false;
@@ -241,6 +245,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
+        #region Panels
+
+        /// <summary>
+        /// Right side Panel.
+        /// </summary>
+        public IPanel RightPanel
+        {
+            get { return GetValue<IPanel>(RightPanelProperty); }
+            set { SetValue(RightPanelProperty, value); }
+        }
+
+        public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel), null);
+
+        #endregion //Panels
+
         #endregion //Bindings
 
         /// <summary>
@@ -248,9 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetCurrentPageCommand command is executed.
-        /// </summary>
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
@@ -261,9 +277,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetCurrentPageCommand command is executed.
-        /// </summary>
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
             SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
@@ -274,9 +287,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MakePageLongerCommand command is executed.
-        /// </summary>
         private void OnMakePageLongerCommandExecute()
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)

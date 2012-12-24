@@ -8,11 +8,17 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
+        <conv:PartsStringConverter x:Key="PartsStringConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <conv:PartsLineVisibilityConverter x:Key="PartsLineVisibilityConverter" />
     </UserControl.Resources>
 
-    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center" IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
-                           HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
-                       IsMouseOverShowEnabled="False">
+    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
+                       IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
+                       OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -116,17 +122,16 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
-            <Thumb DragDelta="StampHandleHitBox_DragDelta"
-                   DragStarted="StampHandleHitBox_DragStarted"
-                   DragCompleted="StampHandleHitBox_DragCompleted"
+            <Thumb Grid.Row="0" 
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="StampHandleHitBox" Grid.Row="0" 
+                        <Polygon x:Name="StampHandleHitBox"  
                                  Width="{Binding Width}" MinWidth="50"  
                                  Height="{Binding PageObject.HANDLE_HEIGHT}" Stretch="Fill"
                                  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
@@ -135,9 +140,10 @@
                         </Polygon>
                     </ControlTemplate>
                 </Thumb.Template>
-                <!--<i:Interaction.Triggers>
+                <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding Path=DragStampCommand}" PassEventArgsToCommand="True"/>
+                        <catel:EventToCommand Command="{Binding Path=DragStampCommand}" 
+                                              PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
                         <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
@@ -145,16 +151,77 @@
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
                     </i:EventTrigger>
-                </i:Interaction.Triggers>-->
+                </i:Interaction.Triggers>
             </Thumb>
             <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2"
                     Width="{Binding Width, Mode=TwoWay}" 
                     Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
                     VerticalAlignment="Top" Margin="0">
-                <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}" 
+                <Grid x:Name="StampBodyGrid">
+                    <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}"
                                                   Width="{Binding Width, Mode=TwoWay}" 
                                                   Height="{Binding Height, Mode=TwoWay}" />
+                    <Rectangle x:Name="StampBodyHitBox" Fill="Transparent"
+                            Width="{Binding ElementName=StampBodyGrid, Path=Width}" 
+                            Height="{Binding ElementName=StampBodyGrid, Path=Height}" />
+                </Grid>
             </Border>
+            <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
+
+                <Border x:Name="PartsHandwritingBox" Visibility="{Binding Converter={StaticResource PartsLineVisibilityConverter}, Path=PageObject.PartsAuthorGenerated}"
+                            BorderBrush="Black" BorderThickness="0,0,0,2"
+                            Width="{Binding HandwritingRegionParts.Width}"
+                            Height="{Binding HandwritingRegionParts.Height}"
+                            HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False">
+                    <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" 
+                                                Width="{Binding Width, Mode=TwoWay}" 
+                                                Height="{Binding Height, Mode=TwoWay}" />
+                </Border>
+                <TextBlock x:Name="PartsAuto"
+                       FontFamily="SketchFlow Print" FontSize="72"
+                       Width="{Binding Width}"
+                       Height="{Binding HandwritingRegionParts.Height}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=PageObject.PartsAutoGenerated}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
+                            <Binding Path="PageObject.Parts" />
+                            <Binding Path="PageObject.PartsInterpreted" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Rectangle x:Name="HandwritingHitBox" Fill="Transparent"
+                            Width="{Binding HandwritingRegionParts.Width}" 
+                            Height="{Binding HandwritingRegionParts.Height}" />
+                <TextBlock x:Name="PartsDetected"
+                       FontFamily="SketchFlow Print" FontSize="24"
+                       Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                       Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       TextAlignment="Left"
+                       Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=PageObject.PartsInterpreted}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
+                            <Binding Path="PageObject.Parts" />
+                            <Binding Path="PageObject.PartsInterpreted" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Rectangle x:Name="PartsHitBox" Fill="Transparent" StrokeThickness="0" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
+                        Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                        Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding Path=ShowKeyPadCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Rectangle>
+            </Grid>
         </Grid>
 
     </ac:AdornedControl>

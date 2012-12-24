@@ -1,19 +1,21 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Model;
 using CLP.Models;
+using System.Windows.Threading;
+using System;
+using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase
+    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
         protected ACLPPageObjectBaseViewModel()
             : base()
@@ -27,9 +29,27 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
+
+            //TODO: Steve - move this to Adorner.cs and expand adorner API
+            hoverTimer = new Timer();
+            hoverTimer.Interval = 800;
+            hoverTimer.Elapsed += hoverTimer_Elapsed;
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsInternalPageObject
+        {
+            get { return GetValue<bool>(IsInternalPageObjectProperty); }
+            set { SetValue(IsInternalPageObjectProperty, value); }
+        }
+
+        public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool));
+
 
         #region Model
 
@@ -43,9 +63,6 @@ namespace Classroom_Learning_Partner.ViewModels
             protected set { SetValue(PageObjectProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObject property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject));
 
         /// <summary>
@@ -58,9 +75,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Height property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double));
 
         /// <summary>
@@ -73,9 +87,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(WidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Width property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double));
 
         /// <summary>
@@ -88,9 +99,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(XPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the XPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double));
 
         /// <summary>
@@ -103,20 +111,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(YPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the YPosition property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
-
-        private StrokeCollection _pageObjectStrokes = new StrokeCollection();
-        public StrokeCollection PageObjectStrokes
-        {
-            get
-            {
-                _pageObjectStrokes = CLPPage.BytesToStrokes(PageObject.PageObjectByteStrokes);
-                return _pageObjectStrokes;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -128,15 +123,32 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsBackgroundProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsBackground property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool CanAdornersShow
+        {
+            get { return GetValue<bool>(CanAdornersShowProperty); }
+            set { SetValue(CanAdornersShowProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the CanAdornersShow property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool));
+
 
         #endregion //Model
 
-        #region Bindings
+        #region IPageObjectAdorners
 
+        /// <summary>
+        /// Shows or hides the adorner.
+        /// Set to 'true' to show the adorner or 'false' to hide the adorner.
+        /// </summary>
         public bool IsAdornerVisible
         {
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
@@ -151,21 +163,113 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         pageVM.IsInkCanvasHitTestVisible = true;
                     }
+
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
                 }
             }
         }
 
         public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
 
-        public Visibility AllowAdorner
+        /// <summary>
+        /// Set to 'true' to make the adorner automatically fade-in and become visible when the mouse is hovered
+        /// over the adorned control.  Also the adorner automatically fades-out when the mouse cursor is moved
+        /// away from the adorned control (and the adorner).
+        /// </summary>
+        public bool IsMouseOverShowEnabled
         {
-            get { return GetValue<Visibility>(AllowAdornerProperty); }
-            set { SetValue(AllowAdornerProperty, value); }
+            get { return GetValue<bool>(IsMouseOverShowEnabledProperty); }
+            set { SetValue(IsMouseOverShowEnabledProperty, value); }
         }
 
-        public static readonly PropertyData AllowAdornerProperty = RegisterProperty("AllowAdorner", typeof(Visibility), Visibility.Visible);
+        public static readonly PropertyData IsMouseOverShowEnabledProperty = RegisterProperty("IsMouseOverShowEnabled", typeof(bool), false);
 
-        #endregion //Bindings
+        /// <summary>
+        /// Specifies the time (in seconds) after the mouse cursor moves over the 
+        /// adorned control (or the adorner) when the adorner begins to fade in.
+        /// </summary>
+        public double OpenAdornerTimeOut
+        {
+            get { return GetValue<double>(OpenAdornerTimeOutProperty); }
+            set { SetValue(OpenAdornerTimeOutProperty, value); }
+        }
+
+        public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.0);
+
+        /// <summary>
+        /// Specifies the time (in seconds) after the mouse cursor moves away from the 
+        /// adorned control (or the adorner) when the adorner begins to fade out.
+        /// </summary>
+        public double CloseAdornerTimeOut
+        {
+            get { return GetValue<double>(CloseAdornerTimeOutProperty); }
+            set { SetValue(CloseAdornerTimeOutProperty, value); }
+        }
+
+        public static readonly PropertyData CloseAdornerTimeOutProperty = RegisterProperty("CloseAdornerTimeOut", typeof(double), 1.0);
+
+        protected Timer hoverTimer;
+
+        protected bool hoverTimeElapsed = false;
+
+        protected bool timerRunning = false;
+        void hoverTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            hoverTimer.Stop();
+            timerRunning = false;
+            hoverTimeElapsed = true;
+        }
+
+        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(IsBackground)
+            {
+                if(App.MainWindowViewModel.IsAuthoring)
+                {
+                    IsMouseOverShowEnabled = true;
+                    if(!timerRunning)
+                    {
+                        timerRunning = true;
+                        hoverTimer.Start();
+                    }
+                }
+                else
+                {
+                    IsMouseOverShowEnabled = false;
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
+                }
+            }
+            else
+            {
+                IsMouseOverShowEnabled = true;
+                if(!timerRunning)
+                {
+                    timerRunning = true;
+                    hoverTimer.Start();
+                }
+            }
+
+            return !hoverTimeElapsed;
+        }
+
+        public virtual void EraserHitTest(string hitBoxName)
+        {
+            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            {
+                //don't erase
+            }
+            else
+            {
+                OnRemovePageObjectCommandExecute();
+            }
+        }
+
+
+        #endregion //IPageObjectAdorners
 
         #region Commands
 
@@ -176,18 +280,15 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the RemovePageObjectCommand command is executed.
-        /// </summary>
         private void OnRemovePageObjectCommandExecute()
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
 
             foreach (CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
             {
                 pageVM.IsInkCanvasHitTestVisible = true;
             }
+
             CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
         }
 
@@ -196,17 +297,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragDeltaEventArgs> DragPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the DragPageObjectCommand command is executed.
-        /// </summary>
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             double x = PageObject.XPosition + e.HorizontalChange;
             double y = PageObject.YPosition + e.VerticalChange;
-            double xStrokeOffset = e.HorizontalChange;
-            double yStrokeOffset = e.VerticalChange;
             if (x < 0)
             {
                 x = 0;
@@ -231,31 +327,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 double yDelta = y - PageObject.YPosition;
                 Matrix moveStroke = new Matrix();
                 moveStroke.Translate(xDelta, yDelta);
-                foreach (Stroke stroke in parentPage.InkStrokes)
-                {
-                    foreach (Stroke vmStroke in PageObjectStrokes)
-                    {
-                        if (stroke.GetPropertyData(CLPPage.StrokeIDKey).Equals(vmStroke.GetPropertyData(CLPPage.StrokeIDKey)))
-                        {
-                            stroke.Transform(moveStroke, false);
-                        }
-                    }
+
+                StrokeCollection strokesToMove = PageObject.GetStrokesOverPageObject();
+                foreach(Stroke stroke in strokesToMove)
+                {  
+                    stroke.Transform(moveStroke, true);  
                 }
             }
 
-            if (PageObject.CanAcceptPageObjects)
+            if (PageObject.PageObjectObjectParentIDs.Count > 0)
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(xDelta, yDelta);
-                var pageObjectsInPageObjectObjects = from po in parentPage.PageObjects
-                                                     join vmPo in PageObject.PageObjectObjects on po.UniqueID equals vmPo.UniqueID
-                                                     select po;
-                foreach (ICLPPageObject poipoo in pageObjectsInPageObjectObjects)
+
+                foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
                 {
-                    Point pageObjectPt = new Point((xDelta + poipoo.XPosition), (yDelta + poipoo.YPosition));
-                    CLPServiceAgent.Instance.ChangePageObjectPosition(poipoo, pageObjectPt);
+                    Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
                 }
             }
 
@@ -279,12 +367,34 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragCompletedEventArgs> DragStopPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the DragStopPageObjectCommand command is executed.
-        /// </summary>
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            ProcessPageObjectObject();
+            AddRemovePageObjectFromOtherObjects();
+        }
+
+        protected void AddRemovePageObjectFromOtherObjects() {
+            if (!PageObject.CanAcceptPageObjects)
+            {
+                foreach(ICLPPageObject container in PageObject.ParentPage.PageObjects)
+                {
+                    if(container.CanAcceptPageObjects && !PageObject.ParentID.Equals(container.UniqueID))
+                    {
+                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
+                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
+                        
+                        if(container.PageObjectIsOver(this.PageObject, .50))
+                        {
+                            addObjects.Add(this.PageObject);
+                        }
+                        else
+                        {
+                            removeObjects.Add(this.PageObject);
+                        }
+
+                        container.AcceptObjects(addObjects, removeObjects);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -292,13 +402,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizePageObjectCommand command is executed.
-        /// </summary>
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;
@@ -327,9 +433,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizeStartPageObjectCommand command is executed.
-        /// </summary>
         private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
         }
@@ -339,46 +442,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragCompletedEventArgs> ResizeStopPageObjectCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizeStopPageObjectCommand command is executed.
-        /// </summary>
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-        }
-
-        protected void ProcessPageObjectObject() {
-            Console.WriteLine("PageObject: " + PageObject.GetType() + " CanAccept: " + PageObject.CanAcceptPageObjects);
-            if (!PageObject.CanAcceptPageObjects)
-            {
-                var containerQuery = from po in PageObject.ParentPage.PageObjects where (po.CanAcceptPageObjects == true) select po;
-                foreach (ICLPPageObject container in containerQuery)
-                {
-                    if (!PageObject.ParentID.Equals(container.UniqueID))
-                    {
-                        if (container.HitTest(this.PageObject, .50))
-                        {
-                            if (!container.PageObjectObjects.Contains(this.PageObject))
-                            {
-                                container.AcceptObject(PageObject);
-                                foreach (ICLPPageObject pos in container.PageObjectObjects)
-                                {
-                                    Console.Write(pos.UniqueID + " ");
-                                    Console.WriteLine("objects");
-                                }
-                                Console.WriteLine("Success Add Move  " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                        else
-                        {
-                            if (container.PageObjectObjects.Contains(PageObject))
-                            {
-                                container.RemoveObject(PageObject);
-                                Console.WriteLine("Success Remove Move " + PageObject.UniqueID + " to " + container.UniqueID + " length: " + container.PageObjectObjects.Count);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         #endregion //Default Adorners
@@ -387,24 +452,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if (IsBackground)
-            {
-                if (App.MainWindowViewModel.IsAuthoring)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return true;
-            }
-        }
+        
 
         #endregion //Methods
     }
