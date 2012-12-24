@@ -227,13 +227,11 @@ namespace CLP.Models
         {
             get {
                 int parts = GetValue<int>(PartsProperty);
-                Console.WriteLine("Parts: " + parts + " parentID: " + ParentID);
                 if (parts < 1 && !ParentID.Equals(""))
                 {
                     //Should only be one
                     foreach (ICLPPageObject po in ParentPage.PageObjects)
                     {
-                        Console.WriteLine("UniqueID: " + po.UniqueID);
                         if (po.UniqueID.Equals(ParentID)) {
                             Parts = po.Parts;
                         }

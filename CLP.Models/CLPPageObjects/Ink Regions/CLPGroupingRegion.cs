@@ -192,6 +192,7 @@ namespace CLP.Models
                 }
             }
             Boolean canCombine = true;
+            // Check to make sure that there are valid objects to group
             while (canCombine && groups.Count > 1) {
                 canCombine = combineGroups(groups);
             }
@@ -209,6 +210,7 @@ namespace CLP.Models
             foreach (DistanceGroup groupA in groups) {
                 foreach (DistanceGroup groupB in groups)
                 {
+                    // Make sure not the same group
                     if (!groupA.Equals(groupB)) {
                         double smallestDistance = Double.MaxValue;
                         foreach (ICLPPageObject poA in groupA.groupObjects) {
@@ -229,8 +231,11 @@ namespace CLP.Models
             }
 
             double threshold = 2;
-            if (combineTheseGroups[0].average() * threshold > smallestDistanceGroups &&
-                combineTheseGroups[1].average() * threshold > smallestDistanceGroups)
+            Console.WriteLine("Average 0: " + combineTheseGroups[0].average());
+            Console.WriteLine("Average 1: " + combineTheseGroups[1].average());
+            Console.WriteLine("SmallestDistanceGroup: " + smallestDistanceGroups);
+            if (combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
+                combineTheseGroups[1].average() * threshold >= smallestDistanceGroups)
             {
                 DistanceGroup removeGroup = combineTheseGroups[0];
                 groups.Remove(removeGroup);
