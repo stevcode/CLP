@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using Catel.Data;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Windows.Ink;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Models
 {
@@ -68,18 +66,36 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("inkShapeRegion", typeof(CLPInkShapeRegion), null);
 
+
+
+                /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ObservableCollection<CLPGrouping> Groupings
+        {
+            get { return GetValue<ObservableCollection<CLPGrouping>>(GroupingsProperty); }
+            set { SetValue(GroupingsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Groupings property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData GroupingsProperty = RegisterProperty("Groupings", typeof(ObservableCollection<CLPGrouping>), () => new ObservableCollection<CLPGrouping>());
+
+
         #endregion // Properties
 
         #region Methods
 
         public override void DoInterpretation()
         {
-            List<Grouping> groupings = new List<Grouping>();
+            Groupings.Clear();
             AddGrouping(InkGrouping(), true, groupings);
             AddGrouping(DistanceClustering(), true, groupings);
             AddGrouping(BasicGrouping(), false, groupings);
             StringBuilder interpretation = new StringBuilder();
-            foreach (Grouping grouping in groupings) {
+            foreach (CLPGrouping grouping in Groupings)
+            {
                 interpretation.AppendLine(grouping.toString());
             }
             StoredAnswer = interpretation.ToString();
@@ -97,31 +113,22 @@ namespace CLP.Models
                 }
             }
         }
-
-        #region GenericGrouping
-
-        private class Grouping
+        
+                private bool ValidObjectForGrouping(ICLPPageObject po)
         {
-            private string type;
-            private List<Dictionary<string, List<ICLPPageObject>>> groups;
+            return PageObjectIsOver(po, .8) && po.Parts >= 0 && po.GetType() != typeof(CLPStamp);
+        }
+
+
             private bool hasContainer;
             private string container;
-
             public Grouping(string typeOfGrouping, string container)  {
-                type = typeOfGrouping;
-                groups = new List<Dictionary<string, List<ICLPPageObject>>>();
                 hasContainer = (container.Length > 0) ? true : false;
                 this.container = container;
             }
 
             public Grouping(string typeOfGrouping) : this(typeOfGrouping, "")
             {
-            }
-
-            public void AddGroup(List<ICLPPageObject> group) {
-                groups.Add(OrganizeGroupOfPageObjectsByType(group));
-            }
-
             public void AddAllOrganizedGroups(List<Dictionary<string, List<ICLPPageObject>>> organizedGroups) {
                 groups.AddRange(organizedGroups);
             }
@@ -134,77 +141,15 @@ namespace CLP.Models
                 return groups;
             }
 
-            public string toString() {
-                StringBuilder answer = new StringBuilder(type);
-                answer.Append(": ");
-                answer.Append(groups.Count);
                 answer.AppendLine(" Groups - ");
                 if (hasContainer) {
                     answer.Append("\t Container: ");
                     answer.AppendLine(container);
                 }
-                foreach (Dictionary<string, List<ICLPPageObject>> dicOfGroup in groups) {
                     answer.AppendLine("\t Group:");
-                    foreach (string key in dicOfGroup.Keys) {
-                        List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
                         answer.Append("\t\t");
-                        answer.Append(objectsOfGroup.Count);
-                        answer.Append(" ");
-                        answer.Append(key);
-                        answer.Append(" of ");
-                        answer.Append(objectsOfGroup[0].Parts);
-                        answer.Append(" Parts");
                         answer.AppendLine("; ");
-                    }
-                }
-                return answer.ToString();
-            }
-        }
-
-        private static Dictionary<string, List<ICLPPageObject>> OrganizeGroupOfPageObjectsByType(List<ICLPPageObject> group) {
-                Dictionary<string, List<ICLPPageObject>> groupOrganized =
-                    new Dictionary<string, List<ICLPPageObject>>();
-                foreach (ICLPPageObject po in group)
-                {
-                    String key = GetObjectGroupingType(po);
-                    List<ICLPPageObject> objectsInGroup;
-                    if (groupOrganized.ContainsKey(key))
-                    {
-                        objectsInGroup = groupOrganized[key];
-                        groupOrganized.Remove(key);
-                    }
-                    else
-                    {
-                        objectsInGroup = new List<ICLPPageObject>();
-                    }
-                    objectsInGroup.Add(po);
-                    groupOrganized.Add(key, objectsInGroup);
-                }
-                return groupOrganized;
-            }
-
-        /* Many objects such as tiles and stamps don't use their generic type of object for
-         * grouping purposes. */
-        private static string GetObjectGroupingType(ICLPPageObject po) {
-            if (po.GetType().Equals(typeof(CLPStrokePathContainer)))
-            {
-                return "CLPStamp-" + (po as CLPStrokePathContainer).ParentID;
-            }
-            else if (po.GetType().Equals(typeof(CLPSnapTileContainer)))
-            {
-                return "Tiles" + (po as CLPSnapTileContainer).NumberOfTiles;
-            }
-            else if (po.GetType().Equals(typeof(CLPShape)))
-            {
-                return (po as CLPShape).ShapeType.ToString();
-            }
-            else
-            {
-                return po.GetType().ToString();
-            }
-        }
-
-        private bool ValidObjectForGrouping(ICLPPageObject po) {
+        {
             return PageObjectIsOver(po, .8) && po.Parts >= 0 && po.GetType() != typeof(CLPStamp);
         }
 
@@ -272,10 +217,10 @@ namespace CLP.Models
                 (possibleContainer[0].Parts == 0 || possibleContainer[0].Parts == 1));
         }
 
-        #endregion
 
-        private Grouping BasicGrouping() {
-            Grouping group = new Grouping("Basic Grouping");
+        private CLPGrouping BasicGrouping()
+        {
+            CLPGrouping group = new CLPGrouping("Basic Grouping");
             List<ICLPPageObject> validGroupingObjects = new List<ICLPPageObject>();
             foreach (ICLPPageObject po in ParentPage.PageObjects) {
                 if (ValidObjectForGrouping(po))
@@ -285,7 +230,7 @@ namespace CLP.Models
             }
 
             Dictionary<string, List<ICLPPageObject>> groupsByObject =
-                OrganizeGroupOfPageObjectsByType(validGroupingObjects);
+                CLPGrouping.OrganizeGroupOfPageObjectsByType(validGroupingObjects);
             foreach (string key in groupsByObject.Keys)
             {
                 group.AddGroup(groupsByObject[key]);
@@ -294,15 +239,15 @@ namespace CLP.Models
         }
 
         #region Ink Grouping
-        private Grouping InkGrouping()
         {
+                    CLPGrouping group = new CLPGrouping("Ink Grouping");
+
             // We need the ink shape region to be the same box as the grouping region, but without overloading the
             // properties of the parent class. Updates to the grouping region's size, etc. will not be seen by its
             // internal ink shape region.
             setInkShapeRegionAttributes();
             inkShapeRegion.DoInterpretation();
             Console.WriteLine("inkShapes" + inkShapeRegion.InkShapesString);
-            Grouping group = new Grouping("Ink Grouping");
             return group;
         }
 
@@ -316,7 +261,8 @@ namespace CLP.Models
 
         #region Distance Grouping
 
-        private Grouping DistanceClustering() {
+        private CLPGrouping DistanceClustering()
+        {
             HashSet<DistanceGroup> groups = new HashSet<DistanceGroup>();
             foreach (ICLPPageObject po in ParentPage.PageObjects)
             {
@@ -330,7 +276,7 @@ namespace CLP.Models
             while (canCombine && groups.Count > 1) {
                 canCombine = combineGroups(groups);
             }
-            Grouping grouping = new Grouping("Distance Grouping");
+            CLPGrouping grouping = new CLPGrouping("Distance Grouping");
             foreach (DistanceGroup group in groups)
             {
                 grouping.AddGroup(group.groupObjects);

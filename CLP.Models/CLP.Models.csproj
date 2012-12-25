@@ -94,6 +94,7 @@
     <Compile Include="CLPPageObjects\CLPAudio.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPDataTable.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPGroupingRegion.cs" />
+    <Compile Include="CLPPageObjects\Ink Regions\CLPGrouping.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\ICLPPageObject.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPHandwritingRegion.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPInkShapeRegion.cs" />
