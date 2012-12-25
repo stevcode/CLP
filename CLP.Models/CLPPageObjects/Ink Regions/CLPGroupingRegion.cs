@@ -18,6 +18,7 @@ namespace CLP.Models
         public CLPGroupingRegion(CLPPage page) : base(page)
         {
             StoredAnswer = "";
+            inkShapeRegion = new CLPInkShapeRegion(ParentPage);
         }
 
         /// <summary>
@@ -53,6 +54,20 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public CLPInkShapeRegion inkShapeRegion
+        {
+            get { return GetValue<CLPInkShapeRegion>(inkShapeRegionProperty); }
+            set { SetValue(inkShapeRegionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the inkShapeRegion property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("inkShapeRegion", typeof(CLPInkShapeRegion), null);
+
         #endregion // Properties
 
         #region Methods
@@ -60,7 +75,7 @@ namespace CLP.Models
         public override void DoInterpretation()
         {
             List<Grouping> groupings = new List<Grouping>();
-            //AddGrouping(InkGrouping(), true, groupings);
+            AddGrouping(InkGrouping(), true, groupings);
             AddGrouping(DistanceClustering(), true, groupings);
             AddGrouping(BasicGrouping(), false, groupings);
             StringBuilder interpretation = new StringBuilder();
@@ -149,11 +164,9 @@ namespace CLP.Models
         private static Dictionary<string, List<ICLPPageObject>> OrganizeGroupOfPageObjectsByType(List<ICLPPageObject> group) {
                 Dictionary<string, List<ICLPPageObject>> groupOrganized =
                     new Dictionary<string, List<ICLPPageObject>>();
-                Console.WriteLine("Original Number Of Objects: " + group.Count);
                 foreach (ICLPPageObject po in group)
                 {
                     String key = GetObjectGroupingType(po);
-                    Console.WriteLine("Key: " + key);
                     List<ICLPPageObject> objectsInGroup;
                     if (groupOrganized.ContainsKey(key))
                     {
@@ -166,9 +179,6 @@ namespace CLP.Models
                     }
                     objectsInGroup.Add(po);
                     groupOrganized.Add(key, objectsInGroup);
-                }
-                foreach (string key in groupOrganized.Keys) {
-                    Console.WriteLine("Key:" + key + " - Number of items: " + groupOrganized[key].Count);
                 }
                 return groupOrganized;
             }
@@ -283,12 +293,26 @@ namespace CLP.Models
             return group;
         }
 
+        #region Ink Grouping
         private Grouping InkGrouping()
         {
+            // We need the ink shape region to be the same box as the grouping region, but without overloading the
+            // properties of the parent class. Updates to the grouping region's size, etc. will not be seen by its
+            // internal ink shape region.
+            setInkShapeRegionAttributes();
+            inkShapeRegion.DoInterpretation();
+            Console.WriteLine("inkShapes" + inkShapeRegion.InkShapesString);
             Grouping group = new Grouping("Ink Grouping");
-            //CLPInkShapeRegion inkShapeRegion = new CLPInkShapeRegion(ParentPage);
             return group;
         }
+
+        private void setInkShapeRegionAttributes() {
+            inkShapeRegion.Width = Width;
+            inkShapeRegion.Height = Height;
+            inkShapeRegion.XPosition = XPosition;
+            inkShapeRegion.YPosition = YPosition;
+        }
+        #endregion
 
         #region Distance Grouping
 
@@ -341,9 +365,6 @@ namespace CLP.Models
             }
 
             double threshold = 2;
-            Console.WriteLine("Average 0: " + combineTheseGroups[0].average());
-            Console.WriteLine("Average 1: " + combineTheseGroups[1].average());
-            Console.WriteLine("SmallestDistanceGroup: " + smallestDistanceGroups);
             if (combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
                 combineTheseGroups[1].average() * threshold >= smallestDistanceGroups)
             {

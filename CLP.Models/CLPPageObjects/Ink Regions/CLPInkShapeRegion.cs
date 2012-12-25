@@ -76,6 +76,7 @@ namespace CLP.Models
         public override void DoInterpretation()
         {
             //ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
+            RefreshStrokeParentIDs();
             ContextNodeCollection shapes = InkInterpretation.InterpretShapes(GetStrokesOverPageObject());
             if (shapes != null)
             {
@@ -86,7 +87,6 @@ namespace CLP.Models
                     string shapeName = shape.GetShapeName();
                     if (shape.GetShapeName().Equals("Other") && shape.Strokes.Count == 1)
                     {
-                        Console.WriteLine("Width: " + shape.Strokes.GetBounds().Width + "; Height: " + shape.Strokes.GetBounds().Height);
                         if (shape.Strokes.GetBounds().Height < lineThreshold) {
                             shapeName = "Horizontal";
                         }
