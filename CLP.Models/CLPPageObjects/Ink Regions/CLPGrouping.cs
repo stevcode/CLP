@@ -12,10 +12,18 @@ namespace CLP.Models
     {
 
         #region Constructor
-        public CLPGrouping(string typeOfGrouping)
+
+        public CLPGrouping(string typeOfGrouping, string container)
         {
+            HasContainer = (container.Length > 0) ? true : false;
+            Container = container;
             GroupingType = typeOfGrouping;
         }
+
+        public CLPGrouping(string typeOfGrouping)
+            : this(typeOfGrouping, "")
+        { }
+
         #endregion
 
         #region Properties
@@ -47,6 +55,34 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData GroupsProperty = RegisterProperty("Groups", typeof(List<Dictionary<string, List<ICLPPageObject>>>), () => new List<Dictionary<string, List<ICLPPageObject>>>());
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool HasContainer
+        {
+            get { return GetValue<bool>(HasContainerProperty); }
+            set { SetValue(HasContainerProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HasContainer property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HasContainerProperty = RegisterProperty("HasContainer", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string Container
+        {
+            get { return GetValue<string>(ContainerProperty); }
+            set { SetValue(ContainerProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Container property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ContainerProperty = RegisterProperty("Container", typeof(string), "");
+
         #endregion
 
         #region Methods
@@ -62,22 +98,35 @@ namespace CLP.Models
             answer.Append(": ");
             answer.Append(Groups.Count);
             answer.Append(" Groups - ");
+            if (HasContainer)
+            {
+                answer.Append("\t Container: ");
+                answer.AppendLine(Container);
+            }
             foreach (Dictionary<string, List<ICLPPageObject>> dicOfGroup in Groups)
             {
                 foreach (string key in dicOfGroup.Keys)
                 {
                     List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
+                    answer.AppendLine("\t Group:");
+                    answer.Append("\t\t");
                     answer.Append(objectsOfGroup.Count);
                     answer.Append(" ");
                     answer.Append(key);
                     answer.Append(" of ");
                     answer.Append(objectsOfGroup[0].Parts);
                     answer.Append(" Parts");
-                    answer.Append("; ");
+                    answer.AppendLine("; ");
                 }
             }
             return answer.ToString();
         }
+
+        public void AddAllOrganizedGroups(List<Dictionary<string, List<ICLPPageObject>>> organizedGroups)
+        {
+            Groups.AddRange(organizedGroups);
+        }
+
 
         public static Dictionary<string, List<ICLPPageObject>> OrganizeGroupOfPageObjectsByType(List<ICLPPageObject> group)
         {

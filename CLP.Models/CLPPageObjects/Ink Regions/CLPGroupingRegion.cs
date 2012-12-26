@@ -13,10 +13,10 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPGroupingRegion(CLPPage page) : base(page)
+        public CLPGroupingRegion(CLPPage page)
+            : base(page)
         {
-            StoredAnswer = "";
-            inkShapeRegion = new CLPInkShapeRegion(ParentPage);
+            InkShapeRegion = new CLPInkShapeRegion(ParentPage);
         }
 
         /// <summary>
@@ -55,20 +55,18 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPInkShapeRegion inkShapeRegion
+        public CLPInkShapeRegion InkShapeRegion
         {
             get { return GetValue<CLPInkShapeRegion>(inkShapeRegionProperty); }
             set { SetValue(inkShapeRegionProperty, value); }
         }
 
         /// <summary>
-        /// Register the inkShapeRegion property so it is known in the class.
+        /// Register the InkShapeRegion property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("inkShapeRegion", typeof(CLPInkShapeRegion), null);
+        public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("InkShapeRegion", typeof(CLPInkShapeRegion), null);
 
-
-
-                /// <summary>
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<CLPGrouping> Groupings
@@ -82,7 +80,6 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData GroupingsProperty = RegisterProperty("Groupings", typeof(ObservableCollection<CLPGrouping>), () => new ObservableCollection<CLPGrouping>());
 
-
         #endregion // Properties
 
         #region Methods
@@ -90,9 +87,9 @@ namespace CLP.Models
         public override void DoInterpretation()
         {
             Groupings.Clear();
-            AddGrouping(InkGrouping(), true, groupings);
-            AddGrouping(DistanceClustering(), true, groupings);
-            AddGrouping(BasicGrouping(), false, groupings);
+            AddGrouping(InkGrouping(), true, Groupings);
+            AddGrouping(DistanceClustering(), true, Groupings);
+            AddGrouping(BasicGrouping(), false, Groupings);
             StringBuilder interpretation = new StringBuilder();
             foreach (CLPGrouping grouping in Groupings)
             {
@@ -101,70 +98,41 @@ namespace CLP.Models
             StoredAnswer = interpretation.ToString();
         }
 
-        private void AddGrouping(Grouping group, bool checkForContainers, List<Grouping> groupingCollection) {
-            if (group.getGroups().Count > 0) {
+        private void AddGrouping(CLPGrouping group, bool checkForContainers, ObservableCollection<CLPGrouping> groupingCollection)
+        {
+            if (group.Groups.Count > 0)
+            {
                 groupingCollection.Add(group);
-                if (checkForContainers) {
-                    List<Grouping> containerGroups = DetectContainer(group);
+                if (checkForContainers)
+                {
+                    List<CLPGrouping> containerGroups = DetectContainer(group);
                     if (containerGroups != null)
                     {
-                        groupingCollection.AddRange(containerGroups);
+                        foreach (CLPGrouping container in containerGroups)
+                        {
+                            groupingCollection.Add(container);
+                        }
                     }
                 }
             }
         }
-        
-                private bool ValidObjectForGrouping(ICLPPageObject po)
+
+        private bool ValidObjectForGrouping(ICLPPageObject po)
         {
             return PageObjectIsOver(po, .8) && po.Parts >= 0 && po.GetType() != typeof(CLPStamp);
         }
-
-
-            private bool hasContainer;
-            private string container;
-            public Grouping(string typeOfGrouping, string container)  {
-                hasContainer = (container.Length > 0) ? true : false;
-                this.container = container;
-            }
-
-            public Grouping(string typeOfGrouping) : this(typeOfGrouping, "")
-            {
-            public void AddAllOrganizedGroups(List<Dictionary<string, List<ICLPPageObject>>> organizedGroups) {
-                groups.AddRange(organizedGroups);
-            }
-
-            public string getTypeOfGroup() {
-                return type;
-            }
-
-            public List<Dictionary<string, List<ICLPPageObject>>> getGroups() {
-                return groups;
-            }
-
-                answer.AppendLine(" Groups - ");
-                if (hasContainer) {
-                    answer.Append("\t Container: ");
-                    answer.AppendLine(container);
-                }
-                    answer.AppendLine("\t Group:");
-                        answer.Append("\t\t");
-                        answer.AppendLine("; ");
-        {
-            return PageObjectIsOver(po, .8) && po.Parts >= 0 && po.GetType() != typeof(CLPStamp);
-        }
-
-        #endregion
 
         #region Containers
-        private List<Grouping> DetectContainer(Grouping group)
+        private List<CLPGrouping> DetectContainer(CLPGrouping group)
         {
             List<string> possibleContainers = new List<string>();
-            List<Dictionary<string, List<ICLPPageObject>>> groups = group.getGroups();
+            List<Dictionary<string, List<ICLPPageObject>>> groups = group.Groups;
             // Go through first group to make a base of possible containers
             foreach (string key in groups[0].Keys)
             {
                 List<ICLPPageObject> objectsOfGroup = groups[0][key];
-                if (IsContainer(objectsOfGroup)) {
+                if (IsContainer(objectsOfGroup))
+                {
                     possibleContainers.Add(key);
                 }
             }
@@ -194,16 +162,18 @@ namespace CLP.Models
             {
                 // Usually this list will only be one item, but we consider that multiple might occasionally
                 // occur.
-                List<Grouping> containerGroups = new List<Grouping>();
-                foreach (String containerKey in possibleContainers) {
-                    Grouping containerGroup = new Grouping("Container" + group.GetType(), containerKey);
+                List<CLPGrouping> containerGroups = new List<CLPGrouping>();
+                foreach (String containerKey in possibleContainers)
+                {
+                    CLPGrouping containerGroup = new CLPGrouping("Container" + group.GetType(), containerKey);
                     List<Dictionary<string, List<ICLPPageObject>>> groupsAugmented = new List<Dictionary<string, List<ICLPPageObject>>>(groups);
-                    foreach (Dictionary<string, List<ICLPPageObject>> grouping in groupsAugmented) {
+                    foreach (Dictionary<string, List<ICLPPageObject>> grouping in groupsAugmented)
+                    {
                         grouping.Remove(containerKey);
                     }
                     containerGroup.AddAllOrganizedGroups(groupsAugmented);
                     containerGroups.Add(containerGroup);
-                }  
+                }
                 return containerGroups;
             }
             else
@@ -212,17 +182,19 @@ namespace CLP.Models
             }
         }
 
-        private bool IsContainer(List<ICLPPageObject> possibleContainer){
+        private bool IsContainer(List<ICLPPageObject> possibleContainer)
+        {
             return (possibleContainer.Count == 1 &&
                 (possibleContainer[0].Parts == 0 || possibleContainer[0].Parts == 1));
         }
-
+        #endregion
 
         private CLPGrouping BasicGrouping()
         {
             CLPGrouping group = new CLPGrouping("Basic Grouping");
             List<ICLPPageObject> validGroupingObjects = new List<ICLPPageObject>();
-            foreach (ICLPPageObject po in ParentPage.PageObjects) {
+            foreach (ICLPPageObject po in ParentPage.PageObjects)
+            {
                 if (ValidObjectForGrouping(po))
                 {
                     validGroupingObjects.Add(po);
@@ -239,23 +211,25 @@ namespace CLP.Models
         }
 
         #region Ink Grouping
+        private CLPGrouping InkGrouping()
         {
-                    CLPGrouping group = new CLPGrouping("Ink Grouping");
+            CLPGrouping group = new CLPGrouping("Ink Grouping");
 
             // We need the ink shape region to be the same box as the grouping region, but without overloading the
             // properties of the parent class. Updates to the grouping region's size, etc. will not be seen by its
             // internal ink shape region.
             setInkShapeRegionAttributes();
-            inkShapeRegion.DoInterpretation();
-            Console.WriteLine("inkShapes" + inkShapeRegion.InkShapesString);
+            InkShapeRegion.DoInterpretation();
+            Console.WriteLine("inkShapes" + InkShapeRegion.InkShapesString);
             return group;
         }
 
-        private void setInkShapeRegionAttributes() {
-            inkShapeRegion.Width = Width;
-            inkShapeRegion.Height = Height;
-            inkShapeRegion.XPosition = XPosition;
-            inkShapeRegion.YPosition = YPosition;
+        private void setInkShapeRegionAttributes()
+        {
+            InkShapeRegion.Width = Width;
+            InkShapeRegion.Height = Height;
+            InkShapeRegion.XPosition = XPosition;
+            InkShapeRegion.YPosition = YPosition;
         }
         #endregion
 
@@ -273,7 +247,8 @@ namespace CLP.Models
             }
             Boolean canCombine = true;
             // Check to make sure that there are valid objects to group
-            while (canCombine && groups.Count > 1) {
+            while (canCombine && groups.Count > 1)
+            {
                 canCombine = combineGroups(groups);
             }
             CLPGrouping grouping = new CLPGrouping("Distance Grouping");
@@ -284,23 +259,28 @@ namespace CLP.Models
             return grouping;
         }
 
-        private Boolean combineGroups(HashSet<DistanceGroup> groups) {
+        private Boolean combineGroups(HashSet<DistanceGroup> groups)
+        {
             double smallestDistanceGroups = Double.MaxValue;
             List<DistanceGroup> combineTheseGroups = new List<DistanceGroup>(2);
-            foreach (DistanceGroup groupA in groups) {
+            foreach (DistanceGroup groupA in groups)
+            {
                 foreach (DistanceGroup groupB in groups)
                 {
                     // Make sure not the same group
-                    if (!groupA.Equals(groupB)) {
+                    if (!groupA.Equals(groupB))
+                    {
                         double smallestDistance = Double.MaxValue;
-                        foreach (ICLPPageObject poA in groupA.groupObjects) {
+                        foreach (ICLPPageObject poA in groupA.groupObjects)
+                        {
                             foreach (ICLPPageObject poB in groupB.groupObjects)
                             {
                                 double distance = getDistanceBetweenPageObjects(poA, poB);
                                 smallestDistance = (distance < smallestDistance) ? distance : smallestDistance;
                             }
                         }
-                        if (smallestDistance < smallestDistanceGroups) {
+                        if (smallestDistance < smallestDistanceGroups)
+                        {
                             smallestDistanceGroups = smallestDistance;
                             combineTheseGroups = new List<DistanceGroup>(2);
                             combineTheseGroups.Add(groupA);
@@ -325,16 +305,19 @@ namespace CLP.Models
             }
         }
 
-        private class DistanceGroup {
+        private class DistanceGroup
+        {
             public List<ICLPPageObject> groupObjects;
             public List<double> metrics = new List<double>();
 
-            public DistanceGroup(ICLPPageObject po) {
+            public DistanceGroup(ICLPPageObject po)
+            {
                 groupObjects = new List<ICLPPageObject>();
                 groupObjects.Add(po);
             }
 
-            public void combineGroup(DistanceGroup group, double metricBetween) {
+            public void combineGroup(DistanceGroup group, double metricBetween)
+            {
                 foreach (ICLPPageObject po in group.groupObjects)
                 {
                     groupObjects.Add(po);
@@ -342,12 +325,14 @@ namespace CLP.Models
                 }
             }
 
-            public double average() {
+            public double average()
+            {
                 if (metrics.Count > 0)
                 {
                     return metrics.Average();
                 }
-                else {
+                else
+                {
                     return double.MaxValue;
                 }
             }
@@ -360,7 +345,9 @@ namespace CLP.Models
             {
                 x -= pageObject1.Width;
                 x = (x < 0) ? 0 : x;
-            } else if (x < 0) {
+            }
+            else if (x < 0)
+            {
                 x *= -1;
                 x -= pageObject2.Width;
                 x = (x < 0) ? 0 : x;
