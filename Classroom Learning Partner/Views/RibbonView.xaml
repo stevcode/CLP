@@ -356,7 +356,14 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
-                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                        <ContentPresenter Grid.Column="1"
+                                                          ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                          Content="{TemplateBinding Header}" 
+                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                          ContentSource="Header" 
+                                                          Margin="{TemplateBinding Padding}" 
+                                                          RecognizesAccessKey="True" 
+                                                          VerticalAlignment="Center"/>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -394,6 +401,7 @@
                         Command="{Binding Path=AddPageTopicCommand}" />
 
             </RibbonGroup>
+            
             <RibbonGroup Header="Text">
 
                 <RibbonButton
@@ -417,7 +425,7 @@
                     <RibbonToggleButton
                             x:Name="BoldButton"
                             SmallImageSource="..\Images\Bold16.png"
-                            Command="{x:Static EditingCommands.ToggleBold}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            Command="{x:Static EditingCommands.ToggleBold}">
                         <RibbonToggleButton.ControlSizeDefinition>
                             <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>
@@ -426,7 +434,7 @@
                     <RibbonToggleButton
                             x:Name="ItalicButton"
                             SmallImageSource="..\Images\Italic16.png"
-                            Command="{x:Static EditingCommands.ToggleItalic}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            Command="{x:Static EditingCommands.ToggleItalic}">
                         <RibbonToggleButton.ControlSizeDefinition>
                             <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>
@@ -435,7 +443,7 @@
                     <RibbonToggleButton
                             x:Name="UnderlineButton"
                             SmallImageSource="..\Images\Underline16.png"
-                            Command="{x:Static EditingCommands.ToggleUnderline}" CommandTarget="{Binding ElementName=RichTextBox}">
+                            Command="{x:Static EditingCommands.ToggleUnderline}">
                         <RibbonToggleButton.ControlSizeDefinition>
                             <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>

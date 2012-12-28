@@ -4,21 +4,21 @@
     using Classroom_Learning_Partner.ViewModels;
 
     /// <summary>
-    /// Interaction logic for WebcamPanel.xaml.
+    /// Interaction logic for DisplayListPanelView.xaml.
     /// </summary>
-    public partial class WebcamPanelView : UserControl
+    public partial class DisplayListPanelView : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebcamPanel"/> class.
+        /// Initializes a new instance of the <see cref="DisplayListPanelView"/> class.
         /// </summary>
-        public WebcamPanelView()
+        public DisplayListPanelView()
         {
             InitializeComponent();
         }
 
         protected override System.Type GetViewModelType()
         {
-            return typeof(WebcamPanelViewModel);
+            return typeof(DisplayListPanelViewModel);
         }
     }
 }

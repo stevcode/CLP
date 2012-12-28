@@ -193,6 +193,7 @@
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
@@ -299,6 +300,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\DisplayListPanelView.xaml.cs">
+      <DependentUpon>DisplayListPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
@@ -433,6 +437,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPTextBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\DisplayListPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
