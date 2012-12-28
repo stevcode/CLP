@@ -222,7 +222,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch(System.Exception ex)
             {
-                Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
+                Classroom_Learning_Partner.Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
         }
 

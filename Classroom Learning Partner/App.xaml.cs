@@ -45,7 +45,7 @@ namespace Classroom_Learning_Partner
             _currentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
-            Classroom_Learning_Partner.Model.Logger.Instance.InitializeLog();
+            Classroom_Learning_Partner.Logger.Instance.InitializeLog();
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
             
             if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
@@ -86,7 +86,7 @@ namespace Classroom_Learning_Partner
             e.Exception.Message + (e.Exception.InnerException != null ? "\n" +
             e.Exception.InnerException.Message : null));
 
-            Classroom_Learning_Partner.Model.Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
+            Classroom_Learning_Partner.Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
 
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
             {

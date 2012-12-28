@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 
-namespace Classroom_Learning_Partner.Model
+namespace Classroom_Learning_Partner
 {
-    //logger.instance.writetolog("");
     public class Logger
     {
         static readonly Logger _instance = new Logger();
