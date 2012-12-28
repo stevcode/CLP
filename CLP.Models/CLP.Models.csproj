@@ -83,6 +83,7 @@
     <Compile Include="CLPHistoryItem.cs" />
     <Compile Include="CLPNotebook.cs" />
     <Compile Include="CLPPage.cs" />
+    <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
     <Compile Include="CLPPageObjects\CLPImage.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPGroupingRegion.cs" />
     <Compile Include="CLPPageObjects\CLPShape.cs" />

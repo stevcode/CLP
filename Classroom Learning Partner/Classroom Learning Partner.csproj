@@ -193,8 +193,10 @@
     <Compile Include="Model\PeerNode.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />
@@ -230,7 +232,6 @@
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
-    <Compile Include="Views\Controls\BindableInkCanvas.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
@@ -261,6 +262,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookNamerWindowView.xaml.cs">
       <DependentUpon>NotebookNamerWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPAggregationDataTableView.xaml.cs">
+      <DependentUpon>CLPAggregationDataTableView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
@@ -385,6 +389,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookNamerWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPAggregationDataTableView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

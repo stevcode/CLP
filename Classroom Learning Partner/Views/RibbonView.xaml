@@ -473,6 +473,11 @@
                         LargeImageSource="..\Images\AddImage.png"
                         Command="{Binding Path=InsertImageCommand}" />
 
+                <RibbonButton
+                        Label="Insert AggregationDataTable"
+                        LargeImageSource="..\Images\AddImage.png"
+                        Command="{Binding Path=InsertAggregationDataTableCommand}" />
+
                 <RibbonMenuButton Label="Stamps"
                          LargeImageSource="..\Images\LargeIcon.png">
                     <RibbonMenuButton.ItemContainerStyle>

@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using Catel.Data;
 using System.Runtime.Serialization;
-using Catel.Runtime.Serialization;
+using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
     public class CLPTextBox : CLPPageObjectBase
     {
-        #region Variables
-        #endregion
-
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.

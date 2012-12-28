@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
-using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -44,9 +41,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SourceImageProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SourceImage property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null);
 
         #endregion //Binding
