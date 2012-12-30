@@ -320,6 +320,7 @@ namespace CLP.Models
         public virtual bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
             double areaObject = pageObject.Height * pageObject.Width;
+            double area = Height * Width;
             double top = Math.Max(YPosition, pageObject.YPosition);
             double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
             double left = Math.Max(XPosition, pageObject.XPosition);
@@ -327,7 +328,7 @@ namespace CLP.Models
             double deltaY = bottom - top;
             double deltaX = right - left;
             double intersectionArea = deltaY * deltaX;
-            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
         public virtual void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)

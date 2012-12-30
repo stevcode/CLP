@@ -234,6 +234,9 @@
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
+      <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
       <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
     </Compile>
@@ -347,6 +350,10 @@
     <Page Include="Resources\MainWindowResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>

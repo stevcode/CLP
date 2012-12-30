@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -25,7 +26,8 @@ namespace Classroom_Learning_Partner.ViewModels
         Pen,
         Marker,
         Eraser,
-        StrokeEraser
+        StrokeEraser,
+        EditObjectProperties
     }
 
     public enum PageEraserInteractionMode
@@ -390,6 +392,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 Point pt = e.GetPosition(pageObjectCanvas);
                 CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
+            }
+            else if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.EditObjectProperties) {
+                CLPShape dummyShape = new CLPShape(CLPShape.CLPShapeType.Rectangle, Page);
+                dummyShape.Height = 1;
+                dummyShape.Width = 1;
+                System.Windows.Point mousePosition = e.GetPosition(TopCanvas);
+                dummyShape.XPosition = mousePosition.X;
+                dummyShape.YPosition = mousePosition.Y;
+                ICLPPageObject selectedObject = null;
+                foreach (ICLPPageObject po in Page.PageObjects) {
+                    if (dummyShape.PageObjectIsOver(po, .8)) {
+                        selectedObject = po;
+                    }
+                }
+                if (selectedObject != null)
+                {
+                    UpdatePropertiesWindowView properties = new UpdatePropertiesWindowView();
+                    properties.Owner = Application.Current.MainWindow;
+                    properties.WindowStartupLocation = WindowStartupLocation.Manual;
+                    properties.Top = 100;
+                    properties.Left = 100;
+                    properties.UniqueIdTextBlock.Text = selectedObject.UniqueID;
+                    properties.ParentIdTextBox.Text = selectedObject.ParentID;
+                    properties.PartsTextBox.Text = selectedObject.Parts.ToString();
+                    properties.ShowDialog();
+                    if (properties.DialogResult == true)
+                    {
+                        int partNum;
+                        bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
+                        selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
+                                Int32.Parse(properties.PartsTextBox.Text) : -1;
+                        selectedObject.ParentID = properties.ParentIdTextBox.Text;
+                    }
+                }
             }
         }
 

@@ -14,9 +14,6 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty PartsPropertyKey = DependencyProperty.Register(
-               "Parts", typeof(String), typeof(KeypadWindowView), new FrameworkPropertyMetadata(" "));
-
         private void ValueButton_Click(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
@@ -25,7 +22,15 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
+            int partNum;
+            bool isNum = Int32.TryParse(NumbersEntered.Text, out partNum);
+            if (NumbersEntered.Text.Length > 0 && isNum)
+            {
+                this.DialogResult = true;
+            }
+            else {
+                MessageBox.Show("Oops, the parts doesn't look quite right. Are you sure it is a positive integer?", "Oops");
+            }
         }
 
         private void BackspaceButton_Click(object sender, RoutedEventArgs e)

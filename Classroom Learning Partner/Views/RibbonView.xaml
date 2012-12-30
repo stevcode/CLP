@@ -125,7 +125,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Tools">
+            <RibbonGroup Header="Tools" x:Name="ToolsRibbonGroup">
 
                 <RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -643,6 +643,15 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InterpretPageCommand}" />
 
+                <RibbonToggleButton
+                    x:Name="EditObjectPropertiesToggleButton"
+                    Click="DebugGroupToggle_Clicked"
+                    IsChecked="False"
+                    Label="Edit Object Properties"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=UpdateObjectPropertiesCommand}"/>
+
+
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
@@ -656,7 +665,6 @@
                         Label="Whole Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=ZoomToWholePageCommand}" />
-
             </RibbonGroup>
 
         </RibbonTab>

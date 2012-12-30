@@ -192,6 +192,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+            UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
         }
@@ -1977,6 +1978,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     (pageObject as CLPGroupingRegion).DoInterpretation();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the UpdateObjectPropertiesCommand command.
+        /// </summary>
+        public Command UpdateObjectPropertiesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the UpdateObjectPropertiesCommand command is executed.
+        /// </summary>
+        private void OnUpdateObjectPropertiesCommandExecute()
+        {
+            PageInteractionMode = PageInteractionMode.EditObjectProperties;
         }
 
         /// <summary>
