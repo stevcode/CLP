@@ -24,6 +24,16 @@ namespace CLP.Models
             : this(typeOfGrouping, "")
         { }
 
+        /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected CLPGrouping(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
         #endregion
 
         #region Properties
