@@ -107,7 +107,7 @@ namespace CLP.Models
             StringBuilder answer = new StringBuilder(GroupingType);
             answer.Append(": ");
             answer.Append(Groups.Count);
-            answer.Append(" Groups - ");
+            answer.AppendLine(" Groups - ");
             if (HasContainer)
             {
                 answer.Append("\t Container: ");
