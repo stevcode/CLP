@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -243,25 +244,32 @@ namespace CLP.Models
             HashSet<DistanceGroup> groups = new HashSet<DistanceGroup>();
             foreach (ICLPPageObject po in validGroupingObjects)
             {
-                groups.Add(new DistanceGroup(po));
+                groups.Add(new DistanceGroup(new DistanceObject(po)));
             }
             Boolean canCombine = true;
             // Check to make sure that there are valid objects to group
+            int count = 0;
             while (canCombine && groups.Count > 1)
             {
+                Console.WriteLine("Iteration: " + count);
+                count++;
                 foreach(DistanceGroup g in groups){
-                    Console.WriteLine("Group:");
-                    foreach (ICLPPageObject po in g.groupObjects) {
-                        Console.Write (po.UniqueID + " "+ po.GetType() + ", ");
+                    Console.Write("Group:");
+                    foreach (DistanceObject distOb in g.groupObjects) {
+                        Console.Write(distOb.po.UniqueID + " ");
                     }
-                    Console.Write("; Average: " + g.average());
+                    Console.WriteLine("; Average: " + g.average());
                 }
                 canCombine = combineGroups(groups);
             }
             CLPGrouping grouping = new CLPGrouping("Distance Grouping");
             foreach (DistanceGroup group in groups)
             {
-                grouping.AddGroup(group.groupObjects);
+                List<ICLPPageObject> poInGroup = new List<ICLPPageObject>();
+                foreach (DistanceObject disObj in group.groupObjects) {
+                    poInGroup.Add(disObj.po);
+                }
+                grouping.AddGroup(poInGroup);
             }
             return grouping;
         }
@@ -278,12 +286,13 @@ namespace CLP.Models
                     if (!groupA.Equals(groupB))
                     {
                         double smallestDistance = Double.MaxValue;
-                        foreach (ICLPPageObject poA in groupA.groupObjects)
+                        foreach (DistanceObject poA in groupA.groupObjects)
                         {
-                            foreach (ICLPPageObject poB in groupB.groupObjects)
+                            foreach (DistanceObject poB in groupB.groupObjects)
                             {
                                 double distance = getDistanceBetweenPageObjects(poA, poB);
                                 smallestDistance = (distance < smallestDistance) ? distance : smallestDistance;
+                                Console.WriteLine("smallestDistance: " + smallestDistance + "; POA: " + poA.po.UniqueID + "; POB: " + poB.po.UniqueID);
                             }
                         }
                         if (smallestDistance < smallestDistanceGroups)
@@ -297,7 +306,8 @@ namespace CLP.Models
                 }
             }
 
-            double threshold = 1.5;
+            double threshold = 2;
+            Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].average());
             if (combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
                 combineTheseGroups[1].average() * threshold >= smallestDistanceGroups)
             {
@@ -314,19 +324,19 @@ namespace CLP.Models
 
         private class DistanceGroup
         {
-            public List<ICLPPageObject> groupObjects;
+            public List<DistanceObject> groupObjects;
             public List<double> metrics = new List<double>();
 
-            public DistanceGroup(ICLPPageObject po)
+            public DistanceGroup(DistanceObject po)
             {
-                groupObjects = new List<ICLPPageObject>();
+                groupObjects = new List<DistanceObject>();
                 groupObjects.Add(po);
             }
 
             public void combineGroup(DistanceGroup group, double metricBetween)
             {
-                Console.Write("; Metric: " + metricBetween);
-                foreach (ICLPPageObject po in group.groupObjects)
+                Console.WriteLine("Metric: " + metricBetween);
+                foreach (DistanceObject po in group.groupObjects)
                 {
                     groupObjects.Add(po);
                     metrics.Add(metricBetween);
@@ -347,7 +357,83 @@ namespace CLP.Models
 
         }
 
-        private double getDistanceBetweenPageObjects(ICLPPageObject pageObject1, ICLPPageObject pageObject2)
+        private class DistanceObject {
+            public ICLPPageObject po;
+            public double Width;
+            public double Height;
+            public double XPosition;
+            public double YPosition;
+
+            public DistanceObject(ICLPPageObject po)
+            {
+                this.po = po;
+                Tuple<double, double, double, double> visWidth = findVisibleWidthHeight(po);
+                XPosition = po.XPosition + visWidth.Item1;
+                Width = visWidth.Item2 - visWidth.Item1;
+                YPosition = po.YPosition + visWidth.Item3;
+                Height = visWidth.Item4 - visWidth.Item3;
+            }
+
+            // XPosition, XPosition+Width, YPosition, YPosition + Height OR left, right, top, bottom
+            private Tuple<double, double, double, double> findVisibleWidthHeight(ICLPPageObject po) {
+                double visibleLeft = Double.MaxValue;
+                double visibleRight = 0;
+                double visibleTop = Double.MaxValue;
+                double visibleBottom = 0;
+                if (po.GetType().Equals(typeof(CLPStrokePathContainer)))
+                {
+                    foreach (ICLPPageObject childObject in po.GetPageObjectsOverPageObject())
+                    {
+                        Tuple<double, double, double, double> visibleWidthChild = findVisibleWidthHeight(childObject);
+                        if (visibleLeft > visibleWidthChild.Item1)
+                        {
+                            visibleLeft = visibleWidthChild.Item1;
+                        }
+                        if (visibleRight < visibleWidthChild.Item2)
+                        {
+                            visibleRight = visibleWidthChild.Item2;
+                        }
+                        if (visibleTop > visibleWidthChild.Item3)
+                        {
+                            visibleTop = visibleWidthChild.Item3;
+                        }
+                        if (visibleBottom < visibleWidthChild.Item4)
+                        {
+                            visibleBottom = visibleWidthChild.Item4;
+                        }
+                    }
+                    foreach (Stroke s in CLPPage.BytesToStrokes((po as CLPStrokePathContainer).ByteStrokes))
+                    {
+                        if (visibleLeft > s.GetBounds().Left)
+                        {
+                            visibleLeft = s.GetBounds().Left;
+                        }
+                        if (visibleRight < s.GetBounds().Right)
+                        {
+                            visibleRight = s.GetBounds().Right;
+                        }
+                        if (visibleTop > s.GetBounds().Top)
+                        {
+                            visibleTop = s.GetBounds().Top;
+                        }
+                        if (visibleBottom < s.GetBounds().Bottom)
+                        {
+                            visibleBottom = s.GetBounds().Bottom;
+                        }
+                    }
+                }
+                else
+                {
+                    visibleLeft = po.XPosition;
+                    visibleRight = po.XPosition + po.Width;
+                    visibleTop = po.YPosition;
+                    visibleBottom = po.YPosition + po.Height;
+                }
+                return new Tuple<double, double, double, double>(visibleLeft, visibleRight, visibleTop, visibleBottom);
+            }
+        }
+
+        private double getDistanceBetweenPageObjects(DistanceObject pageObject1, DistanceObject pageObject2)
         {
             double x = pageObject2.XPosition - pageObject1.XPosition;
             if (x > 0)
