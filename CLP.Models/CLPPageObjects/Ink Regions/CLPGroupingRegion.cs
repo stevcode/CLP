@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -95,7 +96,7 @@ namespace CLP.Models
                     validGroupingObjects.Add(po);
                 }
             }
-            //AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
+            AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
             AddGrouping(DistanceClustering(validGroupingObjects), true, Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);
             StringBuilder interpretation = new StringBuilder();
@@ -218,14 +219,39 @@ namespace CLP.Models
             // properties of the parent class. Updates to the grouping region's size, etc. will not be seen by its
             // internal ink shape region.
             setInkShapeRegionAttributes();
+            InkGroupingNode root = new InkGroupingNode(null, new Rect(XPosition, YPosition, Width, Height));
             InkShapeRegion.DoInterpretation();
             foreach (CLPNamedInkSet shape in InkShapeRegion.InkShapes)
             {
                 if (!shape.InkShapeType.Equals("Other")) {
                     Console.WriteLine(shape.InkShapeType + " " + CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds());
+
+
+                    if (shape.InkShapeType.Equals("Vertical") || shape.InkShapeType.Equals("Horizontal"))
+                    {
+                    }
+                    else {
+                        Rect bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+                        InkGroupingNode parent = getParentNode(bounds, root);
+                        InkGroupingNode node = new InkGroupingNode(parent, bounds);
+                        parent.children.Add(node);
+                    }
                 }
             }
+            foreach (ICLPPageObject po in validObjectsForGrouping) {
+            }
+
             return group;
+        }
+
+        private InkGroupingNode getParentNode(Rect bounds, InkGroupingNode potentialParent) {
+            InkGroupingNode parentNode = potentialParent;
+            foreach (InkGroupingNode childNode in potentialParent.children) {
+                if (childNode.bounds.Contains(bounds)) {
+                    parentNode = getParentNode(bounds, childNode);
+                }
+            }
+            return parentNode;
         }
 
         private void setInkShapeRegionAttributes()
@@ -235,6 +261,19 @@ namespace CLP.Models
             InkShapeRegion.XPosition = XPosition;
             InkShapeRegion.YPosition = YPosition;
         }
+
+        private class InkGroupingNode {
+            public InkGroupingNode parent;
+            public List<InkGroupingNode> children;
+            public Rect bounds;
+
+            public InkGroupingNode(InkGroupingNode parent, Rect bounds) {
+                children = new List<InkGroupingNode>();
+                this.parent = parent;
+                this.bounds = bounds;
+            }
+        }
+
         #endregion
 
         #region Distance Grouping
@@ -251,7 +290,7 @@ namespace CLP.Models
             int count = 0;
             while (canCombine && groups.Count > 1)
             {
-                Console.WriteLine("Iteration: " + count);
+                /*Console.WriteLine("Iteration: " + count);
                 count++;
                 foreach(DistanceGroup g in groups){
                     Console.Write("Group:");
@@ -259,7 +298,7 @@ namespace CLP.Models
                         Console.Write(distOb.po.UniqueID + " ");
                     }
                     Console.WriteLine("; Average: " + g.average());
-                }
+                }*/
                 canCombine = combineGroups(groups);
             }
             CLPGrouping grouping = new CLPGrouping("Distance Grouping");
@@ -292,7 +331,7 @@ namespace CLP.Models
                             {
                                 double distance = getDistanceBetweenPageObjects(poA, poB);
                                 smallestDistance = (distance < smallestDistance) ? distance : smallestDistance;
-                                Console.WriteLine("smallestDistance: " + smallestDistance + "; POA: " + poA.po.UniqueID + "; POB: " + poB.po.UniqueID);
+                                //Console.WriteLine("smallestDistance: " + smallestDistance + "; POA: " + poA.po.UniqueID + "; POB: " + poB.po.UniqueID);
                             }
                         }
                         if (smallestDistance < smallestDistanceGroups)
@@ -307,7 +346,7 @@ namespace CLP.Models
             }
 
             double threshold = 2;
-            Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].average());
+            //Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].average());
             if (combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
                 combineTheseGroups[1].average() * threshold >= smallestDistanceGroups)
             {
@@ -335,7 +374,7 @@ namespace CLP.Models
 
             public void combineGroup(DistanceGroup group, double metricBetween)
             {
-                Console.WriteLine("Metric: " + metricBetween);
+                //Console.WriteLine("Metric: " + metricBetween);
                 foreach (DistanceObject po in group.groupObjects)
                 {
                     groupObjects.Add(po);
