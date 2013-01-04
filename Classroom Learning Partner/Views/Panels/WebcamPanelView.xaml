@@ -24,12 +24,12 @@
 
             <!--Webcam-->
             <webcam:CapPlayer x:Name="webcamPlayer" Grid.Row="0" Stretch="Fill" Margin="6"
-                          Height="{Binding ElementName=webcamPlayer, Path=ActualWidth, Converter={StaticResource ThreeFourthConverter}}"
-                          Rotation="{Binding WebcamRotation}"
-                          Device="{Binding SelectedWebcam}" />
+                              Height="{Binding ElementName=webcamPlayer, Path=ActualWidth, Converter={StaticResource ThreeFourthConverter}}"
+                              Rotation="{Binding WebcamRotation}"
+                              Device="{Binding SelectedWebcam}" />
 
             <Button Grid.Row="1" Command="{Binding CaptureImageCommand}" CommandParameter="{Binding ElementName=webcamPlayer}"
-                Height="50" HorizontalAlignment="Stretch">
+                    Height="50" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="..\..\Images\camera.png" />
                     <TextBlock VerticalAlignment="Center" Text="Take Picture" Margin="10" />
@@ -37,9 +37,9 @@
             </Button>
 
             <ListBox Grid.Row="2" IsSynchronizedWithCurrentItem="True"
-                 ItemsSource="{Binding CapturedImages}"
-                 SelectedItem="{Binding SelectedImage}"
-                 VerticalAlignment="Stretch">
+                     ItemsSource="{Binding CapturedImages}"
+                     SelectedItem="{Binding SelectedImage}"
+                     VerticalAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Image Source="{Binding}" 
@@ -49,7 +49,7 @@
             </ListBox>
 
             <Button Grid.Row="3" Command="{Binding AddImageCommand}"
-                Height="50" HorizontalAlignment="Stretch">
+                    Height="50" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="..\..\Images\AddImage.png" />
                     <TextBlock VerticalAlignment="Center" Text="Use Selected Picture" Margin="10" />

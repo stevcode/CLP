@@ -27,6 +27,10 @@
                 <Views:CLPImageView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="CLPAggregationDataTableTemplate">
+                <Views:CLPAggregationDataTableView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="CLPInkShapeRegionTemplate">
                 <Views:CLPInkShapeRegionView DataContext="{Binding}" />
             </ControlTemplate>
@@ -84,6 +88,11 @@
                     <!-- CLPImage trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPImage">
                         <Setter Property="Template" Value="{StaticResource CLPImageTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPDataTable trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPAggregationDataTable">
+                        <Setter Property="Template" Value="{StaticResource CLPAggregationDataTableTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPInkShapeRegion trigger -->

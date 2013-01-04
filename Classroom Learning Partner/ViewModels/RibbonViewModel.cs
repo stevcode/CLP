@@ -172,6 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
+            InsertAggregationDataTableCommand = new Command(OnInsertAggregationDataTableCommandExecute);
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
@@ -1620,6 +1621,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the InsertAggregationDataTableCommand command.
+        /// </summary>
+        public Command InsertAggregationDataTableCommand { get; private set; }
+
+        private void OnInsertAggregationDataTableCommandExecute()
+        {
+            CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage, 1, 1);
+            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
+        }
+
+        /// <summary>
         /// Gets the InsertImageCommand command.
         /// </summary>
         public Command InsertImageCommand { get; private set; }
@@ -1710,9 +1722,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertImageStampCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertImageStampCommand command is executed.
-        /// </summary>
         private void OnInsertImageStampCommandExecute()
         {
             // Configure open file dialog box

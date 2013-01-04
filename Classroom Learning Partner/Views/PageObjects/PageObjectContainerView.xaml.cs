@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.Views
             if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
             if (dataContext is CLPStrokePathContainer) return typeof(CLPStrokePathContainerViewModel);
             if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
+            if(dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
 
             return null;
         }
