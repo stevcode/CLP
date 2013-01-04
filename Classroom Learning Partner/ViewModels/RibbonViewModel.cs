@@ -138,7 +138,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
-            MergeNotebookIntoCurrentNotebookCommand = new Command(OnMergeNotebookIntoCurrentNotebookCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
@@ -851,7 +850,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Command ImportLocalNotebooksDBCommand { get; private set; }
 
-
         private static System.Threading.Thread _backgroundThread;
         public static System.Threading.Thread BackgroundThread
         {
@@ -860,9 +858,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return _backgroundThread;
             }
         }
-        /// <summary>
-        /// Method to invoke when the ImportLocalNotebooksDBCommandExecute command is executed.
-        /// </summary>
+
         private void ImportLocalNotebooksDBCommandExecute()
         {
             _backgroundThread = new System.Threading.Thread(Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ImportLocalNotebooksFromDB) { IsBackground = true };
@@ -871,9 +867,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Command QueryDatabaseCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the QueryDatabaseCommand command is executed.
-        /// </summary>
         private void QueryDatabaseCommandExecute()
         {
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RunDBQueryForPages();
@@ -1004,26 +997,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MergeNotebookIntoCurrentNotebook command.
-        /// </summary>
-        public Command MergeNotebookIntoCurrentNotebookCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the MergeNotebookIntoCurrentNotebook command is executed.
-        /// </summary>
-        private void OnMergeNotebookIntoCurrentNotebookCommandExecute()
-        {
-            // TODO: Handle command logic here
-        }
-
-        /// <summary>
         /// Gets the ExitCommand command.
         /// </summary>
         public Command ExitCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the ExitCommand command is executed.
-        /// </summary>
         private void OnExitCommandExecute()
         {
             if(MessageBox.Show("Are you sure you want to exit?",
@@ -1626,7 +1603,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertAggregationDataTableCommandExecute()
         {
-            CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage, 1, 1);
+            CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
         }
 
