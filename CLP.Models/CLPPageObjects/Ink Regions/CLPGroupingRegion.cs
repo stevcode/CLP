@@ -83,6 +83,7 @@ namespace CLP.Models
         public static readonly PropertyData GroupingsProperty = RegisterProperty("Groupings", typeof(ObservableCollection<CLPGrouping>), () => new ObservableCollection<CLPGrouping>());
 
         #endregion // Properties
+
         #region Methods
 
         public override void DoInterpretation()
@@ -213,6 +214,7 @@ namespace CLP.Models
         #region Ink Grouping
         private CLPGrouping InkGrouping(List<ICLPPageObject> validObjectsForGrouping)
         {
+            InkShapeRegion.ParentPage = ParentPage;
             CLPGrouping group = new CLPGrouping("Ink Grouping");
 
             // We need the ink shape region to be the same box as the grouping region, but without overloading the
