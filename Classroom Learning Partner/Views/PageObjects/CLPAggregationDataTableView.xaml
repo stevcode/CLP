@@ -3,8 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com">
     
-    <DataGrid ItemsSource="{Binding GridCells}">
+    <Canvas x:Name="GridCanvas">
         
-    </DataGrid>
+    </Canvas>
 
 </catel:UserControl>

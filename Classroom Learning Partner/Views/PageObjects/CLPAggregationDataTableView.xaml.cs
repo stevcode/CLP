@@ -1,5 +1,8 @@
-﻿using Catel.Windows.Controls;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -20,5 +23,10 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(CLPAggregationDataTableViewModel);
         }
+
+
+
+        public static readonly DependencyProperty RowsProperty =
+            DependencyProperty.Register("Rows", typeof(ObservableCollection<CLPGridPart>), typeof(CLPAggregationDataTableView));
     }
 }
