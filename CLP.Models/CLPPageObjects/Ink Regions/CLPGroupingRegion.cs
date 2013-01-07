@@ -97,6 +97,7 @@ namespace CLP.Models
                     validGroupingObjects.Add(po);
                 }
             }
+
             AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
             AddGrouping(DistanceClustering(validGroupingObjects), true, Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);
@@ -144,26 +145,46 @@ namespace CLP.Models
             {
                 this.po = po;
                 Rect visDimensions = findVisibleDimensions(po);
-                XPosition = po.XPosition + visDimensions.X;
+                XPosition = visDimensions.X;
                 Width = visDimensions.Width;
-                YPosition = po.YPosition + visDimensions.Y;
+                YPosition = visDimensions.Y;
                 Height = visDimensions.Height;
+                /*Console.WriteLine("Obj: x: " + XPosition + " oldX: " + po.XPosition + "; Y: " + YPosition + " oldY: " +
+                    po.YPosition + "; width: " + Width + " old Width: " + po.Width + "; height: " + Height + " oldHeight: " +
+                    po.Height);*/
+                //Console.WriteLine("X of rect: " + visDimensions.X + "; Y of rect: " + visDimensions.Y);
             }
 
             // XPosition, XPosition+Width, YPosition, YPosition + Height OR left, right, top, bottom
             private Rect findVisibleDimensions(ICLPPageObject po)
             {
-                Rect bounds = new Rect(0, 0, 0, 0);
-                if (po.GetType().Equals(typeof(CLPStrokePathContainer)))
+                Rect bounds = Rect.Empty;
+                Rect strokeBounds = Rect.Empty;
+                if (po.GetType().Equals(typeof(CLPStrokePathContainer)) && (po as CLPStrokePathContainer).InternalPageObject == null)
                 {
+                    ObservableCollection<ICLPPageObject> pageObjs = po.GetPageObjectsOverPageObject();
                     foreach (ICLPPageObject childObject in po.GetPageObjectsOverPageObject())
                     {
+                        //Console.WriteLine("co");
                         Rect childDimensions = findVisibleDimensions(childObject);
-                        bounds.Union(childDimensions);
+                            bounds.Union(childDimensions);
+                            //Console.WriteLine("X: " + bounds.X + " Y: " + bounds.Y + " Height: " + bounds.Height + " Width: " + bounds.Width);
                     }
+
+                    Rect testRectSize = new Rect(0, 0, po.Width, po.Height);
                     foreach (Stroke s in CLPPage.BytesToStrokes((po as CLPStrokePathContainer).ByteStrokes))
                     {
-                        bounds.Union(s.GetBounds());
+                        //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
+                        if (s.HitTest(testRectSize, 3))
+                        {
+                                strokeBounds.Union(s.GetBounds());
+                        //        Console.WriteLine("X: " + strokeBounds.X + " Y: " + strokeBounds.Y + " Height: " + strokeBounds.Height + " Width: " + strokeBounds.Width);
+                        }
+                    }
+                    if (!strokeBounds.Equals(Rect.Empty)) {
+                        strokeBounds.X = strokeBounds.X + po.XPosition;
+                        strokeBounds.Y = strokeBounds.Y + po.YPosition;
+                        bounds.Union(strokeBounds);
                     }
                 }
                 else
@@ -268,8 +289,8 @@ namespace CLP.Models
             foreach (CLPNamedInkSet shape in InkShapeRegion.InkShapes)
             {
                 if (!shape.InkShapeType.Equals("Other")) {
+                    //GetBounds = X,Y,Width,Height
                     Console.WriteLine(shape.InkShapeType + " " + CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds());
-
 
                     if (shape.InkShapeType.Equals("Vertical") || shape.InkShapeType.Equals("Horizontal"))
                     {
@@ -278,20 +299,51 @@ namespace CLP.Models
                         Rect bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
                         InkGroupingNode parent = getParentNode(bounds, root);
                         InkGroupingNode node = new InkGroupingNode(parent, bounds);
+
+                        List<InkGroupingNode> nodeChildren = new List<InkGroupingNode>();
+                        foreach (InkGroupingNode ign in parent.children) {
+                            if (node.bounds.Contains(ign.bounds)) {
+                                nodeChildren.Add(ign);
+                            }
+                        }
+                        node.children = nodeChildren;
+                        foreach (InkGroupingNode ign in nodeChildren) {
+                            ign.parent = node;
+                            parent.children.Remove(ign);
+                        }
                         parent.children.Add(node);
                     }
                 }
             }
 
             foreach (ICLPPageObject po in validObjectsForGrouping) {
-                ClippedObject distObj = new ClippedObject(po);
-                Console.WriteLine("Dist Obj: Width: " + distObj.Width + "; Height: "+ distObj.Height);
-                Rect objBounds = new Rect(distObj.XPosition, distObj.YPosition, distObj.Width, distObj.Height);
-                findInkGroupingNodeForObject(root, objBounds).objects.Add(po);
+                ClippedObject clipObj = new ClippedObject(po);
+                Rect objBounds = new Rect(clipObj.XPosition, clipObj.YPosition, clipObj.Width, clipObj.Height);
+                InkGroupingNode containRect = findInkGroupingNodeForObject(root, objBounds);
+                containRect.objects.Add(po);
             }
 
             TraverseInkGroupingNodeTree(group, root);
+
+            TraverseInkGroupingDebug(root);
+            
+            // We don't want to return a valid grouping region if the only objects appear in the root (a section unmarked
+            // by ink).
+            if (group.Groups.Count == 1 && root.objects.Count > 0) {
+                group.Groups = new List<Dictionary<string, List<ICLPPageObject>>>();
+            }
             return group;
+        }
+
+        private void TraverseInkGroupingDebug(InkGroupingNode node) {
+            Console.WriteLine("NodeParent: " + node.parent + "; NodeBounds: X: " + node.bounds.X + " Y: " + node.bounds.Y
+                + " Height: " + node.bounds.Height + " Width: " + node.bounds.Width);
+            foreach (ICLPPageObject po in node.objects) {
+                Console.WriteLine("Obj: x: " + po.XPosition + "; Y: " + po.YPosition + "; width: " + po.Width + "; height: " + po.Height);
+            }
+            foreach (InkGroupingNode ign in node.children) {
+                TraverseInkGroupingDebug(ign);
+            }
         }
 
         private InkGroupingNode findInkGroupingNodeForObject(InkGroupingNode node, Rect objBounds) {
@@ -307,7 +359,10 @@ namespace CLP.Models
 
         private void TraverseInkGroupingNodeTree(CLPGrouping group, InkGroupingNode node)
         {
-            group.AddGroup(node.objects);
+            if (node.objects.Count > 0)
+            {
+                group.AddGroup(node.objects);
+            }
             foreach (InkGroupingNode n in node.children)
             {
                 TraverseInkGroupingNodeTree(group, n);
