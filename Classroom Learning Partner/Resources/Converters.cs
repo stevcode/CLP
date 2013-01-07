@@ -110,6 +110,52 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class HalfLengthConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            double half = System.Convert.ToDouble(value) / 2;
+            return half - System.Convert.ToDouble(parameter);
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class LengthSubtractConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            double newLength = 0;
+            if(!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
+            {
+                double length = (double)value[0];
+                double subtractedLength = (double)value[1];
+                newLength = length - subtractedLength;
+            }
+            return newLength;
+        }
+
+        public object[] ConvertBack(object value,
+            Type[] targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ThicknessConverter : IValueConverter
     {
         public object Convert(object value,

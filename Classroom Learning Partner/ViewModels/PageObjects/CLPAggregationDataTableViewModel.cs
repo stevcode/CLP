@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System.Collections.ObjectModel;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -13,6 +14,11 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = dataTable;
+            IsMouseOverShowEnabled = true;
+
+
+            AddRowCommand = new Command(OnAddRowCommandExecute);
+            AddColumnCommand = new Command(OnAddColumnCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -20,32 +26,101 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
-        /// Number of rows in the DataTable.
+        /// Height of the Header Section of each Column.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public int Rows
+        public double ColumnHeaderHeight
         {
-            get { return GetValue<int>(RowsProperty); }
-            set { SetValue(RowsProperty, value); }
+            get { return GetValue<double>(ColumnHeaderHeightProperty); }
+            set { SetValue(ColumnHeaderHeightProperty, value); }
         }
 
-        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(int));
+        public static readonly PropertyData ColumnHeaderHeightProperty = RegisterProperty("ColumnHeaderHeight", typeof(double));
 
         /// <summary>
-        /// Number of columns in the DataTable.
+        /// All the Columns of the DataTable.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public int Columns
+        public ObservableCollection<CLPGridPart> Columns
         {
-            get { return GetValue<int>(ColumnsProperty); }
+            get { return GetValue<ObservableCollection<CLPGridPart>>(ColumnsProperty); }
             set { SetValue(ColumnsProperty, value); }
         }
 
+        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(ObservableCollection<CLPGridPart>));
+
         /// <summary>
-        /// Register the Columns property so it is known in the class.
+        /// Width of Header section of each Row.
         /// </summary>
-        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
+        [ViewModelToModel("PageObject")]
+        public double RowHeaderWidth
+        {
+            get { return GetValue<double>(RowHeaderWidthProperty); }
+            set { SetValue(RowHeaderWidthProperty, value); }
+        }
+
+        public static readonly PropertyData RowHeaderWidthProperty = RegisterProperty("RowHeaderWidth", typeof(double));
+
+        /// <summary>
+        /// All the Rows of the DataTable.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPGridPart> Rows
+        {
+            get { return GetValue<ObservableCollection<CLPGridPart>>(RowsProperty); }
+            set { SetValue(RowsProperty, value); }
+        }
+
+        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(ObservableCollection<CLPGridPart>));
 
         #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Add a row to the DataTable.
+        /// </summary>
+        public Command AddRowCommand { get; private set; }
+
+        private void OnAddRowCommandExecute()
+        {
+            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Row, 30, Width);
+            (PageObject as CLPAggregationDataTable).AddGridPart(newRow);
+        }
+
+        /// <summary>
+        /// Add a column to the DataTable.
+        /// </summary>
+        public Command AddColumnCommand { get; private set; }
+
+        private void OnAddColumnCommandExecute()
+        {
+            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Column, Height, 100);
+            (PageObject as CLPAggregationDataTable).AddGridPart(newRow);
+        }
+
+        #endregion //Commands
+
+        #region Methods
+
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        {
+            if(App.MainWindowViewModel.IsAuthoring)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override void EraserHitTest(string hitBoxName)
+        {
+            if(App.MainWindowViewModel.IsAuthoring && hitBoxName == "TopLeftHitBox")
+            {
+                //TODO: Steve - remove pageObject
+            }
+        }
+
+        #endregion //Methods
     }
 }
