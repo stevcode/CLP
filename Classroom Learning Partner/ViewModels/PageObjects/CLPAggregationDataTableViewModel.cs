@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddRowCommandExecute()
         {
-            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Row, 30, Width);
+            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Row, 75, Width);
             (PageObject as CLPAggregationDataTable).AddGridPart(newRow);
         }
 
@@ -95,7 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddColumnCommandExecute()
         {
-            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Column, Height, 100);
+            CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Column, Height, 150);
             (PageObject as CLPAggregationDataTable).AddGridPart(newRow);
         }
 

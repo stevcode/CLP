@@ -177,6 +177,7 @@
                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight" TextBlock.TextAlignment="Center"
                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
                                                            Background="Transparent" Padding="5"
+                                                           FontSize="34"
                                                            Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ColumnHeaderHeight}" 
                                                            Width="{Binding Width}"/>
                             </Canvas>
@@ -254,6 +255,7 @@
                                                                TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
                                                                VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
                                                                Background="Transparent" Padding="5"
+                                                               FontSize="34"
                                                                Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
                                                                Height="{Binding Height}"/>
                                 </Canvas>

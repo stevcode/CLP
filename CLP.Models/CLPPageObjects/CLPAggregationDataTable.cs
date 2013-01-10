@@ -115,8 +115,8 @@ namespace CLP.Models
     {
         #region Variables
 
-        private const double DEFAULT_COLUMN_HEADER_HEIGHT = 25;
-        private const double DEFAULT_ROW_HEADER_WIDTH = 75;
+        private const double DEFAULT_COLUMN_HEADER_HEIGHT = 75;
+        private const double DEFAULT_ROW_HEADER_WIDTH = 150;
 
         #endregion
 
