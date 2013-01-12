@@ -289,16 +289,21 @@ namespace CLP.Models
             foreach (CLPNamedInkSet shape in InkShapeRegion.InkShapes)
             {
                 if (!shape.InkShapeType.Equals("Other")) {
+                    StrokeCollection shapeStrokes =  CLPPage.BytesToStrokes(shape.InkShapeStrokes);
+                    Rect shapeBounds = shapeStrokes.GetBounds();
                     //GetBounds = X,Y,Width,Height
-                    Console.WriteLine(shape.InkShapeType + " " + CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds());
+                    Console.WriteLine(shape.InkShapeType + " " + shapeStrokes.GetBounds());
 
-                    if (shape.InkShapeType.Equals("Vertical") || shape.InkShapeType.Equals("Horizontal"))
+                    if (shape.InkShapeType.Equals("Vertical"))
                     {
+                        double x = shapeBounds.Height / 2 + shapeBounds.X;
+                    }
+                    else if (shape.InkShapeType.Equals("Horizontal")) {
+                        double y = shapeBounds.Width / 2 + shapeBounds.Y;
                     }
                     else {
-                        Rect bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
-                        InkGroupingNode parent = getParentNode(bounds, root);
-                        InkGroupingNode node = new InkGroupingNode(parent, bounds);
+                        InkGroupingNode parent = getParentNode(shapeBounds, root);
+                        InkGroupingNode node = new InkGroupingNode(parent, shapeBounds);
 
                         List<InkGroupingNode> nodeChildren = new List<InkGroupingNode>();
                         foreach (InkGroupingNode ign in parent.children) {
@@ -347,7 +352,7 @@ namespace CLP.Models
         }
 
         private InkGroupingNode findInkGroupingNodeForObject(InkGroupingNode node, Rect objBounds) {
-            double objThreshold = .8;
+            double objThreshold = .5;
             foreach (InkGroupingNode n in node.children) {
                 Rect intersection = Rect.Intersect(n.bounds,objBounds);
                 if ((intersection.Height*intersection.Width)/(objBounds.Height*objBounds.Width) > objThreshold) {
@@ -457,8 +462,11 @@ namespace CLP.Models
                             foreach (ClippedObject poB in groupB.groupObjects)
                             {
                                 double distance = getDistanceBetweenPageObjects(poA, poB);
-                                smallestDistance = (distance < smallestDistance) ? distance : smallestDistance;
-                                //Console.WriteLine("smallestDistance: " + smallestDistance + "; POA: " + poA.po.UniqueID + "; POB: " + poB.po.UniqueID);
+                                if (distance < smallestDistance)
+                                {
+                                    smallestDistance = distance;
+                                    //Console.WriteLine("smallestDistance: " + smallestDistance + "; POA: " + poA.po.UniqueID + "; POB: " + poB.po.UniqueID);
+                                }
                             }
                         }
                         if (smallestDistance < smallestDistanceGroups)
@@ -472,10 +480,11 @@ namespace CLP.Models
                 }
             }
 
-            double threshold = 2;
-            //Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].average());
-            if (combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
-                combineTheseGroups[1].average() * threshold >= smallestDistanceGroups)
+            double threshold = 2.5;
+            double minValue = 10;
+            //Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].printGroupObjects() + " avg: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].printGroupObjects() + " avg: " + combineTheseGroups[1].average());
+            if (Math.Max(combineTheseGroups[0].average(), minValue) * threshold >= smallestDistanceGroups &&
+                Math.Max(combineTheseGroups[1].average(), minValue) * threshold >= smallestDistanceGroups)
             {
                 DistanceGroup removeGroup = combineTheseGroups[0];
                 groups.Remove(removeGroup);
@@ -519,6 +528,16 @@ namespace CLP.Models
                 {
                     return double.MaxValue;
                 }
+            }
+
+            public string printGroupObjects() {
+                StringBuilder sb = new StringBuilder();
+                foreach(ClippedObject co in groupObjects) {
+                    sb.Append(co.po.UniqueID);
+                    sb.Append(", ");
+                }
+                sb.Remove(sb.Length - 3, 2);
+                return sb.ToString();
             }
 
         }
