@@ -416,14 +416,34 @@ namespace Classroom_Learning_Partner.ViewModels
                     properties.UniqueIdTextBlock.Text = selectedObject.UniqueID;
                     properties.ParentIdTextBox.Text = selectedObject.ParentID;
                     properties.PartsTextBox.Text = selectedObject.Parts.ToString();
+                    properties.WidthTextBox.Text = selectedObject.Width.ToString();
+                    properties.HeightTextBox.Text = selectedObject.Height.ToString();
+                    properties.XPositionTextBox.Text = selectedObject.XPosition.ToString();
+                    properties.YPositionTextBox.Text = selectedObject.YPosition.ToString();
                     properties.ShowDialog();
                     if (properties.DialogResult == true)
                     {
                         int partNum;
                         bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
                         selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
-                                Int32.Parse(properties.PartsTextBox.Text) : -1;
+                                partNum : selectedObject.Parts;
                         selectedObject.ParentID = properties.ParentIdTextBox.Text;
+                        int height;
+                        isNum = Int32.TryParse(properties.HeightTextBox.Text, out height);
+                        selectedObject.Height = (properties.HeightTextBox.Text.Length > 0 && isNum &&
+                            height <= Page.PageHeight) ? height : selectedObject.Width;
+                        int width;
+                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out width);
+                        selectedObject.Height = (properties.WidthTextBox.Text.Length > 0 &&
+                            isNum && width <= Page.PageWidth) ? width : selectedObject.Height;
+                        int x;
+                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out x);
+                        selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
+                            x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
+                        int y;
+                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out y);
+                        selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
+                            && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
                     }
                 }
             }
