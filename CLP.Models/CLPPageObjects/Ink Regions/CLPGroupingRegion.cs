@@ -292,38 +292,42 @@ namespace CLP.Models
                     StrokeCollection shapeStrokes =  CLPPage.BytesToStrokes(shape.InkShapeStrokes);
                     Rect shapeBounds = shapeStrokes.GetBounds();
                     //GetBounds = X,Y,Width,Height
-                    Console.WriteLine(shape.InkShapeType + " " + shapeStrokes.GetBounds());
+                    //Console.WriteLine(shape.InkShapeType + " " + shapeStrokes.GetBounds());
+                    Console.WriteLine(shape.InkShapeType + " Left: " + shapeBounds.Left + " Right: " + shapeBounds.Right + 
+                        " Top: " + shapeBounds.Top + " Bottom: " + shapeBounds.Bottom);
 
+                    double lineThreshold = 1.25;
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
                         double x = shapeBounds.Height / 2 + shapeBounds.X;
+                        double y = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                        double height = shapeBounds.Height * lineThreshold;
+                        Rect left = new Rect(0, y, x, height);
+                        InsertNewInkNode(left, root);
+                        Rect right = new Rect(x, y, ParentPage.PageWidth - x, height);
+                        InsertNewInkNode(right, root);
                     }
                     else if (shape.InkShapeType.Equals("Horizontal")) {
                         double y = shapeBounds.Width / 2 + shapeBounds.Y;
+                        double x = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                        double width = shapeBounds.Width * lineThreshold;
+                        Rect top = new Rect(x, 0, width, y);
+                        InsertNewInkNode(top, root);
+                        Rect bottom = new Rect(x, y, width, ParentPage.PageHeight - y);
+                        InsertNewInkNode(bottom, root);
                     }
                     else {
-                        InkGroupingNode parent = getParentNode(shapeBounds, root);
-                        InkGroupingNode node = new InkGroupingNode(parent, shapeBounds);
-
-                        List<InkGroupingNode> nodeChildren = new List<InkGroupingNode>();
-                        foreach (InkGroupingNode ign in parent.children) {
-                            if (node.bounds.Contains(ign.bounds)) {
-                                nodeChildren.Add(ign);
-                            }
-                        }
-                        node.children = nodeChildren;
-                        foreach (InkGroupingNode ign in nodeChildren) {
-                            ign.parent = node;
-                            parent.children.Remove(ign);
-                        }
-                        parent.children.Add(node);
+                        InsertNewInkNode(shapeBounds, root);
                     }
+
                 }
             }
 
             foreach (ICLPPageObject po in validObjectsForGrouping) {
                 ClippedObject clipObj = new ClippedObject(po);
                 Rect objBounds = new Rect(clipObj.XPosition, clipObj.YPosition, clipObj.Width, clipObj.Height);
+                Console.WriteLine("Object bounds: Left: " + objBounds.Left + " Right: " + objBounds.Right +
+                    " Top: " + objBounds.Top + " Bottom: " + objBounds.Bottom);
                 InkGroupingNode containRect = findInkGroupingNodeForObject(root, objBounds);
                 containRect.objects.Add(po);
             }
@@ -340,23 +344,55 @@ namespace CLP.Models
             return group;
         }
 
+        private void InsertNewInkNode(Rect bounds, InkGroupingNode root) {
+            Console.WriteLine("Insert New Node: bounds: Left: " + bounds.Left + " Right: " + bounds.Right +
+                " Top: " + bounds.Top + " Bottom: " + bounds.Bottom);
+            InkGroupingNode parent = getParentNode(bounds, root);
+            InkGroupingNode node = new InkGroupingNode(parent, bounds);
+            List<InkGroupingNode> nodeChildren = new List<InkGroupingNode>();
+            foreach (InkGroupingNode ign in parent.children)
+            {
+                if (node.bounds.Contains(ign.bounds))
+                {
+                    nodeChildren.Add(ign);
+                }
+            }
+            node.children = nodeChildren;
+            foreach (InkGroupingNode ign in nodeChildren)
+            {
+                ign.parent = node;
+                parent.children.Remove(ign);
+            }
+            parent.children.Add(node);
+        }
+
         private void TraverseInkGroupingDebug(InkGroupingNode node) {
-            Console.WriteLine("NodeParent: " + node.parent + "; NodeBounds: X: " + node.bounds.X + " Y: " + node.bounds.Y
-                + " Height: " + node.bounds.Height + " Width: " + node.bounds.Width);
+            Console.WriteLine("NodeParent: " + node.parent + "; NodeBounds: Left: " + node.bounds.Left +
+                " Right: " + node.bounds.Right + " Top: " + node.bounds.Top + " Bottom: " + node.bounds.Bottom);
             foreach (ICLPPageObject po in node.objects) {
-                Console.WriteLine("Obj: x: " + po.XPosition + "; Y: " + po.YPosition + "; width: " + po.Width + "; height: " + po.Height);
+                Console.WriteLine("Obj: Left: " + po.XPosition + " Right: " + (po.Width + po.XPosition) +
+                    " Top: " + po.YPosition + " Bottom: " + (po.Height + po.YPosition));
             }
             foreach (InkGroupingNode ign in node.children) {
                 TraverseInkGroupingDebug(ign);
             }
         }
 
-        private InkGroupingNode findInkGroupingNodeForObject(InkGroupingNode node, Rect objBounds) {
+        private InkGroupingNode findInkGroupingNodeForObject(InkGroupingNode node, Rect objBounds)
+        {
             double objThreshold = .5;
-            foreach (InkGroupingNode n in node.children) {
-                Rect intersection = Rect.Intersect(n.bounds,objBounds);
-                if ((intersection.Height*intersection.Width)/(objBounds.Height*objBounds.Width) > objThreshold) {
-                    return findInkGroupingNodeForObject(n,objBounds);
+            foreach (InkGroupingNode n in node.children)
+            {
+                if (objBounds.IntersectsWith(n.bounds))
+                {
+                    Rect intersection = Rect.Intersect(n.bounds, objBounds);
+                    //Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " + intersection.Right +
+                    //    " Top: " + intersection.Top + " Bottom: " + intersection.Bottom + "; Node: " + n.bounds);
+                    if ((intersection.Height * intersection.Width) / (objBounds.Height * objBounds.Width) > objThreshold)
+                    {
+                        //Console.WriteLine("Hit");
+                        return findInkGroupingNodeForObject(n, objBounds);
+                    }
                 }
             }
             return node;
@@ -377,6 +413,12 @@ namespace CLP.Models
         private InkGroupingNode getParentNode(Rect bounds, InkGroupingNode potentialParent) {
             InkGroupingNode parentNode = potentialParent;
             foreach (InkGroupingNode childNode in potentialParent.children) {
+                if (childNode.bounds.IntersectsWith(bounds)) {
+                    Rect intersection = Rect.Intersect(bounds, childNode.bounds);
+                    Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " + intersection.Right +
+                       " Top: " + intersection.Top + " Bottom: " + intersection.Bottom + "; Node: " + childNode.bounds);
+                    Console.WriteLine("Breakpoint");
+                }
                 if (childNode.bounds.Contains(bounds)) {
                     parentNode = getParentNode(bounds, childNode);
                 }
