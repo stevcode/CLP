@@ -299,21 +299,21 @@ namespace CLP.Models
                     double lineThreshold = 1.25;
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
-                        double x = shapeBounds.Height / 2 + shapeBounds.X;
+                        double x = shapeBounds.Width / 2 + shapeBounds.X;
                         double y = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
                         double height = shapeBounds.Height * lineThreshold;
                         Rect left = new Rect(0, y, x, height);
                         InsertNewInkNode(left, root);
-                        Rect right = new Rect(x, y, ParentPage.PageWidth - x, height);
+                        Rect right = new Rect(x, y, Width - x, height);
                         InsertNewInkNode(right, root);
                     }
                     else if (shape.InkShapeType.Equals("Horizontal")) {
-                        double y = shapeBounds.Width / 2 + shapeBounds.Y;
+                        double y = shapeBounds.Height / 2 + shapeBounds.Y;
                         double x = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
                         double width = shapeBounds.Width * lineThreshold;
                         Rect top = new Rect(x, 0, width, y);
                         InsertNewInkNode(top, root);
-                        Rect bottom = new Rect(x, y, width, ParentPage.PageHeight - y);
+                        Rect bottom = new Rect(x, y, width, Height - y);
                         InsertNewInkNode(bottom, root);
                     }
                     else {
@@ -415,9 +415,14 @@ namespace CLP.Models
             foreach (InkGroupingNode childNode in potentialParent.children) {
                 if (childNode.bounds.IntersectsWith(bounds)) {
                     Rect intersection = Rect.Intersect(bounds, childNode.bounds);
-                    Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " + intersection.Right +
-                       " Top: " + intersection.Top + " Bottom: " + intersection.Bottom + "; Node: " + childNode.bounds);
-                    Console.WriteLine("Breakpoint");
+                    if (intersection.Height * intersection.Width > 1)
+                    {
+                        Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " +
+                            intersection.Right + " Top: " + intersection.Top + " Bottom: " + intersection.Bottom +
+                            "; Node: " + childNode.bounds);
+                        Console.WriteLine("Intersection area: " + intersection.Height * intersection.Width);
+                        Console.WriteLine("Breakpoint");
+                    }
                 }
                 if (childNode.bounds.Contains(bounds)) {
                     parentNode = getParentNode(bounds, childNode);
