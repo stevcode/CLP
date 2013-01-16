@@ -109,6 +109,8 @@ namespace CLP.Models
             StoredAnswer = interpretation.ToString();
         }
 
+#region General
+
         private void AddGrouping(CLPGrouping group, bool checkForContainers, ObservableCollection<CLPGrouping> groupingCollection)
         {
             if (group.Groups.Count > 0)
@@ -194,6 +196,7 @@ namespace CLP.Models
                 return bounds;
             }
         }
+#endregion
 
         #region Containers
         private List<CLPGrouping> DetectContainer(CLPGrouping group)
@@ -284,7 +287,7 @@ namespace CLP.Models
             // properties of the parent class. Updates to the grouping region's size, etc. will not be seen by its
             // internal ink shape region.
             setInkShapeRegionAttributes();
-            InkGroupingNode root = new InkGroupingNode(null, new Rect(XPosition, YPosition, Width, Height));
+            InkGroupingNode root = new InkGroupingNode(new Rect(XPosition, YPosition, Width, Height), null);
             InkShapeRegion.DoInterpretation();
             foreach (CLPNamedInkSet shape in InkShapeRegion.InkShapes)
             {
@@ -296,30 +299,25 @@ namespace CLP.Models
                     Console.WriteLine(shape.InkShapeType + " Left: " + shapeBounds.Left + " Right: " + shapeBounds.Right + 
                         " Top: " + shapeBounds.Top + " Bottom: " + shapeBounds.Bottom);
 
-                    double lineThreshold = 1.25;
+                    Tuple<double, double, double, double> attributes = getShapeAttributes(shape);
+
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
-                        double x = shapeBounds.Width / 2 + shapeBounds.X;
-                        double y = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
-                        double height = shapeBounds.Height * lineThreshold;
-                        Rect left = new Rect(0, y, x, height);
-                        InsertNewInkNode(left, root);
-                        Rect right = new Rect(x, y, Width - x, height);
-                        InsertNewInkNode(right, root);
+                        Rect left = new Rect(XPosition, attributes.Item2, attributes.Item1, attributes.Item4);
+                        InsertNewInkNode(left, root, createSideDictionary(null, shape, null, null));
+                        Rect right = new Rect(attributes.Item1, attributes.Item2, Width - attributes.Item1, attributes.Item4);
+                        InsertNewInkNode(right, root, createSideDictionary(shape, null, null, null));
                     }
                     else if (shape.InkShapeType.Equals("Horizontal")) {
-                        double y = shapeBounds.Height / 2 + shapeBounds.Y;
-                        double x = Math.Max(0, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
-                        double width = shapeBounds.Width * lineThreshold;
-                        Rect top = new Rect(x, 0, width, y);
-                        InsertNewInkNode(top, root);
-                        Rect bottom = new Rect(x, y, width, Height - y);
-                        InsertNewInkNode(bottom, root);
+                        Rect top = new Rect(attributes.Item1, YPosition, attributes.Item3, attributes.Item2);
+                        InsertNewInkNode(top, root, createSideDictionary(null, null, null, shape));
+                        Rect bottom = new Rect(attributes.Item1, attributes.Item2, attributes.Item3,
+                            Height - attributes.Item2);
+                        InsertNewInkNode(bottom, root, createSideDictionary(null, null, shape, null));
                     }
                     else {
-                        InsertNewInkNode(shapeBounds, root);
+                        InsertNewInkNode(shapeBounds, root, createSideDictionary(shape, shape, shape, shape));
                     }
-
                 }
             }
 
@@ -344,26 +342,51 @@ namespace CLP.Models
             return group;
         }
 
-        private void InsertNewInkNode(Rect bounds, InkGroupingNode root) {
+        private Dictionary<Side, CLPNamedInkSet> createSideDictionary(CLPNamedInkSet left, CLPNamedInkSet right,
+            CLPNamedInkSet top, CLPNamedInkSet bottom)
+        {
+            Dictionary<Side, CLPNamedInkSet> sides = new Dictionary<Side, CLPNamedInkSet>();
+            sides.Add(Side.Left, left);
+            sides.Add(Side.Right, right);
+            sides.Add(Side.Top, top);
+            sides.Add(Side.Bottom, bottom);
+            return sides;
+        }
+
+        // Attributes for node based on shape
+        // Returns Tuple <x, y, width, height> with the suggested attributes of each node
+        // Using -1 as a null value since attributes can never be null
+        private Tuple<double, double, double, double> getShapeAttributes(CLPNamedInkSet shape) {
+            double lineThreshold = 1.25;
+            Rect shapeBounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+            if (shape.InkShapeType.Equals("Vertical"))
+            {
+                double x = shapeBounds.Width / 2 + shapeBounds.X;
+                double y = Math.Max(YPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                double height = shapeBounds.Height * lineThreshold;
+                return new Tuple<double, double, double, double>(x, y, -1, height);
+            }
+            else if (shape.InkShapeType.Equals("Horizontal"))
+            {
+                double y = shapeBounds.Height / 2 + shapeBounds.Y;
+                double x = Math.Max(XPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                double width = shapeBounds.Width * lineThreshold;
+                return new Tuple<double, double, double, double>(x, y, width, -1);
+            }
+            else
+            {
+                return new Tuple<double, double, double, double>(shapeBounds.Left, shapeBounds.Top,
+                    shapeBounds.Width, shapeBounds.Height);
+            }
+            
+        }
+
+        private void InsertNewInkNode(Rect bounds, InkGroupingNode root, Dictionary<Side, CLPNamedInkSet> sides)
+        {
             Console.WriteLine("Insert New Node: bounds: Left: " + bounds.Left + " Right: " + bounds.Right +
                 " Top: " + bounds.Top + " Bottom: " + bounds.Bottom);
-            InkGroupingNode parent = getParentNode(bounds, root);
-            InkGroupingNode node = new InkGroupingNode(parent, bounds);
-            List<InkGroupingNode> nodeChildren = new List<InkGroupingNode>();
-            foreach (InkGroupingNode ign in parent.children)
-            {
-                if (node.bounds.Contains(ign.bounds))
-                {
-                    nodeChildren.Add(ign);
-                }
-            }
-            node.children = nodeChildren;
-            foreach (InkGroupingNode ign in nodeChildren)
-            {
-                ign.parent = node;
-                parent.children.Remove(ign);
-            }
-            parent.children.Add(node);
+            InkGroupingNode node = new InkGroupingNode(bounds, sides);
+            SetParentOfNodeAndFixBounds(node, root);
         }
 
         private void TraverseInkGroupingDebug(InkGroupingNode node) {
@@ -410,25 +433,318 @@ namespace CLP.Models
             }
         }
 
-        private InkGroupingNode getParentNode(Rect bounds, InkGroupingNode potentialParent) {
-            InkGroupingNode parentNode = potentialParent;
+        private void SetParentOfNodeAndFixBounds(InkGroupingNode node, InkGroupingNode potentialParent) {
+            node.parent = potentialParent;
             foreach (InkGroupingNode childNode in potentialParent.children) {
-                if (childNode.bounds.IntersectsWith(bounds)) {
-                    Rect intersection = Rect.Intersect(bounds, childNode.bounds);
-                    if (intersection.Height * intersection.Width > 1)
-                    {
-                        Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " +
-                            intersection.Right + " Top: " + intersection.Top + " Bottom: " + intersection.Bottom +
-                            "; Node: " + childNode.bounds);
-                        Console.WriteLine("Intersection area: " + intersection.Height * intersection.Width);
-                        Console.WriteLine("Breakpoint");
-                    }
+                if (childNode.bounds.Contains(node.bounds))
+                {
+                    SetParentOfNodeAndFixBounds(node, childNode);
                 }
-                if (childNode.bounds.Contains(bounds)) {
-                    parentNode = getParentNode(bounds, childNode);
+                else if (node.bounds.Contains(childNode.bounds))
+                {
+                    switchNodeParent(node, childNode);
+                } else if (childNode.bounds.IntersectsWith(node.bounds)) {
+                    fixBounds(node, childNode);
                 }
             }
-            return parentNode;
+        }
+
+        private void switchNodeParent(InkGroupingNode newParent, InkGroupingNode child) {
+            InkGroupingNode oldParent = child.parent;
+            child.parent = newParent;
+            newParent.children.Add(child);
+            oldParent.children.Remove(child);
+        }
+
+        private bool fixBounds(InkGroupingNode newNode, InkGroupingNode otherNode)
+        {
+            Rect intersection = Rect.Intersect(newNode.bounds, otherNode.bounds);
+            Console.WriteLine("Intersection bounds: Left: " + intersection.Left + " Right: " +
+                intersection.Right + " Top: " + intersection.Top + " Bottom: " + intersection.Bottom +
+                "; Node: " + otherNode);
+            Console.WriteLine("Intersection area: " + intersection.Height * intersection.Width);
+            bool nodeStillExists = true;
+            // New node's right side intersects another node
+            if (newNode.bounds.Right > otherNode.bounds.Left)
+            {
+                nodeStillExists = nodeStillExists && HandleIntersection(newNode, otherNode, Side.Right);
+            }
+            // New node's left side intersects another node
+            if (otherNode.bounds.Right > newNode.bounds.Left)
+            {
+                nodeStillExists = nodeStillExists && HandleIntersection(newNode, otherNode, Side.Left);
+            }
+            // New node's bottom side intersects another node
+            if (newNode.bounds.Bottom > otherNode.bounds.Top)
+            {
+                nodeStillExists = nodeStillExists && HandleIntersection(newNode, otherNode, Side.Bottom);
+            }
+            // New node's top side intersects another node
+            if (otherNode.bounds.Bottom > newNode.bounds.Top)
+            {
+                nodeStillExists = nodeStillExists && HandleIntersection(newNode, otherNode, Side.Top);
+            }
+            return nodeStillExists;
+        }
+
+        private bool HandleIntersection(InkGroupingNode newNode, InkGroupingNode otherNode, Side side) {
+            bool nodeStillExists = true;
+            // One and only one node has a side controlling 
+            if (newNode.sides[side] != null ^ otherNode.sides[side] != null)
+            {
+                InkGroupingNode controlNode = (newNode.sides[side] != null) ? newNode : otherNode;
+                InkGroupingNode changingNode = (newNode.sides[side] != null) ? otherNode : newNode;
+                changingNode.sides[side] = controlNode.sides[side];
+                if (HasSameSides(newNode, otherNode))
+                {
+                    CombineNodes(otherNode, newNode);
+                    nodeStillExists = false;
+                }
+                else
+                {
+                    UpdateBounds(changingNode);
+                    foreach (InkGroupingNode child in changingNode.children) { 
+                        if (!changingNode.bounds.Contains(child.bounds)) {
+                            switchNodeParent(changingNode.parent, child);
+                        }
+                    }
+                }
+            } else {
+                Console.WriteLine("Breakpoint");
+            }
+            return nodeStillExists;
+        }
+
+        private void CombineNodes(InkGroupingNode n1, InkGroupingNode n2) {
+            n1.sides[Side.Left] = (n1.sides[Side.Left] == null) ? n2.sides[Side.Left] : n1.sides[Side.Left];
+            n1.sides[Side.Right] = (n1.sides[Side.Right] == null) ? n2.sides[Side.Right] : n1.sides[Side.Right];
+            n1.sides[Side.Top] = (n1.sides[Side.Top] == null) ? n2.sides[Side.Top] : n1.sides[Side.Top];
+            n1.sides[Side.Bottom] = (n1.sides[Side.Bottom] == null) ? n2.sides[Side.Bottom] : n1.sides[Side.Bottom];
+
+            UpdateBounds(n1);
+            n1.children.AddRange(n2.children);
+        }
+
+        #region Bounds
+        private void UpdateBounds(InkGroupingNode node) {
+            double left = getLeftBound(node);
+            double right = getRightBound(node);
+            double top = getTopBound(node);
+            double bottom = getBottomBound(node);
+
+            if (left < 0)
+            {
+                if (top >= 0 && bottom < 0) {
+                    left = getShapeAttributes(node.sides[Side.Top]).Item1;
+                } else if (top < 0 && bottom >= 0) {
+                    left = getShapeAttributes(node.sides[Side.Bottom]).Item1;
+                } else if (top >= 0 && bottom >= 0) {
+                    Tuple<double, double, double, double> bottomAttrs = getShapeAttributes(node.sides[Side.Bottom]);
+                    Tuple<double, double, double, double> topAttrs = getShapeAttributes(node.sides[Side.Top]);
+                    left = Math.Min(bottomAttrs.Item1, topAttrs.Item1);
+                } else {
+                    left = XPosition;
+                }
+            }
+
+            if (right < 0)
+            {
+                if (top >= 0 && bottom < 0)
+                {
+                    Tuple<double, double, double, double> topAttrs = getShapeAttributes(node.sides[Side.Top]);
+                    right = topAttrs.Item1 + topAttrs.Item3;
+                }
+                else if (top < 0 && bottom >= 0)
+                {
+                    Tuple<double, double, double, double> bottomAttrs = getShapeAttributes(node.sides[Side.Bottom]);
+                    right = bottomAttrs.Item1 + bottomAttrs.Item3;
+                }
+                else if (top >= 0 && bottom >= 0)
+                {
+                    Tuple<double, double, double, double> bottomAttrs = getShapeAttributes(node.sides[Side.Bottom]);
+                    Tuple<double, double, double, double> topAttrs = getShapeAttributes(node.sides[Side.Top]);
+                    right = Math.Max(bottomAttrs.Item1 + bottomAttrs.Item3, topAttrs.Item1 + topAttrs.Item3);
+                }
+                else
+                {
+                    right = XPosition + Width;
+                }
+            }
+
+            if (top < 0)
+            {
+                if (left >= 0 && right < 0)
+                {
+                    top = getShapeAttributes(node.sides[Side.Left]).Item2;
+                }
+                else if (left < 0 && right >= 0)
+                {
+                    top = getShapeAttributes(node.sides[Side.Right]).Item2;
+                }
+                else if (left >= 0 && right >= 0)
+                {
+                    Tuple<double, double, double, double> leftAttrs = getShapeAttributes(node.sides[Side.Left]);
+                    Tuple<double, double, double, double> rightAttrs = getShapeAttributes(node.sides[Side.Right]);
+                    top = Math.Min(leftAttrs.Item2, rightAttrs.Item2);
+                }
+                else
+                {
+                    top = YPosition;
+                }
+            }
+
+            if (bottom < 0)
+            {
+                if (left >= 0 && right < 0)
+                {
+                    Tuple<double, double, double, double> leftAttrs = getShapeAttributes(node.sides[Side.Left]);
+                    bottom = leftAttrs.Item2 + leftAttrs.Item4;
+                }
+                else if (left < 0 && right >= 0)
+                {
+                    Tuple<double, double, double, double> rightAttrs = getShapeAttributes(node.sides[Side.Right]);
+                    bottom = rightAttrs.Item2 + rightAttrs.Item2;
+                }
+                else if (left >= 0 && right >= 0)
+                {
+                    Tuple<double, double, double, double> leftAttrs = getShapeAttributes(node.sides[Side.Left]);
+                    Tuple<double, double, double, double> rightAttrs = getShapeAttributes(node.sides[Side.Right]);
+                    top = Math.Max(leftAttrs.Item2 + leftAttrs.Item4, rightAttrs.Item2 + rightAttrs.Item2);
+                }
+                else
+                {
+                    bottom = YPosition + Height;
+                }
+            }
+            node.bounds = new Rect(left, top, right - left, bottom - top);
+        }
+
+        private double getLeftBound(InkGroupingNode node) {
+            // check not default options
+            if (isLine(node.sides[Side.Left]))
+            {
+                return getShapeAttributes(node.sides[Side.Left]).Item1;
+            }
+            else if (node.sides[Side.Left] != null)
+            {
+                // shape controlling width
+                if (node.sides[Side.Left] == node.sides[Side.Right])
+                {
+                    return getShapeAttributes(node.sides[Side.Left]).Item1;
+                }
+                else {
+                    // This means that the right side of the object is used as a left bound
+                    Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[Side.Left]);
+                    return attributes.Item1 + attributes.Item3;
+                }
+            }
+            else {
+                // No left through side
+                return -1;
+            }
+        }
+
+        private double getRightBound(InkGroupingNode node)
+        {
+            // check not default options
+            if (isLine(node.sides[Side.Right]))
+            {
+                return getShapeAttributes(node.sides[Side.Right]).Item3;
+            }
+            else if (node.sides[Side.Left] != null)
+            {
+                // shape controlling width
+                if (node.sides[Side.Left] == node.sides[Side.Right])
+                {
+                    Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[Side.Right]);
+                    return attributes.Item1 + attributes.Item3;
+                }
+                else
+                {
+                    // This means that the left side of the object is used as a right bound
+                    return getShapeAttributes(node.sides[Side.Right]).Item1;
+                }
+            }
+            else
+            {
+                // No right through side
+                return -1;
+            }
+        }
+
+        private double getTopBound(InkGroupingNode node)
+        {
+            // check not default options
+            if (isLine(node.sides[Side.Top]))
+            {
+                return getShapeAttributes(node.sides[Side.Top]).Item2;
+            }
+            else if (node.sides[Side.Top] != null)
+            {
+                // shape controlling height
+                if (node.sides[Side.Top] == node.sides[Side.Bottom])
+                {
+                    return getShapeAttributes(node.sides[Side.Top]).Item2;
+                }
+                else
+                {
+                    // This means that the bottom side of the object is used as a top bound
+                    Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[Side.Top]);
+                    return attributes.Item2 + attributes.Item4;
+                }
+            }
+            else
+            {
+                // No top through side
+                return -1;
+            }
+        }
+
+        private double getBottomBound(InkGroupingNode node)
+        {
+            // check not default options
+            if (isLine(node.sides[Side.Bottom]))
+            {
+                return getShapeAttributes(node.sides[Side.Bottom]).Item2;
+            }
+            else if (node.sides[Side.Bottom] != null)
+            {
+                // shape controlling height
+                if (node.sides[Side.Top] == node.sides[Side.Bottom])
+                {
+                    Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[Side.Bottom]);
+                    return attributes.Item2 + attributes.Item4;
+                    
+                }
+                else
+                {
+                    // This means that the bottom side of the object is used as a top bound
+                    return getShapeAttributes(node.sides[Side.Bottom]).Item2;
+                }
+            }
+            else
+            {
+                // No top through side
+                return -1;
+            }
+        }
+        #endregion
+
+        private bool isLine(CLPNamedInkSet shape) {
+            return (shape.InkShapeType == "Vertical" || shape.InkShapeType == "Horizontal");
+        }
+
+        private bool HasSameSides(InkGroupingNode n1, InkGroupingNode n2) {
+            return n1.sides[Side.Left] == n2.sides[Side.Left] && n1.sides[Side.Right] == n2.sides[Side.Right] &&
+                n1.sides[Side.Top] == n2.sides[Side.Top] && n1.sides[Side.Bottom] == n2.sides[Side.Bottom];
+        }
+
+        //N2 has either the same sides or has an additional side defined where N1's side is null
+        private bool HasMoreSides(InkGroupingNode n1, InkGroupingNode n2) {
+            return (n1.sides[Side.Left] == n2.sides[Side.Left] || (n1.sides[Side.Left] == null && n2.sides[Side.Left] != null)) &&
+                (n1.sides[Side.Right] == n2.sides[Side.Right] || (n1.sides[Side.Right] == null && n2.sides[Side.Right] != null)) &&
+                (n1.sides[Side.Top] == n2.sides[Side.Top] || (n1.sides[Side.Top] == null && n2.sides[Side.Top] != null)) &&
+                (n1.sides[Side.Bottom] == n2.sides[Side.Bottom] || (n1.sides[Side.Bottom] == null && n2.sides[Side.Bottom] != null));
         }
 
         private void setInkShapeRegionAttributes()
@@ -444,14 +760,19 @@ namespace CLP.Models
             public List<InkGroupingNode> children;
             public Rect bounds;
             public List<ICLPPageObject> objects;
+            public Dictionary<Side, CLPNamedInkSet> sides;
 
-            public InkGroupingNode(InkGroupingNode parent, Rect bounds) {
+            public InkGroupingNode(Rect bounds, Dictionary<Side, CLPNamedInkSet> sides)
+            {
                 children = new List<InkGroupingNode>();
                 objects = new List<ICLPPageObject>();
-                this.parent = parent;
+                parent = null;
                 this.bounds = bounds;
+                this.sides = sides;
             }
         }
+
+        enum Side {Left, Right, Top, Bottom};
 
         #endregion
 
