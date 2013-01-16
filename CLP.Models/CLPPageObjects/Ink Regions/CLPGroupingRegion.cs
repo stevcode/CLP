@@ -295,21 +295,24 @@ namespace CLP.Models
                     StrokeCollection shapeStrokes =  CLPPage.BytesToStrokes(shape.InkShapeStrokes);
                     Rect shapeBounds = shapeStrokes.GetBounds();
                     //GetBounds = X,Y,Width,Height
-                    //Console.WriteLine(shape.InkShapeType + " " + shapeStrokes.GetBounds());
                     Console.WriteLine(shape.InkShapeType + " Left: " + shapeBounds.Left + " Right: " + shapeBounds.Right + 
                         " Top: " + shapeBounds.Top + " Bottom: " + shapeBounds.Bottom);
 
                     Tuple<double, double, double, double> attributes = getShapeAttributes(shape);
+                    Console.WriteLine("ShapeAttrs: X: " + attributes.Item1 + " Y: " + attributes.Item2 +
+    " Width: " + attributes.Item3 + " Height: " + attributes.Item4);
+                    Console.WriteLine("Overall grouping region: X: " + XPosition + " Y: " + YPosition + " Width: " + Width + " Height: " + Height
+                        );
 
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
-                        Rect left = new Rect(XPosition, attributes.Item2, attributes.Item1, attributes.Item4);
+                        Rect left = new Rect(XPosition, attributes.Item2, attributes.Item1 - XPosition, attributes.Item4);
                         InsertNewInkNode(left, root, createSideDictionary(null, shape, null, null));
                         Rect right = new Rect(attributes.Item1, attributes.Item2, Width - attributes.Item1, attributes.Item4);
                         InsertNewInkNode(right, root, createSideDictionary(shape, null, null, null));
                     }
                     else if (shape.InkShapeType.Equals("Horizontal")) {
-                        Rect top = new Rect(attributes.Item1, YPosition, attributes.Item3, attributes.Item2);
+                        Rect top = new Rect(attributes.Item1, YPosition, attributes.Item3, attributes.Item2 - YPosition);
                         InsertNewInkNode(top, root, createSideDictionary(null, null, null, shape));
                         Rect bottom = new Rect(attributes.Item1, attributes.Item2, attributes.Item3,
                             Height - attributes.Item2);
@@ -361,15 +364,15 @@ namespace CLP.Models
             Rect shapeBounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
             if (shape.InkShapeType.Equals("Vertical"))
             {
-                double x = shapeBounds.Width / 2 + shapeBounds.X;
+                double x = (shapeBounds.Right + shapeBounds.Left) / 2;
                 double y = Math.Max(YPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
                 double height = shapeBounds.Height * lineThreshold;
                 return new Tuple<double, double, double, double>(x, y, -1, height);
             }
             else if (shape.InkShapeType.Equals("Horizontal"))
             {
-                double y = shapeBounds.Height / 2 + shapeBounds.Y;
-                double x = Math.Max(XPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                double y = (shapeBounds.Bottom + shapeBounds.Top) /2;
+                double x = Math.Max(XPosition, shapeBounds.Left - shapeBounds.Width * ((lineThreshold - 1) / 2));
                 double width = shapeBounds.Width * lineThreshold;
                 return new Tuple<double, double, double, double>(x, y, width, -1);
             }
