@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public class CLPShapeViewModel : ACLPPageObjectBaseViewModel
     {
         /// <summary>
-        /// Initializes a new instance of the CLPImageViewModel class.
+        /// Initializes a new instance of the CLPShapeViewModel class.
         /// </summary>
         public CLPShapeViewModel(CLPShape shape)
             : base()
@@ -53,19 +53,28 @@ namespace Classroom_Learning_Partner.ViewModels
             double newWidth = PageObject.Width + e.HorizontalChange;
             if((PageObject as CLPShape).ShapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
             {
-                newWidth = 10;
+                newWidth = 20;
+                if(PageObject.YPosition + newHeight > parentPage.PageHeight)
+                {
+                    newHeight = PageObject.Height;
+                }
+
             }
             if((PageObject as CLPShape).ShapeType == CLP.Models.CLPShape.CLPShapeType.HorizontalLine)
             {
-                newHeight = 10;
+                newHeight = 20;
+                if(PageObject.XPosition + newWidth > parentPage.PageWidth)
+                {
+                    newWidth = PageObject.Width;
+                }
             }
-            if(newHeight < 10)
+            if(newHeight < 20)
             {
-                newHeight = 10;
+                newHeight = 20;
             }
-            if(newWidth < 10)
+            if(newWidth < 20)
             {
-                newWidth = 10;
+                newWidth = 20;
             }
             if(newHeight + PageObject.YPosition > parentPage.PageHeight)
             {

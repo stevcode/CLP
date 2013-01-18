@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
+using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -26,6 +29,27 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
             }
+
+            double aspectRatio = 1.0;
+            if(SourceImage.Width > 0)
+            {
+                aspectRatio = SourceImage.Height/SourceImage.Width;
+            }
+            double newHeight, newWidth;
+            if(PageObject.Height > PageObject.Width)
+            {
+                newHeight = PageObject.Height;
+                newWidth = newHeight / aspectRatio;
+            }
+            else
+            {
+                newWidth = PageObject.Width;
+                newHeight = aspectRatio * newWidth;
+            }
+
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+
+            ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
         }
 
         public override string Title { get { return "ImageVM"; } }
@@ -61,6 +85,58 @@ namespace Classroom_Learning_Partner.ViewModels
             memoryStream = null;
 
             SourceImage = genBmpImage;
+
         }
-    }
-}
+
+        /// <summary>
+        /// Gets the CLPImageResize command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeImageCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the ResizeImageCommand command is executed.
+        /// </summary>
+        private void OnResizeImageCommandExecute(DragDeltaEventArgs e)
+        {
+            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+            double aspectRatio = 1.0;
+            if(SourceImage.Width > 0)
+            {
+                aspectRatio = SourceImage.Height/SourceImage.Width;
+            }
+            double newHeight, newWidth;
+            if(e.VerticalChange > e.HorizontalChange)
+            {
+                newHeight = PageObject.Height + e.VerticalChange;
+                if(newHeight < 10)
+                {
+                    newHeight = 10;
+                }
+                newWidth = newHeight / aspectRatio;
+            }
+            else
+            {
+                newWidth = PageObject.Width + e.HorizontalChange;
+                if(newWidth < 10)
+                {
+                    newWidth = 10;
+                }
+                newHeight = aspectRatio * newWidth;
+            }
+
+            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+            {
+                newHeight = PageObject.Height;
+                newWidth = newHeight / aspectRatio;
+            }
+            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+            {
+                newWidth = PageObject.Width;
+                newHeight = aspectRatio * newWidth;
+            }
+
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+        }
+            }
+        }

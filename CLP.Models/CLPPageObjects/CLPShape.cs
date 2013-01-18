@@ -31,11 +31,11 @@ namespace CLP.Models
             Width = 100;
             if(shapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
             {
-                Width = 10;
+                Width = 20;
             }
             if(shapeType == CLP.Models.CLPShape.CLPShapeType.HorizontalLine)
             {
-                Height = 10;
+                Height = 20;
             }
             Parts = 1;
 
