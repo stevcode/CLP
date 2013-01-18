@@ -29,6 +29,14 @@ namespace CLP.Models
             YPosition = 10;
             Height = 100;
             Width = 100;
+            if(shapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
+            {
+                Width = 10;
+            }
+            if(shapeType == CLP.Models.CLPShape.CLPShapeType.HorizontalLine)
+            {
+                Height = 10;
+            }
             Parts = 1;
 
             CLPPageObjectBase.ApplyDistinctPosition(this);
