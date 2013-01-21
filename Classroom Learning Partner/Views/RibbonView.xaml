@@ -172,27 +172,27 @@
                     Command="{Binding SetEraserCommand}"
                     CommandParameter="EraseByStroke" />
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Tile"
                     LargeImageSource="..\Images\SnapTileIcon.png"
-                    Command="{Binding Path=SetSnapTileCommand}" />
+                    Command="{Binding Path=SetSnapTileCommand}" />-->
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <!--<RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <!--<RibbonToggleButton Label="Webcam"
+                <RibbonToggleButton Label="Webcam"
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>

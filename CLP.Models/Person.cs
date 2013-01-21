@@ -23,7 +23,10 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public Person() { }
+        public Person()
+        {
+            CurrentMachineName = Environment.MachineName;
+        }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
@@ -38,7 +41,7 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// UniqueID associated with the Person.
         /// </summary>
         public string UniqueID
         {
@@ -46,13 +49,10 @@ namespace CLP.Models
             private set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Full Name of the Person, delimited by spaces.
         /// </summary>
         public string FullName
         {
@@ -60,13 +60,10 @@ namespace CLP.Models
             set { SetValue(FullNameProperty, value); }
         }
 
-        /// <summary>
-        /// Register the FullName property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), null);
+        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), "NoName");
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Left or Right Handed.
         /// </summary>
         public Handedness Handedness
         {
@@ -74,13 +71,10 @@ namespace CLP.Models
             set { SetValue(HandednessProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Handedness property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Picture of the Person.
         /// </summary>
         public List<byte> HeadShotByteSource
         {
@@ -88,10 +82,18 @@ namespace CLP.Models
             set { SetValue(HeadShotByteSourceProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HeadShotByteSource property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HeadShotByteSourceProperty = RegisterProperty("HeadShotByteSource", typeof(List<byte>), () => new List<byte>());
+
+        /// <summary>
+        /// FriendlyName of the Machine the Person is currently using.
+        /// </summary>
+        public string CurrentMachineName
+        {
+            get { return GetValue<string>(CurrentMachineNameProperty); }
+            set { SetValue(CurrentMachineNameProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), null);
 
         #endregion
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.PeerResolvers;
 using System.Threading;
 using System.Xml;
 
@@ -57,7 +58,7 @@ namespace Classroom_Learning_Partner.Model
             quotas.MaxStringContentLength = int.MaxValue;
             binding.ReaderQuotas = quotas;
 
-            //binding.Resolver.Mode = PeerResolverMode.Pnrp;
+            binding.Resolver.Mode = PeerResolverMode.Pnrp;
 
             var endpoint = new ServiceEndpoint(
                 ContractDescription.GetContract(typeof(ICLPMeshNetworkChannel)),

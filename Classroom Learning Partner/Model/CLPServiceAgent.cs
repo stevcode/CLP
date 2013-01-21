@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -29,6 +30,8 @@ namespace Classroom_Learning_Partner.Model
         {
             notebook.AddStudentSubmission(page.UniqueID, page);
         }
+
+        private Thread _autoSaveThread;
 
         public void OpenNotebook(string notebookName)
         {
@@ -94,6 +97,14 @@ namespace Classroom_Learning_Partner.Model
                             App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
                         }
                     }
+
+                    if(App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        _autoSaveThread = new Thread(new ThreadStart(AutoSaveNotebook));
+                        _autoSaveThread.IsBackground = true;
+                        _autoSaveThread.Start();
+                    }
+
                 }
                 else
                 {
@@ -103,6 +114,46 @@ namespace Classroom_Learning_Partner.Model
             else //else doesn't exist, error checking
             {
                 //check if notebook exisist on server
+            }
+        }
+
+        private void AutoSaveNotebook()
+        {
+            Console.WriteLine("AutoSave Thread Started");
+
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
+
+            if(!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            while(true)
+            {
+                if(App.CurrentUserMode == App.UserMode.Student)
+                {
+                    Thread.Sleep(300000); //AutoSave every 5 minutes.
+                }
+                else
+                {
+                    Thread.Sleep(600000); //AutoSave every 10 minutes.
+                }
+
+                Console.WriteLine("Background AutoSaving Start");
+                DateTime saveTime = DateTime.Now;
+
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
+
+                string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
+                    saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
+
+                string filePathName = filePath + @"\" + time + "-" + notebook.NotebookName + @".clp";
+
+                Console.WriteLine(filePathName);
+
+                notebook.Save(filePathName);
+
+                Console.WriteLine("Notebook Saved");
             }
         }
 
@@ -312,7 +363,11 @@ namespace Classroom_Learning_Partner.Model
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
             //sync with database
             //run network disconnect
-
+            if (_autoSaveThread != null)
+            {
+                _autoSaveThread.Join(1500);
+            }
+            
             Environment.Exit(0);
         }
 
