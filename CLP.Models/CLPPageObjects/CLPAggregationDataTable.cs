@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.Serialization;
@@ -12,6 +13,13 @@ namespace CLP.Models
         Column
     }
 
+    public enum AggregationType
+    {
+        None,
+        Single,
+        Group
+    }
+
     [Serializable]
     public class CLPGridPart : DataObjectBase<CLPGridPart>
     {
@@ -22,6 +30,7 @@ namespace CLP.Models
         /// </summary>
         public CLPGridPart(GridPartOrientation orientation, double height, double width)
         {
+            UniqueID = Guid.NewGuid().ToString();
             Orientation = orientation;
             Height = height;
             Width = width;
@@ -38,6 +47,17 @@ namespace CLP.Models
         #endregion //Constructor
 
         #region Properties
+
+        /// <summary>
+        /// UniqueID of the GridPart.
+        /// </summary>
+        public string UniqueID
+        {
+            get { return GetValue<string>(UniqueIDProperty); }
+            set { SetValue(UniqueIDProperty, value); }
+        }
+
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), null);
 
         /// <summary>
         /// X Position for GridPart.
@@ -107,6 +127,50 @@ namespace CLP.Models
 
         public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof(GridPartOrientation), null);
 
+        /// <summary>
+        /// Stokes to be sent with GridPart on Aggregation.
+        /// </summary>
+        public ObservableCollection<List<byte>> ByteStrokes
+        {
+            get { return GetValue<ObservableCollection<List<byte>>>(ByteStrokesProperty); }
+            set { SetValue(ByteStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
+
+        /// <summary>
+        /// Signifies that this GridPart will be aggregated on submit.
+        /// </summary>
+        public bool IsAggregated
+        {
+            get { return GetValue<bool>(IsAggregatedProperty); }
+            set { SetValue(IsAggregatedProperty, value); }
+        }
+
+        public static readonly PropertyData IsAggregatedProperty = RegisterProperty("IsAggregated", typeof(bool), false);
+
+        /// <summary>
+        /// Submitter if in Single Aggregation Mode (Person).
+        /// </summary>
+        public Person PersonSubmitter
+        {
+            get { return GetValue<Person>(PersonSubmitterProperty); }
+            set { SetValue(PersonSubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData PersonSubmitterProperty = RegisterProperty("PersonSubmitter", typeof(Person), null);
+
+        /// <summary>
+        /// Submitter if in Group Aggregation Mode.
+        /// </summary>
+        public Group GroupSubmitter
+        {
+            get { return GetValue<Group>(GroupSubmitterProperty); }
+            set { SetValue(GroupSubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+
         #endregion //Properties
     }
 
@@ -145,6 +209,20 @@ namespace CLP.Models
         #endregion //Constructor
 
         #region Properties
+
+        /// <summary>
+        /// Type of Aggregation for this DataTable.
+        /// </summary>
+        public AggregationType AggregationType
+        {
+            get { return GetValue<AggregationType>(AggregationTypeProperty); }
+            set { SetValue(AggregationTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AggregationType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AggregationTypeProperty = RegisterProperty("AggregationType", typeof(AggregationType), AggregationType.None);
 
         /// <summary>
         /// Height of the Header Section of each Column.
@@ -190,6 +268,28 @@ namespace CLP.Models
 
         public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(ObservableCollection<CLPGridPart>), () => new ObservableCollection<CLPGridPart>());
 
+        /// <summary>
+        /// UniqueID of Page containing original DataTable.
+        /// </summary>
+        public string LinkedPageID
+        {
+            get { return GetValue<string>(LinkedPageIDProperty); }
+            set { SetValue(LinkedPageIDProperty, value); }
+        }
+
+        public static readonly PropertyData LinkedPageIDProperty = RegisterProperty("LinkedPageID", typeof(string), null);
+
+        /// <summary>
+        /// UniqueID of the GridPart on original DataTable that this DataTable is aggregating.
+        /// </summary>
+        public string AggregatingGridPartID
+        {
+            get { return GetValue<string>(AggregatingGridPartIDProperty); }
+            set { SetValue(AggregatingGridPartIDProperty, value); }
+        }
+
+        public static readonly PropertyData AggregatingGridPartIDProperty = RegisterProperty("AggregatingGridPartID", typeof(string), null);
+        
         #endregion //Properties
 
         #region Methods
@@ -266,6 +366,110 @@ namespace CLP.Models
             {
                 row.Width = Width;
             }
+        }
+
+        public void AddAggregatedGridPart(CLPGridPart gridPart)
+        {
+            if (gridPart.IsAggregated)
+            {
+                switch(gridPart.Orientation)
+                {
+                    case GridPartOrientation.Row:
+                        int replaceIndex = -1;
+                        foreach(CLPGridPart row in Rows)
+                        {
+                            switch(AggregationType)
+                            {
+                                case AggregationType.None:
+                                    break;
+                                case AggregationType.Single:
+                                    gridPart.Header = gridPart.PersonSubmitter.FullName;
+                                    if (row.PersonSubmitter.UniqueID == gridPart.PersonSubmitter.UniqueID)
+                                    {
+                                        gridPart.XPosition = row.XPosition;
+                                        gridPart.YPosition = row.YPosition;
+                                        gridPart.Height = row.Height;
+                                        gridPart.Width = row.Width;
+                                        replaceIndex = Rows.IndexOf(row);
+                                    }
+                                    else
+                                    {
+                                        AddGridPart(gridPart);
+                                    }
+                                    break;
+                                case AggregationType.Group:
+                                    gridPart.Header = gridPart.GroupSubmitter.GroupName;
+                                    if(row.GroupSubmitter.GroupID == gridPart.GroupSubmitter.GroupID)
+                                    {
+                                        gridPart.XPosition = row.XPosition;
+                                        gridPart.YPosition = row.YPosition;
+                                        gridPart.Height = row.Height;
+                                        gridPart.Width = row.Width;
+                                        replaceIndex = Rows.IndexOf(row);
+                                    }
+                                    else
+                                    {
+                                        AddGridPart(gridPart);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if (replaceIndex > -1)
+                        {
+                            Rows.RemoveAt(replaceIndex);
+                            Rows.Insert(replaceIndex, gridPart);
+                        }
+                        
+                        break;
+                    case GridPartOrientation.Column:
+                        //TODO: Steve - Expand to allow for aggregation of columns
+                        break;
+                    default:
+                        break;
+                } 
+            }
+        }
+
+        public CLPAggregationDataTable CreateAggregatedTable(CLPGridPart gridPart)
+        {
+            CLPAggregationDataTable newTable = new CLPAggregationDataTable(ParentPage);
+
+            newTable.ParentID = UniqueID;
+            newTable.LinkedPageID = ParentPage.UniqueID;
+            newTable.AggregatingGridPartID = gridPart.UniqueID;
+            newTable.ColumnHeaderHeight = ColumnHeaderHeight;
+            newTable.RowHeaderWidth = RowHeaderWidth;
+
+            switch(gridPart.Orientation)
+            {
+                case GridPartOrientation.Row:
+                    foreach(CLPGridPart col in Columns)
+                    {
+                        CLPGridPart newCol = new CLPGridPart(col.Orientation, RowHeaderWidth ,col.Width);
+                        newCol.Header = col.Header;
+                        newCol.XPosition = col.XPosition;
+                        newCol.YPosition = col.YPosition;
+                        newTable.AddGridPart(newCol);
+                    }
+                    break;
+                case GridPartOrientation.Column:
+                    foreach(CLPGridPart row in Rows)
+                    {
+                        CLPGridPart newRow = new CLPGridPart(row.Orientation, row.Height, ColumnHeaderHeight);
+                        newRow.Header = row.Header;
+                        newRow.XPosition = row.XPosition;
+                        newRow.YPosition = row.YPosition;
+                        newTable.AddGridPart(newRow);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            return newTable;
         }
 
         #endregion

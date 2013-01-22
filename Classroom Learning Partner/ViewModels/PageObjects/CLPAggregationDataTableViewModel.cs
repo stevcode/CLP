@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeDataTableCommand = new Command<DragDeltaEventArgs>(OnResizeDataTableCommandExecute);
             ResizeColumnHeightCommand = new Command<DragDeltaEventArgs>(OnResizeColumnHeightCommandExecute);
             ResizeRowWidthCommand = new Command<DragDeltaEventArgs>(OnResizeRowWidthCommandExecute);
+            CreateLinkedAggregationDataTableCommand = new Command(OnCreateLinkedAggregationDataTableCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -175,6 +176,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, PageObject.Height, newWidth);
                 ResizeGridPartsEvenly();
             }
+        }
+
+        /// <summary>
+        /// Gets the CreateLinkedAggregationDataTableCommand command.
+        /// </summary>
+        public Command CreateLinkedAggregationDataTableCommand { get; private set; }
+
+        private void OnCreateLinkedAggregationDataTableCommandExecute()
+        {
+            //CLPAggregationDataTable linkedTable = (PageObject as CLPAggregationDataTable).CreateAggregatedTable(gridPart);
         }
 
         #endregion //Commands
