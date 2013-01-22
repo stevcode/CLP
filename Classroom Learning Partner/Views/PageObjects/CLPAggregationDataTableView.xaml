@@ -92,6 +92,30 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Resize Thumb-->
+                <Thumb x:Name="AdornerResize"
+                       Canvas.Right="-50" Canvas.Bottom="-50"
+                       Width="40" Height="40"
+                       Cursor="SizeNWSE">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeDataTableCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                      Data="M 8,23 L 23,23 L 23,8" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                      Data="M 12,27 L 27,27 L 27,12" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
                 <!--Add Row Button-->
                 <Button Width="40" Height="40"
                         Canvas.Left="{Binding Path=Width, Converter={StaticResource HalfLengthConverter}, ConverterParameter=20}" Canvas.Bottom="-50"
@@ -231,19 +255,20 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <ac:AdornedControl IsMouseOverShowEnabled="True" CloseAdornerTimeOut="0.5" FadeOutTime="0">
+                        <ac:AdornedControl
+                            IsMouseOverShowEnabled="True" CloseAdornerTimeOut="0.5" FadeOutTime="0">
                             <ac:AdornedControl.AdornerContent >
 
                                 <!--This is the adorner-->
                                 <Canvas Width="{Binding Path=Width}" Height="{Binding Path=Height}">
 
                                     <!--Resize Row Thumb-->
-                                    <Thumb  Canvas.Left="-20" Canvas.Bottom="-7.5"
+                                    <!--<Thumb  Canvas.Left="-20" Canvas.Bottom="-7.5"
                                             Width="15" Height="15"
                                             Cursor="ScrollNS">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="DragDelta">
-                                                <catel:EventToCommand Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ResizeRowCommand}" PassEventArgsToCommand="True" />
+                                                <catel:EventToCommand Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}, AncestorLevel=2}, Path=DataContext.ResizeRowCommand}" PassEventArgsToCommand="True" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                         <Thumb.Template>
@@ -252,7 +277,7 @@
                                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                             </ControlTemplate>
                                         </Thumb.Template>
-                                    </Thumb>
+                                    </Thumb>-->
 
                                 </Canvas>
 

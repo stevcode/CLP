@@ -2,6 +2,7 @@
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -20,7 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AddRowCommand = new Command(OnAddRowCommandExecute);
             AddColumnCommand = new Command(OnAddColumnCommandExecute);
-            ResizeRowCommand = new Command<DragDeltaEventArgs>(OnResizeRowCommandExecute);
+            ResizeDataTableCommand = new Command<DragDeltaEventArgs>(OnResizeDataTableCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -102,13 +103,56 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the ResizeRowCommand command.
+        /// Resizes DataTable, keeping rows and columns equal length.
         /// </summary>
-        public Command<DragDeltaEventArgs> ResizeRowCommand { get; private set; }
+        public Command<DragDeltaEventArgs> ResizeDataTableCommand { get; private set; }
 
-        private void OnResizeRowCommandExecute(DragDeltaEventArgs e)
+        private void OnResizeDataTableCommandExecute(DragDeltaEventArgs e)
         {
-            // TODO: Handle command logic here
+            CLPPage parentPage = PageObject.ParentPage;
+
+            double newHeight = PageObject.Height + e.VerticalChange;
+            double newWidth = PageObject.Width + e.HorizontalChange;
+            double minHeight = (PageObject as CLPAggregationDataTable).ColumnHeaderHeight + (20 * (PageObject as CLPAggregationDataTable).Columns.Count);
+            double minWidth = (PageObject as CLPAggregationDataTable).RowHeaderWidth + (20 * (PageObject as CLPAggregationDataTable).Rows.Count);
+            if(newHeight < minHeight)
+            {
+                newHeight = minHeight;
+            }
+            if(newWidth < minWidth)
+            {
+                newWidth = minWidth;
+            }
+            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+            {
+                newHeight = PageObject.Height;
+            }
+            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+            {
+                newWidth = PageObject.Width;
+            }
+
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+
+            double newRowHeight = (PageObject.Height - (PageObject as CLPAggregationDataTable).ColumnHeaderHeight) / (PageObject as CLPAggregationDataTable).Rows.Count;
+            double yPos = 0;
+            foreach(CLPGridPart row in (PageObject as CLPAggregationDataTable).Rows)
+            {
+                row.Height = newRowHeight;
+                row.YPosition = yPos;
+                yPos += row.Height;
+                row.Width = newWidth;
+            }
+
+            double newColWidth = (PageObject.Width - (PageObject as CLPAggregationDataTable).RowHeaderWidth) / (PageObject as CLPAggregationDataTable).Columns.Count;
+            double xPos = 0;
+            foreach(CLPGridPart col in (PageObject as CLPAggregationDataTable).Columns)
+            {
+                col.Width = newColWidth;
+                col.XPosition = xPos;
+                xPos += col.Width;
+                col.Height = newHeight;
+            }
         }
 
         #endregion //Commands
