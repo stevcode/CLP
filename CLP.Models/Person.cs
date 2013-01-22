@@ -26,6 +26,7 @@ namespace CLP.Models
         public Person()
         {
             CurrentMachineName = Environment.MachineName;
+            UniqueID = Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace CLP.Models
             private set { SetValue(UniqueIDProperty, value); }
         }
 
-        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), null);
 
         /// <summary>
         /// Full Name of the Person, delimited by spaces.
