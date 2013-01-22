@@ -504,11 +504,11 @@ namespace Classroom_Learning_Partner.Model
                 pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
 
-                if (!page.PageHistory.IgnoreHistory)
-                {
-                    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
-                    page.PageHistory.HistoryItems.Add(item);                  
-                }
+                //if (!page.PageHistory.IgnoreHistory)
+                //{
+                //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
+                //    page.PageHistory.HistoryItems.Add(item);                  
+                //}
             }
         }
 

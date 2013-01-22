@@ -189,25 +189,62 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateLinkedAggregationDataTableCommandExecute(string dataTableType)
         {
-            List<string> choices = new List<string>();
-            int index = 1;
-            foreach(CLPGridPart row in Rows)
+            if(dataTableType != "NONE")
             {
-                choices.Add("Row " + index);
-                index++;
+                List<string> choices = new List<string>();
+                int index = 1;
+                foreach(CLPGridPart row in Rows)
+                {
+                    choices.Add("Row " + index);
+                    index++;
+                }
+
+                AggregationGridRowSelecterWindow rowChooser = new AggregationGridRowSelecterWindow(choices);
+                rowChooser.Owner = Application.Current.MainWindow;
+                rowChooser.ShowDialog();
+                if(rowChooser.DialogResult == true)
+                {
+                    CLPGridPart aggregatedGrid = Rows[rowChooser.SelectedRowIndex];
+                    aggregatedGrid.IsAggregated = true;
+                    
+                    CLPAggregationDataTable linkedTable = (PageObject as CLPAggregationDataTable).CreateAggregatedTable(aggregatedGrid);
+                    if (dataTableType == "SINGLE")
+                    {
+                        linkedTable.AggregationType = AggregationType.Single;
+                    }
+                    else if (dataTableType =="GROUP")
+                    {
+                        linkedTable.AggregationType = AggregationType.Group;
+                    }
+
+                    CLPNotebook currentNotebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+                    int currentPageIndex = currentNotebook.GetNotebookPageIndex(PageObject.ParentPage);
+                    currentPageIndex++;
+                    CLPPage newPage = new CLPPage();
+                    if(PageObject.ParentPage.PageWidth == CLPPage.PORTRAIT_WIDTH)
+                    {
+                        newPage.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                        newPage.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                        newPage.PageAspectRatio = newPage.PageWidth / newPage.PageHeight;
+                    }
+                    currentNotebook.InsertPageAt(currentPageIndex, newPage);
+
+                    linkedTable.ParentPage = newPage;
+                    linkedTable.ParentPageID = newPage.UniqueID;
+                    linkedTable.YPosition = 100;
+                    linkedTable.XPosition = (newPage.PageWidth / 2) - (linkedTable.Width / 2);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(newPage, linkedTable);
+                }
+            }
+            else
+            {
+                //clear all
             }
 
-            AggregationGridRowSelecterWindow rowChooser = new AggregationGridRowSelecterWindow(choices);
-            rowChooser.Owner = Application.Current.MainWindow;
-            rowChooser.ShowDialog();
-            if(rowChooser.DialogResult == true)
-            {
-
-            }
 
 
-
-            //CLPAggregationDataTable linkedTable = (PageObject as CLPAggregationDataTable).CreateAggregatedTable(gridPart);
+            
         }
 
         #endregion //Commands
