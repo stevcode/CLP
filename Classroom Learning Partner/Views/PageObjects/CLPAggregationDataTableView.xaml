@@ -11,6 +11,8 @@
         <conv:LengthConverter x:Key="LengthConverter"/>
         <conv:HalfLengthConverter x:Key="HalfLengthConverter"/>
         <conv:LengthSubtractConverter x:Key="LengthSubtractConverter"/>
+        <conv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>
+        
 
         <Style x:Key="GridPartStyle">
             <Setter Property="Canvas.Left"
@@ -245,7 +247,14 @@
                             <Canvas Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ColumnHeaderHeight}" 
                                     Width="{Binding Width}">
                                 <Rectangle Name="ColumnHitBox" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ColumnHeaderHeight}" 
-                                           Width="{Binding Width}" Stroke="Black" StrokeThickness="1" />
+                                           Width="{Binding Width}" Stroke="Black">
+                                    <Rectangle.StrokeThickness>
+                                        <MultiBinding Converter="{StaticResource HeaderVisibilityConverter}">
+                                            <Binding Source="{x:Static Application.Current}" Path="MainWindowViewModel.Ribbon.AuthoringTabVisibility" />
+                                            <Binding Path="Header" />
+                                        </MultiBinding>
+                                    </Rectangle.StrokeThickness>
+                                </Rectangle>
                                 <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight" TextBlock.TextAlignment="Center"
                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
@@ -291,61 +300,38 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <ac:AdornedControl
-                            IsMouseOverShowEnabled="True" CloseAdornerTimeOut="0.5" FadeOutTime="0">
-                            <ac:AdornedControl.AdornerContent >
+                        <StackPanel Orientation="Horizontal" Height="{Binding Height}" Width="{Binding Width}">
 
-                                <!--This is the adorner-->
-                                <Canvas Width="{Binding Path=Width}" Height="{Binding Path=Height}">
-
-                                    <!--Resize Row Thumb-->
-                                    <!--<Thumb  Canvas.Left="-20" Canvas.Bottom="-7.5"
-                                            Width="15" Height="15"
-                                            Cursor="ScrollNS">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DragDelta">
-                                                <catel:EventToCommand Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}, AncestorLevel=2}, Path=DataContext.ResizeRowCommand}" PassEventArgsToCommand="True" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                        <Thumb.Template>
-                                            <ControlTemplate>
-                                                <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
-                                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>-->
-
-                                </Canvas>
-
-                            </ac:AdornedControl.AdornerContent>
-
-                            <StackPanel Orientation="Horizontal" Height="{Binding Height}" Width="{Binding Width}">
-
-                                <Canvas Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                        Height="{Binding Height}">
-                                    <Rectangle Name="RowHitBox"  Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                               Height="{Binding Height}" Stroke="Black" StrokeThickness="1" />
-                                    <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                                                               TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
-                                                               VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
-                                                               Background="Transparent" Padding="5"
-                                                               FontSize="34"
-                                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                                               Height="{Binding Height}"/>
-                                </Canvas>
-
-                                <Rectangle Stroke="Gray" StrokeThickness="1"
-                                           Height="{Binding Height}">
-                                    <Rectangle.Width>
-                                        <MultiBinding Converter="{StaticResource LengthSubtractConverter}">
-                                            <Binding Path="Width" />
-                                            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=ItemsControl}" Path="DataContext.RowHeaderWidth" />
+                            <Canvas Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                    Height="{Binding Height}">
+                                <Rectangle Name="RowHitBox"  Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                            Height="{Binding Height}" Stroke="Black">
+                                    <Rectangle.StrokeThickness>
+                                        <MultiBinding Converter="{StaticResource HeaderVisibilityConverter}">
+                                            <Binding Source="{x:Static Application.Current}" Path="MainWindowViewModel.Ribbon.AuthoringTabVisibility" />
+                                            <Binding Path="Header" />
                                         </MultiBinding>
-                                    </Rectangle.Width>
+                                    </Rectangle.StrokeThickness>
                                 </Rectangle>
-                            </StackPanel>
+                                <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
+                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
+                                                            Background="Transparent" Padding="5"
+                                                            FontSize="34"
+                                                            Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                                            Height="{Binding Height}"/>
+                            </Canvas>
 
-                        </ac:AdornedControl>
+                            <Rectangle Stroke="Gray" StrokeThickness="1"
+                                        Height="{Binding Height}">
+                                <Rectangle.Width>
+                                    <MultiBinding Converter="{StaticResource LengthSubtractConverter}">
+                                        <Binding Path="Width" />
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=ItemsControl}" Path="DataContext.RowHeaderWidth" />
+                                    </MultiBinding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                        </StackPanel>
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

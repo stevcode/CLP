@@ -130,6 +130,37 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+
+    public class HeaderVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            double thickness = 0;
+            if(!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
+            {
+                Visibility editingModeVisibility = (Visibility)value[0];
+                string header = (string)value[1];
+
+                if(editingModeVisibility == Visibility.Visible || header != "")
+                {
+                    thickness = 1;
+                }
+            }
+            return thickness;
+        }
+
+        public object[] ConvertBack(object value,
+            Type[] targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthSubtractConverter : IMultiValueConverter
     {
         public object Convert(object[] value,

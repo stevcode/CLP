@@ -275,6 +275,39 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
 
+        /// <summary>
+        /// Flag a page as a Group Submission page.
+        /// </summary>
+        public bool IsGroupSubmission
+        {
+            get { return GetValue<bool>(IsGroupSubmissionProperty); }
+            set { SetValue(IsGroupSubmissionProperty, value); }
+        }
+
+        public static readonly PropertyData IsGroupSubmissionProperty = RegisterProperty("IsGroupSubmission", typeof(bool), false);
+
+        /// <summary>
+        /// The Person that submitted the page.
+        /// </summary>
+        public Person Submitter
+        {
+            get { return GetValue<Person>(SubmitterProperty); }
+            set { SetValue(SubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person), null);
+
+        /// <summary>
+        /// The Group that submitted the page.
+        /// </summary>
+        public Group GroupSubmitter
+        {
+            get { return GetValue<Group>(GroupSubmitterProperty); }
+            set { SetValue(GroupSubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+
         #endregion
 
         #region Methods
