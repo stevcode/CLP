@@ -202,19 +202,22 @@
                        Canvas.Left="0" Canvas.Top="0"
                        Width="{Binding RowHeaderWidth}"
                        Height="{Binding ColumnHeaderHeight}"
-                       Fill="LightGray">
+                       Fill="Transparent">
             </Rectangle>
 
             <Grid Canvas.Left="0" Canvas.Top="0"
                   Width="{Binding RowHeaderWidth}"
-                  Height="{Binding ColumnHeaderHeight}">
+                  Height="{Binding ColumnHeaderHeight}"
+                  Visibility="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <ToggleButton Grid.Column="0">Single</ToggleButton>
-                <ToggleButton Grid.Column="1" IsChecked="True">Group</ToggleButton>
+
+                <Button Grid.Column="0" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="NONE">None</Button>
+                <Button Grid.Column="1" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="SINGLE">Single</Button>
+                <Button Grid.Column="2" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="GROUP">Group</Button>
             </Grid>
 
             <ItemsControl Canvas.Left="{Binding RowHeaderWidth}" Canvas.Top="0"

@@ -24,25 +24,5 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(CLPAggregationDataTableViewModel);
         }
-
-        //[ViewToViewModel(MappingType=ViewToViewModelMappingType.ViewModelToView)]
-        //public ObservableCollection<CLPGridPart> Rows
-        //{
-        //    get { return (ObservableCollection<CLPGridPart>)GetValue(RowsProperty); }
-        //    set { SetValue(RowsProperty, value); }
-        //}
-
-        //public static readonly DependencyProperty RowsProperty =
-        //    DependencyProperty.Register("Rows", typeof(ObservableCollection<CLPGridPart>), typeof(CLPAggregationDataTableView));
-
-        //[ViewToViewModel(MappingType = ViewToViewModelMappingType.ViewModelToView)]
-        //public ObservableCollection<CLPGridPart> Columns
-        //{
-        //    get { return (ObservableCollection<CLPGridPart>)GetValue(ColumnsProperty); }
-        //    set { SetValue(ColumnsProperty, value); }
-        //}
-
-        //public static readonly DependencyProperty ColumnsProperty =
-        //    DependencyProperty.Register("Columns", typeof(ObservableCollection<CLPGridPart>), typeof(CLPAggregationDataTableView));
     }
 }

@@ -237,6 +237,9 @@
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml.cs">
+      <DependentUpon>AggregationGridRowSelecterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
       <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
     </Compile>
@@ -354,6 +357,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

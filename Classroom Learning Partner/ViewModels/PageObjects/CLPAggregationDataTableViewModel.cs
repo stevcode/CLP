@@ -1,8 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows;
 using Classroom_Learning_Partner.Model;
+using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -24,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeDataTableCommand = new Command<DragDeltaEventArgs>(OnResizeDataTableCommandExecute);
             ResizeColumnHeightCommand = new Command<DragDeltaEventArgs>(OnResizeColumnHeightCommandExecute);
             ResizeRowWidthCommand = new Command<DragDeltaEventArgs>(OnResizeRowWidthCommandExecute);
-            CreateLinkedAggregationDataTableCommand = new Command(OnCreateLinkedAggregationDataTableCommandExecute);
+            CreateLinkedAggregationDataTableCommand = new Command<string>(OnCreateLinkedAggregationDataTableCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -181,10 +185,28 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the CreateLinkedAggregationDataTableCommand command.
         /// </summary>
-        public Command CreateLinkedAggregationDataTableCommand { get; private set; }
+        public Command<string> CreateLinkedAggregationDataTableCommand { get; private set; }
 
-        private void OnCreateLinkedAggregationDataTableCommandExecute()
+        private void OnCreateLinkedAggregationDataTableCommandExecute(string dataTableType)
         {
+            List<string> choices = new List<string>();
+            int index = 1;
+            foreach(CLPGridPart row in Rows)
+            {
+                choices.Add("Row " + index);
+                index++;
+            }
+
+            AggregationGridRowSelecterWindow rowChooser = new AggregationGridRowSelecterWindow(choices);
+            rowChooser.Owner = Application.Current.MainWindow;
+            rowChooser.ShowDialog();
+            if(rowChooser.DialogResult == true)
+            {
+
+            }
+
+
+
             //CLPAggregationDataTable linkedTable = (PageObject as CLPAggregationDataTable).CreateAggregatedTable(gridPart);
         }
 
