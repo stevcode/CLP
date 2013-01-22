@@ -3,12 +3,14 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:catel="http://catel.codeplex.com">
+                   xmlns:catel="http://catel.codeplex.com"
+                   x:Name="LinkedDisplay">
 
     <!-- Used for page Zooming, Not active in this first test -->
     <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">-->
-        <Border BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">
+        <Border x:Name="PageBorder"  BorderThickness="1" BorderBrush="#C6C6C6" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" 
+                          Padding="0">
                 <ScrollViewer.Resources>
                     <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
                 </ScrollViewer.Resources>

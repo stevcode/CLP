@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -19,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AddRowCommand = new Command(OnAddRowCommandExecute);
             AddColumnCommand = new Command(OnAddColumnCommandExecute);
+            ResizeRowCommand = new Command<DragDeltaEventArgs>(OnResizeRowCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -97,6 +99,16 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPGridPart newRow = new CLPGridPart(GridPartOrientation.Column, Height, 150);
             (PageObject as CLPAggregationDataTable).AddGridPart(newRow);
+        }
+
+        /// <summary>
+        /// Gets the ResizeRowCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeRowCommand { get; private set; }
+
+        private void OnResizeRowCommandExecute(DragDeltaEventArgs e)
+        {
+            // TODO: Handle command logic here
         }
 
         #endregion //Commands

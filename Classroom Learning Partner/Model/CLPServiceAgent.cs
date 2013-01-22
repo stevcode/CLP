@@ -11,6 +11,11 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using ProtoBuf;
+using System.Windows.Controls;
+using Catel.MVVM;
+using Catel.MVVM.Views;
+using Catel.IoC;
+using Catel.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -32,6 +37,14 @@ namespace Classroom_Learning_Partner.Model
         }
 
         private Thread _autoSaveThread;
+
+        public IView GetViewFromViewModel(IViewModel viewModel)
+        {
+            var viewManager = ServiceLocator.Instance.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(viewModel);
+
+            return views[0];
+        }
 
         public void OpenNotebook(string notebookName)
         {

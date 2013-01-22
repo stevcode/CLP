@@ -140,12 +140,25 @@
         <Canvas Background="Transparent" 
                 Height="{Binding Height}" Width="{Binding Width}">
 
+            
             <Rectangle x:Name="TopLeftHitBox" 
                        Canvas.Left="0" Canvas.Top="0"
                        Width="{Binding RowHeaderWidth}"
                        Height="{Binding ColumnHeaderHeight}"
                        Fill="LightGray">
             </Rectangle>
+
+            <Grid Canvas.Left="0" Canvas.Top="0"
+                  Width="{Binding RowHeaderWidth}"
+                  Height="{Binding ColumnHeaderHeight}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <ToggleButton Grid.Column="0">Single</ToggleButton>
+                <ToggleButton Grid.Column="1" IsChecked="True">Group</ToggleButton>
+            </Grid>
 
             <ItemsControl Canvas.Left="{Binding RowHeaderWidth}" Canvas.Top="0"
                           ItemsSource="{Binding Columns}"
@@ -230,7 +243,7 @@
                                             Cursor="ScrollNS">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="DragDelta">
-                                                <catel:EventToCommand Command="{Binding ResizeRowCommand}" PassEventArgsToCommand="True" />
+                                                <catel:EventToCommand Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ResizeRowCommand}" PassEventArgsToCommand="True" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                         <Thumb.Template>
