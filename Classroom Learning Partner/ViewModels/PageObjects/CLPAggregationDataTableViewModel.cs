@@ -22,6 +22,8 @@ namespace Classroom_Learning_Partner.ViewModels
             AddRowCommand = new Command(OnAddRowCommandExecute);
             AddColumnCommand = new Command(OnAddColumnCommandExecute);
             ResizeDataTableCommand = new Command<DragDeltaEventArgs>(OnResizeDataTableCommandExecute);
+            ResizeColumnHeightCommand = new Command<DragDeltaEventArgs>(OnResizeColumnHeightCommandExecute);
+            ResizeRowWidthCommand = new Command<DragDeltaEventArgs>(OnResizeRowWidthCommandExecute);
         }
 
         public override string Title { get { return "AggregationDataTableVM"; } }
@@ -134,24 +136,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
 
-            double newRowHeight = (PageObject.Height - (PageObject as CLPAggregationDataTable).ColumnHeaderHeight) / (PageObject as CLPAggregationDataTable).Rows.Count;
-            double yPos = 0;
-            foreach(CLPGridPart row in (PageObject as CLPAggregationDataTable).Rows)
-            {
-                row.Height = newRowHeight;
-                row.YPosition = yPos;
-                yPos += row.Height;
-                row.Width = newWidth;
-            }
+            ResizeGridPartsEvenly();
+        }
 
-            double newColWidth = (PageObject.Width - (PageObject as CLPAggregationDataTable).RowHeaderWidth) / (PageObject as CLPAggregationDataTable).Columns.Count;
-            double xPos = 0;
-            foreach(CLPGridPart col in (PageObject as CLPAggregationDataTable).Columns)
+        /// <summary>
+        /// Resize the ColumnHeaderHeight.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeColumnHeightCommand { get; private set; }
+
+        private void OnResizeColumnHeightCommandExecute(DragDeltaEventArgs e)
+        {
+            CLPPage parentPage = PageObject.ParentPage;
+
+            double newHeight = PageObject.Height + e.VerticalChange;
+            double newHeaderHeight = (PageObject as CLPAggregationDataTable).ColumnHeaderHeight + e.VerticalChange;
+            if(newHeight + PageObject.YPosition < parentPage.PageHeight && newHeaderHeight > 20)
             {
-                col.Width = newColWidth;
-                col.XPosition = xPos;
-                xPos += col.Width;
-                col.Height = newHeight;
+                (PageObject as CLPAggregationDataTable).ColumnHeaderHeight = newHeaderHeight;
+                CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, PageObject.Width);
+                ResizeGridPartsEvenly();
+            }
+        }
+
+        /// <summary>
+        /// Resize the RowHeaderWidth.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeRowWidthCommand { get; private set; }
+
+        private void OnResizeRowWidthCommandExecute(DragDeltaEventArgs e)
+        {
+            CLPPage parentPage = PageObject.ParentPage;
+
+            double newWidth = PageObject.Width + e.HorizontalChange;
+            double newHeaderWidth = (PageObject as CLPAggregationDataTable).RowHeaderWidth + e.HorizontalChange;
+            if(newWidth + PageObject.XPosition < parentPage.PageWidth && newHeaderWidth > 20)
+            {
+                (PageObject as CLPAggregationDataTable).RowHeaderWidth = newHeaderWidth;
+                CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, PageObject.Height, newWidth);
+                ResizeGridPartsEvenly();
             }
         }
 
@@ -174,6 +196,29 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.IsAuthoring && hitBoxName == "TopLeftHitBox")
             {
                 //TODO: Steve - remove pageObject
+            }
+        }
+
+        private void ResizeGridPartsEvenly()
+        {
+            double newRowHeight = (PageObject.Height - (PageObject as CLPAggregationDataTable).ColumnHeaderHeight) / (PageObject as CLPAggregationDataTable).Rows.Count;
+            double yPos = 0;
+            foreach(CLPGridPart row in (PageObject as CLPAggregationDataTable).Rows)
+            {
+                row.Height = newRowHeight;
+                row.YPosition = yPos;
+                yPos += row.Height;
+                row.Width = PageObject.Width;
+            }
+
+            double newColWidth = (PageObject.Width - (PageObject as CLPAggregationDataTable).RowHeaderWidth) / (PageObject as CLPAggregationDataTable).Columns.Count;
+            double xPos = 0;
+            foreach(CLPGridPart col in (PageObject as CLPAggregationDataTable).Columns)
+            {
+                col.Width = newColWidth;
+                col.XPosition = xPos;
+                xPos += col.Width;
+                col.Height = PageObject.Height;
             }
         }
 

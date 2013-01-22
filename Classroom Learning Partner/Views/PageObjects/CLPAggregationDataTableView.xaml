@@ -116,6 +116,40 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Resize RowHeaderWidth Thumb-->
+                <Thumb  Canvas.Left="{Binding RowHeaderWidth}" Canvas.Top="-12.5"
+                        Width="15" Height="15"
+                        Cursor="ScrollWE">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeRowWidthCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
+                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
+                <!--Resize ColumnHeaderHeight Thumb-->
+                <Thumb  Canvas.Left="-12.5" Canvas.Top="{Binding ColumnHeaderHeight}"
+                        Width="15" Height="15"
+                        Cursor="ScrollNS">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeColumnHeightCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
+                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
                 <!--Add Row Button-->
                 <Button Width="40" Height="40"
                         Canvas.Left="{Binding Path=Width, Converter={StaticResource HalfLengthConverter}, ConverterParameter=20}" Canvas.Bottom="-50"
@@ -163,7 +197,6 @@
         <!--Content-->
         <Canvas Background="Transparent" 
                 Height="{Binding Height}" Width="{Binding Width}">
-
             
             <Rectangle x:Name="TopLeftHitBox" 
                        Canvas.Left="0" Canvas.Top="0"
