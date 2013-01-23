@@ -459,34 +459,27 @@ namespace Classroom_Learning_Partner.Model
             {
 
                 //remove history before sending
-                CLP.Models.CLPHistory tempHistory = CLP.Models.CLPHistory.removeHistoryFromPage(page);
+                //CLP.Models.CLPHistory tempHistory = CLP.Models.CLPHistory.removeHistoryFromPage(page);
 
                 string oldSubmissionID = page.SubmissionID;
                 page.SubmissionID = Guid.NewGuid().ToString();
                 page.SubmissionTime = DateTime.Now;
-                
 
-                //ProtoBufTest - Page
-                //Serialize using protobuf
-                MemoryStream stream = new MemoryStream();
-                Serializer.PrepareSerializer<CLP.Models.CLPPage>();
-                Serializer.Serialize<CLP.Models.CLPPage>(stream, page);
-                string s_page_pb = Convert.ToBase64String(stream.ToArray());
-                double pbPageSize = (s_page_pb.Length / 1024.0);
+                App.Peer.Channel.AddStudentSubmission(page, App.Peer.UserName, notebookName);
 
-                string sPage = ObjectSerializer.ToString(page);
+                //string sPage = ObjectSerializer.ToString(page);
 
                 //Submit Page using PB
-                App.Peer.Channel.SubmitFullPage(sPage, App.Peer.UserName, notebookName);
+                //App.Peer.Channel.SubmitFullPage(sPage, App.Peer.UserName, notebookName);
 
                 //put the history back into the page
-                CLP.Models.CLPHistory.replaceHistoryInPage(tempHistory, page);
+                //CLP.Models.CLPHistory.replaceHistoryInPage(tempHistory, page);
 
-                page.PageHistory.HistoryItems.Add(new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
-                page.PageHistory.HistoryItems.Add(new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.Save, null, null, null)); 
+                //page.PageHistory.HistoryItems.Add(new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.Submit, null, oldSubmissionID, page.SubmissionID));
+                //page.PageHistory.HistoryItems.Add(new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.Save, null, null, null)); 
 
                 //log sizes
-                Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
+                //Logger.Instance.WriteToLog("==== Serialization Size (protobuf) (in .5 kB) for page " + page.PageIndex.ToString() + " : " + pbPageSize);
             }
         }
 

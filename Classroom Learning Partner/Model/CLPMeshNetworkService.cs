@@ -17,6 +17,9 @@ namespace Classroom_Learning_Partner.Model
     public interface ICLPMeshNetworkContract
     {
         [OperationContract(IsOneWay = true)]
+        void AddStudentSubmission(CLPPage page, string userName, string notebookName);
+
+        [OperationContract(IsOneWay = true)]
         void Connect(string userName);
 
         [OperationContract(IsOneWay = true)]
@@ -65,57 +68,34 @@ namespace Classroom_Learning_Partner.Model
     {
         int pagecount = 0;
 
-        public void Connect(string userName)
+        public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
         {
-            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            if(App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
             {
-                Console.WriteLine("Instructor/Student Machine Connected: " + userName);
-                //Users Notebooks to user machine
-                //Currently username is the machine name -> CHANGE when using actual names
-                CLPServiceAgent.Instance.RetrieveNotebooks(userName);
-                
-            }
+                //foreach(ICLPPageObject pageObject in page.PageObjects)
+                //{
+                //    pageObject.ParentPage = page;
+                //}
 
-        }
+                page.IsSubmission = true;
+                page.SubmitterName = userName;
 
-        public void Disconnect(string userName)
-        {
-            if (App.CurrentUserMode == App.UserMode.Server)
-            {
-                Console.WriteLine("Machine Disconnected: " + userName);
-            }
-        }
-
-        public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID, int pageNumber)
-        {
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            (DispatcherOperationCallback)delegate(object arg)
-            {
-
-         if (App.CurrentUserMode == App.UserMode.Server)
+                try
                 {
-                    //Deserialize Using Protobuf
-                    Stream stream = new MemoryStream(Convert.FromBase64String(s_history));
-                    CLP.Models.CLPHistory history = new CLP.Models.CLPHistory();
-                    history = Serializer.Deserialize<CLP.Models.CLPHistory>(stream);
-
-                    //Interpolate History to make it bigger again
-                    
-                    TimeSpan difference = DateTime.Now.Subtract(submitTime);
-                    double kbSize = s_history.Length / 1024.0;
-                    Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " page num " + pageNumber.ToString());
-                    CLP.Models.CLPHistory interpolatedHistory = CLP.Models.CLPHistory.InterpolateHistory(history);
-                    //Database call
-                    if (App.DatabaseUse == App.DatabaseMode.Using)
+                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        //save as submission and as page save
-                        CLPServiceAgent.Instance.SaveHistoryDB(interpolatedHistory, pageID, userName, submitTime);
-
+                        if(page.ParentNotebookID == notebook.UniqueID)
+                        {
+                            CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                            break;
+                        }
                     }
                 }
-                return null;
-            }, null);
+                catch(Exception e)
+                {
+                    Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                }
+            }
         }
 
         public void SubmitFullPage(string s_page, string userName, string notebookName)
@@ -124,9 +104,9 @@ namespace Classroom_Learning_Partner.Model
                 (DispatcherOperationCallback)delegate(object arg)
                 {
 
-                        
 
-                    if (App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
+
+                    if(App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Projector)
                     {
                         //Deserialize Using Protobuf
                         //Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
@@ -149,21 +129,21 @@ namespace Classroom_Learning_Partner.Model
 
                         try
                         {
-                            foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                             {
-                                if (page.ParentNotebookID == notebook.UniqueID)
+                                if(page.ParentNotebookID == notebook.UniqueID)
                                 {
                                     CLPServiceAgent.Instance.AddSubmission(notebook, page);
                                     break;
                                 }
                             }
                         }
-                        catch (Exception e)
+                        catch(Exception e)
                         {
                             Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
                         }
                     }
-                    else if (App.CurrentUserMode == App.UserMode.Server)
+                    else if(App.CurrentUserMode == App.UserMode.Server)
                     {
                         //Deserialize Using Protobuf
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
@@ -172,9 +152,9 @@ namespace Classroom_Learning_Partner.Model
                         pagecount++;
 
                         double kbSize = s_page.Length / 1024.0;
-                        Logger.Instance.WriteToLog("RecvSubmission " + kbSize.ToString() + " "+ DateTime.Now.ToString()+ " " + userName);
+                        Logger.Instance.WriteToLog("RecvSubmission " + kbSize.ToString() + " " + DateTime.Now.ToString() + " " + userName);
                         //Database call
-                        if (App.DatabaseUse == App.DatabaseMode.Using)
+                        if(App.DatabaseUse == App.DatabaseMode.Using)
                         {
                             //save as submission and as page save
                             CLPServiceAgent.Instance.SavePageDB(page, userName, true, DateTime.Now, notebookName);
@@ -189,43 +169,65 @@ namespace Classroom_Learning_Partner.Model
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
-             {
+                {
 
 
-                 //foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
-                 //{
-                 //    if (page.ParentNotebookID == notebook.UniqueID)
-                 //    {
-                 //        CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                 //        break;
-                 //    }
-                 //}
+                    //foreach (var notebook in App.MainWindowViewModel.OpenNotebooks)
+                    //{
+                    //    if (page.ParentNotebookID == notebook.UniqueID)
+                    //    {
+                    //        CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                    //        break;
+                    //    }
+                    //}
 
-                 return null;
-             }, null);
+                    return null;
+                }, null);
+        }
+
+
+        #region Database
+
+        public void Connect(string userName)
+        {
+            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            {
+                Console.WriteLine("Instructor/Student Machine Connected: " + userName);
+                //Users Notebooks to user machine
+                //Currently username is the machine name -> CHANGE when using actual names
+                CLPServiceAgent.Instance.RetrieveNotebooks(userName);               
+            }
+        }
+
+        public void Disconnect(string userName)
+        {
+            if (App.CurrentUserMode == App.UserMode.Server)
+            {
+                Console.WriteLine("Machine Disconnected: " + userName);
+            }
         }
 
         public void SavePage(string s_page, string userName, DateTime submitTime, string notebookName, int pageNumber)
         {
-            
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
             (DispatcherOperationCallback)delegate(object arg)
             {
-                if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+                if(App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
                 {
 
                     //Database call
                     TimeSpan difference = DateTime.Now.Subtract(submitTime);
                     double kbSize = s_page.Length / 1024.0;
                     Logger.Instance.WriteToLog("RecvSave " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " pageNum: " + pageNumber.ToString());
-                    if (App.DatabaseUse == App.DatabaseMode.Using)
+                    if(App.DatabaseUse == App.DatabaseMode.Using)
                     {
                         //CLPPage page = (ObjectSerializer.ToObject(s_page) as CLPPage);
                         //Deserialize Using Protobuf
                         Stream stream = new MemoryStream(Convert.FromBase64String(s_page));
                         CLP.Models.CLPPage page = new CLP.Models.CLPPage();
                         page = Serializer.Deserialize<CLP.Models.CLPPage>(stream);
-                        CLPServiceAgent.Instance.SavePageDB(page,userName, false, DateTime.Now, notebookName);
+                        CLPServiceAgent.Instance.SavePageDB(page, userName, false, DateTime.Now, notebookName);
                     }
                 }
                 return null;
@@ -236,8 +238,8 @@ namespace Classroom_Learning_Partner.Model
         {
             //recieve notebook
             //App.PeerNode.channel
-            
-            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+
+            if(App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 Console.WriteLine("Notebook save requtest received");
                 //Console.WriteLine(s_notebook);
@@ -250,7 +252,7 @@ namespace Classroom_Learning_Partner.Model
 
         public void DistributeNotebook(string s_notebook, string author)
         {
-            if (App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
+            if(App.CurrentUserMode == App.UserMode.Server && App.DatabaseUse == App.DatabaseMode.Using)
             {
                 CLP.Models.CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLP.Models.CLPNotebook);
                 CLPServiceAgent.Instance.DistributeNotebookServer(notebook, author);
@@ -262,7 +264,7 @@ namespace Classroom_Learning_Partner.Model
             Console.WriteLine("ReceiveNotebooks called");
             //Console.WriteLine(s_notebook);
             //string[] splitUserNotebook = s_notebook.Split(new char[] { '#' }, 2);
-            if (userName == App.Peer.UserName && App.CurrentUserMode != App.UserMode.Server)
+            if(userName == App.Peer.UserName && App.CurrentUserMode != App.UserMode.Server)
             {
                 Console.WriteLine("ReceiveNotebooks - recieved one notebook");
                 CLP.Models.CLPNotebook notebook = (ObjectSerializer.ToObject(s_notebook) as CLP.Models.CLPNotebook);
@@ -274,6 +276,43 @@ namespace Classroom_Learning_Partner.Model
                 //}
             }
         }
+
+        public void SaveHistory(string s_history, string userName, DateTime submitTime, string notebookName, string pageID, int pageNumber)
+        {
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            (DispatcherOperationCallback)delegate(object arg)
+            {
+
+                if(App.CurrentUserMode == App.UserMode.Server)
+                {
+                    //Deserialize Using Protobuf
+                    Stream stream = new MemoryStream(Convert.FromBase64String(s_history));
+                    CLP.Models.CLPHistory history = new CLP.Models.CLPHistory();
+                    history = Serializer.Deserialize<CLP.Models.CLPHistory>(stream);
+
+                    //Interpolate History to make it bigger again
+
+                    TimeSpan difference = DateTime.Now.Subtract(submitTime);
+                    double kbSize = s_history.Length / 1024.0;
+                    Logger.Instance.WriteToLog("RecvSaveHistory " + kbSize.ToString() + " " + difference.ToString() + " " + userName + " page num " + pageNumber.ToString());
+                    CLP.Models.CLPHistory interpolatedHistory = CLP.Models.CLPHistory.InterpolateHistory(history);
+                    //Database call
+                    if(App.DatabaseUse == App.DatabaseMode.Using)
+                    {
+                        //save as submission and as page save
+                        CLPServiceAgent.Instance.SaveHistoryDB(interpolatedHistory, pageID, userName, submitTime);
+
+                    }
+                }
+                return null;
+            }, null);
+        }
+
+
+        #endregion //Database
+
+        #region Projector
 
         public void BroadcastInk(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID, bool broadcastInkToStudents)
         {
@@ -513,5 +552,7 @@ namespace Classroom_Learning_Partner.Model
                     return null;
                 }, null);
         }
+
+        #endregion //Projector
     }
 }

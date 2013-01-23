@@ -197,6 +197,7 @@
     <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\ObjectSerializer.cs" />
     <Compile Include="Model\PeerNode.cs" />
+    <Compile Include="Network\InstructorService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
