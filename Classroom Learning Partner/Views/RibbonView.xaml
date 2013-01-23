@@ -2,7 +2,8 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
         <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
@@ -410,14 +411,21 @@
                         Command="{Binding Path=InsertTextBoxCommand}" />
 
                 <RibbonControlGroup>
-                    <ComboBox x:Name="FontFamilyComboBox"
+                    <!--<ComboBox x:Name="FontFamilyComboBox"
                             ItemsSource="{Binding Path=Fonts}"
                             SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
-                            Width="130"/>
-                    <ComboBox x:Name="FontSizeComboBox"
+                            Width="130"/>-->
+                    <!--<ComboBox x:Name="FontSizeComboBox"
                             ItemsSource="{Binding Path=FontSizes}"
                             SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
-                            Width="45"/>
+                            Width="45"/>-->
+                    <Views:XComboBox ItemsSource="{Binding Path=Fonts}" 
+                                     Command="{x:Static Views:MyCommands.SetFontFamily}"
+                                     Width="130"/>
+
+                    <Views:XComboBox ItemsSource="{Binding Path=FontSizes}" 
+                                     Command="{x:Static Views:MyCommands.SetFontSize}"
+                                     Width="45"/>
                 </RibbonControlGroup>
 
                 <RibbonControlGroup>
@@ -451,7 +459,7 @@
 
                     <Label Content="Font Color" />
 
-                    <ComboBox x:Name="FontColorComboBox"
+                    <!--<ComboBox x:Name="FontColorComboBox"
                             ItemsSource="{Binding Path=FontColors}"
                             SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
                             Width="45">
@@ -460,7 +468,16 @@
                                 <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    </ComboBox>-->
+                    <Views:XComboBox ItemsSource="{Binding Path=FontColors}" 
+                                     Command="{x:Static Views:MyCommands.SetFontColor}"
+                                     Width="45">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </Views:XComboBox>
 
                 </RibbonControlGroup>
 
