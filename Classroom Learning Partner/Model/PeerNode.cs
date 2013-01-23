@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Net.PeerToPeer;
 using System.ServiceModel;
+using System.ServiceModel.Discovery;
 using System.ServiceModel.Description;
 using System.ServiceModel.PeerResolvers;
 using System.Threading;
 using System.Xml;
+using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.Model
 {
@@ -86,7 +89,7 @@ namespace Classroom_Learning_Partner.Model
                 SetConnectionStatus();
                 if (App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Instructor)
                 {
-                    Channel.Connect(MachineName);  
+                    Channel.Connect(MachineName);
                 }
             }
         }
