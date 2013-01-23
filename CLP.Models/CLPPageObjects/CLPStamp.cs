@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace CLP.Models
 {
-    [Serializable]
+    [Serializable, KnownType(typeof(CLPImage))]
     public class CLPStamp : DataObjectBase<CLPStamp>, ICLPPageObject
     {
         #region Constants

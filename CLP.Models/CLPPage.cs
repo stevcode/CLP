@@ -19,8 +19,24 @@ namespace CLP.Models
     /// <summary>
     /// CLPPage Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
+    /// 
+    /// KnownTypes allow ICLPPageObjects to be (de)serialized via DataContracts
+    /// for transmission over network calls.
     /// </summary>
-    [Serializable]
+    [Serializable,
+    KnownType(typeof(CLPAggregationDataTable)),
+    KnownType(typeof(CLPAudio)),
+    KnownType(typeof(CLPImage)),
+    KnownType(typeof(CLPShape)),
+    KnownType(typeof(CLPSnapTileContainer)),
+    KnownType(typeof(CLPStamp)),
+    KnownType(typeof(CLPStrokePathContainer)),
+    KnownType(typeof(CLPTextBox)),
+    KnownType(typeof(CLPDataTable)),
+    KnownType(typeof(CLPGroupingRegion)),
+    KnownType(typeof(CLPHandwritingRegion)),
+    KnownType(typeof(CLPInkShapeRegion)),
+    KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
     {
