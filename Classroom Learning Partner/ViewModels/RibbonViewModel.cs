@@ -72,7 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastInkToStudents = false;
             CanSendToTeacher = true;
             IsSending = false;
-            PenSize = 3;
+            PenSize = 1;
             DrawingAttributes = new DrawingAttributes();
             DrawingAttributes.Height = PenSize;
             DrawingAttributes.Width = PenSize;
@@ -1506,7 +1506,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
                 //(SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.RemoveAt(index);
 
-                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages[index];
+                int count = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.Count;
+
+                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages[index == count ? index - 1 : index];
             }
         }
 
