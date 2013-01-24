@@ -817,5 +817,35 @@ namespace Classroom_Learning_Partner.Model
                 Logger.Instance.WriteToLog("===================");
             }
         }
+
+        #region Network
+
+        private Thread _networkThread;
+
+        public void NetworkSetup()
+        {
+            _networkThread = new Thread(App.Network.Run) { IsBackground = true };
+            _networkThread.Start();
+        }
+
+        public void NetworkReconnect()
+        {
+            App.Network.Stop();
+            _networkThread.Join();
+            _networkThread = null;
+            App.Network.Dispose();
+            App.Network = null;
+            App.Network = new CLPNetwork();
+            _networkThread = new Thread(App.Network.Run) { IsBackground = true };
+            _networkThread.Start();
+        }
+
+        public void NetworkDisconnect()
+        {
+            App.Network.Stop();
+            _networkThread.Join();
+        }
+
+        #endregion //Network
     }
 }

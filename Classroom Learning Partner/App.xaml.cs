@@ -8,6 +8,7 @@ using Classroom_Learning_Partner.Views;
 using MongoDB.Driver;
 using ProtoBuf.Meta;
 using Catel.Logging;
+using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner
 {
@@ -60,8 +61,10 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-           
-            JoinMeshNetwork();
+
+            _peer = new Classroom_Learning_Partner.Model.PeerNode();
+            CLPServiceAgent.Instance.NetworkSetup();
+            //JoinMeshNetwork();
             //ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
@@ -117,114 +120,23 @@ namespace Classroom_Learning_Partner
             Console.WriteLine("Connected to DB");
         }
 
-        protected void ProtoBufferSetup()
-        {
-            var model = RuntimeTypeModel.Default;
-            //var model = TypeModel.Create();
-            model[typeof(CLPPage)]
-                .Add(1, "ParentNotebookID")
-                //.Add(2, "Strokes")
-                .Add(3, "PageObjects")
-                .Add(4, "PageHistory")
-                .Add(5, "IsSubmission")
-                .Add(6, "UniqueID")
-                .Add(7, "PageIndex")
-                .Add(8, "PageTopics")
-                .Add(9, "CreationDate")
-                .Add(10, "SubmissionID")
-                .Add(11, "SubmitterName")
-                .Add(12, "SubmissionTime");
-                //.Add(17, "PageObjectsSer");
-
-
-            model[typeof(CLPPage)][17].AsReference = true;
-            model[typeof(CLPPage)][17].OverwriteList = true;
-           
-
-            
-            //Page Object hierarchy 
-            model[typeof(CLP.Models.ICLPPageObject)]
-                .Add(1, "PageID")
-                .Add(2, "ParentID")
-                .Add(3, "CreationDate")
-                .Add(4, "UniqueID")
-                .Add(5, "PageObjectStrokes")
-                .Add(6, "CanAcceptStrokes")
-                .Add(7, "Height")
-                .Add(8, "Width")
-                .Add(9, "XPosition")
-                .Add(10, "YPosition")
-                .Add(11, "PageObjectObjects")
-                .Add(12, "CanAcceptObjects")
-                .Add(13, "Parts")
-                .AddSubType(15, typeof(CLP.Models.CLPPageObjectBase))
-                .AddSubType(16, typeof(CLP.Models.CLPStamp));
-            model[typeof(CLP.Models.CLPPageObjectBase)]
-                .AddSubType(7, typeof(CLPImage))
-                .AddSubType(8, typeof(ACLPInkRegion))
-                .AddSubType(9, typeof(CLPShape))
-                .AddSubType(10, typeof(CLPSnapTileContainer))
-                .AddSubType(11, typeof(CLPStrokePathContainer))
-                .AddSubType(12, typeof(CLPTextBox))
-                .AddSubType(13, typeof(CLPAudio));
-            model[typeof(CLPStamp)]
-                .Add(1, "StrokePathContainer")
-                .Add(1, "HandwritingRegionParts");
-            model[typeof(CLPImage)]
-                .Add(1, "ByteSource");
-
-            model[typeof(ACLPInkRegion)]
-                .AddSubType(1, typeof(CLPInkShapeRegion))
-                .AddSubType(2, typeof(CLPHandwritingRegion))
-                .AddSubType(3, typeof(CLPDataTable))
-                .AddSubType(4, typeof(CLPShadingRegion));
-            model[typeof(CLPHandwritingRegion)]
-                .Add(1, "AnalysisType")
-                .Add(2, "StoredAnswer");    
-            model[typeof(CLPDataTable)]
-                .Add(1, "DataValues")
-                .Add(2, "Rows")
-                .Add(3, "Cols")
-                .Add(4, "AnalysisType");
-            model[typeof(CLPShadingRegion)]
-                .Add(1, "PercentFilled")
-                .Add(2, "Rows")
-                .Add(3, "Cols")
-                .Add(4, "FeatureVector");
-            model[typeof(CLPInkShapeRegion)]
-                .Add(1, "InkShapesString")
-                .Add(2, "InkShapes");
-            model[typeof(CLPNamedInkSet)]
-                .Add(1, "InkShapeStrokes")
-                .Add(2, "InkShapeType");
-            model[typeof(CLPShape)].Add(1, "ShapeType");
-            model[typeof(CLPSnapTileContainer)].Add(1, "NumberOfTiles");
-            model[typeof(CLPStrokePathContainer)].Add(1, "InternalPageObject");
-            model[typeof(CLPTextBox)].Add(1, "Text");
-            model[typeof(CLPAudio)].Add(1, "ID")
-                .Add(2, "File");
-            //Page History
-            model[typeof(CLPHistory)]
-                .Add(1, "IgnoreHistory")
-                .Add(2, "HistoryItems")
-                .Add(3, "UndoneHistoryItems")
-                .Add(4, "TrashedPageObjects")
-                .Add(5, "TrashedInkStrokes");
-            model[typeof(CLPHistoryItem)]
-                .Add(1, "CreationDate")
-                .Add(2, "ObjectID")
-                .Add(3, "UniqueID")
-                .Add(4, "ItemType")
-                .Add(5, "OldValue")
-                .Add(6, "NewValue");
-           
-            model.CompileInPlace();
-            _pageTypeModel = model;
-        }
-
         #endregion //Methods
 
         #region Properties
+
+        private static CLPNetwork _network = new CLPNetwork();
+        public static CLPNetwork Network
+        {
+            get
+            {
+                return _network;
+            }
+            set
+            {
+                _network = value;
+            }
+        }
+
 
         private static MainWindowViewModel _mainWindowViewModel;
         public static MainWindowViewModel MainWindowViewModel
@@ -235,6 +147,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        //TODO: Steve - Make this a String Resource
         private static string _notebookDirectory;
         public static string NotebookDirectory
         {
@@ -257,6 +170,9 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        #region Stuff To Delete
+
+        //delete
         private static Classroom_Learning_Partner.Model.PeerNode _peer;
         public static Classroom_Learning_Partner.Model.PeerNode Peer
         {
@@ -266,6 +182,8 @@ namespace Classroom_Learning_Partner
             }
         }
 
+
+        //delete
         private static Thread _peerThread;
         public static Thread PeerThread
         {
@@ -301,6 +219,8 @@ namespace Classroom_Learning_Partner
                 return _pageTypeModel;
             }
         }
+
+        #endregion //Stuff To Delete
 
         #endregion //Properties
     }
