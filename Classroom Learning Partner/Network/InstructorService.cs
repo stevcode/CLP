@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.ServiceModel;
+using System.Windows;
+using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner
@@ -9,6 +13,9 @@ namespace Classroom_Learning_Partner
     {
         [OperationContract]
         void AddStudentSubmission(CLPPage page, string userName, string notebookName);
+
+        [OperationContract]
+        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
 
         [OperationContract]
         void CollectStudentNotebook(CLPNotebook notebook);
@@ -29,6 +36,53 @@ namespace Classroom_Learning_Partner
         public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
         {
             Console.WriteLine("Submission Added");
+        }
+
+        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
+        {
+            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+            {
+                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+                ProjectorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
+                (ProjectorProxy as ICommunicationObject).Close();
+            }
+            else
+            {
+                //TODO: Steve - add pages to a queue and send when a projector is found
+                Console.WriteLine("Address NOT Available");
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
+
+                    foreach(ICLPPageObject pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
+                    page.IsSubmission = true;
+                    page.SubmitterName = userName;
+
+                    try
+                    {
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            if(page.ParentNotebookID == notebook.UniqueID)
+                            {
+                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                break;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
         }
 
         public void CollectStudentNotebook(CLPNotebook notebook)

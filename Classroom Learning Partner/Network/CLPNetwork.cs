@@ -33,15 +33,7 @@ namespace Classroom_Learning_Partner
 
         public void StartNetworking()
         {
-            App.MainWindowViewModel.OnlineStatus = "CONNECTING...";
-
-            //ServiceHost host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
-            //host.Open();
-            //RunningServices.Add(host);
-
-            
-
-            
+            App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
 
             //var binding = new NetTcpBinding();
 
@@ -73,9 +65,11 @@ namespace Classroom_Learning_Partner
                     break;
                 case App.UserMode.Instructor:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
+                    App.MainWindowViewModel.OnlineStatus = "LISTENING...";
                     break;
                 case App.UserMode.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
+                    App.MainWindowViewModel.OnlineStatus = "LISTENING...";
                     break;
                 case App.UserMode.Student:
                     break;
@@ -100,7 +94,16 @@ namespace Classroom_Learning_Partner
                     break;
                 case App.UserMode.Instructor:
                     DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
-                    DiscoveredProjectors.Open();       
+                    DiscoveredProjectors.Open();
+                    new Thread(() =>
+                    {
+                        Thread.CurrentThread.IsBackground = true;
+                        while(DiscoveredProjectors.Addresses.Count() < 1)
+                        {
+                            Thread.Sleep(1000);
+                        }
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                    }).Start();
                     break;
                 case App.UserMode.Projector:
                     break;
@@ -111,18 +114,11 @@ namespace Classroom_Learning_Partner
                     new Thread(() =>
                     {
                         Thread.CurrentThread.IsBackground = true;
-                        /* run your code here */
-                        int n = 0;
                         while(DiscoveredInstructors.Addresses.Count() < 1)
                         {
-                            Console.WriteLine("Loop Number: " + n);
-                            n++;
                             Thread.Sleep(1000);
                         }
-                        foreach(var address in DiscoveredInstructors.Addresses)
-                        {
-                            Console.WriteLine(address.ToString());
-                        }
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED";
                     }).Start();
                     break;
                 default:
@@ -151,8 +147,6 @@ namespace Classroom_Learning_Partner
             //for IStudent, keep up to date (or options B from instructor, whichever method it uses)
             //can give live "projector" feed to students...or possibly move this functionality to instructor. when 
             //instructor sets projector it also sets students' "projector"
-
-
 
             //For instant
             //EndpointAddress address = DiscoveryHelper.DiscoverAddress<ITestingContract>();

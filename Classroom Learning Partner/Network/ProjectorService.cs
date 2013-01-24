@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
+using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Threading;
+using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 
@@ -16,6 +20,9 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void AddPageToDisplay(string pageID);
+
+        [OperationContract]
+        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
     }
 
     public class ProjectorService : IProjectorContract
@@ -85,6 +92,41 @@ namespace Classroom_Learning_Partner
                     }
                 }
             }
+        }
+
+        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
+
+                    foreach(ICLPPageObject pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
+                    page.IsSubmission = true;
+                    page.SubmitterName = userName;
+
+                    try
+                    {
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            if(page.ParentNotebookID == notebook.UniqueID)
+                            {
+                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                break;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
         }
 
         #region INotebookContract Members
