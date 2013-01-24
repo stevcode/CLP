@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.ServiceModel;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -172,15 +174,28 @@ namespace Classroom_Learning_Partner.ViewModels
         public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
-            if (IsOnProjector && App.Peer.Channel != null)
+            if (IsOnProjector)
             {
+                string pageID;
                 if(DisplayedPage.IsSubmission)
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.SubmissionID);
+                    pageID = DisplayedPage.SubmissionID;
                 }
                 else
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.UniqueID);
+                    pageID = DisplayedPage.UniqueID;
+                }
+
+                if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                {
+                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+                    ProjectorProxy.AddPageToDisplay(pageID);
+                    //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
+                    (ProjectorProxy as ICommunicationObject).Close();
+                }
+                else
+                {
+                    Console.WriteLine("Address NOT Available");
                 }
             }
         }

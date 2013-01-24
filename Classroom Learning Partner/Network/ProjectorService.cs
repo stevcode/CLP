@@ -31,67 +31,77 @@ namespace Classroom_Learning_Partner
 
         public void SwitchProjectorDisplay(string displayType, List<string> displayPages)
         {
-            if(App.CurrentUserMode == App.UserMode.Projector)
-            {
-                if(displayType == "LinkedDisplay")
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
                 {
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
-
-                    AddPageToDisplay(displayPages[0]);
-                }
-                else
-                {
-                    bool isNewDisplay = true;
-                    foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                    if(App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        if(gridDisplay.DisplayID == displayType)
+                        if(displayType == "LinkedDisplay")
                         {
-                            gridDisplay.DisplayedPages.Clear();
-                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
 
-                            isNewDisplay = false;
-                            break;
+                            AddPageToDisplay(displayPages[0]);
+                        }
+                        else
+                        {
+                            bool isNewDisplay = true;
+                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                            {
+                                if(gridDisplay.DisplayID == displayType)
+                                {
+                                    gridDisplay.DisplayedPages.Clear();
+                                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+
+                                    isNewDisplay = false;
+                                    break;
+                                }
+                            }
+
+                            if(isNewDisplay)
+                            {
+                                GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
+                                newGridDisplay.DisplayID = displayType;
+                                newGridDisplay.DisplayedPages.Clear();
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
+
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
+                            }
+
+                            foreach(var pageID in displayPages)
+                            {
+                                AddPageToDisplay(pageID);
+                            }
                         }
                     }
-
-                    if(isNewDisplay)
-                    {
-                        GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
-                        newGridDisplay.DisplayID = displayType;
-                        newGridDisplay.DisplayedPages.Clear();
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
-
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
-                    }
-
-                    foreach(var pageID in displayPages)
-                    {
-                        AddPageToDisplay(pageID);
-                    }
-                }
-            }
+                    return null;
+                }, null);
         }
 
         public void AddPageToDisplay(string pageID)
         {
-            if(App.CurrentUserMode == App.UserMode.Projector)
-            {
-                foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
                 {
-                    CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
-
-                    if(page == null)
+                    if(App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        page = notebook.GetSubmissionByID(pageID);
-                    }
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
-                    if(page != null)
-                    {
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
-                        break;
+                            if(page == null)
+                            {
+                                page = notebook.GetSubmissionByID(pageID);
+                            }
+
+                            if(page != null)
+                            {
+                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
+                                break;
+                            }
+                        }
                     }
-                }
-            }
+                    return null;
+                }, null);
         }
 
         public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)

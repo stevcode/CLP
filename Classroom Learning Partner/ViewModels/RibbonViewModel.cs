@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Timers;
 using System.Windows;
@@ -19,6 +20,7 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 using System.Windows.Threading;
+using System.ServiceModel;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -1331,8 +1333,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSendDisplayToProjectorcommandExecute()
         {
-            if(App.Peer.Channel != null)
+            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
             {
+                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                 foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                 {
@@ -1356,7 +1360,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         pageID = page.UniqueID;
                     }
                     pageIDs.Add(pageID);
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                    ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                 }
                 else
                 {
@@ -1371,8 +1375,14 @@ namespace Classroom_Learning_Partner.ViewModels
                             pageIDs.Add(page.UniqueID);
                         }
                     }
-                    App.Peer.Channel.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                    ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                 }
+                
+                (ProjectorProxy as ICommunicationObject).Close();
+            }
+            else
+            {
+                Console.WriteLine("Address NOT Available");
             }
         }
 
