@@ -1344,7 +1344,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
             {
-                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+                NetTcpBinding binding = new NetTcpBinding();
+                binding.Security.Mode = SecurityMode.None;
+                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
 
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                 foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)

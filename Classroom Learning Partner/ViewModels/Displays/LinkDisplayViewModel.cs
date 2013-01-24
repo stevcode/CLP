@@ -190,7 +190,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+                        NetTcpBinding binding = new NetTcpBinding();
+                        binding.Security.Mode = SecurityMode.None;
+                        IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
                         ProjectorProxy.AddPageToDisplay(pageID);
                         //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
                         (ProjectorProxy as ICommunicationObject).Close();

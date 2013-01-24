@@ -42,9 +42,18 @@ namespace Classroom_Learning_Partner
         {
             if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
             {
-                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
-                ProjectorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
-                (ProjectorProxy as ICommunicationObject).Close();
+                try
+                {
+                    NetTcpBinding binding = new NetTcpBinding();
+                    binding.Security.Mode = SecurityMode.None;
+                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
+                    ProjectorProxy.AddStudentSubmissionViaString(sPage, userName, notebookName);
+                    (ProjectorProxy as ICommunicationObject).Close();
+                }
+                catch(System.Exception ex)
+                {
+
+                }
             }
             else
             {
