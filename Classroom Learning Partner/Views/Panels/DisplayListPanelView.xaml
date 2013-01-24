@@ -4,9 +4,15 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    Width="{Binding InitialWidth}">
     
     <UserControl.Resources>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
+        <catel:IntToStringConverter x:Key="IntToString" />
+        <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
+        <conv:LastItemInCollectionConverter x:Key="LastItem" />
+
         <!-- GridDisplay with the Trigger for Selected -->
         <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -46,7 +52,7 @@
 
             <ListBox Grid.Row="1"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding Path=GridDisplays, UpdateSourceTrigger=PropertyChanged}"
+                     ItemsSource="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SelectedWorkspace.GridDisplays, UpdateSourceTrigger=PropertyChanged}"
                      ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
                      SelectionMode="Single">
 
@@ -62,7 +68,7 @@
 
                             <ItemsControl Margin="10" Background="Transparent"
                                 x:Name="itemsControl" Grid.Column="1"
-                                ItemsSource="{Binding Path=DisplayedPages}">
+                                ItemsSource="{Binding DisplayedPages}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <UniformGrid />
