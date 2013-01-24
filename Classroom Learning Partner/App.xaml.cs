@@ -157,7 +157,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private static UserMode _currentUserMode = UserMode.Projector;
+        private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode
         {
             get

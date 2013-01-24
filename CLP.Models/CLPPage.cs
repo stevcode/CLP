@@ -16,6 +16,13 @@ namespace CLP.Models
         Custom
     }
 
+    public enum GroupSubmitType
+    {
+        Deny,
+        Allow,
+        Force
+    }
+
     /// <summary>
     /// CLPPage Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
@@ -292,7 +299,18 @@ namespace CLP.Models
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
 
         /// <summary>
-        /// Flag a page as a Group Submission page.
+        /// Availability of Group Submit option for a page.
+        /// </summary>
+        public GroupSubmitType GroupSubmitType
+        {
+            get { return GetValue<GroupSubmitType>(GroupSubmitTypeProperty); }
+            set { SetValue(GroupSubmitTypeProperty, value); }
+        }
+
+        public static readonly PropertyData GroupSubmitTypeProperty = RegisterProperty("GroupSubmitType", typeof(GroupSubmitType), GroupSubmitType.Deny);
+
+        /// <summary>
+        /// Flag a page as a page submitted via GroupSubmit.
         /// </summary>
         public bool IsGroupSubmission
         {

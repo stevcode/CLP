@@ -63,15 +63,22 @@ namespace Classroom_Learning_Partner.Model
         {
             if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
             {
-                string oldSubmissionID = page.SubmissionID;
-                page.SubmissionID = Guid.NewGuid().ToString();
-                page.SubmissionTime = DateTime.Now;
+                try
+                {
+                    string oldSubmissionID = page.SubmissionID;
+                    page.SubmissionID = Guid.NewGuid().ToString();
+                    page.SubmissionTime = DateTime.Now;
 
-                IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredInstructors.Addresses[0]);
-                string sPage = ObjectSerializer.ToString(page);
+                    IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredInstructors.Addresses[0]);
+                    string sPage = ObjectSerializer.ToString(page);
 
-                InstructorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
-                (InstructorProxy as ICommunicationObject).Close();
+                    InstructorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
+                    (InstructorProxy as ICommunicationObject).Close();
+                }
+                catch(System.Exception ex)
+                {
+
+                }
             }
             else
             {

@@ -69,6 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
 
+            
             SideBarVisibility = true;
             GridDisplaysVisibility = false;
             BroadcastInkToStudents = false;
@@ -328,7 +329,15 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool GridDisplaysVisibility
         {
             get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
-            set { SetValue(GridDisplaysVisibilityProperty, value); }
+            set
+            {
+                SetValue(GridDisplaysVisibilityProperty, value);
+                if(App.MainWindowViewModel != null && App.MainWindowViewModel.SelectedWorkspace != null && App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+                {
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).DisplayListPanel;
+                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel.IsVisible = value;
+                }
+            }
         }
 
         /// <summary>
@@ -1360,7 +1369,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         pageID = page.UniqueID;
                     }
                     pageIDs.Add(pageID);
-                    ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                    try
+                    {
+                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                    }
+                    catch(System.Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -1375,10 +1391,23 @@ namespace Classroom_Learning_Partner.ViewModels
                             pageIDs.Add(page.UniqueID);
                         }
                     }
-                    ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                    try
+                    {
+                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                    }
+                    catch(System.Exception ex)
+                    {
+
+                    }
                 }
-                
-                (ProjectorProxy as ICommunicationObject).Close();
+
+                try
+                {
+                    (ProjectorProxy as ICommunicationObject).Close();
+                }
+                catch(System.Exception ex)
+                {
+                }
             }
             else
             {

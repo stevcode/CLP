@@ -174,7 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
-            if (IsOnProjector)
+            if(IsOnProjector)
             {
                 string pageID;
                 if(DisplayedPage.IsSubmission)
@@ -188,10 +188,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
                 {
-                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
-                    ProjectorProxy.AddPageToDisplay(pageID);
-                    //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
-                    (ProjectorProxy as ICommunicationObject).Close();
+                    try
+                    {
+                        IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(new NetTcpBinding(), App.Network.DiscoveredProjectors.Addresses[0]);
+                        ProjectorProxy.AddPageToDisplay(pageID);
+                        //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
+                        (ProjectorProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
