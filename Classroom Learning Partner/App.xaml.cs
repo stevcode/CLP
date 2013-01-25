@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
 
-            _currentUserMode = UserMode.Student;
+            _currentUserMode = UserMode.Instructor;
             _databaseUse = DatabaseMode.Using;
 
             Classroom_Learning_Partner.Logger.Instance.InitializeLog();

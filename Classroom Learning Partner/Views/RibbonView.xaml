@@ -58,7 +58,7 @@
 
                 <RibbonApplicationMenuItem Header="Save Notebook Histories"
                                                   Command="{Binding Path=SaveAllHistoriesCommand}"
-                                                  KeyTip="Bs"
+                                                  KeyTip="B"
                                                   ImageSource="..\Images\SaveNotebookHistories.png" />
 
                 <RibbonApplicationMenuItem Header="Convert to XPS"
@@ -70,12 +70,17 @@
                                                   KeyTip="I"
                                                   ImageSource="..\Images\LargeIcon.png"
                                                   Visibility="{Binding Path=ServerVisibility}"/>
+                
+                <RibbonApplicationMenuItem Header="Submit Whole Notebook"
+                                                  Command="{Binding SubmitNotebookToTeacherCommand}"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Visibility="{Binding Path=StudentVisibility}"/>
 
                 <RibbonSeparator />
 
                 <!--Bind header for toggle text: disconnect/reconnect to network-->
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
-                                                  Command="{Binding Path=NetworkReconnectCommand}"
+                                                  Command="{Binding RefreshNetworkCommand}"
                                                   ImageSource="..\Images\ReconnectToNetwork.png" />
 
                 <RibbonApplicationMenu.FooterPaneContent>

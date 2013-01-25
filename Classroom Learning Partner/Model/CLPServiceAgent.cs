@@ -69,13 +69,10 @@ namespace Classroom_Learning_Partner.Model
                     page.SubmissionID = Guid.NewGuid().ToString();
                     page.SubmissionTime = DateTime.Now;
                     string sPage = ObjectSerializer.ToString(page);
-                    int stringLength = sPage.Length;
-                    Console.WriteLine(stringLength);
 
                     NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
                     binding.Security.Mode = SecurityMode.None;
                     IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
-                    
 
                     InstructorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
                     (InstructorProxy as ICommunicationObject).Close();
@@ -198,8 +195,6 @@ namespace Classroom_Learning_Partner.Model
 
         private void AutoSaveNotebook()
         {
-            Console.WriteLine("AutoSave Thread Started");
-
             string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
 
             if(!Directory.Exists(filePath))
@@ -217,8 +212,6 @@ namespace Classroom_Learning_Partner.Model
                 {
                     Thread.Sleep(150000); //AutoSave every 2.5 minutes.
                 }
-
-                Console.WriteLine("Background AutoSaving Start");
                 DateTime saveTime = DateTime.Now;
 
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
@@ -227,12 +220,7 @@ namespace Classroom_Learning_Partner.Model
                     saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
 
                 string filePathName = filePath + @"\" + time + "-" + notebook.NotebookName + @".clp";
-
-                Console.WriteLine(filePathName);
-
                 notebook.Save(filePathName);
-
-                Console.WriteLine("Notebook Saved");
             }
         }
 

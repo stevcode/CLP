@@ -141,6 +141,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
+            SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
+            RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Tools
@@ -1005,6 +1007,52 @@ namespace Classroom_Learning_Partner.ViewModels
             XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
             xw.Write(doc);
             xpsd.Close();
+        }
+
+        /// <summary>
+        /// Submits the entirety of a student's current notebook to the teacher to save on her desktop.
+        /// </summary>
+        public Command SubmitNotebookToTeacherCommand { get; private set; }
+
+        private void OnSubmitNotebookToTeacherCommandExecute()
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+                if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+                {
+                    try
+                    {
+                        string sNotebook = ObjectSerializer.ToString(notebook);
+
+                        NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
+                        binding.Security.Mode = SecurityMode.None;
+                        IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
+
+                        InstructorProxy.CollectStudentNotebook(sNotebook, App.Peer.UserName);
+                        (InstructorProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Address NOT Available");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the RefreshNetworkCommand command.
+        /// </summary>
+        public Command RefreshNetworkCommand { get; private set; }
+
+        private void OnRefreshNetworkCommandExecute()
+        {
+            CLPServiceAgent.Instance.NetworkReconnect();
         }
 
         /// <summary>

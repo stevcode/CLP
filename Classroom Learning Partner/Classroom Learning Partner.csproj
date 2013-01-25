@@ -201,6 +201,7 @@
     <Compile Include="Network\INotebookContract.cs" />
     <Compile Include="Network\InstructorService.cs" />
     <Compile Include="Network\ProjectorService.cs" />
+    <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />

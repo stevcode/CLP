@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace Classroom_Learning_Partner
         void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
 
         [OperationContract]
-        void CollectStudentNotebook(CLPNotebook notebook);
+        void CollectStudentNotebook(string sNotebook, string studentName);
 
         [OperationContract]
         void StudentLogin(Person student);
@@ -94,9 +95,22 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void CollectStudentNotebook(CLPNotebook notebook)
+        public void CollectStudentNotebook(string sNotebook, string studentName)
         {
-            Console.WriteLine("Notebook Collected");
+            CLPNotebook notebook = ObjectSerializer.ToObject(sNotebook) as CLPNotebook;
+            
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\CollectedStudentNotebooks";
+
+            if(!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            DateTime saveTime = DateTime.Now;
+            string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day;
+
+            string filePathName = filePath + @"\" + time + "-" + studentName + "-" + notebook.NotebookName + @".clp";
+            notebook.Save(filePathName);
         }
 
         public void StudentLogin(Person student)
