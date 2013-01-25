@@ -216,9 +216,9 @@
                     </Style>
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black"/>
-                <RibbonButton Background="White"/>
+                <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
-                <RibbonButton Background="Bisque"/>
+                <!--<RibbonButton Background="Bisque"/>-->
                 <RibbonButton Background="DarkOrange"/>
                 <RibbonButton Background="Tan"/>
                 <RibbonButton Background="Gold"/>

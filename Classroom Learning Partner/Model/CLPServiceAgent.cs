@@ -68,11 +68,14 @@ namespace Classroom_Learning_Partner.Model
                     string oldSubmissionID = page.SubmissionID;
                     page.SubmissionID = Guid.NewGuid().ToString();
                     page.SubmissionTime = DateTime.Now;
+                    string sPage = ObjectSerializer.ToString(page);
+                    int stringLength = sPage.Length;
+                    Console.WriteLine(stringLength);
 
-                    NetTcpBinding binding = new NetTcpBinding();
+                    NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
                     binding.Security.Mode = SecurityMode.None;
                     IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
-                    string sPage = ObjectSerializer.ToString(page);
+                    
 
                     InstructorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
                     (InstructorProxy as ICommunicationObject).Close();
