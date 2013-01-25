@@ -143,34 +143,39 @@ namespace Classroom_Learning_Partner
 
         public void ModifyPageInkStrokes(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID)
         {
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            {
-                CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
-
-                if(page == null)
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
                 {
-                    page = notebook.GetSubmissionByID(pageID);
-                }
+                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                    {
+                        CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
 
-                if(page != null)
-                {
-                    StrokeCollection strokesToRemove = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesRemoved));
+                        if(page == null)
+                        {
+                            page = notebook.GetSubmissionByID(pageID);
+                        }
 
-                    var strokes =
-                        from externalStroke in strokesToRemove
-                        from stroke in page.InkStrokes
-                        where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-                        select stroke;
+                        if(page != null)
+                        {
+                            StrokeCollection strokesToRemove = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesRemoved));
 
-                    StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+                            var strokes =
+                                from externalStroke in strokesToRemove
+                                from stroke in page.InkStrokes
+                                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
+                                select stroke;
 
-                    page.InkStrokes.Remove(actualStrokesToRemove);
+                            StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());
 
-                    StrokeCollection strokesToAdd = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesAdded));
-                    page.InkStrokes.Add(strokesToAdd);
-                    break;
-                }
-            }
+                            page.InkStrokes.Remove(actualStrokesToRemove);
+
+                            StrokeCollection strokesToAdd = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesAdded));
+                            page.InkStrokes.Add(strokesToAdd);
+                            break;
+                        }
+                    }
+                    return null;
+                }, null);
         }
 
         #endregion

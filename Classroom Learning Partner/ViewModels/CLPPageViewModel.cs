@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -598,22 +599,54 @@ namespace Classroom_Learning_Partner.ViewModels
 	                    {
 	                        List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
 	                        List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
-	
+
+                            string pageID;
+
+                            if(Page.IsSubmission)
+                            {
+                                pageID = Page.SubmissionID;
+                            }
+                            else
+                            {
+                                pageID = Page.UniqueID;
+                            }
+
+                            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                            {
+                                try
+                                {
+                                    NetTcpBinding binding = new NetTcpBinding();
+                                    binding.Security.Mode = SecurityMode.None;
+                                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
+                                    ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                    (ProjectorProxy as ICommunicationObject).Close();
+                                }
+                                catch(System.Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                            else
+                            {
+                                //TODO: Steve - add pages to a queue and send when a projector is found
+                                Console.WriteLine("Address NOT Available");
+                            }
+
 	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
-	                        if (Page.IsSubmission)
-	                        {
-	                            if (App.Peer.Channel != null)
-	                            {
-	                                App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-	                            }
-	                        }
-	                        else
-	                        {
-	                            if (App.Peer.Channel != null)
-	                            {
-                                    App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-	                            }
-	                        }
+                            //if (Page.IsSubmission)
+                            //{
+                            //    if (App.Peer.Channel != null)
+                            //    {
+                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    if (App.Peer.Channel != null)
+                            //    {
+                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
+                            //    }
+                            //}
 	                    }
                     }
                     catch (System.Exception ex)
