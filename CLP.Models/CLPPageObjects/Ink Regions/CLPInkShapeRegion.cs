@@ -95,6 +95,9 @@ namespace CLP.Models
                             shapeName = "Vertical";
                         }
                     }
+                    else if (shape.GetShapeName().Equals("Straight")) {
+                        shapeName = "Vertical";
+                    }
                     InkShapes.Add(new CLPNamedInkSet(shapeName, CLPPage.StrokesToBytes(shape.Strokes)));
                     text.AppendLine(shapeName);
                 }
