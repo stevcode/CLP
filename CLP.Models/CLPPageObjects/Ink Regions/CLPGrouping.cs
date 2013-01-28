@@ -118,8 +118,7 @@ namespace CLP.Models
                 foreach (string key in dicOfGroup.Keys)
                 {
                     List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
-                    answer.AppendLine("\t Group:");
-                    answer.Append("\t\t");
+                    answer.Append("\t Group: ");
                     answer.Append(objectsOfGroup.Count);
                     answer.Append(" ");
                     answer.Append(key);
