@@ -115,19 +115,20 @@ namespace CLP.Models
             }
             foreach (Dictionary<string, List<ICLPPageObject>> dicOfGroup in Groups)
             {
+                answer.Append("\t");
+                answer.Append("Group: ");
                 foreach (string key in dicOfGroup.Keys)
                 {
                     List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
-                    answer.Append("\t");
-                    answer.Append("Group: ");
                     answer.Append(objectsOfGroup.Count);
                     answer.Append(" ");
                     answer.Append(key);
                     answer.Append(" of ");
                     answer.Append(objectsOfGroup[0].Parts);
-                    answer.Append(" Parts");
-                    answer.AppendLine("; ");
+                    answer.Append(" Parts, ");
                 }
+                answer.Remove(answer.Length - 3, 2);
+                answer.AppendLine(";");
             }
             return answer.ToString();
         }
