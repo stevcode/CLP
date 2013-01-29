@@ -246,7 +246,7 @@ namespace CLP.Models
                 List<CLPGrouping> containerGroups = new List<CLPGrouping>();
                 foreach (String containerKey in possibleContainers)
                 {
-                    CLPGrouping containerGroup = new CLPGrouping("Container" + group.GetType(), containerKey);
+                    CLPGrouping containerGroup = new CLPGrouping("Container " + group.GroupingType, containerKey);
                     List<Dictionary<string, List<ICLPPageObject>>> groupsAugmented = new List<Dictionary<string, List<ICLPPageObject>>>(groups);
                     foreach (Dictionary<string, List<ICLPPageObject>> grouping in groupsAugmented)
                     {
@@ -305,9 +305,9 @@ namespace CLP.Models
                     Console.WriteLine(shape.InkShapeType + " Left: " + shapeBounds.Left + " Right: " + shapeBounds.Right +
                         " Top: " + shapeBounds.Top + " Bottom: " + shapeBounds.Bottom);
 
-                    Tuple<double, double, double, double> attributes = getShapeAttributes(shape);
-                    Console.WriteLine("ShapeAttrs: X: " + attributes.Item1 + " Y: " + attributes.Item2 +
-    " Width: " + attributes.Item3 + " Height: " + attributes.Item4);
+                    Tuple<double, double, double, double> shapeAttributes = getShapeAttributes(shape);
+                    Console.WriteLine("ShapeAttrs: X: " + shapeAttributes.Item1 + " Y: " + shapeAttributes.Item2 +
+    " Width: " + shapeAttributes.Item3 + " Height: " + shapeAttributes.Item4);
 
                     Console.WriteLine("Overall grouping region: X: " + XPosition + " Y: " + YPosition + " Width: " + Width + " Height: " + Height);
 
@@ -316,14 +316,14 @@ namespace CLP.Models
                     double minLineLength = 25;
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
-                        if (shapeBounds.Height > minLineLength) {
-                        InsertNewInkNode(createSideDictionary(null, new NodeSide(shape, Side.Right), null, null));
-                        InsertNewInkNode(createSideDictionary(new NodeSide(shape, Side.Left), null, null, null));
+                        if (shapeAttributes.Item4 > minLineLength && shapeAttributes.Item1 > XPosition && shapeAttributes.Item1 < XPosition + Width) {
+                            InsertNewInkNode(createSideDictionary(null, new NodeSide(shape, Side.Right), null, null));
+                            InsertNewInkNode(createSideDictionary(new NodeSide(shape, Side.Left), null, null, null));
                         }
                     }
                     else if (shape.InkShapeType.Equals("Horizontal"))
                     {
-                        if (shapeBounds.Width > minLineLength)
+                        if (shapeAttributes.Item3 > minLineLength && shapeAttributes.Item2 > YPosition && shapeAttributes.Item2 < YPosition + Height)
                         {
                             InsertNewInkNode(createSideDictionary(null, null, null, new NodeSide(shape, Side.Bottom)));
                             InsertNewInkNode(createSideDictionary(null, null, new NodeSide(shape, Side.Top), null));
@@ -613,12 +613,22 @@ namespace CLP.Models
                 changingNode.sides[side] = controlNode.sides[side];
             }
             Console.WriteLine("Trimming");
-            UpdateBounds(changingNode);
-            // Bounds are only getting smaller so parent has to be the same but the kids may 
-            // have been part of the larger area.
-            CheckIfChildOrUpdateParent(changingNode);
+            SideChangedUpdateNode(changingNode, side);
         }
 
+        private void SideChangedUpdateNode(InkGroupingNode node, Side side) {
+            UpdateBounds(node);
+
+            double s1 = GetBoundOfRectangleWithSide(node.bounds, side);
+            double s2 = GetBoundOfRectangleWithSide(node.bounds, GetOppositeSide(side));
+            CheckAdjacentSides(node.sides, side, Math.Max(s1, s2), Math.Min(s1, s2));
+
+            // Bounds are only getting smaller so parent has to be the same but the kids may 
+            // have been part of the larger area.
+            CheckIfChildOrUpdateParent(node);
+        }
+
+        // controlNode[side] is a line with the other side being null
         private void splitNode(InkGroupingNode changingNode, InkGroupingNode controlNode, Side side) {
             Console.WriteLine("Split changing node in 2");
             // destory all references to the node
@@ -626,30 +636,36 @@ namespace CLP.Models
             if (side == Side.Left || side == Side.Right)
             {
                 //left side of changing node
-                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left],
+                Dictionary<Side, NodeSide> leftDict = createSideDictionary(changingNode.sides[Side.Left],
                     controlNode.sides[side], changingNode.sides[Side.Top],
-                    changingNode.sides[Side.Bottom]));
+                    changingNode.sides[Side.Bottom]);
+                CheckAdjacentSides(leftDict, side, changingNode.bounds.Right,
+                    GetBoundOfRectangleWithSide(controlNode.bounds, side));
+                InsertNewInkNode(leftDict);
                 //right side of changing node
-                InsertNewInkNode(createSideDictionary(controlNode.sides[side],
-                    changingNode.sides[Side.Right], changingNode.sides[Side.Top],
-                    changingNode.sides[Side.Bottom]));
+                Dictionary<Side, NodeSide> rightDict = createSideDictionary(controlNode.sides[side],
+                    changingNode.sides[Side.Right], changingNode.sides[Side.Top], changingNode.sides[Side.Bottom]);
+                CheckAdjacentSides(rightDict, side, changingNode.bounds.Left,
+                    GetBoundOfRectangleWithSide(controlNode.bounds, side));
+                InsertNewInkNode(rightDict);
             }
             else {
                 //top side of changing node
-                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left],
-                    changingNode.sides[Side.Right], changingNode.sides[Side.Top],
-                    controlNode.sides[side]));
+                Dictionary<Side, NodeSide> topDict = createSideDictionary(changingNode.sides[Side.Left],
+                    changingNode.sides[Side.Right], changingNode.sides[Side.Top], controlNode.sides[side]);
+                CheckAdjacentSides(topDict, side, GetBoundOfRectangleWithSide(controlNode.bounds, side),
+                    changingNode.bounds.Top);
+                InsertNewInkNode(topDict);
+
                 //bottom side of changing node
-                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left],
-                    changingNode.sides[Side.Right], controlNode.sides[side],
-                    changingNode.sides[Side.Bottom]));
+                Dictionary<Side, NodeSide> bottomDict = createSideDictionary(changingNode.sides[Side.Left],
+                    changingNode.sides[Side.Right], controlNode.sides[side], changingNode.sides[Side.Bottom]);
+                CheckAdjacentSides(bottomDict, side, changingNode.bounds.Bottom, 
+                    GetBoundOfRectangleWithSide(controlNode.bounds, side));
+                InsertNewInkNode(bottomDict);
             }
-            // If the control's right side is null then changingNode's right side should
-            // alse be the control's right side - this is all we can do for now because
-            // we dont know about the top and bottom
             controlNode.sides[GetOppositeSide(side)] = changingNode.sides[GetOppositeSide(side)];
-            UpdateBounds(controlNode);
-            CheckIfChildOrUpdateParent(controlNode);
+            SideChangedUpdateNode(controlNode, side);
         }
 
         private void overlappingNodes(InkGroupingNode changingNode, InkGroupingNode controlNode, Side side)
@@ -1003,8 +1019,10 @@ namespace CLP.Models
         {
             // percentage of line that must still be present in shape to allow purely trimming
             double threshold = .80;
-            CLPNamedInkSet adjacent1 = node.sides[GetAdjacentSide(side)].shape;
-            CLPNamedInkSet adjacent2 = node.sides[GetOppositeSide(GetAdjacentSide(side))].shape;
+            CLPNamedInkSet adjacent1 = (node.sides[GetAdjacentSide(side)] == null) ?
+                null : node.sides[GetAdjacentSide(side)].shape;
+            CLPNamedInkSet adjacent2 = (node.sides[GetOppositeSide(GetAdjacentSide(side))] == null) ?
+                null : node.sides[GetOppositeSide(GetAdjacentSide(side))].shape;
             Rect bounds;
             
             //Both adjacents present
@@ -1126,6 +1144,35 @@ namespace CLP.Models
         private Side GetAdjacentSide(Side s)
         {
             return (Side)(((int)s + 1) % 4);
+        }
+
+        private void CheckAdjacentSides(Dictionary<Side, NodeSide> sides, Side controlSide, double maxSide, double minSide) {
+            CheckAdjacectSidesHelper(sides, controlSide, GetAdjacentSide(controlSide), maxSide, minSide);
+            CheckAdjacectSidesHelper(sides, controlSide, GetOppositeSide(GetAdjacentSide(controlSide)), maxSide, minSide);
+        }
+
+        private void CheckAdjacectSidesHelper(Dictionary<Side, NodeSide> sides, Side controlSide, Side checkSide,
+            double maxSide, double minSide)
+        {
+            double threshold = .5;
+            double length = maxSide - minSide;
+
+            if (sides[GetAdjacentSide(controlSide)] != null)
+            {
+                // Check side one
+                Rect adj1 = CLPPage.BytesToStrokes(sides[checkSide].shape.InkShapeStrokes).GetBounds();
+                double adjSide1a = GetBoundOfRectangleWithSide(adj1, controlSide);
+                double adjSide1b = GetBoundOfRectangleWithSide(adj1, GetOppositeSide(controlSide));
+                double maxSide1 = Math.Max(adjSide1a, adjSide1b);
+                maxSide1 = (maxSide1 > maxSide) ? maxSide : maxSide1;
+                double minSide1 = Math.Min(adjSide1a, adjSide1b);
+                minSide1 = (minSide1 < minSide) ? minSide : minSide1;
+                double length1 = maxSide1 - minSide1;
+                if (length1 / length < threshold)
+                {
+                    sides[checkSide] = null;
+                }
+            }
         }
 
         #endregion
