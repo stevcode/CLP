@@ -102,13 +102,15 @@ namespace CLP.Models
             AddGrouping(DistanceClustering(validGroupingObjects), true, Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);
             StringBuilder interpretation = new StringBuilder();
+            StringBuilder nonFormattedIterpretation = new StringBuilder();
             foreach (CLPGrouping grouping in Groupings)
             {
-                interpretation.AppendLine(grouping.toString());
+                interpretation.AppendLine(grouping.toFormattedString());
+                nonFormattedIterpretation.Append(grouping.toNonFormattedString());
             }
             StoredAnswer = interpretation.ToString();
             Console.WriteLine("Interpretation");
-            Console.WriteLine(StoredAnswer);
+            Console.WriteLine(nonFormattedIterpretation.ToString());
         }
 
         #region General
@@ -315,21 +317,23 @@ namespace CLP.Models
                     if (shape.InkShapeType.Equals("Vertical"))
                     {
                         if (shapeBounds.Height > minLineLength) {
-                        InsertNewInkNode(createSideDictionary(null, shape, null, null));
-                        InsertNewInkNode(createSideDictionary(shape, null, null, null));
+                        InsertNewInkNode(createSideDictionary(null, new NodeSide(shape, Side.Right), null, null));
+                        InsertNewInkNode(createSideDictionary(new NodeSide(shape, Side.Left), null, null, null));
                         }
                     }
                     else if (shape.InkShapeType.Equals("Horizontal"))
                     {
                         if (shapeBounds.Width > minLineLength)
                         {
-                            InsertNewInkNode(createSideDictionary(null, null, null, shape));
-                            InsertNewInkNode(createSideDictionary(null, null, shape, null));
+                            InsertNewInkNode(createSideDictionary(null, null, null, new NodeSide(shape, Side.Bottom)));
+                            InsertNewInkNode(createSideDictionary(null, null, new NodeSide(shape, Side.Top), null));
                         }
                     }
                     else
                     {
-                        InsertNewInkNode(createSideDictionary(shape, shape, shape, shape));
+                        InsertNewInkNode(createSideDictionary(new NodeSide(shape, Side.Left),
+                            new NodeSide(shape, Side.Right), new NodeSide(shape, Side.Top),
+                            new NodeSide(shape, Side.Bottom)));
                     }
                 }
             }
@@ -355,7 +359,7 @@ namespace CLP.Models
             return group;
         }
 
-        private void InsertNewInkNode(Dictionary<Side, CLPNamedInkSet> sides)
+        private void InsertNewInkNode(Dictionary<Side, NodeSide> sides)
         {
             Console.WriteLine("Insert New Node");
             InkGroupingNode node = new InkGroupingNode(Rect.Empty, sides);
@@ -443,16 +447,19 @@ namespace CLP.Models
                     Rect.Intersect(node.bounds, childNode.bounds).Height * Rect.Intersect(node.bounds, childNode.bounds).Width > 0)
                 {
                     Rect intersection = Rect.Intersect(node.bounds, childNode.bounds);
+                    int count = 0;
                     while (nodeStillExists && intersection.Height * intersection.Width > 0)
                     {
-                        // New node's right side intersects another node
-                        Console.WriteLine("newNode.Left: " + node.bounds.Left + " newNode.Right: " + node.bounds.Right);
-                        Console.WriteLine("exisitingNode.Left: " + childNode.bounds.Left + " exisitingNode.Right: " + childNode.bounds.Right);
+                        intersection = Rect.Intersect(node.bounds, childNode.bounds);
+                        Console.WriteLine("Intersection: Left: " + intersection.Left + " Right: " + intersection.Right + " Top: " +
+                            intersection.Top + " Bottom: " + intersection.Bottom);
 
                         // left or right side of the new node intersects with another node
                         // -- without knowing which side has control its hard to 
                         if (node.bounds.Right > childNode.bounds.Left && node.bounds.Left < childNode.bounds.Left
-                            || node.bounds.Right > childNode.bounds.Right && node.bounds.Left < childNode.bounds.Right)
+                            || node.bounds.Right > childNode.bounds.Right && node.bounds.Left < childNode.bounds.Right ||
+                            childNode.bounds.Right > node.bounds.Left && childNode.bounds.Left < node.bounds.Left
+                            || childNode.bounds.Right > node.bounds.Right && childNode.bounds.Left < node.bounds.Right)
                         {
                             // left side comes from one of the nodes
                             Console.WriteLine("left or right side intersecting");
@@ -460,65 +467,56 @@ namespace CLP.Models
                                 (childNode.sides[Side.Left] != null && childNode.bounds.Left == intersection.Left))
                             {
                                 nodeStillExists = HandleIntersection(node, childNode, Side.Left);
-                                if (!nodeStillExists)
-                                {
-                                    break;
-                                }
-                                intersection = Rect.Intersect(node.bounds, childNode.bounds);
                             }
                             // Right side forming intersection
                             else if ((node.sides[Side.Right] != null && node.bounds.Right == intersection.Right) ||
                                 (childNode.sides[Side.Right] != null && childNode.bounds.Right == intersection.Right))
                             {
                                 nodeStillExists = HandleIntersection(node, childNode, Side.Right);
-                                if (!nodeStillExists)
-                                {
-                                    break;
-                                }
-                                intersection = Rect.Intersect(node.bounds, childNode.bounds);
                             }
                             else {
                                 Console.WriteLine("Umm");
                             }
                         }
+                        if (!nodeStillExists)
+                        {
+                            break;
+                        }
+                        intersection = Rect.Intersect(node.bounds, childNode.bounds);
                         // New node's top side intersects another node
-                        else if (node.bounds.Top < childNode.bounds.Bottom && node.bounds.Bottom > childNode.bounds.Bottom ||
-                            node.bounds.Bottom > childNode.bounds.Top && node.bounds.Top < childNode.bounds.Top)
+                        if (node.bounds.Top < childNode.bounds.Bottom && node.bounds.Bottom > childNode.bounds.Bottom ||
+                            node.bounds.Bottom > childNode.bounds.Top && node.bounds.Top < childNode.bounds.Top ||
+                            childNode.bounds.Top < node.bounds.Bottom && childNode.bounds.Bottom > node.bounds.Bottom ||
+                            childNode.bounds.Bottom > node.bounds.Top && childNode.bounds.Top < node.bounds.Top)
                         {
                             Console.WriteLine("bottom or top side intersecting");
+                            Console.WriteLine("Node bottom null?: " + (node.sides[Side.Bottom] == null) + " Bottom bound: " + node.bounds.Bottom);
                             // top side comes from one of the nodes
                             if ((node.sides[Side.Top] != null && node.bounds.Top == intersection.Top) ||
                                 (childNode.sides[Side.Top] != null && childNode.bounds.Top == intersection.Top))
                             {
                                 nodeStillExists = HandleIntersection(node, childNode, Side.Top);
-                                if (!nodeStillExists)
-                                {
-                                    break;
-                                }
-                                intersection = Rect.Intersect(node.bounds, childNode.bounds);
                             }
                             // Bottom side forming intersection
                             else if ((node.sides[Side.Bottom] != null && node.bounds.Bottom == intersection.Bottom) ||
                                 (childNode.sides[Side.Bottom] != null && childNode.bounds.Bottom == intersection.Bottom))
                             {
                                 nodeStillExists = HandleIntersection(node, childNode, Side.Bottom);
-                                if (!nodeStillExists)
-                                {
-                                    break;
-                                }
-                                intersection = Rect.Intersect(node.bounds, childNode.bounds);
                             }
                             else
                             {
                                 Console.WriteLine("Umm");
                             }
                         }
-                        // Intersection is some bottom side combination with neither immediately adjoining
-                        else
+                        if (!nodeStillExists)
                         {
-                            Console.WriteLine("Break");
+                            break;
                         }
                         intersection = Rect.Intersect(node.bounds, childNode.bounds);
+                        count++;
+                        if (count > 10) {
+                            Console.WriteLine("WAY too many iterations");
+                        }
                     }
                     if (!nodeStillExists)
                     {
@@ -555,14 +553,12 @@ namespace CLP.Models
         private bool HandleIntersection(InkGroupingNode newNode, InkGroupingNode existingNode, Side side)
         {
             Rect intersection = Rect.Intersect(newNode.bounds, existingNode.bounds);
-            Console.WriteLine("Intersection: Left: " + intersection.Left + " Right: " + intersection.Right + " Top: " +
-                intersection.Top + " Bottom: " + intersection.Bottom);
             InkGroupingNode controlNode = (newNode.sides[side] != null && GetBoundOfRectangleWithSide(newNode.bounds, side) == GetBoundOfRectangleWithSide(intersection, side)) ? newNode : existingNode;
             InkGroupingNode changingNode = (controlNode == newNode) ? existingNode : newNode;
             Console.WriteLine("Side: " + side);
             Console.WriteLine("Control: " + controlNode.bounds);
             Console.WriteLine("Changing: " + changingNode.bounds);
-            Console.WriteLine("Opp side: " + GetOppositeSide(side) + " Opposite Side null: " + (GetOppositeSide(side) == null));
+            Console.WriteLine("Opp side: " + GetOppositeSide(side) + " Opposite Side null: " + (changingNode.sides[GetOppositeSide(side)] == null));
             // This is the case where you have a square or the equivalent and the new line splits it
             if (changingNode.sides[side] != null && changingNode.sides[GetOppositeSide(side)] != null)
             {
@@ -664,10 +660,10 @@ namespace CLP.Models
             if (side == Side.Left)
             {
                 // Left Node
-                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left], controlNode.sides[Side.Left],
+                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left], new NodeSide(controlNode.sides[Side.Left].shape, Side.Left),
                     changingNode.sides[Side.Top], changingNode.sides[Side.Bottom]));
                 // Right node
-                InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Right], controlNode.sides[Side.Right],
+                InsertNewInkNode(createSideDictionary(new NodeSide(changingNode.sides[Side.Right].shape, Side.Right), controlNode.sides[Side.Right],
                     controlNode.sides[Side.Top], controlNode.sides[Side.Bottom]));
                 // Middle node - a bit complicated because the top and bottom might 
                 // be different so we're just going to create two nodes - one with
@@ -680,11 +676,12 @@ namespace CLP.Models
             else if (side == Side.Right)
             {
                 // Left Node
-                InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Left], changingNode.sides[Side.Left],
+                InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Left],
+                    new NodeSide(changingNode.sides[Side.Left].shape, Side.Left),
                     controlNode.sides[Side.Top], controlNode.sides[Side.Bottom]));
                 // Right node
-                InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Right], changingNode.sides[Side.Right],
-                    changingNode.sides[Side.Top], changingNode.sides[Side.Bottom]));
+                InsertNewInkNode(createSideDictionary(new NodeSide(controlNode.sides[Side.Right].shape, Side.Right),
+                    changingNode.sides[Side.Right],changingNode.sides[Side.Top], changingNode.sides[Side.Bottom]));
                 // Middle node - a bit complicated because the top and bottom might 
                 // be different so we're just going to create two nodes - one with
                 // the controls top and botton and one with the changine node's
@@ -697,10 +694,10 @@ namespace CLP.Models
             {
                 // Top Node
                 InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left], changingNode.sides[Side.Right],
-                    changingNode.sides[Side.Top], controlNode.sides[Side.Top]));
+                    changingNode.sides[Side.Top], new NodeSide(controlNode.sides[Side.Top].shape, Side.Bottom)));
                 // Bottom node
                 InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Left], controlNode.sides[Side.Right],
-                    changingNode.sides[Side.Bottom], controlNode.sides[Side.Bottom]));
+                   new NodeSide(changingNode.sides[Side.Bottom].shape, Side.Top), controlNode.sides[Side.Bottom]));
                 // Middle node - a bit complicated because the left and right might 
                 // be different so we're just going to create two nodes - one with
                 // the controls left and right and one with the changine node's
@@ -712,10 +709,10 @@ namespace CLP.Models
             else {
                 // Top Node
                 InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Left], controlNode.sides[Side.Right],
-                    controlNode.sides[Side.Top], changingNode.sides[Side.Top]));
+                    controlNode.sides[Side.Top], new NodeSide(changingNode.sides[Side.Top].shape, Side.Bottom)));
                 // Bottom node
                 InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left], changingNode.sides[Side.Right],
-                    controlNode.sides[Side.Bottom], changingNode.sides[Side.Bottom]));
+                    new NodeSide(controlNode.sides[Side.Bottom].shape, Side.Top), changingNode.sides[Side.Bottom]));
                 // Middle node - a bit complicated because the left and right might 
                 // be different so we're just going to create two nodes - one with
                 // the controls left and right and one with the changine node's
@@ -796,16 +793,16 @@ namespace CLP.Models
                 Console.WriteLine("Find Left");
                 if (origTop >= 0 && origBottom < 0)
                 {
-                    left = getShapeAttributes(node.sides[Side.Top]).Item1;
+                    left = getShapeAttributes(node.sides[Side.Top].shape).Item1;
                 }
                 else if (origTop < 0 && origBottom >= 0)
                 {
-                    left = getShapeAttributes(node.sides[Side.Bottom]).Item1;
+                    left = getShapeAttributes(node.sides[Side.Bottom].shape).Item1;
                 }
                 else if (origTop >= 0 && origBottom >= 0)
                 {
-                    double bottomLeft = getShapeAttributes(node.sides[Side.Bottom]).Item1;
-                    double topLeft = getShapeAttributes(node.sides[Side.Top]).Item1;
+                    double bottomLeft = getShapeAttributes(node.sides[Side.Bottom].shape).Item1;
+                    double topLeft = getShapeAttributes(node.sides[Side.Top].shape).Item1;
                     left = Math.Min(bottomLeft, topLeft);
                     // Theres a case where we might have a really small line trying to create multiple nodes with a
                     // really big line. We only want the max if their difference in lengths is not greater than the threshold
@@ -859,16 +856,16 @@ namespace CLP.Models
                 Console.WriteLine("Find Top");
                 if (origLeft >= 0 && origRight < 0)
                 {
-                    top = getShapeAttributes(node.sides[Side.Left]).Item2;
+                    top = getShapeAttributes(node.sides[Side.Left].shape).Item2;
                 }
                 else if (origLeft < 0 && origRight >= 0)
                 {
-                    top = getShapeAttributes(node.sides[Side.Right]).Item2;
+                    top = getShapeAttributes(node.sides[Side.Right].shape).Item2;
                 }
                 else if (origLeft >= 0 && origRight >= 0)
                 {
-                    double topLeft = getShapeAttributes(node.sides[Side.Left]).Item2;
-                    double topRight = getShapeAttributes(node.sides[Side.Right]).Item2;
+                    double topLeft = getShapeAttributes(node.sides[Side.Left].shape).Item2;
+                    double topRight = getShapeAttributes(node.sides[Side.Right].shape).Item2;
                     // Theres a case where we might have a really small line trying to create multiple nodes with a
                     // really big line. We only want the max if their difference in lengths is not greater than the threshold
                     double min = Math.Min(topLeft, topRight);
@@ -924,72 +921,53 @@ namespace CLP.Models
         {
             if (node.sides[side] == null)
             {
-                // No left through side
+                // No side
                 return -1;
             }
             // check line options
-            else if (isLine(node.sides[side]))
+            else if (isLine(node.sides[side].shape))
             {
                 if (side == Side.Left || side == Side.Right)
                 {
-                    return getShapeAttributes(node.sides[side]).Item1;
+                    return getShapeAttributes(node.sides[side].shape).Item1;
                 }
                 else
                 {
-                    return getShapeAttributes(node.sides[side]).Item2;
+                    return getShapeAttributes(node.sides[side].shape).Item2;
                 }
             }
-            else if (((side == Side.Left || side == Side.Right) && node.sides[Side.Left] == node.sides[Side.Right]) ||
-              ((side == Side.Top || side == Side.Bottom) && node.sides[Side.Top] == node.sides[Side.Bottom]))
-            {
-                if (side == Side.Left)
-                {
-                    return getShapeAttributes(node.sides[side]).Item1;
-                }
-                else if (side == Side.Right)
-                {
-                    return GetRightCoordinate(node, side);
-                }
-                else if (side == Side.Top)
-                {
-                    return getShapeAttributes(node.sides[side]).Item2;
-                }
-                else
-                {
-                    return GetBottomCoordinate(node, side);
-                }
-            }
+            // shape constructing side
             else
             {
-                // This means that the bound is found from the opposite side
-                if (side == Side.Left)
+                Side sideOfShapeToUse = node.sides[side].sideOfShape;
+                if (sideOfShapeToUse == Side.Left)
+                {
+                    return getShapeAttributes(node.sides[side].shape).Item1;
+                }
+                else if (sideOfShapeToUse == Side.Right)
                 {
                     return GetRightCoordinate(node, side);
                 }
-                else if (side == Side.Right)
+                else if (sideOfShapeToUse == Side.Top)
                 {
-                    return getShapeAttributes(node.sides[side]).Item1;
-                }
-                else if (side == Side.Top)
-                {
-                    return GetBottomCoordinate(node, side);
+                    return getShapeAttributes(node.sides[side].shape).Item2;
                 }
                 else
                 {
-                    return getShapeAttributes(node.sides[side]).Item2;
+                    return GetBottomCoordinate(node, side);
                 }
             }
         }
 
         private double GetRightCoordinate(InkGroupingNode node, Side side)
         {
-            Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[side]);
+            Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[side].shape);
             return attributes.Item1 + attributes.Item3;
         }
 
         private double GetBottomCoordinate(InkGroupingNode node, Side side)
         {
-            Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[side]);
+            Tuple<double, double, double, double> attributes = getShapeAttributes(node.sides[side].shape);
             return attributes.Item2 + attributes.Item4;
         }
         
@@ -1025,10 +1003,11 @@ namespace CLP.Models
         {
             // percentage of line that must still be present in shape to allow purely trimming
             double threshold = .80;
-            // left
-            CLPNamedInkSet adjacent1 = node.sides[GetAdjacentSide(side)];
-            CLPNamedInkSet adjacent2 = node.sides[GetOppositeSide(GetAdjacentSide(side))];
+            CLPNamedInkSet adjacent1 = node.sides[GetAdjacentSide(side)].shape;
+            CLPNamedInkSet adjacent2 = node.sides[GetOppositeSide(GetAdjacentSide(side))].shape;
             Rect bounds;
+            
+            //Both adjacents present
             if (adjacent1 != null && adjacent2 != null)
             {
                 Console.WriteLine("Both adjacents present");
@@ -1097,10 +1076,19 @@ namespace CLP.Models
         #region Sides
         enum Side { Left, Top, Right, Bottom };
 
-        private Dictionary<Side, CLPNamedInkSet> createSideDictionary(CLPNamedInkSet left, CLPNamedInkSet right,
-    CLPNamedInkSet top, CLPNamedInkSet bottom)
+        private class NodeSide {
+            public CLPNamedInkSet shape;
+            public Side sideOfShape;
+
+            public NodeSide(CLPNamedInkSet shape, Side sideOfShape) {
+                this.shape = shape;
+                this.sideOfShape = sideOfShape;
+            }
+        }
+
+        private Dictionary<Side, NodeSide> createSideDictionary(NodeSide left, NodeSide right, NodeSide top, NodeSide bottom)
         {
-            Dictionary<Side, CLPNamedInkSet> sides = new Dictionary<Side, CLPNamedInkSet>();
+            Dictionary<Side, NodeSide> sides = new Dictionary<Side, NodeSide>();
             sides.Add(Side.Left, left);
             sides.Add(Side.Right, right);
             sides.Add(Side.Top, top);
@@ -1156,9 +1144,9 @@ namespace CLP.Models
             public List<InkGroupingNode> children;
             public Rect bounds;
             public List<ICLPPageObject> objects;
-            public Dictionary<Side, CLPNamedInkSet> sides;
+            public Dictionary<Side, NodeSide> sides;
 
-            public InkGroupingNode(Rect bounds, Dictionary<Side, CLPNamedInkSet> sides)
+            public InkGroupingNode(Rect bounds, Dictionary<Side, NodeSide> sides)
             {
                 children = new List<InkGroupingNode>();
                 objects = new List<ICLPPageObject>();
