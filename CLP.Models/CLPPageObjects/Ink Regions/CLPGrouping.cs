@@ -102,7 +102,7 @@ namespace CLP.Models
             Groups.Add(OrganizeGroupOfPageObjectsByType(group));
         }
 
-        public string toString()
+        public string toFormattedString()
         {
             StringBuilder answer = new StringBuilder(GroupingType);
             answer.Append(": ");
@@ -118,7 +118,8 @@ namespace CLP.Models
                 foreach (string key in dicOfGroup.Keys)
                 {
                     List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
-                    answer.Append("\t Group: ");
+                    answer.Append("\t");
+                    answer.Append("Group: ");
                     answer.Append(objectsOfGroup.Count);
                     answer.Append(" ");
                     answer.Append(key);
@@ -126,6 +127,35 @@ namespace CLP.Models
                     answer.Append(objectsOfGroup[0].Parts);
                     answer.Append(" Parts");
                     answer.AppendLine("; ");
+                }
+            }
+            return answer.ToString();
+        }
+
+        public string toNonFormattedString()
+        {
+            StringBuilder answer = new StringBuilder(GroupingType);
+            answer.Append(": ");
+            answer.Append(Groups.Count);
+            answer.Append(" Groups - ");
+            if (HasContainer)
+            {
+                answer.Append("Container: ");
+                answer.Append(Container);
+            }
+            foreach (Dictionary<string, List<ICLPPageObject>> dicOfGroup in Groups)
+            {
+                foreach (string key in dicOfGroup.Keys)
+                {
+                    List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
+                    answer.Append(" Group: ");
+                    answer.Append(objectsOfGroup.Count);
+                    answer.Append(" ");
+                    answer.Append(key);
+                    answer.Append(" of ");
+                    answer.Append(objectsOfGroup[0].Parts);
+                    answer.Append(" Parts");
+                    answer.Append("; ");
                 }
             }
             return answer.ToString();
