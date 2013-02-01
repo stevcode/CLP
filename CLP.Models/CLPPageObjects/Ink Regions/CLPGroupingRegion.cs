@@ -99,7 +99,8 @@ namespace CLP.Models
             }
 
             AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
-            AddGrouping(DistanceClustering(validGroupingObjects), true, Groupings);
+            AddGrouping(DistanceClustering(validGroupingObjects, true), true, Groupings);
+            AddContainerGrouping(DistanceClustering(validGroupingObjects, false), Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);
             StringBuilder interpretation = new StringBuilder();
             StringBuilder nonFormattedIterpretation = new StringBuilder();
@@ -122,13 +123,21 @@ namespace CLP.Models
                 groupingCollection.Add(group);
                 if (checkForContainers)
                 {
-                    List<CLPGrouping> containerGroups = DetectContainer(group);
-                    if (containerGroups != null)
+                    AddContainerGrouping(group, groupingCollection);
+                }
+            }
+        }
+
+        private void AddContainerGrouping(CLPGrouping group, ObservableCollection<CLPGrouping> groupingCollection)
+        {
+            if (group.Groups.Count > 0)
+            {
+                List<CLPGrouping> containerGroups = DetectContainer(group);
+                if (containerGroups != null)
+                {
+                    foreach (CLPGrouping container in containerGroups)
                     {
-                        foreach (CLPGrouping container in containerGroups)
-                        {
-                            groupingCollection.Add(container);
-                        }
+                        groupingCollection.Add(container);
                     }
                 }
             }
@@ -222,7 +231,7 @@ namespace CLP.Models
             if (groups.Count > 1)
             {
                 //Check all other groups to see if they support the same containers.
-                foreach (Dictionary<string, List<ICLPPageObject>> dictOfGroup in groups.GetRange(1, groups.Count - 2))
+                foreach (Dictionary<string, List<ICLPPageObject>> dictOfGroup in groups.GetRange(1, groups.Count - 1))
                 {
                     // Since we want to iterate through the possible containers, we must create a new list since
                     // we can't edit the list that we are looping through.
@@ -370,9 +379,25 @@ namespace CLP.Models
         private void InsertNewInkNode(Dictionary<Side, NodeSide> sides)
         {
             Console.WriteLine("Insert New Node");
-            InkGroupingNode node = new InkGroupingNode(Rect.Empty, sides);
-            UpdateBounds(node);
-            SetParentOfNodeAndFixBounds(node, root);
+            if (AnySideExists(sides))
+            {
+                InkGroupingNode node = new InkGroupingNode(Rect.Empty, sides);
+                UpdateBounds(node);
+                SetParentOfNodeAndFixBounds(node, root);
+            }
+            else {
+                Console.WriteLine("No Sides");
+            }
+        }
+
+        private bool AnySideExists(Dictionary<Side, NodeSide> sides) {
+            bool sidesExist = false;
+            for (int s = 0; s < 4; s++)
+            {
+                Side side = (Side)s;
+                sidesExist = sidesExist || sides[side] != null;
+            }
+            return sidesExist;
         }
 
         private void TraverseInkGroupingDebug(InkGroupingNode node)
@@ -459,16 +484,12 @@ namespace CLP.Models
                     Console.WriteLine("Intersection: Left: " + intersection.Left + " Right: " + intersection.Right + " Top: " +
                         intersection.Top + " Bottom: " + intersection.Bottom);
 
-                    // left or right side of the new node intersects with another node
-                    // First two check if the width can be contained inside the other width
-                    // Next two check if the nodes are on either side of each other
-                    /*if (!((node.bounds.Left <= childNode.bounds.Left && node.bounds.Right >= childNode.bounds.Right) ||
-                        (childNode.bounds.Left <= node.bounds.Left && childNode.bounds.Right >= node.bounds.Right) ||
-                        childNode.bounds.Right < node.bounds.Left || node.bounds.Right < childNode.bounds.Left))*/
-                    if (node.bounds.Right > childNode.bounds.Left && node.bounds.Left < childNode.bounds.Left
-                            || node.bounds.Right > childNode.bounds.Right && node.bounds.Left < childNode.bounds.Right ||
-                            childNode.bounds.Right > node.bounds.Left && childNode.bounds.Left < node.bounds.Left
-                            || childNode.bounds.Right > node.bounds.Right && childNode.bounds.Left < node.bounds.Right)
+                    //The childNode may not exist if it was split while being handled;
+                    bool handled = false;
+
+                    if (IntersectsLeftOrTop(node, childNode, Side.Left) || IntersectsLeftOrTop(childNode, node, Side.Left)
+                        || IntersectsBottomOrRight(node, childNode, Side.Right) ||
+                        IntersectsBottomOrRight(childNode, node, Side.Right))
                     {
                         // left side comes from one of the nodes
                         Console.WriteLine("left or right side intersecting");
@@ -476,23 +497,27 @@ namespace CLP.Models
                             (childNode.sides[Side.Left] != null && childNode.bounds.Left == intersection.Left))
                         {
                             nodeStillExists = HandleIntersection(node, childNode, Side.Left);
+                            handled = true;
                         }
                         // Right side forming intersection
                         else if ((node.sides[Side.Right] != null && node.bounds.Right == intersection.Right) ||
                             (childNode.sides[Side.Right] != null && childNode.bounds.Right == intersection.Right))
                         {
                             nodeStillExists = HandleIntersection(node, childNode, Side.Right);
+                            handled = true;
                         }
                         else
                         {
                             Console.WriteLine("Umm");
                         }
                     }
+
                     // New node's top side intersects another node
-                    else if (node.bounds.Top < childNode.bounds.Bottom && node.bounds.Bottom > childNode.bounds.Bottom ||
-                            node.bounds.Bottom > childNode.bounds.Top && node.bounds.Top < childNode.bounds.Top ||
-                            childNode.bounds.Top < node.bounds.Bottom && childNode.bounds.Bottom > node.bounds.Bottom ||
-                            childNode.bounds.Bottom > node.bounds.Top && childNode.bounds.Top < node.bounds.Top)
+                    if (!handled &&
+                        (IntersectsLeftOrTop(node, childNode, Side.Top) ||
+                        IntersectsLeftOrTop(childNode, node, Side.Top)
+                        || IntersectsBottomOrRight(node, childNode, Side.Bottom) ||
+                        IntersectsBottomOrRight(childNode, node, Side.Bottom)))
                     {
                         Console.WriteLine("bottom or top side intersecting");
                         Console.WriteLine("Node bottom null?: " + (node.sides[Side.Bottom] == null) + " Bottom bound: " + node.bounds.Bottom);
@@ -501,22 +526,36 @@ namespace CLP.Models
                             (childNode.sides[Side.Top] != null && childNode.bounds.Top == intersection.Top))
                         {
                             nodeStillExists = HandleIntersection(node, childNode, Side.Top);
+                            handled = true;
                         }
                         // Bottom side forming intersection
                         else if ((node.sides[Side.Bottom] != null && node.bounds.Bottom == intersection.Bottom) ||
                             (childNode.sides[Side.Bottom] != null && childNode.bounds.Bottom == intersection.Bottom))
                         {
                             nodeStillExists = HandleIntersection(node, childNode, Side.Bottom);
+                            handled = true;
                         }
                         else
                         {
                             Console.WriteLine("Umm");
                         }
                     }
-                    else
+                    // top and/or bottom could be set on one node, and left and/or right of the other node could be set
+                    // want to expand to make one big node taking in both cases
+                    if (!handled &&
+                        ((OnlyLeftOrRightSet(node) && OnlyTopOrBottomSet(childNode)) ||
+                        (OnlyLeftOrRightSet(childNode) && OnlyTopOrBottomSet(node))))
+                    {
+                        CombineAndExpand(node, childNode);
+                        nodeStillExists = false;
+                        handled = true;
+                    }
+
+                    if (!handled)
                     {
                         Console.WriteLine("Not Good");
                     }
+
                     if (!nodeStillExists)
                     {
                         break;
@@ -527,8 +566,9 @@ namespace CLP.Models
                 {
                     childIndex++;
                 }
+                Console.WriteLine("Iteration Count: " + count + " for " + node.bounds);
                 count++;
-                if (count > 20)
+                if (count > 40)
                 {
                     Console.WriteLine("WAY too many iterations");
                 }
@@ -540,6 +580,68 @@ namespace CLP.Models
                 Console.WriteLine("Done. Added node to parent");
                 potentialParent.children.Add(node);
             }
+        }
+
+        private bool OnlyLeftOrRightSet(InkGroupingNode node) {
+            return node.sides[Side.Top] == null && node.sides[Side.Bottom] == null;
+        }
+
+        private bool OnlyTopOrBottomSet(InkGroupingNode node)
+        {
+            return node.sides[Side.Left] == null && node.sides[Side.Right] == null;
+        }
+
+        private void CombineAndExpand(InkGroupingNode newNode, InkGroupingNode existingNode) {
+            InkGroupingNode leftRightNode = (OnlyLeftOrRightSet(newNode)) ? newNode : existingNode;
+            InkGroupingNode topBottomNode = (OnlyTopOrBottomSet(newNode)) ? newNode : existingNode;
+            leftRightNode.sides[Side.Top] = topBottomNode.sides[Side.Top];
+            leftRightNode.sides[Side.Bottom] = topBottomNode.sides[Side.Bottom];
+
+            existingNode.sides = leftRightNode.sides;
+
+            //Since just expanding more room, all kids must still belong to
+            foreach (InkGroupingNode child in newNode.children)
+            {
+                existingNode.children.Add(child);
+                child.parent = existingNode;
+            }
+
+            CombineNodes(existingNode, newNode);
+        }
+
+       private bool IntersectsBottomOrRight(InkGroupingNode node, InkGroupingNode intersectedNode, Side rightOrBottom) {
+           Side leftOrTopSide = GetOppositeSide(rightOrBottom);
+           double rightOrBottomBoundNode = GetBoundOfRectangleWithSide(node.bounds, rightOrBottom);
+           double leftOrTopBoundNode = GetBoundOfRectangleWithSide(node.bounds, leftOrTopSide);
+
+           double rightOrBottomBoundIntersectedNode = GetBoundOfRectangleWithSide(intersectedNode.bounds, rightOrBottom);
+           double leftOrTopBoundIntersectedNode = GetBoundOfRectangleWithSide(intersectedNode.bounds, leftOrTopSide);
+
+           return leftOrTopBoundNode < rightOrBottomBoundIntersectedNode &&
+               rightOrBottomBoundNode > rightOrBottomBoundIntersectedNode &&
+               leftOrTopBoundNode >= leftOrTopBoundIntersectedNode;
+           /*node.bounds.Top < nodeBeingIntersected.bounds.Bottom &&
+                node.bounds.Bottom > nodeBeingIntersected.bounds.Bottom &&
+                node.bounds.Top >= nodeBeingIntersected.bounds.Top;*/
+        }
+
+
+
+        private bool IntersectsLeftOrTop(InkGroupingNode node, InkGroupingNode intersectedNode, Side leftOrTopSide){
+           Side rightOrBottom = GetOppositeSide(leftOrTopSide);
+           double rightOrBottomBoundNode = GetBoundOfRectangleWithSide(node.bounds, rightOrBottom);
+           double leftOrTopBoundNode = GetBoundOfRectangleWithSide(node.bounds, leftOrTopSide);
+
+           double rightOrBottomBoundIntersectedNode = GetBoundOfRectangleWithSide(intersectedNode.bounds, rightOrBottom);
+           double leftOrTopBoundIntersectedNode = GetBoundOfRectangleWithSide(intersectedNode.bounds, leftOrTopSide);
+
+           return leftOrTopBoundNode < leftOrTopBoundIntersectedNode &&
+               rightOrBottomBoundNode > leftOrTopBoundIntersectedNode &&
+               rightOrBottomBoundNode <= rightOrBottomBoundIntersectedNode;
+            
+            /*return node.bounds.Top < nodeBeingIntersected.bounds.Top &&
+                node.bounds.Bottom > nodeBeingIntersected.bounds.Top &&
+                node.bounds.Bottom <= nodeBeingIntersected.bounds.Bottom;*/
         }
 
         private bool HandleIntersection(InkGroupingNode newNode, InkGroupingNode existingNode, Side side)
@@ -683,7 +785,7 @@ namespace CLP.Models
             {
                 // Top Node
                 InsertNewInkNode(createSideDictionary(changingNode.sides[Side.Left], changingNode.sides[Side.Right],
-                    changingNode.sides[Side.Top], new NodeSide(controlNode.sides[Side.Top].shape, Side.Bottom)));
+                    changingNode.sides[Side.Top], new NodeSide(controlNode.sides[Side.Top].shape, Side.Top)));
                 // Bottom node
                 InsertNewInkNode(createSideDictionary(controlNode.sides[Side.Left], controlNode.sides[Side.Right],
                    new NodeSide(changingNode.sides[Side.Bottom].shape, Side.Top), controlNode.sides[Side.Bottom]));
@@ -1199,7 +1301,7 @@ namespace CLP.Models
 
         #region Distance Grouping
 
-        private CLPGrouping DistanceClustering(List<ICLPPageObject> validGroupingObjects)
+        private CLPGrouping DistanceClustering(List<ICLPPageObject> validGroupingObjects, bool useMinimumDistance)
         {
             HashSet<DistanceGroup> groups = new HashSet<DistanceGroup>();
             foreach (ICLPPageObject po in validGroupingObjects)
@@ -1220,9 +1322,10 @@ namespace CLP.Models
                     }
                     Console.WriteLine("; Average: " + g.average());
                 }*/
-                canCombine = combineGroups(groups);
+                canCombine = combineGroups(groups, useMinimumDistance);
             }
-            CLPGrouping grouping = new CLPGrouping("Distance Grouping");
+            CLPGrouping grouping = (useMinimumDistance) ? new CLPGrouping("Distance Grouping") :
+                new CLPGrouping("Grouping");
             foreach (DistanceGroup group in groups)
             {
                 List<ICLPPageObject> poInGroup = new List<ICLPPageObject>();
@@ -1235,7 +1338,7 @@ namespace CLP.Models
             return grouping;
         }
 
-        private Boolean combineGroups(HashSet<DistanceGroup> groups)
+        private Boolean combineGroups(HashSet<DistanceGroup> groups, bool useMinimumDistance)
         {
             double smallestDistanceGroups = Double.MaxValue;
             List<DistanceGroup> combineTheseGroups = new List<DistanceGroup>(2);
@@ -1271,10 +1374,12 @@ namespace CLP.Models
             }
 
             double threshold = 2.5;
-            double minValue = 10;
+            double minValue = 7;
             //Console.WriteLine("SmallestDistanceGroups: " + smallestDistanceGroups + "; Groups1: " + combineTheseGroups[0].printGroupObjects() + " avg: " + combineTheseGroups[0].average() + "; Groups2: " + combineTheseGroups[1].printGroupObjects() + " avg: " + combineTheseGroups[1].average());
-            if (Math.Max(combineTheseGroups[0].average(), minValue) * threshold >= smallestDistanceGroups &&
-                Math.Max(combineTheseGroups[1].average(), minValue) * threshold >= smallestDistanceGroups)
+            if ((useMinimumDistance && Math.Max(combineTheseGroups[0].average(), minValue) * threshold >= smallestDistanceGroups &&
+                Math.Max(combineTheseGroups[1].average(), minValue) * threshold >= smallestDistanceGroups) ||
+                (!useMinimumDistance && combineTheseGroups[0].average() * threshold >= smallestDistanceGroups &&
+                combineTheseGroups[1].average() * threshold >= smallestDistanceGroups))
             {
                 DistanceGroup removeGroup = combineTheseGroups[0];
                 groups.Remove(removeGroup);

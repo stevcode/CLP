@@ -117,7 +117,6 @@ namespace CLP.Models
             {
                 answer.Append("\t");
                 answer.Append("Group: ");
-                Console.WriteLine("Key Count: " + dicOfGroup.Keys.Count);
                 foreach (string key in dicOfGroup.Keys)
                 {
                     List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
@@ -172,7 +171,6 @@ namespace CLP.Models
 
         public static Dictionary<string, List<ICLPPageObject>> OrganizeGroupOfPageObjectsByType(List<ICLPPageObject> group)
         {
-            Console.WriteLine("Group length: " + group.Count);
             Dictionary<string, List<ICLPPageObject>> groupOrganized =
                 new Dictionary<string, List<ICLPPageObject>>();
             foreach (ICLPPageObject po in group)
