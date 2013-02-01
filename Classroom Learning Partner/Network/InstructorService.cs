@@ -94,6 +94,8 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+
+            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)

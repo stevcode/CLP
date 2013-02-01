@@ -109,6 +109,7 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
+                    //TODO: Steve - AutoSaveHere
                     CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
 
                     foreach(ICLPPageObject pageObject in page.PageObjects)
@@ -138,6 +139,8 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+
+            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         #region INotebookContract Members

@@ -633,6 +633,32 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //TODO: Steve - add pages to a queue and send when a projector is found
                                 Console.WriteLine("Address NOT Available");
                             }
+
+                            if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)
+                            {
+                                if(App.Network.ClassList.Count > 0)
+                                {
+                                    foreach(Person student in App.Network.ClassList)
+                                    {
+                                        try
+                                        {
+                                            NetTcpBinding binding = new NetTcpBinding();
+                                            binding.Security.Mode = SecurityMode.None;
+                                            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                            StudentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                            (StudentProxy as ICommunicationObject).Close();
+                                        }
+                                        catch(System.Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.Instance.WriteToLog("No Students Found");
+                                }
+                            }
 	                    }
                     }
                     catch (System.Exception ex)

@@ -26,15 +26,20 @@ namespace Classroom_Learning_Partner
 
         public void TogglePenDownMode(bool isPenDownModeEnabled)
         {
-            //TODO: Steve - AutoSave here
-            if(isPenDownModeEnabled)
-            {
-                PleaseWaitHelper.Show("The Teacher has disabled the pen.");
-            }
-            else
-            {
-                PleaseWaitHelper.Hide();
-            }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    //TODO: Steve - AutoSave here
+                    if(isPenDownModeEnabled)
+                    {
+                        PleaseWaitHelper.Show("The Teacher has disabled the pen.");
+                    }
+                    else
+                    {
+                        PleaseWaitHelper.Hide();
+                    }
+                    return null;
+                }, null);
         }
 
         #endregion
