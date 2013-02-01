@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using ProtoBuf.Meta;
 using Catel.Logging;
 using Classroom_Learning_Partner.Model;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner
 {
@@ -135,8 +136,7 @@ namespace Classroom_Learning_Partner
             {
                 _network = value;
             }
-        }
-
+        }     
 
         private static MainWindowViewModel _mainWindowViewModel;
         public static MainWindowViewModel MainWindowViewModel

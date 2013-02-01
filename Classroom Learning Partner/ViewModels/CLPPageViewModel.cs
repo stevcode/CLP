@@ -536,6 +536,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
+
+            //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.
             Task.Factory.StartNew( () =>
                 {
                     try
@@ -631,22 +633,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //TODO: Steve - add pages to a queue and send when a projector is found
                                 Console.WriteLine("Address NOT Available");
                             }
-
-	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
-                            //if (Page.IsSubmission)
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
 	                    }
                     }
                     catch (System.Exception ex)

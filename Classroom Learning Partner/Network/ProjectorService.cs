@@ -126,6 +126,7 @@ namespace Classroom_Learning_Partner
                             if(page.ParentNotebookID == notebook.UniqueID)
                             {
                                 CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                //TODO: Steve - AutoSave Here
                                 break;
                             }
                         }
