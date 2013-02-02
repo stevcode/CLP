@@ -318,7 +318,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <!--<RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
+                <RibbonToggleButton x:Name="SendInkToStudentsToggleButton"
                         IsChecked="{Binding BroadcastInkToStudents}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -332,10 +332,33 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>-->
+                </RibbonToggleButton>
 
             </RibbonGroup>
 
+        </RibbonTab>
+
+        <RibbonTab Header="Test Features" Visibility="{Binding Path=InstructorVisibility}">
+            
+            <RibbonGroup Header="ClassList Commands">
+
+                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="Allow Students Pen"/>
+                            <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="Deny Students Pen"/>
+                                    <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+            </RibbonGroup>
+            
         </RibbonTab>
 
         <!--<RibbonTab Header="Page">

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.ServiceModel;
+using System.Threading;
 using Catel.Data;
 using Catel.MVVM;
 
@@ -70,6 +73,40 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnLogInCommandExecute(string userName)
         {
             App.Peer.UserName = userName;
+
+            App.Network.CurrentUser.FullName = userName.Split(new char[] { ',' })[0];
+            App.Network.CurrentGroup.GroupName = userName.Split(new char[] { ',' })[1];
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                int i = App.Network.DiscoveredInstructors.Addresses.Count();
+                while(App.Network.DiscoveredInstructors.Addresses.Count() < 1 || App.Network.CurrentUser.CurrentMachineAddress == null)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+                {
+                    try
+                    {
+                        NetTcpBinding binding = new NetTcpBinding();
+                        binding.Security.Mode = SecurityMode.None;
+                        IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
+                        InstructorProxy.StudentLogin(App.Network.CurrentUser);
+                        (InstructorProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine("ERROR");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Instructor NOT Available");
+                }
+            }).Start();
+
             App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 

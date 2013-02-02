@@ -3,14 +3,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using CLP.Models;
 using ServiceModelEx;
 
 namespace Classroom_Learning_Partner
 {
     public sealed class CLPNetwork : IDisposable
     {
-        public string MachineName { get; private set; }
-        public string UserName { get; set; }
+        public Person CurrentUser { get; set; }
+        public Group CurrentGroup { get; set; }
+        public ObservableCollection<Person> ClassList { get; set; }
+
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
@@ -19,8 +22,11 @@ namespace Classroom_Learning_Partner
 
         public CLPNetwork()
         {
-            MachineName = Environment.MachineName;
-            UserName = MachineName;
+            CurrentUser = new Person();
+            CurrentGroup = new Group();
+            ClassList = new ObservableCollection<Person>();
+            DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
+            DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
             RunningServices = new ObservableCollection<ServiceHost>();
         }
 
@@ -72,6 +78,16 @@ namespace Classroom_Learning_Partner
                     App.MainWindowViewModel.OnlineStatus = "LISTENING...";
                     break;
                 case App.UserMode.Student:
+                    host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
+                    string blah = host.Description.Endpoints[0].Address.ToString();
+                    foreach(var endpoint in host.Description.Endpoints)
+                    {
+                        if(endpoint.Name == "NetTcpBinding_IStudentContract")
+                        {
+                            CurrentUser.CurrentMachineAddress = endpoint.Address.ToString();
+                            break;
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -93,7 +109,6 @@ namespace Classroom_Learning_Partner
                 case App.UserMode.Server:
                     break;
                 case App.UserMode.Instructor:
-                    DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
                     DiscoveredProjectors.Open();
                     new Thread(() =>
                     {
@@ -108,7 +123,6 @@ namespace Classroom_Learning_Partner
                 case App.UserMode.Projector:
                     break;
                 case App.UserMode.Student:
-                    DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>
@@ -159,7 +173,11 @@ namespace Classroom_Learning_Partner
 
         public void StopNetworking()
         {
-            //host.close()
+            foreach(var host in RunningServices)
+            {
+                host.Close();
+            }
+            RunningServices.Clear();
         }
 
         public void Dispose()

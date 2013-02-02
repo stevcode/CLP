@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner.Model
                     binding.Security.Mode = SecurityMode.None;
                     IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
 
-                    InstructorProxy.AddStudentSubmissionViaString(sPage, App.Peer.UserName, notebookName);
+                    InstructorProxy.AddStudentSubmissionViaString(sPage, App.Network.CurrentUser.FullName, notebookName);
                     (InstructorProxy as ICommunicationObject).Close();
                 }
                 catch(System.Exception ex)
@@ -195,6 +195,15 @@ namespace Classroom_Learning_Partner.Model
 
         private void AutoSaveNotebook()
         {
+            while(true)
+            {
+                Thread.Sleep(120000); //AutoSave every 2.5 minutes.
+                QuickSaveNotebook("AUTOSAVE");
+            }
+        }
+
+        public void QuickSaveNotebook(string appendedFileName)
+        {
             string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
 
             if(!Directory.Exists(filePath))
@@ -202,26 +211,15 @@ namespace Classroom_Learning_Partner.Model
                 Directory.CreateDirectory(filePath);
             }
 
-            while(true)
-            {
-                if(App.CurrentUserMode == App.UserMode.Student)
-                {
-                    Thread.Sleep(150000); //AutoSave every 2.5 minutes.
-                }
-                else
-                {
-                    Thread.Sleep(150000); //AutoSave every 2.5 minutes.
-                }
-                DateTime saveTime = DateTime.Now;
+            DateTime saveTime = DateTime.Now;
 
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
+            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
 
-                string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
-                    saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
+            string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
+                saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
 
-                string filePathName = filePath + @"\" + time + "-" + notebook.NotebookName + @".clp";
-                notebook.Save(filePathName);
-            }
+            string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
+            notebook.Save(filePathName);
         }
 
         public void OpenNewNotebook()

@@ -82,6 +82,7 @@ namespace Classroom_Learning_Partner
                             if(page.ParentNotebookID == notebook.UniqueID)
                             {
                                 CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                //TODO: Steve - AutoSave Here
                                 break;
                             }
                         }
@@ -93,6 +94,8 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+
+            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)
@@ -115,7 +118,8 @@ namespace Classroom_Learning_Partner
 
         public void StudentLogin(Person student)
         {
-            Console.WriteLine("Login");
+            App.Network.ClassList.Add(student);
+            Logger.Instance.WriteToLog("Student Logged In: " + student.FullName);
         }
 
         public void StudentLogout(Person student)

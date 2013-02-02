@@ -536,6 +536,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
+
+            //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.
             Task.Factory.StartNew( () =>
                 {
                     try
@@ -632,21 +634,31 @@ namespace Classroom_Learning_Partner.ViewModels
                                 Console.WriteLine("Address NOT Available");
                             }
 
-	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
-                            //if (Page.IsSubmission)
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
+                            if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)
+                            {
+                                if(App.Network.ClassList.Count > 0)
+                                {
+                                    foreach(Person student in App.Network.ClassList)
+                                    {
+                                        try
+                                        {
+                                            NetTcpBinding binding = new NetTcpBinding();
+                                            binding.Security.Mode = SecurityMode.None;
+                                            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                            StudentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                            (StudentProxy as ICommunicationObject).Close();
+                                        }
+                                        catch(System.Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.Instance.WriteToLog("No Students Found");
+                                }
+                            }
 	                    }
                     }
                     catch (System.Exception ex)
