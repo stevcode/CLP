@@ -276,6 +276,7 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), Guid.NewGuid().ToString());
 
+
         /// <summary>
         /// Name of the submitter on a submitted page.
         /// </summary>
@@ -338,6 +339,7 @@ namespace CLP.Models
         {
             get { return GetValue<Group>(GroupSubmitterProperty); }
             set { SetValue(GroupSubmitterProperty, value); }
+
         }
 
         public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);

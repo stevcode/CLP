@@ -65,6 +65,8 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes = new ObservableCollection<string>();
             FilterTypes.Add("Student Name - Ascending");
             FilterTypes.Add("Student Name - Descending");
+            FilterTypes.Add("Group ID - Ascending");
+            FilterTypes.Add("Group ID - Descending");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
         }
@@ -361,6 +363,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PropertyGroupDescription gd = new PropertyGroupDescription();
             gd.PropertyName = "SubmitterName";
+            PropertyGroupDescription gd2 = new PropertyGroupDescription();
+            gd2.PropertyName = "GroupSubmitter.GroupName";
+            PropertyGroupDescription gd3 = new PropertyGroupDescription();
+            gd3.PropertyName = "SubmissionTime";
 
             if(Sort == "Student Name - Ascending")
             {
@@ -374,8 +380,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdAD);
             }
+            else if(Sort == "Group ID - Ascending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd2);
+                SortDescription sdGA = new SortDescription("GroupSubmitter", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdGA);
+            }
+            else if(Sort == "Group ID - Descending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd2);
+                SortDescription sdGD = new SortDescription("GroupSubmitter", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdGD);
+            }
             else if(Sort == "Time In - Ascending")
             {
+                FilteredSubmissions.GroupDescriptions.Add(gd3);
                 SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdTA);
             }
