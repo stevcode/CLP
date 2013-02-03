@@ -508,28 +508,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 //});
 
-            //TODO: Steve - Stamps add/remove too quickly and crash projector
-            //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
-            //{
-            //    List<string> added = new List<string>();
-            //    List<string> removedIDs = new List<string>();
-            //    if (e.NewItems != null)
-            //    {
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            added.Add(ObjectSerializer.ToString(item as ICLPPageObject));
-            //        }
-            //    }
-            //    if (e.OldItems != null)
-            //    {
-            //        foreach (var item in e.OldItems)
-            //        {
-            //            removedIDs.Add((item as ICLPPageObject).UniqueID);
-            //        }
-            //    }
-
-            //    App.Peer.Channel.ChangePageObjectsOnPage(Page.UniqueID, added, removedIDs);
-            //}
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -738,7 +716,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, Classroom_Learning_Partner.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
@@ -850,7 +828,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Classroom_Learning_Partner.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)

@@ -26,12 +26,6 @@ namespace Classroom_Learning_Partner
             Student
         }
 
-        public enum DatabaseMode
-        {
-            Using,
-            NotUsing
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
@@ -45,15 +39,9 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
 
             _currentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.Using;
 
             Classroom_Learning_Partner.Logger.Instance.InitializeLog();
             Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
-            
-            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
-            {
-                ConnectToDB();
-            }
 
             MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainWindowViewModel();
@@ -63,10 +51,7 @@ namespace Classroom_Learning_Partner
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
 
-            _peer = new Classroom_Learning_Partner.Model.PeerNode();
             CLPServiceAgent.Instance.NetworkSetup();
-            //JoinMeshNetwork();
-            //ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
@@ -99,26 +84,6 @@ namespace Classroom_Learning_Partner
                     Application.Current.Shutdown();
                 }
             }
-        }
-
-        public void JoinMeshNetwork()
-        {
-            _peer = new Classroom_Learning_Partner.Model.PeerNode();
-            _peerThread = new Thread(_peer.Run) { IsBackground = true };
-            PeerThread.Start();
-        }
-
-        public void LeaveMeshNetwork()
-        {
-            Peer.Stop();
-            PeerThread.Join();
-        }
-
-        protected void ConnectToDB()
-        {
-            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
-            _databaseServer = MongoServer.Create(ConnectionString);
-            Console.WriteLine("Connected to DB");
         }
 
         #endregion //Methods
@@ -169,58 +134,6 @@ namespace Classroom_Learning_Partner
                 _currentUserMode = value;
             }
         }
-
-        #region Stuff To Delete
-
-        //delete
-        private static Classroom_Learning_Partner.Model.PeerNode _peer;
-        public static Classroom_Learning_Partner.Model.PeerNode Peer
-        {
-            get
-            {
-                return _peer;
-            }
-        }
-
-
-        //delete
-        private static Thread _peerThread;
-        public static Thread PeerThread
-        {
-            get
-            {
-                return _peerThread;
-            }
-        }
-
-        private static DatabaseMode _databaseUse;
-        public static DatabaseMode DatabaseUse
-        {
-            get
-            {
-                return _databaseUse;
-            }
-        }
-
-        private static MongoServer _databaseServer;
-        public static MongoServer DatabaseServer
-        {
-            get
-            {
-                return _databaseServer;
-            }
-        }
-
-        private static RuntimeTypeModel _pageTypeModel;
-        public static RuntimeTypeModel PageTypeModel
-        {
-            get
-            {
-                return _pageTypeModel;
-            }
-        }
-
-        #endregion //Stuff To Delete
 
         #endregion //Properties
     }

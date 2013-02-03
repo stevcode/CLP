@@ -192,11 +192,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\CLPMeshNetworkService.cs" />
     <Compile Include="Model\CLPServiceAgent.cs" />
-    <Compile Include="Model\Logger.cs" />
-    <Compile Include="Model\ObjectSerializer.cs" />
-    <Compile Include="Model\PeerNode.cs" />
+    <Compile Include="Resources\Logger.cs" />
+    <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
     <Compile Include="Network\INotebookContract.cs" />
     <Compile Include="Network\InstructorService.cs" />

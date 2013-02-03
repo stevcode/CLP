@@ -138,9 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
-            SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
-            ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -191,9 +189,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
             InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
-
-            //DB
-            QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
@@ -870,21 +865,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the SaveAllNotebooksCommand command.
         /// </summary>
-        public Command SaveAllHistoriesCommand { get; private set; }
-
-        private void OnSaveAllHistoriesCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving All Notebook Histories", 0.0 / 0.0);
-
-            }
-        }
-
-        /// <summary>
-        /// Gets the SaveAllNotebooksCommand command.
-        /// </summary>
         public Command SaveAllNotebooksCommand { get; private set; }
 
         private void OnSaveAllNotebooksCommandExecute()
@@ -893,30 +873,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook(notebook);
             }
-        }
-
-        public Command ImportLocalNotebooksDBCommand { get; private set; }
-
-        private static System.Threading.Thread _backgroundThread;
-        public static System.Threading.Thread BackgroundThread
-        {
-            get
-            {
-                return _backgroundThread;
-            }
-        }
-
-        private void ImportLocalNotebooksDBCommandExecute()
-        {
-            _backgroundThread = new System.Threading.Thread(Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ImportLocalNotebooksFromDB) { IsBackground = true };
-            BackgroundThread.Start();
-        }
-
-        public Command QueryDatabaseCommand { get; private set; }
-
-        private void QueryDatabaseCommandExecute()
-        {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RunDBQueryForPages();
         }
 
         /// <summary>
@@ -1064,7 +1020,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         binding.Security.Mode = SecurityMode.None;
                         IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
 
-                        InstructorProxy.CollectStudentNotebook(sNotebook, App.Peer.UserName);
+                        InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
                         (InstructorProxy as ICommunicationObject).Close();
                     }
                     catch(System.Exception ex)
