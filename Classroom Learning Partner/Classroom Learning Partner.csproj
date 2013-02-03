@@ -205,6 +205,8 @@
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
+    <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
@@ -572,10 +574,6 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AdornedControl\AdornedControl.csproj">
-      <Project>{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}</Project>
-      <Name>AdornedControl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
       <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
       <Name>CLP.Models</Name>
