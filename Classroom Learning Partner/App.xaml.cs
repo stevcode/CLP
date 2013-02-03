@@ -1,14 +1,8 @@
 using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using MongoDB.Driver;
-using ProtoBuf.Meta;
-using Catel.Logging;
-using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner
 {
@@ -42,11 +36,12 @@ namespace Classroom_Learning_Partner
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
-            MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainWindowViewModel();
+            MainWindowView window = new MainWindowView();
             window.DataContext = MainWindowViewModel;
-            window.Show();
             MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
+            window.Show();
+            
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
 
