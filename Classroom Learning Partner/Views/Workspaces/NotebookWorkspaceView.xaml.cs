@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Catel.MVVM.Views;
-using Classroom_Learning_Partner.Model; //Steve - No Model in View?
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 

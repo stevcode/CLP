@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views

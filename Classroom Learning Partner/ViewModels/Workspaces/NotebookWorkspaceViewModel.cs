@@ -11,7 +11,6 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
-using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

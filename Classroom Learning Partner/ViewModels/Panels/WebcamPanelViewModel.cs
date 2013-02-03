@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System;
 using System.IO;
-using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -153,7 +152,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPImage image = new CLPImage(imageID, currentPage);
             image.IsBackground = App.MainWindowViewModel.IsAuthoring;
 
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(image);
+            CLPServiceAgent.Instance.AddPageObjectToPage(image);
         }
 
         #endregion //Commands

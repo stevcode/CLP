@@ -192,7 +192,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\CLPServiceAgent.cs" />
+    <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -667,6 +667,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

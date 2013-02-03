@@ -4,7 +4,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner

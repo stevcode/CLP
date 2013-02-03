@@ -712,16 +712,16 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
                             }
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, Classroom_Learning_Partner.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:
@@ -820,7 +820,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
+                            CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
                             if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
                             {
                                 PageHistory.TrashedPageObjects.Remove(item.ObjectID);
@@ -828,12 +828,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Classroom_Learning_Partner.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:

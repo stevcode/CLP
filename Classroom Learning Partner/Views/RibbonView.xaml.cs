@@ -1,7 +1,6 @@
 ﻿using System.Windows.Controls.Ribbon;
 using System.Windows.Media;
 using Catel.Windows.Controls;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views

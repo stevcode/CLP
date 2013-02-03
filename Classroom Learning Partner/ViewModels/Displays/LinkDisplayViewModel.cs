@@ -211,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
+            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
 
         #endregion //Methods

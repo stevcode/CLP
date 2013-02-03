@@ -18,7 +18,7 @@ using Catel.IoC;
 using Catel.Windows.Controls;
 using System.ServiceModel;
 
-namespace Classroom_Learning_Partner.Model
+namespace Classroom_Learning_Partner
 {
     //Sealed to allow the compiler to perform special optimizations during JIT
     public sealed class CLPServiceAgent

@@ -15,7 +15,6 @@ using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -805,7 +804,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNewNotebookCommandExecute()
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.OpenNewNotebook();
+            CLPServiceAgent.Instance.OpenNewNotebook();
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[0];
         }
 
@@ -858,7 +857,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 Catel.Windows.PleaseWaitHelper.Show(() =>
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
+                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
             }
         }
 
@@ -871,7 +870,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             {
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook(notebook);
+                CLPServiceAgent.Instance.SaveNotebook(notebook);
             }
         }
 
@@ -1055,7 +1054,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(MessageBox.Show("Are you sure you want to exit?",
                                         "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Exit();
+                CLPServiceAgent.Instance.Exit();
             }
         }
 
@@ -1283,7 +1282,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
             }
             CanSendToTeacher = false;
 
@@ -1676,7 +1675,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertTextBoxCommandExecute()
         {
             CLPTextBox textBox = new CLPTextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
+            CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
         }
 
         /// <summary>
@@ -1687,7 +1686,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAggregationDataTableCommandExecute()
         {
             CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
+            CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
         }
 
         /// <summary>
@@ -1727,7 +1726,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     CLPImage image = new CLPImage(imageID, page);
 
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(image);
                 }
                 else
                 {
@@ -1814,7 +1813,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPImage image = new CLPImage(imageID, page);
                     CLPStamp stamp = new CLPStamp(image, page);
 
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
                 }
                 else
                 {
@@ -1834,7 +1833,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertBlankStampCommandExecute()
         {
             CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
             if(EditingMode != InkCanvasEditingMode.Ink)
             {
                 SetPenCommand.Execute();
@@ -1852,7 +1851,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAudioCommandExecute()
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+            CLPServiceAgent.Instance.AddPageObjectToPage(audio);
         }
 
         /// <summary>
@@ -1866,7 +1865,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertSquareShapeCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(square);
+            CLPServiceAgent.Instance.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -1880,7 +1879,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertCircleShapeCommandExecute()
         {
             CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(circle);
+            CLPServiceAgent.Instance.AddPageObjectToPage(circle);
         }
 
         /// <summary>
@@ -1894,7 +1893,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            CLPServiceAgent.Instance.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -1908,7 +1907,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertVerticalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.VerticalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            CLPServiceAgent.Instance.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -1928,7 +1927,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
                 CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 
@@ -1943,7 +1942,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertInkShapeRegionCommandExecute()
         {
             CLPInkShapeRegion region = new CLPInkShapeRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            CLPServiceAgent.Instance.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -1957,7 +1956,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertGroupingRegionCommandExecute()
         {
             CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            CLPServiceAgent.Instance.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -1986,7 +1985,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException e) { cols = 1; }
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 
@@ -2016,7 +2015,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException e) { cols = 0; }
 
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 

@@ -8,7 +8,6 @@ using Classroom_Learning_Partner.Views;
 using MongoDB.Driver;
 using ProtoBuf.Meta;
 using Catel.Logging;
-using Classroom_Learning_Partner.Model;
 using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner
@@ -40,8 +39,8 @@ namespace Classroom_Learning_Partner
 
             _currentUserMode = UserMode.Instructor;
 
-            Classroom_Learning_Partner.Logger.Instance.InitializeLog();
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
 
             MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainWindowViewModel();
