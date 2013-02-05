@@ -204,6 +204,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
@@ -321,6 +322,9 @@
     </Compile>
     <Compile Include="Views\Panels\DisplayListPanelView.xaml.cs">
       <DependentUpon>DisplayListPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
+      <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
@@ -467,6 +471,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\DisplayListPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\NotebookPagesPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
