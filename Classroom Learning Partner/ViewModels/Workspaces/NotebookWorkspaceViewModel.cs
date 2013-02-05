@@ -258,6 +258,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel), null);
 
         /// <summary>
+        /// Left side Panel.
+        /// </summary>
+        public IPanel LeftPanel
+        {
+            get { return GetValue<IPanel>(LeftPanelProperty); }
+            set { SetValue(LeftPanelProperty, value); }
+        }
+
+        public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel), null);
+
+        /// <summary>
         /// DisplayPanel.
         /// </summary>
         public DisplayListPanelViewModel DisplayListPanel

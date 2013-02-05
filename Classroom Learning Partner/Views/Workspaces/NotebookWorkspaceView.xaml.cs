@@ -134,56 +134,56 @@ namespace Classroom_Learning_Partner.Views
 
         private void ToggleNotebooks(bool isChecked)
         {
-            if(isChecked)
-            {
-                NotebookPagesBorder.Visibility = Visibility.Visible;
-                NotebookPagesSplitter.Visibility = Visibility.Visible;
+            //if(isChecked)
+            //{
+            //    NotebookPagesBorder.Visibility = Visibility.Visible;
+            //    NotebookPagesSplitter.Visibility = Visibility.Visible;
 
-                NotebookPageColumn.MinWidth = notebookPageColumnMinWidth;
-                NotebookPageColumn.Width = new GridLength(notebookPageColumnWidth);
-                NotebookPageSplitterColumn.Width = new GridLength(5);
+            //    NotebookPageColumn.MinWidth = notebookPageColumnMinWidth;
+            //    NotebookPageColumn.Width = new GridLength(notebookPageColumnWidth);
+            //    NotebookPageSplitterColumn.Width = new GridLength(5);
 
-                if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
-                {
-                    FilterSideBar.Visibility = submissionsVisibility;
-                    SubmissionPagesSplitter.Visibility = submissionsVisibility;
+            //    if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
+            //    {
+            //        FilterSideBar.Visibility = submissionsVisibility;
+            //        SubmissionPagesSplitter.Visibility = submissionsVisibility;
 
-                    if(submissionsVisibility == Visibility.Visible)
-                    {
-                        SubmissionColumn.MinWidth = submissionColumnMinWidth;
-                        SubmissionColumn.Width = new GridLength(submissionColumnWidth);
-                        SubmissionSplitterColumn.Width = new GridLength(5);
-                    }
-                }
-            }
-            else
-            {
-                NotebookPagesBorder.Visibility = Visibility.Collapsed;
-                NotebookPagesSplitter.Visibility = Visibility.Collapsed;
+            //        if(submissionsVisibility == Visibility.Visible)
+            //        {
+            //            SubmissionColumn.MinWidth = submissionColumnMinWidth;
+            //            SubmissionColumn.Width = new GridLength(submissionColumnWidth);
+            //            SubmissionSplitterColumn.Width = new GridLength(5);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    NotebookPagesBorder.Visibility = Visibility.Collapsed;
+            //    NotebookPagesSplitter.Visibility = Visibility.Collapsed;
 
-                notebookPageColumnWidth = NotebookPageColumn.Width.Value;
-                notebookPageColumnMinWidth = NotebookPageColumn.MinWidth;
+            //    notebookPageColumnWidth = NotebookPageColumn.Width.Value;
+            //    notebookPageColumnMinWidth = NotebookPageColumn.MinWidth;
 
-                NotebookPageColumn.MinWidth = 0;
-                NotebookPageColumn.Width = new GridLength(0);
-                NotebookPageSplitterColumn.Width = new GridLength(0);
+            //    NotebookPageColumn.MinWidth = 0;
+            //    NotebookPageColumn.Width = new GridLength(0);
+            //    NotebookPageSplitterColumn.Width = new GridLength(0);
 
-                if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
-                {
-                    FilterSideBar.Visibility = Visibility.Collapsed;
-                    SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
+            //    if(MainWindow.Ribbon.InstructorVisibility == Visibility.Visible)
+            //    {
+            //        FilterSideBar.Visibility = Visibility.Collapsed;
+            //        SubmissionPagesSplitter.Visibility = Visibility.Collapsed;
 
-                    if(submissionsVisibility == Visibility.Visible)
-                    {
-                        submissionColumnWidth = SubmissionColumn.Width.Value;
-                        submissionColumnMinWidth = SubmissionColumn.MinWidth;
+            //        if(submissionsVisibility == Visibility.Visible)
+            //        {
+            //            submissionColumnWidth = SubmissionColumn.Width.Value;
+            //            submissionColumnMinWidth = SubmissionColumn.MinWidth;
 
-                        SubmissionColumn.MinWidth = 0;
-                        SubmissionColumn.Width = new GridLength(0);
-                        SubmissionSplitterColumn.Width = new GridLength(0);
-                    }
-                }
-            }
+            //            SubmissionColumn.MinWidth = 0;
+            //            SubmissionColumn.Width = new GridLength(0);
+            //            SubmissionSplitterColumn.Width = new GridLength(0);
+            //        }
+            //    }
+            //}
         }
     }
 }

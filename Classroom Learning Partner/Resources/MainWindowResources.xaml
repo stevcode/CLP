@@ -34,5 +34,11 @@
         <Setter Property="Margin" Value="5,0" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     </Style>
+    
+    <!--Standar Colors-->
+
+    <Color x:Key="GrayBackgroundColor">#F3F3F3</Color>
+    <Color x:Key="GrayBorderColor">#D4D4D4</Color>
+    <Color x:Key="MainColor">#2F64B9</Color>
 
 </ResourceDictionary>
