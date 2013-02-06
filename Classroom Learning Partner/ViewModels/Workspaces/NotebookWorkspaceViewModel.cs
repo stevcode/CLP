@@ -38,6 +38,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
+            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
+            LeftPanel = NotebookPagesPanel;
             SubmissionPages = new ObservableCollection<CLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
@@ -267,6 +269,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel), null);
+
+        /// <summary>
+        /// NotebookPagesPanel.
+        /// </summary>
+        public NotebookPagesPanelViewModel NotebookPagesPanel
+        {
+            get { return GetValue<NotebookPagesPanelViewModel>(NotebookPagesPanelProperty); }
+            set { SetValue(NotebookPagesPanelProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel), null);
 
         /// <summary>
         /// DisplayPanel.

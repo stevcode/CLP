@@ -37,8 +37,14 @@
     
     <!--Standar Colors-->
 
-    <Color x:Key="GrayBackgroundColor">#F3F3F3</Color>
-    <Color x:Key="GrayBorderColor">#D4D4D4</Color>
-    <Color x:Key="MainColor">#2F64B9</Color>
+    <!--<Color x:Key="GrayBackgroundColor">#F3F3F3</Color>
+    <Color x:Key="GrayEdgeColor">#D4D4D4</Color>
+    <Color x:Key="GrayBorderColor">#9FA6AD</Color>
+    <Color x:Key="MainColor">#2F64B9</Color>-->
+
+    <SolidColorBrush x:Key="MainColor" Color="#2F64B9" />
+    <SolidColorBrush x:Key="GrayBackgroundColor" Color="#F3F3F3" />
+    <SolidColorBrush x:Key="GrayEdgeColor" Color="#D4D4D4" />
+    <SolidColorBrush x:Key="GrayBorderColor" Color="#9FA6AD" />
 
 </ResourceDictionary>

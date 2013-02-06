@@ -12,12 +12,14 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <catel:IntToStringConverter x:Key="IntToString" />
+            
             <!-- NotebookPage with the Trigger for Selected -->
             <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                            <Grid x:Name="itemGrid" Margin="0,2,0,2">
+                            <Grid Margin="0,2,0,2">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -31,11 +33,15 @@
                                        Foreground="Black" FontSize="12" />
 
                                 <!--Notebook Page-->
-                                <Border x:Name="IconBorder" Grid.Column="1"
-                                        BorderBrush="#9FA6AD"
-                                        BorderThickness="1"
+                                <Border x:Name="SelectedBorder" Grid.Column="1"
+                                        BorderThickness="2"
+                                        BorderBrush="Transparent"
                                         Margin="4">
-                                    <ContentPresenter />
+                                    <Border x:Name="PageBorder"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource GrayBorderColor}">
+                                        <ContentPresenter />
+                                    </Border>
                                 </Border>
 
                                 <!--Where buttons that reveal submissions are located-->
@@ -55,9 +61,9 @@
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="#2F64B9" />
-                                    <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                                    <Setter TargetName="PageIndex" Property="Foreground" Value="#2F64B9" />
+                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="{StaticResource MainColor}" />
                                     <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -71,23 +77,23 @@
     </UserControl.Resources>
 
     <!-- Notebook Pages-->
-    <Border Background="{Binding {StaticResource GrayBackgroundColor}}"
-            BorderBrush="{Binding {StaticResource GrayBorderColor}}" BorderThickness="5,0,0,0">
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="5,0,0,0">
         <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
                  MinWidth="150" Width="250" 
-                            ItemsSource="{Binding Path=NotebookPages}"
+                            ItemsSource="{Binding Pages}"
                             ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                             SelectionMode="Single">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0">
-                        <i:Interaction.Triggers>
+                        <!--<i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
                                                       PassEventArgsToCommand="True" />
                             </i:EventTrigger>
-                        </i:Interaction.Triggers>
+                        </i:Interaction.Triggers>-->
                         <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                     </Border>
                 </DataTemplate>
