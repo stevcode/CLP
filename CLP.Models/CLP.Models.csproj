@@ -109,6 +109,7 @@
     <Compile Include="Displays\CLPGridDisplay.cs" />
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Extension Methods\StokeExtension.cs" />
+    <Compile Include="Extension Methods\StrokeCollectionExtension.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
