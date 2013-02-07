@@ -181,7 +181,7 @@ namespace Classroom_Learning_Partner
                         }
                     }
 
-                    if(App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Projector)
+                    if(App.CurrentUserMode == App.UserMode.Student)
                     {
                         _autoSaveThread = new Thread(new ThreadStart(AutoSaveNotebook));
                         _autoSaveThread.IsBackground = true;
