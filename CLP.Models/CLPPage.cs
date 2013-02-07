@@ -467,6 +467,24 @@ namespace CLP.Models
             ByteStrokes = StrokesToBytes(InkStrokes);
         }
 
+        public void TrimPage()
+        {
+            double lowestY = 0;
+            foreach(ICLPPageObject pageObject in PageObjects)
+            {
+                double bottom = pageObject.YPosition + pageObject.Height;
+                lowestY = Math.Max(lowestY, bottom);
+            }
+            foreach(Stroke s in InkStrokes)
+            {
+                Rect bounds = s.GetBounds();
+                lowestY = Math.Max(lowestY, bounds.Bottom);
+            }
+
+            double newHeight = Math.Max(PageHeight, lowestY);
+            PageHeight = newHeight + 20;
+        }
+
         #endregion
     }
 

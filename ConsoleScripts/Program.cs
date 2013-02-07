@@ -11,7 +11,9 @@ namespace ConsoleScripts
         static void Main(string[] args)
         {
             Console.WriteLine("Starting");
-            MassSubmit.SubmitSinglePage(4);
+
+            NotebookMerge.Replace();
+
             Console.WriteLine("Ended");
             Console.ReadLine();
         }

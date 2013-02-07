@@ -42,18 +42,18 @@ namespace ConsoleScripts
 
         public static CLPNotebook OpenNotebook(string filePath)
         {
-            CLP.Models.CLPNotebook notebook = null;
+            CLPNotebook notebook = null;
 
             if(File.Exists(filePath))
             {
                 //Steve - Conversion happens here
                 try
                 {
-                    notebook = CLP.Models.CLPNotebook.Load(filePath, true);
+                    notebook = CLPNotebook.Load(filePath, true);
                 }
                 catch(Exception)
                 {
-                    Console.WriteLine("Exception Opening Notebook");
+                    Console.WriteLine("Exception Opening Notebook at {0}", filePath);
                 }
 
                 if(notebook != null)
@@ -78,12 +78,12 @@ namespace ConsoleScripts
                 }
                 else
                 {
-                    Console.WriteLine("Couldn't Open Notebook");
+                    Console.WriteLine("Couldn't Open Notebook at {0}", filePath);
                 }
             }
             else
             {
-                Console.WriteLine("Filepath Wrong");
+                Console.WriteLine("Filepath Wrong at {0}", filePath);
             }
 
             return notebook;
