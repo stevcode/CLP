@@ -45,29 +45,6 @@ namespace Classroom_Learning_Partner
         {
             App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
 
-            //var binding = new NetTcpBinding();
-
-            //// Allow big arguments on messages. Allow ~500 MB message.
-            //binding.MaxReceivedMessageSize = 500 * 1024 * 1024;
-            //binding.MaxBufferPoolSize = 500 * 1024 * 1024;
-
-            //// Allow unlimited time to send/receive a message. 
-            //// It also prevents closing idle sessions.
-            //binding.ReceiveTimeout = TimeSpan.MaxValue;
-            //binding.SendTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.MaxValue;
-            //binding.CloseTimeout = TimeSpan.MaxValue;
-            //XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
-
-            //// Remove quotas limitations
-            //quotas.MaxArrayLength = int.MaxValue;
-            //quotas.MaxBytesPerRead = int.MaxValue;
-            //quotas.MaxDepth = int.MaxValue;
-            //quotas.MaxNameTableCharCount = int.MaxValue;
-            //quotas.MaxStringContentLength = int.MaxValue;
-            //binding.ReaderQuotas = quotas;
-
-
             ServiceHost host = null;
             switch(App.CurrentUserMode)
             {
