@@ -23,12 +23,8 @@ namespace Classroom_Learning_Partner
         [OperationContract]
         void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
             ObservableCollection<ICLPPageObject> pageObjects,
-            string userName,
-            string notebookID,
-            string pageID, string submissionID, DateTime submissionTime);
-
-        [OperationContract]
-        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime);
     }
 
     public class ProjectorService : IProjectorContract
@@ -110,7 +106,10 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, ObservableCollection<ICLPPageObject> pageObjects, string userName, string notebookID, string pageID, string submissionID, DateTime submissionTime)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects,
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime)
         {
             CLPPage submission = null;
 
@@ -141,7 +140,9 @@ namespace Classroom_Learning_Partner
                 submission.IsSubmission = true;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = userName;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
@@ -167,45 +168,6 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-        }
-
-        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
-        {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    //TODO: Steve - AutoSaveHere
-                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
-
-                    foreach(ICLPPageObject pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
-
-                    page.IsSubmission = true;
-                    page.SubmitterName = userName;
-
-                    try
-                    {
-                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                        {
-                            if(page.ParentNotebookID == notebook.UniqueID)
-                            {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                //TODO: Steve - AutoSave Here
-                                break;
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
-
-                    return null;
-                }, null);
-
-            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         #region INotebookContract Members

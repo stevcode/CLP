@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner
                         {
                             Thread.Sleep(1000);
                         }
-                        App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
                         try
                         {
                             InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(defaultBinding, DiscoveredInstructors.Addresses[0]); 

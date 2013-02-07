@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
                             
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser.FullName, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime);
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime);
                         }
                         catch(System.Exception ex)
                         {
@@ -376,9 +376,15 @@ namespace Classroom_Learning_Partner
             App.Network.Stop();
             _networkThread.Join();
             _networkThread = null;
+
+            Person tempPerson = App.Network.CurrentUser;
+            Group tempGroup = App.Network.CurrentGroup;
+
             App.Network.Dispose();
             App.Network = null;
             App.Network = new CLPNetwork();
+            App.Network.CurrentUser = tempPerson;
+            App.Network.CurrentGroup = tempGroup;
             _networkThread = new Thread(App.Network.Run) { IsBackground = true };
             _networkThread.Start();
         }

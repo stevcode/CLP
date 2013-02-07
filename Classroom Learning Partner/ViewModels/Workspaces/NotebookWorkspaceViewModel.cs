@@ -68,6 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Student Name - Descending");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
+            FilterTypes.Add("Group Name - Ascending");
         }
 
         public string WorkspaceName
@@ -406,6 +407,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdTD);
+            }
+            else if(Sort == "Group Name - Ascending")
+            {
+                SortDescription sdTD = new SortDescription("GroupName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdTD);
+                gd.PropertyName = "GroupName";
             }
         }
 

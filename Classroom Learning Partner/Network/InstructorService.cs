@@ -17,12 +17,8 @@ namespace Classroom_Learning_Partner
         [OperationContract]
         void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects, 
-            string userName, 
-            string notebookID, 
-            string pageID, string submissionID, DateTime submissionTime);
-
-        [OperationContract]
-        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime);
 
         [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
@@ -40,7 +36,10 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, ObservableCollection<ICLPPageObject> pageObjects, string userName, string notebookID, string pageID, string submissionID, DateTime submissionTime)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects, 
+            Person submitter, Group groupSubmitter, 
+            string notebookID, string pageID, string submissionID, DateTime submissionTime)
         {
             if(App.Network.ProjectorProxy != null)
             {
@@ -48,7 +47,9 @@ namespace Classroom_Learning_Partner
                 {
                     try
                     {
-                        //App.Network.ProjectorProxy.AddStudentSubmission(page, userName, notebookName);
+                        App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
+                            submitter, groupSubmitter,
+                            notebookID, pageID, submissionID, submissionTime);
                     }
                     catch(System.Exception ex)
                     {
@@ -93,7 +94,9 @@ namespace Classroom_Learning_Partner
                 submission.IsSubmission = true;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = userName;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
@@ -122,65 +125,6 @@ namespace Classroom_Learning_Partner
             
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-        }
-
-        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
-        {
-            if(App.Network.ProjectorProxy != null)
-            {
-                Thread t = new Thread(() =>
-                    {
-                        try
-                        {
-                            App.Network.ProjectorProxy.AddStudentSubmissionViaString(sPage, userName, notebookName);
-                        }
-                        catch(System.Exception ex)
-                        {
-                            Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
-                        }
-                    });
-                t.IsBackground = true;
-                t.Start();
-            }
-            else
-            {
-                //TODO: Steve - add pages to a queue and send when a projector is found
-                Console.WriteLine("Projector NOT Available");
-            }
-
-            CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
-
-            foreach(ICLPPageObject pageObject in page.PageObjects)
-            {
-                pageObject.ParentPage = page;
-            }
-
-            page.IsSubmission = true;
-            page.SubmitterName = userName;
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    try
-                    {
-                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                        {
-                            if(page.ParentNotebookID == notebook.UniqueID)
-                            {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                break;
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
-
-                    return null;
-                }, null);
-
-            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)

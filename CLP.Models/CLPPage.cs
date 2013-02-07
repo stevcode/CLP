@@ -289,6 +289,8 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
 
+
+
         /// <summary>
         /// Time the page was submitted.
         /// </summary>
@@ -343,6 +345,20 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+
+        public string GroupName { 
+            get 
+            { 
+                if (GroupSubmitter != null)
+                {
+                    return GroupSubmitter.GroupName;
+                }
+                else
+                {
+                    return "No Group";
+                }
+            } 
+        }
 
         #endregion
 
