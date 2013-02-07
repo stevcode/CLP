@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -63,7 +64,7 @@ namespace Classroom_Learning_Partner.Views
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
                 if(viewModel.Notebook.Submissions.ContainsKey(pageID))
                 {
-                    viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
+                     viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
                 }
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }

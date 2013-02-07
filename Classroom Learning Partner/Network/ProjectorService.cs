@@ -21,6 +21,9 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
+        void AddStudentSubmission(CLPPage page, string userName, string notebookName);
+
+        [OperationContract]
         void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
     }
 
@@ -101,6 +104,41 @@ namespace Classroom_Learning_Partner
                     }
                     return null;
                 }, null);
+        }
+
+        public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
+        {
+            page.IsSubmission = true;
+            page.SubmitterName = userName;
+
+            foreach(ICLPPageObject pageObject in page.PageObjects)
+            {
+                pageObject.ParentPage = page;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    try
+                    {
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            if(page.ParentNotebookID == notebook.UniqueID)
+                            {
+                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                break;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
+
+            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)

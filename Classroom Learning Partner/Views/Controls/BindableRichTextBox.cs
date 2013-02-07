@@ -85,6 +85,7 @@ namespace Classroom_Learning_Partner.Views
             }
             catch(Exception)
             {
+                //TODO: Steve - First Chance Exceptions are occurring here.
                 rtb.Document = new FlowDocument();
             }
         }

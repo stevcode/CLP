@@ -583,25 +583,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                 pageID = Page.UniqueID;
                             }
 
-                            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                            if(App.Network.ProjectorProxy != null)
                             {
                                 try
                                 {
-                                    NetTcpBinding binding = new NetTcpBinding();
-                                    binding.Security.Mode = SecurityMode.None;
-                                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                                    ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                    (ProjectorProxy as ICommunicationObject).Close();
+                                	App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
                                 }
-                                catch(System.Exception ex)
+                                catch (System.Exception ex)
                                 {
-                                    Console.WriteLine(ex.Message);
+                                	
                                 }
                             }
                             else
                             {
                                 //TODO: Steve - add pages to a queue and send when a projector is found
-                                Console.WriteLine("Address NOT Available");
+                                Console.WriteLine("Projector NOT Available");
                             }
 
                             if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)

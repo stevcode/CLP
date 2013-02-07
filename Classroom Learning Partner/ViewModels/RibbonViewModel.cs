@@ -1009,18 +1009,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
-                if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+                if(App.Network.InstructorProxy != null)
                 {
                     try
                     {
                         string sNotebook = ObjectSerializer.ToString(notebook);
 
-                        NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
-                        binding.Security.Mode = SecurityMode.None;
-                        IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
-
-                        InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
-                        (InstructorProxy as ICommunicationObject).Close();
+                        App.Network.InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
                     }
                     catch(System.Exception ex)
                     {
@@ -1029,7 +1024,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine("Address NOT Available");
+                    Console.WriteLine("Instructor NOT Available");
                 }
             }
         }
@@ -1282,7 +1277,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID);
             }
             CanSendToTeacher = false;
 
@@ -1381,12 +1376,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSendDisplayToProjectorcommandExecute()
         {
-            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+            if(App.Network.ProjectorProxy != null)
             {
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.Security.Mode = SecurityMode.None;
-                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                 foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                 {
@@ -1412,7 +1403,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageIDs.Add(pageID);
                     try
                     {
-                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                     }
                     catch(System.Exception ex)
                     {
@@ -1434,25 +1425,17 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     try
                     {
-                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                     }
                     catch(System.Exception ex)
                     {
 
                     }
                 }
-
-                try
-                {
-                    (ProjectorProxy as ICommunicationObject).Close();
-                }
-                catch(System.Exception ex)
-                {
-                }
             }
             else
             {
-                Console.WriteLine("Address NOT Available");
+                Console.WriteLine("Projector NOT Available");
             }
         }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
@@ -30,7 +31,7 @@ namespace CLP.Models
     /// KnownTypes allow ICLPPageObjects to be (de)serialized via DataContracts
     /// for transmission over network calls.
     /// </summary>
-    [Serializable,
+    [Serializable, 
     KnownType(typeof(CLPAggregationDataTable)),
     KnownType(typeof(CLPAudio)),
     KnownType(typeof(CLPImage)),
@@ -172,6 +173,7 @@ namespace CLP.Models
         /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
+        [XmlIgnore()]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }

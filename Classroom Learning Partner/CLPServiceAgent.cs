@@ -17,6 +17,7 @@ using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
 using System.ServiceModel;
+using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner
 {
@@ -59,32 +60,38 @@ namespace Classroom_Learning_Partner
 
         #region Notebook
 
-        public void SubmitPage(CLP.Models.CLPPage page, string notebookName)
+        public void SubmitPage(CLP.Models.CLPPage page, string notebookID)
         {
-            if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+            if(App.Network.InstructorProxy != null)
             {
-                try
-                {
-                    string oldSubmissionID = page.SubmissionID;
-                    page.SubmissionID = Guid.NewGuid().ToString();
-                    page.SubmissionTime = DateTime.Now;
-                    string sPage = ObjectSerializer.ToString(page);
+                Thread t = new Thread(() =>
+                    {
+                        try
+                        {
+                            string oldSubmissionID = page.SubmissionID;
+                            page.SubmissionID = Guid.NewGuid().ToString();
+                            page.SubmissionTime = DateTime.Now;
+                            //string sPage = ObjectSerializer.ToString(page);
 
-                    NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
-                    binding.Security.Mode = SecurityMode.None;
-                    IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
+                            //App.Network.InstructorProxy.AddStudentSubmissionViaString(sPage, App.Network.CurrentUser.FullName, notebookName);
 
-                    InstructorProxy.AddStudentSubmissionViaString(sPage, App.Network.CurrentUser.FullName, notebookName);
-                    (InstructorProxy as ICommunicationObject).Close();
-                }
-                catch(System.Exception ex)
-                {
 
-                }
+                            ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
+                            ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
+                            
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser.FullName, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime);
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                        }
+                    });
+                t.IsBackground = true;
+                t.Start();
             }
             else
             {
-                Console.WriteLine("Address NOT Available");
+                Console.WriteLine("Instructor NOT Available");
             }
         }
 

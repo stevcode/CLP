@@ -18,7 +18,11 @@ namespace Classroom_Learning_Partner
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
 
+        public IInstructorContract InstructorProxy { get; set; }
+        public IProjectorContract ProjectorProxy { get; set; }
+
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
+        private NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {
@@ -118,6 +122,14 @@ namespace Classroom_Learning_Partner
                             Thread.Sleep(1000);
                         }
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        try
+                        {
+                            ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(defaultBinding, DiscoveredProjectors.Addresses[0]);
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Failed to create Projector Proxy");
+                        }
                     }).Start();
                     break;
                 case App.UserMode.Projector:
@@ -133,6 +145,14 @@ namespace Classroom_Learning_Partner
                             Thread.Sleep(1000);
                         }
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        try
+                        {
+                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(defaultBinding, DiscoveredInstructors.Addresses[0]); 
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
+                        }
                     }).Start();
                     break;
                 default:
@@ -173,6 +193,18 @@ namespace Classroom_Learning_Partner
 
         public void StopNetworking()
         {
+            if (InstructorProxy != null)
+            {
+	            (InstructorProxy as ICommunicationObject).Close();
+	            InstructorProxy = null;
+            }
+
+            if(ProjectorProxy != null)
+            {
+                (ProjectorProxy as ICommunicationObject).Close();
+                ProjectorProxy = null;
+            }
+
             foreach(var host in RunningServices)
             {
                 host.Close();

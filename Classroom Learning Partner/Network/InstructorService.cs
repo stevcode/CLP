@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using CLP.Models;
@@ -12,7 +15,11 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(CLPPage page, string userName, string notebookName);
+        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects, 
+            string userName, 
+            string notebookID, 
+            string pageID, string submissionID, DateTime submissionTime);
 
         [OperationContract]
         void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
@@ -33,47 +40,125 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, ObservableCollection<ICLPPageObject> pageObjects, string userName, string notebookID, string pageID, string submissionID, DateTime submissionTime)
         {
-            Console.WriteLine("Submission Added");
-        }
-
-        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
-        {
-            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+            if(App.Network.ProjectorProxy != null)
             {
-                try
+                Thread t = new Thread(() =>
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.Security.Mode = SecurityMode.None;
-                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                    ProjectorProxy.AddStudentSubmissionViaString(sPage, userName, notebookName);
-                    (ProjectorProxy as ICommunicationObject).Close();
-                }
-                catch(System.Exception ex)
-                {
-
-                }
+                    try
+                    {
+                        //App.Network.ProjectorProxy.AddStudentSubmission(page, userName, notebookName);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                    }
+                });
+                t.IsBackground = true;
+                t.Start();
             }
             else
             {
                 //TODO: Steve - add pages to a queue and send when a projector is found
-                Console.WriteLine("Address NOT Available");
+                Console.WriteLine("Projector NOT Available");
+            }
+
+            CLPPage submission = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    break;
+                }
+            }
+
+            if(submission != null)
+            {
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                }
+
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                foreach(ICLPPageObject pageObject in pageObjects)
+                {
+                    submission.PageObjects.Add(pageObject);
+                }
+
+                submission.IsSubmission = true;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = userName;
             }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
-
-                    foreach(ICLPPageObject pageObject in page.PageObjects)
+                    try
                     {
-                        pageObject.ParentPage = page;
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            if(submission.ParentNotebookID == notebook.UniqueID)
+                            {
+                                CLPServiceAgent.Instance.AddSubmission(notebook, submission);
+                                //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                                break;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
                     }
 
-                    page.IsSubmission = true;
-                    page.SubmitterName = userName;
+                    return null;
+                }, null);
 
+            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
+        {
+            if(App.Network.ProjectorProxy != null)
+            {
+                Thread t = new Thread(() =>
+                    {
+                        try
+                        {
+                            App.Network.ProjectorProxy.AddStudentSubmissionViaString(sPage, userName, notebookName);
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                        }
+                    });
+                t.IsBackground = true;
+                t.Start();
+            }
+            else
+            {
+                //TODO: Steve - add pages to a queue and send when a projector is found
+                Console.WriteLine("Projector NOT Available");
+            }
+
+            CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
+
+            foreach(ICLPPageObject pageObject in page.PageObjects)
+            {
+                pageObject.ParentPage = page;
+            }
+
+            page.IsSubmission = true;
+            page.SubmitterName = userName;
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
                     try
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
@@ -81,7 +166,6 @@ namespace Classroom_Learning_Partner
                             if(page.ParentNotebookID == notebook.UniqueID)
                             {
                                 CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                //TODO: Steve - AutoSave Here
                                 break;
                             }
                         }

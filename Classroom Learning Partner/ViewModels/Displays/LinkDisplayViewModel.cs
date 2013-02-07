@@ -186,25 +186,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageID = DisplayedPage.UniqueID;
                 }
 
-                if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                if(App.Network.ProjectorProxy != null)
                 {
                     try
                     {
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.Security.Mode = SecurityMode.None;
-                        IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                        ProjectorProxy.AddPageToDisplay(pageID);
-                        //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
-                        (ProjectorProxy as ICommunicationObject).Close();
+                    	App.Network.ProjectorProxy.AddPageToDisplay(pageID);
                     }
-                    catch(System.Exception ex)
+                    catch (System.Exception ex)
                     {
-
+                    	
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Address NOT Available");
+                    //TODO: Steve - add pages to a queue and send when a projector is found
+                    Console.WriteLine("Projector NOT Available");
                 }
             }
         }
