@@ -195,14 +195,28 @@ namespace Classroom_Learning_Partner
         {
             if (InstructorProxy != null)
             {
-	            (InstructorProxy as ICommunicationObject).Close();
-	            InstructorProxy = null;
+	            try
+                {
+	                (InstructorProxy as ICommunicationObject).Close();
+		            InstructorProxy = null;
+                }
+                catch (System.Exception ex)
+                {
+	                
+                }
             }
 
             if(ProjectorProxy != null)
             {
-                (ProjectorProxy as ICommunicationObject).Close();
-                ProjectorProxy = null;
+                try
+                {
+                    (ProjectorProxy as ICommunicationObject).Close();
+                    ProjectorProxy = null;
+                }
+                catch (System.Exception ex)
+                {
+	                
+                }
             }
 
             foreach(var host in RunningServices)

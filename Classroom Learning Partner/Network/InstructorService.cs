@@ -94,9 +94,8 @@ namespace Classroom_Learning_Partner
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
                 submission.SubmitterName = userName;
-            }
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     try
@@ -118,6 +117,9 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+            }
+
+            
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }

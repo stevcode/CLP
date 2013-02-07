@@ -21,7 +21,11 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
-        void AddStudentSubmission(CLPPage page, string userName, string notebookName);
+        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
+            ObservableCollection<ICLPPageObject> pageObjects,
+            string userName,
+            string notebookID,
+            string pageID, string submissionID, DateTime submissionTime);
 
         [OperationContract]
         void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
@@ -106,26 +110,49 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, ObservableCollection<ICLPPageObject> pageObjects, string userName, string notebookID, string pageID, string submissionID, DateTime submissionTime)
         {
-            page.IsSubmission = true;
-            page.SubmitterName = userName;
+            CLPPage submission = null;
 
-            foreach(ICLPPageObject pageObject in page.PageObjects)
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             {
-                pageObject.ParentPage = page;
+                if(notebookID == notebook.UniqueID)
+                {
+                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    break;
+                }
             }
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            if(submission != null)
+            {
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                }
+
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                foreach(ICLPPageObject pageObject in pageObjects)
+                {
+                    submission.PageObjects.Add(pageObject);
+                }
+
+                submission.IsSubmission = true;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = userName;
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     try
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            if(page.ParentNotebookID == notebook.UniqueID)
+                            if(submission.ParentNotebookID == notebook.UniqueID)
                             {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
+                                CLPServiceAgent.Instance.AddSubmission(notebook, submission);
                                 break;
                             }
                         }
@@ -137,8 +164,9 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+            }
 
-            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
