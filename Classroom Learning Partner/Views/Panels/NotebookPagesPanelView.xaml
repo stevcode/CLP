@@ -4,7 +4,8 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   Width="{Binding InitialWidth}">
     
     <UserControl.Resources>
         <ResourceDictionary>
@@ -78,24 +79,24 @@
 
     <!-- Notebook Pages-->
     <Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="5,0,0,0">
-        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
+        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                  MinWidth="150" Width="250" 
-                            ItemsSource="{Binding Pages}"
-                            ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
-                            SelectionMode="Single">
+                 ItemsSource="{Binding Pages}"
+                 ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
+                 SelectionMode="Single">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0">
-                        <!--<i:Interaction.Triggers>
+                        <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
                                                       PassEventArgsToCommand="True" />
                             </i:EventTrigger>
-                        </i:Interaction.Triggers>-->
+                        </i:Interaction.Triggers>
                         <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                    </Border>
+                    </Border> 
                 </DataTemplate>
             </ListBox.ItemTemplate>
 

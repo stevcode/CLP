@@ -17,6 +17,64 @@
             <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
             <conv:LastItemInCollectionConverter x:Key="LastItem" />
 
+            <!-- NotebookPage with the Trigger for Selected -->
+            <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Grid Margin="0,2,0,2">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label x:Name="PageIndex"  Grid.Column="0" 
+                                       Content="{Binding PageIndex}"
+                                       Margin="8,0,0,0"
+                                       Foreground="Black" FontSize="12" />
+
+                                <!--Notebook Page-->
+                                <Border x:Name="SelectedBorder" Grid.Column="1"
+                                        BorderThickness="2"
+                                        BorderBrush="Transparent"
+                                        Margin="4">
+                                    <Border x:Name="PageBorder"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource GrayBorderColor}">
+                                        <ContentPresenter />
+                                    </Border>
+                                </Border>
+
+                                <!--Where buttons that reveal submissions are located-->
+                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
+                                        <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
+                                    </ToggleButton>
+                                    <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+                                </Grid>
+
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -29,7 +87,7 @@
         <!-- Content -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition MinWidth="150" Width="250" x:Name="NotebookPageColumn" />
                 <ColumnDefinition Width="Auto" x:Name="NotebookPageSplitterColumn"/>
 
                 <ColumnDefinition MinWidth="150" Width="Auto" x:Name="SubmissionColumn"/>
@@ -41,7 +99,7 @@
             </Grid.ColumnDefinitions>
 
             <!--Left Panel-->
-            <ContentControl Grid.Column="0"
+            <!--<ContentControl Grid.Column="0"
                             DataContext="{Binding LeftPanel, Mode=OneWay}">
                 <ContentControl.Resources>
 
@@ -55,7 +113,7 @@
                     <Style TargetType="{x:Type ContentControl}">
                         <Style.Triggers>
 
-                            <!-- NotebookPagesPanel trigger -->
+                            NotebookPagesPanel trigger
                             <DataTrigger Binding="{Binding PanelName}" Value="NotebookPagesPanel">
                                 <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
                             </DataTrigger>
@@ -63,8 +121,31 @@
                         </Style.Triggers>
                     </Style>
                 </ContentControl.Style>
-            </ContentControl>
-            
+            </ContentControl>-->
+
+            <!-- Notebook Pages-->
+            <Border x:Name="NotebookPagesBorder" Grid.Column="0" Background="#F3F3F3">
+                <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            MinWidth="150" Width="{Binding ElementName=NotebookPagesBorder, Path=ActualWidth, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=NotebookPages}"
+                            ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
+                            SelectionMode="Single">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="0">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDown">
+                                        <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </Border>
 
             <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
          HorizontalAlignment="Center" VerticalAlignment="Stretch"
