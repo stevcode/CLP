@@ -52,14 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
 
-            InkStrokes = new StrokeCollection();
-
-            foreach(List<byte> b in Page.ByteStrokes)
-            {
-                Stroke stroke = CLPPage.ByteToStroke(b);
-                InkStrokes.Add(stroke);
-            }
-
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
         
