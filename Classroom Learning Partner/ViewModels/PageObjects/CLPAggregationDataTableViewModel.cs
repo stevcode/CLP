@@ -5,7 +5,6 @@ using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using CLP.Models;
 

@@ -54,23 +54,9 @@
                 <RibbonApplicationMenuItem Header="Save All Notebooks"
                                                   Command="{Binding Path=SaveAllNotebooksCommand}"
                                                   KeyTip="A"
-                                                  ImageSource="..\Images\SaveAllNotebooks.png" />
-
-                <RibbonApplicationMenuItem Header="Save Notebook Histories"
-                                                  Command="{Binding Path=SaveAllHistoriesCommand}"
-                                                  KeyTip="B"
-                                                  ImageSource="..\Images\SaveNotebookHistories.png" />
-
-                <RibbonApplicationMenuItem Header="Convert to XPS"
-                                                  Command="{Binding Path=ConvertToXPSCommand}"
-                                                  KeyTip="C"
-                                                  ImageSource="..\Images\ConvertToXPS.png" />
-                <RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
-                                                  Command="{Binding Path=ImportLocalNotebooksDBCommand}"
-                                                  KeyTip="I"
-                                                  ImageSource="..\Images\LargeIcon.png"
-                                                  Visibility="{Binding Path=ServerVisibility}"/>
-                
+                                                  ImageSource="..\Images\SaveAllNotebooks.png" 
+                                           Visibility="{Binding Path=InstructorVisibility}"/>
+               
                 <RibbonApplicationMenuItem Header="Submit Whole Notebook"
                                                   Command="{Binding SubmitNotebookToTeacherCommand}"
                                                   ImageSource="..\Images\LargeIcon.png"
@@ -146,7 +132,7 @@
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="1" Width="150" />
+                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="2" Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="3" Width="150" />
@@ -224,18 +210,18 @@
                 <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
-                <RibbonButton Background="DarkOrange"/>
-                <RibbonButton Background="Tan"/>
-                <RibbonButton Background="Gold"/>
-                <RibbonButton Background="SaddleBrown"/>
+                <RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Tan" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Gold" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="DarkGreen"/>
-                <RibbonButton Background="MediumSeaGreen"/>
+                <RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Blue"/>
-                <RibbonButton Background="HotPink"/>
-                <RibbonButton Background="BlueViolet"/>
-                <RibbonButton Background="Aquamarine"/>
-                <RibbonButton Background="SlateGray"/>
-                <RibbonButton Background="SkyBlue"/>
+                <RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="BlueViolet" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Aquamarine" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SlateGray" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -700,6 +686,14 @@
                         Label="Interpret Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InterpretPageCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Notebook">
+
+                <RibbonButton Label="Convert to XPS"
+                            Command="{Binding Path=ConvertToXPSCommand}"
+                            LargeImageSource="..\Images\ConvertToXPS.png" />
 
             </RibbonGroup>
 

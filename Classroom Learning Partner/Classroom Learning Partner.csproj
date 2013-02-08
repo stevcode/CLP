@@ -192,11 +192,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\CLPMeshNetworkService.cs" />
-    <Compile Include="Model\CLPServiceAgent.cs" />
-    <Compile Include="Model\Logger.cs" />
-    <Compile Include="Model\ObjectSerializer.cs" />
-    <Compile Include="Model\PeerNode.cs" />
+    <Compile Include="CLPServiceAgent.cs" />
+    <Compile Include="Resources\Logger.cs" />
+    <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
     <Compile Include="Network\INotebookContract.cs" />
     <Compile Include="Network\InstructorService.cs" />
@@ -206,7 +204,10 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
+    <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
@@ -321,6 +322,9 @@
     </Compile>
     <Compile Include="Views\Panels\DisplayListPanelView.xaml.cs">
       <DependentUpon>DisplayListPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
+      <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
@@ -470,6 +474,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\NotebookPagesPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Panels\WebcamPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -574,10 +582,6 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AdornedControl\AdornedControl.csproj">
-      <Project>{94B81CB7-F8A6-44BC-BD71-E927F701E0D8}</Project>
-      <Name>AdornedControl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
       <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
       <Name>CLP.Models</Name>
@@ -669,6 +673,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
@@ -30,7 +31,7 @@ namespace CLP.Models
     /// KnownTypes allow ICLPPageObjects to be (de)serialized via DataContracts
     /// for transmission over network calls.
     /// </summary>
-    [Serializable,
+    [Serializable, 
     KnownType(typeof(CLPAggregationDataTable)),
     KnownType(typeof(CLPAudio)),
     KnownType(typeof(CLPImage)),
@@ -172,6 +173,7 @@ namespace CLP.Models
         /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
+        [XmlIgnore()]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -288,6 +290,8 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
 
+
+
         /// <summary>
         /// Time the page was submitted.
         /// </summary>
@@ -343,6 +347,20 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+
+        public string GroupName { 
+            get 
+            { 
+                if (GroupSubmitter != null)
+                {
+                    return GroupSubmitter.GroupName;
+                }
+                else
+                {
+                    return "No Group";
+                }
+            } 
+        }
 
         #endregion
 
@@ -449,6 +467,24 @@ namespace CLP.Models
         void OnSerializing(StreamingContext sc)
         {
             ByteStrokes = StrokesToBytes(InkStrokes);
+        }
+
+        public void TrimPage()
+        {
+            double lowestY = 0;
+            foreach(ICLPPageObject pageObject in PageObjects)
+            {
+                double bottom = pageObject.YPosition + pageObject.Height;
+                lowestY = Math.Max(lowestY, bottom);
+            }
+            foreach(Stroke s in InkStrokes)
+            {
+                Rect bounds = s.GetBounds();
+                lowestY = Math.Max(lowestY, bounds.Bottom);
+            }
+
+            double newHeight = Math.Max(PageHeight, lowestY);
+            PageHeight = newHeight + 20;
         }
 
         #endregion

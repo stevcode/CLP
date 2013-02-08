@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectNotebookCommand = new Command<string>(OnSelectNotebookCommandExecute);
 
             NotebookNames = new ObservableCollection<string>();
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.GetNotebookNames(this);
+            CLPServiceAgent.Instance.GetNotebookNames(this);
         }
 
         public override string Title { get { return "NotebookChooserWorkspaceVM"; } }
@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSelectNotebookCommandExecute(string notebookName)
         {
             Catel.Windows.PleaseWaitHelper.Show(() =>
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
+            CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
         }
 
         public string WorkspaceName

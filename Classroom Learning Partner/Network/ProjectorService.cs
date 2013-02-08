@@ -6,7 +6,6 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 
@@ -22,7 +21,10 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
-        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
+        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
+            ObservableCollection<ICLPPageObject> pageObjects,
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime);
     }
 
     public class ProjectorService : IProjectorContract
@@ -104,30 +106,54 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects,
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            CLPPage submission = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    break;
+                }
+            }
+
+            if(submission != null)
+            {
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                }
+
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                foreach(ICLPPageObject pageObject in pageObjects)
+                {
+                    submission.PageObjects.Add(pageObject);
+                }
+
+                submission.IsSubmission = true;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-                    //TODO: Steve - AutoSaveHere
-                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
-
-                    foreach(ICLPPageObject pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
-
-                    page.IsSubmission = true;
-                    page.SubmitterName = userName;
-
                     try
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            if(page.ParentNotebookID == notebook.UniqueID)
+                            if(submission.ParentNotebookID == notebook.UniqueID)
                             {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                //TODO: Steve - AutoSave Here
+                                CLPServiceAgent.Instance.AddSubmission(notebook, submission);
                                 break;
                             }
                         }
@@ -139,8 +165,9 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+            }
 
-            CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         #region INotebookContract Members

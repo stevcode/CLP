@@ -5,10 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AdornedControl")]
+[assembly: AssemblyTitle("ConsoleScripts")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("AdornedControl")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ConsoleScripts")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4ccb000b-396d-4394-a853-3899cde76f27")]
+[assembly: Guid("78e66450-6e92-4f12-9075-4061f0662e1e")]
 
 // Version information for an assembly consists of the following four values:
 //

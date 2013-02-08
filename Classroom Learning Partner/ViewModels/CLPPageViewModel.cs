@@ -52,14 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
 
-            InkStrokes = new StrokeCollection();
-
-            foreach(List<byte> b in Page.ByteStrokes)
-            {
-                Stroke stroke = CLPPage.ByteToStroke(b);
-                InkStrokes.Add(stroke);
-            }
-
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
         
@@ -508,28 +500,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 //});
 
-            //TODO: Steve - Stamps add/remove too quickly and crash projector
-            //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
-            //{
-            //    List<string> added = new List<string>();
-            //    List<string> removedIDs = new List<string>();
-            //    if (e.NewItems != null)
-            //    {
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            added.Add(ObjectSerializer.ToString(item as ICLPPageObject));
-            //        }
-            //    }
-            //    if (e.OldItems != null)
-            //    {
-            //        foreach (var item in e.OldItems)
-            //        {
-            //            removedIDs.Add((item as ICLPPageObject).UniqueID);
-            //        }
-            //    }
-
-            //    App.Peer.Channel.ChangePageObjectsOnPage(Page.UniqueID, added, removedIDs);
-            //}
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -613,25 +583,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                 pageID = Page.UniqueID;
                             }
 
-                            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                            if(App.Network.ProjectorProxy != null)
                             {
                                 try
                                 {
-                                    NetTcpBinding binding = new NetTcpBinding();
-                                    binding.Security.Mode = SecurityMode.None;
-                                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                                    ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                    (ProjectorProxy as ICommunicationObject).Close();
+                                	App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
                                 }
-                                catch(System.Exception ex)
+                                catch (System.Exception ex)
                                 {
-                                    Console.WriteLine(ex.Message);
+                                	
                                 }
                             }
                             else
                             {
                                 //TODO: Steve - add pages to a queue and send when a projector is found
-                                Console.WriteLine("Address NOT Available");
+                                Console.WriteLine("Projector NOT Available");
                             }
 
                             if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)
@@ -734,16 +700,16 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
                             }
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:
@@ -842,7 +808,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
+                            CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
                             if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
                             {
                                 PageHistory.TrashedPageObjects.Remove(item.ObjectID);
@@ -850,12 +816,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:
@@ -912,6 +878,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
-
+                
     }
 }

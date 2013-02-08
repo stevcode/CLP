@@ -59,11 +59,11 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
-            StringBuilder interpretation = new StringBuilder();
-            interpretation.AppendLine(InkGrouping());
-            interpretation.AppendLine(DistanceClustering());
-            interpretation.AppendLine(BasicGrouping());
-            StoredAnswer = interpretation.ToString();
+            //StringBuilder interpretation = new StringBuilder();
+            //interpretation.AppendLine(InkGrouping());
+            //interpretation.AppendLine(DistanceClustering());
+            //interpretation.AppendLine(BasicGrouping());
+            //StoredAnswer = interpretation.ToString();
         }
 
         private string BasicGrouping() {

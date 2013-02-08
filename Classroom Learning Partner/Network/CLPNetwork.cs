@@ -18,7 +18,11 @@ namespace Classroom_Learning_Partner
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
 
+        public IInstructorContract InstructorProxy { get; set; }
+        public IProjectorContract ProjectorProxy { get; set; }
+
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
+        private NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {
@@ -40,29 +44,6 @@ namespace Classroom_Learning_Partner
         public void StartNetworking()
         {
             App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
-
-            //var binding = new NetTcpBinding();
-
-            //// Allow big arguments on messages. Allow ~500 MB message.
-            //binding.MaxReceivedMessageSize = 500 * 1024 * 1024;
-            //binding.MaxBufferPoolSize = 500 * 1024 * 1024;
-
-            //// Allow unlimited time to send/receive a message. 
-            //// It also prevents closing idle sessions.
-            //binding.ReceiveTimeout = TimeSpan.MaxValue;
-            //binding.SendTimeout = TimeSpan.MaxValue;
-            //binding.OpenTimeout = TimeSpan.MaxValue;
-            //binding.CloseTimeout = TimeSpan.MaxValue;
-            //XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
-
-            //// Remove quotas limitations
-            //quotas.MaxArrayLength = int.MaxValue;
-            //quotas.MaxBytesPerRead = int.MaxValue;
-            //quotas.MaxDepth = int.MaxValue;
-            //quotas.MaxNameTableCharCount = int.MaxValue;
-            //quotas.MaxStringContentLength = int.MaxValue;
-            //binding.ReaderQuotas = quotas;
-
 
             ServiceHost host = null;
             switch(App.CurrentUserMode)
@@ -118,6 +99,14 @@ namespace Classroom_Learning_Partner
                             Thread.Sleep(1000);
                         }
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        try
+                        {
+                            ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(defaultBinding, DiscoveredProjectors.Addresses[0]);
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Failed to create Projector Proxy");
+                        }
                     }).Start();
                     break;
                 case App.UserMode.Projector:
@@ -132,7 +121,15 @@ namespace Classroom_Learning_Partner
                         {
                             Thread.Sleep(1000);
                         }
-                        App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
+                        try
+                        {
+                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(defaultBinding, DiscoveredInstructors.Addresses[0]); 
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
+                        }
                     }).Start();
                     break;
                 default:
@@ -173,6 +170,32 @@ namespace Classroom_Learning_Partner
 
         public void StopNetworking()
         {
+            if (InstructorProxy != null)
+            {
+	            try
+                {
+	                (InstructorProxy as ICommunicationObject).Close();
+		            InstructorProxy = null;
+                }
+                catch (System.Exception ex)
+                {
+	                
+                }
+            }
+
+            if(ProjectorProxy != null)
+            {
+                try
+                {
+                    (ProjectorProxy as ICommunicationObject).Close();
+                    ProjectorProxy = null;
+                }
+                catch (System.Exception ex)
+                {
+	                
+                }
+            }
+
             foreach(var host in RunningServices)
             {
                 host.Close();

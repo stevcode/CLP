@@ -7,7 +7,6 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
 using System.Windows.Threading;
 using System;

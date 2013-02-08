@@ -72,8 +72,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnLogInCommandExecute(string userName)
         {
-            App.Peer.UserName = userName;
-
             App.Network.CurrentUser.FullName = userName.Split(new char[] { ',' })[0];
             App.Network.CurrentGroup.GroupName = userName.Split(new char[] { ',' })[1];
 
@@ -81,24 +79,21 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Thread.CurrentThread.IsBackground = true;
                 int i = App.Network.DiscoveredInstructors.Addresses.Count();
-                while(App.Network.DiscoveredInstructors.Addresses.Count() < 1 || App.Network.CurrentUser.CurrentMachineAddress == null)
+                while(App.Network.DiscoveredInstructors.Addresses.Count() < 1 || App.Network.CurrentUser.CurrentMachineAddress == null || App.Network.InstructorProxy == null)
                 {
                     Thread.Sleep(1000);
                 }
 
-                if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+                if(App.Network.InstructorProxy != null)
                 {
                     try
                     {
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.Security.Mode = SecurityMode.None;
-                        IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
-                        InstructorProxy.StudentLogin(App.Network.CurrentUser);
-                        (InstructorProxy as ICommunicationObject).Close();
+                        App.Network.InstructorProxy.StudentLogin(App.Network.CurrentUser);
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.Network.CurrentUser.FullName;
                     }
                     catch(System.Exception ex)
                     {
-                        Console.WriteLine("ERROR");
+                        Logger.Instance.WriteToLog("Problem Logging In as " + App.Network.CurrentUser.FullName);
                     }
                 }
                 else

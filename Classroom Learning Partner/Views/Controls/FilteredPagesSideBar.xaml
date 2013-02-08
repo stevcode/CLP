@@ -4,7 +4,8 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views" 
-                   Background="Lavender">
+                   Background="Lavender"
+                   x:Name="SubmissionSideBar">
 
     <UserControl.Resources>
         
@@ -57,7 +58,7 @@
         
     </UserControl.Resources>
 
-    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBarContainer, Path=ActualWidth}">
+    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBar, Path=ActualWidth}">
 
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
