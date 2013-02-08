@@ -364,7 +364,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PropertyGroupDescription gd = new PropertyGroupDescription();
             gd.PropertyName = "SubmitterName";
             PropertyGroupDescription gd2 = new PropertyGroupDescription();
-            gd2.PropertyName = "GroupSubmitter.GroupName";
+            gd2.PropertyName = "GroupSubmitter";
             PropertyGroupDescription gd3 = new PropertyGroupDescription();
             gd3.PropertyName = "SubmissionTime";
 
