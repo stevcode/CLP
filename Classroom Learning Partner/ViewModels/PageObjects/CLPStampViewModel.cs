@@ -399,12 +399,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                if(parentPage != null)
                 {
-                    pageVM.IsInkCanvasHitTestVisible = true;
-                }
+                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                    {
+                        pageVM.IsInkCanvasHitTestVisible = true;
+                    }
 
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                }
             }
             
             if(hitBoxName == "HandwritingHitBox")

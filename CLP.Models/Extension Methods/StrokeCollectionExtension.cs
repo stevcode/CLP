@@ -5,18 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Ink;
 using System.IO;
+using System.Windows;
 
 namespace CLP.Models
 {
     public static class StrokeCollectionExtension
     {
-        public static string SaveStrokeCollection(this StrokeCollection strokes)
+        public static DataObject SaveStrokeCollection(this StrokeCollection strokes)
         {
-            
 
-            MemoryStream stream = new MemoryStream();
-            strokes.Save(stream, true);
-            return "";
+            DataObject serializedStrokes;
+            using(MemoryStream strokesInMemory = new MemoryStream())
+            {
+                strokes.Save(strokesInMemory, true);
+                serializedStrokes =  new DataObject(StrokeCollection.InkSerializedFormat, strokesInMemory);
+            }
+
+            return serializedStrokes;
+        }
+
+        public static void LoadStrokeCollection(this StrokeCollection strokes, DataObject serializedStrokes)
+        {
+            using(MemoryStream strokesInMemory = new MemoryStream())
+            {
+
+                strokes = new StrokeCollection(strokesInMemory);
+            }
         }
     }
 }
