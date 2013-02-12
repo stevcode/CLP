@@ -532,11 +532,11 @@ namespace AdornedControl
             {
                 if(this.adornerLayer == null)
                 {
-
-
-                    this.adornerLayer = AdornerLayer.GetAdornerLayer(GetLinkedDisplayView(this));
-             
-                    //this.adornerLayer = AdornerLayer.GetAdornerLayer(App.)
+                    UserControl linkedDisplay = GetLinkedDisplayView(this);
+                    if (linkedDisplay != null)
+                    {
+                        this.adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);
+                    }
                 }
 
                 if(this.adornerLayer != null)

@@ -51,7 +51,8 @@ namespace CLP.Models
         #region Variables
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-        public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
+     
+        public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000003");
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
@@ -409,7 +410,19 @@ namespace CLP.Models
 
             m_stream.Dispose();
 
-            return sc[0];
+            return SanitizeStroke(sc[0]);
+
+            //return sc[0];
+        }
+
+        private static Stroke SanitizeStroke(Stroke s)
+        {
+            if (s.ContainsPropertyData(Immutable))
+            {
+                s.RemovePropertyData(Immutable);
+            }
+
+            return s;
         }
 
         public static List<byte> StrokeToByte(Stroke stroke)
@@ -456,9 +469,10 @@ namespace CLP.Models
 
         protected override void OnDeserialized()
         {
+            base.OnDeserialized();
             InkStrokes = BytesToStrokes(ByteStrokes);
 
-            base.OnDeserialized();
+            
         }
 
         [OnSerializing]
