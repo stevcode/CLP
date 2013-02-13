@@ -13,7 +13,6 @@ namespace CLP.Models
     {
         public static DataObject SaveStrokeCollection(this StrokeCollection strokes)
         {
-
             DataObject serializedStrokes;
             using(MemoryStream strokesInMemory = new MemoryStream())
             {
@@ -28,7 +27,6 @@ namespace CLP.Models
         {
             using(MemoryStream strokesInMemory = new MemoryStream())
             {
-
                 strokes = new StrokeCollection(strokesInMemory);
             }
         }
