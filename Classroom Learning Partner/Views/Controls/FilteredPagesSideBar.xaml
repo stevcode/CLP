@@ -71,7 +71,8 @@
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded">
+                 </ItemsPresenter>
             </Grid>
 
         </ControlTemplate>
@@ -118,7 +119,7 @@
                     <GroupStyle.ContainerStyle>
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                             <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
-                            <Style.Triggers>
+                           <!-- <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=SortComboBox,Path=SelectedItem}" Value="Group Name - Ascending">
                                     <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
                                 </DataTrigger>
@@ -126,6 +127,7 @@
                                     <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
                                 </DataTrigger>
                             </Style.Triggers>
+                                -->
                         </Style>
                     </GroupStyle.ContainerStyle>
                     <GroupStyle.Panel>
