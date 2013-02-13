@@ -407,6 +407,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else if(Sort == "Group Name - Ascending")
             {
                 FilteredSubmissions.GroupDescriptions.Add(gd2);
+                FilteredSubmissions.GroupDescriptions.Add(gd);
                 SortDescription sdGA = new SortDescription("GroupName", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdGA);
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
@@ -417,6 +418,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 FilteredSubmissions.GroupDescriptions.Add(gd2);
                 SortDescription sdGD = new SortDescription("GroupName", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdGD);
+                FilteredSubmissions.GroupDescriptions.Add(gd);
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdAA);
             }

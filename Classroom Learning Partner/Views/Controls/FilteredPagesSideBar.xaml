@@ -55,7 +55,27 @@
             </Grid>
 
         </ControlTemplate>
-        
+
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate2">
+
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Click="toggle_Click">
+                    <DockPanel>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name, StringFormat='Group \{0\}'}" Width="50"/>
+                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                    </DockPanel>
+                </ToggleButton>
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
+            </Grid>
+
+        </ControlTemplate>
+
     </UserControl.Resources>
 
     <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBar, Path=ActualWidth}">
@@ -98,6 +118,14 @@
                     <GroupStyle.ContainerStyle>
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                             <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=SortComboBox,Path=SelectedItem}" Value="Group Name - Ascending">
+                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=SortComboBox,Path=SelectedItem}" Value="Group Name - Descending">
+                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </GroupStyle.ContainerStyle>
                     <GroupStyle.Panel>
