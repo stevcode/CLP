@@ -170,6 +170,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -1620,13 +1621,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MakePageLongerCommand command.
+        /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MakePageLongerCommand command is executed.
-        /// </summary>
         private void OnMakePageLongerCommandExecute()
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
@@ -1640,6 +1638,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 double times = yDifference / 200;
 
                 Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
+            }
+        }
+
+        /// <summary>
+        /// Trims the current page's excess height if free of ink strokes and pageObjects.
+        /// </summary>
+        public Command TrimPageCommand { get; private set; }
+
+        private void OnTrimPageCommandExecute()
+        {
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.TrimPage();
             }
         }
 

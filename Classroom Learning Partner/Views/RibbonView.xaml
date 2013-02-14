@@ -709,6 +709,11 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=ZoomToWholePageCommand}" />
 
+                <RibbonButton
+                        Label="Trim Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding TrimPageCommand}" />
+
             </RibbonGroup>
 
         </RibbonTab>
