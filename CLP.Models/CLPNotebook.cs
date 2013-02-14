@@ -177,7 +177,7 @@ namespace CLP.Models
             {
                 try
                 { return Pages[pageIndex]; }
-                catch(Exception e)
+                catch(Exception)
                 {
                     return null;
                 }
@@ -187,7 +187,7 @@ namespace CLP.Models
             {
                 return Submissions[Pages[pageIndex].UniqueID][submissionIndex];
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return null;
             }

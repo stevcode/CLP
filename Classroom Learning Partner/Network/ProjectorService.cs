@@ -128,20 +128,30 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
-                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                {
-                    pageObject.ParentPage = submission;
-                }
-
-                submission.ByteStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
-
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {
                     submission.PageObjects.Add(pageObject);
                 }
 
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                    if(pageObject is ISubmittable)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
+                                return null;
+                            }, null);
+                    }
+                }
+
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
                 submission.IsSubmission = true;
+                submission.IsGroupSubmission = true;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
                 submission.SubmitterName = submitter.FullName;
@@ -153,14 +163,7 @@ namespace Classroom_Learning_Partner
                 {
                     try
                     {
-                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                        {
-                            if(submission.ParentNotebookID == notebook.UniqueID)
-                            {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, submission);
-                                break;
-                            }
-                        }
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
                     }
                     catch(Exception e)
                     {

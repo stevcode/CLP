@@ -589,7 +589,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                 	App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
                                 }
-                                catch (System.Exception ex)
+                                catch (System.Exception)
                                 {
                                 	
                                 }

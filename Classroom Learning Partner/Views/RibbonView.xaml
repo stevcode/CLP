@@ -273,7 +273,7 @@
                 <RibbonButton
                         LargeImageSource="..\Images\Happy.png" 
                         Label="Group Send"
-                        IsEnabled="False"
+                        Command="{Binding GroupSubmitPageCommand}"
                         Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>

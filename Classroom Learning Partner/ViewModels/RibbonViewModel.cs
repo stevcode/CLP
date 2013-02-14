@@ -155,6 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
+            GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute);
 
             //Displays
             SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
@@ -1018,7 +1019,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         App.Network.InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1176,7 +1177,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1197,7 +1198,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1278,10 +1279,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID);
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
             }
             CanSendToTeacher = false;
-
         }
 
         /// <summary>
@@ -1293,9 +1293,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CanSendToTeacherProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanSendToTeacher property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
 
 
@@ -1330,9 +1327,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the IsSending property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSendingProperty = RegisterProperty("IsSending", typeof(bool));
 
         /// <summary>
@@ -1344,9 +1338,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SendButtonVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SendButtonVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SendButtonVisibilityProperty = RegisterProperty("SendButtonVisibility", typeof(Visibility));
 
         /// <summary>
@@ -1358,10 +1349,19 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsSentInfoVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsSentInfoVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets the GroupSubmitPageCommand command.
+        /// </summary>
+        public Command GroupSubmitPageCommand { get; private set; }
+
+        private void OnGroupSubmitPageCommandExecute()
+        {
+            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+            
+        }
 
         #endregion //Submission Command
 
@@ -1406,7 +1406,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1428,7 +1428,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1973,11 +1973,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 1;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 1; }
+                catch(FormatException) { rows = 1; }
 
                 int cols = 1;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 1; }
+                catch(FormatException) { cols = 1; }
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
                 CLPServiceAgent.Instance.AddPageObjectToPage(region);
@@ -2003,11 +2003,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 0;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 0; }
+                catch(FormatException) { rows = 0; }
 
                 int cols = 0;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 0; }
+                catch(FormatException) { cols = 0; }
 
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
                 CLPServiceAgent.Instance.AddPageObjectToPage(region);

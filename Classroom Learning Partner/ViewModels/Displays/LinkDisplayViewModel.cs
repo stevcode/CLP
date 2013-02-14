@@ -192,7 +192,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                     	App.Network.ProjectorProxy.AddPageToDisplay(pageID);
                     }
-                    catch (System.Exception ex)
+                    catch (System.Exception)
                     {
                     	
                     }

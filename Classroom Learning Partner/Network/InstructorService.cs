@@ -93,7 +93,12 @@ namespace Classroom_Learning_Partner
                     pageObject.ParentPage = submission;
                     if(pageObject is ISubmittable)
                     {
-                        (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
+                                return null;
+                            }, null);
                     }
                 }
 
@@ -124,8 +129,6 @@ namespace Classroom_Learning_Partner
                     return null;
                 }, null);
             }
-
-            
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }

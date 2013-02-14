@@ -429,7 +429,7 @@ namespace CLP.Models
                     PageObjectStrokeParentIDs.Remove(strokeID);
                     HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
-                catch(System.Exception ex)
+                catch(System.Exception)
                 {
                     Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }

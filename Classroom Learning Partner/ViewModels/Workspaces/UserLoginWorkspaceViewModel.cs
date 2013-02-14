@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         App.Network.InstructorProxy.StudentLogin(App.Network.CurrentUser);
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.Network.CurrentUser.FullName;
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
                         Logger.Instance.WriteToLog("Problem Logging In as " + App.Network.CurrentUser.FullName);
                     }
