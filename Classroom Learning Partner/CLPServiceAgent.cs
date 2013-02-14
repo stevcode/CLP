@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
                             
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime);
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, false);
                         }
                         catch(System.Exception ex)
                         {

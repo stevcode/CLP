@@ -606,6 +606,7 @@
     <Content Include="External Libraries\NAudio.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\DisplayGroupSubmissions.png" />
     <Resource Include="Images\MakePageLonger.png" />
     <Resource Include="Images\PenSize-icon32.png" />
     <Resource Include="Images\PenSize.png" />

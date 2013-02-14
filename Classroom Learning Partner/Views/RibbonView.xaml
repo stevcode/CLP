@@ -157,12 +157,12 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />
+                    CommandParameter="EraseByStroke" />-->
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -210,18 +210,18 @@
                 <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
-                <!--<RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Tan" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Gold" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>-->
+                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="DarkGreen"/>
-                <!--<RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>-->
+                <RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Blue"/>
-                <!--<RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="BlueViolet" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Aquamarine" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="SlateGray" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>-->
+                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -269,6 +269,12 @@
                         Label="Thank you!"
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
+
+                <RibbonButton
+                        LargeImageSource="..\Images\Happy.png" 
+                        Label="Group Send"
+                        IsEnabled="False"
+                        Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 

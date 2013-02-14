@@ -24,7 +24,8 @@ namespace Classroom_Learning_Partner
         void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime);
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission);
     }
 
     public class ProjectorService : IProjectorContract
@@ -109,14 +110,17 @@ namespace Classroom_Learning_Partner
         public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime)
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission)
         {
             CLPPage submission = null;
+            CLPNotebook currentNotebook = null;
 
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             {
                 if(notebookID == notebook.UniqueID)
                 {
+                    currentNotebook = notebook;
                     submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
                     break;
                 }
