@@ -495,7 +495,17 @@ namespace CLP.Models
                 lowestY = Math.Max(lowestY, bounds.Bottom);
             }
 
-            double newHeight = Math.Max(PageHeight, lowestY);
+            double defaultHeight = 0;
+            if(PageWidth == LANDSCAPE_WIDTH)
+            {
+                defaultHeight = LANDSCAPE_HEIGHT;
+            }
+            else
+            {
+                defaultHeight = PORTRAIT_HEIGHT;
+            }
+
+            double newHeight = Math.Max(defaultHeight, lowestY);
             PageHeight = newHeight + 20;
         }
 
