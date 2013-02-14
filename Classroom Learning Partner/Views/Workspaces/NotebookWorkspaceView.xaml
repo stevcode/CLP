@@ -52,12 +52,16 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
+                                        <RowDefinition />
                                     </Grid.RowDefinitions>
 
                                     <ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
                                         <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
                                     </ToggleButton>
-                                    <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+                                    <ToggleButton x:Name="toggleGroups" Height="50" Width="25" Grid.Row="1" >
+                                        <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
+                                    </ToggleButton>
+                                    <Label Grid.Row="2" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
                                 </Grid>
 
                             </Grid>
