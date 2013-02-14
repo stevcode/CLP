@@ -105,6 +105,7 @@
     <Compile Include="CLPPageObjects\PageObject Interfaces\IInkStrokeAccepter.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\IPageObjectAccepter.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\IPageObjectContainer.cs" />
+    <Compile Include="CLPPageObjects\PageObject Interfaces\ISubmittable.cs" />
     <Compile Include="Displays\ACLPDisplayBase.cs" />
     <Compile Include="Displays\CLPGridDisplay.cs" />
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
