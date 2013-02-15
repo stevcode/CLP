@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Models
@@ -443,7 +444,9 @@ namespace CLP.Models
 
                             foreach(Stroke s in sc)
                             {
+                                ParentPage.IsInkAutoAdding = true;
                                 ParentPage.InkStrokes.Remove(s);
+                                ParentPage.IsInkAutoAdding = false;
                             }
 
                             Rows.RemoveAt(replaceIndex);
@@ -457,7 +460,12 @@ namespace CLP.Models
                         StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
                         foreach(Stroke stroke in gridPartStrokes)
                         {
+                            Matrix transform = new Matrix();
+                            transform.Translate(gridPart.XPosition + RowHeaderWidth + XPosition, gridPart.YPosition + ColumnHeaderHeight + YPosition);
+                            stroke.Transform(transform, true);
+                            ParentPage.IsInkAutoAdding = true;
                             ParentPage.InkStrokes.Add(stroke);
+                            ParentPage.IsInkAutoAdding = false;
                         }
                         break;
                     case GridPartOrientation.Column:
@@ -517,20 +525,27 @@ namespace CLP.Models
                     if(gridPart.IsAggregated)
                     {
                         gridPart.ByteStrokes.Clear();
-                        Rect rect = new Rect(gridPart.XPosition + RowHeaderWidth + XPosition, gridPart.YPosition + ColumnHeaderHeight + YPosition, gridPart.Width, gridPart.Height);
+                        Rect rect = new Rect(gridPart.XPosition + RowHeaderWidth + XPosition, gridPart.YPosition + ColumnHeaderHeight + YPosition, gridPart.Width - RowHeaderWidth, gridPart.Height);
                         var strokesOverObject =
                             from stroke in ParentPage.InkStrokes
                             where stroke.HitTest(rect, 3)
                             select stroke;
 
+                        StrokeCollection clonedStrokes = new StrokeCollection();
                         foreach(Stroke stroke in strokesOverObject)
                         {
                             StrokeCollection clippedStrokes = stroke.GetClipResult(rect);
                             foreach (Stroke clippedStroke in clippedStrokes)
                             {
-                                gridPart.ByteStrokes.Add(CLPPage.StrokeToByte(clippedStroke));
+                                Stroke newStroke = clippedStroke.Clone();
+                                Matrix transform = new Matrix();
+                                transform.Translate(-gridPart.XPosition - RowHeaderWidth - XPosition, -gridPart.YPosition - ColumnHeaderHeight - YPosition);
+                                newStroke.Transform(transform, true);
+                                newStroke.SetStrokeUniqueID(Guid.NewGuid().ToString());
+                                clonedStrokes.Add(newStroke);
                             }
                         }
+                        gridPart.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
                     }
                 }
             }

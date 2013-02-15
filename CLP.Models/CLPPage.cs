@@ -192,6 +192,17 @@ namespace CLP.Models
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
 
         /// <summary>
+        /// Set to True to ignore InkStrokeCollectionChange event.
+        /// </summary>
+        public bool IsInkAutoAdding
+        {
+            get { return GetValue<bool>(IsInkAutoAddingProperty); }
+            set { SetValue(IsInkAutoAddingProperty, value); }
+        }
+
+        public static readonly PropertyData IsInkAutoAddingProperty = RegisterProperty("IsInkAutoAdding", typeof(bool), false);
+
+        /// <summary>
         /// Gets a list of pageObjects on the page.
         /// </summary>
         public ObservableCollection<ICLPPageObject> PageObjects
