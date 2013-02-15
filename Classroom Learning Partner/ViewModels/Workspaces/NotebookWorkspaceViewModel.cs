@@ -187,7 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(SubmissionPagesProperty, value);
                 SelectedFilterType = "Student Name - Ascending"; 
-                FilterSubmissions("Student Name - Ascending");
+                //FilterSubmissions("Student Name - Ascending");
             } 
         }
 

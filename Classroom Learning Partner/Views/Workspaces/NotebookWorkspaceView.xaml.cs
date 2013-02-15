@@ -62,9 +62,16 @@ namespace Classroom_Learning_Partner.Views
                 CLPPage page = ((((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as Border).Child as ContentPresenter).Content as CLPPage;
                 string pageID = page.UniqueID;
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
+
+                
+
                 if(viewModel.Notebook.Submissions.ContainsKey(pageID))
                 {
                      viewModel.SubmissionPages = viewModel.Notebook.Submissions[pageID];
+                     if(button.Name == "toggleGroups")
+                     {
+                         viewModel.SelectedFilterType = "Group Name - Ascending";
+                     }
                 }
                 (((sender as ToggleButton).Parent as Grid).Parent as Grid).Background = new SolidColorBrush(Colors.Lavender);
             }
