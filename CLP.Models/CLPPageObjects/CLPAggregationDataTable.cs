@@ -596,7 +596,8 @@ namespace CLP.Models
                                             {
                                                 gridPart.PersonSubmitter = ParentPage.Submitter;
                                                 gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
-                                                linkedDataTable.AddAggregatedGridPart(gridPart);
+                                                CLPGridPart partToAdd = gridPart.Clone() as CLPGridPart;
+                                                linkedDataTable.AddAggregatedGridPart(partToAdd);
                                             }
                                         }
                                     }
@@ -610,7 +611,8 @@ namespace CLP.Models
                                             {
                                                 gridPart.PersonSubmitter = ParentPage.Submitter;
                                                 gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
-                                                linkedDataTable.AddAggregatedGridPart(gridPart);
+                                                CLPGridPart partToAdd = gridPart.Clone() as CLPGridPart;
+                                                linkedDataTable.AddAggregatedGridPart(partToAdd);
                                             }
                                         }
                                     }
