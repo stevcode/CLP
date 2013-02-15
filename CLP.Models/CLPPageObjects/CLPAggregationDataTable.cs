@@ -380,58 +380,50 @@ namespace CLP.Models
                 {
                     case GridPartOrientation.Row:
                         int replaceIndex = -1;
+
+                        if (Rows.Count == 0)
+                        {
+                            switch(AggregationType)
+                            {
+                                case AggregationType.None:
+                                    return;
+                                case AggregationType.Single:
+                                    gridPart.Header = gridPart.PersonSubmitter.FullName;
+                                    break;
+                                case AggregationType.Group:
+                                    gridPart.Header = gridPart.GroupSubmitter.GroupName;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                         foreach(CLPGridPart row in Rows)
                         {
                             switch(AggregationType)
                             {
                                 case AggregationType.None:
-                                    break;
+                                    return;
                                 case AggregationType.Single:
                                     gridPart.Header = gridPart.PersonSubmitter.FullName;
-                                    if (row.PersonSubmitter.UniqueID == gridPart.PersonSubmitter.UniqueID)
+                                    if (row.PersonSubmitter.FullName == gridPart.PersonSubmitter.FullName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
                                         gridPart.Height = row.Height;
                                         gridPart.Width = row.Width;
                                         replaceIndex = Rows.IndexOf(row);
-                                    }
-                                    else
-                                    {
-                                        AddGridPart(gridPart);
-                                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
-                                        foreach(Stroke stroke in gridPartStrokes)
-                                        {
-                                            ParentPage.InkStrokes.Add(stroke);
-                                        }
                                     }
                                     break;
                                 case AggregationType.Group:
                                     gridPart.Header = gridPart.GroupSubmitter.GroupName;
-                                    if(row.GroupSubmitter.GroupID == gridPart.GroupSubmitter.GroupID)
+                                    if(row.GroupSubmitter.GroupName == gridPart.GroupSubmitter.GroupName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
                                         gridPart.Height = row.Height;
                                         gridPart.Width = row.Width;
                                         replaceIndex = Rows.IndexOf(row);
-                                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(row.ByteStrokes);
-                                        foreach(Stroke stroke in gridPartStrokes)
-                                        {
-                                            foreach(Stroke pageStroke in ParentPage.InkStrokes)
-                                            {
-                                          
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        AddGridPart(gridPart);
-                                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
-                                        foreach(Stroke stroke in gridPartStrokes)
-                                        {
-                                            ParentPage.InkStrokes.Add(stroke);
-                                        }
                                     }
                                     break;
                                 default:
@@ -441,25 +433,32 @@ namespace CLP.Models
 
                         if (replaceIndex > -1)
                         {
+                            var strokesToRemove =
+                                from pageStroke in ParentPage.InkStrokes
+                                from objectStroke in CLPPage.BytesToStrokes(Rows[replaceIndex].ByteStrokes)
+                                where pageStroke.GetStrokeUniqueID() == objectStroke.GetStrokeUniqueID()
+                                select pageStroke;
+
+                            StrokeCollection sc = new StrokeCollection(strokesToRemove);
+
+                            foreach(Stroke s in sc)
+                            {
+                                ParentPage.InkStrokes.Remove(s);
+                            }
+
                             Rows.RemoveAt(replaceIndex);
                             Rows.Insert(replaceIndex, gridPart);
-                            StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
-                            foreach(Stroke stroke in gridPartStrokes)
-                            {
-                                ParentPage.InkStrokes.Add(stroke);
-                            }
                         }
-
-                        if(Rows.Count == 0)
+                        else
                         {
                             AddGridPart(gridPart);
-                            StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
-                            foreach(Stroke stroke in gridPartStrokes)
-                            {
-                                ParentPage.InkStrokes.Add(stroke);
-                            }
+                        }                       
+
+                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
+                        foreach(Stroke stroke in gridPartStrokes)
+                        {
+                            ParentPage.InkStrokes.Add(stroke);
                         }
-                        
                         break;
                     case GridPartOrientation.Column:
                         //TODO: Steve - Expand to allow for aggregation of columns
@@ -580,6 +579,7 @@ namespace CLP.Models
                                         {
                                             if(gridPart.IsAggregated)
                                             {
+                                                gridPart.PersonSubmitter = ParentPage.Submitter;
                                                 gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
                                                 linkedDataTable.AddAggregatedGridPart(gridPart);
                                             }
@@ -593,6 +593,7 @@ namespace CLP.Models
                                         {
                                             if(gridPart.IsAggregated)
                                             {
+                                                gridPart.PersonSubmitter = ParentPage.Submitter;
                                                 gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
                                                 linkedDataTable.AddAggregatedGridPart(gridPart);
                                             }

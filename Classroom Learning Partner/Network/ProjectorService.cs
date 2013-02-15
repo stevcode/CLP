@@ -128,6 +128,17 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                submission.IsSubmission = true;
+                submission.IsGroupSubmission = true;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
+
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {
                     submission.PageObjects.Add(pageObject);
@@ -146,17 +157,6 @@ namespace Classroom_Learning_Partner
                             }, null);
                     }
                 }
-
-                submission.ByteStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
-
-                submission.IsSubmission = true;
-                submission.IsGroupSubmission = true;
-                submission.SubmissionID = submissionID;
-                submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = submitter.FullName;
-                submission.Submitter = submitter;
-                submission.GroupSubmitter = groupSubmitter;
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
