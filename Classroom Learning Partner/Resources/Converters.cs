@@ -166,10 +166,18 @@ namespace Classroom_Learning_Partner.Resources
                 Visibility editingModeVisibility = (Visibility)value[0];
                 string header = (string)value[1];
 
-                RtfTree tree = new RtfTree();
-                tree.LoadRtfText(header);
+                //TODO: Steve - Fix this, absolute mess.
+                try
+                {
+                    RtfTree tree = new RtfTree();
+                    tree.LoadRtfText(header);
 
-                if(editingModeVisibility == Visibility.Visible || tree.Text != "\r\n")
+                    if(editingModeVisibility == Visibility.Visible || tree.Text != "\r\n")
+                    {
+                        thickness = 1;
+                    }
+                }
+                catch(System.Exception)
                 {
                     thickness = 1;
                 }
