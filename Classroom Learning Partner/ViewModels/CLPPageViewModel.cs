@@ -457,6 +457,7 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - Catel? causing this to be called twice
             //Task.Factory.StartNew( () =>
@@ -505,6 +506,7 @@ namespace Classroom_Learning_Partner.ViewModels
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
 
             //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.

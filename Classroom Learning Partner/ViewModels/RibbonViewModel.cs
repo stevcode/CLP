@@ -1264,9 +1264,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SubmitPageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SubmitPageCommand command is executed.
-        /// </summary>
         private void OnSubmitPageCommandExecute()
         {
             //Steve - change to different thread and do callback to make sure sent page has arrived
@@ -1295,6 +1292,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanGroupSendToTeacher
+        {
+            get { return GetValue<bool>(CanGroupSendToTeacherProperty); }
+            set { SetValue(CanGroupSendToTeacherProperty, value); }
+        }
+
+        public static readonly PropertyData CanGroupSendToTeacherProperty = RegisterProperty("CanGroupSendToTeacher", typeof(bool), true);
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -1358,9 +1365,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnGroupSubmitPageCommandExecute()
         {
-            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
-            
+            IsSending = true;
+            Timer timer = new Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Enabled = true;
+
+            if(CanGroupSendToTeacher)
+            {
+                CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+            }
+            CanGroupSendToTeacher = false;
         }
 
         #endregion //Submission Command

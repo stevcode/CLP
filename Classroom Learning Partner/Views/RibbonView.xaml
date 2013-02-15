@@ -270,11 +270,10 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <RibbonButton
-                        LargeImageSource="..\Images\Happy.png" 
-                        Label="Group Send"
-                        Command="{Binding GroupSubmitPageCommand}"
-                        Visibility="{Binding SendButtonVisibility}"/>
+                <RibbonButton Label="Group Send"
+                              LargeImageSource="..\Images\GroupSubmit-icon32.png" 
+                              Command="{Binding GroupSubmitPageCommand}"
+                              Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 
