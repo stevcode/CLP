@@ -154,6 +154,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="NRtfTree, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\NRtfTree.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.480, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\protobuf-net.dll</HintPath>
@@ -604,6 +608,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="External Libraries\NAudio.dll" />
+    <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Resource Include="Images\GroupSubmit-icon32.png" />
