@@ -141,9 +141,6 @@ namespace Classroom_Learning_Partner
 
                     foreach(CLPPage page in notebook.Pages)
                     {
-                        Logger.Instance.WriteToLog("Page Index: " + page.PageIndex);
-                        Logger.Instance.WriteToLog("Page ID: " + page.UniqueID);
-
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
                             pageObject.ParentPage = page;
