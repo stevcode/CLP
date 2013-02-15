@@ -568,6 +568,7 @@ namespace CLP.Models
 
         public void AfterSubmit(bool isGroupSubmit, CLPNotebook notebook)
         {
+            CanAcceptStrokes = true;
             RefreshStrokeParentIDs();
 
             int autoPageIndex = ParentPage.PageIndex; //off by one indexing
