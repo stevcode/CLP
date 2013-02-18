@@ -437,11 +437,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         selectedObject.Width = (properties.WidthTextBox.Text.Length > 0 &&
                             isNum && width <= Page.PageWidth) ? width : selectedObject.Width;
                         int x;
-                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out x);
+                        isNum = Int32.TryParse(properties.XPositionTextBox.Text, out x);
                         selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
                             x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
                         int y;
-                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out y);
+                        isNum = Int32.TryParse(properties.YPositionTextBox.Text, out y);
                         selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
                             && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
                     }

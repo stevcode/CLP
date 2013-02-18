@@ -119,15 +119,9 @@ namespace CLP.Models
                 answer.Append("Group: ");
                 foreach (string key in dicOfGroup.Keys)
                 {
-                    List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
-                    answer.Append(objectsOfGroup.Count);
-                    answer.Append(" ");
-                    answer.Append(key);
-                    answer.Append(" of ");
-                    answer.Append(objectsOfGroup[0].Parts);
-                    answer.Append(" Parts, ");
+                    answer.Append(PrintObjectsInGroup(dicOfGroup[key], key));
                 }
-                answer.Remove(answer.Length - 3, 2);
+                answer.Remove(answer.Length - 2, 2);
                 answer.AppendLine(";");
             }
             return answer.ToString();
@@ -149,17 +143,30 @@ namespace CLP.Models
                 answer.Append(" Group: ");
                 foreach (string key in dicOfGroup.Keys)
                 {
-                    List<ICLPPageObject> objectsOfGroup = dicOfGroup[key];
-                    answer.Append(objectsOfGroup.Count);
-                    answer.Append(" ");
-                    answer.Append(key);
-                    answer.Append(" of ");
-                    answer.Append(objectsOfGroup[0].Parts);
-                    answer.Append(" Parts, ");
+                    answer.Append(PrintObjectsInGroup(dicOfGroup[key], key));
                 }
-                answer.Remove(answer.Length - 3, 2);
+                answer.Remove(answer.Length - 2, 2);
                 answer.Append(";");
             }
+            return answer.ToString();
+        }
+
+        private string PrintObjectsInGroup(List<ICLPPageObject> objectsOfGroup, String key)
+        {
+            StringBuilder answer = new StringBuilder();
+            answer.Append(objectsOfGroup.Count);
+            answer.Append(" ");
+            if (key.StartsWith("Tile")) {
+                answer.Append("Tile of ");
+                answer.Append((objectsOfGroup[0] as CLPSnapTileContainer).NumberOfTiles);
+            }
+            else
+            {
+                answer.Append(key);
+                answer.Append(" of ");
+                answer.Append(objectsOfGroup[0].Parts);
+            }
+            answer.Append(" Parts, ");
             return answer.ToString();
         }
 
