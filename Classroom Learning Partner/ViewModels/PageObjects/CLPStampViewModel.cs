@@ -12,7 +12,6 @@ using Catel.MVVM;
 using CLP.Models;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 
 
@@ -264,7 +263,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     || PageObject.PageObjectObjectParentIDs.Count > 0))
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
                     PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
                     foreach(ICLPPageObject pageObject in droppedContainer.GetPageObjectsOverPageObject())
@@ -279,10 +278,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                     {
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
                     }
                 }
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
 
@@ -320,11 +319,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
+                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             Point pt = new Point(x, y);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
         /// <summary>
@@ -405,12 +404,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                if(parentPage != null)
                 {
-                    pageVM.IsInkCanvasHitTestVisible = true;
-                }
+                    foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                    {
+                        pageVM.IsInkCanvasHitTestVisible = true;
+                    }
 
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                }
             }
             
             if(hitBoxName == "HandwritingHitBox")

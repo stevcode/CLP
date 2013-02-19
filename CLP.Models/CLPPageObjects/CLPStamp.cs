@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace CLP.Models
 {
-    [Serializable]
+    [Serializable, KnownType(typeof(CLPImage))]
     public class CLPStamp : DataObjectBase<CLPStamp>, ICLPPageObject
     {
         #region Constants
@@ -429,7 +429,7 @@ namespace CLP.Models
                     PageObjectStrokeParentIDs.Remove(strokeID);
                     HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
-                catch(System.Exception ex)
+                catch(System.Exception)
                 {
                     Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }

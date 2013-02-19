@@ -461,6 +461,31 @@ namespace AdornedControl
             return null;
         }
 
+        public static UserControl GetLinkedDisplayView(DependencyObject child)
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if(parentObject == null)
+            {
+                return null;
+            }
+            UserControl parent = parentObject as UserControl;
+            if(parent != null)
+            {
+                if(parent.Name == "LinkedDisplay")
+                {
+                    return parent;
+                }
+                else
+                {
+                    return GetLinkedDisplayView(parentObject);
+                }
+            }
+            else
+            {
+                return GetLinkedDisplayView(parentObject);
+            }
+        }
+
         #endregion //Public Methods
 
         #region Private Methods
@@ -507,7 +532,11 @@ namespace AdornedControl
             {
                 if(this.adornerLayer == null)
                 {
-                    this.adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                    UserControl linkedDisplay = GetLinkedDisplayView(this);
+                    if (linkedDisplay != null)
+                    {
+                        this.adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);
+                    }
                 }
 
                 if(this.adornerLayer != null)

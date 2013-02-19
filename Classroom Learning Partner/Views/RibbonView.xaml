@@ -2,7 +2,8 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
         <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
@@ -53,28 +54,19 @@
                 <RibbonApplicationMenuItem Header="Save All Notebooks"
                                                   Command="{Binding Path=SaveAllNotebooksCommand}"
                                                   KeyTip="A"
-                                                  ImageSource="..\Images\SaveAllNotebooks.png" />
-
-                <RibbonApplicationMenuItem Header="Save Notebook Histories"
-                                                  Command="{Binding Path=SaveAllHistoriesCommand}"
-                                                  KeyTip="Bs"
-                                                  ImageSource="..\Images\SaveNotebookHistories.png" />
-
-                <RibbonApplicationMenuItem Header="Convert to XPS"
-                                                  Command="{Binding Path=ConvertToXPSCommand}"
-                                                  KeyTip="C"
-                                                  ImageSource="..\Images\ConvertToXPS.png" />
-                <RibbonApplicationMenuItem Header="Import Local Notebooks to DB"
-                                                  Command="{Binding Path=ImportLocalNotebooksDBCommand}"
-                                                  KeyTip="I"
+                                                  ImageSource="..\Images\SaveAllNotebooks.png" 
+                                           Visibility="{Binding Path=InstructorVisibility}"/>
+               
+                <RibbonApplicationMenuItem Header="Submit Whole Notebook"
+                                                  Command="{Binding SubmitNotebookToTeacherCommand}"
                                                   ImageSource="..\Images\LargeIcon.png"
-                                                  Visibility="{Binding Path=ServerVisibility}"/>
+                                                  Visibility="{Binding Path=StudentVisibility}"/>
 
                 <RibbonSeparator />
 
                 <!--Bind header for toggle text: disconnect/reconnect to network-->
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
-                                                  Command="{Binding Path=NetworkReconnectCommand}"
+                                                  Command="{Binding RefreshNetworkCommand}"
                                                   ImageSource="..\Images\ReconnectToNetwork.png" />
 
                 <RibbonApplicationMenu.FooterPaneContent>
@@ -140,7 +132,7 @@
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="1" Width="150" />
+                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="2" Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="3" Width="150" />
@@ -165,34 +157,34 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />
+                    CommandParameter="EraseByStroke" />-->
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Tile"
                     LargeImageSource="..\Images\SnapTileIcon.png"
-                    Command="{Binding Path=SetSnapTileCommand}" />
+                    Command="{Binding Path=SetSnapTileCommand}" />-->
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <!--<RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <!--<RibbonToggleButton Label="Webcam"
+                <RibbonToggleButton Label="Webcam"
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
@@ -215,21 +207,21 @@
                     </Style>
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black"/>
-                <RibbonButton Background="White"/>
+                <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
-                <RibbonButton Background="Bisque"/>
-                <RibbonButton Background="DarkOrange"/>
-                <RibbonButton Background="Tan"/>
-                <RibbonButton Background="Gold"/>
-                <RibbonButton Background="SaddleBrown"/>
+                <!--<RibbonButton Background="Bisque"/>-->
+                <RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Tan" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Gold" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="DarkGreen"/>
-                <RibbonButton Background="MediumSeaGreen"/>
+                <RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>
                 <RibbonButton Background="Blue"/>
-                <RibbonButton Background="HotPink"/>
-                <RibbonButton Background="BlueViolet"/>
-                <RibbonButton Background="Aquamarine"/>
-                <RibbonButton Background="SlateGray"/>
-                <RibbonButton Background="SkyBlue"/>
+                <RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="BlueViolet" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="Aquamarine" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SlateGray" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -277,6 +269,11 @@
                         Label="Thank you!"
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
+
+                <RibbonButton Label="Group Send"
+                              LargeImageSource="..\Images\GroupSubmit-icon32.png" 
+                              Command="{Binding GroupSubmitPageCommand}"
+                              Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 
@@ -330,6 +327,29 @@
 
             </RibbonGroup>
 
+        </RibbonTab>
+
+        <RibbonTab Header="Test Features" Visibility="{Binding Path=InstructorVisibility}">
+            
+            <RibbonGroup Header="ClassList Commands">
+
+                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="Allow Students Pen"/>
+                            <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="Deny Students Pen"/>
+                                    <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+            </RibbonGroup>
+            
         </RibbonTab>
 
         <!--<RibbonTab Header="Page">
@@ -410,14 +430,21 @@
                         Command="{Binding Path=InsertTextBoxCommand}" />
 
                 <RibbonControlGroup>
-                    <ComboBox x:Name="FontFamilyComboBox"
+                    <!--<ComboBox x:Name="FontFamilyComboBox"
                             ItemsSource="{Binding Path=Fonts}"
                             SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
-                            Width="130"/>
-                    <ComboBox x:Name="FontSizeComboBox"
+                            Width="130"/>-->
+                    <!--<ComboBox x:Name="FontSizeComboBox"
                             ItemsSource="{Binding Path=FontSizes}"
                             SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
-                            Width="45"/>
+                            Width="45"/>-->
+                    <Views:XComboBox ItemsSource="{Binding Path=Fonts}" 
+                                     Command="{x:Static Views:MyCommands.SetFontFamily}"
+                                     Width="130"/>
+
+                    <Views:XComboBox ItemsSource="{Binding Path=FontSizes}" 
+                                     Command="{x:Static Views:MyCommands.SetFontSize}"
+                                     Width="45"/>
                 </RibbonControlGroup>
 
                 <RibbonControlGroup>
@@ -451,7 +478,7 @@
 
                     <Label Content="Font Color" />
 
-                    <ComboBox x:Name="FontColorComboBox"
+                    <!--<ComboBox x:Name="FontColorComboBox"
                             ItemsSource="{Binding Path=FontColors}"
                             SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
                             Width="45">
@@ -460,7 +487,16 @@
                                 <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    </ComboBox>-->
+                    <Views:XComboBox ItemsSource="{Binding Path=FontColors}" 
+                                     Command="{x:Static Views:MyCommands.SetFontColor}"
+                                     Width="45">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </Views:XComboBox>
 
                 </RibbonControlGroup>
 
@@ -666,6 +702,14 @@
 
 
             </RibbonGroup>
+            
+            <RibbonGroup Header="Notebook">
+
+                <RibbonButton Label="Convert to XPS"
+                            Command="{Binding Path=ConvertToXPSCommand}"
+                            LargeImageSource="..\Images\ConvertToXPS.png" />
+
+            </RibbonGroup>
 
             <RibbonGroup Header="Page">
 
@@ -678,6 +722,11 @@
                         Label="Whole Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=ZoomToWholePageCommand}" />
+
+                <RibbonButton
+                        Label="Trim Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding TrimPageCommand}" />
             </RibbonGroup>
 
         </RibbonTab>

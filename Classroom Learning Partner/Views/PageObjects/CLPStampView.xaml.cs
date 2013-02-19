@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.Generic;
 

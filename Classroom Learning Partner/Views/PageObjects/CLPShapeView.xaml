@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+                   xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
 
     <UserControl.Resources>

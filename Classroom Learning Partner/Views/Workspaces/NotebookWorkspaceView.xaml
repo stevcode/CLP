@@ -22,7 +22,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                            <Grid x:Name="itemGrid" Margin="0,2,0,2">
+                            <Grid Margin="0,2,0,2">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -31,21 +31,26 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Label x:Name="PageIndex"  Grid.Column="0" 
-                                   Content="{Binding PageIndex}"
-                                   Margin="8,0,0,0"
-                                   Foreground="Black" FontSize="12" />
+                                       Content="{Binding PageIndex}"
+                                       Margin="8,0,0,0"
+                                       Foreground="Black" FontSize="12" />
 
                                 <!--Notebook Page-->
-                                <Border x:Name="IconBorder" Grid.Column="1"
-                                    BorderBrush="#9FA6AD"
-                                    BorderThickness="1"
-                                    Margin="4">
-                                    <ContentPresenter />
+                                <Border x:Name="SelectedBorder" Grid.Column="1"
+                                        BorderThickness="2"
+                                        BorderBrush="Transparent"
+                                        Margin="4">
+                                    <Border x:Name="PageBorder"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource GrayBorderColor}">
+                                        <ContentPresenter />
+                                    </Border>
                                 </Border>
 
                                 <!--Where buttons that reveal submissions are located-->
                                 <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
                                     <Grid.RowDefinitions>
+                                        <RowDefinition />
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
@@ -54,15 +59,18 @@
                                         <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
                                     </ToggleButton>
                                     <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
-                                </Grid>
+                                    <ToggleButton Margin="0,10,0,0" x:Name="toggleGroups" Height="50" Width="25" Grid.Row="2" Click="ToggleButton_Click" >
+                                        <Image Source="..\..\Images\DisplayGroupSubmissionsButton.png" />
+                                    </ToggleButton>
+                                    </Grid>
 
                             </Grid>
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="#2F64B9" />
-                                    <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                                    <Setter TargetName="PageIndex" Property="Foreground" Value="#2F64B9" />
+                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="PageIndex" Property="Foreground" Value="{StaticResource MainColor}" />
                                     <Setter TargetName="PageIndex" Property="FontWeight" Value="Bold" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -70,10 +78,10 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <!-- Background="#F3F3F3" -->
     <Grid Background="{Binding WorkspaceBackgroundColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -94,10 +102,35 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--Left Panel-->
+            <!--<ContentControl Grid.Column="0"
+                            DataContext="{Binding LeftPanel, Mode=OneWay}">
+                <ContentControl.Resources>
+
+                    <ControlTemplate x:Key="NotebookPagesPanelTemplate">
+                        <Views:NotebookPagesPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
+                    </ControlTemplate>
+
+                </ContentControl.Resources>
+
+                <ContentControl.Style>
+                    <Style TargetType="{x:Type ContentControl}">
+                        <Style.Triggers>
+
+                            NotebookPagesPanel trigger
+                            <DataTrigger Binding="{Binding PanelName}" Value="NotebookPagesPanel">
+                                <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>-->
+
             <!-- Notebook Pages-->
             <Border x:Name="NotebookPagesBorder" Grid.Column="0" Background="#F3F3F3">
                 <ListBox x:Name="NotebookPageListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                            MinWidth="150" Width="{Binding ElementName=NotebookPageSidebarContainer, Path=ActualWidth, Mode=OneWay}" 
+                            MinWidth="150" Width="{Binding ElementName=NotebookPagesBorder, Path=ActualWidth, Mode=OneWay}" 
                             ItemsSource="{Binding Path=NotebookPages}"
                             ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
                             SelectionMode="Single">

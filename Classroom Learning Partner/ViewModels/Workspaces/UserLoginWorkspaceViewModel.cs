@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.ServiceModel;
+using System.Threading;
 using Catel.Data;
 using Catel.MVVM;
 
@@ -69,7 +72,36 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnLogInCommandExecute(string userName)
         {
-            App.Peer.UserName = userName;
+            App.Network.CurrentUser.FullName = userName.Split(new char[] { ',' })[0];
+            App.Network.CurrentGroup.GroupName = userName.Split(new char[] { ',' })[1];
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                int i = App.Network.DiscoveredInstructors.Addresses.Count();
+                while(App.Network.DiscoveredInstructors.Addresses.Count() < 1 || App.Network.CurrentUser.CurrentMachineAddress == null || App.Network.InstructorProxy == null)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                if(App.Network.InstructorProxy != null)
+                {
+                    try
+                    {
+                        App.Network.InstructorProxy.StudentLogin(App.Network.CurrentUser);
+                        App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.Network.CurrentUser.FullName;
+                    }
+                    catch(System.Exception)
+                    {
+                        Logger.Instance.WriteToLog("Problem Logging In as " + App.Network.CurrentUser.FullName);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Instructor NOT Available");
+                }
+            }).Start();
+
             App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 

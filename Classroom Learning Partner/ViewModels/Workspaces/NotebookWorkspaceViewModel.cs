@@ -11,7 +11,6 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
-using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -39,6 +38,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
+            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
+            LeftPanel = NotebookPagesPanel;
             SubmissionPages = new ObservableCollection<CLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
@@ -65,8 +66,11 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes = new ObservableCollection<string>();
             FilterTypes.Add("Student Name - Ascending");
             FilterTypes.Add("Student Name - Descending");
+            FilterTypes.Add("Group Name - Ascending");
+            FilterTypes.Add("Group Name - Descending");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
+
         }
 
         public string WorkspaceName
@@ -183,7 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(SubmissionPagesProperty, value);
                 SelectedFilterType = "Student Name - Ascending"; 
-                FilterSubmissions("Student Name - Ascending");
+                //FilterSubmissions("Student Name - Ascending");
             } 
         }
 
@@ -257,6 +261,39 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel), null);
+
+        /// <summary>
+        /// Left side Panel.
+        /// </summary>
+        public IPanel LeftPanel
+        {
+            get { return GetValue<IPanel>(LeftPanelProperty); }
+            set { SetValue(LeftPanelProperty, value); }
+        }
+
+        public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel), null);
+
+        /// <summary>
+        /// NotebookPagesPanel.
+        /// </summary>
+        public NotebookPagesPanelViewModel NotebookPagesPanel
+        {
+            get { return GetValue<NotebookPagesPanelViewModel>(NotebookPagesPanelProperty); }
+            set { SetValue(NotebookPagesPanelProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel), null);
+
+        /// <summary>
+        /// DisplayPanel.
+        /// </summary>
+        public DisplayListPanelViewModel DisplayListPanel
+        {
+            get { return GetValue<DisplayListPanelViewModel>(DisplayListPanelProperty); }
+            set { SetValue(DisplayListPanelProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel), new DisplayListPanelViewModel());
 
         #endregion //Panels
 
@@ -350,6 +387,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PropertyGroupDescription gd = new PropertyGroupDescription();
             gd.PropertyName = "SubmitterName";
+            PropertyGroupDescription gd2 = new PropertyGroupDescription();
+            gd2.PropertyName = "GroupName";
+            PropertyGroupDescription gd3 = new PropertyGroupDescription();
+            gd3.PropertyName = "SubmissionTime";
 
             if(Sort == "Student Name - Ascending")
             {
@@ -363,13 +404,33 @@ namespace Classroom_Learning_Partner.ViewModels
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdAD);
             }
+            else if(Sort == "Group Name - Ascending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd2);
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdGA = new SortDescription("GroupName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdGA);
+                SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdAA);
+            }
+            else if(Sort == "Group Name - Descending")
+            {
+                FilteredSubmissions.GroupDescriptions.Add(gd2);
+                SortDescription sdGD = new SortDescription("GroupName", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(sdGD);
+                FilteredSubmissions.GroupDescriptions.Add(gd);
+                SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
+                FilteredSubmissions.SortDescriptions.Add(sdAA);
+            }
             else if(Sort == "Time In - Ascending")
             {
+                FilteredSubmissions.GroupDescriptions.Add(gd3);
                 SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdTA);
             }
             else if(Sort == "Time In - Descending")
             {
+                FilteredSubmissions.GroupDescriptions.Add(gd3);
                 SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdTD);
             }

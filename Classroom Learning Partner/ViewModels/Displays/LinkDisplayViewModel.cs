@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.ServiceModel;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -172,22 +174,40 @@ namespace Classroom_Learning_Partner.ViewModels
         public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
-            if (IsOnProjector && App.Peer.Channel != null)
+            if(IsOnProjector)
             {
+                string pageID;
                 if(DisplayedPage.IsSubmission)
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.SubmissionID);
+                    pageID = DisplayedPage.SubmissionID;
                 }
                 else
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.UniqueID);
+                    pageID = DisplayedPage.UniqueID;
+                }
+
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                    	App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+                    }
+                    catch (System.Exception)
+                    {
+                    	
+                    }
+                }
+                else
+                {
+                    //TODO: Steve - add pages to a queue and send when a projector is found
+                    Console.WriteLine("Projector NOT Available");
                 }
             }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
+            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
 
         #endregion //Methods
