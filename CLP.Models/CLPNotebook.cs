@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace CLP.Models
 {
@@ -13,6 +17,8 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
     {
+        private readonly Memento memento;
+        private readonly Memento initialMemento;
         #region Constructor
 
         /// <summary>
@@ -20,11 +26,13 @@ namespace CLP.Models
         /// </summary>
         public CLPNotebook()
         {
+            memento = new Memento(this);
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
+            initialMemento = this.getMemento();
         }
 
         /// <summary>
@@ -138,14 +146,21 @@ namespace CLP.Models
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            List<object> l = new List<object>();
+            l.Add(memento.Page_Added);
+            l.Add(page);
+            this.memento.push(l);  
         }
 
         public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
-
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            List<object> l = new List<object>();
+            l.Add(memento.Page_Inserted);
+            l.Add(page);
+            this.memento.push(l);  
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
@@ -158,6 +173,13 @@ namespace CLP.Models
 
         public void RemovePageAt(int index)
         {
+            CLPPage sPage = null;
+            try{
+                sPage = Pages[index]; 
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+
             if(Pages.Count > index && index >= 0)
             {
                 Submissions.Remove(Pages[index].UniqueID);
@@ -168,6 +190,10 @@ namespace CLP.Models
                 AddPage(new CLPPage());
             }
             GeneratePageIndexes();
+            List<object> l = new List<object>();
+            l.Add(memento.Page_Removed);
+            l.Add(sPage);
+            this.memento.push(l); 
         }
 
         public CLPPage GetPageAt(int pageIndex, int submissionIndex)
@@ -295,5 +321,209 @@ namespace CLP.Models
         }
 
         #endregion
+
+        #region History
+
+      
+        public Boolean replay(Memento memInit, Memento memCurrent){
+            Memento memFinal = memCurrent.getClone();
+            revertToMem(memInit, memCurrent);
+            forwardToMem(memFinal, memInit);
+            return true;
+        }
+        
+        public Boolean replayNotebook(){
+            try{
+                Memento memInit = this.getInitMem();
+                Memento memCurrent = this.getMemento();
+                return replay(memInit, memCurrent);
+            }
+            catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
+
+        private Boolean revertToMemList(List<object> l){
+            string inst = (string)l[0];
+            if(inst.Equals(memento.Page_Added)){
+                CLPPage page = (CLPPage)l[1];
+                RemovePageAt(page.PageIndex-1);
+                return true;
+            }else if(inst.Equals(memento.Page_Inserted)){
+                CLPPage page = (CLPPage)l[1];
+                RemovePageAt(page.PageIndex-1);
+                return true;
+            }else if(inst.Equals(memento.Page_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                InsertPageAt(page.PageIndex-1,page);
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        private Boolean ForwardToMemList(List<object> l){
+            string inst = (string)l[0];
+            if(inst.Equals(memento.Page_Added)){
+                CLPPage page = (CLPPage)l[1];
+                AddPage(page);
+                return true;
+            }else if(inst.Equals(memento.Page_Inserted)){
+                CLPPage page = (CLPPage)l[1];
+                InsertPageAt(page.PageIndex-1, page);
+                return true;
+            }else if(inst.Equals(memento.Page_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                RemovePageAt(page.PageIndex-1);
+                return true;
+            }else{
+                return false;
+            } 
+        }
+
+        private Boolean revertToMem(Memento oldMem){
+            Memento currentMem = this.getMemento();
+            return revertToMem(oldMem, currentMem);
+        }
+
+        public Boolean revertToMem(Memento oldMem, Memento currentMem) { 
+            String oldMemNotebookId = oldMem.getNotebookID();
+            String currentMemNotebookId = currentMem.getNotebookID();
+            if(oldMemNotebookId.Equals(currentMemNotebookId)){
+                Stack<object> sOldMem = oldMem.getStack();
+                Stack<object> sCurrentMem = currentMem.getStack();
+                if(sOldMem.Count<sCurrentMem.Count){
+                    try{
+                        while(sOldMem.Count < sCurrentMem.Count){
+                            List<object> l = (List<object>)sCurrentMem.Pop();
+                            Console.WriteLine("This is the action being UNDONE: " + l[0]);
+                            revertToMemList(l);
+                        }
+                        return true;
+                    }catch(Exception e){
+                        Console.WriteLine(e.StackTrace);
+                        return false;
+                    }
+                }
+            } 
+            return false;
+        }
+
+        public Boolean forwardToMem(Memento futureMem, Memento currentMem) {
+            Stack<object> sFutureMem = futureMem.getStack();
+            int futureMemCount = sFutureMem.Count;
+            Stack<object> sCurrentMem = currentMem.getStack();
+            int currentMemCount = sCurrentMem.Count;
+            if(futureMemCount <= currentMemCount) {
+                return false;
+            }
+            ArrayList aFutureMem = new ArrayList();
+            while(sFutureMem.Count > currentMemCount){
+                aFutureMem.Insert(0, sFutureMem.Pop());
+            }
+            try{
+                for(int i = 0; i < aFutureMem.Count; i++){
+                    List<object> l = (List<object>)aFutureMem[i];
+                    Console.WriteLine("This is the action being redone: " +l[0]);
+                    ForwardToMemList(l);
+                }
+                return true;
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
+
+        public Memento getInitMem() {
+            Memento m = this.initialMemento.getClone();
+            return m;
+        }
+
+        public Memento getMemento() {
+            Memento m = this.memento.getClone();
+            return m;
+
+        }
+        
+        [Serializable]
+        public class Memento{
+            private string closed = null;
+            private readonly CLPNotebook notebook;
+            private readonly string memId;
+            private Stack<object> stack = new Stack<object>();
+            public readonly string Page_Added = "Page_Added";
+            public readonly string Page_Inserted = "Page_Inserted";
+            public readonly string Page_Removed = "Page_Removed";
+            
+            public Memento(CLPNotebook clpnb){
+                notebook = clpnb;
+                memId = notebook.UniqueID;
+            }
+
+            
+            public void close() {
+                closed = "closed";
+            }
+            
+            public Boolean push(Object o){
+                if(closed==null){
+                stack.Push(o);
+                return true;
+                }else{
+                return false;
+                }
+            }
+
+            public Object pop(){
+                if(closed == null){
+                    Object o = stack.Pop();
+                    return o;
+                }else{
+                    return null;
+                }
+            }
+            
+            public static T Clone<T>(T source)
+            {
+                if(!typeof(T).IsSerializable)
+                {
+                    Console.WriteLine("object is not serializable");
+                    throw new ArgumentException("The type must be serializable.", "source");
+                }
+
+                // Don't serialize a null object, simply return the default for that object
+                if(Object.ReferenceEquals(source, null))
+                {
+                    Console.WriteLine("Don't serialize a null object, simply return the default for that object");
+                    return default(T);
+                }
+
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new MemoryStream();
+                using(stream)
+                {
+                    formatter.Serialize(stream, source);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    return (T)formatter.Deserialize(stream);
+                }
+            }
+
+            public Memento getClone(){
+                Memento m = Clone(this);
+                m.close();
+                return m;
+            }
+
+            public string getNotebookID() {
+                return memId;
+            }
+
+            public Stack<object> getStack() {
+                return Clone(this.stack);
+            }
+              
+        }
+        #endregion 
     }
 }

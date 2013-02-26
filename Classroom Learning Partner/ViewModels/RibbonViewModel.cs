@@ -173,6 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            ReplayCommand = new Command(OnReplayCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -1649,6 +1650,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets the MakePageLongerCommand command.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
+        
+
 
         /// <summary>
         /// Method to invoke when the MakePageLongerCommand command is executed.
@@ -1669,6 +1672,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public Command ReplayCommand { get; private set; }
+
+        private void OnReplayCommandExecute()
+        {
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.replayNotebook();
+        }
         #endregion //Page Commands
 
         #region Insert Commands
