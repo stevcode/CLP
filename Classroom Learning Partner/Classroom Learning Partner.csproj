@@ -221,7 +221,7 @@
     <Compile Include="Views\Controls\WebcamPlayer\CapStructures.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\FilterInfo.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPGroupingRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
@@ -251,6 +251,9 @@
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
+      <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml.cs">
       <DependentUpon>AggregationGridRowSelecterWindow.xaml</DependentUpon>
@@ -377,6 +380,10 @@
     <Page Include="Resources\MainWindowResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml">
       <SubType>Designer</SubType>

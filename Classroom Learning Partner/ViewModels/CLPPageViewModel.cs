@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -26,7 +27,8 @@ namespace Classroom_Learning_Partner.ViewModels
         Pen,
         Marker,
         Eraser,
-        StrokeEraser
+        StrokeEraser,
+        EditObjectProperties
     }
 
     public enum PageEraserInteractionMode
@@ -383,6 +385,60 @@ namespace Classroom_Learning_Partner.ViewModels
                 Point pt = e.GetPosition(pageObjectCanvas);
                 CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
+            }
+            else if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.EditObjectProperties) {
+                CLPShape dummyShape = new CLPShape(CLPShape.CLPShapeType.Rectangle, Page);
+                dummyShape.Height = 1;
+                dummyShape.Width = 1;
+                System.Windows.Point mousePosition = e.GetPosition(TopCanvas);
+                dummyShape.XPosition = mousePosition.X;
+                dummyShape.YPosition = mousePosition.Y;
+                ICLPPageObject selectedObject = null;
+                foreach (ICLPPageObject po in Page.PageObjects) {
+                    if (dummyShape.PageObjectIsOver(po, .8)) {
+                        selectedObject = po;
+                    }
+                }
+                if (selectedObject != null)
+                {
+                    UpdatePropertiesWindowView properties = new UpdatePropertiesWindowView();
+                    properties.Owner = Application.Current.MainWindow;
+                    properties.WindowStartupLocation = WindowStartupLocation.Manual;
+                    properties.Top = 100;
+                    properties.Left = 100;
+                    properties.UniqueIdTextBlock.Text = selectedObject.UniqueID;
+                    properties.ParentIdTextBox.Text = selectedObject.ParentID;
+                    properties.PartsTextBox.Text = selectedObject.Parts.ToString();
+                    properties.WidthTextBox.Text = selectedObject.Width.ToString();
+                    properties.HeightTextBox.Text = selectedObject.Height.ToString();
+                    properties.XPositionTextBox.Text = selectedObject.XPosition.ToString();
+                    properties.YPositionTextBox.Text = selectedObject.YPosition.ToString();
+                    properties.ShowDialog();
+                    if (properties.DialogResult == true)
+                    {
+                        int partNum;
+                        bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
+                        selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
+                                partNum : selectedObject.Parts;
+                        selectedObject.ParentID = properties.ParentIdTextBox.Text;
+                        int height;
+                        isNum = Int32.TryParse(properties.HeightTextBox.Text, out height);
+                        selectedObject.Height = (properties.HeightTextBox.Text.Length > 0 && isNum &&
+                            height <= Page.PageHeight) ? height : selectedObject.Height;
+                        int width;
+                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out width);
+                        selectedObject.Width = (properties.WidthTextBox.Text.Length > 0 &&
+                            isNum && width <= Page.PageWidth) ? width : selectedObject.Width;
+                        int x;
+                        isNum = Int32.TryParse(properties.XPositionTextBox.Text, out x);
+                        selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
+                            x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
+                        int y;
+                        isNum = Int32.TryParse(properties.YPositionTextBox.Text, out y);
+                        selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
+                            && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
+                    }
+                }
             }
         }
 
