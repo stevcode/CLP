@@ -11,6 +11,7 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Resources;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -72,6 +73,8 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Descending");
 
         }
+
+
 
         public string WorkspaceName
         {
@@ -204,6 +207,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
 
+        /// <summary>
+        /// Gets or sets the property value.
         /// <summary>
         /// Types of Filters for sorting SubmissionPages
         /// STEVE - Change to PageTags. All PageTags should be sortable/filterable.
@@ -368,6 +373,8 @@ namespace Classroom_Learning_Partner.ViewModels
             
         }
 
+
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -387,7 +394,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PropertyGroupDescription gd = new PropertyGroupDescription();
             gd.PropertyName = "SubmitterName";
-            PropertyGroupDescription gd2 = new PropertyGroupDescription();
+            PropertyGroupDescription gd2 = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
             gd2.PropertyName = "GroupName";
             PropertyGroupDescription gd3 = new PropertyGroupDescription();
             gd3.PropertyName = "SubmissionTime";

@@ -36,6 +36,68 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+   
+    public class GroupLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            //If the group name does not have group in it, add it to the front
+            int index = value.ToString().IndexOf("Group");
+            int index2 = value.ToString().IndexOf("group");
+            if(index != -1 && index2 != -1)
+            {
+                return "Group" + value;
+            }
+            else
+            {
+                return value;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class GrouptoBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("Group");
+            int index2 = value.ToString().IndexOf("group");
+            if(index != -1 || index2 != -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    //Converts to shorter date time
+  /**  public class DateTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if(value is DateTime)
+            {
+                DateTime d = value as DateTime;
+                return (DateTime) value.ToShortTimeString();
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+    */
     public class PartsStringConverter : IMultiValueConverter
     {
         public object Convert(object[] value,

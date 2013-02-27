@@ -4,11 +4,13 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views" 
+                   xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources" 
                    Background="Lavender"
-                   x:Name="SubmissionSideBar">
+                   x:Name="SubmissionSideBar"
+                   >
 
     <UserControl.Resources>
-        
+        <res:GrouptoBooleanConverter x:Key="gConverter" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -66,7 +68,7 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Click="toggle_Click">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name, StringFormat='Group \{0\}'}" Width="50"/>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="100"/>
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
                     </DockPanel>
                 </ToggleButton>
@@ -98,7 +100,8 @@
                 <ComboBox x:Name="SortComboBox" Grid.Column="1" 
                             ItemsSource="{Binding FilterTypes}"
                             SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
-                            SelectedIndex="0">
+                            SelectedIndex="0"
+                            >
                 </ComboBox>
 
             </Grid>
@@ -119,15 +122,13 @@
                     <GroupStyle.ContainerStyle>
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                             <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
-                           <!-- <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox,Path=SelectedItem}" Value="Group Name - Ascending">
-                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox,Path=SelectedItem}" Value="Group Name - Descending">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True">
                                     <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
                                 </DataTrigger>
                             </Style.Triggers>
-                                -->
+                            
+                                
                         </Style>
                     </GroupStyle.ContainerStyle>
                     <GroupStyle.Panel>
@@ -143,7 +144,7 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate x:Name="SortTrigger">
-                    <!--ListBoxBorder Width must be bound to Slider value-->
+                  
                     <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
@@ -160,7 +161,9 @@
                     <WrapPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
+  
 
         </ListBox>
+
     </DockPanel>
 </catel:UserControl>
