@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceModel;
+using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -16,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             DisplayedPage = page;
+            PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
         }
 
         public override string Title { get { return "LinkDisplayVM"; } }
@@ -141,6 +143,32 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Resizing
 
         #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the PageScrollCommand command.
+        /// </summary>
+        public Command<ScrollChangedEventArgs> PageScrollCommand { get; private set; }
+
+        private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
+        {
+            if (App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                string submissionID = "";
+                if (DisplayedPage.IsSubmission)
+                {
+                    submissionID = DisplayedPage.SubmissionID;
+                }
+
+                //TODO: Steve - Make the offset a percentage and convert back on receive. If
+                //Instructor and Projector are on different screen sizes, they don't have the
+                //same vertical offsets.
+                App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
+            }
+        }
+
+        #endregion //Commands
 
         #region Methods
 

@@ -6,8 +6,11 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
+using Catel.IoC;
+using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner
 {
@@ -26,6 +29,9 @@ namespace Classroom_Learning_Partner
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
             bool isGroupSubmission);
+
+        [OperationContract]
+        void ScrollPage(string pageID, string submissionID, double offset);
     }
 
     public class ProjectorService : IProjectorContract
@@ -175,6 +181,33 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void ScrollPage(string pageID, string submissionID, double offset)
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    CLPPage currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+                    if(currentPage.UniqueID == pageID)
+                    {
+                        if(submissionID == "" || submissionID == currentPage.SubmissionID)
+                        {
+                            var viewManager = ServiceLocator.Instance.ResolveType<IViewManager>();
+                            var views = viewManager.GetViewsOfViewModel((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel);
+
+                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (views[0] as LinkedDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
+                                return null;
+                            }, null);
+                        }
+                    }
+                }
+            }
         }
 
         #region INotebookContract Members
