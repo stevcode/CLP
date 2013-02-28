@@ -392,52 +392,60 @@ namespace Classroom_Learning_Partner.ViewModels
             FilteredSubmissions.Source = SubmissionPages;
             FilteredSubmissions.SortDescriptions.Clear();
 
-            PropertyGroupDescription gd = new PropertyGroupDescription();
-            gd.PropertyName = "SubmitterName";
-            PropertyGroupDescription gd2 = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
-            gd2.PropertyName = "GroupName";
-            PropertyGroupDescription gd3 = new PropertyGroupDescription();
-            gd3.PropertyName = "SubmissionTime";
+            PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription();
+            submitterNameDescription.PropertyName = "SubmitterName";
+            PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
+            PropertyGroupDescription timeDescription = new PropertyGroupDescription();
+            timeDescription.PropertyName = "SubmissionTime";
+            PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
+
 
             if(Sort == "Student Name - Ascending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdAA);
             }
             else if(Sort == "Student Name - Descending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                 SortDescription sdAD = new SortDescription("SubmitterName", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdAD);
             }
             else if(Sort == "Group Name - Ascending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd2);
-                FilteredSubmissions.GroupDescriptions.Add(gd);
+                FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);  
                 SortDescription sdGA = new SortDescription("GroupName", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdGA);
+                FilteredSubmissions.GroupDescriptions.Add(isGroupDescription);
+                SortDescription isGroup = new SortDescription("IsGroupSubmission", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(isGroup);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-                FilteredSubmissions.SortDescriptions.Add(sdAA);
+               FilteredSubmissions.SortDescriptions.Add(sdAA);
             }
             else if(Sort == "Group Name - Descending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd2);
+                FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
                 SortDescription sdGD = new SortDescription("GroupName", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdGD);
-                FilteredSubmissions.GroupDescriptions.Add(gd);
+                FilteredSubmissions.GroupDescriptions.Add(isGroupDescription);
+                SortDescription isGroup2 = new SortDescription("IsGroupSubmission", ListSortDirection.Descending);
+                FilteredSubmissions.SortDescriptions.Add(isGroup2);
+               
                 SortDescription sdAA = new SortDescription("SubmitterName", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdAA);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }
             else if(Sort == "Time In - Ascending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd3);
+                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
                 SortDescription sdTA = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
                 FilteredSubmissions.SortDescriptions.Add(sdTA);
             }
             else if(Sort == "Time In - Descending")
             {
-                FilteredSubmissions.GroupDescriptions.Add(gd3);
+                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
                 SortDescription sdTD = new SortDescription("SubmissionTime", ListSortDirection.Descending);
                 FilteredSubmissions.SortDescriptions.Add(sdTD);
             }

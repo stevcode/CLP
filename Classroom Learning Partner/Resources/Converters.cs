@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.Resources
         {
             //If the group name does not have group in it, add it to the front
             int index = value.ToString().IndexOf("Group");
-            int index2 = value.ToString().IndexOf("group");
+            int index2 = value.ToString().IndexOf("group"); 
             if(index != -1 && index2 != -1)
             {
                 return "Group" + value;
@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.Resources
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             int index = value.ToString().IndexOf("Group");
-            int index2 = value.ToString().IndexOf("group");
+           int index2 = value.ToString().IndexOf("group"); 
             if(index != -1 || index2 != -1)
             {
                 return true;
@@ -73,6 +73,50 @@ namespace Classroom_Learning_Partner.Resources
             else
             {
                 return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class SumbissiontoBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("Individual");
+            int index2 = value.ToString().IndexOf("Collective");
+            if(index != -1 || index2 != -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(string))]
+    public class BooleantoGroupConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+
+            bool b = (bool)value;
+            if(b==true)
+            {
+                return "Collective";
+            }
+            else
+            {
+                return "Individual";
             }
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -340,7 +384,7 @@ namespace Classroom_Learning_Partner.Resources
             System.Globalization.CultureInfo culture)
         {
             ReadOnlyCollection<object> items = value as ReadOnlyCollection<object>;
-            CLPPage page = items.Last() as CLPPage;
+            CLPPage page = items.First() as CLPPage;
             return page;
         }
 

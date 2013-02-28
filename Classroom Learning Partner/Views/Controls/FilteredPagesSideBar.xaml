@@ -11,6 +11,8 @@
 
     <UserControl.Resources>
         <res:GrouptoBooleanConverter x:Key="gConverter" />
+        <res:SumbissiontoBooleanConverter x:Key="sConverter" />
+        <res:LastItemInCollectionConverter x:Key="LastItem" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -40,18 +42,18 @@
         
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
 
-            <Grid Margin="0,10,0,0">
+            <Grid Margin="0,2,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click">
+               <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click"> 
                     <DockPanel>
                         <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
                     </DockPanel>
-                </ToggleButton>
+               </ToggleButton> 
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
             </Grid>
@@ -60,21 +62,44 @@
 
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate2">
 
+            <Grid Margin="0,20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Height="35" Click="toggle_Click2" BorderBrush="Black" BorderThickness="10"> 
+                        <DockPanel>
+                            <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="16" Text="{Binding Path=Name}" Width="120"/>
+                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="16" Text="{Binding Path=ItemCount}"/>
+                        </DockPanel>
+                </ToggleButton>            
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="2" Loaded="allItems_Loaded2">
+                 </ItemsPresenter>
+                
+            </Grid>
+
+        </ControlTemplate>
+
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate3">
+
             <Grid Margin="0,10,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Click="toggle_Click">
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="140" Height="20" Click="toggle_Click3">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="100"/>
-                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="80"/>
+                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="14" Text="{Binding Path=ItemCount}"/>
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded">
-                 </ItemsPresenter>
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="2" Loaded="allItems_Loaded3">
+                </ItemsPresenter>
+
             </Grid>
 
         </ControlTemplate>
@@ -126,6 +151,9 @@
                                 <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True">
                                     <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource sConverter}}" Value="True">
+                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate3}" />
+                                </DataTrigger>
                             </Style.Triggers>
                             
                                 
@@ -151,7 +179,7 @@
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/>
+                       <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/> 
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
