@@ -249,6 +249,8 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
+        public void AddNewPage(string s_page, int index) { }
+        
         #endregion
     }
 }

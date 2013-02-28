@@ -10,6 +10,7 @@ using System.Windows.Ink;
 using System.Windows.Threading;
 using Catel.Windows;
 using CLP.Models;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner
 {
@@ -76,6 +77,22 @@ namespace Classroom_Learning_Partner
                     }
                     return null;
                 }, null);
+        }
+
+        public void AddNewPage(string s_page, int index)
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPPage page = ObjectSerializer.ToObject(s_page) as CLPPage;
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+                        
+                        return null;
+                    }, null);
+            }
         }
 
         #endregion

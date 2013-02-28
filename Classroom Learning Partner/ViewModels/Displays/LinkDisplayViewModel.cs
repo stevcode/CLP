@@ -153,18 +153,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if (App.CurrentUserMode == App.UserMode.Instructor)
+            if(App.CurrentUserMode == App.UserMode.Instructor)
             {
                 string submissionID = "";
-                if (DisplayedPage.IsSubmission)
+                if(DisplayedPage.IsSubmission)
                 {
                     submissionID = DisplayedPage.SubmissionID;
                 }
 
-                //TODO: Steve - Make the offset a percentage and convert back on receive. If
-                //Instructor and Projector are on different screen sizes, they don't have the
-                //same vertical offsets.
-                App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                        //TODO: Steve - Make the offset a percentage and convert back on receive. If
+                        //Instructor and Projector are on different screen sizes, they don't have the
+                        //same vertical offsets.
+                        App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
+                    }
+                    catch(System.Exception)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Projector NOT Available");
+                }
             }
         }
 
