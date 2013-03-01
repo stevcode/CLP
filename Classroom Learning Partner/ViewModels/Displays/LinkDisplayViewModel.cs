@@ -8,6 +8,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(CLPPageViewModel))]
     public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -185,6 +186,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "PageHeight")
+            {
+                var pageViewModel = (viewModel as CLPPageViewModel);
+                if (pageViewModel.Page.UniqueID == DisplayedPage.UniqueID)
+                {
+                    if(pageViewModel.Page.IsSubmission)
+                    {
+                        if(pageViewModel.Page.SubmissionID == DisplayedPage.SubmissionID)
+                        {
+                            ResizePage();
+                        }
+                    }
+                    ResizePage();
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+
+        }
 
         public void ResizePage()
         {

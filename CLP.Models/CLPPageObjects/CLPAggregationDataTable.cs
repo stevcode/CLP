@@ -371,6 +371,12 @@ namespace CLP.Models
             {
                 row.Width = Width;
             }
+
+            double bottomPosition = Height + YPosition;
+            if(bottomPosition > ParentPage.PageHeight)
+            {
+                ParentPage.PageHeight = bottomPosition + 10;
+            }
         }
 
         public void AddAggregatedGridPart(CLPGridPart gridPart)
@@ -381,6 +387,8 @@ namespace CLP.Models
                 {
                     case GridPartOrientation.Row:
                         int replaceIndex = -1;
+                        //TODO: Steve - make more generic to account for more than one cell at the end.
+                        bool hasLastCell = Rows.Count != 0 && !Rows.Last<CLPGridPart>().IsAggregated;
 
                         if (Rows.Count == 0)
                         {
@@ -407,7 +415,7 @@ namespace CLP.Models
                                     return;
                                 case AggregationType.Single:
                                     gridPart.Header = gridPart.PersonSubmitter.FullName;
-                                    if (row.PersonSubmitter.FullName == gridPart.PersonSubmitter.FullName)
+                                    if(row.PersonSubmitter != null && row.PersonSubmitter.FullName == gridPart.PersonSubmitter.FullName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
@@ -418,7 +426,7 @@ namespace CLP.Models
                                     break;
                                 case AggregationType.Group:
                                     gridPart.Header = gridPart.GroupSubmitter.GroupName;
-                                    if(row.GroupSubmitter.GroupName == gridPart.GroupSubmitter.GroupName)
+                                    if(row.GroupSubmitter != null && row.GroupSubmitter.GroupName == gridPart.GroupSubmitter.GroupName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
@@ -454,7 +462,30 @@ namespace CLP.Models
                         }
                         else
                         {
-                            AddGridPart(gridPart);
+                            if(hasLastCell)
+                            {
+                                gridPart.XPosition = 0;
+
+                                double yPos = 0;
+                                foreach(var row in Rows)
+                                {
+                                    if (row != Rows.Last<CLPGridPart>())
+                                    {
+                                        yPos += row.Height;
+                                    }
+                                }
+
+                                gridPart.YPosition = yPos;
+                                Rows.Last<CLPGridPart>().YPosition = yPos + gridPart.Height;
+
+                                Rows.Insert(Rows.Count - 1, gridPart);
+
+                                RefreshDataTableDimensions();
+                            }
+                            else 
+                            { 
+                                AddGridPart(gridPart); 
+                            }
                         }                       
 
                         StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
