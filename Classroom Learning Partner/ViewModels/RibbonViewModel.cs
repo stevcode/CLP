@@ -153,8 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //History
             EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
-            UndoCommand = new Command(OnUndoCommandExecute);
-            RedoCommand = new Command(OnRedoCommandExecute);
+            
 
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
@@ -174,6 +173,9 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
             ReplayCommand = new Command(OnReplayCommandExecute);
+            RedotCommand = new Command(OnRedotCommandExecute);
+            UndotCommand = new Command(OnUndotCommandExecute);
+            
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -1673,11 +1675,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public Command ReplayCommand { get; private set; }
+        public Command RedotCommand { get; private set; }
+        public Command UndotCommand { get; private set; }
+
+
+
 
         private void OnReplayCommandExecute()
         {
-            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.replayNotebook();
+            //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.replayNotebook();
         }
+
+        private void OnRedotCommandExecute() 
+        {
+            
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.redo();
+           
+        }
+
+        private void OnUndotCommandExecute()
+        {
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.undo();
+         }
+
+
         #endregion //Page Commands
 
         #region Insert Commands

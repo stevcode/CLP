@@ -172,6 +172,12 @@ namespace CLP.Models
         /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
+       
+        void InkStrokesProperty_StrokesChanged(object sender, StrokeCollectionChangedEventArgs args) {
+            Console.WriteLine("came hereXXXXXXXXXXXXXXXXXXXXXXXXX: " );
+        }
+        
+       
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -184,6 +190,9 @@ namespace CLP.Models
                 SetValue(InkStrokesProperty, value);
             }
         }
+
+      
+
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);

@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+//using Classroom_Learning_Partner.App;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -535,27 +536,63 @@ namespace Classroom_Learning_Partner.ViewModels
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-
             Task.Factory.StartNew( () =>
                 {
                     try
                     {
-	                    List<string> removedStrokeIDs = new List<string>();
+                        
+                        List<string> removedStrokeIDs = new List<string>();
 	                    foreach(Stroke stroke in e.Removed)
 	                    {
-	                        removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
+                                String nbid = Page.ParentNotebookID;
+                                CLPNotebook nb = null;
+                                foreach(CLPNotebook notebook in App.MainWindowViewModel.OpenNotebooks)
+                                {
+                                    if(notebook.UniqueID.Equals(nbid))
+                                    {
+                                        nb = notebook;
+                                        break;
+                                    }
+                                }
+                                if(nb.memento.isMemEnabled()){
+                                    List<object> l = new List<object>();
+                                    l.Add(nb.memento.Stroke_Removed);
+                                    l.Add(Page);
+                                    l.Add(stroke);
+                                    nb.memento.push(l); 
+                                }
+                            
+                            removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
 	                    }
 	
 	                    foreach(Stroke stroke in e.Added)
 	                    {
-	                        if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
-	                        {
+	                        if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey)){
 	                            string newUniqueID = Guid.NewGuid().ToString();
 	                            stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
 	                            //TODO: Steve - Add Property for time created if necessary.
 	                            //TODO: Steve - Add Property for Mutability.
 	                            //TODO: Steve - Add Property for UserName of person who created the stroke.
 	                        }
+                            
+                                String nbid = Page.ParentNotebookID;
+                                CLPNotebook nb = null;
+                                foreach(CLPNotebook notebook in App.MainWindowViewModel.OpenNotebooks)
+                                {
+                                    if(notebook.UniqueID.Equals(nbid))
+                                    {
+                                        nb = notebook;
+                                        break;
+                                    }
+                                }
+                                if(nb.memento.isMemEnabled()){
+                                    List<object> l = new List<object>();
+                                    l.Add(nb.memento.Stroke_Added);
+                                    l.Add(Page);
+                                    l.Add(stroke);
+                                    nb.memento.push(l);  
+                                }
+                            
                             //Ensures truly uniqueIDs
 	                        foreach(string id in removedStrokeIDs)
 	                        {

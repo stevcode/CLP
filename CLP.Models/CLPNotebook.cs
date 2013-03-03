@@ -5,8 +5,9 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 using System.IO;
-using System.Runtime.Serialization;
+//using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Ink;
 
 namespace CLP.Models
 {
@@ -17,8 +18,10 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
     {
-        private readonly Memento memento;
-        private readonly Memento initialMemento;
+        public readonly Memento memento;
+        private bool memEnabled;
+        
+        //private readonly Memento initialMemento;
         #region Constructor
 
         /// <summary>
@@ -27,12 +30,14 @@ namespace CLP.Models
         public CLPNotebook()
         {
             memento = new Memento(this);
+            memento.disableMem();
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
-            initialMemento = this.getMemento();
+            memento.enableMem();
+            //initialMemento = this.getMemento();
         }
 
         /// <summary>
@@ -54,6 +59,12 @@ namespace CLP.Models
             get { return GetValue<string>(UserNameProperty); }
             set { SetValue(UserNameProperty, value); }
         }
+
+       
+
+
+
+
         public static readonly PropertyData UserNameProperty = RegisterProperty("UserName", typeof(String), "NoName");
 
         /// <summary>
@@ -158,7 +169,7 @@ namespace CLP.Models
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
             List<object> l = new List<object>();
-            l.Add(memento.Page_Inserted);
+            l.Add(memento.Page_Inserted); 
             l.Add(page);
             this.memento.push(l);  
         }
@@ -324,8 +335,7 @@ namespace CLP.Models
 
         #region History
 
-      
-        public Boolean replay(Memento memInit, Memento memCurrent){
+        /*public Boolean replay(Memento memInit, Memento memCurrent){
             Memento memFinal = memCurrent.getClone();
             revertToMem(memInit, memCurrent);
             forwardToMem(memFinal, memInit);
@@ -342,6 +352,61 @@ namespace CLP.Models
                 Console.WriteLine(e.StackTrace);
                 return false;
             }
+        }*/
+
+        public void undo(){
+            printMemStacks("undo", "before"); 
+            Stack<object> Stack1 = memento.getStack1();
+            if(Stack1.Count == 0){
+                return;
+            }
+            Stack<object> Stack2 = memento.getStack2();
+            List<object> l = (List<object>)Stack1.Pop();
+            try{
+                memento.disableMem();
+                revertToMemList(l);
+                memento.enableMem();
+           }catch(Exception e){
+                        Console.WriteLine(e.StackTrace);
+                        return;
+           }
+            Stack2.Push(l);
+            printMemStacks("undo", "after"); 
+        }
+
+        public void printMemStacks(String methodName, String pos) {
+            Console.WriteLine(pos + " " + methodName + " stack1");
+            Stack<object> stack1 = memento.getStack1();
+            foreach(Object o in stack1)
+            {
+                Console.WriteLine(((List<object>)o)[0]);
+            }
+            Console.WriteLine(pos + " " + methodName + " stack2");
+            Stack<object> stack2 = memento.getStack2();
+            foreach(Object o in stack2)
+            {
+                Console.WriteLine(((List<object>)o)[0]);
+            }
+        }
+
+
+        public void redo(){
+             printMemStacks("redo", "before"); 
+             Stack<object> stack2 = memento.getStack2();
+             if(stack2.Count==0){
+              return;
+             }
+            List<object> l = (List<object>)stack2.Pop();
+            try{
+                memento.disableMem();
+                forwardToMemList(l);
+                memento.enableMem();
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+                return;
+            }
+            this.memento.getStack1().Push(l);
+            printMemStacks("redo", "after"); 
         }
 
         private Boolean revertToMemList(List<object> l){
@@ -358,12 +423,22 @@ namespace CLP.Models
                 CLPPage page = (CLPPage)l[1];
                 InsertPageAt(page.PageIndex-1,page);
                 return true;
+            }else if(inst.Equals(memento.Stroke_Added)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                page.InkStrokes.Remove(s);
+                return true;
+            }else if(inst.Equals(memento.Stroke_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                page.InkStrokes.Add(s);
+                return true;
             }else{
                 return false;
             }
         }
 
-        private Boolean ForwardToMemList(List<object> l){
+        private Boolean forwardToMemList(List<object> l){
             string inst = (string)l[0];
             if(inst.Equals(memento.Page_Added)){
                 CLPPage page = (CLPPage)l[1];
@@ -377,12 +452,22 @@ namespace CLP.Models
                 CLPPage page = (CLPPage)l[1];
                 RemovePageAt(page.PageIndex-1);
                 return true;
+            }else if(inst.Equals(memento.Stroke_Added)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                page.InkStrokes.Add(s);
+                return true;
+            }else if(inst.Equals(memento.Stroke_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                page.InkStrokes.Remove(s);
+                return true;
             }else{
                 return false;
             } 
         }
 
-        private Boolean revertToMem(Memento oldMem){
+      /*  private Boolean revertToMem(Memento oldMem){
             Memento currentMem = this.getMemento();
             return revertToMem(oldMem, currentMem);
         }
@@ -426,7 +511,7 @@ namespace CLP.Models
                 for(int i = 0; i < aFutureMem.Count; i++){
                     List<object> l = (List<object>)aFutureMem[i];
                     Console.WriteLine("This is the action being redone: " +l[0]);
-                    ForwardToMemList(l);
+                    forwardToMemList(l);
                 }
                 return true;
             }catch(Exception e){
@@ -444,83 +529,131 @@ namespace CLP.Models
             Memento m = this.memento.getClone();
             return m;
 
-        }
-        
+        }*/
+       
+       
+
         [Serializable]
         public class Memento{
-            private string closed = null;
+            
             private readonly CLPNotebook notebook;
             private readonly string memId;
-            private Stack<object> stack = new Stack<object>();
+
+            private bool memEnabledF;
+            private string closed = null;
+            private Stack<object> stack1 = new Stack<object>();
+            private Stack<object> stack2 = new Stack<object>();
+            
+            
             public readonly string Page_Added = "Page_Added";
             public readonly string Page_Inserted = "Page_Inserted";
             public readonly string Page_Removed = "Page_Removed";
+            public readonly string Stroke_Added = "Stroke_Added";
+            public readonly string Stroke_Removed = "Stroke_Removed";
             
             public Memento(CLPNotebook clpnb){
                 notebook = clpnb;
                 memId = notebook.UniqueID;
+                memEnabledF = true;
+
+            }
+           
+            public void enableMem() {
+                memEnabledF= true;
+                
+            }
+            public void disableMem() {
+                memEnabledF = false;
+                
             }
 
-            
+            public bool isMemEnabled() {
+                return memEnabledF;
+            }
             public void close() {
                 closed = "closed";
             }
             
             public Boolean push(Object o){
                 if(closed==null){
-                stack.Push(o);
-                return true;
+                    if(isMemEnabled()) {
+                        Console.WriteLine("memEnabled: " + isMemEnabled());
+                        stack1.Push(o);
+                        stack2.Clear();
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }else{
-                return false;
+                    return false;
                 }
             }
 
-            public Object pop(){
-                if(closed == null){
-                    Object o = stack.Pop();
-                    return o;
-                }else{
-                    return null;
-                }
-            }
+            /*
+               public Object pop(){
+                   if(closed == null){
+                       if(notebook.isMemEnabled() && isMemEnabledInternal())
+                       {
+                           if(stack1.Count!=0){
+                               Object o = stack1.Pop();
+                               stack2.Push(o);
+                               return o;
+                           }else{
+                               return null;
+                               }
+                       }else{
+                           return null;
+                       }
+                   }else{
+                       return null;
+                   }
+               }
             
-            public static T Clone<T>(T source)
-            {
-                if(!typeof(T).IsSerializable)
-                {
-                    Console.WriteLine("object is not serializable");
-                    throw new ArgumentException("The type must be serializable.", "source");
-                }
+               public static T Clone<T>(T source)
+               {
+                  if(!typeof(T).IsSerializable)
+                 {
+                   Console.WriteLine("object is not serializable");
+                       throw new ArgumentException("The type must be serializable.", "source");
+                 }
+       
+                 // Don't serialize a null object, simply return the default for that object
+                  if(Object.ReferenceEquals(source, null))
+                   {
+                       Console.WriteLine("Don't serialize a null object, simply return the default for that object");
+                      return default(T);
+                  }
 
-                // Don't serialize a null object, simply return the default for that object
-                if(Object.ReferenceEquals(source, null))
-                {
-                    Console.WriteLine("Don't serialize a null object, simply return the default for that object");
-                    return default(T);
-                }
+                   IFormatter formatter = new BinaryFormatter();
+                   Stream stream = new MemoryStream();
+                   using(stream)
+                   {
+                       formatter.Serialize(stream, source);
+                       stream.Seek(0, SeekOrigin.Begin);
+                       return (T)formatter.Deserialize(stream);
+                   }
+               }
 
-                IFormatter formatter = new BinaryFormatter();
-                Stream stream = new MemoryStream();
-                using(stream)
-                {
-                    formatter.Serialize(stream, source);
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return (T)formatter.Deserialize(stream);
-                }
-            }
-
-            public Memento getClone(){
-                Memento m = Clone(this);
-                m.close();
-                return m;
-            }
-
+               public Memento getClone(){
+                   Memento m = Clone(this);
+                   m.close();
+                   return m;
+               }
+            
+               public Stack<object> getStack() {
+                 return Clone(this.stack1);
+              }*/
+            
             public string getNotebookID() {
                 return memId;
             }
 
-            public Stack<object> getStack() {
-                return Clone(this.stack);
+            public Stack<object> getStack1() {
+                return stack1;
+            }
+
+            public Stack<object> getStack2(){
+            return stack2;
             }
               
         }

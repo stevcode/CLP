@@ -339,7 +339,12 @@
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=ReplayCommand}"/>
-
+                <RibbonButton Label="Undo"
+                              LargeImageSource="..\Images\Undo.png"
+                              Command="{Binding Path=UndotCommand}"/>
+                <RibbonButton Label="Redo"
+                               LargeImageSource="..\Images\Redo.png"
+                              Command="{Binding Path=RedotCommand}"/>
             </RibbonGroup>
         </RibbonTab>
 
