@@ -360,21 +360,41 @@ namespace CLP.Models
             if(Stack1.Count == 0){
                 return;
             }
-            Stack<object> Stack2 = memento.getStack2();
-            List<object> l = (List<object>)Stack1.Pop();
+            List<object> l = (List<object>)memento.popStack1();
+            memento.disableMem();
             try{
-                memento.disableMem();
                 revertToMemList(l);
-                memento.enableMem();
-           }catch(Exception e){
-                        Console.WriteLine(e.StackTrace);
-                        return;
-           }
-            Stack2.Push(l);
-            printMemStacks("undo", "after"); 
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+            
+            memento.pushStack2(l);
+            memento.enableMem();
+            printMemStacks("undo", "before"); 
         }
 
-        public void printMemStacks(String methodName, String pos) {
+        public void redo(){
+             printMemStacks("redo", "before"); 
+             
+             Stack<object> stack2 = memento.getStack2();
+             if(stack2.Count==0){
+                return;
+             }
+            List<object> l = (List<object>)memento.popStack2();
+            memento.disableMem();
+            try{
+                forwardToMemList(l);
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+            memento.pushStack1(l);
+            memento.enableMem();
+            
+            printMemStacks("redo", "after");
+        }
+
+        public void printMemStacks(String methodName, String pos)
+        {
             Console.WriteLine(pos + " " + methodName + " stack1");
             Stack<object> stack1 = memento.getStack1();
             foreach(Object o in stack1)
@@ -387,26 +407,6 @@ namespace CLP.Models
             {
                 Console.WriteLine(((List<object>)o)[0]);
             }
-        }
-
-
-        public void redo(){
-             printMemStacks("redo", "before"); 
-             Stack<object> stack2 = memento.getStack2();
-             if(stack2.Count==0){
-              return;
-             }
-            List<object> l = (List<object>)stack2.Pop();
-            try{
-                memento.disableMem();
-                forwardToMemList(l);
-                memento.enableMem();
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-                return;
-            }
-            this.memento.getStack1().Push(l);
-            printMemStacks("redo", "after"); 
         }
 
         private Boolean revertToMemList(List<object> l){
@@ -530,8 +530,8 @@ namespace CLP.Models
             return m;
 
         }*/
-       
-       
+
+  
 
         [Serializable]
         public class Memento{
@@ -541,8 +541,9 @@ namespace CLP.Models
 
             private bool memEnabledF;
             private string closed = null;
-            private Stack<object> stack1 = new Stack<object>();
-            private Stack<object> stack2 = new Stack<object>();
+            public Stack<object> stack1 = new Stack<object>();
+            public Stack<object> stack2 = new Stack<object>();
+            
             
             
             public readonly string Page_Added = "Page_Added";
@@ -653,9 +654,29 @@ namespace CLP.Models
             }
 
             public Stack<object> getStack2(){
-            return stack2;
+                return stack2;
             }
-              
+
+            public void setStack1(Stack<object> stack){
+                stack1 = stack;
+            }
+            public void setStack2(Stack<object> stack) {
+                stack2 = stack;
+            }
+            public object popStack1() {
+                return stack1.Pop();
+            }
+            public object popStack2() {
+                return stack2.Pop();
+            }
+
+            
+            public void pushStack2(object o) {
+                stack2.Push(o);
+            }
+            public void pushStack1(object o) {
+                stack1.Push(o);
+            }
         }
         #endregion 
     }
