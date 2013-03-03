@@ -355,11 +355,22 @@ namespace CLP.Models
         }*/
 
         public void undo(){
-            printMemStacks("undo", "before"); 
-            Stack<object> Stack1 = memento.getStack1();
-            if(Stack1.Count == 0){
+            printMemStacks("undo", "before1");
+            Stack<object> stack1 = memento.getStack1();
+            int stack1Count = stack1.Count;
+            if(stack1Count==0){
                 return;
             }
+            Stack<object> stack2 = memento.getStack2();
+            int stack2Count = stack2.Count;
+
+            printMemStacks("undo", "before2");
+            Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+            printMemStacks("undo", "before3");
+            
+            
+           
+            
             List<object> l = (List<object>)memento.popStack1();
             memento.disableMem();
             try{
@@ -367,19 +378,41 @@ namespace CLP.Models
             }catch(Exception e){
                 Console.WriteLine(e.StackTrace);
             }
+            ///////////////
+            //Integrity check
+            int stack1CountAfter = memento.getStack1().Count;
+            if(stack1CountAfter != (stack1Count - 1))
+            {
+                memento.popStack1();
+                memento.setStack2(stack3);
+                memento.ClearStack1();
+                memento.enableMem();
+            }
+            else {
+                memento.pushStack2(l);
+                memento.enableMem();
+            }
+            ////////////////
             
-            memento.pushStack2(l);
-            memento.enableMem();
             printMemStacks("undo", "before"); 
         }
 
         public void redo(){
-             printMemStacks("redo", "before"); 
+             printMemStacks("redo", "before1"); 
              
              Stack<object> stack2 = memento.getStack2();
-             if(stack2.Count==0){
+             int stack2Count = stack2.Count;
+             if(stack2Count == 0)
+             {
                 return;
              }
+             Stack<object> stack1 = memento.getStack1();
+             int stack1Count = stack1.Count;
+
+             printMemStacks("redo", "before2");
+             Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+             printMemStacks("redo", "before3");
+
             List<object> l = (List<object>)memento.popStack2();
             memento.disableMem();
             try{
@@ -387,9 +420,22 @@ namespace CLP.Models
             }catch(Exception e){
                 Console.WriteLine(e.StackTrace);
             }
-            memento.pushStack1(l);
-            memento.enableMem();
-            
+            ///////////////
+            //Integrity check
+            int stack1CountAfter = memento.getStack1().Count;
+            if(stack1CountAfter != stack1Count)
+            {
+                memento.popStack1();
+                memento.setStack2(stack3);
+                memento.ClearStack2();
+                memento.enableMem();
+            }
+            else
+            {
+                memento.pushStack1(l);
+                memento.enableMem();
+            }
+            ////////////////
             printMemStacks("redo", "after");
         }
 
@@ -670,13 +716,25 @@ namespace CLP.Models
                 return stack2.Pop();
             }
 
-            
+            public void pushStack1(object o)
+            {
+                stack1.Push(o);
+            }
+
             public void pushStack2(object o) {
                 stack2.Push(o);
             }
-            public void pushStack1(object o) {
-                stack1.Push(o);
+
+            public void ClearStack1()
+            {
+                stack1.Clear();
             }
+
+            public void ClearStack2()
+            {
+                stack2.Clear();
+            }
+           
         }
         #endregion 
     }
