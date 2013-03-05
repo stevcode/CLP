@@ -45,6 +45,9 @@ namespace Classroom_Learning_Partner.ViewModels
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
             CurrentPage = Notebook.Pages[0];
+            TopThumbnailsVisible = App.MainWindowViewModel.Ribbon.ThumbnailsTop;
+            SideThumbnailsVisible = !TopThumbnailsVisible;
+
 
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -170,6 +173,29 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
+
+        /// <summary>
+        /// Top Thumbnail Toggle
+        /// </summary>
+        public Boolean TopThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(TopThumbnailsVisibleProperty); }
+            set { SetValue(TopThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData TopThumbnailsVisibleProperty = RegisterProperty("TopThumbnailsVisible", typeof(Boolean));
+
+        /// <summary>
+        /// Side Thumbnail Toggle
+        /// </summary>
+        public Boolean SideThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(SideThumbnailsVisibleProperty); }
+            set { SetValue(SideThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData SideThumbnailsVisibleProperty = RegisterProperty("SideThumbnailsVisible", typeof(Boolean));
+
 
         #endregion //Displays
 
@@ -362,6 +388,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
+            if(propertyName == "ThumbnailsTop")
+            {
+                TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;
+                IsSideBarVisible = !TopThumbnailsVisible;
+            }
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }

@@ -87,7 +87,7 @@
         <!-- Content -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="150" Width="250" x:Name="NotebookPageColumn" />
+                <ColumnDefinition Width="Auto" x:Name="NotebookPageColumn" />
                 <ColumnDefinition Width="Auto" x:Name="NotebookPageSplitterColumn"/>
 
                 <ColumnDefinition MinWidth="150" Width="Auto" x:Name="SubmissionColumn"/>
@@ -148,7 +148,7 @@
             </Border>
 
             <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
-         HorizontalAlignment="Center" VerticalAlignment="Stretch"
+         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="{Binding SideThumbnailsVisible, Converter={StaticResource BoolConverter}}"
          />
 
             <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
@@ -157,37 +157,76 @@
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
 
             <!-- Control that dynamically determines what Display to show -->
-            <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Column="4">
-                <ContentControl.Resources>
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="NotebookPagesBorder1" Grid.Row="0" Background="#F3F3F3" Visibility="{Binding TopThumbnailsVisible, Converter={StaticResource BoolConverter}}">
+                    <ListBox x:Name="NotebookPageListBox1" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        MinHeight="120"
+                        Height="{Binding ElementName=NotebookPagesBorder1, Path=ActualHeight, Mode=OneWay}" 
+                        ItemsSource="{Binding Path=NotebookPages}"
+                        ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
+                        SelectionMode="Single">
 
-                    <ControlTemplate x:Key="LinkedDisplayTemplate">
-                        <Views:LinkedDisplayView />
-                    </ControlTemplate>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0" Height="Auto">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
 
-                    <ControlTemplate x:Key="GridDisplayTemplate">
-                        <Views:GridDisplayView />
-                    </ControlTemplate>
+                    </ListBox>
+                    </Border>
+                <GridSplitter Grid.Row ="1" Background="#D4D4D4" Height="5" HorizontalAlignment="Stretch" Visibility="{Binding TopThumbnailsVisible, Converter={StaticResource BoolConverter}}"/>
+                    <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Row="2">
 
-                </ContentControl.Resources>
+                    <ContentControl.Resources>
 
-                <ContentControl.Style>
-                    <Style TargetType="{x:Type ContentControl}">
-                        <Style.Triggers>
+                        <ControlTemplate x:Key="LinkedDisplayTemplate">
+                            <Views:LinkedDisplayView />
+                        </ControlTemplate>
 
-                            <!-- LinkedDisplay trigger -->
-                            <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                                <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
-                            </DataTrigger>
+                        <ControlTemplate x:Key="GridDisplayTemplate">
+                            <Views:GridDisplayView />
+                        </ControlTemplate>
 
-                            <!-- GridDisplay trigger -->
-                            <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                                <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
-                            </DataTrigger>
+                    </ContentControl.Resources>
 
-                        </Style.Triggers>
-                    </Style>
-                </ContentControl.Style>
-            </ContentControl>
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Style.Triggers>
+
+                                <!-- LinkedDisplay trigger -->
+                                <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
+                                    <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
+                                </DataTrigger>
+
+                                <!-- GridDisplay trigger -->
+                                <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
+                                    <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+            </Grid>
 
             <ContentControl Grid.Column="5"
                             DataContext="{Binding RightPanel, Mode=OneWay}">

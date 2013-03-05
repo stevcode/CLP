@@ -28,7 +28,7 @@
                                                   ImageSource="..\Images\NewNotebook.png"
                                                   Command="{Binding Path=NewNotebookCommand}"
                                                   Visibility="{Binding Path=InstructorVisibility}"/>
-
+                
                 <RibbonApplicationMenuItem Header="Open Notebook"
                                                   KeyTip="O"
                                                   ImageSource="..\Images\OpenNotebook.png" 
@@ -68,6 +68,10 @@
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
                                                   Command="{Binding RefreshNetworkCommand}"
                                                   ImageSource="..\Images\ReconnectToNetwork.png" />
+                
+                <RibbonApplicationMenuItem Header="Toggle Thumbnail Location"
+                                                  ImageSource="..\Images\NewNotebook.png"
+                                                  Command="{Binding Path=ToggleThumbnailsCommand}"/>
 
                 <RibbonApplicationMenu.FooterPaneContent>
                     <DockPanel LastChildFill="False">
