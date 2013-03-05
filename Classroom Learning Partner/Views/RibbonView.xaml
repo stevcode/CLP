@@ -88,7 +88,7 @@
         </Ribbon.ApplicationMenu>
 
         <!--Home Tab-->
-        <RibbonTab Header="Home" Margin="0,0,0,-3" Width="1180">
+        <RibbonTab Header="Home" Margin="0,0,0,-3">
 
             <RibbonGroup Header="Notebook">
 
