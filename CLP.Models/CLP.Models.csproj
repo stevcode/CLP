@@ -86,7 +86,6 @@
     <Compile Include="CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
     <Compile Include="CLPPageObjects\CLPImage.cs" />
-    <Compile Include="CLPPageObjects\Ink Regions\CLPGroupingRegion.cs" />
     <Compile Include="CLPPageObjects\CLPShape.cs" />
     <Compile Include="CLPPageObjects\CLPSnapTileContainer.cs" />
     <Compile Include="CLPPageObjects\CLPStamp.cs" />
@@ -96,6 +95,8 @@
     <Compile Include="CLPPageObjects\ACLPPageObjectBase.cs" />
     <Compile Include="CLPPageObjects\CLPAudio.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPDataTable.cs" />
+    <Compile Include="CLPPageObjects\Ink Regions\CLPGroupingRegion.cs" />
+    <Compile Include="CLPPageObjects\Ink Regions\CLPGrouping.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\ICLPPageObject.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPHandwritingRegion.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\CLPInkShapeRegion.cs" />
@@ -105,10 +106,12 @@
     <Compile Include="CLPPageObjects\PageObject Interfaces\IInkStrokeAccepter.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\IPageObjectAccepter.cs" />
     <Compile Include="CLPPageObjects\PageObject Interfaces\IPageObjectContainer.cs" />
+    <Compile Include="CLPPageObjects\PageObject Interfaces\ISubmittable.cs" />
     <Compile Include="Displays\ACLPDisplayBase.cs" />
     <Compile Include="Displays\CLPGridDisplay.cs" />
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Extension Methods\StokeExtension.cs" />
+    <Compile Include="Extension Methods\StrokeCollectionExtension.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

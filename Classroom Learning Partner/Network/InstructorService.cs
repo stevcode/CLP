@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner
@@ -13,10 +15,11 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(CLPPage page, string userName, string notebookName);
-
-        [OperationContract]
-        void AddStudentSubmissionViaString(string sPage, string userName, string notebookName);
+        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects, 
+            Person submitter, Group groupSubmitter,
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission);
 
         [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
@@ -34,57 +37,89 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(CLPPage page, string userName, string notebookName)
+        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+            ObservableCollection<ICLPPageObject> pageObjects, 
+            Person submitter, Group groupSubmitter, 
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission)
         {
-            Console.WriteLine("Submission Added");
-        }
-
-        public void AddStudentSubmissionViaString(string sPage, string userName, string notebookName)
-        {
-            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+            if(App.Network.ProjectorProxy != null)
             {
-                try
+                Thread t = new Thread(() =>
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.Security.Mode = SecurityMode.None;
-                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                    ProjectorProxy.AddStudentSubmissionViaString(sPage, userName, notebookName);
-                    (ProjectorProxy as ICommunicationObject).Close();
-                }
-                catch(System.Exception ex)
-                {
-
-                }
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
+                            submitter, groupSubmitter,
+                            notebookID, pageID, submissionID, submissionTime,
+                            isGroupSubmission);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                    }
+                });
+                t.IsBackground = true;
+                t.Start();
             }
             else
             {
                 //TODO: Steve - add pages to a queue and send when a projector is found
-                Console.WriteLine("Address NOT Available");
+                Console.WriteLine("Projector NOT Available");
             }
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            CLPPage submission = null;
+            CLPNotebook currentNotebook = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    currentNotebook = notebook;
+                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    break;
+                }
+            }
+
+            if(submission != null)
+            {
+                submission.ByteStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                submission.IsSubmission = true;
+                submission.IsGroupSubmission = isGroupSubmission;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
+
+                foreach(ICLPPageObject pageObject in pageObjects)
+                {
+                    submission.PageObjects.Add(pageObject);
+                }
+
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                    if(pageObject is ISubmittable)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
+                                return null;
+                            }, null);
+                    }
+                }
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
-                    CLPPage page = (ObjectSerializer.ToObject(sPage) as CLPPage);
-
-                    foreach(ICLPPageObject pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
-
-                    page.IsSubmission = true;
-                    page.SubmitterName = userName;
-
                     try
                     {
-                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                        {
-                            if(page.ParentNotebookID == notebook.UniqueID)
-                            {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, page);
-                                break;
-                            }
-                        }
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
                     }
                     catch(Exception e)
                     {
@@ -93,6 +128,9 @@ namespace Classroom_Learning_Partner
 
                     return null;
                 }, null);
+            }
+
+            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)
@@ -115,7 +153,8 @@ namespace Classroom_Learning_Partner
 
         public void StudentLogin(Person student)
         {
-            Console.WriteLine("Login");
+            App.Network.ClassList.Add(student);
+            Logger.Instance.WriteToLog("Student Logged In: " + student.FullName);
         }
 
         public void StudentLogout(Person student)

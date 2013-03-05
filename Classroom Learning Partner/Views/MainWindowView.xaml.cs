@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Ribbon;
-using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner.Views
 {

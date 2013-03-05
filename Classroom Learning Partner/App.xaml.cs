@@ -1,14 +1,8 @@
 using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using MongoDB.Driver;
-using ProtoBuf.Meta;
-using Catel.Logging;
-using Classroom_Learning_Partner.Model;
 
 namespace Classroom_Learning_Partner
 {
@@ -25,12 +19,6 @@ namespace Classroom_Learning_Partner
             Student
         }
 
-        public enum DatabaseMode
-        {
-            Using,
-            NotUsing
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
@@ -44,28 +32,20 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
 
             _currentUserMode = UserMode.Instructor;
-            _databaseUse = DatabaseMode.Using;
 
-            Classroom_Learning_Partner.Logger.Instance.InitializeLog();
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Initialize();
-            
-            if (_databaseUse == DatabaseMode.Using && App.CurrentUserMode == UserMode.Server) 
-            {
-                ConnectToDB();
-            }
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
 
-            MainWindowView window = new MainWindowView();
             _mainWindowViewModel = new MainWindowViewModel();
+            MainWindowView window = new MainWindowView();
             window.DataContext = MainWindowViewModel;
-            window.Show();
             MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
+            window.Show();
+            
 
             _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
 
-            _peer = new Classroom_Learning_Partner.Model.PeerNode();
             CLPServiceAgent.Instance.NetworkSetup();
-            //JoinMeshNetwork();
-            //ProtoBufferSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
@@ -100,26 +80,6 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void JoinMeshNetwork()
-        {
-            _peer = new Classroom_Learning_Partner.Model.PeerNode();
-            _peerThread = new Thread(_peer.Run) { IsBackground = true };
-            PeerThread.Start();
-        }
-
-        public void LeaveMeshNetwork()
-        {
-            Peer.Stop();
-            PeerThread.Join();
-        }
-
-        protected void ConnectToDB()
-        {
-            string ConnectionString = "mongodb://localhost/?connect=direct;slaveok=true";
-            _databaseServer = MongoServer.Create(ConnectionString);
-            Console.WriteLine("Connected to DB");
-        }
-
         #endregion //Methods
 
         #region Properties
@@ -135,8 +95,7 @@ namespace Classroom_Learning_Partner
             {
                 _network = value;
             }
-        }
-
+        }     
 
         private static MainWindowViewModel _mainWindowViewModel;
         public static MainWindowViewModel MainWindowViewModel
@@ -169,58 +128,6 @@ namespace Classroom_Learning_Partner
                 _currentUserMode = value;
             }
         }
-
-        #region Stuff To Delete
-
-        //delete
-        private static Classroom_Learning_Partner.Model.PeerNode _peer;
-        public static Classroom_Learning_Partner.Model.PeerNode Peer
-        {
-            get
-            {
-                return _peer;
-            }
-        }
-
-
-        //delete
-        private static Thread _peerThread;
-        public static Thread PeerThread
-        {
-            get
-            {
-                return _peerThread;
-            }
-        }
-
-        private static DatabaseMode _databaseUse;
-        public static DatabaseMode DatabaseUse
-        {
-            get
-            {
-                return _databaseUse;
-            }
-        }
-
-        private static MongoServer _databaseServer;
-        public static MongoServer DatabaseServer
-        {
-            get
-            {
-                return _databaseServer;
-            }
-        }
-
-        private static RuntimeTypeModel _pageTypeModel;
-        public static RuntimeTypeModel PageTypeModel
-        {
-            get
-            {
-                return _pageTypeModel;
-            }
-        }
-
-        #endregion //Stuff To Delete
 
         #endregion //Properties
     }

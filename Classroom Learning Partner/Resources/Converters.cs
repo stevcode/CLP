@@ -5,8 +5,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
+using Net.Sgoliver.NRtfTree.Core;
 
 namespace Classroom_Learning_Partner.Resources
 {
@@ -90,6 +90,28 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class UserNameGroupTrimConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            string nameandgroup = value as string;
+            string trimmedName = nameandgroup.Split(new char[] { ',' })[0];
+
+            return trimmedName;
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,
@@ -144,7 +166,18 @@ namespace Classroom_Learning_Partner.Resources
                 Visibility editingModeVisibility = (Visibility)value[0];
                 string header = (string)value[1];
 
-                if(editingModeVisibility == Visibility.Visible || header != "")
+                //TODO: Steve - Fix this, absolute mess.
+                try
+                {
+                    RtfTree tree = new RtfTree();
+                    tree.LoadRtfText(header);
+
+                    if(editingModeVisibility == Visibility.Visible || tree.Text != "\r\n")
+                    {
+                        thickness = 1;
+                    }
+                }
+                catch(System.Exception)
                 {
                     thickness = 1;
                 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceModel;
+using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -16,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             DisplayedPage = page;
+            PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
         }
 
         public override string Title { get { return "LinkDisplayVM"; } }
@@ -142,6 +144,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        #region Commands
+
+        /// <summary>
+        /// Gets the PageScrollCommand command.
+        /// </summary>
+        public Command<ScrollChangedEventArgs> PageScrollCommand { get; private set; }
+
+        private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
+        {
+            if(App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                string submissionID = "";
+                if(DisplayedPage.IsSubmission)
+                {
+                    submissionID = DisplayedPage.SubmissionID;
+                }
+
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                        //TODO: Steve - Make the offset a percentage and convert back on receive. If
+                        //Instructor and Projector are on different screen sizes, they don't have the
+                        //same vertical offsets.
+                        App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
+                    }
+                    catch(System.Exception)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Projector NOT Available");
+                }
+            }
+        }
+
+        #endregion //Commands
+
         #region Methods
 
         public void ResizePage()
@@ -186,32 +228,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageID = DisplayedPage.UniqueID;
                 }
 
-                if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+                if(App.Network.ProjectorProxy != null)
                 {
                     try
                     {
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.Security.Mode = SecurityMode.None;
-                        IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                        ProjectorProxy.AddPageToDisplay(pageID);
-                        //TODO: Steve - add try/catch around closing in case projector closes in between the 20 seconds DiscoveredProjectors refreshes
-                        (ProjectorProxy as ICommunicationObject).Close();
+                    	App.Network.ProjectorProxy.AddPageToDisplay(pageID);
                     }
-                    catch(System.Exception ex)
+                    catch (System.Exception)
                     {
-
+                    	
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Address NOT Available");
+                    //TODO: Steve - add pages to a queue and send when a projector is found
+                    Console.WriteLine("Projector NOT Available");
                 }
             }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
+            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
 
         #endregion //Methods

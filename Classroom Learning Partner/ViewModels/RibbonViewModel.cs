@@ -15,7 +15,6 @@ using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -75,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastInkToStudents = false;
             CanSendToTeacher = true;
             IsSending = false;
-            PenSize = 1;
+            PenSize = 2;
             DrawingAttributes = new DrawingAttributes();
             DrawingAttributes.Height = PenSize;
             DrawingAttributes.Width = PenSize;
@@ -138,9 +137,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
-            SaveAllHistoriesCommand = new Command(OnSaveAllHistoriesCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
-            ImportLocalNotebooksDBCommand = new Command(ImportLocalNotebooksDBCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -157,6 +154,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
+            GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute);
 
             //Displays
             SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
@@ -164,6 +162,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
@@ -172,6 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute);
             ReplayCommand = new Command(OnReplayCommandExecute);
             RedotCommand = new Command(OnRedotCommandExecute);
             UndotCommand = new Command(OnUndotCommandExecute);
@@ -195,11 +195,9 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
             InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
 
-            //DB
-            QueryDatabaseCommand = new Command(QueryDatabaseCommandExecute);
-
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+            UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
         }
@@ -359,10 +357,44 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(BroadcastInkToStudentsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the GridDisplaysVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData BroadcastInkToStudentsProperty = RegisterProperty("BroadcastInkToStudents", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool BlockStudentPenInput
+        {
+            get { return GetValue<bool>(BlockStudentPenInputProperty); }
+            set 
+            { 
+                SetValue(BlockStudentPenInputProperty, value); 
+            
+                if(App.Network.ClassList.Count > 0)
+                {
+                    foreach(Person student in App.Network.ClassList)
+                    {
+                        try
+                        {
+                            NetTcpBinding binding = new NetTcpBinding();
+                            binding.Security.Mode = SecurityMode.None;
+                            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                            StudentProxy.TogglePenDownMode(value);
+                            (StudentProxy as ICommunicationObject).Close();
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Students Found");
+                }
+            }
+        }
+
+        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof(bool), false);
 
         #region Convert to XAMLS?
 
@@ -741,6 +773,40 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Notebook Commands
 
         /// <summary>
+        /// Broadcast the current page of a MirrorDisplay to all connected Students.
+        /// </summary>
+        public Command BroadcastPageCommand { get; private set; }
+
+        private void OnBroadcastPageCommandExecute()
+        {
+            //TODO: Steve - also broadcast to Projector
+            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            string s_page = ObjectSerializer.ToString(page);
+            int index = page.PageIndex - 1;
+
+            if(App.Network.ClassList.Count > 0)
+            {
+                foreach(Person student in App.Network.ClassList)
+                {
+                    try
+                    {
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        StudentProxy.AddNewPage(s_page, index);
+                        (StudentProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("No Students Found");
+            }
+        }
+
+        /// <summary>
         /// Gets the PreviousPageCommand command.
         /// </summary>
         public Command PreviousPageCommand { get; private set; }
@@ -779,7 +845,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNewNotebookCommandExecute()
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.OpenNewNotebook();
+            CLPServiceAgent.Instance.OpenNewNotebook();
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[0];
         }
 
@@ -818,7 +884,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     page.PageHistory.ClearHistory();
                 }
-
             }
         }
 
@@ -832,22 +897,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 Catel.Windows.PleaseWaitHelper.Show(() =>
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
-            }
-        }
-
-        /// <summary>
-        /// Gets the SaveAllNotebooksCommand command.
-        /// </summary>
-        public Command SaveAllHistoriesCommand { get; private set; }
-
-        private void OnSaveAllHistoriesCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveAllHistories((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving All Notebook Histories", 0.0 / 0.0);
-
+                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
             }
         }
 
@@ -860,32 +910,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             {
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SaveNotebook(notebook);
+                CLPServiceAgent.Instance.SaveNotebook(notebook);
             }
-        }
-
-        public Command ImportLocalNotebooksDBCommand { get; private set; }
-
-        private static System.Threading.Thread _backgroundThread;
-        public static System.Threading.Thread BackgroundThread
-        {
-            get
-            {
-                return _backgroundThread;
-            }
-        }
-
-        private void ImportLocalNotebooksDBCommandExecute()
-        {
-            _backgroundThread = new System.Threading.Thread(Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ImportLocalNotebooksFromDB) { IsBackground = true };
-            BackgroundThread.Start();
-        }
-
-        public Command QueryDatabaseCommand { get; private set; }
-
-        private void QueryDatabaseCommandExecute()
-        {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RunDBQueryForPages();
         }
 
         /// <summary>
@@ -1023,27 +1049,22 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
-                if(App.Network.DiscoveredInstructors.Addresses.Count() > 0)
+                if(App.Network.InstructorProxy != null)
                 {
                     try
                     {
                         string sNotebook = ObjectSerializer.ToString(notebook);
 
-                        NetTcpBinding binding = new NetTcpBinding("ProxyBinding");
-                        binding.Security.Mode = SecurityMode.None;
-                        IInstructorContract InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(binding, App.Network.DiscoveredInstructors.Addresses[0]);
-
-                        InstructorProxy.CollectStudentNotebook(sNotebook, App.Peer.UserName);
-                        (InstructorProxy as ICommunicationObject).Close();
+                        App.Network.InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Address NOT Available");
+                    Console.WriteLine("Instructor NOT Available");
                 }
             }
         }
@@ -1068,13 +1089,15 @@ namespace Classroom_Learning_Partner.ViewModels
             if(MessageBox.Show("Are you sure you want to exit?",
                                         "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.Exit();
+                CLPServiceAgent.Instance.Exit();
             }
         }
 
         #endregion //Notebook Commands
 
         #region Pen Commands
+
+        
 
         /// <summary>
         /// Gets the SetPenCommand command.
@@ -1192,7 +1215,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1213,7 +1236,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1279,9 +1302,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SubmitPageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SubmitPageCommand command is executed.
-        /// </summary>
         private void OnSubmitPageCommandExecute()
         {
             //Steve - change to different thread and do callback to make sure sent page has arrived
@@ -1294,10 +1314,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
             }
             CanSendToTeacher = false;
-
         }
 
         /// <summary>
@@ -1309,11 +1328,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CanSendToTeacherProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanSendToTeacher property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanGroupSendToTeacher
+        {
+            get { return GetValue<bool>(CanGroupSendToTeacherProperty); }
+            set { SetValue(CanGroupSendToTeacherProperty, value); }
+        }
+
+        public static readonly PropertyData CanGroupSendToTeacherProperty = RegisterProperty("CanGroupSendToTeacher", typeof(bool), true);
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -1346,9 +1372,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the IsSending property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSendingProperty = RegisterProperty("IsSending", typeof(bool));
 
         /// <summary>
@@ -1360,9 +1383,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SendButtonVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SendButtonVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SendButtonVisibilityProperty = RegisterProperty("SendButtonVisibility", typeof(Visibility));
 
         /// <summary>
@@ -1374,10 +1394,28 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsSentInfoVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsSentInfoVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets the GroupSubmitPageCommand command.
+        /// </summary>
+        public Command GroupSubmitPageCommand { get; private set; }
+
+        private void OnGroupSubmitPageCommandExecute()
+        {
+            IsSending = true;
+            Timer timer = new Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Enabled = true;
+
+            if(CanGroupSendToTeacher)
+            {
+                CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+            }
+            CanGroupSendToTeacher = false;
+        }
 
         #endregion //Submission Command
 
@@ -1393,12 +1431,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSendDisplayToProjectorcommandExecute()
         {
-            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
+            if(App.Network.ProjectorProxy != null)
             {
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.Security.Mode = SecurityMode.None;
-                IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
                 foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                 {
@@ -1424,9 +1458,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageIDs.Add(pageID);
                     try
                     {
-                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1446,25 +1480,17 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     try
                     {
-                        ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
                 }
-
-                try
-                {
-                    (ProjectorProxy as ICommunicationObject).Close();
-                }
-                catch(System.Exception ex)
-                {
-                }
             }
             else
             {
-                Console.WriteLine("Address NOT Available");
+                Console.WriteLine("Projector NOT Available");
             }
         }
 
@@ -1649,15 +1675,12 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MakePageLongerCommand command.
+        /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
         
 
 
-        /// <summary>
-        /// Method to invoke when the MakePageLongerCommand command is executed.
-        /// </summary>
         private void OnMakePageLongerCommandExecute()
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
@@ -1699,6 +1722,20 @@ namespace Classroom_Learning_Partner.ViewModels
          }
 
 
+        /// <summary>
+        /// Trims the current page's excess height if free of ink strokes and pageObjects.
+        /// </summary>
+        public Command TrimPageCommand { get; private set; }
+
+        private void OnTrimPageCommandExecute()
+        {
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.TrimPage();
+            }
+        }
+
         #endregion //Page Commands
 
         #region Insert Commands
@@ -1714,7 +1751,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertTextBoxCommandExecute()
         {
             CLPTextBox textBox = new CLPTextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
+            CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
         }
 
         /// <summary>
@@ -1725,7 +1762,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAggregationDataTableCommandExecute()
         {
             CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
+            CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
         }
 
         /// <summary>
@@ -1765,7 +1802,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     CLPImage image = new CLPImage(imageID, page);
 
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(image);
                 }
                 else
                 {
@@ -1852,7 +1889,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPImage image = new CLPImage(imageID, page);
                     CLPStamp stamp = new CLPStamp(image, page);
 
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
                 }
                 else
                 {
@@ -1872,7 +1909,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertBlankStampCommandExecute()
         {
             CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
             if(EditingMode != InkCanvasEditingMode.Ink)
             {
                 SetPenCommand.Execute();
@@ -1890,7 +1927,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAudioCommandExecute()
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+            CLPServiceAgent.Instance.AddPageObjectToPage(audio);
         }
 
         /// <summary>
@@ -1904,7 +1941,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertSquareShapeCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(square);
+            CLPServiceAgent.Instance.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -1918,7 +1955,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertCircleShapeCommandExecute()
         {
             CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(circle);
+            CLPServiceAgent.Instance.AddPageObjectToPage(circle);
         }
 
         /// <summary>
@@ -1932,7 +1969,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            CLPServiceAgent.Instance.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -1946,7 +1983,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertVerticalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.VerticalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            CLPServiceAgent.Instance.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -1966,7 +2003,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
                 CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 
@@ -1981,7 +2018,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertInkShapeRegionCommandExecute()
         {
             CLPInkShapeRegion region = new CLPInkShapeRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            CLPServiceAgent.Instance.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -1995,7 +2032,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertGroupingRegionCommandExecute()
         {
             CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            CLPServiceAgent.Instance.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -2017,14 +2054,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 1;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 1; }
+                catch(FormatException) { rows = 1; }
 
                 int cols = 1;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 1; }
+                catch(FormatException) { cols = 1; }
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 
@@ -2047,14 +2084,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 0;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 0; }
+                catch(FormatException) { rows = 0; }
 
                 int cols = 0;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 0; }
+                catch(FormatException) { cols = 0; }
 
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }
 
@@ -2084,6 +2121,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     (pageObject as CLPGroupingRegion).DoInterpretation();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the UpdateObjectPropertiesCommand command.
+        /// </summary>
+        public Command UpdateObjectPropertiesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the UpdateObjectPropertiesCommand command is executed.
+        /// </summary>
+        private void OnUpdateObjectPropertiesCommandExecute()
+        {
+            PageInteractionMode = PageInteractionMode.EditObjectProperties;
         }
 
         /// <summary>

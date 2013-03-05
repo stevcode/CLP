@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Classroom_Learning_Partner.Model
+namespace Classroom_Learning_Partner
 {
     public static class ObjectSerializer
     {

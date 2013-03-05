@@ -41,6 +41,8 @@ namespace CLP.Models
 
         #region Properties
 
+        #region Persistent
+
         /// <summary>
         /// UniqueID associated with the Person.
         /// </summary>
@@ -85,6 +87,10 @@ namespace CLP.Models
 
         public static readonly PropertyData HeadShotByteSourceProperty = RegisterProperty("HeadShotByteSource", typeof(List<byte>), () => new List<byte>());
 
+        #endregion //Persistent
+
+        #region Change From Session to Session
+
         /// <summary>
         /// FriendlyName of the Machine the Person is currently using.
         /// </summary>
@@ -96,7 +102,20 @@ namespace CLP.Models
 
         public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), null);
 
-        #endregion
+        /// <summary>
+        /// Stringified URI address of the endpoint of this student's StudentService.
+        /// </summary>
+        public string CurrentMachineAddress
+        {
+            get { return GetValue<string>(CurrentMachineAddressProperty); }
+            set { SetValue(CurrentMachineAddressProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string), null);
+
+        #endregion //Change From Session to Session
+
+        #endregion //Properties
 
     }
 }

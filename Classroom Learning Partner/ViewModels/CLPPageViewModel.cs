@@ -16,7 +16,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-//using Classroom_Learning_Partner.App;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -27,7 +27,8 @@ namespace Classroom_Learning_Partner.ViewModels
         Pen,
         Marker,
         Eraser,
-        StrokeEraser
+        StrokeEraser,
+        EditObjectProperties
     }
 
     public enum PageEraserInteractionMode
@@ -52,14 +53,6 @@ namespace Classroom_Learning_Partner.ViewModels
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
-
-            InkStrokes = new StrokeCollection();
-
-            foreach(List<byte> b in Page.ByteStrokes)
-            {
-                Stroke stroke = CLPPage.ByteToStroke(b);
-                InkStrokes.Add(stroke);
-            }
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
@@ -393,6 +386,60 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
             }
+            else if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.EditObjectProperties) {
+                CLPShape dummyShape = new CLPShape(CLPShape.CLPShapeType.Rectangle, Page);
+                dummyShape.Height = 1;
+                dummyShape.Width = 1;
+                System.Windows.Point mousePosition = e.GetPosition(TopCanvas);
+                dummyShape.XPosition = mousePosition.X;
+                dummyShape.YPosition = mousePosition.Y;
+                ICLPPageObject selectedObject = null;
+                foreach (ICLPPageObject po in Page.PageObjects) {
+                    if (dummyShape.PageObjectIsOver(po, .8)) {
+                        selectedObject = po;
+                    }
+                }
+                if (selectedObject != null)
+                {
+                    UpdatePropertiesWindowView properties = new UpdatePropertiesWindowView();
+                    properties.Owner = Application.Current.MainWindow;
+                    properties.WindowStartupLocation = WindowStartupLocation.Manual;
+                    properties.Top = 100;
+                    properties.Left = 100;
+                    properties.UniqueIdTextBlock.Text = selectedObject.UniqueID;
+                    properties.ParentIdTextBox.Text = selectedObject.ParentID;
+                    properties.PartsTextBox.Text = selectedObject.Parts.ToString();
+                    properties.WidthTextBox.Text = selectedObject.Width.ToString();
+                    properties.HeightTextBox.Text = selectedObject.Height.ToString();
+                    properties.XPositionTextBox.Text = selectedObject.XPosition.ToString();
+                    properties.YPositionTextBox.Text = selectedObject.YPosition.ToString();
+                    properties.ShowDialog();
+                    if (properties.DialogResult == true)
+                    {
+                        int partNum;
+                        bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
+                        selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
+                                partNum : selectedObject.Parts;
+                        selectedObject.ParentID = properties.ParentIdTextBox.Text;
+                        int height;
+                        isNum = Int32.TryParse(properties.HeightTextBox.Text, out height);
+                        selectedObject.Height = (properties.HeightTextBox.Text.Length > 0 && isNum &&
+                            height <= Page.PageHeight) ? height : selectedObject.Height;
+                        int width;
+                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out width);
+                        selectedObject.Width = (properties.WidthTextBox.Text.Length > 0 &&
+                            isNum && width <= Page.PageWidth) ? width : selectedObject.Width;
+                        int x;
+                        isNum = Int32.TryParse(properties.XPositionTextBox.Text, out x);
+                        selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
+                            x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
+                        int y;
+                        isNum = Int32.TryParse(properties.YPositionTextBox.Text, out y);
+                        selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
+                            && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -466,6 +513,7 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - Catel? causing this to be called twice
             //Task.Factory.StartNew( () =>
@@ -509,41 +557,24 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 //});
 
-            //TODO: Steve - Stamps add/remove too quickly and crash projector
-            //if (App.CurrentUserMode == App.UserMode.Instructor && App.Peer.Channel != null)
-            //{
-            //    List<string> added = new List<string>();
-            //    List<string> removedIDs = new List<string>();
-            //    if (e.NewItems != null)
-            //    {
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            added.Add(ObjectSerializer.ToString(item as ICLPPageObject));
-            //        }
-            //    }
-            //    if (e.OldItems != null)
-            //    {
-            //        foreach (var item in e.OldItems)
-            //        {
-            //            removedIDs.Add((item as ICLPPageObject).UniqueID);
-            //        }
-            //    }
-
-            //    App.Peer.Channel.ChangePageObjectsOnPage(Page.UniqueID, added, removedIDs);
-            //}
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            Task.Factory.StartNew( () =>
-                {
-                    try
+            if(!Page.IsInkAutoAdding)
+            {
+                App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+                App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
+
+                //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.
+                Task.Factory.StartNew(() =>
                     {
+                        try
+                        {
                         
                         List<string> removedStrokeIDs = new List<string>();
-	                    foreach(Stroke stroke in e.Removed)
-	                    {
+                            foreach(Stroke stroke in e.Removed)
+                            {
                                 String nbid = Page.ParentNotebookID;
                                 CLPNotebook nb = null;
                                 foreach(CLPNotebook notebook in App.MainWindowViewModel.OpenNotebooks)
@@ -562,18 +593,19 @@ namespace Classroom_Learning_Partner.ViewModels
                                     nb.memento.push(l); 
                                 }
                             
-                            removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
-	                    }
-	
-	                    foreach(Stroke stroke in e.Added)
-	                    {
-	                        if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey)){
-	                            string newUniqueID = Guid.NewGuid().ToString();
-	                            stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-	                            //TODO: Steve - Add Property for time created if necessary.
-	                            //TODO: Steve - Add Property for Mutability.
-	                            //TODO: Steve - Add Property for UserName of person who created the stroke.
-	                        }
+                                removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
+                            }
+
+                            foreach(Stroke stroke in e.Added)
+                            {
+                                if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                                {
+                                    string newUniqueID = Guid.NewGuid().ToString();
+                                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                                    //TODO: Steve - Add Property for time created if necessary.
+                                    //TODO: Steve - Add Property for Mutability.
+                                    //TODO: Steve - Add Property for UserName of person who created the stroke.
+                                }
                             
                                 String nbid = Page.ParentNotebookID;
                                 CLPNotebook nb = null;
@@ -593,104 +625,111 @@ namespace Classroom_Learning_Partner.ViewModels
                                     nb.memento.push(l);  
                                 }
                             
-                            //Ensures truly uniqueIDs
-	                        foreach(string id in removedStrokeIDs)
-	                        {
-	                            if(id == stroke.GetStrokeUniqueID())
-	                            {
-	                                stroke.RemovePropertyData(CLPPage.StrokeIDKey);
-	
-	                                string newUniqueID = Guid.NewGuid().ToString();
-	                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-	                            }
-	                        }
-	                    }
-	
-	                    foreach(ICLPPageObject pageObject in PageObjects)
-	                    {
-	                        if(pageObject.CanAcceptStrokes)
-	                        {
-	                            Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
-	
-	                            var addedStrokesOverObject = 
-	                                from stroke in e.Added
-	                                where stroke.HitTest(rect, 3)
-	                                select stroke;
-	
-	                            var removedStrokesOverObject =
-	                                from stroke in e.Removed
-	                                where stroke.HitTest(rect, 3)
-	                                select stroke;
-
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                    (DispatcherOperationCallback)delegate(object arg)
+                                //Ensures truly uniqueIDs
+                                foreach(string id in removedStrokeIDs)
+                                {
+                                    if(id == stroke.GetStrokeUniqueID())
                                     {
-                                        pageObject.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+                                        stroke.RemovePropertyData(CLPPage.StrokeIDKey);
 
-                                        return null;
-                                    }, null);
-	                        }
-	                    }
-	
-	                    if(App.CurrentUserMode == App.UserMode.Instructor)
-	                    {
-	                        List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
-	                        List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
-
-                            string pageID;
-
-                            if(Page.IsSubmission)
-                            {
-                                pageID = Page.SubmissionID;
-                            }
-                            else
-                            {
-                                pageID = Page.UniqueID;
-                            }
-
-                            if(App.Network.DiscoveredProjectors.Addresses.Count() > 0)
-                            {
-                                try
-                                {
-                                    NetTcpBinding binding = new NetTcpBinding();
-                                    binding.Security.Mode = SecurityMode.None;
-                                    IProjectorContract ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(binding, App.Network.DiscoveredProjectors.Addresses[0]);
-                                    ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                    (ProjectorProxy as ICommunicationObject).Close();
-                                }
-                                catch(System.Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
+                                        string newUniqueID = Guid.NewGuid().ToString();
+                                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                                    }
                                 }
                             }
-                            else
+
+                            foreach(ICLPPageObject pageObject in PageObjects)
                             {
-                                //TODO: Steve - add pages to a queue and send when a projector is found
-                                Console.WriteLine("Address NOT Available");
+                                if(pageObject.CanAcceptStrokes)
+                                {
+                                    Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
+
+                                    var addedStrokesOverObject =
+                                        from stroke in e.Added
+                                        where stroke.HitTest(rect, 3)
+                                        select stroke;
+
+                                    var removedStrokesOverObject =
+                                        from stroke in e.Removed
+                                        where stroke.HitTest(rect, 3)
+                                        select stroke;
+
+                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                        (DispatcherOperationCallback)delegate(object arg)
+                                        {
+                                            pageObject.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+
+                                            return null;
+                                        }, null);
+                                }
                             }
 
-	                        //TODO: Steve - Re-write BroadcastInk (add, remove, uniqueID, submissionID)
-                            //if (Page.IsSubmission)
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.SubmissionID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    if (App.Peer.Channel != null)
-                            //    {
-                            //        App.Peer.Channel.BroadcastInk(add, remove, Page.UniqueID, App.MainWindowViewModel.Ribbon.BroadcastInkToStudents);
-                            //    }
-                            //}
-	                    }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Console.WriteLine("InkStrokeCollectionChanged Exception: " + ex.Message);
-                    }
-                });
+                            if(App.CurrentUserMode == App.UserMode.Instructor)
+                            {
+                                List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
+                                List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
+
+                                string pageID;
+
+                                if(Page.IsSubmission)
+                                {
+                                    pageID = Page.SubmissionID;
+                                }
+                                else
+                                {
+                                    pageID = Page.UniqueID;
+                                }
+
+                                if(App.Network.ProjectorProxy != null)
+                                {
+                                    try
+                                    {
+                                        App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                    }
+                                    catch(System.Exception)
+                                    {
+
+                                    }
+                                }
+                                else
+                                {
+                                    //TODO: Steve - add pages to a queue and send when a projector is found
+                                    Console.WriteLine("Projector NOT Available");
+                                }
+
+                                if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)
+                                {
+                                    if(App.Network.ClassList.Count > 0)
+                                    {
+                                        foreach(Person student in App.Network.ClassList)
+                                        {
+                                            try
+                                            {
+                                                NetTcpBinding binding = new NetTcpBinding();
+                                                binding.Security.Mode = SecurityMode.None;
+                                                IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                                StudentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                                (StudentProxy as ICommunicationObject).Close();
+                                            }
+                                            catch(System.Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Logger.Instance.WriteToLog("No Students Found");
+                                    }
+                                }
+                            }
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Console.WriteLine("InkStrokeCollectionChanged Exception: " + ex.Message);
+                        }
+                    });
+            }
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -759,16 +798,16 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
                             }
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
+                            CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:
@@ -867,7 +906,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     case HistoryItemType.AddPageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
+                            CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
                             if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
                             {
                                 PageHistory.TrashedPageObjects.Remove(item.ObjectID);
@@ -875,12 +914,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.RemovePageObject:
-                        Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(Classroom_Learning_Partner.Model.ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
                         break;
                     case HistoryItemType.MovePageObject:
                         if (pageObject != null)
                         {
-                            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
                         }
                         break;
                     case HistoryItemType.ResizePageObject:
@@ -937,6 +976,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
-
+                
     }
 }
