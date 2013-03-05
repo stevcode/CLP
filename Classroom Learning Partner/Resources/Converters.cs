@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -41,17 +42,10 @@ namespace Classroom_Learning_Partner.Resources
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            //If the group name does not have group in it, add it to the front
-            int index = value.ToString().IndexOf("Group");
-            int index2 = value.ToString().IndexOf("group"); 
-            if(index != -1 && index2 != -1)
-            {
-                return "Group" + value;
-            }
-            else
-            {
-                return value;
-            }
+            string val = value as string;
+            return "Group " + val;
+            
+
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -383,9 +377,14 @@ namespace Classroom_Learning_Partner.Resources
             object parameter,
             System.Globalization.CultureInfo culture)
         {
+            System.Console.WriteLine("***************TYPE:" + value.GetType());
             ReadOnlyCollection<object> items = value as ReadOnlyCollection<object>;
-            CLPPage page = items.First() as CLPPage;
-            return page;
+            List<Object> pages = new List<Object>();
+            //System.Console.WriteLine(TypeOf(value));
+            //Object page = items.First();
+            //pages.Add(page);
+            //ReadOnlyCollection<object> items2 = new ReadOnlyCollection<object>
+            return items;
         }
 
         public object ConvertBack(object value,
@@ -396,6 +395,8 @@ namespace Classroom_Learning_Partner.Resources
             return false;
         }
     }
+
+
 
     /// <summary>
     /// Converts a double to 3/4 of its value
@@ -424,6 +425,38 @@ namespace Classroom_Learning_Partner.Resources
 
             // Convert
             return (width > 0) ? (width / 4) * 3 : 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(int), typeof(int))]
+    public class HalfConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Declare variables
+            int width = 0;
+
+            try
+            {
+                // Get value
+                width = (int)value;
+            }
+            catch(Exception)
+            {
+                // Trace
+                Trace.TraceError("Failed to cast '{0}' to Double", value);
+
+                // Return 0
+                return 0;
+            }
+
+            // Convert
+            return (width > 0) ? (width /2 )  : 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

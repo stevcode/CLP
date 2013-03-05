@@ -55,26 +55,32 @@ namespace Classroom_Learning_Partner.Views
         {
             var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
             var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
-
-            foreach(UIElement item in vsp.Children)
-            {
-                if(item != vsp.Children[0])
-                {
-                    if((bool)(sender as ToggleButton).IsChecked)
+             if((bool)(sender as ToggleButton).IsChecked)
                     {
-                      //  ((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
-                       // ((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
+                        foreach(UIElement item in vsp.Children)
+                        {
 
-                        item.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
-                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
+                            //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
+                            //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
 
-                        item.Visibility = Visibility.Collapsed;
+                            item.Visibility = Visibility.Visible;
+                            if(item == vsp.Children[0])
+                            {
+                                //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
+                                //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
+
+                                var label = GetVisualChild<ToggleButton>(item);
+                                if(label != null)
+                                {
+                                    label.Visibility = Visibility.Visible;
+                                }
+                                
+                            }
+                        }
                     }
-                }
+                
+            else {
+            allItems_Loaded3(itemsPresenter, e);
             }
         }
 
@@ -97,7 +103,10 @@ namespace Classroom_Learning_Partner.Views
                             //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
 
                             var label = GetVisualChild<ToggleButton>(item);
-                            label.Visibility = Visibility.Visible;
+                            if(label != null)
+                            {
+                                label.Visibility = Visibility.Visible;
+                            }
                         }
                     }
                     else
@@ -112,7 +121,11 @@ namespace Classroom_Learning_Partner.Views
                         else
                         {
                             var label = GetVisualChild<ToggleButton>(item);
-                            label.Visibility = Visibility.Collapsed;
+                            if(label != null)
+                            {
+                                label.Visibility = Visibility.Collapsed;
+                            }
+                           
 
                         }
                     }
@@ -166,8 +179,16 @@ namespace Classroom_Learning_Partner.Views
             {
                 //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
                 if(item != vsp.Children[0])
-               {
-                        item.Visibility = Visibility.Collapsed;
+                {
+                    item.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    var label = GetVisualChild<ToggleButton>(item);
+                    if(label != null)
+                    {
+                        label.Visibility = Visibility.Collapsed;
+                    }
                 }
             }
         }
@@ -177,7 +198,10 @@ namespace Classroom_Learning_Partner.Views
             var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
             var first = (Visual)vsp.Children[0];
             var label = GetVisualChild<ToggleButton>(first);
-            label.Visibility = Visibility.Collapsed;
+            if(label != null)
+            {
+                label.Visibility = Visibility.Collapsed;
+            }
             foreach(UIElement item in vsp.Children)
             {
                 if(item != vsp.Children[0])

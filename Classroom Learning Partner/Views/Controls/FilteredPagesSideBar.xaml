@@ -12,7 +12,6 @@
     <UserControl.Resources>
         <res:GrouptoBooleanConverter x:Key="gConverter" />
         <res:SumbissiontoBooleanConverter x:Key="sConverter" />
-        <res:LastItemInCollectionConverter x:Key="LastItem" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -39,7 +38,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
+
+
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
 
             <Grid Margin="0,2,0,0">
@@ -77,7 +78,15 @@
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="2" Loaded="allItems_Loaded2">
                  </ItemsPresenter>
-                
+
+                <Border Grid.Row="2" Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
+
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Border>
             </Grid>
 
         </ControlTemplate>
@@ -141,7 +150,8 @@
                     Background="Lavender"
                     ItemsSource="{Binding Path=FilteredSubmissions.View}"
                     ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
-                    SelectionMode="Single">
+                    SelectionMode="Single"
+                >
             <ListBox.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
@@ -169,20 +179,28 @@
                     </GroupStyle.Panel>
                 </GroupStyle>
             </ListBox.GroupStyle>
-
+            
             <ListBox.ItemTemplate>
                 <DataTemplate x:Name="SortTrigger">
-                  
+
                     <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
+
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                       <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview"/> 
+                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview1">
+
+                        </Views:CLPPagePreviewView>
+
                     </Border>
+
                 </DataTemplate>
+
             </ListBox.ItemTemplate>
+
+
 
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
