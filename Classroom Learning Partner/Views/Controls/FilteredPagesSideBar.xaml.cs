@@ -97,37 +97,14 @@ namespace Classroom_Learning_Partner.Views
                         // ((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
 
                         item.Visibility = Visibility.Visible;
-                       if(item == vsp.Children[0])
-                        {
-                            //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
-                            //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
-
-                            var label = GetVisualChild<ToggleButton>(item);
-                            if(label != null)
-                            {
-                                label.Visibility = Visibility.Visible;
-                            }
-                        }
                     }
                     else
                     {
-                        if(item != vsp.Children[0])
-                        {
+
                             //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
                             //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
 
-                            item.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            var label = GetVisualChild<ToggleButton>(item);
-                            if(label != null)
-                            {
-                                label.Visibility = Visibility.Collapsed;
-                            }
-                           
-
-                        }
+                        item.Visibility = Visibility.Collapsed;
                     }
             }
         }
@@ -196,12 +173,8 @@ namespace Classroom_Learning_Partner.Views
         {
             var itemsPresenter = sender as ItemsPresenter;
             var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
-            var first = (Visual)vsp.Children[0];
-            var label = GetVisualChild<ToggleButton>(first);
-            if(label != null)
-            {
-                label.Visibility = Visibility.Collapsed;
-            }
+            
+
             foreach(UIElement item in vsp.Children)
             {
                 if(item != vsp.Children[0])

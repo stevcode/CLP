@@ -19,6 +19,7 @@
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
 
                         <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
+                        <!--SARAH SCODEL Add stack image here-->
                         <Border x:Name="IconBorder"
                                 BorderBrush="#9FA6AD"
                                 BorderThickness="1"
@@ -38,10 +39,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
 
-
-
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameGroupItemTemplate">
 
             <Grid Margin="0,2,0,0">
                 <Grid.RowDefinitions>
@@ -61,57 +61,26 @@
 
         </ControlTemplate>
 
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate2">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupNameGroupItemTemplate">
 
             <Grid Margin="0,20,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
-                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Height="35" Click="toggle_Click2" BorderBrush="Black" BorderThickness="10"> 
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Height="35" Click="toggle_Click3" BorderBrush="Black" BorderThickness="10"> 
                         <DockPanel>
                             <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="16" Text="{Binding Path=Name}" Width="120"/>
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="16" Text="{Binding Path=ItemCount}"/>
                         </DockPanel>
                 </ToggleButton>            
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="2" Loaded="allItems_Loaded2">
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded3">
                  </ItemsPresenter>
-
-                <Border Grid.Row="2" Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
-
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Border>
             </Grid>
 
         </ControlTemplate>
 
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="NameGroupItemTemplate3">
-
-            <Grid Margin="0,10,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="140" Height="20" Click="toggle_Click3">
-                    <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="80"/>
-                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="14" Text="{Binding Path=ItemCount}"/>
-                    </DockPanel>
-                </ToggleButton>
-
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="2" Loaded="allItems_Loaded3">
-                </ItemsPresenter>
-
-            </Grid>
-
-        </ControlTemplate>
 
     </UserControl.Resources>
 
@@ -152,17 +121,21 @@
                     ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                     SelectionMode="Single"
                 >
+
+            
+            
             <ListBox.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate}" />
+                            <Setter Property="Template" Value="{StaticResource StudentNameGroupItemTemplate}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True">
-                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate2}" />
+                               <!-- <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Name - Asending">
+                                    <Setter Property="Template" Value="{StaticResource GroupNameGroupItemTemplate}" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource sConverter}}" Value="True">
-                                    <Setter Property="Template" Value="{StaticResource NameGroupItemTemplate3}" />
+                                -->
+                               <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True">
+                                    <Setter Property="Template" Value="{StaticResource GroupNameGroupItemTemplate}" />
                                 </DataTrigger>
                             </Style.Triggers>
                             
