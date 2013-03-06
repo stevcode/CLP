@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner
         public IProjectorContract ProjectorProxy { get; set; }
 
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
-        private NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
+        public NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {

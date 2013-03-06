@@ -329,6 +329,7 @@
 
         </RibbonTab>
 
+        <!--Test Tab-->
         <RibbonTab Header="Test Features" Visibility="{Binding Path=InstructorVisibility}">
             
             <RibbonGroup Header="ClassList Commands">
@@ -348,6 +349,14 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Page">
+                
+                <RibbonButton Label="Broadcast This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding BroadcastPageCommand}" />
+                
             </RibbonGroup>
             
         </RibbonTab>

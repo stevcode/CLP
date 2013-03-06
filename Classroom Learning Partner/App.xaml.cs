@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner
             Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            CurrentUserMode = UserMode.Instructor;
+            //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
 

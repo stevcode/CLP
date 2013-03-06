@@ -8,5 +8,8 @@ namespace Classroom_Learning_Partner
     {
         [OperationContract]
         void ModifyPageInkStrokes(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID);
+
+        [OperationContract]
+        void AddNewPage(string s_page, int index);
     }
 }
