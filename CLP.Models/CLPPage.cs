@@ -516,7 +516,15 @@ namespace CLP.Models
             foreach(Stroke s in InkStrokes)
             {
                 Rect bounds = s.GetBounds();
-                lowestY = Math.Max(lowestY, bounds.Bottom);
+                if(bounds.Bottom >= PageHeight)
+                {
+                    lowestY = Math.Max(lowestY, PageHeight);
+                    break;
+                }
+                else
+                {
+                    lowestY = Math.Max(lowestY, bounds.Bottom);
+                }
             }
 
             double defaultHeight = 0;
@@ -530,7 +538,10 @@ namespace CLP.Models
             }
 
             double newHeight = Math.Max(defaultHeight, lowestY);
-            PageHeight = newHeight + 20;
+            if (newHeight + 20 < PageHeight)
+            {
+                PageHeight = newHeight + 20;
+            }        
         }
 
         #endregion

@@ -71,11 +71,12 @@ namespace Classroom_Learning_Partner
                             string oldSubmissionID = page.SubmissionID;
                             page.SubmissionID = Guid.NewGuid().ToString();
                             page.SubmissionTime = DateTime.Now;
+                            page.TrimPage();
 
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission);
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
                         catch(System.Exception ex)
                         {
