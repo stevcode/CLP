@@ -150,6 +150,17 @@ namespace CLP.Models
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
 
         /// <summary>
+        /// Number of Group Submissions associated with this page.
+        /// </summary>
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int), 0);
+
+        /// <summary>
         /// UniqueID of the Notebook this page is part of.
         /// </summary>
         public string ParentNotebookID
