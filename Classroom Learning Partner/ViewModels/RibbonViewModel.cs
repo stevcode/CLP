@@ -2050,11 +2050,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
                 {
-                    (pageObject as ACLPInkRegion).InterpretStrokes();
-                }
-                else if (pageObject.GetType().IsSubclassOf(typeof(CLPGroupingRegion)))
-                {
-                    (pageObject as CLPGroupingRegion).DoInterpretation();
+                    CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
                 }
             }
         }
