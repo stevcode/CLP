@@ -18,8 +18,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
     {
-        public readonly Memento memento;
-        private bool memEnabled;
+        
         
         //private readonly Memento initialMemento;
         #region Constructor
@@ -29,15 +28,14 @@ namespace CLP.Models
         /// </summary>
         public CLPNotebook()
         {
-            memento = new Memento(this);
-            memento.disableMem();
+            
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
-            memento.enableMem();
-            //initialMemento = this.getMemento();
+           
+
         }
 
         /// <summary>
@@ -157,10 +155,7 @@ namespace CLP.Models
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
-            List<object> l = new List<object>();
-            l.Add(memento.Page_Added);
-            l.Add(page);
-            this.memento.push(l);  
+            
         }
 
         public void InsertPageAt(int index, CLPPage page)
@@ -168,10 +163,8 @@ namespace CLP.Models
             Pages.Insert(index, page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
-            List<object> l = new List<object>();
-            l.Add(memento.Page_Inserted); 
-            l.Add(page);
-            this.memento.push(l);  
+            
+
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
@@ -201,10 +194,7 @@ namespace CLP.Models
                 AddPage(new CLPPage());
             }
             GeneratePageIndexes();
-            List<object> l = new List<object>();
-            l.Add(memento.Page_Removed);
-            l.Add(sPage);
-            this.memento.push(l); 
+           
         }
 
         public CLPPage GetPageAt(int pageIndex, int submissionIndex)
@@ -332,410 +322,5 @@ namespace CLP.Models
         }
 
         #endregion
-
-        #region History
-
-        /*public Boolean replay(Memento memInit, Memento memCurrent){
-            Memento memFinal = memCurrent.getClone();
-            revertToMem(memInit, memCurrent);
-            forwardToMem(memFinal, memInit);
-            return true;
-        }
-        
-        public Boolean replayNotebook(){
-            try{
-                Memento memInit = this.getInitMem();
-                Memento memCurrent = this.getMemento();
-                return replay(memInit, memCurrent);
-            }
-            catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-                return false;
-            }
-        }*/
-
-        public void undo(){
-            printMemStacks("undo", "before1");
-            Stack<object> stack1 = memento.getStack1();
-            int stack1Count = stack1.Count;
-            if(stack1Count==0){
-                return;
-            }
-            Stack<object> stack2 = memento.getStack2();
-            int stack2Count = stack2.Count;
-
-            printMemStacks("undo", "before2");
-            Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
-            printMemStacks("undo", "before3");
-            
-            
-           
-            
-            List<object> l = (List<object>)memento.popStack1();
-            memento.disableMem();
-            try{
-                revertToMemList(l);
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-            }
-            ///////////////
-            //Integrity check
-            int stack1CountAfter = memento.getStack1().Count;
-            if(stack1CountAfter != (stack1Count - 1))
-            {
-                memento.popStack1();
-                memento.setStack2(stack3);
-                memento.ClearStack1();
-                memento.enableMem();
-            }
-            else {
-                memento.pushStack2(l);
-                memento.enableMem();
-            }
-            ////////////////
-            
-            printMemStacks("undo", "before"); 
-        }
-
-        public void redo(){
-             printMemStacks("redo", "before1"); 
-             
-             Stack<object> stack2 = memento.getStack2();
-             int stack2Count = stack2.Count;
-             if(stack2Count == 0)
-             {
-                return;
-             }
-             Stack<object> stack1 = memento.getStack1();
-             int stack1Count = stack1.Count;
-
-             printMemStacks("redo", "before2");
-             Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
-             printMemStacks("redo", "before3");
-
-            List<object> l = (List<object>)memento.popStack2();
-            memento.disableMem();
-            try{
-                forwardToMemList(l);
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-            }
-            ///////////////
-            //Integrity check
-            int stack1CountAfter = memento.getStack1().Count;
-            if(stack1CountAfter != stack1Count)
-            {
-                memento.popStack1();
-                memento.setStack2(stack3);
-                memento.ClearStack2();
-                memento.enableMem();
-            }
-            else
-            {
-                memento.pushStack1(l);
-                memento.enableMem();
-            }
-            ////////////////
-            printMemStacks("redo", "after");
-        }
-
-        public void printMemStacks(String methodName, String pos)
-        {
-            Console.WriteLine(pos + " " + methodName + " stack1");
-            Stack<object> stack1 = memento.getStack1();
-            foreach(Object o in stack1)
-            {
-                Console.WriteLine(((List<object>)o)[0]);
-            }
-            Console.WriteLine(pos + " " + methodName + " stack2");
-            Stack<object> stack2 = memento.getStack2();
-            foreach(Object o in stack2)
-            {
-                Console.WriteLine(((List<object>)o)[0]);
-            }
-        }
-
-        private Boolean revertToMemList(List<object> l){
-            string inst = (string)l[0];
-            if(inst.Equals(memento.Page_Added)){
-                CLPPage page = (CLPPage)l[1];
-                RemovePageAt(page.PageIndex-1);
-                return true;
-            }else if(inst.Equals(memento.Page_Inserted)){
-                CLPPage page = (CLPPage)l[1];
-                RemovePageAt(page.PageIndex-1);
-                return true;
-            }else if(inst.Equals(memento.Page_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                InsertPageAt(page.PageIndex-1,page);
-                return true;
-            }else if(inst.Equals(memento.Stroke_Added)){
-                CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                page.InkStrokes.Remove(s);
-                return true;
-            }else if(inst.Equals(memento.Stroke_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                page.InkStrokes.Add(s);
-                return true;
-            }else{
-                return false;
-            }
-        }
-
-        private Boolean forwardToMemList(List<object> l){
-            string inst = (string)l[0];
-            if(inst.Equals(memento.Page_Added)){
-                CLPPage page = (CLPPage)l[1];
-                AddPage(page);
-                return true;
-            }else if(inst.Equals(memento.Page_Inserted)){
-                CLPPage page = (CLPPage)l[1];
-                InsertPageAt(page.PageIndex-1, page);
-                return true;
-            }else if(inst.Equals(memento.Page_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                RemovePageAt(page.PageIndex-1);
-                return true;
-            }else if(inst.Equals(memento.Stroke_Added)){
-                CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                page.InkStrokes.Add(s);
-                return true;
-            }else if(inst.Equals(memento.Stroke_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                page.InkStrokes.Remove(s);
-                return true;
-            }else{
-                return false;
-            } 
-        }
-
-      /*  private Boolean revertToMem(Memento oldMem){
-            Memento currentMem = this.getMemento();
-            return revertToMem(oldMem, currentMem);
-        }
-
-        public Boolean revertToMem(Memento oldMem, Memento currentMem) { 
-            String oldMemNotebookId = oldMem.getNotebookID();
-            String currentMemNotebookId = currentMem.getNotebookID();
-            if(oldMemNotebookId.Equals(currentMemNotebookId)){
-                Stack<object> sOldMem = oldMem.getStack();
-                Stack<object> sCurrentMem = currentMem.getStack();
-                if(sOldMem.Count<sCurrentMem.Count){
-                    try{
-                        while(sOldMem.Count < sCurrentMem.Count){
-                            List<object> l = (List<object>)sCurrentMem.Pop();
-                            Console.WriteLine("This is the action being UNDONE: " + l[0]);
-                            revertToMemList(l);
-                        }
-                        return true;
-                    }catch(Exception e){
-                        Console.WriteLine(e.StackTrace);
-                        return false;
-                    }
-                }
-            } 
-            return false;
-        }
-
-        public Boolean forwardToMem(Memento futureMem, Memento currentMem) {
-            Stack<object> sFutureMem = futureMem.getStack();
-            int futureMemCount = sFutureMem.Count;
-            Stack<object> sCurrentMem = currentMem.getStack();
-            int currentMemCount = sCurrentMem.Count;
-            if(futureMemCount <= currentMemCount) {
-                return false;
-            }
-            ArrayList aFutureMem = new ArrayList();
-            while(sFutureMem.Count > currentMemCount){
-                aFutureMem.Insert(0, sFutureMem.Pop());
-            }
-            try{
-                for(int i = 0; i < aFutureMem.Count; i++){
-                    List<object> l = (List<object>)aFutureMem[i];
-                    Console.WriteLine("This is the action being redone: " +l[0]);
-                    forwardToMemList(l);
-                }
-                return true;
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-                return false;
-            }
-        }
-
-        public Memento getInitMem() {
-            Memento m = this.initialMemento.getClone();
-            return m;
-        }
-
-        public Memento getMemento() {
-            Memento m = this.memento.getClone();
-            return m;
-
-        }*/
-
-  
-
-        [Serializable]
-        public class Memento{
-            
-            private readonly CLPNotebook notebook;
-            private readonly string memId;
-
-            private bool memEnabledF;
-            private string closed = null;
-            public Stack<object> stack1 = new Stack<object>();
-            public Stack<object> stack2 = new Stack<object>();
-            
-            
-            
-            public readonly string Page_Added = "Page_Added";
-            public readonly string Page_Inserted = "Page_Inserted";
-            public readonly string Page_Removed = "Page_Removed";
-            public readonly string Stroke_Added = "Stroke_Added";
-            public readonly string Stroke_Removed = "Stroke_Removed";
-            
-            public Memento(CLPNotebook clpnb){
-                notebook = clpnb;
-                memId = notebook.UniqueID;
-                memEnabledF = true;
-
-            }
-           
-            public void enableMem() {
-                memEnabledF= true;
-                
-            }
-            public void disableMem() {
-                memEnabledF = false;
-                
-            }
-
-            public bool isMemEnabled() {
-                return memEnabledF;
-            }
-            public void close() {
-                closed = "closed";
-            }
-            
-            public Boolean push(Object o){
-                if(closed==null){
-                    if(isMemEnabled()) {
-                        Console.WriteLine("memEnabled: " + isMemEnabled());
-                        stack1.Push(o);
-                        stack2.Clear();
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }else{
-                    return false;
-                }
-            }
-
-            /*
-               public Object pop(){
-                   if(closed == null){
-                       if(notebook.isMemEnabled() && isMemEnabledInternal())
-                       {
-                           if(stack1.Count!=0){
-                               Object o = stack1.Pop();
-                               stack2.Push(o);
-                               return o;
-                           }else{
-                               return null;
-                               }
-                       }else{
-                           return null;
-                       }
-                   }else{
-                       return null;
-                   }
-               }
-            
-               public static T Clone<T>(T source)
-               {
-                  if(!typeof(T).IsSerializable)
-                 {
-                   Console.WriteLine("object is not serializable");
-                       throw new ArgumentException("The type must be serializable.", "source");
-                 }
-       
-                 // Don't serialize a null object, simply return the default for that object
-                  if(Object.ReferenceEquals(source, null))
-                   {
-                       Console.WriteLine("Don't serialize a null object, simply return the default for that object");
-                      return default(T);
-                  }
-
-                   IFormatter formatter = new BinaryFormatter();
-                   Stream stream = new MemoryStream();
-                   using(stream)
-                   {
-                       formatter.Serialize(stream, source);
-                       stream.Seek(0, SeekOrigin.Begin);
-                       return (T)formatter.Deserialize(stream);
-                   }
-               }
-
-               public Memento getClone(){
-                   Memento m = Clone(this);
-                   m.close();
-                   return m;
-               }
-            
-               public Stack<object> getStack() {
-                 return Clone(this.stack1);
-              }*/
-            
-            public string getNotebookID() {
-                return memId;
-            }
-
-            public Stack<object> getStack1() {
-                return stack1;
-            }
-
-            public Stack<object> getStack2(){
-                return stack2;
-            }
-
-            public void setStack1(Stack<object> stack){
-                stack1 = stack;
-            }
-            public void setStack2(Stack<object> stack) {
-                stack2 = stack;
-            }
-            public object popStack1() {
-                return stack1.Pop();
-            }
-            public object popStack2() {
-                return stack2.Pop();
-            }
-
-            public void pushStack1(object o)
-            {
-                stack1.Push(o);
-            }
-
-            public void pushStack2(object o) {
-                stack2.Push(o);
-            }
-
-            public void ClearStack1()
-            {
-                stack1.Clear();
-            }
-
-            public void ClearStack2()
-            {
-                stack2.Clear();
-            }
-           
-        }
-        #endregion 
     }
 }

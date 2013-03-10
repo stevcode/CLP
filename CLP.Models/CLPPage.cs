@@ -57,6 +57,7 @@ namespace CLP.Models
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
         public const double PORTRAIT_WIDTH = 816;
+        
 
         #endregion
 
@@ -78,6 +79,7 @@ namespace CLP.Models
             NumberOfSubmissions = 0;
             PageAspectRatio = PageWidth / PageHeight;
         }
+     
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
