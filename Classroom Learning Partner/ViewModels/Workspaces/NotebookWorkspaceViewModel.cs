@@ -484,13 +484,12 @@ namespace Classroom_Learning_Partner.ViewModels
    
                 FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);  
                 FilteredSubmissions.SortDescriptions.Add(groupNameSort);
+                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
               
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
-
-              
-                FilteredSubmissions2.GroupDescriptions.Add(groupNameDescription);
-                FilteredSubmissions2.SortDescriptions.Add(groupNameSort);
-                FilteredSubmissions2.SortDescriptions.Add(timeDescendingSort);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
+                
 
             }
 
