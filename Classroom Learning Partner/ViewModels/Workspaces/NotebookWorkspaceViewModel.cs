@@ -43,7 +43,6 @@ namespace Classroom_Learning_Partner.ViewModels
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             LeftPanel = NotebookPagesPanel;
             SubmissionPages = new ObservableCollection<CLPPage>();
-            SubmissionPages2 = new ObservableCollection<CLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
@@ -66,10 +65,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook.GeneratePageIndexes();
 
             FilteredSubmissions = new CollectionViewSource();
-            FilteredSubmissions2 = new CollectionViewSource();
             FilterTypes = new ObservableCollection<string>();
             FilterTypes.Add("Student Name - Ascending");
-            FilterTypes.Add("Group Name - Ascending");
+            FilterTypes.Add("Group Submissions");
+            FilterTypes.Add("Submissions By Group Name");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
 
@@ -197,18 +196,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
-        public ObservableCollection<CLPPage> SubmissionPages2
-        {
-            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPages2Property); }
-            set
-            {
-                SetValue(SubmissionPages2Property, value);
-                SelectedFilterType = "Student Name - Ascending";
-                //FilterSubmissions("Student Name - Ascending");
-            }
-        }
-
-        public static readonly PropertyData SubmissionPages2Property = RegisterProperty("SubmissionPages2", typeof(ObservableCollection<CLPPage>));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -220,14 +207,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
-
-        public CollectionViewSource FilteredSubmissions2
-        {
-            get { return GetValue<CollectionViewSource>(FilteredSubmissions2Property); }
-            set { SetValue(FilteredSubmissions2Property, value); }
-        }
-
-        public static readonly PropertyData FilteredSubmissions2Property = RegisterProperty("FilteredSubmissions2", typeof(CollectionViewSource), null);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -408,58 +387,43 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsSideBarVisibleProperty = RegisterProperty("IsSideBarVisible", typeof(bool), true);
 
+        public void OnlyGroupSubmissionsFilter(object sender, FilterEventArgs e)
+        {
+            CLPPage page = e.Item as CLPPage;
+            if(page != null)
+            {
+                if(page.IsGroupSubmission == true)
+                {
+                    e.Accepted = true;
+                }
+                else {
+                    e.Accepted = false;
+                }
+            }
+        }
+
+        public void OnlyIndividualSubmissionsFilter(object sender, FilterEventArgs e)
+        {
+            CLPPage page = e.Item as CLPPage;
+            if(page != null)
+            {
+                if(page.IsGroupSubmission == true)
+                {
+                    e.Accepted = false;
+                }
+                else
+                {
+                    e.Accepted = true;
+                }
+            }
+        }
+
+
+
         public void FilterSubmissions(string Sort)
         {
-            FilteredSubmissions = new CollectionViewSource();
-            FilteredSubmissions2 = new CollectionViewSource();
-
-            
-          
-                List<String> groupNames = new List<String>();
-                ObservableCollection<CLPPage> pages = new ObservableCollection<CLPPage>();
-                ObservableCollection<CLPPage> groupPages = new ObservableCollection<CLPPage>();
-                foreach(CLPPage p in SubmissionPages)
-                {
-                    if(p.IsGroupSubmission)
-                    {
-                        groupPages.Add(p);
-                    }
-                    if(p.GroupName != null && !groupNames.Contains(p.GroupName))
-                    {
-                        groupNames.Add(p.GroupName);
-                    }
-                }
-                foreach(String name in groupNames)
-                {
-                    CLPPage groupSub = null;
-                    foreach(CLPPage p in SubmissionPages)
-                    {
-                        if(groupSub == null && p.GroupName==name && p.IsGroupSubmission)
-                        {
-                            groupSub = p;
-                        }
-                        else if(groupSub != null && p.GroupName == name && p.IsGroupSubmission)
-                        {
-                            if(p.SubmissionTime > groupSub.SubmissionTime)
-                            {
-                                groupSub = p;
-                            }
-                        }
-
-                    }
-                    if (groupSub!=null) {
-                        System.Console.WriteLine("FOUND GROUP SUBMISSION, Name: " + groupSub.SubmitterName);
-                    pages.Add(groupSub);
-                    }
-                }
-         
-                FilteredSubmissions2.Source = pages;
-                FilteredSubmissions2.SortDescriptions.Clear();
-        
+            FilteredSubmissions = new CollectionViewSource();     
             FilteredSubmissions.Source = SubmissionPages;
-            PropertyGroupDescription groupNameDescription2 = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
-
-            
 
             PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription("SubmitterName");
             PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
@@ -478,9 +442,9 @@ namespace Classroom_Learning_Partner.ViewModels
                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
             }
 
-            else if(Sort == "Group Name - Ascending")
+            else if(Sort == "Group Submissions")
             {
-                FilteredSubmissions.Source = groupPages;
+                FilteredSubmissions.Filter += new FilterEventHandler(OnlyGroupSubmissionsFilter);
    
                 FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);  
                 FilteredSubmissions.SortDescriptions.Add(groupNameSort);
@@ -492,17 +456,27 @@ namespace Classroom_Learning_Partner.ViewModels
                 
 
             }
+            else if(Sort == "Submissions By Group Name")
+            {
+                FilteredSubmissions.Filter += new FilterEventHandler(OnlyIndividualSubmissionsFilter);
+
+                FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
+                FilteredSubmissions.SortDescriptions.Add(groupNameSort);
+
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
+            }
 
             else if(Sort == "Time In - Ascending")
             {
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
-               
+
                 FilteredSubmissions.SortDescriptions.Add(timeAscendingSort);
             }
             else if(Sort == "Time In - Descending")
             {
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
-              
+
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
         }

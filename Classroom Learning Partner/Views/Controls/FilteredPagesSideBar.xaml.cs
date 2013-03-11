@@ -52,6 +52,32 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
+        private void toggle_Click_Group_Individual(object sender, RoutedEventArgs e)
+        {
+            var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
+
+            foreach(UIElement item in vsp.Children)
+            {
+
+                    if((bool)(sender as ToggleButton).IsChecked)
+                    {
+                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
+                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
+
+                        item.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
+                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
+
+                        item.Visibility = Visibility.Collapsed;
+                    }
+                
+            }
+        }
+
         private void toggle_Click2(object sender, RoutedEventArgs e)
         {
             var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;

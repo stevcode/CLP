@@ -101,6 +101,26 @@
 
         </ControlTemplate>
 
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupNameIndividualItemTemplate">
+            <Border BorderBrush="Blue"  BorderThickness="2" Margin="0,30,0,0">
+                <Grid Margin="0,-20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="180" Height="55" IsChecked="True" Click="toggle_Click_Group_Individual" BorderBrush="Black" BorderThickness="10">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="180"/>
+                        <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Individual Submissions"/>
+                    </DockPanel>
+                </ToggleButton>
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" >
+                </ItemsPresenter>
+            </Grid>
+            </Border>
+
+        </ControlTemplate>
 
     </UserControl.Resources>
 
@@ -150,13 +170,23 @@
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                             <Setter Property="Template" Value="{StaticResource StudentNameGroupItemTemplate}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Name - Ascending">
+                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
                                     <Setter Property="Template" Value="{StaticResource StudentNameForGroupGroupItemTemplate}" />
                                 </DataTrigger>
-                                
-                               <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True">
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Template" Value="{StaticResource GroupNameGroupItemTemplate}" />
-                                </DataTrigger>
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Template" Value="{StaticResource GroupNameIndividualItemTemplate}" />
+                                </MultiDataTrigger>
                             </Style.Triggers>
                             
                                 
