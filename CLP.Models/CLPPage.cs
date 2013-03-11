@@ -150,6 +150,17 @@ namespace CLP.Models
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
 
         /// <summary>
+        /// Number of Group Submissions associated with this page.
+        /// </summary>
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int), 0);
+
+        /// <summary>
         /// UniqueID of the Notebook this page is part of.
         /// </summary>
         public string ParentNotebookID
@@ -505,7 +516,15 @@ namespace CLP.Models
             foreach(Stroke s in InkStrokes)
             {
                 Rect bounds = s.GetBounds();
-                lowestY = Math.Max(lowestY, bounds.Bottom);
+                if(bounds.Bottom >= PageHeight)
+                {
+                    lowestY = Math.Max(lowestY, PageHeight);
+                    break;
+                }
+                else
+                {
+                    lowestY = Math.Max(lowestY, bounds.Bottom);
+                }
             }
 
             double defaultHeight = 0;
@@ -519,7 +538,10 @@ namespace CLP.Models
             }
 
             double newHeight = Math.Max(defaultHeight, lowestY);
-            PageHeight = newHeight + 20;
+            if (newHeight + 20 < PageHeight)
+            {
+                PageHeight = newHeight + 20;
+            }        
         }
 
         #endregion

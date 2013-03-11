@@ -19,7 +19,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission);
+            bool isGroupSubmission, double pageHeight);
 
         [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission)
+            bool isGroupSubmission, double pageHeight)
         {
             if(App.Network.ProjectorProxy != null)
             {
@@ -52,7 +52,7 @@ namespace Classroom_Learning_Partner
                         App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
                             submitter, groupSubmitter,
                             notebookID, pageID, submissionID, submissionTime,
-                            isGroupSubmission);
+                            isGroupSubmission, pageHeight);
                     }
                     catch(System.Exception ex)
                     {
@@ -93,6 +93,7 @@ namespace Classroom_Learning_Partner
                 submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
+                submission.PageHeight = pageHeight;
 
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {

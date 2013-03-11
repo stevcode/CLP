@@ -235,6 +235,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        [ViewModelToModel("Page")]
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the NumberOfGroupSubmissions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
         public InkCanvasEditingMode EditingMode
         {
             get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }

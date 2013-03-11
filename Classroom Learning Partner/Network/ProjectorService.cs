@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission);
+            bool isGroupSubmission, double pageHeight);
 
         [OperationContract]
         void ScrollPage(string pageID, string submissionID, double offset);
@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission)
+            bool isGroupSubmission, double pageHeight)
         {
             CLPPage submission = null;
             CLPNotebook currentNotebook = null;
@@ -144,6 +144,7 @@ namespace Classroom_Learning_Partner
                 submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
+                submission.PageHeight = pageHeight;
 
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {

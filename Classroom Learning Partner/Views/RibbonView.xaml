@@ -258,7 +258,7 @@
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
-                <RibbonButton
+                <RibbonButton Margin="0,0,35,0"
                         LargeImageSource="..\Images\Send.png" 
                         Command="{Binding Path=SubmitPageCommand}" 
                         Label="Send To Teacher"
