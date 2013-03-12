@@ -513,9 +513,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            //Console.WriteLine("This was the action: " + e.Action.ToString());
-            //This was the action: Add
-            //This was the action: Remove
             String action = e.Action.ToString().Trim();
             if(action == Page.PageHistory.Object_Added){
                 List<object> l = new List<object>();
@@ -532,12 +529,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 l.Add(e.OldItems);
                 Page.PageHistory.push(l); 
             }
-            
-
-
-                
-
-
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 

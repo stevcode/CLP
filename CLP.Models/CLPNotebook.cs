@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 using System.IO;
-//using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Ink;
 

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,7 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
+using System.Collections;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -1306,7 +1308,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //Steve - change to different thread and do callback to make sure sent page has arrived
             IsSending = true;
-            Timer timer = new Timer();
+            System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 1000;
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Enabled = true;
@@ -1343,7 +1345,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Timer timer = sender as Timer;
+            System.Timers.Timer timer = sender as System.Timers.Timer;
             timer.Stop();
             timer.Elapsed -= timer_Elapsed;
             IsSending = false;
@@ -1404,7 +1406,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGroupSubmitPageCommandExecute()
         {
             IsSending = true;
-            Timer timer = new Timer();
+            System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 1000;
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Enabled = true;
@@ -1701,31 +1703,125 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command RedotCommand { get; private set; }
         public Command UndotCommand { get; private set; }
 
-
-
-
         private void OnReplayCommandExecute()
         {
-            //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.replayNotebook();
+            Thread t = new Thread(() =>
+            {
+                try
+                {
+                    CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                    CLPHistory memInit = page.PageHistory.getInitialHistory();
+                    CLPHistory memCurrent = page.PageHistory.getMemento();
+                    CLPHistory memFinal = page.PageHistory.getMemento();
+                    page.PageHistory.disableMem();
+
+                    //revertToMem(memInit, memCurrent);
+                    Stack<object> sOldMem = memInit.getStack1();
+                    Stack<object> sCurrentMem = memCurrent.getStack1();
+                    if(sOldMem.Count < sCurrentMem.Count)
+                    {
+                        try
+                        {
+                            while(sOldMem.Count < sCurrentMem.Count)
+                            {
+                                List<object> l = (List<object>)sCurrentMem.Pop();
+                                Console.WriteLine("This is the action being UNDONE: " + l[0]);
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                (DispatcherOperationCallback)delegate(object arg)
+                                {
+                                    memInit.revertToMemList(l);
+                                return null;
+                                }, null);
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e.StackTrace);
+                           
+                        }
+                    }
+
+                    //forwardToMem(memFinal, memInit);
+                    Thread.Sleep(400);
+                    Stack<object> sFutureMem = new Stack<object>(memFinal.getStack1());
+                    Stack<object>  sCurrentMem2 = memInit.getStack1(); 
+                    if(sFutureMem.Count > sCurrentMem2.Count)
+                    {
+                        try
+                        {
+                            while(sFutureMem.Count > sCurrentMem2.Count)
+                            {
+                                List<object> l2 = (List<object>)sFutureMem.Pop();
+                                Thread.Sleep(400);
+                                Console.WriteLine("This is the action being REDONE: " + l2[0]);
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                (DispatcherOperationCallback)delegate(object arg)
+                                {
+                                    memFinal.forwardToMemList(l2);
+                                    return null;
+                                }, null);
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e.StackTrace);
+                        }
+                    }
+                    page.PageHistory.enableMem();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            t.Start();
         }
+
+    
 
         private void OnRedotCommandExecute() 
         {
-            
-            //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.redo();
             CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            page.PageHistory.redo();
-           
-           
+            Thread ty = new Thread(() =>
+            {
+                try
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        page.PageHistory.redo(); 
+                        return null;
+                    }, null);   
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            ty.Start(); 
         }
 
         private void OnUndotCommandExecute()
         {
-            //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.undo();
             CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            page.PageHistory.undo();
+            Thread tx = new Thread(() =>
+            {
+                try
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        page.PageHistory.undo();
+                        return null;
+                    }, null);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            tx.Start(); 
          }
-
 
         /// <summary>
         /// Trims the current page's excess height if free of ink strokes and pageObjects.

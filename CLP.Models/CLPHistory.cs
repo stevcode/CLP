@@ -13,17 +13,10 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistory
     {
-
-        
-        private readonly string historyId;
-
         private bool memEnabled;
         private string closed = null;
         private Stack<object> stack1 = new Stack<object>();
         private Stack<object> stack2 = new Stack<object>();
-
-
-
         public readonly string Page_Added = "Page_Added";
         public readonly string Page_Inserted = "Page_Inserted";
         public readonly string Page_Removed = "Page_Removed";
@@ -31,32 +24,38 @@ namespace CLP.Models
         public readonly string Stroke_Removed = "Stroke_Removed";
         public readonly string Object_Added = "Add"; //do not modify
         public readonly string Object_Removed = "Remove"; //do not modify
-
-       
-
+        public readonly string Object_Resized = "Resize"; 
+        public readonly string Object_Moved = "Move";
+        public readonly double Sample_Rate = 9;
+        
         public CLPHistory()
         {
-            
-            //historyId = clpPage.UniqueID;
             memEnabled = true;
-
         }
 
+        public CLPHistory getMemento(){
+            CLPHistory clpHistory = new CLPHistory();
+            clpHistory.setStack1 (new Stack<object>(new Stack<object>(getStack1())));
+            clpHistory.setStack2 (new Stack<object>(new Stack<object>(getStack2())));
+            clpHistory.close();
+            return clpHistory;
+        }
+        
         public void enableMem()
         {
             memEnabled = true;
-
         }
+
         public void disableMem()
         {
             memEnabled = false;
-
         }
 
         public bool isMemEnabled()
         {
             return memEnabled;
         }
+
         public void close()
         {
             closed = "closed";
@@ -84,19 +83,12 @@ namespace CLP.Models
             }
         }
 
-      
-
-        public string getHistoryId()
-        {
-            return historyId;
-        }
-
-        private Stack<object> getStack1()
+        public Stack<object> getStack1()
         {
             return stack1;
         }
 
-        private Stack<object> getStack2()
+        public Stack<object> getStack2()
         {
             return stack2;
         }
@@ -105,14 +97,17 @@ namespace CLP.Models
         {
             stack1 = stack;
         }
+
         private void setStack2(Stack<object> stack)
         {
             stack2 = stack;
         }
+
         private object popStack1()
         {
             return stack1.Pop();
         }
+        
         private object popStack2()
         {
             return stack2.Pop();
@@ -137,9 +132,17 @@ namespace CLP.Models
         {
             stack2.Clear();
         }
-        /////////////////////////////////
+
+        public CLPHistory getInitialHistory(){
+            CLPHistory clpHistory = new CLPHistory();
+            clpHistory.setStack1(new Stack<object>());
+            clpHistory.setStack2(new Stack<object>());
+            clpHistory.close();
+            return clpHistory;
+        }
+       
         public void undo(){
-            printMemStacks("undo", "before1");
+            //printMemStacks("undo", "before1");
             Stack<object> stack1 = getStack1();
             int stack1Count = stack1.Count;
             if(stack1Count==0){
@@ -148,9 +151,9 @@ namespace CLP.Models
             Stack<object> stack2 = getStack2();
             int stack2Count = stack2.Count;
 
-            printMemStacks("undo", "before2");
+            //printMemStacks("undo", "before2");
             Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
-            printMemStacks("undo", "before3");
+            //printMemStacks("undo", "before3");
             
             List<object> l = (List<object>)popStack1();
             disableMem();
@@ -178,8 +181,7 @@ namespace CLP.Models
         }
 
         public void redo(){
-             printMemStacks("redo", "before1"); 
-             
+             //printMemStacks("redo", "before1"); 
              Stack<object> stack2 = getStack2();
              int stack2Count = stack2.Count;
              if(stack2Count == 0)
@@ -189,9 +191,9 @@ namespace CLP.Models
              Stack<object> stack1 = getStack1();
              int stack1Count = stack1.Count;
 
-             printMemStacks("redo", "before2");
+             //printMemStacks("redo", "before2");
              Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
-             printMemStacks("redo", "before3");
+             //printMemStacks("redo", "before3");
 
             List<object> l = (List<object>)popStack2();
             disableMem();
@@ -216,7 +218,7 @@ namespace CLP.Models
                 enableMem();
             }
             ////////////////
-            printMemStacks("redo", "after");
+            //printMemStacks("redo", "after");
         }
 
         public void printMemStacks(String methodName, String pos)
@@ -235,17 +237,23 @@ namespace CLP.Models
             }
         }
 
-        private Boolean revertToMemList(List<object> l){
+        public Boolean revertToMemList(List<object> l){
             string inst = (string)l[0];
            if(inst.Equals(Stroke_Added)){
                 CLPPage page = (CLPPage)l[1];
                 Stroke s = (Stroke)l[2];
-                page.InkStrokes.Remove(s);
+                if(page.InkStrokes.Contains(s))
+                {
+                    page.InkStrokes.Remove(s);
+                }
                 return true;
             }else if(inst.Equals(Stroke_Removed)){
                 CLPPage page = (CLPPage)l[1];
                 Stroke s = (Stroke)l[2];
+                if(!page.InkStrokes.Contains(s))
+                {
                 page.InkStrokes.Add(s);
+                }
                 return true;
             }else if(inst.Equals(Object_Added)){
                 CLPPage page = (CLPPage)l[1];
@@ -263,22 +271,42 @@ namespace CLP.Models
                     page.PageObjects.Add(removedPageObject);
                 }
                 return true;
+            }else if(inst.Equals(Object_Resized)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double oldHeight = (double)l[3];
+                double oldWidth = (double)l[4];
+                pageObject.Height = oldHeight;
+                pageObject.Width = oldWidth;
+                return true;
+            }else if(inst.Equals(Object_Moved)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double oldXPos = (double)l[3];
+                double oldYPos = (double)l[4];
+                pageObject.XPosition = oldXPos;
+                pageObject.YPosition = oldYPos;
+                return true;
             }else{
                 return false;
             }
         }
 
-        private Boolean forwardToMemList(List<object> l){
+        public Boolean forwardToMemList(List<object> l){
             string inst = (string)l[0];
             if(inst.Equals(Stroke_Added)){
                 CLPPage page = (CLPPage)l[1];
                 Stroke s = (Stroke)l[2];
+                if(!page.InkStrokes.Contains(s))
+                {
                 page.InkStrokes.Add(s);
+                }
                 return true;
             }else if(inst.Equals(Stroke_Removed)){
                 CLPPage page = (CLPPage)l[1];
                 Stroke s = (Stroke)l[2];
+                if(page.InkStrokes.Contains(s))
+                {
                 page.InkStrokes.Remove(s);
+                }
                 return true;
             }
             else if(inst.Equals(Object_Added))
@@ -300,45 +328,59 @@ namespace CLP.Models
                     page.PageObjects.Remove(removedPageObject);
                 }
                 return true;
+            }else if(inst.Equals(Object_Resized)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double newHeight = (double)l[5];
+                double newWidth = (double)l[6];
+                pageObject.Height = newHeight;
+                pageObject.Width = newWidth;
+                return true;
+            }else if(inst.Equals(Object_Moved)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double newXPos = (double)l[5];
+                double newYPos = (double)l[6];
+                pageObject.XPosition = newXPos;
+                pageObject.YPosition = newYPos;
+                return true;
             }else{
                 return false;
             } 
         }
 
         #region Previous History
-
-        /*public Boolean replay(Memento memInit, Memento memCurrent){
-            Memento memFinal = memCurrent.getClone();
+        /*
+        public Boolean replay(CLPHistory memInit, CLPHistory memCurrent){
+            CLPHistory memFinal = memCurrent.getMemento();
             revertToMem(memInit, memCurrent);
             forwardToMem(memFinal, memInit);
             return true;
         }
         
-        public Boolean replayNotebook(){
+        public Boolean replayPage(){
             try{
-                Memento memInit = this.getInitMem();
-                Memento memCurrent = this.getMemento();
+                CLPHistory memInit = this.getInitialHistory();
+                CLPHistory memCurrent = this.getMemento();
                 return replay(memInit, memCurrent);
             }
             catch(Exception e){
                 Console.WriteLine(e.StackTrace);
                 return false;
             }
-        }*/
+        }
 
 
 
-        /*  private Boolean revertToMem(Memento oldMem){
-              Memento currentMem = this.getMemento();
+          private Boolean revertToMem(CLPHistory oldMem){
+              CLPHistory currentMem = getMemento();
               return revertToMem(oldMem, currentMem);
           }
 
-          public Boolean revertToMem(Memento oldMem, Memento currentMem) { 
-              String oldMemNotebookId = oldMem.getNotebookID();
-              String currentMemNotebookId = currentMem.getNotebookID();
-              if(oldMemNotebookId.Equals(currentMemNotebookId)){
-                  Stack<object> sOldMem = oldMem.getStack();
-                  Stack<object> sCurrentMem = currentMem.getStack();
+          public Boolean revertToMem(CLPHistory oldMem, CLPHistory currentMem) { 
+              //String oldMemNotebookId = oldMem.getNotebookID();
+              //String currentMemNotebookId = currentMem.getNotebookID();
+              //if(oldMemNotebookId.Equals(currentMemNotebookId)){
+                  Stack<object> sOldMem = oldMem.getStack1();
+                  Stack<object> sCurrentMem = currentMem.getStack1();
                   if(sOldMem.Count<sCurrentMem.Count){
                       try{
                           while(sOldMem.Count < sCurrentMem.Count){
@@ -352,14 +394,14 @@ namespace CLP.Models
                           return false;
                       }
                   }
-              } 
+              
               return false;
           }
 
-          public Boolean forwardToMem(Memento futureMem, Memento currentMem) {
-              Stack<object> sFutureMem = futureMem.getStack();
+          public Boolean forwardToMem(CLPHistory futureMem, CLPHistory currentMem) {
+              Stack<object> sFutureMem = futureMem.getStack1();
               int futureMemCount = sFutureMem.Count;
-              Stack<object> sCurrentMem = currentMem.getStack();
+              Stack<object> sCurrentMem = currentMem.getStack1();
               int currentMemCount = sCurrentMem.Count;
               if(futureMemCount <= currentMemCount) {
                   return false;
@@ -387,15 +429,9 @@ namespace CLP.Models
           }
 
           public Memento getMemento() {
-              Memento m = this.memento.getClone();
-              return m;
-
+            Memento m = this.memento.getClone();
+            return m;
           }*/
-
-
-
-
-
         /*
            public Object pop(){
                if(closed == null){
@@ -450,8 +486,6 @@ namespace CLP.Models
            public Stack<object> getStack() {
              return Clone(this.stack1);
           }*/
-
-
         #endregion 
     }
 }
