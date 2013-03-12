@@ -80,10 +80,10 @@ namespace CLP.Models
 
         public void InterpretStrokes()
         {
-            lock(interpretation_lock)
-            {
-                DoInterpretation();
-            }
+            //lock(interpretation_lock)
+            //{
+            //    DoInterpretation();
+            //}
         }
 
         public override string PageObjectType

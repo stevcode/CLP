@@ -96,6 +96,7 @@ namespace CLP.Models
 
         public override void DoInterpretation()
         {
+            RefreshStrokeParentIDs();
             StrokeCollection strokes = GetStrokesOverPageObject();
             string result = InkInterpretation.InterpretHandwriting(strokes, AnalysisType);
             if (result != null)

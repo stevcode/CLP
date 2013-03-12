@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.Views
         {
             ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
 
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
+            CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
         }
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -64,12 +64,12 @@ namespace Classroom_Learning_Partner.Views
                 {
                     //Console.WriteLine(po.UniqueID);
                     Point pageObjectPt = new Point((xDelta + po.XPosition), (yDelta + po.YPosition));
-                    Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(po, pageObjectPt);
+                    CLPServiceAgent.Instance.ChangePageObjectPosition(po, pageObjectPt);
                 }
             }
 
             Point pt = new Point(x, y);
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
+            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pt);
         }
 
     }

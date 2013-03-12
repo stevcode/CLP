@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
+using System.ServiceModel;
+using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(CLPPageViewModel))]
     public class LinkedDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -14,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             DisplayedPage = page;
+            PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
         }
 
         public override string Title { get { return "LinkDisplayVM"; } }
@@ -140,7 +145,69 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        #region Commands
+
+        /// <summary>
+        /// Gets the PageScrollCommand command.
+        /// </summary>
+        public Command<ScrollChangedEventArgs> PageScrollCommand { get; private set; }
+
+        private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
+        {
+            if(App.CurrentUserMode == App.UserMode.Instructor)
+            {
+                string submissionID = "";
+                if(DisplayedPage.IsSubmission)
+                {
+                    submissionID = DisplayedPage.SubmissionID;
+                }
+
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                        //TODO: Steve - Make the offset a percentage and convert back on receive. If
+                        //Instructor and Projector are on different screen sizes, they don't have the
+                        //same vertical offsets.
+                        App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
+                    }
+                    catch(System.Exception)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Projector NOT Available");
+                }
+            }
+        }
+
+        #endregion //Commands
+
         #region Methods
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "PageHeight")
+            {
+                var pageViewModel = (viewModel as CLPPageViewModel);
+                if (pageViewModel.Page.UniqueID == DisplayedPage.UniqueID)
+                {
+                    if(pageViewModel.Page.IsSubmission)
+                    {
+                        if(pageViewModel.Page.SubmissionID == DisplayedPage.SubmissionID)
+                        {
+                            ResizePage();
+                        }
+                    }
+                    ResizePage();
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+
+        }
 
         public void ResizePage()
         {
@@ -172,22 +239,40 @@ namespace Classroom_Learning_Partner.ViewModels
         public void AddPageToDisplay(CLPPage page)
         {
             DisplayedPage = page;
-            if (IsOnProjector && App.Peer.Channel != null)
+            if(IsOnProjector)
             {
+                string pageID;
                 if(DisplayedPage.IsSubmission)
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.SubmissionID);
+                    pageID = DisplayedPage.SubmissionID;
                 }
                 else
                 {
-                    App.Peer.Channel.AddPageToDisplay(DisplayedPage.UniqueID);
+                    pageID = DisplayedPage.UniqueID;
+                }
+
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                    	App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+                    }
+                    catch (System.Exception)
+                    {
+                    	
+                    }
+                }
+                else
+                {
+                    //TODO: Steve - add pages to a queue and send when a projector is found
+                    Console.WriteLine("Projector NOT Available");
                 }
             }
         }
 
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
+            CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
         }
 
         #endregion //Methods

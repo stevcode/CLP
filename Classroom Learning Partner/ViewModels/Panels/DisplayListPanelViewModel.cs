@@ -1,4 +1,6 @@
-﻿using Catel.Data;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using Catel.Data;
 using Catel.MVVM;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -13,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public DisplayListPanelViewModel()
         {
+            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
         }
 
         /// <summary>
@@ -95,5 +98,19 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel), null);
 
         #endregion
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the SetCurrentPageCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
+
+        private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
+        {
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+        }
+
+        #endregion //Commands
     }
 }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
@@ -16,18 +17,42 @@ namespace CLP.Models
         Custom
     }
 
+    public enum GroupSubmitType
+    {
+        Deny,
+        Allow,
+        Force
+    }
+
     /// <summary>
     /// CLPPage Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
+    /// 
+    /// KnownTypes allow ICLPPageObjects to be (de)serialized via DataContracts
+    /// for transmission over network calls.
     /// </summary>
-    [Serializable]
+    [Serializable, 
+    KnownType(typeof(CLPAggregationDataTable)),
+    KnownType(typeof(CLPAudio)),
+    KnownType(typeof(CLPImage)),
+    KnownType(typeof(CLPShape)),
+    KnownType(typeof(CLPSnapTileContainer)),
+    KnownType(typeof(CLPStamp)),
+    KnownType(typeof(CLPStrokePathContainer)),
+    KnownType(typeof(CLPTextBox)),
+    KnownType(typeof(CLPDataTable)),
+    KnownType(typeof(CLPGroupingRegion)),
+    KnownType(typeof(CLPHandwritingRegion)),
+    KnownType(typeof(CLPInkShapeRegion)),
+    KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
     {
         #region Variables
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-        public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000002");
+     
+        public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000003");
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
@@ -125,6 +150,17 @@ namespace CLP.Models
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
 
         /// <summary>
+        /// Number of Group Submissions associated with this page.
+        /// </summary>
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int), 0);
+
+        /// <summary>
         /// UniqueID of the Notebook this page is part of.
         /// </summary>
         public string ParentNotebookID
@@ -149,6 +185,7 @@ namespace CLP.Models
         /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
+        [XmlIgnore()]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -164,6 +201,17 @@ namespace CLP.Models
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
+
+        /// <summary>
+        /// Set to True to ignore InkStrokeCollectionChange event.
+        /// </summary>
+        public bool IsInkAutoAdding
+        {
+            get { return GetValue<bool>(IsInkAutoAddingProperty); }
+            set { SetValue(IsInkAutoAddingProperty, value); }
+        }
+
+        public static readonly PropertyData IsInkAutoAddingProperty = RegisterProperty("IsInkAutoAdding", typeof(bool), false);
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -253,6 +301,7 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), Guid.NewGuid().ToString());
 
+
         /// <summary>
         /// Name of the submitter on a submitted page.
         /// </summary>
@@ -264,6 +313,8 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
 
+
+
         /// <summary>
         /// Time the page was submitted.
         /// </summary>
@@ -274,6 +325,65 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
+
+        /// <summary>
+        /// Availability of Group Submit option for a page.
+        /// </summary>
+        public GroupSubmitType GroupSubmitType
+        {
+            get { return GetValue<GroupSubmitType>(GroupSubmitTypeProperty); }
+            set { SetValue(GroupSubmitTypeProperty, value); }
+        }
+
+        public static readonly PropertyData GroupSubmitTypeProperty = RegisterProperty("GroupSubmitType", typeof(GroupSubmitType), GroupSubmitType.Deny);
+
+        /// <summary>
+        /// Flag a page as a page submitted via GroupSubmit.
+        /// </summary>
+        public bool IsGroupSubmission
+        {
+            get { return GetValue<bool>(IsGroupSubmissionProperty); }
+            set { SetValue(IsGroupSubmissionProperty, value); }
+        }
+
+        public static readonly PropertyData IsGroupSubmissionProperty = RegisterProperty("IsGroupSubmission", typeof(bool), false);
+
+        /// <summary>
+        /// The Person that submitted the page.
+        /// </summary>
+        public Person Submitter
+        {
+            get { return GetValue<Person>(SubmitterProperty); }
+            set { SetValue(SubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person), null);
+
+        /// <summary>
+        /// The Group that submitted the page.
+        /// </summary>
+        public Group GroupSubmitter
+        {
+            get { return GetValue<Group>(GroupSubmitterProperty); }
+            set { SetValue(GroupSubmitterProperty, value); }
+
+        }
+
+        public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+
+        public string GroupName { 
+            get 
+            { 
+                if (GroupSubmitter != null)
+                {
+                    return GroupSubmitter.GroupName;
+                }
+                else
+                {
+                    return "No Group";
+                }
+            } 
+        }
 
         #endregion
 
@@ -324,7 +434,19 @@ namespace CLP.Models
 
             m_stream.Dispose();
 
-            return sc[0];
+            return SanitizeStroke(sc[0]);
+
+            //return sc[0];
+        }
+
+        private static Stroke SanitizeStroke(Stroke s)
+        {
+            if (s.ContainsPropertyData(Immutable))
+            {
+                s.RemovePropertyData(Immutable);
+            }
+
+            return s;
         }
 
         public static List<byte> StrokeToByte(Stroke stroke)
@@ -371,15 +493,55 @@ namespace CLP.Models
 
         protected override void OnDeserialized()
         {
+            base.OnDeserialized();
             InkStrokes = BytesToStrokes(ByteStrokes);
 
-            base.OnDeserialized();
+            
         }
 
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
             ByteStrokes = StrokesToBytes(InkStrokes);
+        }
+
+        public void TrimPage()
+        {
+            double lowestY = 0;
+            foreach(ICLPPageObject pageObject in PageObjects)
+            {
+                double bottom = pageObject.YPosition + pageObject.Height;
+                lowestY = Math.Max(lowestY, bottom);
+            }
+            foreach(Stroke s in InkStrokes)
+            {
+                Rect bounds = s.GetBounds();
+                if(bounds.Bottom >= PageHeight)
+                {
+                    lowestY = Math.Max(lowestY, PageHeight);
+                    break;
+                }
+                else
+                {
+                    lowestY = Math.Max(lowestY, bounds.Bottom);
+                }
+            }
+
+            double defaultHeight = 0;
+            if(PageWidth == LANDSCAPE_WIDTH)
+            {
+                defaultHeight = LANDSCAPE_HEIGHT;
+            }
+            else
+            {
+                defaultHeight = PORTRAIT_HEIGHT;
+            }
+
+            double newHeight = Math.Max(defaultHeight, lowestY);
+            if (newHeight + 20 < PageHeight)
+            {
+                PageHeight = newHeight + 20;
+            }        
         }
 
         #endregion

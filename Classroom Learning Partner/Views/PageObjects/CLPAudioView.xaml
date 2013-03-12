@@ -1,7 +1,7 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPAudioView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+             xmlns:ac="clr-namespace:AdornedControl"
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              xmlns:catel="http://catel.codeplex.com">
     <UserControl.Resources>

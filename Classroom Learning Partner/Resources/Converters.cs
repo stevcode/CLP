@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
+using Net.Sgoliver.NRtfTree.Core;
 
 namespace Classroom_Learning_Partner.Resources
 {
@@ -36,6 +37,105 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+   
+    public class GroupLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string val = value as string;
+            return "Group " + val;
+            
+
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class GrouptoBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("Group");
+           int index2 = value.ToString().IndexOf("group"); 
+            if(index != -1 || index2 != -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class SumbissiontoBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("Individual");
+            int index2 = value.ToString().IndexOf("Collective");
+            if(index != -1 || index2 != -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(string))]
+    public class BooleantoGroupConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+
+            bool b = (bool)value;
+            if(b==true)
+            {
+                return "Collective";
+            }
+            else
+            {
+                return "Individual";
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    //Converts to shorter date time
+  /**  public class DateTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if(value is DateTime)
+            {
+                DateTime d = value as DateTime;
+                return (DateTime) value.ToShortTimeString();
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+    */
     public class PartsStringConverter : IMultiValueConverter
     {
         public object Convert(object[] value,
@@ -90,6 +190,28 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class UserNameGroupTrimConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            string nameandgroup = value as string;
+            string trimmedName = nameandgroup.Split(new char[] { ',' })[0];
+
+            return trimmedName;
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LengthConverter : IValueConverter
     {
         public object Convert(object value,
@@ -123,6 +245,48 @@ namespace Classroom_Learning_Partner.Resources
 
         public object ConvertBack(object value,
             Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class HeaderVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            double thickness = 0;
+            if(!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
+            {
+                Visibility editingModeVisibility = (Visibility)value[0];
+                string header = (string)value[1];
+
+                //TODO: Steve - Fix this, absolute mess.
+                try
+                {
+                    RtfTree tree = new RtfTree();
+                    tree.LoadRtfText(header);
+
+                    if(editingModeVisibility == Visibility.Visible || tree.Text != "\r\n")
+                    {
+                        thickness = 1;
+                    }
+                }
+                catch(System.Exception)
+                {
+                    thickness = 1;
+                }
+            }
+            return thickness;
+        }
+
+        public object[] ConvertBack(object value,
+            Type[] targetType,
             object parameter,
             System.Globalization.CultureInfo culture)
         {
@@ -213,9 +377,14 @@ namespace Classroom_Learning_Partner.Resources
             object parameter,
             System.Globalization.CultureInfo culture)
         {
+            System.Console.WriteLine("***************TYPE:" + value.GetType());
             ReadOnlyCollection<object> items = value as ReadOnlyCollection<object>;
-            CLPPage page = items.Last() as CLPPage;
-            return page;
+            List<Object> pages = new List<Object>();
+            //System.Console.WriteLine(TypeOf(value));
+            //Object page = items.First();
+            //pages.Add(page);
+            //ReadOnlyCollection<object> items2 = new ReadOnlyCollection<object>
+            return items;
         }
 
         public object ConvertBack(object value,
@@ -226,6 +395,8 @@ namespace Classroom_Learning_Partner.Resources
             return false;
         }
     }
+
+
 
     /// <summary>
     /// Converts a double to 3/4 of its value
@@ -254,6 +425,38 @@ namespace Classroom_Learning_Partner.Resources
 
             // Convert
             return (width > 0) ? (width / 4) * 3 : 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(int), typeof(int))]
+    public class HalfConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // Declare variables
+            int width = 0;
+
+            try
+            {
+                // Get value
+                width = (int)value;
+            }
+            catch(Exception)
+            {
+                // Trace
+                Trace.TraceError("Failed to cast '{0}' to Double", value);
+
+                // Return 0
+                return 0;
+            }
+
+            // Convert
+            return (width > 0) ? (width /2 )  : 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

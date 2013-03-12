@@ -7,7 +7,6 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Model;
 using CLP.Models;
 using System.Windows.Threading;
 using System;
@@ -155,18 +154,21 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(IsAdornerVisibleProperty, value);
-                if (!value)
+                if(!value)
                 {
                     CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                    foreach (CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                    if(parentPage != null)
                     {
-                        pageVM.IsInkCanvasHitTestVisible = true;
-                    }
+                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                        {
+                            pageVM.IsInkCanvasHitTestVisible = true;
+                        }
 
-                    hoverTimer.Stop();
-                    timerRunning = false;
-                    hoverTimeElapsed = false;
+                        hoverTimer.Stop();
+                        timerRunning = false;
+                        hoverTimeElapsed = false;
+                    }
                 }
             }
         }
@@ -284,12 +286,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-            foreach (CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+            if(parentPage != null)
             {
-                pageVM.IsInkCanvasHitTestVisible = true;
-            }
+                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                {
+                    pageVM.IsInkCanvasHitTestVisible = true;
+                }
 
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+            }
         }
 
         /// <summary>

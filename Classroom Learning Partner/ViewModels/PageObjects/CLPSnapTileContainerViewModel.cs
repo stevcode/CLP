@@ -106,7 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //}
                                 int oldCount = otherTile.NumberOfTiles;
                                 otherTile.NumberOfTiles += NumberOfTiles;
-                                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                                 if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
@@ -143,7 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //int oldCount = otherTile.NumberOfTiles;
                                 //otherTile.NumberOfTiles += NumberOfTiles;
 
-                                Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
+                                CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
                                 if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, PageObject.UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
@@ -228,7 +228,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newSnapTile.XPosition = x;
             newSnapTile.YPosition = y;
 
-            Classroom_Learning_Partner.Model.CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.ParentPage, newSnapTile);
+            CLPServiceAgent.Instance.AddPageObjectToPage(PageObject.ParentPage, newSnapTile);
         }
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)

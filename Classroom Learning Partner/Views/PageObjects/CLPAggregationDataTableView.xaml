@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+                   xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
     
@@ -11,6 +11,8 @@
         <conv:LengthConverter x:Key="LengthConverter"/>
         <conv:HalfLengthConverter x:Key="HalfLengthConverter"/>
         <conv:LengthSubtractConverter x:Key="LengthSubtractConverter"/>
+        <conv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>
+        
 
         <Style x:Key="GridPartStyle">
             <Setter Property="Canvas.Left"
@@ -92,6 +94,64 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Resize Thumb-->
+                <Thumb x:Name="AdornerResize"
+                       Canvas.Right="-50" Canvas.Bottom="-50"
+                       Width="40" Height="40"
+                       Cursor="SizeNWSE">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeDataTableCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                      Data="M 8,23 L 23,23 L 23,8" />
+                                <Path Stroke="Black" StrokeThickness="1"
+                                      Data="M 12,27 L 27,27 L 27,12" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
+                <!--Resize RowHeaderWidth Thumb-->
+                <Thumb  Canvas.Left="{Binding RowHeaderWidth}" Canvas.Top="-12.5"
+                        Width="15" Height="15"
+                        Cursor="ScrollWE">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeRowWidthCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
+                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
+                <!--Resize ColumnHeaderHeight Thumb-->
+                <Thumb  Canvas.Left="-12.5" Canvas.Top="{Binding ColumnHeaderHeight}"
+                        Width="15" Height="15"
+                        Cursor="ScrollNS">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeColumnHeightCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
+                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
                 <!--Add Row Button-->
                 <Button Width="40" Height="40"
                         Canvas.Left="{Binding Path=Width, Converter={StaticResource HalfLengthConverter}, ConverterParameter=20}" Canvas.Bottom="-50"
@@ -139,13 +199,28 @@
         <!--Content-->
         <Canvas Background="Transparent" 
                 Height="{Binding Height}" Width="{Binding Width}">
-
+            
             <Rectangle x:Name="TopLeftHitBox" 
                        Canvas.Left="0" Canvas.Top="0"
                        Width="{Binding RowHeaderWidth}"
                        Height="{Binding ColumnHeaderHeight}"
-                       Fill="LightGray">
+                       Fill="Transparent">
             </Rectangle>
+
+            <Grid Canvas.Left="0" Canvas.Top="0"
+                  Width="{Binding RowHeaderWidth}"
+                  Height="{Binding ColumnHeaderHeight}"
+                  Visibility="{Binding Source={x:Static Application.Current},Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="NONE">None</Button>
+                <Button Grid.Column="1" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="SINGLE">Single</Button>
+                <Button Grid.Column="2" Command="{Binding CreateLinkedAggregationDataTableCommand}" CommandParameter="GROUP">Group</Button>
+            </Grid>
 
             <ItemsControl Canvas.Left="{Binding RowHeaderWidth}" Canvas.Top="0"
                           ItemsSource="{Binding Columns}"
@@ -172,7 +247,14 @@
                             <Canvas Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ColumnHeaderHeight}" 
                                     Width="{Binding Width}">
                                 <Rectangle Name="ColumnHitBox" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.ColumnHeaderHeight}" 
-                                           Width="{Binding Width}" Stroke="Black" StrokeThickness="1" />
+                                           Width="{Binding Width}" Stroke="Black">
+                                    <Rectangle.StrokeThickness>
+                                        <MultiBinding Converter="{StaticResource HeaderVisibilityConverter}">
+                                            <Binding Source="{x:Static Application.Current}" Path="MainWindowViewModel.Ribbon.AuthoringTabVisibility" />
+                                            <Binding Path="Header" />
+                                        </MultiBinding>
+                                    </Rectangle.StrokeThickness>
+                                </Rectangle>
                                 <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight" TextBlock.TextAlignment="Center"
                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
@@ -218,60 +300,38 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <ac:AdornedControl IsMouseOverShowEnabled="True" CloseAdornerTimeOut="0.5" FadeOutTime="0">
-                            <ac:AdornedControl.AdornerContent >
+                        <StackPanel Orientation="Horizontal" Height="{Binding Height}" Width="{Binding Width}">
 
-                                <!--This is the adorner-->
-                                <Canvas Width="{Binding Path=Width}" Height="{Binding Path=Height}">
-
-                                    <!--Resize Row Thumb-->
-                                    <Thumb  Canvas.Left="-20" Canvas.Bottom="-7.5"
-                                            Width="15" Height="15"
-                                            Cursor="ScrollNS">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DragDelta">
-                                                <catel:EventToCommand Command="{Binding ResizeRowCommand}" PassEventArgsToCommand="True" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                        <Thumb.Template>
-                                            <ControlTemplate>
-                                                <Ellipse Stroke="Black" StrokeThickness="2" Fill="White"
-                                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-
-                                </Canvas>
-
-                            </ac:AdornedControl.AdornerContent>
-
-                            <StackPanel Orientation="Horizontal" Height="{Binding Height}" Width="{Binding Width}">
-
-                                <Canvas Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                        Height="{Binding Height}">
-                                    <Rectangle Name="RowHitBox"  Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                               Height="{Binding Height}" Stroke="Black" StrokeThickness="1" />
-                                    <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                                                               TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
-                                                               VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
-                                                               Background="Transparent" Padding="5"
-                                                               FontSize="34"
-                                                               Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
-                                                               Height="{Binding Height}"/>
-                                </Canvas>
-
-                                <Rectangle Stroke="Gray" StrokeThickness="1"
-                                           Height="{Binding Height}">
-                                    <Rectangle.Width>
-                                        <MultiBinding Converter="{StaticResource LengthSubtractConverter}">
-                                            <Binding Path="Width" />
-                                            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=ItemsControl}" Path="DataContext.RowHeaderWidth" />
+                            <Canvas Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                    Height="{Binding Height}">
+                                <Rectangle Name="RowHitBox"  Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                            Height="{Binding Height}" Stroke="Black">
+                                    <Rectangle.StrokeThickness>
+                                        <MultiBinding Converter="{StaticResource HeaderVisibilityConverter}">
+                                            <Binding Source="{x:Static Application.Current}" Path="MainWindowViewModel.Ribbon.AuthoringTabVisibility" />
+                                            <Binding Path="Header" />
                                         </MultiBinding>
-                                    </Rectangle.Width>
+                                    </Rectangle.StrokeThickness>
                                 </Rectangle>
-                            </StackPanel>
+                                <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
+                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
+                                                            Background="Transparent" Padding="5"
+                                                            FontSize="34"
+                                                            Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.RowHeaderWidth}" 
+                                                            Height="{Binding Height}"/>
+                            </Canvas>
 
-                        </ac:AdornedControl>
+                            <Rectangle Stroke="Gray" StrokeThickness="1"
+                                        Height="{Binding Height}">
+                                <Rectangle.Width>
+                                    <MultiBinding Converter="{StaticResource LengthSubtractConverter}">
+                                        <Binding Path="Width" />
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType=ItemsControl}" Path="DataContext.RowHeaderWidth" />
+                                    </MultiBinding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                        </StackPanel>
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

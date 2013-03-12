@@ -71,9 +71,12 @@ namespace CLP.Models
 
         #region Methods
 
+        private int lineThreshold = 50;
+
         public override void DoInterpretation()
         {
             //ObservableCollection<List<byte>> StrokesNoDuplicates = new ObservableCollection<List<byte>>(PageObjectByteStrokes.Distinct().ToList());
+            RefreshStrokeParentIDs();
             ContextNodeCollection shapes = InkInterpretation.InterpretShapes(GetStrokesOverPageObject());
             if (shapes != null)
             {
@@ -81,8 +84,22 @@ namespace CLP.Models
                 InkShapes.Clear();
                 foreach (InkDrawingNode shape in shapes)
                 {
-                    InkShapes.Add(new CLPNamedInkSet(shape.GetShapeName(),CLPPage.StrokesToBytes(shape.Strokes)));
-                    text.AppendLine(shape.GetShapeName());
+                    string shapeName = shape.GetShapeName();
+                    if (shape.GetShapeName().Equals("Other") && shape.Strokes.Count == 1)
+                    {
+                        if (shape.Strokes.GetBounds().Height < lineThreshold) {
+                            shapeName = "Horizontal";
+                        }
+                        else if (shape.Strokes.GetBounds().Width < lineThreshold)
+                        {
+                            shapeName = "Vertical";
+                        }
+                    }
+                    else if (shape.GetShapeName().Equals("Straight")) {
+                        shapeName = "Vertical";
+                    }
+                    InkShapes.Add(new CLPNamedInkSet(shapeName, CLPPage.StrokesToBytes(shape.Strokes)));
+                    text.AppendLine(shapeName);
                 }
                 InkShapesString = text.ToString();
             }
