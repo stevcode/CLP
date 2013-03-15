@@ -72,7 +72,6 @@
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="ShowAllSiblings">
                     <DockPanel>
                         <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="*" Width="50"/>
                     </DockPanel>
                 </ToggleButton>
 
@@ -88,7 +87,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="150" Height="55" IsChecked="True" Click="toggle_Click3" BorderBrush="Black" BorderThickness="10"> 
+                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="150" Height="55" IsChecked="True" Click="toggle_Click3" BorderBrush="Black" BorderThickness="10"> 
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="150"/>
                         <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Group Submissions"/>
@@ -102,13 +101,13 @@
         </ControlTemplate>
 
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupNameIndividualItemTemplate">
-            <Border BorderBrush="Blue"  BorderThickness="2" Margin="0,30,0,0">
+            <Border BorderBrush="Blue"  BorderThickness="2" Margin="0,30,30,0">
                 <Grid Margin="0,-20,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" x:Name="toggle" Width="180" Height="55" IsChecked="True" Click="toggle_Click_Group_Individual" BorderBrush="Black" BorderThickness="10">
+                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="180" Height="55" IsChecked="True" Click="toggle_Click_Group_Individual" BorderBrush="Black" BorderThickness="10">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="180"/>
                         <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Individual Submissions"/>
@@ -124,7 +123,7 @@
 
     </UserControl.Resources>
 
-    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBar, Path=ActualWidth}">
+    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBar, Path=MaxWidth}">
 
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
