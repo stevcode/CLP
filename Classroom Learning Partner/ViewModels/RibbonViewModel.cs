@@ -164,6 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Page
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
+            ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
@@ -789,6 +790,40 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
                         StudentProxy.AddNewPage(s_page, index);
+                        (StudentProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("No Students Found");
+            }
+        }
+
+        /// <summary>
+        /// Replaces the current page on all Student Machines.
+        /// </summary>
+        public Command ReplacePageCommand { get; private set; }
+
+        private void OnReplacePageCommandExecute()
+        {
+            //TODO: Steve - also broadcast to Projector
+            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            string s_page = ObjectSerializer.ToString(page);
+            int index = page.PageIndex - 1;
+
+            if(App.Network.ClassList.Count > 0)
+            {
+                foreach(Person student in App.Network.ClassList)
+                {
+                    try
+                    {
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        StudentProxy.ReplacePage(s_page, index);
                         (StudentProxy as ICommunicationObject).Close();
                     }
                     catch(System.Exception ex)

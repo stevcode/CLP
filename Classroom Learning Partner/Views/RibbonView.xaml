@@ -356,7 +356,11 @@
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding BroadcastPageCommand}" />
-                
+
+                <RibbonButton Label="Replace This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ReplacePageCommand}" />
+
             </RibbonGroup>
             
         </RibbonTab>

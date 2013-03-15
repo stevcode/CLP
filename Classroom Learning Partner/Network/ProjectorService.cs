@@ -251,6 +251,8 @@ namespace Classroom_Learning_Partner
         }
 
         public void AddNewPage(string s_page, int index) { }
+
+        public void ReplacePage(string s_page, int index) { }
         
         #endregion
     }

@@ -95,6 +95,23 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        public void ReplacePage(string s_page, int index)
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPPage page = ObjectSerializer.ToObject(s_page) as CLPPage;
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
+                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+
+                        return null;
+                    }, null);
+            }
+        }
+
         #endregion
     }
 }
