@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.Views
             if (dataContext is CLPStrokePathContainer) return typeof(CLPStrokePathContainerViewModel);
             if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
             if (dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
+            if(dataContext is CLPArray) return typeof(CLPArrayViewModel);
 
             return null;
         }
@@ -65,6 +66,8 @@ namespace Classroom_Learning_Partner.Views
                 else if(dataContext is CLPStrokePathContainer) vm = new CLPStrokePathContainerViewModel(dataContext as CLPStrokePathContainer);
                 else if(dataContext is CLPTextBox) vm = new CLPTextBoxViewModel(dataContext as CLPTextBox);
                 else if(dataContext is CLPAggregationDataTable) vm = new CLPAggregationDataTableViewModel(dataContext as CLPAggregationDataTable);
+                else if(dataContext is CLPArray) vm = new CLPArrayViewModel(dataContext as CLPArray);
+                
                 else
                 {
                     vm = new CLPImageViewModel(dataContext as CLPImage);

@@ -157,6 +157,10 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />
 
+                <RibbonButton Label="Array"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"/>
+
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
@@ -179,7 +183,11 @@
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <RibbonToggleButton Label="Webcam"
+                <RibbonButton
+                        Label="Array"
+                        LargeImageSource="..\Images\Array.png"
+                        Command="{Binding Path=InsertArrayCommand}"/>
+
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
@@ -255,6 +263,7 @@
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
             </RibbonGroup>
+
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
