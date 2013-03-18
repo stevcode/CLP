@@ -6,36 +6,49 @@
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views" 
                    xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources" 
                    Background="Lavender"
-                   x:Name="SubmissionSideBar"
-                   >
+                   x:Name="SubmissionSideBar">
 
     <UserControl.Resources>
         <res:GrouptoBooleanConverter x:Key="gConverter" />
         <res:SumbissiontoBooleanConverter x:Key="sConverter" />
+        <res:HalfLengthConverter x:Key="halfConverter" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        
 
-                        <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
+                        <Grid>
+                            <Rectangle x:Name="skew"
+                                       Width="{Binding ElementName=content, Path=ActualWidth}"
+                                       Height="{Binding ElementName=content, Path=ActualHeight}"
+                                       Fill="White"
+                                       Stroke="#9FA6AD"
+                                       StrokeThickness="1" >
+                                <Rectangle.RenderTransform>
+                                    <RotateTransform Angle="5"  CenterX="{Binding ElementName=content, Path=ActualWidth, Converter={StaticResource halfConverter}}" CenterY="{Binding ElementName=content, Path=ActualHeight, Converter={StaticResource halfConverter}}" />
+                                </Rectangle.RenderTransform>
+
+                            </Rectangle>
+                            <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
                         <!--SARAH SCODEL Add stack image here-->
-                        
                         <Border x:Name="IconBorder"
+                                Margin="8"
                                 BorderBrush="#9FA6AD"
                                 BorderThickness="1"
-                                Width="{Binding ElementName=content, Path=Width}"
-                                Margin="4">
-                            <ContentPresenter DockPanel.Dock="Bottom" x:Name="content"/>
+                                Width="{Binding ElementName=content, Path=Width}" >
+   
+                             <ContentPresenter DockPanel.Dock="Bottom" x:Name="content"/>
+                            
                         </Border>
-
+                      </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
                                 <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
                             </Trigger>
+
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -43,7 +56,7 @@
         </Style>
         
 
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameGroupItemTemplate">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameTemplate">
 
             <Grid Margin="0,2,0,0">
                 <Grid.RowDefinitions>
@@ -51,7 +64,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-               <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click"> 
+               <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click_student_name"> 
                     <DockPanel>
                         <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
@@ -60,9 +73,8 @@
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
             </Grid>
-
         </ControlTemplate>
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameForGroupGroupItemTemplate">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameForGroupTemplate">
 
             <Grid Margin="0,2,0,0">
                 <Grid.RowDefinitions>
@@ -76,19 +88,19 @@
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" />
             </Grid>
 
         </ControlTemplate>
 
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupNameGroupItemTemplate">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupSubmissionsByGroupTemplate">
 
             <Grid Margin="0,20,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="150" Height="55" IsChecked="True" Click="toggle_Click3" BorderBrush="Black" BorderThickness="10"> 
+                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="150" Height="55" IsChecked="True" Click="toggle_Click_group_group" BorderBrush="Black" BorderThickness="10"> 
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="150"/>
                         <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Group Submissions"/>
@@ -101,7 +113,7 @@
 
         </ControlTemplate>
 
-        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupNameIndividualItemTemplate">
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="IndividualSubmissionsByGroupTemplate">
             <Border BorderBrush="Blue"  BorderThickness="2" Margin="0,30,30,0">
                 <Grid Margin="0,-20,0,0">
                 <Grid.RowDefinitions>
@@ -115,7 +127,7 @@
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" >
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1">
                 </ItemsPresenter>
             </Grid>
             </Border>
@@ -168,24 +180,24 @@
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
                         <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template" Value="{StaticResource StudentNameGroupItemTemplate}" />
+                            <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForGroupGroupItemTemplate}" />
+                                    <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
                                 </DataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
                                         <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource GroupNameGroupItemTemplate}" />
+                                    <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
                                 </MultiDataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
                                         <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource GroupNameIndividualItemTemplate}" />
+                                    <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
                                 </MultiDataTrigger>
                             </Style.Triggers>
                             
