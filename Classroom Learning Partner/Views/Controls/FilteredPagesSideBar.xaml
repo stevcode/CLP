@@ -21,6 +21,7 @@
 
                         <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
                         <!--SARAH SCODEL Add stack image here-->
+                        
                         <Border x:Name="IconBorder"
                                 BorderBrush="#9FA6AD"
                                 BorderThickness="1"
