@@ -150,6 +150,17 @@ namespace CLP.Models
         public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
 
         /// <summary>
+        /// Number of Group Submissions associated with this page.
+        /// </summary>
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int), 0);
+
+        /// <summary>
         /// UniqueID of the Notebook this page is part of.
         /// </summary>
         public string ParentNotebookID
@@ -190,6 +201,17 @@ namespace CLP.Models
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
+
+        /// <summary>
+        /// Set to True to ignore InkStrokeCollectionChange event.
+        /// </summary>
+        public bool IsInkAutoAdding
+        {
+            get { return GetValue<bool>(IsInkAutoAddingProperty); }
+            set { SetValue(IsInkAutoAddingProperty, value); }
+        }
+
+        public static readonly PropertyData IsInkAutoAddingProperty = RegisterProperty("IsInkAutoAdding", typeof(bool), false);
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
@@ -279,6 +301,7 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), Guid.NewGuid().ToString());
 
+
         /// <summary>
         /// Name of the submitter on a submitted page.
         /// </summary>
@@ -343,6 +366,7 @@ namespace CLP.Models
         {
             get { return GetValue<Group>(GroupSubmitterProperty); }
             set { SetValue(GroupSubmitterProperty, value); }
+
         }
 
         public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
@@ -492,11 +516,32 @@ namespace CLP.Models
             foreach(Stroke s in InkStrokes)
             {
                 Rect bounds = s.GetBounds();
-                lowestY = Math.Max(lowestY, bounds.Bottom);
+                if(bounds.Bottom >= PageHeight)
+                {
+                    lowestY = Math.Max(lowestY, PageHeight);
+                    break;
+                }
+                else
+                {
+                    lowestY = Math.Max(lowestY, bounds.Bottom);
+                }
             }
 
-            double newHeight = Math.Max(PageHeight, lowestY);
-            PageHeight = newHeight + 20;
+            double defaultHeight = 0;
+            if(PageWidth == LANDSCAPE_WIDTH)
+            {
+                defaultHeight = LANDSCAPE_HEIGHT;
+            }
+            else
+            {
+                defaultHeight = PORTRAIT_HEIGHT;
+            }
+
+            double newHeight = Math.Max(defaultHeight, lowestY);
+            if (newHeight + 20 < PageHeight)
+            {
+                PageHeight = newHeight + 20;
+            }        
         }
 
         #endregion

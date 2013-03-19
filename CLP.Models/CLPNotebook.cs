@@ -177,7 +177,7 @@ namespace CLP.Models
             {
                 try
                 { return Pages[pageIndex]; }
-                catch(Exception e)
+                catch(Exception)
                 {
                     return null;
                 }
@@ -187,7 +187,7 @@ namespace CLP.Models
             {
                 return Submissions[Pages[pageIndex].UniqueID][submissionIndex];
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return null;
             }
@@ -270,16 +270,31 @@ namespace CLP.Models
             CLPPage notebookPage = GetNotebookPageByID(pageID);
             if(Submissions.ContainsKey(pageID))
             {
-                int count = 0;
+                int groupCount = 0;
+                foreach(var page in Submissions[pageID])
+                {
+                    if(submission.GroupName == page.GroupName)
+                    {
+                        groupCount++;
+                        break;
+                    }
+                }
+
+                int individualCount = 0;
                 foreach(var page in Submissions[pageID])
                 {
                     if(submission.SubmitterName == page.SubmitterName)
                     {
-                        count++;
+                        individualCount++;
                         break;
                     }
                 }
-                if(count == 0)
+
+                if(groupCount == 0 && submission.IsGroupSubmission)
+                {
+                    notebookPage.NumberOfGroupSubmissions++;
+                }
+                if(individualCount == 0 && !submission.IsGroupSubmission)
                 {
                     notebookPage.NumberOfSubmissions++;
                 }
@@ -291,6 +306,10 @@ namespace CLP.Models
                 pages.Add(submission);
                 Submissions.Add(pageID, pages);
                 notebookPage.NumberOfSubmissions++;
+                if (notebookPage.IsGroupSubmission)
+                {
+                    notebookPage.NumberOfGroupSubmissions++;
+                }
             }
         }
 

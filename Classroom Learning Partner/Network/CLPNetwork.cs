@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner
         public IProjectorContract ProjectorProxy { get; set; }
 
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
-        private NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
+        public NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {
@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner
                         {
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(defaultBinding, DiscoveredProjectors.Addresses[0]);
                         }
-                        catch(System.Exception ex)
+                        catch(System.Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Projector Proxy");
                         }
@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner
                         {
                             InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(defaultBinding, DiscoveredInstructors.Addresses[0]); 
                         }
-                        catch(System.Exception ex)
+                        catch(System.Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
                         }
@@ -177,7 +177,7 @@ namespace Classroom_Learning_Partner
 	                (InstructorProxy as ICommunicationObject).Close();
 		            InstructorProxy = null;
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
 	                
                 }
@@ -190,7 +190,7 @@ namespace Classroom_Learning_Partner
                     (ProjectorProxy as ICommunicationObject).Close();
                     ProjectorProxy = null;
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
 	                
                 }

@@ -158,6 +158,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
+            GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute);
 
             //Displays
             SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
@@ -165,6 +166,8 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
+            ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
@@ -173,6 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute);
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -194,6 +198,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+            UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
         }
@@ -785,6 +790,74 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Notebook Commands
 
         /// <summary>
+        /// Broadcast the current page of a MirrorDisplay to all connected Students.
+        /// </summary>
+        public Command BroadcastPageCommand { get; private set; }
+
+        private void OnBroadcastPageCommandExecute()
+        {
+            //TODO: Steve - also broadcast to Projector
+            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            string s_page = ObjectSerializer.ToString(page);
+            int index = page.PageIndex - 1;
+
+            if(App.Network.ClassList.Count > 0)
+            {
+                foreach(Person student in App.Network.ClassList)
+                {
+                    try
+                    {
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        StudentProxy.AddNewPage(s_page, index);
+                        (StudentProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("No Students Found");
+            }
+        }
+
+        /// <summary>
+        /// Replaces the current page on all Student Machines.
+        /// </summary>
+        public Command ReplacePageCommand { get; private set; }
+
+        private void OnReplacePageCommandExecute()
+        {
+            //TODO: Steve - also broadcast to Projector
+            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            string s_page = ObjectSerializer.ToString(page);
+            int index = page.PageIndex - 1;
+
+            if(App.Network.ClassList.Count > 0)
+            {
+                foreach(Person student in App.Network.ClassList)
+                {
+                    try
+                    {
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        StudentProxy.ReplacePage(s_page, index);
+                        (StudentProxy as ICommunicationObject).Close();
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("No Students Found");
+            }
+        }
+
+        /// <summary>
         /// Gets the PreviousPageCommand command.
         /// </summary>
         public Command PreviousPageCommand { get; private set; }
@@ -862,7 +935,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     page.PageHistory.ClearHistory();
                 }
-
             }
         }
 
@@ -1036,7 +1108,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         App.Network.InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1194,7 +1266,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Undo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1215,7 +1287,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.Redo();
                 }
-                catch(Exception e)
+                catch(Exception)
                 { }
             }
         }
@@ -1281,9 +1353,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SubmitPageCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SubmitPageCommand command is executed.
-        /// </summary>
         private void OnSubmitPageCommandExecute()
         {
             //Steve - change to different thread and do callback to make sure sent page has arrived
@@ -1296,10 +1365,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID);
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
             }
             CanSendToTeacher = false;
-
         }
 
         /// <summary>
@@ -1311,11 +1379,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CanSendToTeacherProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CanSendToTeacher property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData CanSendToTeacherProperty = RegisterProperty("CanSendToTeacher", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool CanGroupSendToTeacher
+        {
+            get { return GetValue<bool>(CanGroupSendToTeacherProperty); }
+            set { SetValue(CanGroupSendToTeacherProperty, value); }
+        }
+
+        public static readonly PropertyData CanGroupSendToTeacherProperty = RegisterProperty("CanGroupSendToTeacher", typeof(bool), true);
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -1348,9 +1423,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Register the IsSending property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSendingProperty = RegisterProperty("IsSending", typeof(bool));
 
         /// <summary>
@@ -1362,9 +1434,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SendButtonVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SendButtonVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SendButtonVisibilityProperty = RegisterProperty("SendButtonVisibility", typeof(Visibility));
 
         /// <summary>
@@ -1376,10 +1445,28 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsSentInfoVisibilityProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsSentInfoVisibility property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility));
+
+        /// <summary>
+        /// Gets the GroupSubmitPageCommand command.
+        /// </summary>
+        public Command GroupSubmitPageCommand { get; private set; }
+
+        private void OnGroupSubmitPageCommandExecute()
+        {
+            IsSending = true;
+            Timer timer = new Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Enabled = true;
+
+            if(CanGroupSendToTeacher)
+            {
+                CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+            }
+            CanGroupSendToTeacher = false;
+        }
 
         #endregion //Submission Command
 
@@ -1424,7 +1511,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1446,7 +1533,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                     }
-                    catch(System.Exception ex)
+                    catch(System.Exception)
                     {
 
                     }
@@ -1653,13 +1740,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MakePageLongerCommand command.
+        /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MakePageLongerCommand command is executed.
-        /// </summary>
         private void OnMakePageLongerCommandExecute()
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
@@ -1673,6 +1757,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 double times = yDifference / 200;
 
                 Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
+            }
+        }
+
+        /// <summary>
+        /// Trims the current page's excess height if free of ink strokes and pageObjects.
+        /// </summary>
+        public Command TrimPageCommand { get; private set; }
+
+        private void OnTrimPageCommandExecute()
+        {
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            {
+                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                page.TrimPage();
             }
         }
 
@@ -1994,11 +2092,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 1;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 1; }
+                catch(FormatException) { rows = 1; }
 
                 int cols = 1;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 1; }
+                catch(FormatException) { cols = 1; }
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
                 CLPServiceAgent.Instance.AddPageObjectToPage(region);
@@ -2024,11 +2122,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 int rows = 0;
                 try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException e) { rows = 0; }
+                catch(FormatException) { rows = 0; }
 
                 int cols = 0;
                 try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException e) { cols = 0; }
+                catch(FormatException) { cols = 0; }
 
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
                 CLPServiceAgent.Instance.AddPageObjectToPage(region);
@@ -2061,6 +2159,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     (pageObject as CLPGroupingRegion).DoInterpretation();
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the UpdateObjectPropertiesCommand command.
+        /// </summary>
+        public Command UpdateObjectPropertiesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the UpdateObjectPropertiesCommand command is executed.
+        /// </summary>
+        private void OnUpdateObjectPropertiesCommandExecute()
+        {
+            PageInteractionMode = PageInteractionMode.EditObjectProperties;
         }
 
         /// <summary>

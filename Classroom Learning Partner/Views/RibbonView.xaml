@@ -121,7 +121,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Tools">
+            <RibbonGroup Header="Tools" x:Name="ToolsRibbonGroup">
 
                 <RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -161,12 +161,12 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />
+                    CommandParameter="EraseByStroke" />-->
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -262,7 +262,7 @@
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
-                <RibbonButton
+                <RibbonButton Margin="0,0,35,0"
                         LargeImageSource="..\Images\Send.png" 
                         Command="{Binding Path=SubmitPageCommand}" 
                         Label="Send To Teacher"
@@ -273,6 +273,11 @@
                         Label="Thank you!"
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
+
+                <RibbonButton Label="Group Send"
+                              LargeImageSource="..\Images\GroupSubmit-icon32.png" 
+                              Command="{Binding GroupSubmitPageCommand}"
+                              Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 
@@ -328,6 +333,7 @@
 
         </RibbonTab>
 
+        <!--Test Tab-->
         <RibbonTab Header="Test Features" Visibility="{Binding Path=InstructorVisibility}">
             
             <RibbonGroup Header="ClassList Commands">
@@ -346,6 +352,18 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Page">
+                
+                <RibbonButton Label="Broadcast This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding BroadcastPageCommand}" />
+
+                <RibbonButton Label="Replace This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ReplacePageCommand}" />
 
             </RibbonGroup>
             
@@ -691,6 +709,15 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=InterpretPageCommand}" />
 
+                <RibbonToggleButton
+                    x:Name="EditObjectPropertiesToggleButton"
+                    Click="DebugGroupToggle_Clicked"
+                    IsChecked="False"
+                    Label="Edit Object Properties"
+                    LargeImageSource="..\Images\LargeIcon.png"
+                    Command="{Binding Path=UpdateObjectPropertiesCommand}"/>
+
+
             </RibbonGroup>
             
             <RibbonGroup Header="Notebook">
@@ -713,6 +740,10 @@
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=ZoomToWholePageCommand}" />
 
+                <RibbonButton
+                        Label="Trim Page"
+                        LargeImageSource="..\Images\LargeIcon.png"
+                        Command="{Binding TrimPageCommand}" />
             </RibbonGroup>
 
         </RibbonTab>

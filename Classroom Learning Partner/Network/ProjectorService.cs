@@ -6,8 +6,11 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
+using Catel.IoC;
+using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner
 {
@@ -24,7 +27,11 @@ namespace Classroom_Learning_Partner
         void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime);
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission, double pageHeight);
+
+        [OperationContract]
+        void ScrollPage(string pageID, string submissionID, double offset);
     }
 
     public class ProjectorService : IProjectorContract
@@ -109,14 +116,17 @@ namespace Classroom_Learning_Partner
         public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime)
+            string notebookID, string pageID, string submissionID, DateTime submissionTime,
+            bool isGroupSubmission, double pageHeight)
         {
             CLPPage submission = null;
+            CLPNotebook currentNotebook = null;
 
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             {
                 if(notebookID == notebook.UniqueID)
                 {
+                    currentNotebook = notebook;
                     submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
                     break;
                 }
@@ -124,39 +134,43 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
-                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                {
-                    pageObject.ParentPage = submission;
-                }
-
                 submission.ByteStrokes = byteStrokes;
                 submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+
+                submission.IsSubmission = true;
+                submission.IsGroupSubmission = true;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
+                submission.PageHeight = pageHeight;
 
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {
                     submission.PageObjects.Add(pageObject);
                 }
 
-                submission.IsSubmission = true;
-                submission.SubmissionID = submissionID;
-                submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = submitter.FullName;
-                submission.Submitter = submitter;
-                submission.GroupSubmitter = groupSubmitter;
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                    if(pageObject is ISubmittable)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
+                                return null;
+                            }, null);
+                    }
+                }
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)
                 {
                     try
                     {
-                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                        {
-                            if(submission.ParentNotebookID == notebook.UniqueID)
-                            {
-                                CLPServiceAgent.Instance.AddSubmission(notebook, submission);
-                                break;
-                            }
-                        }
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
                     }
                     catch(Exception e)
                     {
@@ -168,6 +182,33 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void ScrollPage(string pageID, string submissionID, double offset)
+        {
+            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                {
+                    CLPPage currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+                    if(currentPage.UniqueID == pageID)
+                    {
+                        if(submissionID == "" || submissionID == currentPage.SubmissionID)
+                        {
+                            var viewManager = ServiceLocator.Instance.ResolveType<IViewManager>();
+                            var views = viewManager.GetViewsOfViewModel((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel);
+
+                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            (DispatcherOperationCallback)delegate(object arg)
+                            {
+                                (views[0] as LinkedDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
+                                return null;
+                            }, null);
+                        }
+                    }
+                }
+            }
         }
 
         #region INotebookContract Members
@@ -209,6 +250,10 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
+        public void AddNewPage(string s_page, int index) { }
+
+        public void ReplacePage(string s_page, int index) { }
+        
         #endregion
     }
 }

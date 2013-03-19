@@ -146,13 +146,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
                 StrokeCollection clonedStrokes = new StrokeCollection();
 
+                StrokeCollection handwritingStrokes = HandwritingRegionParts.GetStrokesOverPageObject();
+
                 foreach (Stroke stroke in originalStrokes)
                 {
-                    Stroke newStroke = stroke.Clone();
-                    Matrix transform = new Matrix();
-                    transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
-                    newStroke.Transform(transform, true);
-                    clonedStrokes.Add(newStroke);
+                    if (!handwritingStrokes.Contains(stroke))
+                    {
+                        Stroke newStroke = stroke.Clone();
+                        Matrix transform = new Matrix();
+                        transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
+                        newStroke.Transform(transform, true);
+                        clonedStrokes.Add(newStroke);
+                    }
                 }
 
                 StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);

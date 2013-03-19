@@ -2,11 +2,12 @@
 using System.Runtime.Serialization;
 using Catel.Data;
 using System.Collections.ObjectModel;
+using System.Collections;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class Group : DataObjectBase<Group>
+    public class Group : DataObjectBase<Group>, IComparable, IComparer
     {
         #region Constructors
 
@@ -64,5 +65,22 @@ namespace CLP.Models
         public static readonly PropertyData GroupMembersProperty = RegisterProperty("GroupMembers", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         #endregion //Properties
+        #region Methods
+        public int CompareTo(object obj)
+        {
+           Console.WriteLine("compareTo");
+          Group otherGroup = obj as Group;
+           return this.GroupName.CompareTo(otherGroup.GroupName);
+       }
+         int IComparer.Compare(object a, object b)
+        {
+            Console.WriteLine("comparing icomparer");
+            Group g1 = a as Group;
+            Group g2 = b as Group;
+            return g1.GroupName.CompareTo(g2.GroupName);
+        }
+
+#endregion
     }
+
 }

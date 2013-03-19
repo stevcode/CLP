@@ -32,7 +32,20 @@ namespace Classroom_Learning_Partner.Views
                     (item as RibbonToggleButton).IsChecked = false;
                 }
             }
+            EditObjectPropertiesToggleButton.IsChecked = false;
 
+            (sender as RibbonToggleButton).IsChecked = true;
+        }
+
+        private void DebugGroupToggle_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            foreach (var item in ToolsRibbonGroup.Items)
+            {
+                if (item.GetType() == typeof(RibbonToggleButton))
+                {
+                    (item as RibbonToggleButton).IsChecked = false;
+                }
+            }
             (sender as RibbonToggleButton).IsChecked = true;
         }
 

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Models
@@ -175,7 +179,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    public class CLPAggregationDataTable : CLPPageObjectBase
+    public class CLPAggregationDataTable : CLPPageObjectBase, ISubmittable
     {
         #region Variables
 
@@ -196,6 +200,7 @@ namespace CLP.Models
             YPosition = 50;
             Height = DEFAULT_COLUMN_HEADER_HEIGHT;
             Width = DEFAULT_ROW_HEADER_WIDTH;
+            CanAcceptStrokes = true;
         }        
 
         /// <summary>
@@ -366,6 +371,12 @@ namespace CLP.Models
             {
                 row.Width = Width;
             }
+
+            double bottomPosition = Height + YPosition;
+            if(bottomPosition > ParentPage.PageHeight)
+            {
+                ParentPage.PageHeight = bottomPosition + 10;
+            }
         }
 
         public void AddAggregatedGridPart(CLPGridPart gridPart)
@@ -376,40 +387,52 @@ namespace CLP.Models
                 {
                     case GridPartOrientation.Row:
                         int replaceIndex = -1;
+                        //TODO: Steve - make more generic to account for more than one cell at the end.
+                        bool hasLastCell = Rows.Count != 0 && !Rows.Last<CLPGridPart>().IsAggregated;
+
+                        if (Rows.Count == 0)
+                        {
+                            switch(AggregationType)
+                            {
+                                case AggregationType.None:
+                                    return;
+                                case AggregationType.Single:
+                                    gridPart.Header = gridPart.PersonSubmitter.FullName;
+                                    break;
+                                case AggregationType.Group:
+                                    gridPart.Header = gridPart.GroupSubmitter.GroupName;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                         foreach(CLPGridPart row in Rows)
                         {
                             switch(AggregationType)
                             {
                                 case AggregationType.None:
-                                    break;
+                                    return;
                                 case AggregationType.Single:
                                     gridPart.Header = gridPart.PersonSubmitter.FullName;
-                                    if (row.PersonSubmitter.UniqueID == gridPart.PersonSubmitter.UniqueID)
+                                    if(row.PersonSubmitter != null && row.PersonSubmitter.FullName == gridPart.PersonSubmitter.FullName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
                                         gridPart.Height = row.Height;
                                         gridPart.Width = row.Width;
                                         replaceIndex = Rows.IndexOf(row);
-                                    }
-                                    else
-                                    {
-                                        AddGridPart(gridPart);
                                     }
                                     break;
                                 case AggregationType.Group:
                                     gridPart.Header = gridPart.GroupSubmitter.GroupName;
-                                    if(row.GroupSubmitter.GroupID == gridPart.GroupSubmitter.GroupID)
+                                    if(row.GroupSubmitter != null && row.GroupSubmitter.GroupName == gridPart.GroupSubmitter.GroupName)
                                     {
                                         gridPart.XPosition = row.XPosition;
                                         gridPart.YPosition = row.YPosition;
                                         gridPart.Height = row.Height;
                                         gridPart.Width = row.Width;
                                         replaceIndex = Rows.IndexOf(row);
-                                    }
-                                    else
-                                    {
-                                        AddGridPart(gridPart);
                                     }
                                     break;
                                 default:
@@ -419,10 +442,62 @@ namespace CLP.Models
 
                         if (replaceIndex > -1)
                         {
+                            var strokesToRemove =
+                                from pageStroke in ParentPage.InkStrokes
+                                from objectStroke in CLPPage.BytesToStrokes(Rows[replaceIndex].ByteStrokes)
+                                where pageStroke.GetStrokeUniqueID() == objectStroke.GetStrokeUniqueID()
+                                select pageStroke;
+
+                            StrokeCollection sc = new StrokeCollection(strokesToRemove);
+
+                            foreach(Stroke s in sc)
+                            {
+                                ParentPage.IsInkAutoAdding = true;
+                                ParentPage.InkStrokes.Remove(s);
+                                ParentPage.IsInkAutoAdding = false;
+                            }
+
                             Rows.RemoveAt(replaceIndex);
                             Rows.Insert(replaceIndex, gridPart);
                         }
-                        
+                        else
+                        {
+                            if(hasLastCell)
+                            {
+                                gridPart.XPosition = 0;
+
+                                double yPos = 0;
+                                foreach(var row in Rows)
+                                {
+                                    if (row != Rows.Last<CLPGridPart>())
+                                    {
+                                        yPos += row.Height;
+                                    }
+                                }
+
+                                gridPart.YPosition = yPos;
+                                Rows.Last<CLPGridPart>().YPosition = yPos + gridPart.Height;
+
+                                Rows.Insert(Rows.Count - 1, gridPart);
+
+                                RefreshDataTableDimensions();
+                            }
+                            else 
+                            { 
+                                AddGridPart(gridPart); 
+                            }
+                        }                       
+
+                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
+                        foreach(Stroke stroke in gridPartStrokes)
+                        {
+                            Matrix transform = new Matrix();
+                            transform.Translate(gridPart.XPosition + RowHeaderWidth + XPosition, gridPart.YPosition + ColumnHeaderHeight + YPosition);
+                            stroke.Transform(transform, true);
+                            ParentPage.IsInkAutoAdding = true;
+                            ParentPage.InkStrokes.Add(stroke);
+                            ParentPage.IsInkAutoAdding = false;
+                        }
                         break;
                     case GridPartOrientation.Column:
                         //TODO: Steve - Expand to allow for aggregation of columns
@@ -472,7 +547,119 @@ namespace CLP.Models
             return newTable;
         }
 
+        public override void RefreshStrokeParentIDs()
+        {
+            if(CanAcceptStrokes)
+            {
+                foreach(CLPGridPart gridPart in Rows)
+                {
+                    if(gridPart.IsAggregated)
+                    {
+                        gridPart.ByteStrokes.Clear();
+                        Rect rect = new Rect(gridPart.XPosition + RowHeaderWidth + XPosition, gridPart.YPosition + ColumnHeaderHeight + YPosition, gridPart.Width - RowHeaderWidth, gridPart.Height);
+                        var strokesOverObject =
+                            from stroke in ParentPage.InkStrokes
+                            where stroke.HitTest(rect, 3)
+                            select stroke;
+
+                        StrokeCollection clonedStrokes = new StrokeCollection();
+                        foreach(Stroke stroke in strokesOverObject)
+                        {
+                            StrokeCollection clippedStrokes = stroke.GetClipResult(rect);
+                            foreach (Stroke clippedStroke in clippedStrokes)
+                            {
+                                Stroke newStroke = clippedStroke.Clone();
+                                Matrix transform = new Matrix();
+                                transform.Translate(-gridPart.XPosition - RowHeaderWidth - XPosition, -gridPart.YPosition - ColumnHeaderHeight - YPosition);
+                                newStroke.Transform(transform, true);
+                                newStroke.SetStrokeUniqueID(Guid.NewGuid().ToString());
+                                clonedStrokes.Add(newStroke);
+                            }
+                        }
+                        gridPart.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
+                    }
+                }
+            }
+        }
+
+        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            //This pageObject can accept strokes, but never needs strokes in real time, so RefreshStrokeParentIDs
+            //is called when the strokes are needed. Blank method to override default behavior.
+        }
+
         #endregion
 
+        #region ISubmittable Members
+
+        public void BeforeSubmit(bool isGroupSubmit, CLPNotebook notebook)
+        {
+            
+        }
+
+        public void AfterSubmit(bool isGroupSubmit, CLPNotebook notebook)
+        {
+            CanAcceptStrokes = true;
+            RefreshStrokeParentIDs();
+
+            int autoPageIndex = ParentPage.PageIndex; //off by one indexing
+            CLPPage autoGeneratedPage = notebook.GetPageAt(autoPageIndex, -1);
+            if(autoGeneratedPage != null)
+            {
+                CLPAggregationDataTable linkedDataTable;
+                foreach(ICLPPageObject pageObject in autoGeneratedPage.PageObjects)
+                {
+                    if(pageObject is CLPAggregationDataTable)
+                    {
+                        if((pageObject as CLPAggregationDataTable).LinkedPageID == ParentPage.UniqueID)
+                        {
+                            linkedDataTable = pageObject as CLPAggregationDataTable;
+
+                            switch(linkedDataTable.AggregationType)
+                            {
+                                case AggregationType.None:
+                                    break;
+                                case AggregationType.Single:
+                                    if(!isGroupSubmit)
+                                    {
+                                        foreach(CLPGridPart gridPart in Rows)
+                                        {
+                                            if(gridPart.IsAggregated)
+                                            {
+                                                gridPart.PersonSubmitter = ParentPage.Submitter;
+                                                gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
+                                                CLPGridPart partToAdd = gridPart.Clone() as CLPGridPart;
+                                                linkedDataTable.AddAggregatedGridPart(partToAdd);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case AggregationType.Group:
+                                    if(isGroupSubmit)
+                                    {
+                                        foreach(CLPGridPart gridPart in Rows)
+                                        {
+                                            if(gridPart.IsAggregated)
+                                            {
+                                                gridPart.PersonSubmitter = ParentPage.Submitter;
+                                                gridPart.GroupSubmitter = ParentPage.GroupSubmitter;
+                                                CLPGridPart partToAdd = gridPart.Clone() as CLPGridPart;
+                                                linkedDataTable.AddAggregatedGridPart(partToAdd);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion //ISubmittable Members
     }
 }
