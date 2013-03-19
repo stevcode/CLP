@@ -612,7 +612,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     List<object> l = new List<object>();
                                     l.Add(Page.PageHistory.Stroke_Removed);
                                     l.Add(Page);
-                                    l.Add(stroke);
+                                    l.Add(CLPPage.StrokeToByte(stroke));
                                     Page.PageHistory.push(l); 
                                 }
                             
@@ -635,7 +635,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     List<object> l = new List<object>();
                                     l.Add(Page.PageHistory.Stroke_Added);
                                     l.Add(Page);
-                                    l.Add(stroke);
+                                    l.Add(CLPPage.StrokeToByte(stroke));
                                     Page.PageHistory.push(l);  
                                 }
                             

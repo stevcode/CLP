@@ -241,18 +241,37 @@ namespace CLP.Models
             string inst = (string)l[0];
            if(inst.Equals(Stroke_Added)){
                 CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                if(page.InkStrokes.Contains(s))
+                List<byte> bs = (List<byte>)l[2];
+                Stroke s = CLPPage.ByteToStroke(bs);
+                int indexToRemove = -1;
+                foreach(Stroke otherstroke in page.InkStrokes)
                 {
-                    page.InkStrokes.Remove(s);
+                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                    {
+                        indexToRemove = page.InkStrokes.IndexOf(otherstroke);
+                        break;
+                    }
+                }
+                if (indexToRemove != -1){
+                    page.InkStrokes.RemoveAt(indexToRemove);
                 }
                 return true;
             }else if(inst.Equals(Stroke_Removed)){
                 CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                if(!page.InkStrokes.Contains(s))
+                List<byte> bs = (List<byte>)l[2];
+                Stroke s = CLPPage.ByteToStroke(bs);
+                bool shouldAdd = true;
+                foreach(Stroke otherstroke in page.InkStrokes)
                 {
-                page.InkStrokes.Add(s);
+                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                    {
+                        shouldAdd = false;
+                        break;
+                    }
+                }
+                if(shouldAdd)
+                {
+                    page.InkStrokes.Add(s);
                 }
                 return true;
             }else if(inst.Equals(Object_Added)){
@@ -294,18 +313,37 @@ namespace CLP.Models
             string inst = (string)l[0];
             if(inst.Equals(Stroke_Added)){
                 CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                if(!page.InkStrokes.Contains(s))
+                List<byte> bs = (List<byte>)l[2];
+                Stroke s = CLPPage.ByteToStroke(bs);
+                bool shouldAdd = true;
+                foreach(Stroke otherstroke in page.InkStrokes)
                 {
-                page.InkStrokes.Add(s);
+                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                    {
+                        shouldAdd = false;
+                        break;
+                    }
+                }
+                if(shouldAdd)
+                {
+                    page.InkStrokes.Add(s);
                 }
                 return true;
             }else if(inst.Equals(Stroke_Removed)){
                 CLPPage page = (CLPPage)l[1];
-                Stroke s = (Stroke)l[2];
-                if(page.InkStrokes.Contains(s))
+                List<byte> bs = (List<byte>)l[2];
+                Stroke s = CLPPage.ByteToStroke(bs);
+                int indexToRemove = -1;
+                foreach(Stroke otherstroke in page.InkStrokes)
                 {
-                page.InkStrokes.Remove(s);
+                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                    {
+                        indexToRemove = page.InkStrokes.IndexOf(otherstroke);
+                        break;
+                    }
+                }
+                if (indexToRemove != -1){
+                    page.InkStrokes.RemoveAt(indexToRemove);
                 }
                 return true;
             }
