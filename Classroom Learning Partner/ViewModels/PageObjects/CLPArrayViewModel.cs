@@ -181,26 +181,37 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
+            hoverTimer.Interval = 1000;
             if(hitBoxName == "ArrayBodyHitBox")
             {
                 if(IsBackground)
                 {
                     if(App.MainWindowViewModel.IsAuthoring)
                     {
-                        OpenAdornerTimeOut = 0.0;
                         IsMouseOverShowEnabled = true;
+                        if(!timerRunning)
+                        {
+                            timerRunning = true;
+                            hoverTimer.Start();
+                        }
                     }
                     else
                     {
                         IsMouseOverShowEnabled = false;
+                        hoverTimer.Stop();
+                        timerRunning = false;
+                        hoverTimeElapsed = false;
                     }
                 }
                 else
                 {
-                    OpenAdornerTimeOut = 1.0; //Liz - maybe change to 1.2?
                     IsMouseOverShowEnabled = true;
+                    if(!timerRunning)
+                    {
+                        timerRunning = true;
+                        hoverTimer.Start();
+                    }
                 }
-                return false;
             }
             if(hitBoxName == "ArrayBottomHitBox")
             {
@@ -210,9 +221,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //TO DO Liz - create division
             }
-            return true;
-            
-            
+
+            return !hoverTimeElapsed;       
         }
 
 
