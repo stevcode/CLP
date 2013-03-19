@@ -210,18 +210,18 @@
                 <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
-                <RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Tan" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Gold" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="DarkOrange" />
+                <RibbonButton Background="Tan" />
+                <RibbonButton Background="Gold" />
+                <RibbonButton Background="SaddleBrown" />
                 <RibbonButton Background="DarkGreen"/>
-                <RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="MediumSeaGreen" />
                 <RibbonButton Background="Blue"/>
-                <RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="BlueViolet" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Aquamarine" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SlateGray" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="HotPink" />
+                <RibbonButton Background="BlueViolet" />
+                <RibbonButton Background="Aquamarine" />
+                <RibbonButton Background="SlateGray" />
+                <RibbonButton Background="SkyBlue" />
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
