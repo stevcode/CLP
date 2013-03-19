@@ -11,12 +11,12 @@ using System.Windows.Ink;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory
+    public class CLPHistory : DataObjectBase<CLPHistory>
     {
         private bool memEnabled;
         private string closed = null;
-        private Stack<object> stack1 = new Stack<object>();
-        private Stack<object> stack2 = new Stack<object>();
+        //private Stack<object> stack1 = new Stack<object>();
+        //private Stack<object> stack2 = new Stack<object>();
         public readonly string Page_Added = "Page_Added";
         public readonly string Page_Inserted = "Page_Inserted";
         public readonly string Page_Removed = "Page_Removed";
@@ -33,10 +33,42 @@ namespace CLP.Models
             memEnabled = true;
         }
 
+         /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected CLPHistory(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Stack<object> Stack1
+        {
+            get { return GetValue<Stack<object>>(Stack1Property); }
+            set { SetValue(Stack1Property, value); }
+        }
+
+        public static readonly PropertyData Stack1Property = RegisterProperty("Stack1", typeof(Stack<object>), () => new Stack<object>());
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Stack<object> Stack2
+        {
+            get { return GetValue<Stack<object>>(Stack2Property); }
+            set { SetValue(Stack2Property, value); }
+        }
+
+        public static readonly PropertyData Stack2Property = RegisterProperty("Stack2", typeof(Stack<object>), () => new Stack<object>());
+
         public CLPHistory getMemento(){
             CLPHistory clpHistory = new CLPHistory();
-            clpHistory.setStack1 (new Stack<object>(new Stack<object>(getStack1())));
-            clpHistory.setStack2 (new Stack<object>(new Stack<object>(getStack2())));
+            clpHistory.setStack1 (new Stack<object>(new Stack<object>(Stack1)));
+            clpHistory.setStack2 (new Stack<object>(new Stack<object>(Stack2)));
             clpHistory.close();
             return clpHistory;
         }
@@ -68,8 +100,8 @@ namespace CLP.Models
                 if(isMemEnabled())
                 {
                     Console.WriteLine("memEnabled: " + isMemEnabled());
-                    stack1.Push(o);
-                    stack2.Clear();
+                    Stack1.Push(o);
+                    Stack2.Clear();
                     return true;
                 }
                 else
@@ -83,54 +115,44 @@ namespace CLP.Models
             }
         }
 
-        public Stack<object> getStack1()
-        {
-            return stack1;
-        }
-
-        public Stack<object> getStack2()
-        {
-            return stack2;
-        }
-
         private void setStack1(Stack<object> stack)
         {
-            stack1 = stack;
+            Stack1 = stack;
         }
 
         private void setStack2(Stack<object> stack)
         {
-            stack2 = stack;
+            Stack2 = stack;
         }
 
         private object popStack1()
         {
-            return stack1.Pop();
+            return Stack1.Pop();
         }
         
         private object popStack2()
         {
-            return stack2.Pop();
+            return Stack2.Pop();
         }
 
         private void pushStack1(object o)
         {
-            stack1.Push(o);
+            Stack1.Push(o);
         }
 
         private void pushStack2(object o)
         {
-            stack2.Push(o);
+            Stack2.Push(o);
         }
 
         private void ClearStack1()
         {
-            stack1.Clear();
+            Stack1.Clear();
         }
 
         private void ClearStack2()
         {
-            stack2.Clear();
+            Stack2.Clear();
         }
 
         public CLPHistory getInitialHistory(){
@@ -143,16 +165,14 @@ namespace CLP.Models
        
         public void undo(){
             //printMemStacks("undo", "before1");
-            Stack<object> stack1 = getStack1();
-            int stack1Count = stack1.Count;
+            int stack1Count = Stack1.Count;
             if(stack1Count==0){
                 return;
             }
-            Stack<object> stack2 = getStack2();
-            int stack2Count = stack2.Count;
+            int stack2Count = Stack2.Count;
 
             //printMemStacks("undo", "before2");
-            Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+            Stack<object> stack3 = new Stack<object>(new Stack<object>(Stack2));
             //printMemStacks("undo", "before3");
             
             List<object> l = (List<object>)popStack1();
@@ -164,7 +184,7 @@ namespace CLP.Models
             }
             ///////////////
             //Integrity check
-            int stack1CountAfter = getStack1().Count;
+            int stack1CountAfter = Stack1.Count;
             if(stack1CountAfter != (stack1Count - 1))
             {
                 popStack1();
@@ -181,18 +201,16 @@ namespace CLP.Models
         }
 
         public void redo(){
-             //printMemStacks("redo", "before1"); 
-             Stack<object> stack2 = getStack2();
-             int stack2Count = stack2.Count;
+             //printMemStacks("redo", "before1");
+             int stack2Count = Stack2.Count;
              if(stack2Count == 0)
              {
                 return;
              }
-             Stack<object> stack1 = getStack1();
-             int stack1Count = stack1.Count;
+             int stack1Count = Stack1.Count;
 
              //printMemStacks("redo", "before2");
-             Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+             Stack<object> stack3 = new Stack<object>(new Stack<object>(Stack2));
              //printMemStacks("redo", "before3");
 
             List<object> l = (List<object>)popStack2();
@@ -204,7 +222,7 @@ namespace CLP.Models
             }
             ///////////////
             //Integrity check
-            int stack1CountAfter = getStack1().Count;
+            int stack1CountAfter = Stack1.Count;
             if(stack1CountAfter != stack1Count)
             {
                 popStack1();
@@ -224,14 +242,12 @@ namespace CLP.Models
         public void printMemStacks(String methodName, String pos)
         {
             Console.WriteLine(pos + " " + methodName + " stack1");
-            Stack<object> stack1 = getStack1();
-            foreach(Object o in stack1)
+            foreach(Object o in Stack1)
             {
                 Console.WriteLine(((List<object>)o)[0]);
             }
             Console.WriteLine(pos + " " + methodName + " stack2");
-            Stack<object> stack2 = getStack2();
-            foreach(Object o in stack2)
+            foreach(Object o in Stack2)
             {
                 Console.WriteLine(((List<object>)o)[0]);
             }

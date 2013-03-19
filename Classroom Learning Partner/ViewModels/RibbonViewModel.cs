@@ -1751,8 +1751,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageHistory.disableMem();
 
                     //revertToMem(memInit, memCurrent);
-                    Stack<object> sOldMem = memInit.getStack1();
-                    Stack<object> sCurrentMem = memCurrent.getStack1();
+                    Stack<object> sOldMem = memInit.Stack1;
+                    Stack<object> sCurrentMem = memCurrent.Stack1;
                     if(sOldMem.Count < sCurrentMem.Count)
                     {
                         try
@@ -1778,8 +1778,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //forwardToMem(memFinal, memInit);
                     Thread.Sleep(400);
-                    Stack<object> sFutureMem = new Stack<object>(memFinal.getStack1());
-                    Stack<object>  sCurrentMem2 = memInit.getStack1(); 
+                    Stack<object> sFutureMem = new Stack<object>(memFinal.Stack1);
+                    Stack<object>  sCurrentMem2 = memInit.Stack1; 
                     if(sFutureMem.Count > sCurrentMem2.Count)
                     {
                         try
