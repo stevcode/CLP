@@ -383,6 +383,7 @@ namespace AdornedControl
 
             if (adornerShowState != AdornerShowState.FadingOut)
             {
+                //TO FIX Liz - getting null exception here - help link is null (after deleting array?)
                 adorner.Opacity = 0.0;
             }
 

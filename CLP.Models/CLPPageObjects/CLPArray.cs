@@ -32,8 +32,14 @@ namespace CLP.Models
             XPosition = 10;
             YPosition = 10;
             
-            Height = 100*Ratio;
-            Width = 100;
+            Height = 750*Ratio;
+            Width = 750;
+
+            if(Height + this.YPosition > page.PageHeight)
+            {
+                Height = page.PageHeight - this.YPosition;
+                Width = Height * ((double)this.Columns) / ((double)this.Rows);
+            }
 
             
 

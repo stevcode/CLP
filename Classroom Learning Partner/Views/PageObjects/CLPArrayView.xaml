@@ -13,11 +13,27 @@
     </UserControl.Resources>
 
     <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-        <Rectangle DataContext="{Binding}" Height="{Binding Height, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" 
+        <Rectangle Grid.Row="1" Grid.Column="1" DataContext="{Binding}" Height="{Binding Height *.7, Mode=TwoWay}" Width="{Binding Width *.7, Mode=TwoWay}" 
+                   Canvas.Top="500" Canvas.Left="500"
                    Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+        <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" FontSize="18"></TextBlock>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" FontSize="18"></TextBlock>
+        
 
-        <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
+        <ac:AdornedControl Grid.RowSpan="3" Grid.ColumnSpan="3"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
                            HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
                            IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                            IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
@@ -117,9 +133,32 @@
 
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
+            
+            <Grid>
 
-            <Rectangle Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
-                       Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
+                <Rectangle Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
+                           Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
+
+                <!--TO DO Liz place hit boxes on sides , use Canvas.Top and left? -->
+                <!--Rectangle Name="ArrayBottomHitBox" Tag="1001" Fill="Transparent" Stretch="Fill"
+                           Width="{Binding Width, Mode=TwoWay}" Height="20">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding Path=CreateVerticalDivisionCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    </Rectangle>
+               
+            
+                <Rectangle Name="ArrayRightHitBox" Tag="1002" Fill="Transparent" Stretch="Fill"
+                           Width="20" Height="{Binding Height, Mode=TwoWay}" 
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding Path=CreateHorizontalDivisionCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Rectangle-->
+            </Grid>
 
         </ac:AdornedControl>
 

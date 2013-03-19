@@ -32,6 +32,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
+            CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
+            CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
 
         }
 
@@ -111,13 +113,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-
-
-        #endregion //Commands
-
-
-        #region Methods
-
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
         /// </summary>
@@ -125,31 +120,64 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeArrayCommandExecute(DragDeltaEventArgs e)
         {
+            // TO DO Liz - 7x77 won't resize?
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             double newHeight = PageObject.Height + e.VerticalChange;
-            double newWidth = PageObject.Width + e.HorizontalChange;
-            if(newHeight < 10)
+            double newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
+            if(newHeight < 100)
             {
-                newHeight = 10;
-            }
-            if(newWidth < 10)
-            {
-                newWidth = 10;
+                newHeight = 100;
+                newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
             }
             if(newHeight + PageObject.YPosition > parentPage.PageHeight)
             {
                 newHeight = PageObject.Height;
+                newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
             }
             if(newWidth + PageObject.XPosition > parentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
+                newHeight = newWidth * ((double)this.Rows) / ((double)this.Columns);
             }
-
+            //TO DO Liz - make sure resizing doesn't change ratio
             //TO DO Liz - make it so resizing preserves divisions
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
+
+        /// <summary>
+        /// Gets the CreateHorizontalDivisionCommand command.
+        /// </summary>
+        public Command CreateHorizontalDivisionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CreateHorizontalDivisionCommand command is executed.
+        /// </summary>
+        private void OnCreateHorizontalDivisionCommandExecute()
+        {
+            // TODO: Handle command logic here
+        }
+
+        /// <summary>
+        /// Gets the CreateVerticalDivisionCommand command.
+        /// </summary>
+        public Command CreateVerticalDivisionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the CreateVerticalDivisionCommand command is executed.
+        /// </summary>
+        private void OnCreateVerticalDivisionCommandExecute()
+        {
+            // TODO: Handle command logic here
+        }
+
+
+        #endregion //Commands
+
+
+        #region Methods
+
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
@@ -169,15 +197,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    OpenAdornerTimeOut = 0.8;
+                    OpenAdornerTimeOut = 1.0; //Liz - maybe change to 1.2?
                     IsMouseOverShowEnabled = true;
                 }
                 return false;
             }
+            if(hitBoxName == "ArrayBottomHitBox")
+            {
+                //TO DO Liz - create division
+            }
+            if(hitBoxName == "ArrayRightHitBox")
+            {
+                //TO DO Liz - create division
+            }
             return true;
             
-            //TO DO Liz - Bottom and side hit box check here
+            
         }
+
 
 
         #endregion //Methods
