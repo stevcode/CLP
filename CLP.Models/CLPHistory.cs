@@ -1,211 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows;
-using System.Linq;
 using Catel.Data;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Ink;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory : DataObjectBase<CLPHistory>
+    public class CLPHistory
     {
-        public const double SAMPLE_TIME = 100.0;
-
-        #region Constructor
-
-        /// <summary>
-        /// Initializes a new object from scratch.
-        /// </summary>
+        private bool memEnabled;
+        private string closed = null;
+        private Stack<object> stack1 = new Stack<object>();
+        private Stack<object> stack2 = new Stack<object>();
+        public readonly string Page_Added = "Page_Added";
+        public readonly string Page_Inserted = "Page_Inserted";
+        public readonly string Page_Removed = "Page_Removed";
+        public readonly string Stroke_Added = "Stroke_Added";
+        public readonly string Stroke_Removed = "Stroke_Removed";
+        public readonly string Object_Added = "Add"; //do not modify
+        public readonly string Object_Removed = "Remove"; //do not modify
+        public readonly string Object_Resized = "Resize"; 
+        public readonly string Object_Moved = "Move";
+        public readonly double Sample_Rate = 9;
+        
         public CLPHistory()
         {
-            HistoryItems = new ObservableCollection<CLPHistoryItem>();
-            UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
-            TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
-            TrashedInkStrokes = new Dictionary<string, List<byte>>();
-            IgnoreHistory = false;
+            memEnabled = true;
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
-        /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistory(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IgnoreHistory
+        public CLPHistory getMemento(){
+            CLPHistory clpHistory = new CLPHistory();
+            clpHistory.setStack1 (new Stack<object>(new Stack<object>(getStack1())));
+            clpHistory.setStack2 (new Stack<object>(new Stack<object>(getStack2())));
+            clpHistory.close();
+            return clpHistory;
+        }
+        
+        public void enableMem()
         {
-            get { return GetValue<bool>(IgnoreHistoryProperty); }
-            set { SetValue(IgnoreHistoryProperty, value); }
+            memEnabled = true;
         }
 
-        /// <summary>
-        /// Register the IgnoreHistory property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IgnoreHistoryProperty = RegisterProperty("IgnoreHistory", typeof(bool), false);
-
-        /// <summary>
-        /// List of history items.
-        /// </summary>
-        public ObservableCollection<CLPHistoryItem> HistoryItems
+        public void disableMem()
         {
-            get { return GetValue<ObservableCollection<CLPHistoryItem>>(HistoryItemsProperty); }
-            set { SetValue(HistoryItemsProperty, value); }
+            memEnabled = false;
         }
 
-        /// <summary>
-        /// Register the HistoryItems property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HistoryItemsProperty = RegisterProperty("HistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
-
-        /// <summary>
-        /// List to enable undo/redo functionality.
-        /// </summary>
-        public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
+        public bool isMemEnabled()
         {
-            get { return GetValue<ObservableCollection<CLPHistoryItem>>(UndoneHistoryItemsProperty); }
-            set { SetValue(UndoneHistoryItemsProperty, value); }
+            return memEnabled;
         }
 
-        /// <summary>
-        /// Register the UndoneHistoryItems property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData UndoneHistoryItemsProperty = RegisterProperty("UndoneHistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Dictionary<string, ICLPPageObject> TrashedPageObjects
+        public void close()
         {
-            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedPageObjectsProperty); }
-            set { SetValue(TrashedPageObjectsProperty, value); }
+            closed = "closed";
         }
 
-        /// <summary>
-        /// Register the TrashedObjects property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), () => new Dictionary<string, ICLPPageObject>());
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Dictionary<string, List<byte>> TrashedInkStrokes
+        public Boolean push(Object o)
         {
-            get { return GetValue<Dictionary<string, List<byte>>>(TrashedInkStrokesProperty); }
-            set { SetValue(TrashedInkStrokesProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the TrashedInkStrokes property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, List<byte>>), () => new Dictionary<string, List<byte>>());
-
-        #endregion
-
-        #region Methods
-
-        public static CLPHistory GenerateHistorySinceLastSubmission(CLPPage page)
-        {
-            CLPHistory historySubset = GetSegmentedHistory(page);
-            bool start = true;
-            foreach(CLPHistoryItem item in page.PageHistory.HistoryItems)
+            if(closed == null)
             {
-                if(item.ItemType == HistoryItemType.Submit)
+                if(isMemEnabled())
                 {
-                    start = true;
+                    Console.WriteLine("memEnabled: " + isMemEnabled());
+                    stack1.Push(o);
+                    stack2.Clear();
+                    return true;
                 }
-                if(start)
+                else
                 {
-                    historySubset.HistoryItems.Clear();
-                    historySubset.UndoneHistoryItems.Clear();
-                    historySubset.TrashedPageObjects.Clear();
-                    historySubset.TrashedInkStrokes.Clear();
-                    start = false;
+                    return false;
                 }
-                historySubset.HistoryItems.Add(item);
-                if(item.ItemType == HistoryItemType.EraseInk)
-                {
-                    if(page.PageHistory.TrashedInkStrokes.ContainsKey(item.ObjectID))
-                    {
-                        historySubset.TrashedInkStrokes.Add(item.ObjectID, page.PageHistory.TrashedInkStrokes[item.ObjectID]);
-                    }
-                    //Steve - Fix for lack of InkStrokes in CLPPage now. Perhaps move this method to ViewModel?
-                    //foreach(Stroke s in page.InkStrokes)
-                    //{
-                    //    if(s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                    //    {
-                    //        page.InkStrokes.Remove(s);
-                    //        historySubset.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-                    //        break;
-                    //    }
-                    //}
-                }
-                else if(item.ItemType == HistoryItemType.RemovePageObject)
-                {
-                    if(page.PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-                    {
-                        historySubset.TrashedPageObjects.Add(item.ObjectID, page.PageHistory.TrashedPageObjects[item.ObjectID]);
-                        break;
-                    }
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        if(pageObject.UniqueID == item.ObjectID)
-                        {
-                            historySubset.TrashedPageObjects.Add(item.ObjectID, pageObject);
-                            break;
-                        }
-                    }
-
-                }
-            }
-            return historySubset;
-        }
-
-        public static ObservableCollection<ICLPPageObject> PageObjectsSinceLastSubmission(CLPPage page, CLPHistory history)
-        {
-            ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
-            foreach(CLPHistoryItem item in history.HistoryItems)
-            {
-                if(item.ItemType == HistoryItemType.AddPageObject)
-                {
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        if(pageObject.UniqueID == item.ObjectID)
-                        {
-                            pageObjects.Add(pageObject);
-                            break;
-                        }
-                    }
-                }
-            }
-            return pageObjects;
-        }
-
-        public void ClearHistory()
-        {
-            HistoryItems.Clear();
-            UndoneHistoryItems.Clear();
-            TrashedPageObjects.Clear();
-            TrashedInkStrokes.Clear();
-        }
-
-        //IsSaved == true means that the history has not been updated since the last save
-        //(to be used by Jessie- DB stuff)
-        //dirty data returns false, pages 
-        public bool IsSaved()
-        {
-            if(HistoryItems.Count > 0)
-            {
-                return HistoryItems[HistoryItems.Count - 1].ItemType == HistoryItemType.Save;
             }
             else
             {
@@ -213,512 +83,409 @@ namespace CLP.Models
             }
         }
 
-        public static CLPHistory InterpolateHistory(CLPHistory history)
+        public Stack<object> getStack1()
         {
-            CLPHistory newHistory = new CLPHistory();
-            for(int i = 0; i < history.HistoryItems.Count; i++)
-            {
-                CLPHistoryItem item = history.HistoryItems[i];
-                if(((item.ItemType == HistoryItemType.MovePageObject && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == HistoryItemType.MovePageObject) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)) //|| (item.ItemType == "RESIZE" && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == "RESIZE")) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)
-                {
-                    newHistory.HistoryItems.Add(item);
-                    //get dx and dy
-                    //Logger.Instance.WriteToLog("Interpolated Endpt: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
-                    double dx = Point.Parse(history.HistoryItems[i + 1].NewValue).X - Point.Parse(item.NewValue).X;
-                    double dy = Point.Parse(history.HistoryItems[i + 1].NewValue).Y - Point.Parse(item.NewValue).Y;
-                    //dist is the distance between 2 points 
-                    double dist = Math.Sqrt((dx * dx) + (dy * dy));
-                    DateTime t0 = item.CreationDate;
-                    DateTime t1 = history.HistoryItems[i + 1].CreationDate;
-                    double timeDiff = (t1 - t0).TotalMilliseconds;
-
-                    if(timeDiff > SAMPLE_TIME)
-                    {
-                        int numNewPoints = (int)Math.Floor(timeDiff / SAMPLE_TIME);
-                        double[,] values = new double[2, 2];
-                        values[0, 0] = Point.Parse(item.NewValue).X;
-                        values[0, 1] = Point.Parse(item.NewValue).Y;
-                        values[1, 0] = Point.Parse(history.HistoryItems[i + 1].NewValue).X;
-                        values[1, 1] = Point.Parse(history.HistoryItems[i + 1].NewValue).Y;
-                        Tuple<double, double> fitLine = regress(values);
-                        double slope = fitLine.Item1;
-                        double intercept = fitLine.Item2;
-                        double section = dist / numNewPoints;
-
-                        //use quadratic eqn to get x displacement
-                        /* double a = 1 + slope * slope;
-                         double b = 2 * slope * intercept;
-                         double c = intercept * intercept - section * section;
-                         double d = b * b - 4 * a * c;
-                         double x1 = 0;
-                         double x2 = 0;
-                         if (d == 0) // If the discriminant is 0, both solutions are equal.
-                         {
-                             x1 = x2 = -b / (2 * a);
-                         }
-                         else if (d < 0) // If the discriminant is negative, there are no solutions.
-                         {
-                             Logger.Instance.WriteToLog("No solutions for the equation to add history points.");
-                            
-                         }
-                         else // In other cases the discriminant is positive, so there are two different solutions.
-                         {
-                             x1 = (-b - Math.Sqrt(d)) / (2 * a);
-                             x2 = (-b + Math.Sqrt(d)) / (2 * a);
-                         }*/
-                        double theta = Math.Atan2(dy, dx);
-
-                        for(int j = 1; j < numNewPoints; j++)
-                        {
-                            //double newX = Point.Parse(item.NewValue).X + x1;
-                            //double newY = slope * newX + intercept;
-                            double newdx = Math.Cos(theta) * (section * j);
-                            double newdy = Math.Sin(theta) * (section * j);
-                            double newX = Point.Parse(item.NewValue).X + newdx;
-                            double newY = Point.Parse(item.NewValue).Y + newdy;
-                            CLPHistoryItem newItem = new CLPHistoryItem(item.ItemType, item.ObjectID, newHistory.HistoryItems[newHistory.HistoryItems.Count - 1].NewValue, new Point(newX, newY).ToString());
-                            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)((SAMPLE_TIME) * j));
-                            newItem.CreationDate = item.CreationDate.Add(time);
-                            newHistory.HistoryItems.Add(newItem);
-                            //Logger.Instance.WriteToLog("Interpolated: " + Point.Parse(newItem.NewValue).X + ", " + Point.Parse(newItem.NewValue).Y + " " + newItem.MetaData.GetValue("CreationDate"));
-
-                        }
-                    }
-                }
-                else
-                {
-                    newHistory.HistoryItems.Add(item);
-                }
-            }
-
-            return newHistory;
+            return stack1;
         }
 
-        public static CLPHistory GetSegmentedHistory(CLPPage page)
+        public Stack<object> getStack2()
         {
-            bool resizing = false;
-            bool moving = false;
-            //int total = HistoryItems.Count;
-            CLPHistory smallerHistory = new CLPHistory();
-            //smallerHistory.ObjectReferences = History.ObjectReferences;
-            smallerHistory.TrashedInkStrokes = page.PageHistory.TrashedInkStrokes;
-            smallerHistory.TrashedPageObjects = page.PageHistory.TrashedPageObjects;
-            int resizeCount = 0;
-            int fullNumHistoryItems = page.PageHistory.HistoryItems.Count;
-            double[] resizeX = new double[fullNumHistoryItems];
-            double[] resizeY = new double[fullNumHistoryItems];
-            DateTime[] resizeT = new DateTime[fullNumHistoryItems];
-            CLPHistoryItem[] resizeItems = new CLPHistoryItem[fullNumHistoryItems];
-            foreach(var item in page.PageHistory.HistoryItems)
-            {
-                /* if (item.ItemType == "RESIZE")
-                 {
-                     //not supporting this right now, the kids aren't doing it in lessons
-                    
-                     moving = false;
-                     resizing = true;
-                     resizeT[resizeCount] = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
-                     int indexOfComma = item.NewValue.IndexOf(',');
-                     resizeY[resizeCount] = double.Parse(item.NewValue.Substring(indexOfComma + 2));
-                     resizeX[resizeCount] = double.Parse(item.NewValue.Substring(0, item.NewValue.Length - indexOfComma));
-                    // Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " +Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
-                     resizeItems[resizeCount] = item;
-                    if(resizing == true)
-                    {
-                             int index = History.HistoryItems.IndexOf(item);
-                             resizeCount++;
-                            
-                                 if (index == History.HistoryItems.Count-1 || (item.ObjectID != History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (HistoryItems.Count > index + 1 && History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != "MOVE"))
-                                 {
-                                     moving = false;
-                                    
-                                     int[] indices = History.segmentPath(resizeX, resizeY, resizeT);
-                                     for (int i = 0; i < indices.Length; i++)
-                                     {
-                                         smallerHistory.AddHistoryItem(resizeItems[indices[i]]);
-                                         CLPHistoryItem add = resizeItems[indices[i]];
-                                         //Logger.Instance.WriteToLog("Resize Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
-                    
-                                        /* CLPHistoryItem it = new CLPHistoryItem("ADD");
-                                         it.ObjectID = resizeItems[indices[i]].ObjectID;
-                                         it.NewValue = resizeItems[indices[i]].NewValue;
-                                         //item.MetaData = resizeItems[indices[i]].MetaData;
-                                         smallerHistory.AddHistoryItem(it);
-                                         */
-                /*
-                                    }
-                                    resizeCount = 0;
-                                    Array.Clear(resizeT, 0, resizeT.Length);
-                                    Array.Clear(resizeX, 0, resizeX.Length);
-                                    Array.Clear(resizeY, 0, resizeY.Length);
-                                }
-                            
-                        
-                    }
-                    else
-                    {
-                        
-                        resizing = true;
-                        resizeCount++;
-                    }
-                }
-                else */
-                if(item.ItemType == HistoryItemType.MovePageObject)
-                {
-                    resizing = false;
-                    resizeT[resizeCount] = item.CreationDate;
-                    resizeY[resizeCount] = Point.Parse(item.NewValue).Y;
-                    resizeX[resizeCount] = Point.Parse(item.NewValue).X;
-                    //Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.CreationDate);
-                    resizeItems[resizeCount] = item;
-                    if(moving == true)
-                    {
-                        int index = page.PageHistory.HistoryItems.IndexOf(item);
-                        resizeCount++;
-
-                        if(index == page.PageHistory.HistoryItems.Count - 1 || (item.ObjectID != page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (page.PageHistory.HistoryItems.Count > index + 1 && page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != HistoryItemType.MovePageObject))
-                        {
-                            moving = false;
-
-                            int[] indices = segmentPath(resizeX, resizeY, resizeT);
-                            for(int i = 0; i < indices.Length; i++)
-                            {
-                                smallerHistory.HistoryItems.Add(resizeItems[indices[i]]);
-                                //CLPHistoryItem add = resizeItems[indices[i]];
-                                //Logger.Instance.WriteToLog("Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
-
-                                /* CLPHistoryItem it = new CLPHistoryItem("ADD");
-                                 it.ObjectID = resizeItems[indices[i]].ObjectID;
-                                 it.NewValue = resizeItems[indices[i]].NewValue;
-                                 //item.MetaData = resizeItems[indices[i]].MetaData;
-                                 smallerHistory.AddHistoryItem(it);
-                                 */
-                            }
-                            resizeCount = 0;
-                            Array.Clear(resizeT, 0, resizeT.Length);
-                            Array.Clear(resizeX, 0, resizeX.Length);
-                            Array.Clear(resizeY, 0, resizeY.Length);
-                        }
-                    }
-                    else
-                    {
-                        moving = true;
-                        resizeCount++;
-                    }
-                }
-                else
-                {
-                    resizing = false;
-                    moving = false;
-                    smallerHistory.HistoryItems.Add(item);
-                }
-            }
-            return smallerHistory;
+            return stack2;
         }
 
-        public static int[] segmentPath(double[] xpoints, double[] ypoints, DateTime[] times)
+        private void setStack1(Stack<object> stack)
         {
-            int numPoints = 0;
-            for(int i = 0; i < times.Length; i++)
-            {
-                if(times[i] != DateTime.MinValue)
-                {
-                    numPoints++;
-                }
-            }
-            double[] dx = new double[numPoints - 1];
-            double[] dy = new double[numPoints - 1];
-            double[] p = new double[numPoints - 1];
-            double[,] segPoints = new double[numPoints, 2];
-            double[] distance = new double[numPoints];
-            double[] speed = new double[numPoints];
-            double[] linTan = new double[numPoints];
-            double[] arcTan = new double[numPoints];
-            double[] bSlope = new double[numPoints];
-            double d0, d1;
-            DateTime t0, t1;
-
-            double currentDist = 0;
-            for(int i = 0; i < numPoints - 1; i++)
-            {
-                //populate the dx and dy arrays
-                dx[i] = xpoints[i + 1] - xpoints[i];
-                dy[i] = ypoints[i + 1] - ypoints[i];
-                //p[i] is the distance between 2 points 
-                p[i] = (dx[i] * dx[i]) + (dy[i] * dy[i]);
-                //distance is the total distance of the path so far
-                currentDist += p[i];
-                distance[i] = currentDist;
-                int k;
-                if(i < 2)
-                {
-                    k = 2;
-                }
-                else
-                {
-                    k = i;
-                }
-                if(distance.Length > 2)
-                {
-                    d0 = distance[k - 2];
-                    d1 = distance[k];
-                    t0 = times[k - 2];
-                    t1 = times[k];
-
-                    double timeDiff = (t1 - t0).TotalMilliseconds;
-                    speed[i] = Math.Abs((d1 - d0) / timeDiff);
-
-                }
-                else
-                {
-                    speed[i] = 0;
-                }
-            } // now the arrays are populated and we can calculate slope, curvature
-
-            double[,] values;
-            for(int i = 1; i < numPoints; i++)
-            {
-                int k = 0;
-                int windowSize = 11;
-                if(i <= Math.Floor(windowSize / 2.0))
-                {
-                    if(i == 1)
-                    {
-                        k = 1;
-                    }
-                    else
-                    {
-                        k = i;
-                    }
-                    windowSize = 2 * k - 1;
-                }
-                else if(i >= numPoints + Math.Floor(windowSize / 2.0))
-                {
-                    if(i == numPoints)
-                    {
-                        k = numPoints - 1;
-                    }
-                    else
-                    {
-                        k = i;
-                    }
-                    windowSize = 2 * (numPoints - k) - 1;
-                }
-                values = new double[windowSize, 2];
-                double winMin = i - Math.Floor(windowSize / 2.0);
-                double winMax = i + Math.Floor(windowSize / 2.0);
-                if(winMin == 0)
-                {
-                    winMin = 1;
-                }
-                int valCount = 0;
-                for(int w = (int)winMin + i; w < winMax + i; w++)
-                {
-                    if(w < numPoints - 1)
-                    {
-                        //do a least squares regression to get the slope of the best fit line for this segment
-                        values[valCount, 0] = xpoints[w];
-                        values[valCount, 1] = ypoints[w];
-                        valCount++;
-                    }
-                }
-
-                linTan[i] = regress(values).Item1;
-                arcTan[i] = Math.Atan(linTan[i]);
-            }
-
-            double[] correctedAngles = correctAngles(arcTan);
-            double[] dAngles = new double[numPoints];
-            double[] dDistance = new double[numPoints];
-            double[] curvature = new double[numPoints];
-            double curveSum = 0, speedSum = 0;
-            for(int i = 0; i < numPoints; i++)
-            {
-                int k = i;
-                if(i == 0)
-                {
-                    k = 1;
-                }
-                dAngles[i] = arcTan[k] - arcTan[k - 1];
-                dDistance[i] = distance[k] - distance[k - 1];
-                if(i == 0 || i == numPoints - 1)
-                {
-                    curvature[i] = 0;
-                }
-                else
-                {
-                    curvature[i] = dAngles[i] / dDistance[i];
-                }
-                curveSum += curvature[i];
-                speedSum += speed[i];
-            }
-            double avgCurve = curveSum / numPoints;
-            double curveThreshold = .6 * avgCurve;
-            double avgSpeed = speedSum / numPoints;
-            double speedThreshHigh = .8 * avgSpeed;
-            double speedThreshLow = .25 * avgSpeed;
-            double[] speedCorners = new double[numPoints];
-            double[] curveCorners = new double[numPoints];
-            int numSegPoints = 0;
-            for(int i = 1; i < numPoints - 2; i++)
-            {
-                //find local speed minima to detect corners
-                if(speed[i] < speedThreshHigh && speed[i] < speed[i + 1] && speed[i] < speed[i - 1])
-                {
-                    speedCorners[i] = 1;
-                }
-                //find local curvature maxima to detect corners
-                else if(curvature[i] > curveThreshold && curvature[i] > curvature[i + 1] && curvature[i] > curvature[i - 1])
-                {
-                    if(speed[i] < speedThreshLow)
-                    {
-                        curveCorners[i] = 1;
-                    }
-                }
-                //check if the corner points are too close together
-                //or too close to the ends
-                double pauseThreshold = 750; //double milliseconds
-                int y = 20;
-                if(speedCorners[i] == 1 || curveCorners[i] == 1)
-                {
-                    if(i > y && i < numPoints - y)
-                    {
-                        for(int k = i - y; k < i; k++)
-                        {
-                            DateTime time0 = times[k];
-                            DateTime time1 = times[i];
-                            double timeDiff = (time1 - time0).TotalMilliseconds;
-                            if(curveCorners[k] == 1)
-                            {
-                                curveCorners[k] = 0;
-                            }
-                            else if(speedCorners[k] == 1 && timeDiff < pauseThreshold)
-                            {
-                                speedCorners[k] = 0;
-                            }
-                        }
-                    }
-                }
-
-                //create segments from the corner points 
-                if(speedCorners[i] == 1 || curveCorners[i] == 1)
-                {
-                    segPoints[i, 0] = xpoints[i];
-                    segPoints[i, 1] = ypoints[i];
-                    numSegPoints += 1;
-                }
-            }
-
-            int[] indices = new int[numSegPoints + 2];
-            int count = 0;
-            for(int i = 0; i < numPoints; i++)
-            {
-                if(segPoints[i, 0] != 0 || i == numPoints - 1 || i == 0)
-                {
-                    indices[count] = i;
-                    count++;
-                }
-            }
-            double[] segTypes = new double[numSegPoints];
-
-            return indices;
+            stack1 = stack;
         }
 
-        private static double[] correctAngles(double[] angles)
+        private void setStack2(Stack<object> stack)
         {
-            double b = 0;
-            double[] corrected = new double[angles.Length];
-            for(int i = 1; i < angles.Length; i++)
-            {
-                double dif = angles[i - 1] - angles[i];
-                if(Math.Abs(dif) > 2.5)
-                {
-                    b = b + dif;
-                }
-                corrected[i] = b + angles[i];
-            }
-            return corrected;
+            stack2 = stack;
         }
 
-        private static Tuple<double, double> regress(double[,] values)
+        private object popStack1()
         {
-            double xAvg = 0;
-            double yAvg = 0;
-
-            for(int x = 0; x < values.GetLength(0); x++)
-            {
-                xAvg += values[x, 0];
-                yAvg += values[x, 1];
-            }
-
-            xAvg = xAvg / values.Length;
-            yAvg = yAvg / values.Length;
-
-            double v1 = 0;
-            double v2 = 0;
-
-            for(int x = 0; x < values.GetLength(0); x++)
-            {
-                v1 += (values[x, 0] - xAvg) * (values[x, 1] - yAvg);
-                v2 += Math.Pow(values[x, 0] - xAvg, 2);
-            }
-
-            double a = v1 / v2;
-            double b = yAvg - a * xAvg;
-            return Tuple.Create<double, double>(a, b);
-            //Console.WriteLine("y = ax + b");
-            //Console.WriteLine("a = {0}, the slope of the trend line.", Math.Round(a, 2));
-            //Console.WriteLine("b = {0}, the intercept of the trend line.", Math.Round(b, 2));
-
-            //Console.ReadLine();
+            return stack1.Pop();
+        }
+        
+        private object popStack2()
+        {
+            return stack2.Pop();
         }
 
-        public static CLPHistory removeHistoryFromPage(CLPPage page)
+        private void pushStack1(object o)
         {
-            CLPHistory tempHistory = new CLPHistory();
-            foreach(var key in page.PageHistory.TrashedPageObjects.Keys)
-            {
-                tempHistory.TrashedPageObjects.Add(key, page.PageHistory.TrashedPageObjects[key]);
-            }
-            foreach(var key in page.PageHistory.TrashedInkStrokes.Keys)
-            {
-                tempHistory.TrashedInkStrokes.Add(key, page.PageHistory.TrashedInkStrokes[key]);
-            }
-            foreach(CLPHistoryItem item in page.PageHistory.HistoryItems)
-            {
-                tempHistory.HistoryItems.Add(item);
-            }
-            foreach(CLPHistoryItem item in page.PageHistory.UndoneHistoryItems)
-            {
-                tempHistory.UndoneHistoryItems.Add(item);
-            }
-            page.PageHistory.ClearHistory();
-            return tempHistory;
+            stack1.Push(o);
         }
 
-        public static void replaceHistoryInPage(CLPHistory tempHistory, CLPPage page)
+        private void pushStack2(object o)
         {
-            //in case the page history wasn't already empty, clear it.
-            page.PageHistory.ClearHistory();
+            stack2.Push(o);
+        }
 
-            foreach(var key in tempHistory.TrashedPageObjects.Keys)
-            {
-                page.PageHistory.TrashedPageObjects.Add(key, tempHistory.TrashedPageObjects[key]);
+        private void ClearStack1()
+        {
+            stack1.Clear();
+        }
+
+        private void ClearStack2()
+        {
+            stack2.Clear();
+        }
+
+        public CLPHistory getInitialHistory(){
+            CLPHistory clpHistory = new CLPHistory();
+            clpHistory.setStack1(new Stack<object>());
+            clpHistory.setStack2(new Stack<object>());
+            clpHistory.close();
+            return clpHistory;
+        }
+       
+        public void undo(){
+            //printMemStacks("undo", "before1");
+            Stack<object> stack1 = getStack1();
+            int stack1Count = stack1.Count;
+            if(stack1Count==0){
+                return;
             }
-            foreach(var key in tempHistory.TrashedInkStrokes.Keys)
-            {
-                page.PageHistory.TrashedInkStrokes.Add(key, tempHistory.TrashedInkStrokes[key]);
+            Stack<object> stack2 = getStack2();
+            int stack2Count = stack2.Count;
+
+            //printMemStacks("undo", "before2");
+            Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+            //printMemStacks("undo", "before3");
+            
+            List<object> l = (List<object>)popStack1();
+            disableMem();
+            try{
+                revertToMemList(l);
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
             }
-            foreach(CLPHistoryItem item in tempHistory.HistoryItems)
+            ///////////////
+            //Integrity check
+            int stack1CountAfter = getStack1().Count;
+            if(stack1CountAfter != (stack1Count - 1))
             {
-                page.PageHistory.HistoryItems.Add(item);
+                popStack1();
+                setStack2(stack3);
+                ClearStack1();
+                enableMem();
             }
-            foreach(CLPHistoryItem item in tempHistory.UndoneHistoryItems)
+            else {
+                pushStack2(l);
+                enableMem();
+            }
+            ////////////////
+            printMemStacks("undo", "after"); 
+        }
+
+        public void redo(){
+             //printMemStacks("redo", "before1"); 
+             Stack<object> stack2 = getStack2();
+             int stack2Count = stack2.Count;
+             if(stack2Count == 0)
+             {
+                return;
+             }
+             Stack<object> stack1 = getStack1();
+             int stack1Count = stack1.Count;
+
+             //printMemStacks("redo", "before2");
+             Stack<object> stack3 = new Stack<object>(new Stack<object>(stack2));
+             //printMemStacks("redo", "before3");
+
+            List<object> l = (List<object>)popStack2();
+            disableMem();
+            try{
+                forwardToMemList(l);
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+            ///////////////
+            //Integrity check
+            int stack1CountAfter = getStack1().Count;
+            if(stack1CountAfter != stack1Count)
             {
-                page.PageHistory.UndoneHistoryItems.Add(item);
+                popStack1();
+                setStack2(stack3);
+                ClearStack2();
+                enableMem();
+            }
+            else
+            {
+                pushStack1(l);
+                enableMem();
+            }
+            ////////////////
+            //printMemStacks("redo", "after");
+        }
+
+        public void printMemStacks(String methodName, String pos)
+        {
+            Console.WriteLine(pos + " " + methodName + " stack1");
+            Stack<object> stack1 = getStack1();
+            foreach(Object o in stack1)
+            {
+                Console.WriteLine(((List<object>)o)[0]);
+            }
+            Console.WriteLine(pos + " " + methodName + " stack2");
+            Stack<object> stack2 = getStack2();
+            foreach(Object o in stack2)
+            {
+                Console.WriteLine(((List<object>)o)[0]);
             }
         }
 
-        #endregion
+        public Boolean revertToMemList(List<object> l){
+            string inst = (string)l[0];
+           if(inst.Equals(Stroke_Added)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                if(page.InkStrokes.Contains(s))
+                {
+                    page.InkStrokes.Remove(s);
+                }
+                return true;
+            }else if(inst.Equals(Stroke_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                if(!page.InkStrokes.Contains(s))
+                {
+                page.InkStrokes.Add(s);
+                }
+                return true;
+            }else if(inst.Equals(Object_Added)){
+                CLPPage page = (CLPPage)l[1];
+                IList addedPageObjects = (IList)l[2];
+                foreach(ICLPPageObject addedPageObject in addedPageObjects)
+                {
+                    page.PageObjects.Remove(addedPageObject);
+                }
+                return true;
+            }else if(inst.Equals(Object_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                IList removedPageObjects = (IList)l[2];
+                foreach(ICLPPageObject removedPageObject in removedPageObjects)
+                {
+                    page.PageObjects.Add(removedPageObject);
+                }
+                return true;
+            }else if(inst.Equals(Object_Resized)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double oldHeight = (double)l[3];
+                double oldWidth = (double)l[4];
+                pageObject.Height = oldHeight;
+                pageObject.Width = oldWidth;
+                return true;
+            }else if(inst.Equals(Object_Moved)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double oldXPos = (double)l[3];
+                double oldYPos = (double)l[4];
+                pageObject.XPosition = oldXPos;
+                pageObject.YPosition = oldYPos;
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public Boolean forwardToMemList(List<object> l){
+            string inst = (string)l[0];
+            if(inst.Equals(Stroke_Added)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                if(!page.InkStrokes.Contains(s))
+                {
+                page.InkStrokes.Add(s);
+                }
+                return true;
+            }else if(inst.Equals(Stroke_Removed)){
+                CLPPage page = (CLPPage)l[1];
+                Stroke s = (Stroke)l[2];
+                if(page.InkStrokes.Contains(s))
+                {
+                page.InkStrokes.Remove(s);
+                }
+                return true;
+            }
+            else if(inst.Equals(Object_Added))
+            {
+                CLPPage page = (CLPPage)l[1];
+                IList addedPageObjects = (IList)l[2];
+                foreach(ICLPPageObject addedPageObject in addedPageObjects)
+                {
+                    page.PageObjects.Add(addedPageObject);
+                }
+                return true;
+            }
+            else if(inst.Equals(Object_Removed))
+            {
+                CLPPage page = (CLPPage)l[1];
+                IList removedPageObjects = (IList)l[2];
+                foreach(ICLPPageObject removedPageObject in removedPageObjects)
+                {
+                    page.PageObjects.Remove(removedPageObject);
+                }
+                return true;
+            }else if(inst.Equals(Object_Resized)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double newHeight = (double)l[5];
+                double newWidth = (double)l[6];
+                pageObject.Height = newHeight;
+                pageObject.Width = newWidth;
+                return true;
+            }else if(inst.Equals(Object_Moved)){
+                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
+                double newXPos = (double)l[5];
+                double newYPos = (double)l[6];
+                pageObject.XPosition = newXPos;
+                pageObject.YPosition = newYPos;
+                return true;
+            }else{
+                return false;
+            } 
+        }
+
+        #region Previous History
+        /*
+        public Boolean replay(CLPHistory memInit, CLPHistory memCurrent){
+            CLPHistory memFinal = memCurrent.getMemento();
+            revertToMem(memInit, memCurrent);
+            forwardToMem(memFinal, memInit);
+            return true;
+        }
+        
+        public Boolean replayPage(){
+            try{
+                CLPHistory memInit = this.getInitialHistory();
+                CLPHistory memCurrent = this.getMemento();
+                return replay(memInit, memCurrent);
+            }
+            catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
+
+
+
+          private Boolean revertToMem(CLPHistory oldMem){
+              CLPHistory currentMem = getMemento();
+              return revertToMem(oldMem, currentMem);
+          }
+
+          public Boolean revertToMem(CLPHistory oldMem, CLPHistory currentMem) { 
+              //String oldMemNotebookId = oldMem.getNotebookID();
+              //String currentMemNotebookId = currentMem.getNotebookID();
+              //if(oldMemNotebookId.Equals(currentMemNotebookId)){
+                  Stack<object> sOldMem = oldMem.getStack1();
+                  Stack<object> sCurrentMem = currentMem.getStack1();
+                  if(sOldMem.Count<sCurrentMem.Count){
+                      try{
+                          while(sOldMem.Count < sCurrentMem.Count){
+                              List<object> l = (List<object>)sCurrentMem.Pop();
+                              Console.WriteLine("This is the action being UNDONE: " + l[0]);
+                              revertToMemList(l);
+                          }
+                          return true;
+                      }catch(Exception e){
+                          Console.WriteLine(e.StackTrace);
+                          return false;
+                      }
+                  }
+              
+              return false;
+          }
+
+          public Boolean forwardToMem(CLPHistory futureMem, CLPHistory currentMem) {
+              Stack<object> sFutureMem = futureMem.getStack1();
+              int futureMemCount = sFutureMem.Count;
+              Stack<object> sCurrentMem = currentMem.getStack1();
+              int currentMemCount = sCurrentMem.Count;
+              if(futureMemCount <= currentMemCount) {
+                  return false;
+              }
+              ArrayList aFutureMem = new ArrayList();
+              while(sFutureMem.Count > currentMemCount){
+                  aFutureMem.Insert(0, sFutureMem.Pop());
+              }
+              try{
+                  for(int i = 0; i < aFutureMem.Count; i++){
+                      List<object> l = (List<object>)aFutureMem[i];
+                      Console.WriteLine("This is the action being redone: " +l[0]);
+                      forwardToMemList(l);
+                  }
+                  return true;
+              }catch(Exception e){
+                  Console.WriteLine(e.StackTrace);
+                  return false;
+              }
+          }
+
+          public Memento getInitMem() {
+              Memento m = this.initialMemento.getClone();
+              return m;
+          }
+
+          public Memento getMemento() {
+            Memento m = this.memento.getClone();
+            return m;
+          }*/
+        /*
+           public Object pop(){
+               if(closed == null){
+                   if(notebook.isMemEnabled() && isMemEnabledInternal())
+                   {
+                       if(stack1.Count!=0){
+                           Object o = stack1.Pop();
+                           stack2.Push(o);
+                           return o;
+                       }else{
+                           return null;
+                           }
+                   }else{
+                       return null;
+                   }
+               }else{
+                   return null;
+               }
+           }
+            
+           public static T Clone<T>(T source)
+           {
+              if(!typeof(T).IsSerializable)
+             {
+               Console.WriteLine("object is not serializable");
+                   throw new ArgumentException("The type must be serializable.", "source");
+             }
+       
+             // Don't serialize a null object, simply return the default for that object
+              if(Object.ReferenceEquals(source, null))
+               {
+                   Console.WriteLine("Don't serialize a null object, simply return the default for that object");
+                  return default(T);
+              }
+
+               IFormatter formatter = new BinaryFormatter();
+               Stream stream = new MemoryStream();
+               using(stream)
+               {
+                   formatter.Serialize(stream, source);
+                   stream.Seek(0, SeekOrigin.Begin);
+                   return (T)formatter.Deserialize(stream);
+               }
+           }
+
+           public Memento getClone(){
+               Memento m = Clone(this);
+               m.close();
+               return m;
+           }
+            
+           public Stack<object> getStack() {
+             return Clone(this.stack1);
+          }*/
+        #endregion 
     }
 }

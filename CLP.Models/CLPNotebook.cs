@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Ink;
 
 namespace CLP.Models
 {
@@ -13,6 +17,9 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
     {
+        
+        
+        //private readonly Memento initialMemento;
         #region Constructor
 
         /// <summary>
@@ -20,11 +27,14 @@ namespace CLP.Models
         /// </summary>
         public CLPNotebook()
         {
+            
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             Pages = new ObservableCollection<CLPPage>();
             Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
+           
+
         }
 
         /// <summary>
@@ -46,6 +56,12 @@ namespace CLP.Models
             get { return GetValue<string>(UserNameProperty); }
             set { SetValue(UserNameProperty, value); }
         }
+
+       
+
+
+
+
         public static readonly PropertyData UserNameProperty = RegisterProperty("UserName", typeof(String), "NoName");
 
         /// <summary>
@@ -138,14 +154,16 @@ namespace CLP.Models
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            
         }
 
         public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
-
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            
+
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
@@ -158,6 +176,13 @@ namespace CLP.Models
 
         public void RemovePageAt(int index)
         {
+            CLPPage sPage = null;
+            try{
+                sPage = Pages[index]; 
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+
             if(Pages.Count > index && index >= 0)
             {
                 Submissions.Remove(Pages[index].UniqueID);
@@ -168,6 +193,7 @@ namespace CLP.Models
                 AddPage(new CLPPage());
             }
             GeneratePageIndexes();
+           
         }
 
         public CLPPage GetPageAt(int pageIndex, int submissionIndex)

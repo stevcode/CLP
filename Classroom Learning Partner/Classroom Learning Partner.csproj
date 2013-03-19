@@ -252,6 +252,7 @@
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Memento.cs" />
     <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
       <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
     </Compile>

@@ -56,6 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
             Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+            
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -527,6 +528,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            String action = e.Action.ToString().Trim();
+            if(action == Page.PageHistory.Object_Added){
+                List<object> l = new List<object>();
+                l.Add(Page.PageHistory.Object_Added);
+                l.Add(Page);
+                l.Add(e.NewItems);
+                Page.PageHistory.push(l); 
+            }
+            else if(action == Page.PageHistory.Object_Removed)
+            {
+                List<object> l = new List<object>();
+                l.Add(Page.PageHistory.Object_Removed);
+                l.Add(Page);
+                l.Add(e.OldItems);
+                Page.PageHistory.push(l); 
+            }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -581,15 +598,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
                 App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
-
                 //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.
                 Task.Factory.StartNew(() =>
                     {
                         try
                         {
-                            List<string> removedStrokeIDs = new List<string>();
+                        
+                        List<string> removedStrokeIDs = new List<string>();
                             foreach(Stroke stroke in e.Removed)
                             {
+                               
+                                if(Page.PageHistory.isMemEnabled()){
+                                    List<object> l = new List<object>();
+                                    l.Add(Page.PageHistory.Stroke_Removed);
+                                    l.Add(Page);
+                                    l.Add(stroke);
+                                    Page.PageHistory.push(l); 
+                                }
+                            
                                 removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
                             }
 
@@ -603,6 +629,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                     //TODO: Steve - Add Property for Mutability.
                                     //TODO: Steve - Add Property for UserName of person who created the stroke.
                                 }
+                            
+                                
+                                if(Page.PageHistory.isMemEnabled()){
+                                    List<object> l = new List<object>();
+                                    l.Add(Page.PageHistory.Stroke_Added);
+                                    l.Add(Page);
+                                    l.Add(stroke);
+                                    Page.PageHistory.push(l);  
+                                }
+                            
                                 //Ensures truly uniqueIDs
                                 foreach(string id in removedStrokeIDs)
                                 {
@@ -731,7 +767,7 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        public ICLPPageObject GetPageObjectByID(string uniqueID)
+       /* public ICLPPageObject GetPageObjectByID(string uniqueID)
         {
             if (PageHistory.TrashedPageObjects.ContainsKey(uniqueID))
             {
@@ -746,10 +782,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             return null;
-        }
+        }*/
 
         /************** UNDO **************/
-        public void Undo()
+      /*  public void Undo()
         {
             PageHistory.IgnoreHistory = true;
             if (PageHistory.HistoryItems.Count > 0)
@@ -821,7 +857,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         break;
                     case HistoryItemType.EraseInk:
-                        /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+                        // foreach (string s in PageHistory.TrashedInkStrokes.Keys)
                          //{
                          //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
                          //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
@@ -831,7 +867,7 @@ namespace Classroom_Learning_Partner.ViewModels
                          //        break;
                          //    }
                          //}
-                         * } */
+                        // * } 
                         //Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
                         //Page.InkStrokes.Add(inkStroke);
                         break;
@@ -856,9 +892,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageHistory.UndoneHistoryItems.Add(item);
             }
             PageHistory.IgnoreHistory = false;
-        }
+        }*/
 
-        public void Redo()
+       /* public void Redo()
         {
             PageHistory.IgnoreHistory = true;
             if (PageHistory.UndoneHistoryItems.Count > 0)
@@ -951,7 +987,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             PageHistory.IgnoreHistory = false;
-        }
+        }*/
 
         #endregion //Methods
                 

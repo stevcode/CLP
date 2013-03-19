@@ -332,9 +332,30 @@ namespace Classroom_Learning_Partner
             //   //CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
             //   //page.PageHistory.HistoryItems.Add(item);
             //}
+            double oldXPos = pageObject.XPosition;
+            double oldYPos = pageObject.YPosition;
+            CLPPage page = pageObject.ParentPage;
+            
+            double xDiff = Math.Abs(oldXPos - pt.X);
+            double yDiff = Math.Abs(oldYPos - pt.Y);
+            double diff = xDiff + yDiff;
+            if(diff > page.PageHistory.Sample_Rate)
+            {
 
-            pageObject.XPosition = pt.X;
-            pageObject.YPosition = pt.Y;
+                List<object> l = new List<object>();
+                l.Add(page.PageHistory.Object_Moved);
+                l.Add(page);
+                l.Add(pageObject);
+                l.Add(oldXPos);
+                l.Add(oldYPos);
+                l.Add(pt.X);
+                l.Add(pt.Y);
+                page.PageHistory.push(l);
+                pageObject.XPosition = pt.X;
+                pageObject.YPosition = pt.Y;
+                Console.WriteLine("x diff = " + (oldXPos - pt.X));
+                Console.WriteLine("y diff = " + (oldYPos - pt.Y));
+            }
         }
 
         public void ChangePageObjectDimensions(CLP.Models.ICLPPageObject pageObject, double height, double width)
@@ -351,9 +372,27 @@ namespace Classroom_Learning_Partner
             //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.ResizePageObject, pageObject.UniqueID, oldValue.ToString(), newValue.ToString());
             //    page.PageHistory.HistoryItems.Add(item);
             //}
-
+            double oldHeight = pageObject.Height;
+            double oldWidth = pageObject.Width;
+            CLPPage page = pageObject.ParentPage;
+            double heightDiff = Math.Abs(oldHeight - height);
+            double widthDiff = Math.Abs(oldWidth - width);
+            double diff = heightDiff + widthDiff;
+            if(diff > page.PageHistory.Sample_Rate){
+            List<object> l = new List<object>();
+            l.Add(page.PageHistory.Object_Resized);
+            l.Add(page);
+            l.Add(pageObject);
+            l.Add(oldHeight);
+            l.Add(oldWidth);
+            l.Add(height);
+            l.Add(width);
+            page.PageHistory.push(l); 
             pageObject.Height = height;
             pageObject.Width = width;
+            Console.WriteLine("height diff = " + (oldHeight-height));
+            Console.WriteLine("width diff = " + (oldWidth - width));
+            }
         }
 
         #endregion //Page
