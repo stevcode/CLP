@@ -11,6 +11,7 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
+using System.Security.Cryptography;
 
 namespace Classroom_Learning_Partner
 {
@@ -28,7 +29,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+            bool isGroupSubmission, double pageHeight, List<byte> image);
 
         [OperationContract]
         void ScrollPage(string pageID, string submissionID, double offset);
@@ -117,7 +118,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+            bool isGroupSubmission, double pageHeight, List<byte> image)
         {
             CLPPage submission = null;
             CLPNotebook currentNotebook = null;
@@ -145,6 +146,26 @@ namespace Classroom_Learning_Partner
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
                 submission.PageHeight = pageHeight;
+
+                if(submission.PageIndex == 25)
+                {
+                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                    byte[] hash = md5.ComputeHash(image.ToArray());
+                    string imageID = Convert.ToBase64String(hash);
+
+                    if(!submission.ImagePool.ContainsKey(imageID))
+                    {
+                        submission.ImagePool.Add(imageID, image);
+                    }
+                    CLPImage imagePO = new CLPImage(imageID, submission);
+                    imagePO.IsBackground = true;
+                    imagePO.Height = 450;
+                    imagePO.Width = 600;
+                    imagePO.YPosition = 225;
+                    imagePO.XPosition = 108;
+
+                    submission.PageObjects.Add(imagePO);
+                }
 
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {

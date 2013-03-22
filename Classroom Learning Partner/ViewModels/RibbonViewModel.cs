@@ -163,6 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
@@ -769,6 +770,25 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         #region Notebook Commands
+
+        /// <summary>
+        /// Removes all the submissions on a notebook, making it essentially a Student Notebook.
+        /// </summary>
+        public Command RemoveAllSubmissionsCommand { get; private set; }
+
+        private void OnRemoveAllSubmissionsCommandExecute()
+        {
+            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            foreach (ObservableCollection<CLPPage> pages in notebook.Submissions.Values)
+            {
+                pages.Clear();
+            }
+            foreach (CLPPage page in notebook.Pages)
+            {
+                page.NumberOfSubmissions = 0;
+                page.NumberOfGroupSubmissions = 0;
+            }
+        }
 
         /// <summary>
         /// Broadcast the current page of a MirrorDisplay to all connected Students.

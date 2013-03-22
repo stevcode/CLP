@@ -172,19 +172,19 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Insert">
+            <RibbonGroup Header="Insert">
 
-                <RibbonButton
+                <!--<RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}"/>
+                        Command="{Binding Path=InsertBlankStampCommand}"/>-->
 
-                <RibbonToggleButton Label="Webcam"
+                <RibbonToggleButton Label="Webcam" 
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
@@ -248,13 +248,13 @@
 
             </RibbonGroup>-->
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
@@ -360,6 +360,10 @@
                 <RibbonButton Label="Replace This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ReplacePageCommand}" />
+
+                <RibbonButton Label="Remove All Submissions"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding RemoveAllSubmissionsCommand}" />
 
             </RibbonGroup>
             

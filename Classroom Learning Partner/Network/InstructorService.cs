@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
@@ -19,7 +20,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+            bool isGroupSubmission, double pageHeight, List<byte> image);
 
         [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
@@ -41,7 +42,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+            bool isGroupSubmission, double pageHeight, List<byte> image)
         {
             if(App.Network.ProjectorProxy != null)
             {
@@ -52,7 +53,7 @@ namespace Classroom_Learning_Partner
                         App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
                             submitter, groupSubmitter,
                             notebookID, pageID, submissionID, submissionTime,
-                            isGroupSubmission, pageHeight);
+                            isGroupSubmission, pageHeight, image);
                     }
                     catch(System.Exception ex)
                     {
@@ -94,6 +95,26 @@ namespace Classroom_Learning_Partner
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
                 submission.PageHeight = pageHeight;
+
+                if(submission.PageIndex == 25)
+                {
+                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                    byte[] hash = md5.ComputeHash(image.ToArray());
+                    string imageID = Convert.ToBase64String(hash);
+
+                    if(!submission.ImagePool.ContainsKey(imageID))
+                    {
+                        submission.ImagePool.Add(imageID, image);
+                    }
+                    CLPImage imagePO = new CLPImage(imageID, submission);
+                    imagePO.IsBackground = true;
+                    imagePO.Height = 450;
+                    imagePO.Width = 600;
+                    imagePO.YPosition = 225;
+                    imagePO.XPosition = 108;
+
+                    submission.PageObjects.Add(imagePO);
+                }
 
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {
