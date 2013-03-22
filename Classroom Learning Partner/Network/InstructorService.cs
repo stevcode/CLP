@@ -98,6 +98,31 @@ namespace Classroom_Learning_Partner
 
                 if(submission.PageIndex == 25)
                 {
+                    if(App.Network.ClassList.Count > 0 && App.MainWindowViewModel.Ribbon.AllowWebcamShare && isGroupSubmission)
+                    {
+                        foreach(Person student in App.Network.ClassList)
+                        {
+                            if (student.GroupName == submission.GroupSubmitter.GroupName && student.FullName != submission.SubmitterName)
+                            {
+                                try
+                                {
+                                    IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                                    StudentProxy.AddWebcamImage(image);
+                                    (StudentProxy as ICommunicationObject).Close();
+                                }
+                                catch(System.Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Logger.Instance.WriteToLog("No Students Found");
+                    }
+
+
                     MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
                     byte[] hash = md5.ComputeHash(image.ToArray());
                     string imageID = Convert.ToBase64String(hash);

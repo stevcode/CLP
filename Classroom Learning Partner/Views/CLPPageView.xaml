@@ -51,7 +51,7 @@
                        IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                        EditingMode="{Binding EditingMode}"
-                       EditingModeInverted="EraseByPoint"
+                       EditingModeInverted="EraseByStroke"
                        DefaultDrawingAttributes="{Binding DefaultDA}" />
 
         </Canvas>

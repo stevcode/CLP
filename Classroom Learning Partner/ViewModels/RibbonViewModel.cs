@@ -199,6 +199,9 @@ namespace Classroom_Learning_Partner.ViewModels
             UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
+
+
+            TurnOffWebcamSharing = new Command(OnTurnOffWebcamSharingExecute);
         }
 
         /// <summary>
@@ -768,6 +771,27 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool AllowWebcamShare
+        {
+            get { return GetValue<bool>(AllowWebcamShareProperty); }
+            set { SetValue(AllowWebcamShareProperty, value); }
+        }
+
+        public static readonly PropertyData AllowWebcamShareProperty = RegisterProperty("AllowWebcamShare", typeof(bool), true);
+
+        /// <summary>
+        /// Gets the TurnOffWebcamSharing command.
+        /// </summary>
+        public Command TurnOffWebcamSharing { get; private set; }
+
+        private void OnTurnOffWebcamSharingExecute()
+        {
+            AllowWebcamShare = false;
+        }
 
         #region Notebook Commands
 

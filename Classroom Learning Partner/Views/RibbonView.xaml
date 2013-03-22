@@ -348,6 +348,10 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
+                
+                <RibbonButton Label="Turn Off Webcam Sharing"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding TurnOffWebcamSharing}" />
 
             </RibbonGroup>
             
