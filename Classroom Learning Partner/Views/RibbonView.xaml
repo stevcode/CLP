@@ -140,12 +140,12 @@
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="5" Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <!--<RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="7" Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="12" Width="150" />
-                            </RibbonGalleryItem>
+                            </RibbonGalleryItem>-->
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
