@@ -44,6 +44,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <value>The title.</value>
         public override string Title { get { return "WebcamPanelVM"; } }
 
+        protected override void Close()
+        {
+            SelectedWebcam.Dispose();
+            SelectedWebcam = null;
+
+            base.Close();
+        }
+
         #region Bindings
 
         /// <summary>

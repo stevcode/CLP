@@ -1848,9 +1848,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(!isButtonChecked) //ClosePanel
             {
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
-                //panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
-                //panelCloserTimer.Tick += panelCloserTimer_Tick;
-                //panelCloserTimer.Start();
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
             }
             else //OpenPanel
             {
@@ -1858,10 +1857,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
                 }
-                else
-                {
-                    //panelCloserTimer.Stop();
-                }
+
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
             }
         }
