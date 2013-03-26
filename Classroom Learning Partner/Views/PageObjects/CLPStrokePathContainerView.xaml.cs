@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
+            //TODO: Steve - This needs moved to ViewModel
             ICLPPageObject pageObject = (this.DataContext as CLPStrokePathContainerViewModel).PageObject;
 
             CLPServiceAgent.Instance.RemovePageObjectFromPage(pageObject);
@@ -32,6 +33,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            //TODO: Steve - This needs moved to ViewModel
             ICLPPageObject pageObject = (ViewModel as CLPStrokePathContainerViewModel).PageObject;
 
             double x = pageObject.XPosition + e.HorizontalChange;
@@ -44,23 +46,23 @@ namespace Classroom_Learning_Partner.Views
             {
                 y = 0;
             }
-            if(x > 1056 - pageObject.Width)
+            if(x > pageObject.ParentPage.PageWidth - pageObject.Width)
             {
-                x = 1056 - pageObject.Width;
+                x = pageObject.ParentPage.PageWidth - pageObject.Width;
             }
-            if(y > 816 - pageObject.Height)
+            if(y > pageObject.ParentPage.PageHeight - pageObject.Height)
             {
-                y = 816 - pageObject.Height;
+                y = pageObject.ParentPage.PageHeight - pageObject.Height;
             }
 
             //Console.WriteLine("PageObject pageObjects moving: " + pageObject.PageObjectObjectParentIDs.Count);
-            if (pageObject.PageObjectObjectParentIDs.Count > 0)
+            if(pageObject.PageObjectObjectParentIDs.Count > 0)
             {
                 double xDelta = x - pageObject.XPosition;
                 double yDelta = y - pageObject.YPosition;
 
                 ObservableCollection<ICLPPageObject> pageObjectsOverPageObject = pageObject.GetPageObjectsOverPageObject();
-                foreach (ICLPPageObject po in pageObjectsOverPageObject)
+                foreach(ICLPPageObject po in pageObjectsOverPageObject)
                 {
                     //Console.WriteLine(po.UniqueID);
                     Point pageObjectPt = new Point((xDelta + po.XPosition), (yDelta + po.YPosition));
