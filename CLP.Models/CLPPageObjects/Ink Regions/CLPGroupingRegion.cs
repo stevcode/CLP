@@ -41,20 +41,6 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// Stored interpreted answer.
-        /// </summary>
-        public string StoredAnswer
-        {
-            get { return GetValue<string>(StoredAnswerProperty); }
-            set { SetValue(StoredAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the StoredAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
-
-        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public CLPInkShapeRegion InkShapeRegion
@@ -110,6 +96,7 @@ namespace CLP.Models
                 nonFormattedIterpretation.Append(grouping.toNonFormattedString());
             }
             StoredAnswer = interpretation.ToString();
+
             Console.WriteLine("Interpretation");
             Console.WriteLine(nonFormattedIterpretation.ToString());
         }

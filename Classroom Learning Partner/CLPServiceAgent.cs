@@ -369,6 +369,15 @@ namespace Classroom_Learning_Partner
             pageObject.Width = width;
         }
 
+        public void InterpretRegion(ACLPInkRegion inkRegion) {
+            inkRegion.DoInterpretation();
+
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.SubmitterName);
+            Logger.Instance.WriteToLog((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
+            Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
+        }
+
         #endregion //Page
 
         #region Network
