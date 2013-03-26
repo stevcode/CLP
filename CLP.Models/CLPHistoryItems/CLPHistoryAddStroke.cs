@@ -6,6 +6,7 @@ using Catel.Data;
 
 namespace CLP.Models.CLPHistoryItems
 {
+    [Serializable]
     public class CLPHistoryAddStroke : CLPHistoryItem
     {
 

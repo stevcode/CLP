@@ -106,18 +106,15 @@ namespace CLP.Models
         {
             if(closed == null && memEnabled)
             {
-                lock(this)
+                if(!isExpected(item))
                 {
-                    if(!isExpected(item))
-                    {
-                        Console.WriteLine("pushing a " + item.ItemType);
-                        Past.Push(item);
-                        Future.Clear();
-                    }
-                    else
-                    {
-                        Console.WriteLine("expected " + item.ItemType);
-                    }
+                    Console.WriteLine("pushing a " + item.ItemType);
+                    Past.Push(item);
+                    Future.Clear();
+                }
+                else
+                {
+                    Console.WriteLine("expected " + item.ItemType);
                 }
                 return true;
             }
@@ -134,6 +131,7 @@ namespace CLP.Models
        
         public void undo(){
             if(Past.Count==0){
+                Console.WriteLine("told to undo, but nothing in stack");
                 return;
             }
             Console.WriteLine("started undo");
@@ -151,6 +149,7 @@ namespace CLP.Models
         public void redo(){
             if(Future.Count == 0)
             {
+               Console.WriteLine("told to redo, but nothing in stack");
                return;
             }
             CLPHistoryItem nextAction = (CLPHistoryItem)Future.Pop();
