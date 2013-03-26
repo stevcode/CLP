@@ -17,6 +17,7 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -529,20 +530,18 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             String action = e.Action.ToString().Trim();
-            if(action == Page.PageHistory.Object_Added){
-                List<object> l = new List<object>();
-                l.Add(Page.PageHistory.Object_Added);
-                l.Add(Page);
-                l.Add(e.NewItems);
-                Page.PageHistory.push(l); 
+            if(action == "Add"){
+                foreach(ICLPPageObject item in e.NewItems)
+                {
+                    Page.PageHistory.push(new CLPHistoryAddObject(Page, item));
+                }
             }
-            else if(action == Page.PageHistory.Object_Removed)
+            else if(action == "Remove")
             {
-                List<object> l = new List<object>();
-                l.Add(Page.PageHistory.Object_Removed);
-                l.Add(Page);
-                l.Add(e.OldItems);
-                Page.PageHistory.push(l); 
+                foreach(ICLPPageObject item in e.OldItems)
+                {
+                    Page.PageHistory.push(new CLPHistoryRemoveObject(Page, item));
+                }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
@@ -607,14 +606,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         List<string> removedStrokeIDs = new List<string>();
                             foreach(Stroke stroke in e.Removed)
                             {
-                               
-                                if(Page.PageHistory.isMemEnabled()){
-                                    List<object> l = new List<object>();
-                                    l.Add(Page.PageHistory.Stroke_Removed);
-                                    l.Add(Page);
-                                    l.Add(CLPPage.StrokeToByte(stroke));
-                                    Page.PageHistory.push(l); 
-                                }
+                                Page.PageHistory.push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke))); 
                             
                                 removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
                             }
@@ -631,13 +623,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }
                             
                                 
-                                if(Page.PageHistory.isMemEnabled()){
-                                    List<object> l = new List<object>();
-                                    l.Add(Page.PageHistory.Stroke_Added);
-                                    l.Add(Page);
-                                    l.Add(CLPPage.StrokeToByte(stroke));
-                                    Page.PageHistory.push(l);  
-                                }
+                                Page.PageHistory.push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
+
                             
                                 //Ensures truly uniqueIDs
                                 foreach(string id in removedStrokeIDs)

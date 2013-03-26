@@ -22,6 +22,7 @@ using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
 using System.Collections;
+using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -1751,20 +1752,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageHistory.disableMem();
 
                     //revertToMem(memInit, memCurrent);
-                    Stack<object> sOldMem = memInit.Stack1;
-                    Stack<object> sCurrentMem = memCurrent.Stack1;
+                    Stack<CLPHistoryItem> sOldMem = memInit.Past;
+                    Stack<CLPHistoryItem> sCurrentMem = memCurrent.Past;
                     if(sOldMem.Count < sCurrentMem.Count)
                     {
                         try
                         {
                             while(sOldMem.Count < sCurrentMem.Count)
                             {
-                                List<object> l = (List<object>)sCurrentMem.Pop();
-                                Console.WriteLine("This is the action being UNDONE: " + l[0]);
+                                CLPHistoryItem item = sCurrentMem.Pop();
+                                Console.WriteLine("This is the action being UNDONE: " + item.ItemType);
                                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                 (DispatcherOperationCallback)delegate(object arg)
                                 {
-                                    memInit.revertToMemList(l);
+                                    item.Undo();
                                 return null;
                                 }, null);
                             }
@@ -1772,27 +1773,26 @@ namespace Classroom_Learning_Partner.ViewModels
                         catch(Exception e)
                         {
                             Console.WriteLine(e.StackTrace);
-                           
                         }
                     }
 
                     //forwardToMem(memFinal, memInit);
                     Thread.Sleep(400);
-                    Stack<object> sFutureMem = new Stack<object>(memFinal.Stack1);
-                    Stack<object>  sCurrentMem2 = memInit.Stack1; 
+                    Stack<CLPHistoryItem> sFutureMem = new Stack<CLPHistoryItem>(memFinal.Past);
+                    Stack<CLPHistoryItem>  sCurrentMem2 = memInit.Past; 
                     if(sFutureMem.Count > sCurrentMem2.Count)
                     {
                         try
                         {
                             while(sFutureMem.Count > sCurrentMem2.Count)
                             {
-                                List<object> l2 = (List<object>)sFutureMem.Pop();
+                                CLPHistoryItem item = sFutureMem.Pop();
                                 Thread.Sleep(400);
-                                Console.WriteLine("This is the action being REDONE: " + l2[0]);
+                                Console.WriteLine("This is the action being REDONE: " + item.ItemType);
                                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                 (DispatcherOperationCallback)delegate(object arg)
                                 {
-                                    memFinal.forwardToMemList(l2);
+                                    item.Redo();
                                     return null;
                                 }, null);
                             }

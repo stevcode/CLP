@@ -5,8 +5,8 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Ink;
+using CLP.Models.CLPHistoryItems;
 
 namespace CLP.Models
 {
@@ -15,25 +15,16 @@ namespace CLP.Models
     {
         private bool memEnabled;
         private string closed = null;
-        //private Stack<object> stack1 = new Stack<object>();
-        //private Stack<object> stack2 = new Stack<object>();
-        public readonly string Page_Added = "Page_Added";
-        public readonly string Page_Inserted = "Page_Inserted";
-        public readonly string Page_Removed = "Page_Removed";
-        public readonly string Stroke_Added = "Stroke_Added";
-        public readonly string Stroke_Removed = "Stroke_Removed";
-        public readonly string Object_Added = "Add"; //do not modify
-        public readonly string Object_Removed = "Remove"; //do not modify
-        public readonly string Object_Resized = "Resize"; 
-        public readonly string Object_Moved = "Move";
         public readonly double Sample_Rate = 9;
-        
+
+        #region Constructor
+
         public CLPHistory()
         {
             memEnabled = true;
         }
 
-         /// <summary>
+        /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
@@ -43,39 +34,57 @@ namespace CLP.Models
         {
         }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Stack<object> Stack1
-        {
-            get { return GetValue<Stack<object>>(Stack1Property); }
-            set { SetValue(Stack1Property, value); }
-        }
+        #endregion //Constructor
 
-        public static readonly PropertyData Stack1Property = RegisterProperty("Stack1", typeof(Stack<object>), () => new Stack<object>());
+        #region Properties
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The actions that have happened in the past.  "Undo" reverses the top action on the stack and pushes
+        /// it to Future.
         /// </summary>
-        public Stack<object> Stack2
+        public Stack<CLPHistoryItem> Past
         {
-            get { return GetValue<Stack<object>>(Stack2Property); }
-            set { SetValue(Stack2Property, value); }
+            get { return GetValue<Stack<CLPHistoryItem>>(PastProperty); }
+            set { SetValue(PastProperty, value); }
         }
 
-        public static readonly PropertyData Stack2Property = RegisterProperty("Stack2", typeof(Stack<object>), () => new Stack<object>());
+        public static readonly PropertyData PastProperty = RegisterProperty("Past", 
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
+
+        /// <summary>
+        /// The actions queued to happen in the future.  "Redo" performs the top action on the stack and pushes
+        /// it to Past.  Taking an action other than Undo or Redo clears the Future.
+        /// </summary>
+        public Stack<CLPHistoryItem> Future
+        {
+            get { return GetValue<Stack<CLPHistoryItem>>(FutureProperty); }
+            set { SetValue(FutureProperty, value); }
+        }
+
+        public static readonly PropertyData FutureProperty = RegisterProperty("Future", 
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
+
+        /// <summary>
+        /// The events that we have triggered and should therefore ignore when we're told they've
+        /// happened.
+        /// </summary>
+        public List<CLPHistoryItem> ExpectedEvents
+        {
+            get { return GetValue<List<CLPHistoryItem>>(ExpectedEventsProperty); }
+            set { SetValue(ExpectedEventsProperty, value); }
+        }
+
+        public static readonly PropertyData ExpectedEventsProperty = RegisterProperty("ExpectedEvents",
+            typeof(List<CLPHistoryItem>), () => new List<CLPHistoryItem>());
+
+        #endregion //Properties
 
         public CLPHistory getMemento(){
             CLPHistory clpHistory = new CLPHistory();
-            clpHistory.setStack1 (new Stack<object>(new Stack<object>(Stack1)));
-            clpHistory.setStack2 (new Stack<object>(new Stack<object>(Stack2)));
+            clpHistory.Past = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Past));
+            clpHistory.Future = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Future));
             clpHistory.close();
             return clpHistory;
-        }
-        
-        public void enableMem()
-        {
-            memEnabled = true;
         }
 
         public void disableMem()
@@ -83,9 +92,9 @@ namespace CLP.Models
             memEnabled = false;
         }
 
-        public bool isMemEnabled()
+        public void enableMem()
         {
-            return memEnabled;
+            memEnabled = true;
         }
 
         public void close()
@@ -93,453 +102,101 @@ namespace CLP.Models
             closed = "closed";
         }
 
-        public Boolean push(Object o)
+        public Boolean push(CLPHistoryItem item)
         {
-            if(closed == null)
+            if(closed == null && memEnabled)
             {
-                if(isMemEnabled())
+                lock(this)
                 {
-                    Console.WriteLine("memEnabled: " + isMemEnabled());
-                    Stack1.Push(o);
-                    Stack2.Clear();
-                    return true;
+                    if(!isExpected(item))
+                    {
+                        Console.WriteLine("pushing a " + item.ItemType);
+                        Past.Push(item);
+                        Future.Clear();
+                    }
+                    else
+                    {
+                        Console.WriteLine("expected " + item.ItemType);
+                    }
                 }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void setStack1(Stack<object> stack)
-        {
-            Stack1 = stack;
-        }
-
-        private void setStack2(Stack<object> stack)
-        {
-            Stack2 = stack;
-        }
-
-        private object popStack1()
-        {
-            return Stack1.Pop();
-        }
-        
-        private object popStack2()
-        {
-            return Stack2.Pop();
-        }
-
-        private void pushStack1(object o)
-        {
-            Stack1.Push(o);
-        }
-
-        private void pushStack2(object o)
-        {
-            Stack2.Push(o);
-        }
-
-        private void ClearStack1()
-        {
-            Stack1.Clear();
-        }
-
-        private void ClearStack2()
-        {
-            Stack2.Clear();
+            return false;
         }
 
         public CLPHistory getInitialHistory(){
             CLPHistory clpHistory = new CLPHistory();
-            clpHistory.setStack1(new Stack<object>());
-            clpHistory.setStack2(new Stack<object>());
+            clpHistory.Past = new Stack<CLPHistoryItem>();
+            clpHistory.Future = new Stack<CLPHistoryItem>();
             clpHistory.close();
             return clpHistory;
         }
        
         public void undo(){
-            //printMemStacks("undo", "before1");
-            int stack1Count = Stack1.Count;
-            if(stack1Count==0){
+            if(Past.Count==0){
                 return;
             }
-            int stack2Count = Stack2.Count;
-
-            //printMemStacks("undo", "before2");
-            Stack<object> stack3 = new Stack<object>(new Stack<object>(Stack2));
-            //printMemStacks("undo", "before3");
-            
-            List<object> l = (List<object>)popStack1();
-            disableMem();
-            try{
-                revertToMemList(l);
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-            }
-            ///////////////
-            //Integrity check
-            int stack1CountAfter = Stack1.Count;
-            if(stack1CountAfter != (stack1Count - 1))
+            Console.WriteLine("started undo");
+            CLPHistoryItem lastAction = (CLPHistoryItem)Past.Pop();
+            CLPHistoryItem expected = lastAction.GetUndoFingerprint();
+            if(expected != null)
             {
-                popStack1();
-                setStack2(stack3);
-                ClearStack1();
-                enableMem();
+                ExpectedEvents.Add(expected);
             }
-            else {
-                pushStack2(l);
-                enableMem();
-            }
-            ////////////////
-            printMemStacks("undo", "after"); 
+            lastAction.Undo();
+            Future.Push(lastAction);
+            printMemStacks("undo", "after");
         }
 
         public void redo(){
-             //printMemStacks("redo", "before1");
-             int stack2Count = Stack2.Count;
-             if(stack2Count == 0)
-             {
-                return;
-             }
-             int stack1Count = Stack1.Count;
-
-             //printMemStacks("redo", "before2");
-             Stack<object> stack3 = new Stack<object>(new Stack<object>(Stack2));
-             //printMemStacks("redo", "before3");
-
-            List<object> l = (List<object>)popStack2();
-            disableMem();
-            try{
-                forwardToMemList(l);
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-            }
-            ///////////////
-            //Integrity check
-            int stack1CountAfter = Stack1.Count;
-            if(stack1CountAfter != stack1Count)
+            if(Future.Count == 0)
             {
-                popStack1();
-                setStack2(stack3);
-                ClearStack2();
-                enableMem();
+               return;
             }
-            else
+            CLPHistoryItem nextAction = (CLPHistoryItem)Future.Pop();
+            CLPHistoryItem expected = nextAction.GetRedoFingerprint();
+            if(expected != null)
             {
-                pushStack1(l);
-                enableMem();
+                ExpectedEvents.Add(expected);
             }
-            ////////////////
-            //printMemStacks("redo", "after");
+            nextAction.Redo();
+            Past.Push(nextAction);
+            printMemStacks("redo", "after");
         }
 
         public void printMemStacks(String methodName, String pos)
         {
-            Console.WriteLine(pos + " " + methodName + " stack1");
-            foreach(Object o in Stack1)
+            Console.WriteLine(pos + " " + methodName + " Past");
+            foreach(CLPHistoryItem item in Past)
             {
-                Console.WriteLine(((List<object>)o)[0]);
+                Console.WriteLine(item.ItemType);
             }
-            Console.WriteLine(pos + " " + methodName + " stack2");
-            foreach(Object o in Stack2)
+            Console.WriteLine(pos + " " + methodName + " Future");
+            foreach(CLPHistoryItem item in Future)
             {
-                Console.WriteLine(((List<object>)o)[0]);
+                Console.WriteLine(item.ItemType);
             }
         }
 
-        public Boolean revertToMemList(List<object> l){
-            string inst = (string)l[0];
-           if(inst.Equals(Stroke_Added)){
-                CLPPage page = (CLPPage)l[1];
-                List<byte> bs = (List<byte>)l[2];
-                Stroke s = CLPPage.ByteToStroke(bs);
-                int indexToRemove = -1;
-                foreach(Stroke otherstroke in page.InkStrokes)
+        private bool isExpected(CLPHistoryItem item)
+        {
+            CLPHistoryItem match = null;
+            foreach (CLPHistoryItem expected in ExpectedEvents) {
+                if(item.ItemType == expected.ItemType && expected.Equals(item))
                 {
-                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
-                    {
-                        indexToRemove = page.InkStrokes.IndexOf(otherstroke);
-                        break;
-                    }
+                    match = expected;
+                    break;
                 }
-                if (indexToRemove != -1){
-                    page.InkStrokes.RemoveAt(indexToRemove);
-                }
-                return true;
-            }else if(inst.Equals(Stroke_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                List<byte> bs = (List<byte>)l[2];
-                Stroke s = CLPPage.ByteToStroke(bs);
-                bool shouldAdd = true;
-                foreach(Stroke otherstroke in page.InkStrokes)
-                {
-                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
-                    {
-                        shouldAdd = false;
-                        break;
-                    }
-                }
-                if(shouldAdd)
-                {
-                    page.InkStrokes.Add(s);
-                }
-                return true;
-            }else if(inst.Equals(Object_Added)){
-                CLPPage page = (CLPPage)l[1];
-                IList addedPageObjects = (IList)l[2];
-                foreach(ICLPPageObject addedPageObject in addedPageObjects)
-                {
-                    page.PageObjects.Remove(addedPageObject);
-                }
-                return true;
-            }else if(inst.Equals(Object_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                IList removedPageObjects = (IList)l[2];
-                foreach(ICLPPageObject removedPageObject in removedPageObjects)
-                {
-                    page.PageObjects.Add(removedPageObject);
-                }
-                return true;
-            }else if(inst.Equals(Object_Resized)){
-                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
-                double oldHeight = (double)l[3];
-                double oldWidth = (double)l[4];
-                pageObject.Height = oldHeight;
-                pageObject.Width = oldWidth;
-                return true;
-            }else if(inst.Equals(Object_Moved)){
-                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
-                double oldXPos = (double)l[3];
-                double oldYPos = (double)l[4];
-                pageObject.XPosition = oldXPos;
-                pageObject.YPosition = oldYPos;
-                return true;
-            }else{
+            }
+            if(match == null)
+            {
                 return false;
             }
-        }
-
-        public Boolean forwardToMemList(List<object> l){
-            string inst = (string)l[0];
-            if(inst.Equals(Stroke_Added)){
-                CLPPage page = (CLPPage)l[1];
-                List<byte> bs = (List<byte>)l[2];
-                Stroke s = CLPPage.ByteToStroke(bs);
-                bool shouldAdd = true;
-                foreach(Stroke otherstroke in page.InkStrokes)
-                {
-                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
-                    {
-                        shouldAdd = false;
-                        break;
-                    }
-                }
-                if(shouldAdd)
-                {
-                    page.InkStrokes.Add(s);
-                }
-                return true;
-            }else if(inst.Equals(Stroke_Removed)){
-                CLPPage page = (CLPPage)l[1];
-                List<byte> bs = (List<byte>)l[2];
-                Stroke s = CLPPage.ByteToStroke(bs);
-                int indexToRemove = -1;
-                foreach(Stroke otherstroke in page.InkStrokes)
-                {
-                    if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
-                    {
-                        indexToRemove = page.InkStrokes.IndexOf(otherstroke);
-                        break;
-                    }
-                }
-                if (indexToRemove != -1){
-                    page.InkStrokes.RemoveAt(indexToRemove);
-                }
-                return true;
-            }
-            else if(inst.Equals(Object_Added))
+            else
             {
-                CLPPage page = (CLPPage)l[1];
-                IList addedPageObjects = (IList)l[2];
-                foreach(ICLPPageObject addedPageObject in addedPageObjects)
-                {
-                    page.PageObjects.Add(addedPageObject);
-                }
+                ExpectedEvents.Remove(match);
                 return true;
             }
-            else if(inst.Equals(Object_Removed))
-            {
-                CLPPage page = (CLPPage)l[1];
-                IList removedPageObjects = (IList)l[2];
-                foreach(ICLPPageObject removedPageObject in removedPageObjects)
-                {
-                    page.PageObjects.Remove(removedPageObject);
-                }
-                return true;
-            }else if(inst.Equals(Object_Resized)){
-                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
-                double newHeight = (double)l[5];
-                double newWidth = (double)l[6];
-                pageObject.Height = newHeight;
-                pageObject.Width = newWidth;
-                return true;
-            }else if(inst.Equals(Object_Moved)){
-                CLP.Models.ICLPPageObject pageObject = (CLP.Models.ICLPPageObject)l[2];
-                double newXPos = (double)l[5];
-                double newYPos = (double)l[6];
-                pageObject.XPosition = newXPos;
-                pageObject.YPosition = newYPos;
-                return true;
-            }else{
-                return false;
-            } 
         }
-
-        #region Previous History
-        /*
-        public Boolean replay(CLPHistory memInit, CLPHistory memCurrent){
-            CLPHistory memFinal = memCurrent.getMemento();
-            revertToMem(memInit, memCurrent);
-            forwardToMem(memFinal, memInit);
-            return true;
-        }
-        
-        public Boolean replayPage(){
-            try{
-                CLPHistory memInit = this.getInitialHistory();
-                CLPHistory memCurrent = this.getMemento();
-                return replay(memInit, memCurrent);
-            }
-            catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-                return false;
-            }
-        }
-
-
-
-          private Boolean revertToMem(CLPHistory oldMem){
-              CLPHistory currentMem = getMemento();
-              return revertToMem(oldMem, currentMem);
-          }
-
-          public Boolean revertToMem(CLPHistory oldMem, CLPHistory currentMem) { 
-              //String oldMemNotebookId = oldMem.getNotebookID();
-              //String currentMemNotebookId = currentMem.getNotebookID();
-              //if(oldMemNotebookId.Equals(currentMemNotebookId)){
-                  Stack<object> sOldMem = oldMem.getStack1();
-                  Stack<object> sCurrentMem = currentMem.getStack1();
-                  if(sOldMem.Count<sCurrentMem.Count){
-                      try{
-                          while(sOldMem.Count < sCurrentMem.Count){
-                              List<object> l = (List<object>)sCurrentMem.Pop();
-                              Console.WriteLine("This is the action being UNDONE: " + l[0]);
-                              revertToMemList(l);
-                          }
-                          return true;
-                      }catch(Exception e){
-                          Console.WriteLine(e.StackTrace);
-                          return false;
-                      }
-                  }
-              
-              return false;
-          }
-
-          public Boolean forwardToMem(CLPHistory futureMem, CLPHistory currentMem) {
-              Stack<object> sFutureMem = futureMem.getStack1();
-              int futureMemCount = sFutureMem.Count;
-              Stack<object> sCurrentMem = currentMem.getStack1();
-              int currentMemCount = sCurrentMem.Count;
-              if(futureMemCount <= currentMemCount) {
-                  return false;
-              }
-              ArrayList aFutureMem = new ArrayList();
-              while(sFutureMem.Count > currentMemCount){
-                  aFutureMem.Insert(0, sFutureMem.Pop());
-              }
-              try{
-                  for(int i = 0; i < aFutureMem.Count; i++){
-                      List<object> l = (List<object>)aFutureMem[i];
-                      Console.WriteLine("This is the action being redone: " +l[0]);
-                      forwardToMemList(l);
-                  }
-                  return true;
-              }catch(Exception e){
-                  Console.WriteLine(e.StackTrace);
-                  return false;
-              }
-          }
-
-          public Memento getInitMem() {
-              Memento m = this.initialMemento.getClone();
-              return m;
-          }
-
-          public Memento getMemento() {
-            Memento m = this.memento.getClone();
-            return m;
-          }*/
-        /*
-           public Object pop(){
-               if(closed == null){
-                   if(notebook.isMemEnabled() && isMemEnabledInternal())
-                   {
-                       if(stack1.Count!=0){
-                           Object o = stack1.Pop();
-                           stack2.Push(o);
-                           return o;
-                       }else{
-                           return null;
-                           }
-                   }else{
-                       return null;
-                   }
-               }else{
-                   return null;
-               }
-           }
-            
-           public static T Clone<T>(T source)
-           {
-              if(!typeof(T).IsSerializable)
-             {
-               Console.WriteLine("object is not serializable");
-                   throw new ArgumentException("The type must be serializable.", "source");
-             }
-       
-             // Don't serialize a null object, simply return the default for that object
-              if(Object.ReferenceEquals(source, null))
-               {
-                   Console.WriteLine("Don't serialize a null object, simply return the default for that object");
-                  return default(T);
-              }
-
-               IFormatter formatter = new BinaryFormatter();
-               Stream stream = new MemoryStream();
-               using(stream)
-               {
-                   formatter.Serialize(stream, source);
-                   stream.Seek(0, SeekOrigin.Begin);
-                   return (T)formatter.Deserialize(stream);
-               }
-           }
-
-           public Memento getClone(){
-               Memento m = Clone(this);
-               m.close();
-               return m;
-           }
-            
-           public Stack<object> getStack() {
-             return Clone(this.stack1);
-          }*/
-        #endregion 
     }
 }

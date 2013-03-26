@@ -18,6 +18,7 @@ using Catel.IoC;
 using Catel.Windows.Controls;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
+using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner
 {
@@ -292,12 +293,6 @@ namespace Classroom_Learning_Partner
             {
                 pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 page.PageObjects.Add(pageObject);
-
-                //if (!page.PageHistory.IgnoreHistory)
-                //{
-                //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
-                //    page.PageHistory.HistoryItems.Add(item);                  
-                //}
             }
         }
 
@@ -314,24 +309,11 @@ namespace Classroom_Learning_Partner
             {
                 pageObject.OnRemoved();
                 page.PageObjects.Remove(pageObject);
-
-                //if (!page.PageHistory.IgnoreHistory)
-                //{
-                //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-                //    page.PageHistory.HistoryItems.Add(item);
-                //}
             }
         }
 
         public void ChangePageObjectPosition(CLP.Models.ICLPPageObject pageObject, Point pt)
         {
-
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    //steve - fix for lack of Position
-            //   //CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
-            //   //page.PageHistory.HistoryItems.Add(item);
-            //}
             double oldXPos = pageObject.XPosition;
             double oldYPos = pageObject.YPosition;
             CLPPage page = pageObject.ParentPage;
@@ -341,16 +323,7 @@ namespace Classroom_Learning_Partner
             double diff = xDiff + yDiff;
             if(diff > page.PageHistory.Sample_Rate)
             {
-
-                List<object> l = new List<object>();
-                l.Add(page.PageHistory.Object_Moved);
-                l.Add(page);
-                l.Add(pageObject);
-                l.Add(oldXPos);
-                l.Add(oldYPos);
-                l.Add(pt.X);
-                l.Add(pt.Y);
-                page.PageHistory.push(l);
+                page.PageHistory.push(new CLPHistoryMoveObject(page, pageObject, oldXPos, oldYPos, pt.X, pt.Y));
                 pageObject.XPosition = pt.X;
                 pageObject.YPosition = pt.Y;
                 Console.WriteLine("x diff = " + (oldXPos - pt.X));
@@ -360,18 +333,6 @@ namespace Classroom_Learning_Partner
 
         public void ChangePageObjectDimensions(CLP.Models.ICLPPageObject pageObject, double height, double width)
         {
-            //Commented out for now because not useful at all. Just uncomment to start using.
-            //CLPPage page = GetPageFromID(pageObject.PageID);
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    double oldHeight = pageObject.Height;
-            //    double oldWidth = pageObject.Width;
-            //    Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
-            //    Tuple<double, double> newValue = new Tuple<double, double>(height, width);
-
-            //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.ResizePageObject, pageObject.UniqueID, oldValue.ToString(), newValue.ToString());
-            //    page.PageHistory.HistoryItems.Add(item);
-            //}
             double oldHeight = pageObject.Height;
             double oldWidth = pageObject.Width;
             CLPPage page = pageObject.ParentPage;
@@ -379,19 +340,11 @@ namespace Classroom_Learning_Partner
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;
             if(diff > page.PageHistory.Sample_Rate){
-            List<object> l = new List<object>();
-            l.Add(page.PageHistory.Object_Resized);
-            l.Add(page);
-            l.Add(pageObject);
-            l.Add(oldHeight);
-            l.Add(oldWidth);
-            l.Add(height);
-            l.Add(width);
-            page.PageHistory.push(l); 
-            pageObject.Height = height;
-            pageObject.Width = width;
-            Console.WriteLine("height diff = " + (oldHeight-height));
-            Console.WriteLine("width diff = " + (oldWidth - width));
+                page.PageHistory.push(new CLPHistoryResizeObject(page, pageObject, oldHeight, oldWidth, height, width)); 
+                pageObject.Height = height;
+                pageObject.Width = width;
+                Console.WriteLine("height diff = " + (oldHeight-height));
+                Console.WriteLine("width diff = " + (oldWidth - width));
             }
         }
 
