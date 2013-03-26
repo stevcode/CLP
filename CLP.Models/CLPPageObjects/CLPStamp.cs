@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
-using System.Windows.Media;
-using System.Threading;
 
 namespace CLP.Models
 {
@@ -44,14 +41,14 @@ namespace CLP.Models
         #region Constructors
 
         public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
-            : base()
         { 
-            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
-            StrokePathContainer.IsInternalPageObject = true;
-            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
-            HandwritingRegionParts.IsInternalPageObject = true;
-            HandwritingRegionParts.IsBackground = true;
-            HandwritingRegionParts.Height = PARTS_HEIGHT;
+            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page) {IsInternalPageObject = true};
+            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page)
+                {
+                    IsInternalPageObject = true,
+                    IsBackground = true,
+                    Height = PARTS_HEIGHT
+                };
 
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
@@ -164,16 +161,13 @@ namespace CLP.Models
         {
             get
             {
-                string tempValue = GetValue<string>(ParentPageIDProperty);
+                var tempValue = GetValue<string>(ParentPageIDProperty);
                 if(tempValue != "")
                 {
                     return tempValue;
                 }
-                else
-                {
-                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
-                    return ParentPage.UniqueID;
-                }
+                SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                return ParentPage.UniqueID;
             }
             set { SetValue(ParentPageIDProperty, value); }
         }
@@ -200,7 +194,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
         /// UniqueID of pageObject.
@@ -371,7 +365,9 @@ namespace CLP.Models
 
         public ICLPPageObject Duplicate()
         {
-            CLPStamp newStamp = this.Clone() as CLPStamp;
+            var newStamp = Clone() as CLPStamp;
+            if (newStamp == null) return null;
+
             newStamp.UniqueID = Guid.NewGuid().ToString();
             newStamp.ParentPage = ParentPage;
             if(newStamp.StrokePathContainer != null)
@@ -429,7 +425,7 @@ namespace CLP.Models
                     PageObjectStrokeParentIDs.Remove(strokeID);
                     HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
-                catch(System.Exception)
+                catch(Exception)
                 {
                     Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }
