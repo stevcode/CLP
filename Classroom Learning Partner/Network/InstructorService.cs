@@ -23,6 +23,10 @@ namespace Classroom_Learning_Partner
             bool isGroupSubmission, double pageHeight, List<byte> image);
 
         [OperationContract]
+        void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID);
+
+        [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
 
         [OperationContract]
@@ -96,51 +100,6 @@ namespace Classroom_Learning_Partner
                 submission.GroupSubmitter = groupSubmitter;
                 submission.PageHeight = pageHeight;
 
-                if(submission.PageIndex == 25)
-                {
-                    if(App.Network.ClassList.Count > 0 && App.MainWindowViewModel.Ribbon.AllowWebcamShare && isGroupSubmission)
-                    {
-                        foreach(Person student in App.Network.ClassList)
-                        {
-                            if (student.GroupName == submission.GroupSubmitter.GroupName && student.FullName != submission.SubmitterName)
-                            {
-                                try
-                                {
-                                    IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                                    StudentProxy.AddWebcamImage(image);
-                                    (StudentProxy as ICommunicationObject).Close();
-                                }
-                                catch(System.Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Logger.Instance.WriteToLog("No Students Found");
-                    }
-
-
-                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-                    byte[] hash = md5.ComputeHash(image.ToArray());
-                    string imageID = Convert.ToBase64String(hash);
-
-                    if(!submission.ImagePool.ContainsKey(imageID))
-                    {
-                        submission.ImagePool.Add(imageID, image);
-                    }
-                    CLPImage imagePO = new CLPImage(imageID, submission);
-                    imagePO.IsBackground = true;
-                    imagePO.Height = 450;
-                    imagePO.Width = 600;
-                    imagePO.YPosition = 225;
-                    imagePO.XPosition = 108;
-
-                    submission.PageObjects.Add(imagePO);
-                }
-
                 foreach(ICLPPageObject pageObject in pageObjects)
                 {
                     submission.PageObjects.Add(pageObject);
@@ -178,6 +137,70 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
+        {
+            if(App.Network.ProjectorProxy != null)
+            {
+                Thread t = new Thread(() =>
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddSerializedSubmission(sPage, submitter, groupSubmitter,
+            submissionTime, isGroupSubmission, notebookID, submissionID);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                    }
+                });
+                t.IsBackground = true;
+                t.Start();
+            }
+            else
+            {
+                //TODO: Steve - add pages to a queue and send when a projector is found
+                Console.WriteLine("Projector NOT Available");
+            }
+
+            CLPPage submission = ObjectSerializer.ToObject(sPage) as CLPPage;
+            submission.IsSubmission = true;
+            submission.IsGroupSubmission = isGroupSubmission;
+            submission.SubmissionID = submissionID;
+            submission.SubmissionTime = submissionTime;
+            submission.SubmitterName = submitter.FullName;
+            submission.Submitter = submitter;
+            submission.GroupSubmitter = groupSubmitter;
+
+            CLPNotebook currentNotebook = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    currentNotebook = notebook;
+                    break;
+                }
+            }
+
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    try
+                    {
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)
