@@ -448,15 +448,15 @@ namespace CLP.Models
             var containerBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT,
                 StrokePathContainer.Width, StrokePathContainer.Height);
 
-            var partsBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT + StrokePathContainer.Height,
-                HandwritingRegionParts.Width, HandwritingRegionParts.Height);
+            var partsBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT + StrokePathContainer.Height + 3,
+                HandwritingRegionParts.Width, HandwritingRegionParts.Height - 3);
 
             
 
             var handwritingRegionStrokesAdd = new StrokeCollection();
             foreach(Stroke stroke in addedStrokes)
             {
-                if(stroke.HitTest(partsBoundingBox, 3))
+                if(stroke.HitTest(partsBoundingBox, 0))
                 {
                     //TODO: Steve - this doesn't do anything because HandwritingRegionParts hasn't accepted strokes yet, move down.
                     if(PartsAuthorGenerated)
