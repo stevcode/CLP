@@ -40,22 +40,22 @@ namespace Classroom_Learning_Partner.Views
             base.OnViewModelChanged();
         }
 
-        protected override IViewModel GetViewModelInstance(object dataContext)
-        {
-            if(dataContext == null)
-            {
-                // Let catel handle this one
-                return null;
-            }
+        //protected override IViewModel GetViewModelInstance(object dataContext)
+        //{
+        //    if(dataContext == null)
+        //    {
+        //        // Let catel handle this one
+        //        return null;
+        //    }
 
-            if(!CLPPagePreviewView.ModelViewModels.ContainsKey(dataContext.GetHashCode()))
-            {
-                var vm = new CLPPageViewModel(dataContext as CLPPage);
-                CLPPagePreviewView.ModelViewModels.Add(dataContext.GetHashCode(), vm);
-            }
+        //    if(!CLPPagePreviewView.ModelViewModels.ContainsKey(dataContext.GetHashCode()))
+        //    {
+        //        var vm = new CLPPageViewModel(dataContext as CLPPage);
+        //        CLPPagePreviewView.ModelViewModels.Add(dataContext.GetHashCode(), vm);
+        //    }
 
-            // Reuse VM
-            return CLPPagePreviewView.ModelViewModels[dataContext.GetHashCode()];
-        }
+        //    // Reuse VM
+        //    return CLPPagePreviewView.ModelViewModels[dataContext.GetHashCode()];
+        //}
     }
 }

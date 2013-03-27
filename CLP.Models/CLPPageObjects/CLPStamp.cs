@@ -456,7 +456,11 @@ namespace CLP.Models
             var handwritingRegionStrokesAdd = new StrokeCollection();
             foreach(Stroke stroke in addedStrokes)
             {
-                if(stroke.HitTest(partsBoundingBox, 0))
+                if (stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && PageObjectStrokeParentIDs.Contains(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                {
+                    continue;
+                }
+                if(stroke.HitTest(partsBoundingBox, 30))
                 {
                     //TODO: Steve - this doesn't do anything because HandwritingRegionParts hasn't accepted strokes yet, move down.
                     if(PartsAuthorGenerated)
@@ -470,7 +474,7 @@ namespace CLP.Models
                     }
                 }
 
-                if(stroke.HitTest(containerBoundingBox, 3))
+                if(stroke.HitTest(containerBoundingBox, 30))
                 {
                     if(!PartsAuthorGenerated)
                     {
