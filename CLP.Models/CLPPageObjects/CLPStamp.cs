@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
-using System.Windows.Media;
-using System.Threading;
 
 namespace CLP.Models
 {
@@ -44,14 +41,14 @@ namespace CLP.Models
         #region Constructors
 
         public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
-            : base()
         { 
-            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page);
-            StrokePathContainer.IsInternalPageObject = true;
-            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
-            HandwritingRegionParts.IsInternalPageObject = true;
-            HandwritingRegionParts.IsBackground = true;
-            HandwritingRegionParts.Height = PARTS_HEIGHT;
+            StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page) {IsInternalPageObject = true};
+            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page)
+                {
+                    IsInternalPageObject = true,
+                    IsBackground = true,
+                    Height = PARTS_HEIGHT
+                };
 
             Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
             Width = StrokePathContainer.Width;
@@ -164,16 +161,13 @@ namespace CLP.Models
         {
             get
             {
-                string tempValue = GetValue<string>(ParentPageIDProperty);
+                var tempValue = GetValue<string>(ParentPageIDProperty);
                 if(tempValue != "")
                 {
                     return tempValue;
                 }
-                else
-                {
-                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
-                    return ParentPage.UniqueID;
-                }
+                SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                return ParentPage.UniqueID;
             }
             set { SetValue(ParentPageIDProperty, value); }
         }
@@ -200,7 +194,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
         /// UniqueID of pageObject.
@@ -371,7 +365,9 @@ namespace CLP.Models
 
         public ICLPPageObject Duplicate()
         {
-            CLPStamp newStamp = this.Clone() as CLPStamp;
+            var newStamp = Clone() as CLPStamp;
+            if (newStamp == null) return null;
+
             newStamp.UniqueID = Guid.NewGuid().ToString();
             newStamp.ParentPage = ParentPage;
             if(newStamp.StrokePathContainer != null)
@@ -393,12 +389,13 @@ namespace CLP.Models
                 {
                     ParentPage.InkStrokes.Remove(stroke);
                 }
-            }
 
-            foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
-            {
-                po.OnRemoved();
-                ParentPage.PageObjects.Remove(po);
+                foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
+                {
+                    //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
+                    po.OnRemoved();
+                    ParentPage.PageObjects.Remove(po);
+                }
             }
         }
 
@@ -409,7 +406,7 @@ namespace CLP.Models
                 PageObjectStrokeParentIDs.Clear();
                 HandwritingRegionParts.PageObjectStrokeParentIDs.Clear();
 
-                Rect rect = new Rect(XPosition, YPosition, Width, Height);
+                var rect = new Rect(XPosition, YPosition, Width, Height);
                 var strokesOverObject = 
                     from stroke in ParentPage.InkStrokes
                     where stroke.HitTest(rect, 3)
@@ -429,22 +426,37 @@ namespace CLP.Models
                     PageObjectStrokeParentIDs.Remove(strokeID);
                     HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
-                catch(System.Exception)
+                catch(Exception)
                 {
                     Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }
-            }           
+            }
 
-            Rect rectParts = new Rect(XPosition, YPosition + CLPStamp.HANDLE_HEIGHT + StrokePathContainer.Height,
-                HandwritingRegionParts.Width, HandwritingRegionParts.Height);
+            Console.WriteLine("***PageObject***");
+            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + YPosition);
+            Console.WriteLine("Height: " + Height + " Width: " + Width);
 
-            Rect container = new Rect(XPosition, YPosition + CLPStamp.HANDLE_HEIGHT,
+            Console.WriteLine("***ContainerBoundingBox***");
+            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + (YPosition + HANDLE_HEIGHT));
+            Console.WriteLine("Height: " + StrokePathContainer.Height + " Width: " + StrokePathContainer.Width);
+
+            Console.WriteLine("***PartsBoundingBox***");
+            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + (YPosition + HANDLE_HEIGHT + StrokePathContainer.Height));
+            Console.WriteLine("Height: " + HandwritingRegionParts.Height + " Width: " + HandwritingRegionParts.Width);
+
+
+            var containerBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT,
                 StrokePathContainer.Width, StrokePathContainer.Height);
 
-            StrokeCollection handwritingRegionStrokesAdd = new StrokeCollection();
+            var partsBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT + StrokePathContainer.Height + 3,
+                HandwritingRegionParts.Width, HandwritingRegionParts.Height - 3);
+
+            
+
+            var handwritingRegionStrokesAdd = new StrokeCollection();
             foreach(Stroke stroke in addedStrokes)
             {
-                if(stroke.HitTest(rectParts, 3))
+                if(stroke.HitTest(partsBoundingBox, 0))
                 {
                     //TODO: Steve - this doesn't do anything because HandwritingRegionParts hasn't accepted strokes yet, move down.
                     if(PartsAuthorGenerated)
@@ -457,7 +469,8 @@ namespace CLP.Models
                         PartsAutoGenerated = false;
                     }
                 }
-                else if(stroke.HitTest(container, 3))
+
+                if(stroke.HitTest(containerBoundingBox, 3))
                 {
                     if(!PartsAuthorGenerated)
                     {
@@ -471,12 +484,6 @@ namespace CLP.Models
             UpdatePartsFromHandwritingRegion();
         }
 
-        public void ResetParts()
-        {
-            Parts = 0;
-            PartsAutoGenerated = false;
-        }
-
         public StrokeCollection GetStrokesOverPageObject()
         {
             var strokes =
@@ -485,8 +492,14 @@ namespace CLP.Models
                 where stroke.GetStrokeUniqueID() == strokeID
                 select stroke;
 
-            StrokeCollection inkStrokes = new StrokeCollection(strokes);
+            var inkStrokes = new StrokeCollection(strokes);
             return inkStrokes;
+        }
+
+        public void ResetParts()
+        {
+            Parts = 0;
+            PartsAutoGenerated = false;
         }
 
         public void UpdatePartsFromHandwritingRegion()
@@ -501,12 +514,11 @@ namespace CLP.Models
             // Set back to null otherwise you may accidentally keep reading the old value
             HandwritingRegionParts.StoredAnswer = null;
             Console.WriteLine("After interpret Parts: " + Parts);
-            PartsInterpreted = (HandwritingRegionParts.GetStrokesOverPageObject().Count > 0) ? true : false;
+            PartsInterpreted = (HandwritingRegionParts.GetStrokesOverPageObject().Count > 0);
         }
 
         public void ClearHandWritingPartsStrokes()
         {
-            //Console.WriteLine("hw strokes : " + HandwritingRegionParts.GetStrokesOverPageObject().Count);
             foreach(Stroke stroke in HandwritingRegionParts.GetStrokesOverPageObject())
             {
                 ParentPage.InkStrokes.Remove(stroke);
@@ -546,7 +558,7 @@ namespace CLP.Models
 
                 foreach(ICLPPageObject pageObject in addedPageObjects)
                 {
-                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && !pageObject.GetType().Equals(typeof(CLPStamp)))
+                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject.GetType() != typeof(CLPStamp))
                     {
                         changed = true;
                         Parts += pageObject.Parts;
@@ -571,7 +583,7 @@ namespace CLP.Models
                 where pageObject.UniqueID == pageObjectID
                 select pageObject;
 
-            ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
+            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
             return pageObjectsOver;
         }
 

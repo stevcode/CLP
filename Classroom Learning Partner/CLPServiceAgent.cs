@@ -77,7 +77,20 @@ namespace Classroom_Learning_Partner
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            List<byte> image = new List<byte>();
+                            if (page.PageIndex == 25)
+                            {
+                                foreach(ICLPPageObject pageObject in page.PageObjects)
+                                {
+                                    if(pageObject is CLPImage && pageObject.XPosition == 108 && pageObject.YPosition == 225)
+                                    {
+                                        image = page.ImagePool[(pageObject as CLPImage).ImageID];
+                                        break;
+                                    }
+                                }
+                            }
+
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight, image);
                         }
                         catch(System.Exception ex)
                         {
@@ -346,6 +359,15 @@ namespace Classroom_Learning_Partner
                 Console.WriteLine("height diff = " + (oldHeight-height));
                 Console.WriteLine("width diff = " + (oldWidth - width));
             }
+        }
+
+        public void InterpretRegion(ACLPInkRegion inkRegion) {
+            inkRegion.DoInterpretation();
+
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.SubmitterName);
+            Logger.Instance.WriteToLog((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
+            Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
         }
 
         #endregion //Page

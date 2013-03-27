@@ -130,7 +130,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" x:Name="InkShapesString" Text="{Binding Path=InkShapesString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"></TextBlock>
+                    <TextBlock Grid.Row="0" Grid.Column="0" x:Name="StoredAnswer" Text="{Binding Path=StoredAnswer, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"></TextBlock>
                 </Grid>
             </Grid>
 

@@ -140,29 +140,29 @@
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="5" Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <!--<RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="7" Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="12" Width="150" />
-                            </RibbonGalleryItem>
+                            </RibbonGalleryItem>-->
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
                     LargeImageSource="..\Images\Eraser.png"
                     Command="{Binding SetEraserCommand}" 
-                    CommandParameter="EraseByPoint" />
+                    CommandParameter="EraseByPoint" />-->
 
-                <!--<RibbonToggleButton
+                <RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />-->
+                    CommandParameter="EraseByStroke" />
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -172,19 +172,19 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Insert">
+            <RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <RibbonToggleButton Label="Webcam"
+                <!--<RibbonToggleButton Label="Webcam" 
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
@@ -258,7 +258,7 @@
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
-                <RibbonButton Margin="0,0,35,0"
+                <RibbonButton 
                         LargeImageSource="..\Images\Send.png" 
                         Command="{Binding Path=SubmitPageCommand}" 
                         Label="Send To Teacher"
@@ -270,7 +270,7 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <RibbonButton Label="Group Send"
+                <RibbonButton Label="Group Send" Margin="35,0,0,0"
                               LargeImageSource="..\Images\GroupSubmit-icon32.png" 
                               Command="{Binding GroupSubmitPageCommand}"
                               Visibility="{Binding SendButtonVisibility}"/>
@@ -358,6 +358,10 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
+                
+                <RibbonButton Label="Turn Off Webcam Sharing"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding TurnOffWebcamSharing}" />
 
             </RibbonGroup>
             
@@ -370,6 +374,10 @@
                 <RibbonButton Label="Replace This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ReplacePageCommand}" />
+
+                <RibbonButton Label="Remove All Submissions"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding RemoveAllSubmissionsCommand}" />
 
             </RibbonGroup>
             

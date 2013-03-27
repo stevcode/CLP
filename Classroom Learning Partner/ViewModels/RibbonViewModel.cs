@@ -165,6 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //Page
+            RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
@@ -204,6 +205,9 @@ namespace Classroom_Learning_Partner.ViewModels
             UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);
+
+
+            TurnOffWebcamSharing = new Command(OnTurnOffWebcamSharingExecute);
         }
 
         /// <summary>
@@ -774,7 +778,47 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool AllowWebcamShare
+        {
+            get { return GetValue<bool>(AllowWebcamShareProperty); }
+            set { SetValue(AllowWebcamShareProperty, value); }
+        }
+
+        public static readonly PropertyData AllowWebcamShareProperty = RegisterProperty("AllowWebcamShare", typeof(bool), true);
+
+        /// <summary>
+        /// Gets the TurnOffWebcamSharing command.
+        /// </summary>
+        public Command TurnOffWebcamSharing { get; private set; }
+
+        private void OnTurnOffWebcamSharingExecute()
+        {
+            AllowWebcamShare = false;
+        }
+
         #region Notebook Commands
+
+        /// <summary>
+        /// Removes all the submissions on a notebook, making it essentially a Student Notebook.
+        /// </summary>
+        public Command RemoveAllSubmissionsCommand { get; private set; }
+
+        private void OnRemoveAllSubmissionsCommandExecute()
+        {
+            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            foreach (ObservableCollection<CLPPage> pages in notebook.Submissions.Values)
+            {
+                pages.Clear();
+            }
+            foreach (CLPPage page in notebook.Pages)
+            {
+                page.NumberOfSubmissions = 0;
+                page.NumberOfGroupSubmissions = 0;
+            }
+        }
 
         /// <summary>
         /// Broadcast the current page of a MirrorDisplay to all connected Students.
@@ -1959,9 +2003,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(!isButtonChecked) //ClosePanel
             {
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
-                //panelCloserTimer.Interval = TimeSpan.FromMinutes(1);
-                //panelCloserTimer.Tick += panelCloserTimer_Tick;
-                //panelCloserTimer.Start();
+                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
             }
             else //OpenPanel
             {
@@ -1969,10 +2012,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
                 }
-                else
-                {
-                    //panelCloserTimer.Stop();
-                }
+
                 ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
             }
         }
@@ -2250,11 +2290,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
                 {
-                    (pageObject as ACLPInkRegion).InterpretStrokes();
-                }
-                else if (pageObject.GetType().IsSubclassOf(typeof(CLPGroupingRegion)))
-                {
-                    (pageObject as CLPGroupingRegion).DoInterpretation();
+                    CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
                 }
             }
         }
