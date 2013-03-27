@@ -1791,8 +1791,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     CLPHistory memInit = page.PageHistory.getInitialHistory();
-                    CLPHistory memCurrent = page.PageHistory.getMemento();
-                    CLPHistory memFinal = page.PageHistory.getMemento();
+                    CLPHistory memCurrent = page.PageHistory.GetMemento();
+                    CLPHistory memFinal = page.PageHistory.GetMemento();
                     page.PageHistory.disableMem();
 
                     //revertToMem(memInit, memCurrent);

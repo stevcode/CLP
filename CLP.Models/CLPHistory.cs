@@ -79,10 +79,12 @@ namespace CLP.Models
 
         #endregion //Properties
 
-        public CLPHistory getMemento(){
-            CLPHistory clpHistory = new CLPHistory();
-            clpHistory.Past = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Past));
-            clpHistory.Future = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Future));
+        public CLPHistory GetMemento(){
+            var clpHistory = new CLPHistory
+                {
+                    Past = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Past)),
+                    Future = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Future))
+                };
             clpHistory.close();
             return clpHistory;
         }
