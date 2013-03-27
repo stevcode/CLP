@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using Catel.Data;
 using System.IO;
 using System.Windows.Ink;
-using CLP.Models.CLPHistoryItems;
 
 namespace CLP.Models
 {

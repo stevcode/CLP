@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Catel.Data;
 
-namespace CLP.Models.CLPHistoryItems
+namespace CLP.Models
 {
     public enum HistoryItemType
     {

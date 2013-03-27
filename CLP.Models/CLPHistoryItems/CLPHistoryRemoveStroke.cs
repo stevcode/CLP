@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
 
-namespace CLP.Models.CLPHistoryItems
+namespace CLP.Models
 {
     [Serializable]
     public class CLPHistoryRemoveStroke : CLPHistoryItem

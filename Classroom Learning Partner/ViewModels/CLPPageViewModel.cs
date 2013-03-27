@@ -17,7 +17,6 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

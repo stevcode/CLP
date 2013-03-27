@@ -22,7 +22,6 @@ using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
 using System.Collections;
-using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

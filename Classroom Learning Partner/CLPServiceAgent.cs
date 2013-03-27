@@ -18,7 +18,6 @@ using Catel.IoC;
 using Catel.Windows.Controls;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
-using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner
 {
@@ -140,7 +139,7 @@ namespace Classroom_Learning_Partner
                 //Steve - Conversion happens here
                 try
                 {
-                    notebook = CLP.Models.CLPNotebook.Load(filePath, true);
+                    notebook = CLP.Models.CLPNotebook.Load(filePath);
                 }
                 catch(Exception ex)
                 {
