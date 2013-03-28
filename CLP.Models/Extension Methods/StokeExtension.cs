@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Ink;
 
 namespace CLP.Models
@@ -11,23 +12,24 @@ namespace CLP.Models
         {
             try
             {
-                if (!s.ContainsPropertyData(StrokeIDKey))
+                if (!s.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
                     string newUniqueID = Guid.NewGuid().ToString();
-                    s.AddPropertyData(StrokeIDKey, newUniqueID);
+                    s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                 }
             }
             catch(Exception)
             {
-                
+                Console.WriteLine("GetStrokeUniqueID Fail");
             }
 
             try
             {
-                return s.GetPropertyData(StrokeIDKey) as string;
+                return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
             catch(Exception)
             {
+                Console.WriteLine("GetStrokeUniqueID Fail");
                 return "";
             }
         }
@@ -36,21 +38,23 @@ namespace CLP.Models
         {
             try
             {
-                if(s.ContainsPropertyData(StrokeIDKey))
+                if(s.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
-                    s.RemovePropertyData(StrokeIDKey);
+                    s.RemovePropertyData(CLPPage.StrokeIDKey);
                 }
             }
             catch(Exception)
             {
+                Console.WriteLine("SetStrokeUniqueID Fail");
             }
 
             try
             {
-                s.AddPropertyData(StrokeIDKey, uniqueID);
+                s.AddPropertyData(CLPPage.StrokeIDKey, uniqueID);
             }
             catch(Exception)
             {
+                Console.WriteLine("SetStrokeUniqueID Fail");
             }
         }
     }
