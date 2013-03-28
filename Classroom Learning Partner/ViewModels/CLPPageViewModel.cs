@@ -42,14 +42,19 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
+        static public int count = 0;
+        public int ID;
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
         public CLPPageViewModel(CLPPage page)
-            : base()
         {
+            count++;
+            ID = count;
+            Console.WriteLine("I am a PageVM. My ID is " + ID);
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
@@ -75,7 +80,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPage Page
         {
             get { return GetValue<CLPPage>(PageProperty); }
-            private set { SetValue(PageProperty, value); }
+            private set { SetValue(PageProperty, value); 
+            Console.WriteLine("Page of PageVM ID " + ID + " has been set to Page with UniqueID " + Page.UniqueID);}
         }
 
         /// <summary>
@@ -712,6 +718,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+            Console.WriteLine("PageVM with ID " + ID + " has been notified of InterestedIn Property Change for propertyName " + propertyName);
             if (propertyName == "EditingMode")
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;

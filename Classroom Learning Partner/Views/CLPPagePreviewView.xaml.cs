@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Windows;
+﻿using System;
+using System.Collections.Generic;
 using Catel.MVVM;
-using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 
@@ -14,8 +11,14 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPagePreviewView : Catel.Windows.Controls.UserControl
     {
+        static public int count = 0;
+        public int ID;
+
         public CLPPagePreviewView()
         {
+            count++;
+            ID = count;
+            Console.WriteLine("PagePreviewView Created with ID: " + ID);
             InitializeComponent();
         }
 
@@ -24,24 +27,39 @@ namespace Classroom_Learning_Partner.Views
             return typeof(CLPPageViewModel);
         }
 
-        public static readonly Dictionary<int, IViewModel> ModelViewModels = new Dictionary<int, IViewModel>();
-        protected override IViewModel GetViewModelInstance(object dataContext)
+        protected override void OnViewModelChanged()
         {
-            if(dataContext == null)
-            {
-                // Let catel handle this one
-                return null;
-            }
+            base.OnViewModelChanged();
 
-            if(!CLPPagePreviewView.ModelViewModels.ContainsKey(dataContext.GetHashCode()))
+            var clpPageViewModel = ViewModel as CLPPageViewModel;
+            if (clpPageViewModel != null)
             {
-                var vm = new CLPPageViewModel(dataContext as CLPPage);
-                CLPPagePreviewView.ModelViewModels.Add(dataContext.GetHashCode(), vm);
+                Console.WriteLine("PagePreviewVIEW ID " + ID + " viewModel has changed to ID " + clpPageViewModel.ID);
             }
-
-            // Reuse VM
-            return CLPPagePreviewView.ModelViewModels[dataContext.GetHashCode()];
+            else
+            {
+                Console.WriteLine("PagePreviewVIEW ID " + ID + " has a viewModel set to null");
+            }
         }
+
+        public static readonly Dictionary<int, IViewModel> ModelViewModels = new Dictionary<int, IViewModel>();
+        //protected override IViewModel GetViewModelInstance(object dataContext)
+        //{
+        //    if(dataContext == null)
+        //    {
+        //        // Let catel handle this one
+        //        return null;
+        //    }
+
+        //    if(!ModelViewModels.ContainsKey(dataContext.GetHashCode()))
+        //    {
+        //        var vm = new CLPPageViewModel(dataContext as CLPPage);
+        //        ModelViewModels.Add(dataContext.GetHashCode(), vm);
+        //    }
+
+        //    // Reuse VM
+        //    return ModelViewModels[dataContext.GetHashCode()];
+        //}
     
     }
 }
