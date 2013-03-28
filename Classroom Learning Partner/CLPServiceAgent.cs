@@ -218,25 +218,35 @@ namespace Classroom_Learning_Partner
                 Directory.CreateDirectory(filePath);
             }
 
-            DateTime saveTime = DateTime.Now;
+            var saveTime = DateTime.Now;
 
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
 
-            string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
-                saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
+                string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
+                              saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
 
-            string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
-            notebook.Save(filePathName);
+                if(notebook != null)
+                {
+                    string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
+                    notebook.Save(filePathName);
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
+                }
+            }
         }
 
         public void OpenNewNotebook()
         {
-            bool NameChooserLoop = true;
+            bool nameChooserLoop = true;
 
-            while(NameChooserLoop)
+            while(nameChooserLoop)
             {
-                NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
-                nameChooser.Owner = Application.Current.MainWindow;
+                var nameChooser = new NotebookNamerWindowView {Owner = Application.Current.MainWindow};
                 nameChooser.ShowDialog();
                 if(nameChooser.DialogResult == true)
                 {
@@ -245,14 +255,13 @@ namespace Classroom_Learning_Partner
 
                     if(!File.Exists(filePath))
                     {
-                        CLP.Models.CLPNotebook newNotebook = new CLP.Models.CLPNotebook();
-                        newNotebook.NotebookName = notebookName;
+                        var newNotebook = new CLPNotebook {NotebookName = notebookName};
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
 
-                        NameChooserLoop = false;
+                        nameChooserLoop = false;
                         //Send empty notebook to db
                         //ObjectSerializer.ToString(newNotebookViewModel)
                     }
@@ -263,12 +272,12 @@ namespace Classroom_Learning_Partner
                 }
                 else
                 {
-                    NameChooserLoop = false;
+                    nameChooserLoop = false;
                 }
             }
         }
 
-        public void SaveNotebook(CLP.Models.CLPNotebook notebook)
+        public void SaveNotebook(CLPNotebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             if(App.CurrentUserMode == App.UserMode.Student)
