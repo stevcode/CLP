@@ -33,17 +33,17 @@
                 <!--Close Button-->
                 <Button x:Name="AdornerClose"
                         Click="AdornerClose_Click"
-                            Width="40" Height="40"
-                            Canvas.Left="-50" Canvas.Top="-25"
-                            Cursor="Hand">
+                        Width="40" Height="40"
+                        Canvas.Left="-50" Canvas.Top="-25"
+                        Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                          Stretch="Fill" Margin="5"
-                                          Stroke="Red" StrokeThickness="3" />
+                                        Stretch="Fill" Margin="5"
+                                        Stroke="Red" StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
