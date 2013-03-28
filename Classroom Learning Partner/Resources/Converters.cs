@@ -149,7 +149,8 @@ namespace Classroom_Learning_Partner.Resources
                 bool interpreted = (bool)value[1];
                 if (parts <= 0)
                 {
-                    return (interpreted) ? "?" : "";
+                    //return (interpreted) ? "?" : "";
+                    return "?";
                 }
             }
             return value[0].ToString();

@@ -73,23 +73,13 @@ namespace Classroom_Learning_Partner
                             page.SubmissionTime = DateTime.Now;
                             page.TrimPage();
 
+                            var sPage = ObjectSerializer.ToString(page);
+
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            List<byte> image = new List<byte>();
-                            if (page.PageIndex == 25)
-                            {
-                                foreach(ICLPPageObject pageObject in page.PageObjects)
-                                {
-                                    if(pageObject is CLPImage && pageObject.XPosition == 108 && pageObject.YPosition == 225)
-                                    {
-                                        image = page.ImagePool[(pageObject as CLPImage).ImageID];
-                                        break;
-                                    }
-                                }
-                            }
-
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight, image);
+                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
+                         //   App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
                         catch(System.Exception ex)
                         {

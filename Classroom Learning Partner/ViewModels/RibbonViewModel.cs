@@ -837,7 +837,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
                         StudentProxy.AddNewPage(s_page, index);
                         (StudentProxy as ICommunicationObject).Close();
                     }
@@ -871,7 +871,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.defaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
                         StudentProxy.ReplacePage(s_page, index);
                         (StudentProxy as ICommunicationObject).Close();
                     }
