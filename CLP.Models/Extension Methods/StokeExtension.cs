@@ -9,23 +9,49 @@ namespace CLP.Models
 
         public static string GetStrokeUniqueID(this Stroke s)
         {
-            if (!s.ContainsPropertyData(StrokeIDKey))
+            try
             {
-                string newUniqueID = Guid.NewGuid().ToString();
-                s.AddPropertyData(StrokeIDKey, newUniqueID);
+                if (!s.ContainsPropertyData(StrokeIDKey))
+                {
+                    string newUniqueID = Guid.NewGuid().ToString();
+                    s.AddPropertyData(StrokeIDKey, newUniqueID);
+                }
+            }
+            catch(Exception)
+            {
+                
             }
 
-            return s.GetPropertyData(StrokeIDKey) as string;
+            try
+            {
+                return s.GetPropertyData(StrokeIDKey) as string;
+            }
+            catch(Exception)
+            {
+                return "";
+            }
         }
 
         public static void SetStrokeUniqueID(this Stroke s, string uniqueID)
         {
-            if(s.ContainsPropertyData(StrokeIDKey))
+            try
             {
-                s.RemovePropertyData(StrokeIDKey);
+                if(s.ContainsPropertyData(StrokeIDKey))
+                {
+                    s.RemovePropertyData(StrokeIDKey);
+                }
+            }
+            catch(Exception)
+            {
             }
 
-            s.AddPropertyData(StrokeIDKey, uniqueID);
+            try
+            {
+                s.AddPropertyData(StrokeIDKey, uniqueID);
+            }
+            catch(Exception)
+            {
+            }
         }
     }
 }
