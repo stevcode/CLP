@@ -149,7 +149,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         Stroke newStroke = stroke.Clone();
                         var transform = new Matrix();
-                        transform.Translate(-XPosition, -YPosition - CLPStamp.HANDLE_HEIGHT);
+                        transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
                         newStroke.Transform(transform, true);
                         clonedStrokes.Add(newStroke);
                     }
@@ -246,7 +246,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(droppedContainer != null)
                 {
                     droppedContainer.XPosition = PageObject.XPosition;
-                    droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HANDLE_HEIGHT;
+                    droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HandleHeight;
                     droppedContainer.ParentID = PageObject.UniqueID;
                     //droppedContainer.IsStamped = true;
                     droppedContainer.Parts = PageObject.Parts;
@@ -312,9 +312,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 x = 0;
             }
-            if (y < - CLPStamp.HANDLE_HEIGHT)
+            if (y < - CLPStamp.HandleHeight)
             {
-                y = -CLPStamp.HANDLE_HEIGHT;
+                y = -CLPStamp.HandleHeight;
             }
             if (x > PageObject.ParentPage.PageWidth - PageObject.Width)
             {

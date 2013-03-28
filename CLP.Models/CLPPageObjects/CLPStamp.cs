@@ -13,7 +13,7 @@ namespace CLP.Models
     {
         #region Constants
 
-        public static double HANDLE_HEIGHT
+        public static double HandleHeight
         {
             get
             {
@@ -21,7 +21,7 @@ namespace CLP.Models
             }
         }    
 
-        public static double PARTS_HEIGHT
+        public static double PartsHeight
         {
             get
             {
@@ -29,7 +29,7 @@ namespace CLP.Models
             }
         }
 
-        public static double DETECTED_PARTS_SIDE {
+        public static double DetectedPartsSide {
             get
             {
                 return 25;
@@ -47,10 +47,10 @@ namespace CLP.Models
                 {
                     IsInternalPageObject = true,
                     IsBackground = true,
-                    Height = PARTS_HEIGHT
+                    Height = PartsHeight
                 };
 
-            Height = StrokePathContainer.Height + HANDLE_HEIGHT + PARTS_HEIGHT;
+            Height = StrokePathContainer.Height + HandleHeight + PartsHeight;
             Width = StrokePathContainer.Width;
 
             ParentPage = page;
@@ -282,7 +282,7 @@ namespace CLP.Models
             set 
             { 
                 SetValue(HeightProperty, value);
-                StrokePathContainer.Height = Height - HANDLE_HEIGHT - PARTS_HEIGHT;
+                StrokePathContainer.Height = Height - HandleHeight - PartsHeight;
                 if (StrokePathContainer.InternalPageObject != null)
                 {
                     StrokePathContainer.InternalPageObject.Height = StrokePathContainer.Height;
@@ -383,37 +383,41 @@ namespace CLP.Models
 
         public void OnRemoved()
         {
-            if(!StrokePathContainer.IsStamped)
+            if(StrokePathContainer.IsStamped)
             {
-                foreach(Stroke stroke in GetStrokesOverPageObject())
-                {
-                    ParentPage.InkStrokes.Remove(stroke);
-                }
+                return;
+            }
 
-                foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
-                {
-                    //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
-                    po.OnRemoved();
-                    ParentPage.PageObjects.Remove(po);
-                }
+            foreach(Stroke stroke in GetStrokesOverPageObject())
+            {
+                ParentPage.InkStrokes.Remove(stroke);
+            }
+
+            foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
             }
         }
 
         public virtual void RefreshStrokeParentIDs()
         {
-            if(CanAcceptStrokes)
+            if(!CanAcceptStrokes)
             {
-                PageObjectStrokeParentIDs.Clear();
-                HandwritingRegionParts.PageObjectStrokeParentIDs.Clear();
-
-                var rect = new Rect(XPosition, YPosition, Width, Height);
-                var strokesOverObject = 
-                    from stroke in ParentPage.InkStrokes
-                    where stroke.HitTest(rect, 3)
-                    select stroke;
-
-                AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+                return;
             }
+
+            PageObjectStrokeParentIDs.Clear();
+            HandwritingRegionParts.PageObjectStrokeParentIDs.Clear();
+
+            var rect = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = 
+                from stroke in ParentPage.InkStrokes
+                where stroke.HitTest(rect, 50)
+                select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
         public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
@@ -423,8 +427,12 @@ namespace CLP.Models
                 string strokeID = s.GetStrokeUniqueID();
                 try
                 {
+                    if(!PartsAuthorGenerated)
+                    {
+                        ResetParts();
+                    }
+
                     PageObjectStrokeParentIDs.Remove(strokeID);
-                    HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
                 catch(Exception)
                 {
@@ -432,47 +440,21 @@ namespace CLP.Models
                 }
             }
 
-            var containerBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT,
-                StrokePathContainer.Width, StrokePathContainer.Height);
+            var containerBoundingBox = new Rect(XPosition, YPosition + HandleHeight,
+                StrokePathContainer.Width, StrokePathContainer.Height);      
 
-            var partsBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT + StrokePathContainer.Height + 3,
-                HandwritingRegionParts.Width, HandwritingRegionParts.Height - 3);
-
-            
-
-            var handwritingRegionStrokesAdd = new StrokeCollection();
-            foreach(Stroke stroke in addedStrokes)
+            foreach(Stroke stroke in addedStrokes.Where(stroke => stroke.HitTest(containerBoundingBox, 50)))
             {
-                if (stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && PageObjectStrokeParentIDs.Contains(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                if(!PartsAuthorGenerated)
                 {
-                    continue;
-                }
-                if(stroke.HitTest(partsBoundingBox, 30))
-                {
-                    //TODO: Steve - this doesn't do anything because HandwritingRegionParts hasn't accepted strokes yet, move down.
-                    if(PartsAuthorGenerated)
-                    {
-                        ClearHandWritingPartsStrokes();
-                    }
-                    else
-                    {
-                        handwritingRegionStrokesAdd.Add(stroke);
-                        PartsAutoGenerated = false;
-                    }
+                    ResetParts();
                 }
 
-                if(stroke.HitTest(containerBoundingBox, 30))
+                if(!PageObjectStrokeParentIDs.Contains(stroke.GetStrokeUniqueID()))
                 {
-                    if(!PartsAuthorGenerated)
-                    {
-                        ResetParts();
-                    }
+                    PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
                 }
-                PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
             }
-
-            HandwritingRegionParts.AcceptStrokes(handwritingRegionStrokesAdd, new StrokeCollection());
-            UpdatePartsFromHandwritingRegion();
         }
 
         public StrokeCollection GetStrokesOverPageObject()
@@ -510,10 +492,10 @@ namespace CLP.Models
 
         public void ClearHandWritingPartsStrokes()
         {
-            foreach(Stroke stroke in HandwritingRegionParts.GetStrokesOverPageObject())
-            {
-                ParentPage.InkStrokes.Remove(stroke);
-            }
+            //foreach(Stroke stroke in HandwritingRegionParts.GetStrokesOverPageObject())
+            //{
+            //    ParentPage.InkStrokes.Remove(stroke);
+            //}
             PartsInterpreted = false;
 
             //TODO: Steve - call RefreshStrokeParentIDs() here?
@@ -522,8 +504,8 @@ namespace CLP.Models
         public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
             double areaObject = pageObject.Height * pageObject.Width;
-            double top = Math.Max(YPosition + HANDLE_HEIGHT, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + Height - PARTS_HEIGHT, pageObject.YPosition + pageObject.Height);
+            double top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
             double left = Math.Max(XPosition, pageObject.XPosition);
             double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
             double deltaY = bottom - top;
