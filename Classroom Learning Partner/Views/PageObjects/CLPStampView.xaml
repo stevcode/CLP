@@ -172,15 +172,11 @@
                             BorderBrush="Black" BorderThickness="0,0,0,2"
                             Width="{Binding HandwritingRegionParts.Width}"
                             Height="{Binding HandwritingRegionParts.Height}"
-                            HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False">
-                    <Views:CLPHandwritingRegionView DataContext="{Binding HandwritingRegionParts}" 
-                                                Width="{Binding Width, Mode=TwoWay}" 
-                                                Height="{Binding Height, Mode=TwoWay}" />
-                </Border>
+                            HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False" />
                 <TextBlock x:Name="PartsAuto"
                        FontFamily="SketchFlow Print" FontSize="72"
                        Width="{Binding Width}"
-                       Height="{Binding HandwritingRegionParts.Height}"
+                       Height="{Binding PageObject.PARTS_HEIGHT}"
                        HorizontalAlignment="Center"
                        TextAlignment="Center"
                        VerticalAlignment="Bottom"
@@ -192,27 +188,9 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <Rectangle x:Name="HandwritingHitBox" Fill="Transparent"
-                            Width="{Binding HandwritingRegionParts.Width}" 
-                            Height="{Binding HandwritingRegionParts.Height}" />
-                <TextBlock x:Name="PartsDetected"
-                       FontFamily="SketchFlow Print" FontSize="24"
-                       Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
-                       Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       TextAlignment="Left"
-                       Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=PageObject.PartsInterpreted}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
-                            <Binding Path="PageObject.Parts" />
-                            <Binding Path="PageObject.PartsInterpreted" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
                 <Rectangle x:Name="PartsHitBox" Fill="Transparent" StrokeThickness="0" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
-                        Width="{Binding PageObject.DETECTED_PARTS_SIDE}"
-                        Height="{Binding PageObject.DETECTED_PARTS_SIDE}"
+                        Width="{Binding Width}"
+                        Height="{Binding PageObject.PARTS_HEIGHT}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                     <i:Interaction.Triggers>

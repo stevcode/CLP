@@ -129,7 +129,7 @@ namespace Classroom_Learning_Partner
                 //Steve - Conversion happens here
                 try
                 {
-                    notebook = CLP.Models.CLPNotebook.Load(filePath, true);
+                    notebook = CLP.Models.CLPNotebook.Load(filePath);
                 }
                 catch(Exception ex)
                 {
