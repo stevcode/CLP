@@ -42,9 +42,6 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
-        static public int count = 0;
-        public int ID;
-
         #region Constructors
 
         /// <summary>
@@ -52,9 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page)
         {
-            count++;
-            ID = count;
-            Console.WriteLine("I am a PageVM. My ID is " + ID);
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
@@ -80,8 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPage Page
         {
             get { return GetValue<CLPPage>(PageProperty); }
-            private set { SetValue(PageProperty, value); 
-            Console.WriteLine("Page of PageVM ID " + ID + " has been set to Page with UniqueID " + Page.UniqueID);}
+            private set { SetValue(PageProperty, value); }
         }
 
         /// <summary>
@@ -477,11 +470,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        Type lastType = null;
+        Type _lastType = null;
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(lastType == typeof(Canvas) && o is Canvas)
+            if(_lastType == typeof(Canvas) && o is Canvas)
             {
                 IsInkCanvasHitTestVisible = true;
             }
@@ -492,13 +485,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if((o as Shape).Name.Contains("HitBox"))
                     {
-                        lastType = o.GetType();
+                        _lastType = o.GetType();
                         return HitTestFilterBehavior.Continue;
                     }
                 }
             }
 
-            lastType = o.GetType();
+            _lastType = o.GetType();
             return HitTestFilterBehavior.ContinueSkipSelf;
         }
 
@@ -718,7 +711,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            Console.WriteLine("PageVM with ID " + ID + " has been notified of InterestedIn Property Change for propertyName " + propertyName);
             if (propertyName == "EditingMode")
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;

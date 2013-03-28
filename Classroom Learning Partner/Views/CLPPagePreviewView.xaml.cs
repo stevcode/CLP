@@ -11,14 +11,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPagePreviewView : Catel.Windows.Controls.UserControl
     {
-        static public int count = 0;
-        public int ID;
-
         public CLPPagePreviewView()
         {
-            count++;
-            ID = count;
-            Console.WriteLine("PagePreviewView Created with ID: " + ID);
             InitializeComponent();
         }
 
@@ -27,22 +21,7 @@ namespace Classroom_Learning_Partner.Views
             return typeof(CLPPageViewModel);
         }
 
-        protected override void OnViewModelChanged()
-        {
-            base.OnViewModelChanged();
-
-            var clpPageViewModel = ViewModel as CLPPageViewModel;
-            if (clpPageViewModel != null)
-            {
-                Console.WriteLine("PagePreviewVIEW ID " + ID + " viewModel has changed to ID " + clpPageViewModel.ID);
-            }
-            else
-            {
-                Console.WriteLine("PagePreviewVIEW ID " + ID + " has a viewModel set to null");
-            }
-        }
-
-        public static readonly Dictionary<int, IViewModel> ModelViewModels = new Dictionary<int, IViewModel>();
+        //public static readonly Dictionary<int, IViewModel> ModelViewModels = new Dictionary<int, IViewModel>();
         //protected override IViewModel GetViewModelInstance(object dataContext)
         //{
         //    if(dataContext == null)

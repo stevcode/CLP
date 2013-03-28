@@ -89,7 +89,7 @@ namespace CLP.Models
             set { SetValue(StrokePathContainerProperty, value); }
         }
 
-        public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer), null);
+        public static readonly PropertyData StrokePathContainerProperty = RegisterProperty("StrokePathContainer", typeof(CLPStrokePathContainer));
 
         /// <summary>
         /// Internally contained Handwriting Region.
@@ -100,7 +100,7 @@ namespace CLP.Models
             set { SetValue(HandwritingRegionPartsProperty, value); }
         }
 
-        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion), null);
+        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -432,19 +432,6 @@ namespace CLP.Models
                 }
             }
 
-            Console.WriteLine("***PageObject***");
-            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + YPosition);
-            Console.WriteLine("Height: " + Height + " Width: " + Width);
-
-            Console.WriteLine("***ContainerBoundingBox***");
-            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + (YPosition + HANDLE_HEIGHT));
-            Console.WriteLine("Height: " + StrokePathContainer.Height + " Width: " + StrokePathContainer.Width);
-
-            Console.WriteLine("***PartsBoundingBox***");
-            Console.WriteLine("XPOS: " + XPosition + " YPOS: " + (YPosition + HANDLE_HEIGHT + StrokePathContainer.Height));
-            Console.WriteLine("Height: " + HandwritingRegionParts.Height + " Width: " + HandwritingRegionParts.Width);
-
-
             var containerBoundingBox = new Rect(XPosition, YPosition + HANDLE_HEIGHT,
                 StrokePathContainer.Width, StrokePathContainer.Height);
 
@@ -456,7 +443,7 @@ namespace CLP.Models
             var handwritingRegionStrokesAdd = new StrokeCollection();
             foreach(Stroke stroke in addedStrokes)
             {
-                if (stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && PageObjectStrokeParentIDs.Contains(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string))
+                if (stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && stroke.GetPropertyData(CLPPage.StrokeIDKey) is string && PageObjectStrokeParentIDs.Contains(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string))
                 {
                     continue;
                 }
