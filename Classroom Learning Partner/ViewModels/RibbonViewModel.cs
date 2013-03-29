@@ -1909,11 +1909,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
                 int rows = 1;
-                try { rows = Convert.ToInt32(dimensionChooser.rows.Content); }
+                try { rows = Convert.ToInt32(dimensionChooser.Rows.Text); }
                 catch(FormatException) { rows = 1; }
 
                 int cols = 1;
-                try { cols = Convert.ToInt32(dimensionChooser.cols.Content); }
+                try { cols = Convert.ToInt32(dimensionChooser.Columns.Text); }
                 catch(FormatException) { cols = 1; }
 
                 CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
