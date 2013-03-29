@@ -130,34 +130,58 @@
                             </ControlTemplate>
                         </Thumb.Template>
                     </Thumb>
+                    
+                    <!--Right Side Division Adorner-->
+                    <!--<Thumb x:Name="AdornerSideDivision"
+                           Canvas.Right="0" Canvas.Top="0"
+                           Width="40" Height="{Binding Height}"
+                           Cursor="Help"> 
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="DivideSide">
+                                <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Thumb.Template>
+                            <ControlTemplate>
+                               <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
+                                   RadiusX="10" RadiusY="10"
+                                   Canvas.Top="-5" Canvas.Left="5"
+                                   Width="50"
+                                   Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
+                            </ControlTemplate>
+                        </Thumb.Template>
+                    </Thumb>-->
 
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
             
             <Grid>
 
-                <Rectangle Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
+                <Rectangle Grid.Row="0" Grid.Column="0" 
+                           Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
                            Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
 
                 <!--TO DO Liz place hit boxes on sides , use Canvas.Top and left? -->
-                <!--Rectangle Name="ArrayBottomHitBox" Tag="1001" Fill="Transparent" Stretch="Fill"
-                           Width="{Binding Width, Mode=TwoWay}" Height="20">
-                    <i:Interaction.Triggers>
+                <Rectangle Grid.Row="1" Grid.Column="0"
+                           Name="ArrayBottomHitBox" Tag="1001" Fill="Transparent" Stretch="Fill"
+                           Width="{Binding Width, Mode=TwoWay}" Height="20"/>
+                    <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <catel:EventToCommand Command="{Binding Path=CreateVerticalDivisionCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    </Rectangle>
-               
-            
-                <Rectangle Name="ArrayRightHitBox" Tag="1002" Fill="Transparent" Stretch="Fill"
+                    </Rectangle>-->
+
+                <Rectangle Grid.Row="0" Grid.Column="1" 
+                           Name="ArrayRightHitBox" Tag="1002" Fill="Transparent" Stretch="Fill"
                            Width="20" Height="{Binding Height, Mode=TwoWay}" 
-                    <i:Interaction.Triggers>
+                           Cursor="Help"/>
+                    <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <catel:EventToCommand Command="{Binding Path=CreateHorizontalDivisionCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Rectangle-->
+                </Rectangle>-->
             </Grid>
 
         </ac:AdornedControl>

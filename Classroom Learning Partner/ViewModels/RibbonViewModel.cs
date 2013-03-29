@@ -1900,19 +1900,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertArrayCommandExecute()
         {
             //pop up number pads to get dimensions
-            CustomizeDataTableView optionChooser = new CustomizeDataTableView();
-            optionChooser.Owner = Application.Current.MainWindow;
-            optionChooser.ShowDialog();
-            if(optionChooser.DialogResult == true)
+            CustomizeArrayView dimensionChooser = new CustomizeArrayView();
+            //CustomizeDataTableView dimensionChooser = new CustomizeDataTableView();
+            dimensionChooser.Owner = Application.Current.MainWindow;
+            dimensionChooser.ShowDialog();
+            if(dimensionChooser.DialogResult == true)
             {
-                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+                //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
                 int rows = 1;
-                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+                try { rows = Convert.ToInt32(dimensionChooser.rows.Content); }
                 catch(FormatException) { rows = 1; }
 
                 int cols = 1;
-                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+                try { cols = Convert.ToInt32(dimensionChooser.cols.Content); }
                 catch(FormatException) { cols = 1; }
 
                 CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);

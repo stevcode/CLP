@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
-
+            EnterRowsCommand = new Command(OnEnterRowsCommandExecute);
         }
 
         /// <summary>
@@ -172,6 +172,27 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Handle command logic here
         }
 
+        /// <summary>
+        /// Shows Modal Window Keypad to input Parts manually.
+        /// </summary>
+        public Command EnterRowsCommand { get; private set; }
+
+        private void OnEnterRowsCommandExecute()
+        {
+            if(App.MainWindowViewModel.IsAuthoring || !(PageObject as CLPStamp).PartsAuthorGenerated)
+            {
+                KeypadWindowView keyPad = new KeypadWindowView();
+                keyPad.Owner = Application.Current.MainWindow;
+                keyPad.WindowStartupLocation = WindowStartupLocation.Manual;
+                keyPad.Top = 100;
+                keyPad.Left = 100;
+                keyPad.ShowDialog();
+                if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+                {
+                    (PageObject as CLPArray).Rows = Int32.Parse(keyPad.NumbersEntered.Text);
+                }
+            }
+        }
 
         #endregion //Commands
 
@@ -216,6 +237,12 @@ namespace Classroom_Learning_Partner.ViewModels
             if(hitBoxName == "ArrayBottomHitBox")
             {
                 //TO DO Liz - create division
+                //use isMouseDown
+                if(isMouseDown)
+                {
+                    //CREATE DIVISION
+                }
+
             }
             if(hitBoxName == "ArrayRightHitBox")
             {
