@@ -13,6 +13,7 @@ using CLP.Models;
 using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using Classroom_Learning_Partner.Views;
+using System.Windows.Input;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -34,8 +35,36 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
-            EnterRowsCommand = new Command(OnEnterRowsCommandExecute);
+            EnterRowsCommand = new Command(OnEnterRowsCommandExecute);;
         }
+
+        /// <summary>
+        /// Gets or sets the BottomArrowPosition value.
+        /// </summary>
+        public double BottomArrowPosition
+        {
+            get { return GetValue<double>(BottomArrowPositionProperty); }
+            set { SetValue(BottomArrowPositionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the BottomArrowPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData BottomArrowPositionProperty = RegisterProperty("BottomArrowPosition", typeof(double), 0.0);
+
+        /// <summary>
+        /// Gets or sets the RightArrowPosition value.
+        /// </summary>
+        public double RightArrowPosition
+        {
+            get { return GetValue<double>(RightArrowPositionProperty); }
+            set { SetValue(RightArrowPositionProperty, value); Console.WriteLine("RightArrowPosition: " + RightArrowPosition); }
+        }
+
+        /// <summary>
+        /// Register the RightArrowPosition property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
 
         /// <summary>
         /// Gets or sets the Rows value
@@ -145,6 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
+
 
         /// <summary>
         /// Gets the CreateHorizontalDivisionCommand command.
