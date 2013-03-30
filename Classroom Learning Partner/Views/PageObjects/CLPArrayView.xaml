@@ -5,32 +5,10 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
-
     <UserControl.Resources>
-        <ResourceDictionary>
-            <conv:LengthConverter x:Key="LengthConverter"/>
-        </ResourceDictionary>
+        <conv:LengthConverter x:Key="LengthConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-
-    <Grid x:Name="TopGrid">
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-
-        <Rectangle Grid.Row="1" Grid.Column="1" DataContext="{Binding}" Height="{Binding Height *.7, Mode=TwoWay}" Width="{Binding Width *.7, Mode=TwoWay}" 
-                   Canvas.Top="500" Canvas.Left="500"
-                   Fill="Transparent" Stroke="Black" StrokeThickness="3" />
-        <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" FontSize="18"></TextBlock>
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" FontSize="18"></TextBlock>
-        
 
         <ac:AdornedControl Grid.RowSpan="3" Grid.ColumnSpan="3"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -47,15 +25,16 @@
                     <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
                                RadiusX="10" RadiusY="10"
                                Canvas.Top="-5" Canvas.Left="-5"
-                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
+                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=20}"
+                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=20}" 
+                               Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}"/>
 
                     <!--Close Button-->
                     <Button x:Name="AdornerClose"
                             Command="{Binding RemovePageObjectCommand}"
                             Width="40" Height="40"
                             Canvas.Left="-50" Canvas.Top="-25"
-                            Cursor="Hand">
+                            Cursor="Hand" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
                                 <Grid>
@@ -73,7 +52,7 @@
                     <Thumb x:Name="AdornerDrag"
                            Canvas.Right="-50" Canvas.Top="-25"
                            Width="40" Height="40"
-                           Cursor="ScrollAll">
+                           Cursor="ScrollAll" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="DragDelta">
                                 <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -111,7 +90,7 @@
                     <Thumb x:Name="AdornerResize"
                            Canvas.Right="-50" Canvas.Bottom="-50"
                            Width="40" Height="40"
-                           Cursor="SizeNWSE">
+                           Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="DragDelta">
                                 <catel:EventToCommand Command="{Binding ResizeArrayCommand}" PassEventArgsToCommand="True" />
@@ -132,10 +111,10 @@
                     </Thumb>
                     
                     <!--Right Side Division Adorner-->
-                    <Thumb x:Name="AdornerSideDivision"
-                           Canvas.Right="-20" Canvas.Top="{Binding RightArrowPosition}"
+                    <Thumb x:Name="AdornerRightDivision"
+                           Canvas.Right="0" Canvas.Top="{Binding RightArrowPosition}"
                            Width="40" Height="40"
-                           Cursor="SizeNWSE"> 
+                           Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsRightAdornerVisible}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
                                 <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="True" />
@@ -145,11 +124,10 @@
                             <ControlTemplate>
                                 <Grid>
                                     <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                    <Path Stroke="Black" StrokeThickness="1"
-                                          Data="M 8,23 L 23,23 L 23,8" />
-                                    <Path Stroke="Black" StrokeThickness="1"
-                                          Data="M 12,27 L 27,27 L 27,12" />
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                    <Path Data="M0,0 L1,1 M0,1 L1,0" 
+                                          Stretch="Fill" Margin="5"
+                                          Stroke="Green" StrokeThickness="3" />
                                 </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
@@ -157,9 +135,9 @@
 
                     <!--Bottom Side Division Adorner-->
                     <Thumb x:Name="AdornerBottomDivision"
-                           Canvas.Right="0" Canvas.Top="{Binding BottomArrowPosition}"
+                           Canvas.Left="{Binding Path=BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=-20}" Canvas.Bottom="0"
                            Width="40" Height="40"
-                           Cursor="SizeNWSE">
+                           Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsBottomAdornerVisible}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
                                 <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="True" />
@@ -167,7 +145,13 @@
                         </i:Interaction.Triggers>
                         <Thumb.Template>
                             <ControlTemplate>
-                                
+                                <Grid>
+                                    <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                    <Path Data="M0,0 L1,1 M0,1 L1,0" 
+                                          Stretch="Fill" Margin="5"
+                                          Stroke="Blue" StrokeThickness="3" />
+                                </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
                     </Thumb>
@@ -175,35 +159,43 @@
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
             
-            <Grid>
+            <Grid x:Name="TopGrid" Height="{Binding Height}" Width="{Binding Width}">
                 
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-                <Rectangle Grid.Row="0" Grid.Column="0" 
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" FontSize="18" />
+            <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" FontSize="18" />
+
+            <Rectangle Grid.Row="1" Grid.Column="1" Fill="Transparent" Stroke="Black" StrokeThickness="3"/>
+            
+            <!--<TextBlock Grid.Row="2" Grid.ColumnSpan="3" />
+            <TextBlock Grid.RowSpan="3" Grid.Column="2" />-->
+
+            <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
                            Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
                            Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
 
-                <!--TO DO Liz place hit boxes on sides , use Canvas.Top and left? -->
-                <Rectangle Grid.Row="1" Grid.Column="0"
-                           Name="ArrayBottomHitBox" Tag="1001" Fill="Red" Stretch="Fill"
-                           Width="{Binding Width, Mode=TwoWay}" Height="20" MouseMove="ArrayBottomHitBox_MouseMove_1" />
+            <Rectangle Grid.Row="2" Grid.Column="1"
+                           Name="ArrayBottomHitBox" Tag="1001" Fill="Transparent" Stretch="Fill"
+                           Width="{Binding Width, Mode=TwoWay}" Height="40" MouseMove="ArrayBottomHitBox_MouseMove_1" />
 
-                <Rectangle Grid.Row="0" Grid.Column="1" 
-                           Name="ArrayRightHitBox" Tag="1002" Fill="Blue" Stretch="Fill"
-                           Width="20" Height="{Binding Height, Mode=TwoWay}" MouseMove="ArrayRightHitBox_MouseMove_1" />
+            <Rectangle Grid.Row="1" Grid.Column="2" 
+                           Name="ArrayRightHitBox" Tag="1002" Fill="Transparent" Stretch="Fill"
+                           Width="40" Height="{Binding Height, Mode=TwoWay}" MouseMove="ArrayRightHitBox_MouseMove_1" />
 
             </Grid>
 
         </ac:AdornedControl>
 
-    </Grid>
 
 </catel:UserControl>
 

@@ -39,6 +39,48 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets the IsDefaultAdornerVisible value.
+        /// </summary>
+        public Boolean IsDefaultAdornerVisible
+        {
+            get { return GetValue<Boolean>(IsDefaultAdornerVisibleProperty); }
+            set { SetValue(IsDefaultAdornerVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsDefaultAdornerVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(Boolean), true);
+
+        /// <summary>
+        /// Gets or sets the IsRightAdornerVisible value.
+        /// </summary>
+        public Boolean IsRightAdornerVisible
+        {
+            get { return GetValue<Boolean>(IsRightAdornerVisibleProperty); }
+            set { SetValue(IsRightAdornerVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsRightAdornerVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(Boolean), false);
+
+        /// <summary>
+        /// Gets or sets the IsBottomAdornerVisible value.
+        /// </summary>
+        public Boolean IsBottomAdornerVisible
+        {
+            get { return GetValue<Boolean>(IsBottomAdornerVisibleProperty); }
+            set { SetValue(IsBottomAdornerVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsBottomAdornerVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsBottomAdornerVisibleProperty = RegisterProperty("IsBottomAdornerVisible", typeof(Boolean), false);
+
+        /// <summary>
         /// Gets or sets the BottomArrowPosition value.
         /// </summary>
         public double BottomArrowPosition
@@ -235,6 +277,9 @@ namespace Classroom_Learning_Partner.ViewModels
             hoverTimer.Interval = 1000;
             if(hitBoxName == "ArrayBodyHitBox")
             {
+                IsDefaultAdornerVisible = true;
+                IsRightAdornerVisible = false;
+                IsBottomAdornerVisible = false;
                 if(IsBackground)
                 {
                     if(App.MainWindowViewModel.IsAuthoring)
@@ -266,6 +311,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if(hitBoxName == "ArrayBottomHitBox")
             {
+                IsDefaultAdornerVisible = false;
+                IsRightAdornerVisible = false;
+                IsBottomAdornerVisible = true;
                 //TO DO Liz - create division
                 //use isMouseDown
                 if(isMouseDown)
@@ -276,6 +324,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if(hitBoxName == "ArrayRightHitBox")
             {
+                IsDefaultAdornerVisible = false;
+                IsRightAdornerVisible = true;
+                IsBottomAdornerVisible = false;
                 //TO DO Liz - create division
             }
 
