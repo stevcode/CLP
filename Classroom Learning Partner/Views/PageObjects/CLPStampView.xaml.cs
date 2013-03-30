@@ -26,24 +26,29 @@ namespace Classroom_Learning_Partner.Views
 
         private void StampHandleHitBox_MouseEnter(object sender, MouseEventArgs e)
         {
-            (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Green);
+            var clpStampViewModel = ViewModel as CLPStampViewModel;
+            if(clpStampViewModel != null)
+            {
+                clpStampViewModel.StampHandleColor = new SolidColorBrush(Colors.Green);
+            }
         }
 
         private void StampHandleHitBox_MouseLeave(object sender, MouseEventArgs e)
         {
-            if(ViewModel != null)
+            var clpStampViewModel = ViewModel as CLPStampViewModel;
+            if(clpStampViewModel != null)
             {
-                (ViewModel as CLPStampViewModel).StampHandleColor = new SolidColorBrush(Colors.Black);
+                clpStampViewModel.StampHandleColor = new SolidColorBrush(Colors.Black);
             }
         }
 
         private void AdornerClose_Click(object sender, RoutedEventArgs e)
         {
-            //foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage))
-            //{
-            //    pageVM.IsInkCanvasHitTestVisible = true;
-            //}
-            CLPServiceAgent.Instance.RemovePageObjectFromPage((ViewModel as CLPStampViewModel).PageObject);
+            var clpStampViewModel = ViewModel as CLPStampViewModel;
+            if(clpStampViewModel != null)
+            {
+                CLPServiceAgent.Instance.RemovePageObjectFromPage(clpStampViewModel.PageObject);
+            }
         }
     }
 }

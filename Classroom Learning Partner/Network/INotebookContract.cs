@@ -11,5 +11,8 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void AddNewPage(string s_page, int index);
+
+        [OperationContract]
+        void ReplacePage(string s_page, int index);
     }
 }

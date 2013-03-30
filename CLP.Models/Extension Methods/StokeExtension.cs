@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Ink;
 
 namespace CLP.Models
@@ -9,23 +10,52 @@ namespace CLP.Models
 
         public static string GetStrokeUniqueID(this Stroke s)
         {
-            if (!s.ContainsPropertyData(StrokeIDKey))
+            try
             {
-                string newUniqueID = Guid.NewGuid().ToString();
-                s.AddPropertyData(StrokeIDKey, newUniqueID);
+                if (!s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                {
+                    string newUniqueID = Guid.NewGuid().ToString();
+                    s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                }
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("GetStrokeUniqueID Fail");
             }
 
-            return s.GetPropertyData(StrokeIDKey) as string;
+            try
+            {
+                return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("GetStrokeUniqueID Fail");
+                return "";
+            }
         }
 
         public static void SetStrokeUniqueID(this Stroke s, string uniqueID)
         {
-            if(s.ContainsPropertyData(StrokeIDKey))
+            try
             {
-                s.RemovePropertyData(StrokeIDKey);
+                if(s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                {
+                    s.RemovePropertyData(CLPPage.StrokeIDKey);
+                }
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("SetStrokeUniqueID Fail");
             }
 
-            s.AddPropertyData(StrokeIDKey, uniqueID);
+            try
+            {
+                s.AddPropertyData(CLPPage.StrokeIDKey, uniqueID);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("SetStrokeUniqueID Fail");
+            }
         }
     }
 }

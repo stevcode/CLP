@@ -22,7 +22,6 @@ namespace CLP.Models
         public CLPHandwritingRegion(CLPHandwritingAnalysisType analysis_type, CLPPage page) : base(page)
         {
             AnalysisType = analysis_type;
-            StoredAnswer = "";
         }
 
         /// <summary>
@@ -76,27 +75,12 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData AnalysisTypeProperty = RegisterProperty("AnalysisType", typeof(CLPHandwritingAnalysisType), 0);
 
-        /// <summary>
-        /// Stored interpreted answer.
-        /// </summary>
-        public string StoredAnswer
-        {
-            get { return GetValue<string>(StoredAnswerProperty); }
-            set { SetValue(StoredAnswerProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the StoredAnswer property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
-
         #endregion // Properties
 
         #region Methods
 
         public override void DoInterpretation()
         {
-            RefreshStrokeParentIDs();
             StrokeCollection strokes = GetStrokesOverPageObject();
             string result = InkInterpretation.InterpretHandwriting(strokes, AnalysisType);
             if (result != null)

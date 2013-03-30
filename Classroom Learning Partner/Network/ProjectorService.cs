@@ -11,6 +11,7 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
+using System.Security.Cryptography;
 
 namespace Classroom_Learning_Partner
 {
@@ -28,7 +29,11 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+            bool isGroupSubmission, double pageHeight, List<byte> image);
+
+        [OperationContract]
+        void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID);
 
         [OperationContract]
         void ScrollPage(string pageID, string submissionID, double offset);
@@ -117,7 +122,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+            bool isGroupSubmission, double pageHeight, List<byte> image)
         {
             CLPPage submission = null;
             CLPNotebook currentNotebook = null;
@@ -182,6 +187,46 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
+        {
+             CLPPage submission = ObjectSerializer.ToObject(sPage) as CLPPage;
+            submission.IsSubmission = true;
+            submission.IsGroupSubmission = isGroupSubmission;
+            submission.SubmissionID = submissionID;
+            submission.SubmissionTime = submissionTime;
+            submission.SubmitterName = submitter.FullName;
+            submission.Submitter = submitter;
+            submission.GroupSubmitter = groupSubmitter;
+
+            CLPNotebook currentNotebook = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    currentNotebook = notebook;
+                    break;
+                }
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    try
+                    {
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
         }
 
         public void ScrollPage(string pageID, string submissionID, double offset)
@@ -251,6 +296,8 @@ namespace Classroom_Learning_Partner
         }
 
         public void AddNewPage(string s_page, int index) { }
+
+        public void ReplacePage(string s_page, int index) { }
         
         #endregion
     }

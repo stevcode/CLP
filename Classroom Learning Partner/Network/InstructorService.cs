@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
@@ -19,7 +20,11 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+            bool isGroupSubmission, double pageHeight, List<byte> image);
+
+        [OperationContract]
+        void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID);
 
         [OperationContract]
         void CollectStudentNotebook(string sNotebook, string studentName);
@@ -41,7 +46,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+            bool isGroupSubmission, double pageHeight, List<byte> image)
         {
             if(App.Network.ProjectorProxy != null)
             {
@@ -52,7 +57,7 @@ namespace Classroom_Learning_Partner
                         App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
                             submitter, groupSubmitter,
                             notebookID, pageID, submissionID, submissionTime,
-                            isGroupSubmission, pageHeight);
+                            isGroupSubmission, pageHeight, image);
                     }
                     catch(System.Exception ex)
                     {
@@ -132,6 +137,70 @@ namespace Classroom_Learning_Partner
             }
 
             //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+        }
+
+        public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
+            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
+        {
+            if(App.Network.ProjectorProxy != null)
+            {
+                Thread t = new Thread(() =>
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddSerializedSubmission(sPage, submitter, groupSubmitter,
+            submissionTime, isGroupSubmission, notebookID, submissionID);
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                    }
+                });
+                t.IsBackground = true;
+                t.Start();
+            }
+            else
+            {
+                //TODO: Steve - add pages to a queue and send when a projector is found
+                Console.WriteLine("Projector NOT Available");
+            }
+
+            CLPPage submission = ObjectSerializer.ToObject(sPage) as CLPPage;
+            submission.IsSubmission = true;
+            submission.IsGroupSubmission = isGroupSubmission;
+            submission.SubmissionID = submissionID;
+            submission.SubmissionTime = submissionTime;
+            submission.SubmitterName = submitter.FullName;
+            submission.Submitter = submitter;
+            submission.GroupSubmitter = groupSubmitter;
+
+            CLPNotebook currentNotebook = null;
+
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(notebookID == notebook.UniqueID)
+                {
+                    currentNotebook = notebook;
+                    break;
+                }
+            }
+
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate(object arg)
+                {
+                    try
+                    {
+                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
+                    }
+
+                    return null;
+                }, null);
         }
 
         public void CollectStudentNotebook(string sNotebook, string studentName)

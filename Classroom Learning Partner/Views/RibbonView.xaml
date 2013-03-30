@@ -2,12 +2,7 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
-
-    <UserControl.Resources>
-        <conv:PageInteractionModeConverter x:Key="PageInteractionModeConverter"/>
-    </UserControl.Resources>
 
     <!--Ribbon-->
     <Ribbon x:Name="Ribbon" IsMinimized="False">
@@ -140,33 +135,32 @@
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="5" Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <!--<RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="7" Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="12" Width="150" />
-                            </RibbonGalleryItem>
+                            </RibbonGalleryItem>-->
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <RibbonToggleButton
+                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
                     LargeImageSource="..\Images\Eraser.png"
                     Command="{Binding SetEraserCommand}" 
-                    CommandParameter="EraseByPoint" />
+                    CommandParameter="EraseByPoint" />-->
 
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding Path=InsertArrayCommand}"/>
 
-                <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Stroke Eraser"
                     LargeImageSource="..\Images\StrokeEraser.png"
                     Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />-->
+                    CommandParameter="EraseByStroke" />
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -176,23 +170,23 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Insert">
+            <RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <RibbonButton
+                <!--<RibbonToggleButton Label="Webcam" 
                         Label="Array"
                         LargeImageSource="..\Images\Array.png"
                         Command="{Binding Path=InsertArrayCommand}"/>
 
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
@@ -218,18 +212,18 @@
                 <!--<RibbonButton Background="White"/>-->
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
-                <RibbonButton Background="DarkOrange" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Tan" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Gold" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SaddleBrown" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="DarkOrange" />
+                <RibbonButton Background="Tan" />
+                <RibbonButton Background="Gold" />
+                <RibbonButton Background="SaddleBrown" />
                 <RibbonButton Background="DarkGreen"/>
-                <RibbonButton Background="MediumSeaGreen" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="MediumSeaGreen" />
                 <RibbonButton Background="Blue"/>
-                <RibbonButton Background="HotPink" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="BlueViolet" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="Aquamarine" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SlateGray" Visibility="{Binding Path=StudentVisibility}"/>
-                <RibbonButton Background="SkyBlue" Visibility="{Binding Path=StudentVisibility}"/>
+                <RibbonButton Background="HotPink" />
+                <RibbonButton Background="BlueViolet" />
+                <RibbonButton Background="Aquamarine" />
+                <RibbonButton Background="SlateGray" />
+                <RibbonButton Background="SkyBlue" />
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -267,7 +261,7 @@
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
-                <RibbonButton Margin="0,0,35,0"
+                <RibbonButton 
                         LargeImageSource="..\Images\Send.png" 
                         Command="{Binding Path=SubmitPageCommand}" 
                         Label="Send To Teacher"
@@ -279,10 +273,10 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <RibbonButton Label="Group Send"
+                <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
                               LargeImageSource="..\Images\GroupSubmit-icon32.png" 
                               Command="{Binding GroupSubmitPageCommand}"
-                              Visibility="{Binding SendButtonVisibility}"/>
+                              Visibility="{Binding SendButtonVisibility}"/>-->
 
             </RibbonGroup>
 
@@ -357,6 +351,10 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
+                
+                <RibbonButton Label="Turn Off Webcam Sharing"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding TurnOffWebcamSharing}" />
 
             </RibbonGroup>
             
@@ -365,7 +363,15 @@
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding BroadcastPageCommand}" />
-                
+
+                <RibbonButton Label="Replace This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ReplacePageCommand}" />
+
+                <RibbonButton Label="Remove All Submissions"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding RemoveAllSubmissionsCommand}" />
+
             </RibbonGroup>
             
         </RibbonTab>
