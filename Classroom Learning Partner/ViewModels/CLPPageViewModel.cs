@@ -208,6 +208,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Signifies the viewModel's view is a CLPPagePreviewView.
+        /// </summary>
+        public bool IsPagePreview
+        {
+            get { return GetValue<bool>(IsPagePreviewProperty); }
+            set { SetValue(IsPagePreviewProperty, value); }
+        }
+
+        public static readonly PropertyData IsPagePreviewProperty = RegisterProperty("IsPagePreview", typeof(bool), true);
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
@@ -369,7 +380,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            if(TopCanvas != null)
+            if(TopCanvas != null && !IsPagePreview)
             {
                 Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
                 if(!IsMouseDown)
@@ -526,55 +537,59 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (IsPagePreview) return;
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - Catel? causing this to be called twice
             //Task.Factory.StartNew( () =>
             //    {
-                    try
+            try
+            {
+                foreach (ICLPPageObject pageObject in PageObjects)
+                {
+                    if (pageObject.CanAcceptPageObjects)
                     {
-                        foreach(ICLPPageObject pageObject in PageObjects)
+                        ObservableCollection<ICLPPageObject> removedPageObjects =
+                            new ObservableCollection<ICLPPageObject>();
+                        if (e.OldItems != null)
                         {
-                            if(pageObject.CanAcceptPageObjects)
+                            foreach (ICLPPageObject removedPageObject in e.OldItems)
                             {
-                                ObservableCollection<ICLPPageObject> removedPageObjects = new ObservableCollection<ICLPPageObject>();
-                                if(e.OldItems != null)
-                                {
-                                    foreach (ICLPPageObject removedPageObject in e.OldItems) {
-                                        removedPageObjects.Add(removedPageObject);
-                                    }
-                                }
-
-                                ObservableCollection<ICLPPageObject> addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                                if(e.NewItems != null)
-                                {
-                                    foreach(ICLPPageObject addedPageObject in e.NewItems)
-                                    {
-                                        if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
-                                            && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
-                                            && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
-                                            && pageObject.PageObjectIsOver(addedPageObject, .50))
-                                        {
-                                            addedPageObjects.Add(addedPageObject);
-                                        }
-                                    }
-                                }
-
-                                pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
+                                removedPageObjects.Add(removedPageObject);
                             }
                         }
-                    }
-                    catch(System.Exception ex)
-                    {
-                        Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
-                    }
-                //});
 
+                        ObservableCollection<ICLPPageObject> addedPageObjects =
+                            new ObservableCollection<ICLPPageObject>();
+                        if (e.NewItems != null)
+                        {
+                            foreach (ICLPPageObject addedPageObject in e.NewItems)
+                            {
+                                if (!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                    && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                    && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                    && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                {
+                                    addedPageObjects.Add(addedPageObject);
+                                }
+                            }
+                        }
+
+                        pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+            }
+            //});
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
+            if(IsPagePreview) return;
             if(!Page.IsInkAutoAdding)
             {
                 App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
