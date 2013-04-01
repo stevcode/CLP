@@ -10,6 +10,12 @@ namespace CLP.Models
 
         public static string GetStrokeUniqueID(this Stroke s)
         {
+            if (s == null)
+            {
+                Console.WriteLine("Null Stroke");
+                return "";
+            }
+
             try
             {
                 if (!s.ContainsPropertyData(CLPPage.StrokeIDKey))
