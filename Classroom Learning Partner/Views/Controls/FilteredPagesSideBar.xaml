@@ -23,7 +23,7 @@
                                        Width="{Binding ElementName=content, Path=ActualWidth}"
                                        Height="{Binding ElementName=content, Path=ActualHeight}"
                                        Fill="White"
-                                       Stroke="#9FA6AD"
+                                       Stroke="#6a6a6a"
                                        StrokeThickness="1" >
                                 <Rectangle.RenderTransform>
                                     <RotateTransform Angle="5"  CenterX="{Binding ElementName=content, Path=ActualWidth, Converter={StaticResource halfConverter}}" CenterY="{Binding ElementName=content, Path=ActualHeight, Converter={StaticResource halfConverter}}" />
