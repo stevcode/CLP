@@ -92,6 +92,17 @@ namespace CLP.Models
         #region Change From Session to Session
 
         /// <summary>
+        /// Name of the Group.
+        /// </summary>
+        public string GroupName
+        {
+            get { return GetValue<string>(GroupNameProperty); }
+            set { SetValue(GroupNameProperty, value); }
+        }
+
+        public static readonly PropertyData GroupNameProperty = RegisterProperty("GroupName", typeof(string), "");
+
+        /// <summary>
         /// FriendlyName of the Machine the Person is currently using.
         /// </summary>
         public string CurrentMachineName

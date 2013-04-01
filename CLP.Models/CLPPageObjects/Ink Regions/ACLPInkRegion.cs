@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Threading;
+using Catel.Data;
 
 namespace CLP.Models
 {
@@ -27,6 +28,7 @@ namespace CLP.Models
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += new EventHandler(timer_Tick);
+            StoredAnswer = "";
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -53,6 +55,23 @@ namespace CLP.Models
             : base(info, context) { }
 
         #endregion //Constructors
+
+        #region Properties
+        /// <summary>
+        /// Stored interpreted answer.
+        /// </summary>
+        public string StoredAnswer
+        {
+            get { return GetValue<string>(StoredAnswerProperty); }
+            set { SetValue(StoredAnswerProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the StoredAnswer property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string), "");
+
+        #endregion // Properties
 
         #region Methods
 

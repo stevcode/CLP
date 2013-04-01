@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner
         public IProjectorContract ProjectorProxy { get; set; }
 
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
-        public NetTcpBinding defaultBinding = new NetTcpBinding("ProxyBinding");
+        public NetTcpBinding DefaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {
@@ -60,7 +60,6 @@ namespace Classroom_Learning_Partner
                     break;
                 case App.UserMode.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
-                    string blah = host.Description.Endpoints[0].Address.ToString();
                     foreach(var endpoint in host.Description.Endpoints)
                     {
                         if(endpoint.Name == "NetTcpBinding_IStudentContract")
@@ -69,8 +68,6 @@ namespace Classroom_Learning_Partner
                             break;
                         }
                     }
-                    break;
-                default:
                     break;
             }
 
@@ -94,16 +91,16 @@ namespace Classroom_Learning_Partner
                     new Thread(() =>
                     {
                         Thread.CurrentThread.IsBackground = true;
-                        while(DiscoveredProjectors.Addresses.Count() < 1)
+                        while(!DiscoveredProjectors.Addresses.Any())
                         {
                             Thread.Sleep(1000);
                         }
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED";
                         try
                         {
-                            ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(defaultBinding, DiscoveredProjectors.Addresses[0]);
+                            ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
                         }
-                        catch(System.Exception)
+                        catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Projector Proxy");
                         }
@@ -117,22 +114,20 @@ namespace Classroom_Learning_Partner
                     new Thread(() =>
                     {
                         Thread.CurrentThread.IsBackground = true;
-                        while(DiscoveredInstructors.Addresses.Count() < 1)
+                        while(!DiscoveredInstructors.Addresses.Any())
                         {
                             Thread.Sleep(1000);
                         }
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
                         try
                         {
-                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(defaultBinding, DiscoveredInstructors.Addresses[0]); 
+                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]); 
                         }
-                        catch(System.Exception)
+                        catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
                         }
                     }).Start();
-                    break;
-                default:
                     break;
             }
 
@@ -177,7 +172,7 @@ namespace Classroom_Learning_Partner
 	                (InstructorProxy as ICommunicationObject).Close();
 		            InstructorProxy = null;
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
 	                
                 }
@@ -190,7 +185,7 @@ namespace Classroom_Learning_Partner
                     (ProjectorProxy as ICommunicationObject).Close();
                     ProjectorProxy = null;
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
 	                
                 }

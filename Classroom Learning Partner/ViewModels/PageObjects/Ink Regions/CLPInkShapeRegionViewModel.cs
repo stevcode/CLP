@@ -31,16 +31,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public string InkShapesString
+        public string StoredAnswer
         {
-            get { return GetValue<string>(InkShapesStringProperty); }
-            set { SetValue(InkShapesStringProperty, value); }
+            get { return GetValue<string>(StoredAnswerProperty); }
+            set { SetValue(StoredAnswerProperty, value); }
         }
 
         /// <summary>
         /// Register the InkShapesString property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapesStringProperty = RegisterProperty("InkShapesString", typeof(string));
+        public static readonly PropertyData StoredAnswerProperty = RegisterProperty("StoredAnswer", typeof(string));
 
         /// <summary>
         /// Stored strokecollections that constitute shapes

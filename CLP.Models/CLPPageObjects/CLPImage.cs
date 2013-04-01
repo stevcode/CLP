@@ -80,6 +80,12 @@ namespace CLP.Models
             return newImage;
         }
 
+        public override void OnRemoved()
+        {
+            //TODO: Steve - remove image from ParentPage ImagePool if last one.
+            base.OnRemoved();
+        }
+
         #endregion
 
     }
