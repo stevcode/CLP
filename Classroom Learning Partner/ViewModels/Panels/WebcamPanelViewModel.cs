@@ -150,9 +150,32 @@ namespace Classroom_Learning_Partner.ViewModels
                 currentPage.ImagePool.Add(imageID, ByteSource);
             }
             CLPImage image = new CLPImage(imageID, currentPage);
-            image.IsBackground = App.MainWindowViewModel.IsAuthoring;
 
-            CLPServiceAgent.Instance.AddPageObjectToPage(image);
+            //TODO: Steve - All this is a hack for science webcam usage. Fix to be generalized.
+            int pageObjectIndex = -1;
+            if (currentPage.PageIndex == 25)
+            {
+                foreach(ICLPPageObject pageObject in currentPage.PageObjects)
+                {
+                    if(pageObject is CLPImage && pageObject.YPosition == 225 && pageObject.XPosition == 108)
+                    {
+                        pageObjectIndex = currentPage.PageObjects.IndexOf(pageObject);
+                        break;
+                    }
+                }
+
+                if(pageObjectIndex >= 0)
+                {
+                    currentPage.PageObjects.RemoveAt(pageObjectIndex);
+                }
+
+                CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                image.IsBackground = true;
+                image.Height = 450;
+                image.Width = 600;
+                image.YPosition = 225;
+                image.XPosition = 108;
+            }
         }
 
         #endregion //Commands

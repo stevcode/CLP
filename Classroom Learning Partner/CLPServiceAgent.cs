@@ -18,7 +18,6 @@ using Catel.IoC;
 using Catel.Windows.Controls;
 using System.ServiceModel;
 using System.Collections.ObjectModel;
-using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner
 {
@@ -74,10 +73,13 @@ namespace Classroom_Learning_Partner
                             page.SubmissionTime = DateTime.Now;
                             page.TrimPage();
 
+                            var sPage = ObjectSerializer.ToString(page);
+
                             ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
+                         //   App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
                         catch(System.Exception ex)
                         {
@@ -127,7 +129,7 @@ namespace Classroom_Learning_Partner
                 //Steve - Conversion happens here
                 try
                 {
-                    notebook = CLP.Models.CLPNotebook.Load(filePath, true);
+                    notebook = CLP.Models.CLPNotebook.Load(filePath);
                 }
                 catch(Exception ex)
                 {
@@ -342,6 +344,15 @@ namespace Classroom_Learning_Partner
                 pageObject.Height = height;
                 pageObject.Width = width;
             }
+        }
+
+        public void InterpretRegion(ACLPInkRegion inkRegion) {
+            inkRegion.DoInterpretation();
+
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.SubmitterName);
+            Logger.Instance.WriteToLog((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
+            Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
         }
 
         #endregion //Page

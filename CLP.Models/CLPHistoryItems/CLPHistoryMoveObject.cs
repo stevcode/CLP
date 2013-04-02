@@ -3,7 +3,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using Catel.Data;
 
-namespace CLP.Models.CLPHistoryItems
+namespace CLP.Models
 {
     [Serializable]
     public class CLPHistoryMoveObject : CLPHistoryItem

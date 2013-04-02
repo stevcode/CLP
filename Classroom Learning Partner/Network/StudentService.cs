@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Catel.Windows;
 using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
+using System.Security.Cryptography;
 
 namespace Classroom_Learning_Partner
 {
@@ -19,6 +20,9 @@ namespace Classroom_Learning_Partner
     {
         [OperationContract]
         void TogglePenDownMode(bool isPenDownModeEnabled);
+
+        [OperationContract]
+        void AddWebcamImage(List<byte> image);
     }
 
     public class StudentService : IStudentContract
@@ -41,6 +45,34 @@ namespace Classroom_Learning_Partner
                     }
                     return null;
                 }, null);
+        }
+
+        public void AddWebcamImage(List<byte> image)
+        {
+            CLPPage page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
+
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] hash = md5.ComputeHash(image.ToArray());
+            string imageID = Convert.ToBase64String(hash);
+
+            if(!page.ImagePool.ContainsKey(imageID))
+            {
+                page.ImagePool.Add(imageID, image);
+            }
+            CLPImage imagePO = new CLPImage(imageID, page);
+            imagePO.IsBackground = true;
+            imagePO.Height = 450;
+            imagePO.Width = 600;
+            imagePO.YPosition = 225;
+            imagePO.XPosition = 108;
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        page.PageObjects.Add(imagePO);
+
+                        return null;
+                    }, null);
         }
 
         #endregion

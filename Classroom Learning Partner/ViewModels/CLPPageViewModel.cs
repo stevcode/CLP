@@ -17,7 +17,6 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models.CLPHistoryItems;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -49,7 +48,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
         public CLPPageViewModel(CLPPage page)
-            : base()
         {
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
@@ -473,11 +471,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        Type lastType = null;
+        Type _lastType = null;
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(lastType == typeof(Canvas) && o is Canvas)
+            if(_lastType == typeof(Canvas) && o is Canvas)
             {
                 IsInkCanvasHitTestVisible = true;
             }
@@ -488,13 +486,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if((o as Shape).Name.Contains("HitBox"))
                     {
-                        lastType = o.GetType();
+                        _lastType = o.GetType();
                         return HitTestFilterBehavior.Continue;
                     }
                 }
             }
 
-            lastType = o.GetType();
+            _lastType = o.GetType();
             return HitTestFilterBehavior.ContinueSkipSelf;
         }
 
