@@ -11,7 +11,9 @@ namespace CLP.Models.CLPHistoryItems
         AddObject,
         RemoveObject,
         ResizeObject,
-        MoveObject
+        MoveObject,
+        Undo,
+        Redo
     }
 
     /// <summary>

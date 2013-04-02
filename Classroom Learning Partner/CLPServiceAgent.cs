@@ -326,8 +326,6 @@ namespace Classroom_Learning_Partner
                 page.PageHistory.push(new CLPHistoryMoveObject(page, pageObject, oldXPos, oldYPos, pt.X, pt.Y));
                 pageObject.XPosition = pt.X;
                 pageObject.YPosition = pt.Y;
-                Console.WriteLine("x diff = " + (oldXPos - pt.X));
-                Console.WriteLine("y diff = " + (oldYPos - pt.Y));
             }
         }
 
@@ -343,8 +341,6 @@ namespace Classroom_Learning_Partner
                 page.PageHistory.push(new CLPHistoryResizeObject(page, pageObject, oldHeight, oldWidth, height, width)); 
                 pageObject.Height = height;
                 pageObject.Width = width;
-                Console.WriteLine("height diff = " + (oldHeight-height));
-                Console.WriteLine("width diff = " + (oldWidth - width));
             }
         }
 

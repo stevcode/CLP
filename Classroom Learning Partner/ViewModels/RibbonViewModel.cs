@@ -1745,64 +1745,50 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
-                    CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    CLPHistory memInit = page.PageHistory.getInitialHistory();
-                    CLPHistory memCurrent = page.PageHistory.getMemento();
-                    CLPHistory memFinal = page.PageHistory.getMemento();
-                    page.PageHistory.disableMem();
+                    CLPHistory pageHistory = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.PageHistory;
 
-                    //revertToMem(memInit, memCurrent);
-                    Stack<CLPHistoryItem> sOldMem = memInit.Past;
-                    Stack<CLPHistoryItem> sCurrentMem = memCurrent.Past;
-                    if(sOldMem.Count < sCurrentMem.Count)
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
                     {
-                        try
+                        pageHistory.Freeze();
+                        return null;
+                    }, null);
+
+                    Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
+                    Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
+
+                    while(metaPast.Count > 0) 
+                    {
+                        CLPHistoryItem item = metaPast.Pop();
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (DispatcherOperationCallback)delegate(object arg)
                         {
-                            while(sOldMem.Count < sCurrentMem.Count)
-                            {
-                                CLPHistoryItem item = sCurrentMem.Pop();
-                                Console.WriteLine("This is the action being UNDONE: " + item.ItemType);
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                (DispatcherOperationCallback)delegate(object arg)
-                                {
-                                    item.Undo();
-                                return null;
-                                }, null);
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine(e.StackTrace);
-                        }
+                            item.Undo();
+                            return null;
+                        }, null);
+                        metaFuture.Push(item);
                     }
 
-                    //forwardToMem(memFinal, memInit);
                     Thread.Sleep(400);
-                    Stack<CLPHistoryItem> sFutureMem = new Stack<CLPHistoryItem>(memFinal.Past);
-                    Stack<CLPHistoryItem>  sCurrentMem2 = memInit.Past; 
-                    if(sFutureMem.Count > sCurrentMem2.Count)
+                    while(metaFuture.Count > 0)
                     {
-                        try
+                        CLPHistoryItem item = metaFuture.Pop();
+                        Thread.Sleep(400);
+                        Console.WriteLine("This is the action being REDONE: " + item.ItemType);
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (DispatcherOperationCallback)delegate(object arg)
                         {
-                            while(sFutureMem.Count > sCurrentMem2.Count)
-                            {
-                                CLPHistoryItem item = sFutureMem.Pop();
-                                Thread.Sleep(400);
-                                Console.WriteLine("This is the action being REDONE: " + item.ItemType);
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                (DispatcherOperationCallback)delegate(object arg)
-                                {
-                                    item.Redo();
-                                    return null;
-                                }, null);
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine(e.StackTrace);
-                        }
+                            item.Redo();
+                            return null;
+                        }, null);
                     }
-                    page.PageHistory.enableMem();
+                    Thread.Sleep(400);
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        pageHistory.Unfreeze();
+                        return null;
+                    }, null);
                 }
                 catch(Exception e)
                 {
@@ -1824,7 +1810,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.redo(); 
+                        page.PageHistory.Redo(); 
                         return null;
                     }, null);   
                 }
@@ -1846,7 +1832,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.undo();
+                        page.PageHistory.Undo();
                         return null;
                     }, null);
                 }

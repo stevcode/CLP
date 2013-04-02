@@ -134,6 +134,18 @@ namespace CLP.Models.CLPHistoryItems
             return base.Equals(obj);
         }
 
+        public bool CombinesWith(CLPHistoryItem other)
+        {
+            if(other is CLPHistoryMoveObject)
+            {
+                if((other as CLPHistoryMoveObject).PageObject.UniqueID == PageObject.UniqueID)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion //Methods
     }
 }

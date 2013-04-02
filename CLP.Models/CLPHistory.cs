@@ -13,15 +13,14 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistory : DataObjectBase<CLPHistory>
     {
-        private bool memEnabled;
-        private string closed = null;
         public readonly double Sample_Rate = 9;
+        private bool frozen;
 
         #region Constructor
 
         public CLPHistory()
         {
-            memEnabled = true;
+            frozen = false;
         }
 
         /// <summary>
@@ -65,6 +64,18 @@ namespace CLP.Models
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
+        /// The actions that have happened in the past, *including* undos and redos.
+        /// </summary>
+        public Stack<CLPHistoryItem> MetaPast
+        {
+            get { return GetValue<Stack<CLPHistoryItem>>(MetaPastProperty); }
+            set { SetValue(MetaPastProperty, value); }
+        }
+
+        public static readonly PropertyData MetaPastProperty = RegisterProperty("MetaPast",
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
+
+        /// <summary>
         /// The events that we have triggered and should therefore ignore when we're told they've
         /// happened.
         /// </summary>
@@ -79,74 +90,63 @@ namespace CLP.Models
 
         #endregion //Properties
 
-        public CLPHistory getMemento(){
-            CLPHistory clpHistory = new CLPHistory();
-            clpHistory.Past = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Past));
-            clpHistory.Future = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(Future));
-            clpHistory.close();
-            return clpHistory;
+        public void Freeze()
+        {
+            frozen = true;
         }
 
-        public void disableMem()
+        public void Unfreeze()
         {
-            memEnabled = false;
-        }
-
-        public void enableMem()
-        {
-            memEnabled = true;
-        }
-
-        public void close()
-        {
-            closed = "closed";
+            frozen = false;
         }
 
         public Boolean push(CLPHistoryItem item)
         {
-            if(closed == null && memEnabled)
+            if(frozen)
             {
-                if(!isExpected(item))
-                {
-                    Console.WriteLine("pushing a " + item.ItemType);
-                    Past.Push(item);
-                    Future.Clear();
-                }
-                else
-                {
-                    Console.WriteLine("expected " + item.ItemType);
-                }
-                return true;
+                return false;
             }
-            return false;
+            if(!isExpected(item))
+            {
+                Console.WriteLine("pushing a " + item.ItemType);
+                Past.Push(item);
+                MetaPast.Push(item);
+                Future.Clear();
+            }
+            else
+            {
+                Console.WriteLine("expected " + item.ItemType);
+            }
+            return true;
         }
-
-        public CLPHistory getInitialHistory(){
-            CLPHistory clpHistory = new CLPHistory();
-            clpHistory.Past = new Stack<CLPHistoryItem>();
-            clpHistory.Future = new Stack<CLPHistoryItem>();
-            clpHistory.close();
-            return clpHistory;
-        }
-       
-        public void undo(){
+        
+        public void Undo()
+        {
             if(Past.Count==0){
                 Console.WriteLine("told to undo, but nothing in stack");
                 return;
             }
             Console.WriteLine("started undo");
-            CLPHistoryItem lastAction = (CLPHistoryItem)Past.Pop();
+            CLPHistoryItem lastAction = Past.Pop();
             CLPHistoryItem expected = lastAction.GetUndoFingerprint();
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
             }
             lastAction.Undo();
+            MetaPast.Push(expected);
             Future.Push(lastAction);
-            printMemStacks("undo", "after");
+            if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
+            {
+                CLPHistoryItem penultimateAction = Past.Peek();
+                if((lastAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
+                {
+                    Undo();
+                }
+            }
         }
 
-        public void redo(){
+        public void Redo(){
             if(Future.Count == 0)
             {
                Console.WriteLine("told to redo, but nothing in stack");
@@ -159,8 +159,16 @@ namespace CLP.Models
                 ExpectedEvents.Add(expected);
             }
             nextAction.Redo();
+            MetaPast.Push(expected);
             Past.Push(nextAction);
-            printMemStacks("redo", "after");
+            if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
+            {
+                CLPHistoryItem penultimateAction = Future.Peek();
+                if((nextAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
+                {
+                    Redo();
+                }
+            }
         }
 
         public void printMemStacks(String methodName, String pos)
