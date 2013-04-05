@@ -24,9 +24,9 @@ namespace CLP.Models
                 }
                 return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                Console.WriteLine("GetStrokeUniqueID Fail");
+                Console.WriteLine("GetStrokeUniqueID Fail: " + ex.Message);
                 return null;
             }
         }
@@ -35,16 +35,11 @@ namespace CLP.Models
         {
             try
             {
-                if(s.ContainsPropertyData(CLPPage.StrokeIDKey))
-                {
-                    s.RemovePropertyData(CLPPage.StrokeIDKey);
-                }
-
                 s.AddPropertyData(CLPPage.StrokeIDKey, uniqueID);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                Console.WriteLine("SetStrokeUniqueID Fail");
+                Console.WriteLine("SetStrokeUniqueID Fail: " + ex.Message);
             }
         }
     }
