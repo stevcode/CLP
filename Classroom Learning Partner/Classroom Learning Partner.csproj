@@ -252,6 +252,9 @@
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
+      <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
       <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
     </Compile>
@@ -378,6 +381,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\PageTopicWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

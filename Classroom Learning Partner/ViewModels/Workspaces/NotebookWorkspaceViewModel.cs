@@ -11,6 +11,7 @@ using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using CLP.Models.Tags;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Resources;
 
@@ -66,11 +67,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             FilteredSubmissions = new CollectionViewSource();
             FilterTypes = new ObservableCollection<string>();
-            FilterTypes.Add("Student Name - Ascending");
+            FilterTypes.Add("Student Name - Alphabetical");
             FilterTypes.Add("Group Submissions");
             FilterTypes.Add("Submissions By Group Name");
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
+
+            ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
+            foreach(Tag t in tags)
+            {
+                if(t.TagType != null)
+                {
+                    FilterTypes.Add(t.TagType.Name);
+                }
+            }
+           
 
         }
 
@@ -189,8 +200,8 @@ namespace Classroom_Learning_Partner.ViewModels
             set 
             { 
                 SetValue(SubmissionPagesProperty, value);
-                SelectedFilterType = "Student Name - Ascending"; 
-                //FilterSubmissions("Student Name - Ascending");
+                SelectedFilterType = "Student Name - Alphabetical";
+                //FilterSubmissions("Student Name - Alphabetical");
             } 
         }
 
@@ -418,6 +429,22 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public ObservableCollection<Tag>  getAllTags(ObservableCollection<CLPPage> pages) 
+        {
+            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            foreach (CLPPage page in pages) {
+                foreach(Tag tag in page.PageTags)
+                {
+                    if(!tags.Contains(tag))
+                    {
+                        tags.Add(tag);
+
+                    }
+                }
+            }
+            return tags;
+        }
+
 
 
         public void FilterSubmissions(string Sort)
@@ -436,7 +463,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortDescription timeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
              SortDescription isGroupSubmissionSort = new SortDescription("IsGroupSubmission", ListSortDirection.Ascending);
 
-            if(Sort == "Student Name - Ascending")
+            if(Sort == "Student Name - Alphabetical")
             {
                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);

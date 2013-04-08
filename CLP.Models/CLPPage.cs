@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using CLP.Models.Tags;
 
 namespace CLP.Models
 {
@@ -78,6 +79,16 @@ namespace CLP.Models
             PageTopics = new ObservableCollection<string>();
             NumberOfSubmissions = 0;
             PageAspectRatio = PageWidth / PageHeight;
+
+            //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
+            PageTags = new ObservableCollection<Tag>();
+            Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
+            Tag starredTag  = new Tag("Teacher", new StarredTagType());
+            correctnessTag.AddTagOptonValue(new TagOptionValue("Unknown",""));
+            starredTag.AddTagOptonValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
+            PageTags.Add(correctnessTag);
+            PageTags.Add(starredTag);
+            
         }
 
         /// <summary>
@@ -270,6 +281,17 @@ namespace CLP.Models
         public static readonly PropertyData PageIndexProperty = RegisterProperty("PageIndex", typeof(int), -1);
 
         /// <summary>
+        /// Author created pageTags associated with the page.
+        /// </summary>
+        public ObservableCollection<Tag> PageTags
+        {
+            get { return GetValue<ObservableCollection<Tag>>(PageTagsProperty); }
+            set { SetValue(PageTagsProperty, value); }
+        }
+
+        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), () => new ObservableCollection<Tag>());
+
+        /// <summary>
         /// Author created pageTopics associated with the page.
         /// </summary>
         public ObservableCollection<string> PageTopics
@@ -393,7 +415,8 @@ namespace CLP.Models
                     PageWidth = PageWidth,
                     PageAspectRatio = PageAspectRatio,
                     ImagePool = ImagePool,
-                    ParentNotebookID = ParentNotebookID
+                    ParentNotebookID = ParentNotebookID,
+                    PageTags = PageTags
                 };
 
 

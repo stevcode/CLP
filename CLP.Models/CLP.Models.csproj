@@ -115,6 +115,16 @@
     <Compile Include="Group.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tags\CorrectnessTagType.cs" />
+    <Compile Include="Tags\DomainInterpretatoinTagType.cs" />
+    <Compile Include="Tags\PageTopicTagType.cs" />
+    <Compile Include="Tags\StarredTagType.cs" />
+    <Compile Include="Tags\Tag.cs" />
+    <Compile Include="Tags\TagOptionValue.cs" />
+    <Compile Include="Tags\TagType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tags\Images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

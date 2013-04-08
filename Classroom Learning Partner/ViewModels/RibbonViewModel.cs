@@ -1736,15 +1736,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
-            NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
-            nameChooser.Owner = Application.Current.MainWindow;
+            PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
+            pageTopicWindow.Owner = Application.Current.MainWindow;
 
             string originalPageTopics = String.Join(",", page.PageTopics);
-            nameChooser.NotebookName.Text = originalPageTopics;
-            nameChooser.ShowDialog();
-            if(nameChooser.DialogResult == true)
+            pageTopicWindow.PageTopicName.Text = originalPageTopics;
+            pageTopicWindow.ShowDialog();
+            if(pageTopicWindow.DialogResult == true)
             {
-                string pageTopics = nameChooser.NotebookName.Text;
+                string pageTopics = pageTopicWindow.PageTopicName.Text;
                 string[] stringArray = pageTopics.Split(',');
                 page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
             }
