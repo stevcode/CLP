@@ -134,6 +134,66 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets the HorizontalDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<double> HorizontalDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(HorizontalDivsProperty); }
+            set { SetValue(HorizontalDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalDivsProperty = RegisterProperty("HorizontalDivs", typeof(ObservableCollection<double>));
+
+        /// <summary>
+        /// Gets or sets the VerticalDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<double> VerticalDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(VerticalDivsProperty); }
+            set { SetValue(VerticalDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>));
+
+        /// <summary>
+        /// Gets or sets the RowDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<int> RowDivs
+        {
+            get { return GetValue<ObservableCollection<int>>(RowDivsProperty); }
+            set { SetValue(RowDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the RowDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RowDivsProperty = RegisterProperty("RowDivs", typeof(ObservableCollection<int>));
+
+        /// <summary>
+        /// Gets or sets the ColumnDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<int> ColumnDivs
+        {
+            get { return GetValue<ObservableCollection<int>>(ColumnDivsProperty); }
+            set { SetValue(ColumnDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the ColumnDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ColumnDivsProperty = RegisterProperty("ColumnDivs", typeof(ObservableCollection<int>));
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -153,34 +213,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the Columns property so it is known in the class.
         /// </summary>
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
-
-        /// <summary>
-        /// List of vertical divisions in the array - where the lines are actually placed.
-        /// </summary>
-        public ObservableCollection<double> VerticalDivs
-        {
-            get { return GetValue<ObservableCollection<double>>(VerticalDivsProperty); }
-            set { SetValue(VerticalDivsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the VerticalDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>), null);
-
-        /// <summary>
-        /// List of horizontal divisions in the array - where lines is actually placed.
-        /// </summary>
-        public ObservableCollection<double> HorizontalDivs
-        {
-            get { return GetValue<ObservableCollection<double>>(HorizontalDivsProperty); }
-            set { SetValue(HorizontalDivsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the HorizontalDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HorizontalDivsProperty = RegisterProperty("HorizontalDivs", typeof(ObservableCollection<double>), null);
 
         #region Commands
 
@@ -228,7 +260,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            // TODO: Handle command logic here
+            HorizontalDivs.Add(RightArrowPosition);
         }
 
         /// <summary>
@@ -241,7 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCreateVerticalDivisionCommandExecute()
         {
-            // TODO: Handle command logic here
+             VerticalDivs.Add(BottomArrowPosition);
         }
 
         /// <summary>

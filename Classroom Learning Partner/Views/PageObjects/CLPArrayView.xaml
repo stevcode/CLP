@@ -8,6 +8,18 @@
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="HorizontalDivisionStyle">
+            <Setter Property="Canvas.Left"
+                   Value="0" />
+            <Setter Property="Canvas.Top"
+                   Value="{Binding}" />
+        </Style>
+        <Style x:Key="VerticalDivisionStyle">
+            <Setter Property="Canvas.Left"
+                   Value="{Binding}" />
+            <Setter Property="Canvas.Top"
+                   Value="0" />
+        </Style>
     </UserControl.Resources>
 
         <ac:AdornedControl Grid.RowSpan="3" Grid.ColumnSpan="3"
@@ -115,20 +127,22 @@
                            Canvas.Right="0" Canvas.Top="{Binding RightArrowPosition}"
                            Width="40" Height="40"
                            Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsRightAdornerVisible}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
+
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Grid>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="False" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                     <!--Array bottom adorner design defined here-->
                                     <Path Data="M0,1 L-.75,.5 L0,0 M-.75,.5 L1,.5" 
                                               Stretch="Fill" Margin="5"
                                               Stroke="Black" StrokeThickness="3" />
+
                             </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
@@ -139,16 +153,16 @@
                            Canvas.Left="{Binding Path=BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=-20}" Canvas.Bottom="0"
                            Width="40" Height="40"
                            Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsBottomAdornerVisible}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <catel:EventToCommand Command="{Binding CreateHorizontalDivisionCommand}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Grid>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding CreateVerticalDivisionCommand}" PassEventArgsToCommand="False" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                     <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                     <!--Array bottom adorner design defined here-->
                                     <Path Data="M-.5,.5 L0,0 L.5,.5 M0,0 L0,1" 
                                           Stretch="Fill" Margin="5"
@@ -181,6 +195,39 @@
             
             <!--<TextBlock Grid.Row="2" Grid.ColumnSpan="3" />
             <TextBlock Grid.RowSpan="3" Grid.Column="2" />-->
+                
+            <ItemsControl Grid.Row="1" Grid.Column="1" 
+                          ItemsSource="{Binding HorizontalDivs}"
+                          ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="4" 
+                                   Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
+                                   Stroke="Black" StrokeThickness="3" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl Grid.Row="1" Grid.Column="1" 
+                          ItemsSource="{Binding VerticalDivs}"
+                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
+                                   Width="4" Stroke="Black" StrokeThickness="3" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
                            Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"

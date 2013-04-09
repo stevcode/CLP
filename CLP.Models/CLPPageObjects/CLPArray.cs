@@ -22,6 +22,10 @@ namespace CLP.Models
         {
             this.Rows = rows;
             this.Columns = columns;
+            this.HorizontalDivs = new ObservableCollection<double>();
+            this.VerticalDivs = new ObservableCollection<double>();
+            this.RowDivs = new ObservableCollection<int>();
+            this.ColumnDivs = new ObservableCollection<int>();
             double Ratio = ((double)rows) / ((double)columns);
 
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
@@ -97,6 +101,34 @@ namespace CLP.Models
         /// Register the Columns property so it is known in the class.
         /// </summary>
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int), null);
+
+        /// <summary>
+        /// Exact positions of where the horizontal divisions are placed on the array.
+        /// </summary>
+        public ObservableCollection<double> HorizontalDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(HorizontalDivsProperty); }
+            set { SetValue(HorizontalDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalDivsProperty = RegisterProperty("HorizontalDivs", typeof(ObservableCollection<double>), null);
+
+        /// <summary>
+        /// Exact position of where the vertical divisions are placed on the array.
+        /// </summary>
+        public ObservableCollection<double> VerticalDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(VerticalDivsProperty); }
+            set { SetValue(VerticalDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>), null);
 
         /// <summary>
         /// A list of divisions in the rows of the array - based on labels
