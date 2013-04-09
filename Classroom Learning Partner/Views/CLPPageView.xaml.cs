@@ -6,14 +6,14 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for CLPPageView.xaml
     /// </summary>
-    public partial class CLPPageView : Catel.Windows.Controls.UserControl
+    public partial class CLPPageView
     {
         public CLPPageView()
         {
             InitializeComponent();
         }
 
-        protected override System.Type GetViewModelType()
+        protected override Type GetViewModelType()
         {
             return typeof(CLPPageViewModel);
         }
@@ -23,27 +23,10 @@ namespace Classroom_Learning_Partner.Views
             if(ViewModel is CLPPageViewModel)
             {
                 (ViewModel as CLPPageViewModel).TopCanvas = TopCanvas;
+                (ViewModel as CLPPageViewModel).IsPagePreview = false;
             }
             
             base.OnViewModelChanged();
         }
-
-        //protected override IViewModel GetViewModelInstance(object dataContext)
-        //{
-        //    if(dataContext == null)
-        //    {
-        //        // Let catel handle this one
-        //        return null;
-        //    }
-
-        //    if(!CLPPagePreviewView.ModelViewModels.ContainsKey(dataContext.GetHashCode()))
-        //    {
-        //        var vm = new CLPPageViewModel(dataContext as CLPPage);
-        //        CLPPagePreviewView.ModelViewModels.Add(dataContext.GetHashCode(), vm);
-        //    }
-
-        //    // Reuse VM
-        //    return CLPPagePreviewView.ModelViewModels[dataContext.GetHashCode()];
-        //}
     }
 }

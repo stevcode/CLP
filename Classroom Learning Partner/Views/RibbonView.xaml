@@ -178,7 +178,7 @@
                         LargeImageSource="..\Images\Array.png"
                         Command="{Binding Path=InsertArrayCommand}"/>
 
-                <!--<RibbonToggleButton Label="Webcam" 
+		<!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
                         Command="{Binding ToggleWebcamPanelCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
@@ -247,13 +247,13 @@
 
             </RibbonGroup>-->
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
@@ -270,10 +270,10 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
+                <RibbonButton Label="Group Send" Margin="35,0,0,0"
                               LargeImageSource="..\Images\GroupSubmit-icon32.png" 
                               Command="{Binding GroupSubmitPageCommand}"
-                              Visibility="{Binding SendButtonVisibility}"/>-->
+                              Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 

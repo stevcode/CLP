@@ -829,7 +829,7 @@ namespace Classroom_Learning_Partner.ViewModels
             string s_page = ObjectSerializer.ToString(page);
             int index = page.PageIndex - 1;
 
-            if(App.Network.ClassList.Count > 0)
+            if(App.Network.ClassList.Any())
             {
                 foreach(Person student in App.Network.ClassList)
                 {
