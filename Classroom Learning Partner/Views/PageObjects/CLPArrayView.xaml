@@ -125,10 +125,11 @@
                                 <Grid>
                                     <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                    <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                          Stretch="Fill" Margin="5"
-                                          Stroke="Green" StrokeThickness="3" />
-                                </Grid>
+                                    <!--Array bottom adorner design defined here-->
+                                    <Path Data="M0,1 L-.75,.5 L0,0 M-.75,.5 L1,.5" 
+                                              Stretch="Fill" Margin="5"
+                                              Stroke="Black" StrokeThickness="3" />
+                            </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
                     </Thumb>
@@ -148,9 +149,10 @@
                                 <Grid>
                                     <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                    <Path Data="M0,0 L1,1 M0,1 L1,0" 
+                                    <!--Array bottom adorner design defined here-->
+                                    <Path Data="M-.5,.5 L0,0 L.5,.5 M0,0 L0,1" 
                                           Stretch="Fill" Margin="5"
-                                          Stroke="Blue" StrokeThickness="3" />
+                                          Stroke="Black" StrokeThickness="3" />
                                 </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
