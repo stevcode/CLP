@@ -997,11 +997,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertToXPSCommandExecute()
         {
-            CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+            var notebook = notebookWorkspaceViewModel.Notebook;
 
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
-                FixedDocument docSubmissions = new FixedDocument();
+                var docSubmissions = new FixedDocument();
                 docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
                 int pageCount = 0;
@@ -1070,30 +1075,31 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
 
-            FixedDocument doc = new FixedDocument();
-            doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+            var document = new FixedDocument();
+            document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
             foreach(CLPPage page in notebook.Pages)
             {
-                PageContent pageContent = new PageContent();
-                FixedPage fixedPage = new FixedPage();
+                var pageContent = new PageContent();
+                var fixedPage = new FixedPage();
 
-                CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                currentPage.DataContext = page;
+                var currentPage = new CLPPagePreviewView {DataContext = page};
                 currentPage.UpdateLayout();
 
                 //Create first page of document
-                RotateTransform rotate = new RotateTransform(90.0);
-                TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-                TransformGroup transform = new TransformGroup();
-                transform.Children.Add(rotate);
-                transform.Children.Add(translate);
-                currentPage.RenderTransform = transform;
+
+                //Rotate Document
+                //var rotate = new RotateTransform(90.0);
+                //var translate = new TranslateTransform(816 + 2, -2);
+                //var transform = new TransformGroup();
+                //transform.Children.Add(rotate);
+                //transform.Children.Add(translate);
+                //currentPage.RenderTransform = transform;
 
                 fixedPage.Children.Add(currentPage);
 
                 ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                doc.Pages.Add(pageContent);
+                document.Pages.Add(pageContent);
             }
 
             //Save the document
@@ -1108,10 +1114,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.Delete(path);
             }
 
-            XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
-            XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
-            xw.Write(doc);
-            xpsd.Close();
+            var xpsDocument = new XpsDocument(path, FileAccess.ReadWrite);
+            XpsDocumentWriter documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            documentWriter.Write(document);
+            xpsDocument.Close();
         }
 
         /// <summary>
