@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
-namespace CLP.Models.Tags
+namespace CLP.Models
 {
     public class TagOptionValue : DataObjectBase
     {

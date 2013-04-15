@@ -4,6 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views" 
+                   xmlns:Windows="Classroom_Learning_Partner.Views.Modal_Windows" 
                    xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources" 
                    Background="Lavender"
                    x:Name="SubmissionSideBar">
@@ -37,18 +38,19 @@
                                 BorderBrush="#9FA6AD"
                                 BorderThickness="1"
                                 Width="{Binding ElementName=content, Path=Width}" >
-   
-                             <ContentPresenter DockPanel.Dock="Bottom" x:Name="content"/>
+
+                                <ContentPresenter DockPanel.Dock="Bottom" x:Name="content"> 
+                                </ContentPresenter>
                             
                         </Border>
-                      </Grid>
+                           
+                        </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter TargetName="IconBorder" Property="BorderBrush" Value="DarkViolet" />
                                 <Setter TargetName="IconBorder" Property="BorderThickness" Value="3" />
-                            </Trigger>
-
+                            </Trigger>                      
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -129,6 +131,7 @@
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1">
                 </ItemsPresenter>
+                   
             </Grid>
             </Border>
 
@@ -225,9 +228,16 @@
                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview1">
-
+                       <!-- <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions> -->
+                            <Views:CLPPagePreviewView DataContext="{Binding}"  x:Name="preview1">
                         </Views:CLPPagePreviewView>
+                       <!-- <Views:HoverBoxView Grid.Row="1"  DataContext="{Binding}" x:Name="hover1">
+                         </Views:HoverBoxView>
+                        </Grid> -->
 
                     </Border>
 
@@ -239,7 +249,8 @@
 
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel />
+                    <WrapPanel>
+                    </WrapPanel>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
   

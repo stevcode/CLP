@@ -11,7 +11,6 @@ using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-using CLP.Models.Tags;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Resources;
 

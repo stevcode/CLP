@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
-using CLP.Models.Tags;
 
 namespace CLP.Models
 {
@@ -46,6 +45,7 @@ namespace CLP.Models
     KnownType(typeof(CLPGroupingRegion)),
     KnownType(typeof(CLPHandwritingRegion)),
     KnownType(typeof(CLPInkShapeRegion)),
+    KnownType(typeof(Tag)),
     KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
@@ -289,7 +289,7 @@ namespace CLP.Models
             set { SetValue(PageTagsProperty, value); }
         }
 
-        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), () => new ObservableCollection<Tag>());
+        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), new ObservableCollection<Tag>());
 
         /// <summary>
         /// Author created pageTopics associated with the page.
@@ -442,6 +442,8 @@ namespace CLP.Models
                 newPage.PageObjects.Add(clonedPageObject);
                 clonedPageObject.RefreshStrokeParentIDs();
             }
+
+
 
             return newPage;
         }

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 
-namespace CLP.Models.Tags
+namespace CLP.Models
 {
     [Serializable]
     class DomainInterpretationTagType : DataObjectBase, TagType
@@ -69,7 +69,7 @@ namespace CLP.Models.Tags
             set { SetValue(AccessLevelsProperty, value); }
         }
 
-        public static readonly PropertyData AccessLevelsProperty = RegisterProperty("AccessLevels", typeof(ObservableCollection<TagOptionValue>), new ObservableCollection<string>());
+        public static readonly PropertyData AccessLevelsProperty = RegisterProperty("AccessLevels", typeof(ObservableCollection<string>), new ObservableCollection<string>());
 
         public ObservableCollection<TagOptionValue> ValueOptions
         {

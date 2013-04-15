@@ -4,6 +4,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels;
 using System.Collections.Generic;
+using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -71,6 +73,28 @@ namespace Classroom_Learning_Partner.Views
                     }
                 }
             }
+        }
+
+        private void show_hover(object sender, RoutedEventArgs e)
+        {
+      
+            HoverBoxView hoverBoxView = GetVisualChild<HoverBoxView>(sender as Border);
+            if(hoverBoxView != null)
+            {
+                hoverBoxView.Visibility = Visibility.Visible;
+            }
+
+        }
+
+        private void hide_hover(object sender, RoutedEventArgs e)
+        {
+
+            HoverBoxView hoverBoxView = GetVisualChild<HoverBoxView>(sender as Border);
+            if(hoverBoxView != null)
+            {
+                hoverBoxView.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         private void toggle_Click_Group_Individual(object sender, RoutedEventArgs e)
