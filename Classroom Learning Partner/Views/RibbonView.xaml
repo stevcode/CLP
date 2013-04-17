@@ -62,6 +62,13 @@
                                             ImageSource="..\Images\ConvertToXPS.png"
                                             Visibility="{Binding Path=InstructorVisibility}"/>
 
+                
+
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
                 <RibbonSeparator />
 
                 <!--Bind header for toggle text: disconnect/reconnect to network-->
