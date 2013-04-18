@@ -62,7 +62,10 @@
                                             ImageSource="..\Images\ConvertToXPS.png"
                                             Visibility="{Binding Path=InstructorVisibility}"/>
 
-                
+                <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
+                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
 
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
                                             Command="{Binding ConvertPageSubmissionToXPSCommand}"

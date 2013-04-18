@@ -139,6 +139,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
+            ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -1131,6 +1132,87 @@ namespace Classroom_Learning_Partner.ViewModels
                         fixedPage.Children.Add(grid);
 
                         ((System.Windows.Markup.IAddChild) pageContent).AddChild(fixedPage);
+                        document.Pages.Add(pageContent);
+                    } while(page.PageHeight > transformAmount);
+                }
+
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+            }, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
+        }
+
+        /// <summary>
+        /// Converts all Submissions in a notebook to XPS.
+        /// </summary>
+        public Command ConvertAllSubmissionsToXPSCommand { get; private set; }
+
+        private void OnConvertAllSubmissionsToXPSCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+                if(!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string fileName = notebook.NotebookName + " - All Submissions.xps";
+                string filePath = directoryPath + fileName;
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+
+                foreach(CLPPage page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                {
+                    page.TrimPage();
+                    double printHeight = page.PageWidth / page.PageAspectRatio;
+
+                    double transformAmount = 0;
+                    do
+                    {
+                        var currentPageView = new CLPPagePreviewView { DataContext = page };
+                        currentPageView.UpdateLayout();
+
+                        var grid = new Grid();
+                        grid.Children.Add(currentPageView);
+                        var label = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = page.SubmitterName,
+                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                        };
+                        grid.Children.Add(label);
+                        grid.UpdateLayout();
+
+                        var transform = new TransformGroup();
+                        var translate = new TranslateTransform(0, -transformAmount);
+                        transform.Children.Add(translate);
+                        grid.RenderTransform = transform;
+                        transformAmount += printHeight;
+
+                        var pageContent = new PageContent();
+                        var fixedPage = new FixedPage();
+                        fixedPage.Children.Add(grid);
+
+                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
                         document.Pages.Add(pageContent);
                     } while(page.PageHeight > transformAmount);
                 }
