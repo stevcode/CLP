@@ -75,7 +75,7 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
-        private void show_hover(object sender, RoutedEventArgs e)
+ /**       private void show_hover(object sender, RoutedEventArgs e)
         {
       
             HoverBoxView hoverBoxView = GetVisualChild<HoverBoxView>(sender as Border);
@@ -96,6 +96,7 @@ namespace Classroom_Learning_Partner.Views
             }
 
         }
+  */
 
         private void toggle_Click_Group_Individual(object sender, RoutedEventArgs e)
         {

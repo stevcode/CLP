@@ -165,97 +165,122 @@
             </Grid>
 
             <Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}" />
-
         </Grid>
-
+     
         <!--ListBox Width must be bound to Width of SubmissionsSideBar-->
-        <ListBox x:Name="SubmissionListBox" 
+            <ListBox x:Name="SubmissionListBox" 
                     MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     Background="Lavender"
                     ItemsSource="{Binding Path=FilteredSubmissions.View}"
                     ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
                     SelectionMode="Single"
+                     DockPanel.Dock="Top"
+                 
                 >
-
-            
-            
+            <ListBox.Style>
+                <Style TargetType="{x:Type ListBox}">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Alphabetical">
+                            <Setter Property="MaxHeight" Value="430" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Style>
             <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
-                                </DataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
-                                </MultiDataTrigger>
-                            </Style.Triggers>
-                            
-                                
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                    <GroupStyle.Panel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" 
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
+                                    </DataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" 
                                         HorizontalAlignment="Stretch" 
                                         VerticalAlignment="Stretch" 
                                         Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}"/>
-                        </ItemsPanelTemplate>
-                    </GroupStyle.Panel>
-                </GroupStyle>
-            </ListBox.GroupStyle>
-            
-            <ListBox.ItemTemplate>
-                <DataTemplate x:Name="SortTrigger">
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
 
-                    <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:Name="SortTrigger">
 
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                       <!-- <Grid>
+                        <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <!--   <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions> -->
-                            <Views:CLPPagePreviewView DataContext="{Binding}"  x:Name="preview1">
-                        </Views:CLPPagePreviewView>
-                       <!-- <Views:HoverBoxView Grid.Row="1"  DataContext="{Binding}" x:Name="hover1">
+                            <Views:CLPPagePreviewView  DataContext="{Binding}"  x:Name="preview1">
+                            </Views:CLPPagePreviewView>
+                            <!--      <Views:HoverBoxView Grid.Row="1"  DataContext="{Binding}" x:Name="hover1">
                          </Views:HoverBoxView>
-                        </Grid> -->
+                               
+                        </Grid> 
+-->
+                        </Border>
 
-                    </Border>
+                    </DataTemplate>
 
-                </DataTemplate>
+                </ListBox.ItemTemplate>
 
-            </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel>
+                        </WrapPanel>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
 
+            </ListBox>
+        <Border DockPanel.Dock="Top"  BorderBrush="Black"
+                                BorderThickness="0" MinHeight="100">
+            <Border.Style>
+                <Style x:Name="SubmissionsListBorderStyle" TargetType="{x:Type Border}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Setter Property="BorderThickness" Value="0" />
+            <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Alphabetical">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <DockPanel>
 
-
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel>
-                    </WrapPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-  
-
-        </ListBox>
-
+                <TextBlock DockPanel.Dock="Top"  TextAlignment="Center" HorizontalAlignment="Center" Width="200"  FontWeight="Bold" FontSize="18" Text="No Submissions"/>
+   
+                    <TextBlock  DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontSize="12" Text="{Binding Path=StudentsWithNoSubmissions}"/>
+              
+            </DockPanel>
+        </Border>
     </DockPanel>
 </catel:UserControl>

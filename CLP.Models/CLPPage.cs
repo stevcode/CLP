@@ -43,9 +43,12 @@ namespace CLP.Models
     KnownType(typeof(CLPTextBox)),
     KnownType(typeof(CLPDataTable)),
     KnownType(typeof(CLPGroupingRegion)),
+    KnownType(typeof(CorrectnessTagType)),
+    KnownType(typeof(StarredTagType)),
+    KnownType(typeof(PageTopicTagType)),
+    KnownType(typeof(DomainInterpretationTagType)),
     KnownType(typeof(CLPHandwritingRegion)),
     KnownType(typeof(CLPInkShapeRegion)),
-    KnownType(typeof(Tag)),
     KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
@@ -289,7 +292,7 @@ namespace CLP.Models
             set { SetValue(PageTagsProperty, value); }
         }
 
-        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), new ObservableCollection<Tag>());
+        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), () => new ObservableCollection<Tag>());
 
         /// <summary>
         /// Author created pageTopics associated with the page.

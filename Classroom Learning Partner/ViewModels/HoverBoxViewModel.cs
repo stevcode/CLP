@@ -32,22 +32,40 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Page = page;
             IsCorrect = false;
-            IsUnknown = true;
+            IsUnknown = false;
             IsIncorrect = false;
             IsStarred = false;
-            foreach(Tag tag in Page.PageTags)
+            if(page.PageTags != null)
             {
-
-                if(typeof(tag.TagType) == typeof(CorrectnessTagType))
+                foreach(Tag tag in Page.PageTags)
                 {
 
+                    if(tag.TagType is CorrectnessTagType)
+                    {
+                        /**  String correct = tag.Value.ElementAt(0).Value;
+                          if (correct=="Correct") {
+                              IsCorrect = true;
+                          }
+                          else if(correct == "Incorrect")
+                          {
+                              IsIncorrect = true;
+                          }
+                          else
+                          {
+                              IsUnknown = true;
+
+                          }*/
+                    }
+                    if(tag.TagType is StarredTagType)
+                    {
+                        /** String star = tag.Value.ElementAt(0).Value;
+                         if(star == "Starred")
+                         {
+                             IsStarred = true;
+                         }*/
+                    }
+
                 }
-
-            }
-            foreach(ICLPPageObject po in Page.PageObjects)
-            {
-                po.CanAcceptPageObjects = true;
-
             }
 
 
@@ -146,53 +164,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData IsUnknownProperty = RegisterProperty("IsUnknown", typeof(bool), false);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public double PageHeight
-        {
-            get { return GetValue<double>(PageHeightProperty); }
-            set { SetValue(PageHeightProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the PageHeight property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
-
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public ObservableCollection<ICLPPageObject> PageObjects
-        {
-            get { return GetValue<ObservableCollection<ICLPPageObject>>(PageObjectsProperty); }
-            set { SetValue(PageObjectsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the PageObjects property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
-
-
-
-
-        [ViewModelToModel("Page")]
-        public string SubmitterName
-        {
-            get { return GetValue<string>(SubmitterNameProperty); }
-            set { SetValue(SubmitterNameProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the SubmitterName property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string));
-
-
 
         #endregion //Properties
 
@@ -290,11 +261,24 @@ namespace Classroom_Learning_Partner.ViewModels
             IsCorrect = !IsCorrect;
             if(IsCorrect == true)
             {
+                if(Page.PageTags != null)
+                {
+                    foreach(Tag tag in Page.PageTags)
+                    {
+                        if(tag.TagType is CorrectnessTagType)
+                        {
+                            tag.Value.Clear();
+                            tag.Value.Add(new TagOptionValue("Correct", "..\\Images\\Correct.png"));
+
+                        }
+                    }
+                }
                 IsIncorrect = false;
                 IsUnknown = false;
+                System.Console.WriteLine("page tags:" + Page.PageTags.Count);
 
             }
-            System.Console.WriteLine("page tags:" + Page.PageTags.Count);
+           
         }
         /// <summary>
         /// Gets the MarkCorrectCommand command.
@@ -303,12 +287,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkIncorrectCommandExecute(MouseEventArgs e)
         {
-            System.Console.WriteLine("[age tags:" + Page.PageTags.Count);
+            
             IsIncorrect = !IsIncorrect;
             if(IsIncorrect == true)
             {
                 IsCorrect = false;
                 IsUnknown = false;
+                if(Page.PageTags != null)
+                {
+                    System.Console.WriteLine("[age tags:" + Page.PageTags.Count);
+                    foreach(Tag tag in Page.PageTags)
+                    {
+                        if(tag.TagType is CorrectnessTagType)
+                        {
+                            tag.Value.Clear();
+                            tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
+
+                        }
+                    }
+                }
 
             }
         }
@@ -319,14 +316,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkUnknownCommandExecute(MouseEventArgs e)
         {
-            System.Console.WriteLine("in unknown:" + Page.PageTags.Count);
+            
 
             IsUnknown = !IsUnknown;
             if(IsUnknown == true)
             {
                 IsCorrect = false;
                 IsIncorrect = false;
+                if(Page.PageTags != null)
+                {
+                    System.Console.WriteLine("in unknown:" + Page.PageTags.Count);
+                    foreach(Tag tag in Page.PageTags)
+                    {
+                        if(tag.TagType is CorrectnessTagType)
+                        {
+                            tag.Value.Clear();
+                            tag.Value.Add(new TagOptionValue("Unknown", ""));
 
+                        }
+                    }
+
+                }
             }
         }
         /// <summary>
@@ -336,6 +346,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleStarCommandExecute(MouseEventArgs e)
         {
+            IsStarred = !IsStarred;
+                   if(Page.PageTags != null)
+                {
+                    foreach(Tag tag in Page.PageTags)
+                    {
+                        if(tag.TagType is StarredTagType)
+                        {
+                            tag.Value.Clear();
+                            if(IsStarred)
+                            {
+                                tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
+                            }
+                            else
+                            {
+                                tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
+                            }
+
+                        }
+                    }
+            }
         }
         /// <summary>
         /// Gets the MarkCorrectCommand command.

@@ -10,7 +10,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class Tag : DataObjectBase<Tag>
+    public class Tag : DataObjectBase
     {
            #region Constructors
 
@@ -71,7 +71,7 @@ namespace CLP.Models
                   set { SetValue(TagTypeProperty, value); }
               }
 
-              public static readonly PropertyData TagTypeProperty = RegisterProperty("TagType", typeof(TagType), new CorrectnessTagType());
+              public static readonly PropertyData TagTypeProperty = RegisterProperty("TagType", typeof(TagType), null);
 
  
               public ObservableCollection<TagOptionValue> Value

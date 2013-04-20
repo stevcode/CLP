@@ -47,6 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
             CurrentPage = Notebook.Pages[0];
+            StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -206,6 +207,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
 
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string StudentsWithNoSubmissions
+        {
+            get { return GetValue<string>(StudentsWithNoSubmissionsProperty); }
+            set { SetValue(StudentsWithNoSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions", typeof(string), "");
 
         /// <summary>
         /// Gets or sets the property value.
@@ -383,6 +395,35 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
+        public string getStudentsWithNoSubmissions()
+        {
+            ObservableCollection<string> UserNames = new ObservableCollection<string>();
+            //Steve - move to CLPService and grab from database
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
+
+            if(File.Exists(filePath))
+            {
+                StreamReader reader = new StreamReader(filePath);
+                string name;
+                while(!((name = reader.ReadLine()) == null))
+                {
+                    string user = name.Split(new char[] { ',' })[0];
+                    UserNames.Add(user);
+                }
+                reader.Dispose();
+            }
+            foreach(CLPPage p in SubmissionPages) {
+                UserNames.Remove(p.SubmitterName);
+
+            }
+            string names = "";
+            foreach(string user in UserNames)
+            {
+                names = names + user + "\n";
+            }
+            names = names.Substring(0, names.Length - 2);
+            return names;
+        }
 
 
 
@@ -450,6 +491,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             FilteredSubmissions = new CollectionViewSource();     
             FilteredSubmissions.Source = SubmissionPages;
+            StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
             PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription("SubmitterName");
             PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
