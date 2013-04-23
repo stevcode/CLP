@@ -287,7 +287,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}" Width="254">
+            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
 
                 <RibbonButton
                         LargeImageSource="..\Images\Projector.png"

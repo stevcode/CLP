@@ -610,8 +610,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     try
                     {
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
-                                Page.PageHistory.push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke))); 
-                            
+                        foreach (var stroke in e.Removed)
+                        {
+                            Page.PageHistory.push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                        }
 
                         foreach(var stroke in e.Added)
                         {
