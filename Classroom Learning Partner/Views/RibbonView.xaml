@@ -57,6 +57,21 @@
                                                   ImageSource="..\Images\LargeIcon.png"
                                                   Visibility="{Binding Path=StudentVisibility}"/>
 
+                <RibbonApplicationMenuItem Header="Convert To XPS"
+                                            Command="{Binding ConvertToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
+                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
                 <RibbonSeparator />
 
                 <!--Bind header for toggle text: disconnect/reconnect to network-->
