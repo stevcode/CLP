@@ -11,7 +11,6 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
-using System.Security.Cryptography;
 
 namespace Classroom_Learning_Partner
 {
@@ -29,7 +28,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight, List<byte> image);
+            bool isGroupSubmission, double pageHeight);
 
         [OperationContract]
         void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
@@ -122,7 +121,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight, List<byte> image)
+            bool isGroupSubmission, double pageHeight)
         {
             CLPPage submission = null;
             CLPNotebook currentNotebook = null;
@@ -161,18 +160,23 @@ namespace Classroom_Learning_Partner
                     pageObject.ParentPage = submission;
                     if(pageObject is ISubmittable)
                     {
+                        ICLPPageObject o = pageObject;
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                            (DispatcherOperationCallback)delegate(object arg)
-                            {
-                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
-                                return null;
-                            }, null);
+                            (DispatcherOperationCallback)delegate
+                                {
+                                    var submittable = o as ISubmittable;
+                                    if(submittable != null)
+                                    {
+                                        submittable.AfterSubmit(isGroupSubmission, currentNotebook);
+                                    }
+                                    return null;
+                                }, null);
                     }
                 }
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                    {
                     try
                     {
                         CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
@@ -192,29 +196,23 @@ namespace Classroom_Learning_Partner
         public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
             DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
         {
-             CLPPage submission = ObjectSerializer.ToObject(sPage) as CLPPage;
-            submission.IsSubmission = true;
-            submission.IsGroupSubmission = isGroupSubmission;
-            submission.SubmissionID = submissionID;
-            submission.SubmissionTime = submissionTime;
-            submission.SubmitterName = submitter.FullName;
-            submission.Submitter = submitter;
-            submission.GroupSubmitter = groupSubmitter;
-
-            CLPNotebook currentNotebook = null;
-
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            var submission = ObjectSerializer.ToObject(sPage) as CLPPage;
+            if(submission != null)
             {
-                if(notebookID == notebook.UniqueID)
-                {
-                    currentNotebook = notebook;
-                    break;
-                }
+                submission.IsSubmission = true;
+                submission.IsGroupSubmission = isGroupSubmission;
+                submission.SubmissionID = submissionID;
+                submission.SubmissionTime = submissionTime;
+                submission.SubmitterName = submitter.FullName;
+                submission.Submitter = submitter;
+                submission.GroupSubmitter = groupSubmitter;
             }
 
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                    {
                     try
                     {
                         CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
@@ -245,8 +243,8 @@ namespace Classroom_Learning_Partner
                             var views = viewManager.GetViewsOfViewModel((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel);
 
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                            (DispatcherOperationCallback)delegate(object arg)
-                            {
+                            (DispatcherOperationCallback)delegate
+                                {
                                 (views[0] as LinkedDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
                                 return null;
                             }, null);
@@ -261,11 +259,11 @@ namespace Classroom_Learning_Partner
         public void ModifyPageInkStrokes(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                    {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
+                        CLPPage page = notebook.GetNotebookPageByID(pageID);
 
                         if(page == null)
                         {

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
@@ -20,7 +18,7 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight, List<byte> image);
+            bool isGroupSubmission, double pageHeight);
 
         [OperationContract]
         void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
@@ -46,32 +44,27 @@ namespace Classroom_Learning_Partner
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight, List<byte> image)
+            bool isGroupSubmission, double pageHeight)
         {
             if(App.Network.ProjectorProxy != null)
             {
-                Thread t = new Thread(() =>
+                var t = new Thread(() =>
                 {
                     try
                     {
                         App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
                             submitter, groupSubmitter,
                             notebookID, pageID, submissionID, submissionTime,
-                            isGroupSubmission, pageHeight, image);
+                            isGroupSubmission, pageHeight);
                     }
-                    catch(System.Exception ex)
+                    catch(Exception ex)
                     {
                         Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
                     }
-                });
-                t.IsBackground = true;
+                }) {IsBackground = true};
                 t.Start();
             }
-            else
-            {
-                //TODO: Steve - add pages to a queue and send when a projector is found
-                Console.WriteLine("Projector NOT Available");
-            }
+            //TODO: Steve - add pages to a queue and send when a projector is found
 
             CLPPage submission = null;
             CLPNotebook currentNotebook = null;

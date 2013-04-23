@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Builders;
-using ProtoBuf;
-using System.Windows.Controls;
 using Catel.MVVM;
 using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
-using System.ServiceModel;
 using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner
@@ -60,33 +52,31 @@ namespace Classroom_Learning_Partner
 
         #region Notebook
 
-        public void SubmitPage(CLP.Models.CLPPage page, string notebookID, bool isGroupSubmission)
+        public void SubmitPage(CLPPage page, string notebookID, bool isGroupSubmission)
         {
             if(App.Network.InstructorProxy != null)
             {
-                Thread t = new Thread(() =>
+                var t = new Thread(() =>
                     {
                         try
                         {
-                            string oldSubmissionID = page.SubmissionID;
                             page.SubmissionID = Guid.NewGuid().ToString();
                             page.SubmissionTime = DateTime.Now;
                             page.TrimPage();
 
-                            var sPage = ObjectSerializer.ToString(page);
+                            //var sPage = ObjectSerializer.ToString(page);
 
-                            ObservableCollection<List<byte>> byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
-                            ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
+                            var byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
+                            var pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
-                         //   App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            //App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
+                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
-                        catch(System.Exception ex)
+                        catch(Exception ex)
                         {
                             Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
                         }
-                    });
-                t.IsBackground = true;
+                    }) {IsBackground = true};
                 t.Start();
             }
             else
@@ -95,7 +85,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void AddSubmission(CLP.Models.CLPNotebook notebook, CLP.Models.CLPPage page)
+        public void AddSubmission(CLPNotebook notebook, CLPPage page)
         {
             notebook.AddStudentSubmission(page.UniqueID, page);
         }
@@ -123,21 +113,20 @@ namespace Classroom_Learning_Partner
             if(File.Exists(filePath))
             {
 
-                DateTime start = DateTime.Now;
-                CLP.Models.CLPNotebook notebook = null;
+                var start = DateTime.Now;
+                CLPNotebook notebook = null;
 
-                //Steve - Conversion happens here
                 try
                 {
-                    notebook = CLP.Models.CLPNotebook.Load(filePath);
+                    notebook = CLPNotebook.Load(filePath);
                 }
                 catch(Exception ex)
                 {
                     Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
                 }
 
-                DateTime end = DateTime.Now;
-                TimeSpan span = end.Subtract(start);
+                var end = DateTime.Now;
+                var span = end.Subtract(start);
                 Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
                 if(notebook != null)
                 {
@@ -183,8 +172,7 @@ namespace Classroom_Learning_Partner
 
                     if(App.CurrentUserMode == App.UserMode.Student)
                     {
-                        _autoSaveThread = new Thread(new ThreadStart(AutoSaveNotebook));
-                        _autoSaveThread.IsBackground = true;
+                        _autoSaveThread = new Thread(AutoSaveNotebook) {IsBackground = true};
                         _autoSaveThread.Start();
                     }
 
@@ -193,10 +181,6 @@ namespace Classroom_Learning_Partner
                 {
                     MessageBox.Show("Notebook could not be opened. Check error log.");
                 }
-            }
-            else //else doesn't exist, error checking
-            {
-                //check if notebook exisist on server
             }
         }
 
@@ -218,25 +202,35 @@ namespace Classroom_Learning_Partner
                 Directory.CreateDirectory(filePath);
             }
 
-            DateTime saveTime = DateTime.Now;
+            var saveTime = DateTime.Now;
 
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Clone() as CLPNotebook;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
 
-            string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
-                saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
+                string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
+                              saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
 
-            string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
-            notebook.Save(filePathName);
+                if(notebook != null)
+                {
+                    string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
+                    notebook.Save(filePathName);
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
+                }
+            }
         }
 
         public void OpenNewNotebook()
         {
-            bool NameChooserLoop = true;
+            bool nameChooserLoop = true;
 
-            while(NameChooserLoop)
+            while(nameChooserLoop)
             {
-                NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
-                nameChooser.Owner = Application.Current.MainWindow;
+                var nameChooser = new NotebookNamerWindowView {Owner = Application.Current.MainWindow};
                 nameChooser.ShowDialog();
                 if(nameChooser.DialogResult == true)
                 {
@@ -245,14 +239,13 @@ namespace Classroom_Learning_Partner
 
                     if(!File.Exists(filePath))
                     {
-                        CLP.Models.CLPNotebook newNotebook = new CLP.Models.CLPNotebook();
-                        newNotebook.NotebookName = notebookName;
+                        var newNotebook = new CLPNotebook {NotebookName = notebookName};
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
 
-                        NameChooserLoop = false;
+                        nameChooserLoop = false;
                         //Send empty notebook to db
                         //ObjectSerializer.ToString(newNotebookViewModel)
                     }
@@ -263,12 +256,12 @@ namespace Classroom_Learning_Partner
                 }
                 else
                 {
-                    NameChooserLoop = false;
+                    nameChooserLoop = false;
                 }
             }
         }
 
-        public void SaveNotebook(CLP.Models.CLPNotebook notebook)
+        public void SaveNotebook(CLPNotebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
             if(App.CurrentUserMode == App.UserMode.Student)
@@ -282,39 +275,49 @@ namespace Classroom_Learning_Partner
 
         #region Page
 
-        public void AddPageObjectToPage(CLP.Models.ICLPPageObject pageObject)
+        public void AddPageObjectToPage(ICLPPageObject pageObject)
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
-
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+            var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(pageObject.ParentPageID);
             AddPageObjectToPage(parentPage, pageObject);
         }
 
-        public void AddPageObjectToPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
+        public void AddPageObjectToPage(CLPPage page, ICLPPageObject pageObject)
         {
-            if (page != null)
+            if(page == null)
             {
-                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
-                page.PageObjects.Add(pageObject);
+                return;
             }
+            pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            page.PageObjects.Add(pageObject);
         }
 
-        public void RemovePageObjectFromPage(CLP.Models.ICLPPageObject pageObject)
+        public void RemovePageObjectFromPage(ICLPPageObject pageObject)
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(pageObject.ParentPageID);
-
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+            var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(pageObject.ParentPageID);
             RemovePageObjectFromPage(parentPage, pageObject);
         }
 
-        public void RemovePageObjectFromPage(CLP.Models.CLPPage page, CLP.Models.ICLPPageObject pageObject)
+        public void RemovePageObjectFromPage(CLPPage page, ICLPPageObject pageObject)
         {
-            if (page != null)
+            if(page == null)
             {
-                pageObject.OnRemoved();
-                page.PageObjects.Remove(pageObject);
+                return;
             }
+            pageObject.OnRemoved();
+            page.PageObjects.Remove(pageObject);
         }
 
-        public void ChangePageObjectPosition(CLP.Models.ICLPPageObject pageObject, Point pt)
+        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
             double oldXPos = pageObject.XPosition;
             double oldYPos = pageObject.YPosition;
@@ -331,7 +334,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void ChangePageObjectDimensions(CLP.Models.ICLPPageObject pageObject, double height, double width)
+        public void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
         {
             double oldHeight = pageObject.Height;
             double oldWidth = pageObject.Width;
@@ -350,7 +353,11 @@ namespace Classroom_Learning_Partner
             inkRegion.DoInterpretation();
 
             Logger.Instance.WriteToLog(inkRegion.ParentPage.SubmitterName);
-            Logger.Instance.WriteToLog((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.NotebookName);
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                Logger.Instance.WriteToLog(notebookWorkspaceViewModel.Notebook.NotebookName);
+            }
             Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
             Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
         }
@@ -373,14 +380,12 @@ namespace Classroom_Learning_Partner
             _networkThread.Join();
             _networkThread = null;
 
-            Person tempPerson = App.Network.CurrentUser;
-            Group tempGroup = App.Network.CurrentGroup;
+            var tempPerson = App.Network.CurrentUser;
+            var tempGroup = App.Network.CurrentGroup;
 
             App.Network.Dispose();
             App.Network = null;
-            App.Network = new CLPNetwork();
-            App.Network.CurrentUser = tempPerson;
-            App.Network.CurrentGroup = tempGroup;
+            App.Network = new CLPNetwork {CurrentUser = tempPerson, CurrentGroup = tempGroup};
             _networkThread = new Thread(App.Network.Run) { IsBackground = true };
             _networkThread.Start();
         }

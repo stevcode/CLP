@@ -140,6 +140,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
+            ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
+            ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -831,7 +833,7 @@ namespace Classroom_Learning_Partner.ViewModels
             string s_page = ObjectSerializer.ToString(page);
             int index = page.PageIndex - 1;
 
-            if(App.Network.ClassList.Count > 0)
+            if(App.Network.ClassList.Any())
             {
                 foreach(Person student in App.Network.ClassList)
                 {
@@ -996,127 +998,236 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the ConvertToXPSCommand command.
+        /// Converts Notebook Pages to XPS.
         /// </summary>
         public Command ConvertToXPSCommand { get; private set; }
 
         private void OnConvertToXPSCommandExecute()
         {
-            CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-
-            if(App.CurrentUserMode == App.UserMode.Instructor)
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
             {
-                FixedDocument docSubmissions = new FixedDocument();
-                docSubmissions.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+                return;
+            }
 
-                int pageCount = 0;
-
-                foreach(var pageID in notebook.Submissions.Keys)
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+                if(!Directory.Exists(directoryPath))
                 {
-                    foreach(CLPPage page in notebook.Submissions[pageID])
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string fileName = notebook.NotebookName + ".xps";
+                string filePath = directoryPath + fileName;
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96*11, 96*8.5);
+
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.TrimPage();
+                    double printHeight = page.PageWidth / page.PageAspectRatio;
+
+                    double transformAmount = 0;
+                    do
                     {
-                        pageCount++;
+                        var currentPageView = new CLPPagePreviewView { DataContext = page };
+                        currentPageView.UpdateLayout();
+                        var transform = new TransformGroup();
+                        var translate = new TranslateTransform(0, -transformAmount);
+                        transform.Children.Add(translate);
+                        currentPageView.RenderTransform = transform;
+                        transformAmount += printHeight;
 
-                        PageContent pageContent = new PageContent();
-                        FixedPage fixedPage = new FixedPage();
+                        var pageContent = new PageContent();
+                        var fixedPage = new FixedPage();
+                        fixedPage.Children.Add(currentPageView);
 
-                        CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                        currentPage.DataContext = page;
-                        currentPage.UpdateLayout();
+                        ((System.Windows.Markup.IAddChild) pageContent).AddChild(fixedPage);
+                        document.Pages.Add(pageContent);
+                    } while(page.PageHeight > transformAmount);
+                }
 
-                        Grid grid = new Grid();
-                        grid.Children.Add(currentPage);
-                        Label label = new Label();
-                        label.FontSize = 20;
-                        label.FontWeight = FontWeights.Bold;
-                        label.FontStyle = FontStyles.Oblique;
-                        label.HorizontalAlignment = HorizontalAlignment.Left;
-                        label.VerticalAlignment = VerticalAlignment.Top;
-                        label.Content = page.SubmitterName;
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+
+            }, null, "Converting Notebook to XPS", 0.0 / 0.0);
+        }
+
+        /// <summary>
+        /// Converts the Submissions of the currently selected page to XPS.
+        /// </summary>
+        public Command ConvertPageSubmissionToXPSCommand { get; private set; }
+
+        private void OnConvertPageSubmissionToXPSCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+                if(!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string fileName = notebook.NotebookName + " - Page " + notebookWorkspaceViewModel.CurrentPage.PageIndex + " Submissions.xps";
+                string filePath = directoryPath + fileName;
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                if(!notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID].Any())
+                {
+                    return;
+                }
+
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96*11, 96*8.5);
+
+                foreach(CLPPage page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
+                {
+                    page.TrimPage();
+                    double printHeight = page.PageWidth/page.PageAspectRatio;
+
+                    double transformAmount = 0;
+                    do
+                    {
+                        var currentPageView = new CLPPagePreviewView {DataContext = page};
+                        currentPageView.UpdateLayout();
+
+                        var grid = new Grid();
+                        grid.Children.Add(currentPageView);
+                        var label = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = page.SubmitterName,
+                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                        };
                         grid.Children.Add(label);
+                        grid.UpdateLayout();
 
-                        //Create first page of document
-                        RotateTransform rotate = new RotateTransform(90.0);
-                        TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-                        TransformGroup transform = new TransformGroup();
-                        transform.Children.Add(rotate);
+                        var transform = new TransformGroup();
+                        var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
                         grid.RenderTransform = transform;
+                        transformAmount += printHeight;
 
+                        var pageContent = new PageContent();
+                        var fixedPage = new FixedPage();
                         fixedPage.Children.Add(grid);
-                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                        docSubmissions.Pages.Add(pageContent);
-                    }
+
+                        ((System.Windows.Markup.IAddChild) pageContent).AddChild(fixedPage);
+                        document.Pages.Add(pageContent);
+                    } while(page.PageHeight > transformAmount);
                 }
 
-                //Save the submissions
-                if(pageCount > 0)
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+            }, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
+        }
+
+        /// <summary>
+        /// Converts all Submissions in a notebook to XPS.
+        /// </summary>
+        public Command ConvertAllSubmissionsToXPSCommand { get; private set; }
+
+        private void OnConvertAllSubmissionsToXPSCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+                if(!Directory.Exists(directoryPath))
                 {
-                    string filenameSubs = notebook.NotebookName + " - Submissions" + ".xps";
-                    string pathSubs = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filenameSubs;
-                    if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
-                    {
-                        Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-                    }
-                    if(File.Exists(pathSubs))
-                    {
-                        File.Delete(pathSubs);
-                    }
-
-
-                    XpsDocument xpsdSubs = new XpsDocument(pathSubs, FileAccess.ReadWrite);
-                    XpsDocumentWriter xwSubs = XpsDocument.CreateXpsDocumentWriter(xpsdSubs);
-                    if(docSubmissions.Pages.Count > 0)
-                    {
-                        xwSubs.Write(docSubmissions);
-                    }
-                    xpsdSubs.Close();
+                    Directory.CreateDirectory(directoryPath);
                 }
-            }
 
+                string fileName = notebook.NotebookName + " - All Submissions.xps";
+                string filePath = directoryPath + fileName;
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
 
-            FixedDocument doc = new FixedDocument();
-            doc.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-            foreach(CLPPage page in notebook.Pages)
-            {
-                PageContent pageContent = new PageContent();
-                FixedPage fixedPage = new FixedPage();
+                foreach(CLPPage page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                {
+                    page.TrimPage();
+                    double printHeight = page.PageWidth / page.PageAspectRatio;
 
-                CLPPagePreviewView currentPage = new CLPPagePreviewView();
-                currentPage.DataContext = page;
-                currentPage.UpdateLayout();
+                    double transformAmount = 0;
+                    do
+                    {
+                        var currentPageView = new CLPPagePreviewView { DataContext = page };
+                        currentPageView.UpdateLayout();
 
-                //Create first page of document
-                RotateTransform rotate = new RotateTransform(90.0);
-                TranslateTransform translate = new TranslateTransform(816 + 2, -2);
-                TransformGroup transform = new TransformGroup();
-                transform.Children.Add(rotate);
-                transform.Children.Add(translate);
-                currentPage.RenderTransform = transform;
+                        var grid = new Grid();
+                        grid.Children.Add(currentPageView);
+                        var label = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = page.SubmitterName,
+                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                        };
+                        grid.Children.Add(label);
+                        grid.UpdateLayout();
 
-                fixedPage.Children.Add(currentPage);
+                        var transform = new TransformGroup();
+                        var translate = new TranslateTransform(0, -transformAmount);
+                        transform.Children.Add(translate);
+                        grid.RenderTransform = transform;
+                        transformAmount += printHeight;
 
-                ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                doc.Pages.Add(pageContent);
-            }
+                        var pageContent = new PageContent();
+                        var fixedPage = new FixedPage();
+                        fixedPage.Children.Add(grid);
 
-            //Save the document
-            string filename = notebook.NotebookName + ".xps";
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\" + filename;
-            if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\"))
-            {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\");
-            }
-            if(File.Exists(path))
-            {
-                File.Delete(path);
-            }
+                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                        document.Pages.Add(pageContent);
+                    } while(page.PageHeight > transformAmount);
+                }
 
-            XpsDocument xpsd = new XpsDocument(path, FileAccess.ReadWrite);
-            XpsDocumentWriter xw = XpsDocument.CreateXpsDocumentWriter(xpsd);
-            xw.Write(doc);
-            xpsd.Close();
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+            }, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
         }
 
         /// <summary>
@@ -1741,15 +1852,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
-            NotebookNamerWindowView nameChooser = new NotebookNamerWindowView();
-            nameChooser.Owner = Application.Current.MainWindow;
+            PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
+            pageTopicWindow.Owner = Application.Current.MainWindow;
 
             string originalPageTopics = String.Join(",", page.PageTopics);
-            nameChooser.NotebookName.Text = originalPageTopics;
-            nameChooser.ShowDialog();
-            if(nameChooser.DialogResult == true)
+            pageTopicWindow.PageTopicName.Text = originalPageTopics;
+            pageTopicWindow.ShowDialog();
+            if(pageTopicWindow.DialogResult == true)
             {
-                string pageTopics = nameChooser.NotebookName.Text;
+                string pageTopics = pageTopicWindow.PageTopicName.Text;
                 string[] stringArray = pageTopics.Split(',');
                 page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
             }

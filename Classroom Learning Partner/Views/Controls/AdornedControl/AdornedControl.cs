@@ -41,27 +41,27 @@ namespace AdornedControl
         /// <summary>
         /// Specifies the current show/hide state of the adorner.
         /// </summary>
-        private AdornerShowState adornerShowState = AdornerShowState.Hidden;
+        private AdornerShowState _adornerShowState = AdornerShowState.Hidden;
 
         /// <summary>
         /// Caches the adorner layer.
         /// </summary>
-        private AdornerLayer adornerLayer = null;
+        private AdornerLayer _adornerLayer;
 
         /// <summary>
         /// The actual adorner create to contain our 'adorner UI content'.
         /// </summary>
-        private FrameworkElementAdorner adorner = null;
+        private FrameworkElementAdorner _adorner;
 
         /// <summary>
         /// This timer is used to fade in and open the adorner.
         /// </summary>
-        private DispatcherTimer openAdornerTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _openAdornerTimer = new DispatcherTimer();
 
         /// <summary>
         /// This timer is used to fade out and close the adorner.
         /// </summary>
-        private DispatcherTimer closeAdornerTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _closeAdornerTimer = new DispatcherTimer();
 
         #endregion //Private Data Members
 
@@ -69,15 +69,15 @@ namespace AdornedControl
 
         public AdornedControl()
         {
-            this.Focusable = false; // By default don't want 'AdornedControl' to be focusable.
+            Focusable = false; // By default don't want 'AdornedControl' to be focusable.
 
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(AdornedControl_DataContextChanged);
+            DataContextChanged += AdornedControl_DataContextChanged;
 
-            openAdornerTimer.Tick += new EventHandler(openAdornerTimer_Tick);
-            openAdornerTimer.Interval = TimeSpan.FromSeconds(OpenAdornerTimeOut);
+            _openAdornerTimer.Tick += openAdornerTimer_Tick;
+            _openAdornerTimer.Interval = TimeSpan.FromSeconds(OpenAdornerTimeOut);
 
-            closeAdornerTimer.Tick += new EventHandler(closeAdornerTimer_Tick);
-            closeAdornerTimer.Interval = TimeSpan.FromSeconds(CloseAdornerTimeOut);
+            _closeAdornerTimer.Tick += closeAdornerTimer_Tick;
+            _closeAdornerTimer.Interval = TimeSpan.FromSeconds(CloseAdornerTimeOut);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace AdornedControl
 
         private static void IsAdornerVisible_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)o;
+            var c = (AdornedControl)o;
             c.ShowOrHideAdornerInternal();
         }
 
@@ -130,21 +130,21 @@ namespace AdornedControl
 
         private static void AdornerContent_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)o;
+            var c = (AdornedControl)o;
             c.ShowOrHideAdornerInternal();
 
-            FrameworkElement oldAdornerContent = (FrameworkElement)e.OldValue;
+            var oldAdornerContent = (FrameworkElement)e.OldValue;
             if(oldAdornerContent != null)
             {
-                oldAdornerContent.MouseEnter -= new MouseEventHandler(c.adornerContent_MouseEnter);
-                oldAdornerContent.MouseLeave -= new MouseEventHandler(c.adornerContent_MouseLeave);
+                oldAdornerContent.MouseEnter -= c.adornerContent_MouseEnter;
+                oldAdornerContent.MouseLeave -= c.adornerContent_MouseLeave;
             }
 
-            FrameworkElement newAdornerContent = (FrameworkElement)e.NewValue;
+            var newAdornerContent = (FrameworkElement)e.NewValue;
             if(newAdornerContent != null)
             {
-                newAdornerContent.MouseEnter += new MouseEventHandler(c.adornerContent_MouseEnter);
-                newAdornerContent.MouseLeave += new MouseEventHandler(c.adornerContent_MouseLeave);
+                newAdornerContent.MouseEnter += c.adornerContent_MouseEnter;
+                newAdornerContent.MouseLeave += c.adornerContent_MouseLeave;
             }
         }
 
@@ -215,8 +215,8 @@ namespace AdornedControl
 
         private static void IsMouseOverShowEnabled_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)o;
-            c.closeAdornerTimer.Stop();
+            var c = (AdornedControl)o;
+            c._closeAdornerTimer.Stop();
             c.HideAdorner();
         }
 
@@ -249,9 +249,9 @@ namespace AdornedControl
 
         private static void OpenAdornerTimeOut_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)o;
-            c.openAdornerTimer.Stop();
-            c.openAdornerTimer.Interval = TimeSpan.FromSeconds(c.OpenAdornerTimeOut);
+            var c = (AdornedControl)o;
+            c._openAdornerTimer.Stop();
+            c._openAdornerTimer.Interval = TimeSpan.FromSeconds(c.OpenAdornerTimeOut);
         }
 
         /// <summary>
@@ -283,9 +283,9 @@ namespace AdornedControl
 
         private static void CloseAdornerTimeOut_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)o;
-            c.closeAdornerTimer.Stop();
-            c.closeAdornerTimer.Interval = TimeSpan.FromSeconds(c.CloseAdornerTimeOut);
+            var c = (AdornedControl)o;
+            c._closeAdornerTimer.Stop();
+            c._closeAdornerTimer.Interval = TimeSpan.FromSeconds(c.CloseAdornerTimeOut);
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace AdornedControl
 
         private static void ShowAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)target;
+            var c = (AdornedControl)target;
             c.ShowAdorner();
         }
 
@@ -325,7 +325,7 @@ namespace AdornedControl
 
         private static void FadeInAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)target;
+            var c = (AdornedControl)target;
             c.FadeOutAdorner();
         }
         
@@ -334,7 +334,7 @@ namespace AdornedControl
 
         private static void HideAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)target;
+            var c = (AdornedControl)target;
             c.HideAdorner();
         }
         
@@ -343,7 +343,7 @@ namespace AdornedControl
 
         private static void FadeOutAdornerCommand_Executed(object target, ExecutedRoutedEventArgs e)
         {
-            AdornedControl c = (AdornedControl)target;
+            var c = (AdornedControl)target;
             c.FadeOutAdorner();
         }
 
@@ -372,27 +372,27 @@ namespace AdornedControl
         /// </summary>
         public void FadeInAdorner()
         {
-            if (adornerShowState == AdornerShowState.Visible ||
-                adornerShowState == AdornerShowState.FadingIn)
+            if (_adornerShowState == AdornerShowState.Visible ||
+                _adornerShowState == AdornerShowState.FadingIn)
             {
                 // Already visible or fading in.
                 return;
             }
 
-            this.ShowAdorner();
+            ShowAdorner();
 
-            if (adornerShowState != AdornerShowState.FadingOut)
+            if (_adornerShowState != AdornerShowState.FadingOut)
             {
-                adorner.Opacity = 0.0;
+                _adorner.Opacity = 0.0;
             }
 
-            DoubleAnimation doubleAnimation = new DoubleAnimation(1.0, new Duration(TimeSpan.FromSeconds(FadeInTime)));
-            doubleAnimation.Completed += new EventHandler(fadeInAnimation_Completed);
+            var doubleAnimation = new DoubleAnimation(1.0, new Duration(TimeSpan.FromSeconds(FadeInTime)));
+            doubleAnimation.Completed += fadeInAnimation_Completed;
             doubleAnimation.Freeze();
                 
-            adorner.BeginAnimation(FrameworkElement.OpacityProperty, doubleAnimation);
+            _adorner.BeginAnimation(OpacityProperty, doubleAnimation);
 
-            adornerShowState = AdornerShowState.FadingIn;
+            _adornerShowState = AdornerShowState.FadingIn;
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace AdornedControl
         /// </summary>
         public void FadeOutAdorner()
         {
-            if (adornerShowState == AdornerShowState.FadingOut)
+            if (_adornerShowState == AdornerShowState.FadingOut)
             {
                 //
                 // Already fading out.
@@ -408,7 +408,7 @@ namespace AdornedControl
                 return;
             }
 
-            if (adornerShowState == AdornerShowState.Hidden)
+            if (_adornerShowState == AdornerShowState.Hidden)
             {
                 //
                 // Adorner has already been hidden.
@@ -416,13 +416,17 @@ namespace AdornedControl
                 return;
             }
 
-            DoubleAnimation fadeOutAnimation = new DoubleAnimation(0.0, new Duration(TimeSpan.FromSeconds(FadeOutTime)));
-            fadeOutAnimation.Completed += new EventHandler(fadeOutAnimation_Completed);
+            var fadeOutAnimation = new DoubleAnimation(0.0, new Duration(TimeSpan.FromSeconds(FadeOutTime)));
+            fadeOutAnimation.Completed += fadeOutAnimation_Completed;
             fadeOutAnimation.Freeze();
 
-            adorner.BeginAnimation(FrameworkElement.OpacityProperty, fadeOutAnimation);
+            if(_adorner == null)
+            {
+                return;
+            }
+            _adorner.BeginAnimation(OpacityProperty, fadeOutAnimation);
 
-            adornerShowState = AdornerShowState.FadingOut;
+            _adornerShowState = AdornerShowState.FadingOut;
         }
 
         /// <summary>
@@ -445,7 +449,7 @@ namespace AdornedControl
             for(int i = 0; i < numChildren; ++i)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(rootElement, i);
-                FrameworkElement childElement = child as FrameworkElement;
+                var childElement = child as FrameworkElement;
                 if(childElement != null && childElement.Name == childName)
                 {
                     return childElement;
@@ -463,26 +467,24 @@ namespace AdornedControl
 
         public static UserControl GetLinkedDisplayView(DependencyObject child)
         {
-            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
-            if(parentObject == null)
+            while(true)
             {
-                return null;
-            }
-            UserControl parent = parentObject as UserControl;
-            if(parent != null)
-            {
-                if(parent.Name == "LinkedDisplay")
+                var parentObject = VisualTreeHelper.GetParent(child);
+                if(parentObject == null)
                 {
-                    return parent;
+                    return null;
                 }
-                else
+                var parent = parentObject as UserControl;
+                if(parent != null)
                 {
-                    return GetLinkedDisplayView(parentObject);
+                    if(parent.Name == "LinkedDisplay")
+                    {
+                        return parent;
+                    }
+                    child = parentObject;
+                    continue;
                 }
-            }
-            else
-            {
-                return GetLinkedDisplayView(parentObject);
+                child = parentObject;
             }
         }
 
@@ -495,9 +497,9 @@ namespace AdornedControl
         /// </summary>
         private void UpdateAdornerDataContext()
         {
-            if(this.AdornerContent != null)
+            if(AdornerContent != null)
             {
-                this.AdornerContent.DataContext = this.DataContext;
+                AdornerContent.DataContext = DataContext;
             }
         }
 
@@ -522,51 +524,51 @@ namespace AdornedControl
         /// </summary>
         private void ShowAdornerInternal()
         {
-            if(this.adorner != null)
+            if(_adorner != null)
             {
                 // Already adorned.
                 return;
             }
 
-            if(this.AdornerContent != null)
+            if(AdornerContent != null)
             {
-                if(this.adornerLayer == null)
+                if(_adornerLayer == null)
                 {
                     UserControl linkedDisplay = GetLinkedDisplayView(this);
                     if (linkedDisplay != null)
                     {
-                        this.adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);
+                        _adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);
                     }
                 }
 
-                if(this.adornerLayer != null)
+                if(_adornerLayer != null)
                 {
                     FrameworkElement adornedControl = this; // The control to be adorned defaults to 'this'.
 
-                    if(!string.IsNullOrEmpty(this.AdornedTemplatePartName))
+                    if(!string.IsNullOrEmpty(AdornedTemplatePartName))
                     {
                         //
                         // If 'AdornedTemplatePartName' is set to a valid string then search the visual-tree
                         // for a UI element that has the specified part name.  If we find it then use it as the
                         // adorned control, otherwise throw an exception.
                         //
-                        adornedControl = FindNamedChild(this, this.AdornedTemplatePartName);
+                        adornedControl = FindNamedChild(this, AdornedTemplatePartName);
                         if(adornedControl == null)
                         {
-                            throw new ApplicationException("Failed to find a FrameworkElement in the visual-tree with the part name '" + this.AdornedTemplatePartName + "'.");
+                            throw new ApplicationException("Failed to find a FrameworkElement in the visual-tree with the part name '" + AdornedTemplatePartName + "'.");
                         }
                     }
 
-                    this.adorner = new FrameworkElementAdorner(this.AdornerContent, adornedControl,
-                                                               this.HorizontalAdornerPlacement, this.VerticalAdornerPlacement,
-                                                               this.AdornerOffsetX, this.AdornerOffsetY);
-                    this.adornerLayer.Add(this.adorner);
+                    _adorner = new FrameworkElementAdorner(AdornerContent, adornedControl,
+                                                               HorizontalAdornerPlacement, VerticalAdornerPlacement,
+                                                               AdornerOffsetX, AdornerOffsetY);
+                    _adornerLayer.Add(_adorner);
 
                     UpdateAdornerDataContext();
                 }
             }
 
-            this.adornerShowState = AdornerShowState.Visible;
+            _adornerShowState = AdornerShowState.Visible;
         }
 
         /// <summary>
@@ -574,7 +576,7 @@ namespace AdornedControl
         /// </summary>
         private void HideAdornerInternal()
         {
-            if(this.adornerLayer == null || this.adorner == null)
+            if(_adornerLayer == null || _adorner == null)
             {
                 // Not already adorned.
                 return;
@@ -583,18 +585,18 @@ namespace AdornedControl
             //
             // Stop the timer that might be about to fade out the adorner.
             //
-            closeAdornerTimer.Stop();
-            this.adornerLayer.Remove(this.adorner);
-            this.adorner.DisconnectChild();
+            _closeAdornerTimer.Stop();
+            _adornerLayer.Remove(_adorner);
+            _adorner.DisconnectChild();
 
-            this.adorner = null;
-            this.adornerLayer = null;
+            _adorner = null;
+            _adornerLayer = null;
 
             //
             // Ensure that the state of the adorned control reflects that
             // the the adorner is no longer.
             //
-            this.adornerShowState = AdornerShowState.Hidden;
+            _adornerShowState = AdornerShowState.Hidden;
         }
 
         /// <summary>
@@ -607,9 +609,9 @@ namespace AdornedControl
                 return;
             }
 
-            closeAdornerTimer.Stop();
+            _closeAdornerTimer.Stop();
 
-            openAdornerTimer.Start();
+            _openAdornerTimer.Start();
         }
 
         /// <summary>
@@ -622,9 +624,9 @@ namespace AdornedControl
             //    return;
             //}
 
-            openAdornerTimer.Stop();
+            _openAdornerTimer.Stop();
 
-            closeAdornerTimer.Start();
+            _closeAdornerTimer.Start();
         }
 
         /// <summary>
@@ -655,7 +657,7 @@ namespace AdornedControl
         /// </summary>
         private void openAdornerTimer_Tick(object sender, EventArgs e)
         {
-            openAdornerTimer.Stop();
+            _openAdornerTimer.Stop();
 
             if (IsMouseOverShowEnabled)
             {
@@ -669,7 +671,7 @@ namespace AdornedControl
         /// </summary>
         private void closeAdornerTimer_Tick(object sender, EventArgs e)
         {
-            closeAdornerTimer.Stop();
+            _closeAdornerTimer.Stop();
 
             FadeOutAdorner();
         }
@@ -709,7 +711,7 @@ namespace AdornedControl
         /// </summary>
         private void fadeInAnimation_Completed(object sender, EventArgs e)
         {
-            adornerShowState = AdornerShowState.Visible;
+            _adornerShowState = AdornerShowState.Visible;
         }
 
         /// <summary>
@@ -717,10 +719,10 @@ namespace AdornedControl
         /// </summary>
         private void fadeOutAnimation_Completed(object sender, EventArgs e)
         {
-            if(adornerShowState == AdornerShowState.FadingOut)
+            if(_adornerShowState == AdornerShowState.FadingOut)
             {
                 // Still fading out, eg it wasn't aborted.
-                this.HideAdorner();
+                HideAdorner();
             }
         }
 
