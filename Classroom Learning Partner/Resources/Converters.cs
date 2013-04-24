@@ -76,6 +76,29 @@ namespace Classroom_Learning_Partner.Resources
     }
 
     [ValueConversion(typeof(string), typeof(bool))]
+    public class TimeToBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("/");
+            int index2 = value.ToString().LastIndexOf("/");
+
+            if(index != -1 && index2 != -1 && index!=index2)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(bool))]
     public class SumbissiontoBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
