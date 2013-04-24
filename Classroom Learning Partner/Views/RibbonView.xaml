@@ -57,6 +57,21 @@
                                                   ImageSource="..\Images\LargeIcon.png"
                                                   Visibility="{Binding Path=StudentVisibility}"/>
 
+                <RibbonApplicationMenuItem Header="Convert To XPS"
+                                            Command="{Binding ConvertToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
+                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
+                                            ImageSource="..\Images\ConvertToXPS.png"
+                                            Visibility="{Binding Path=InstructorVisibility}"/>
+
                 <RibbonSeparator />
 
                 <!--Bind header for toggle text: disconnect/reconnect to network-->
@@ -167,19 +182,19 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <!--<RibbonGroup Header="Insert">
 
                 <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
-                <!--<RibbonToggleButton Label="Webcam" 
+                <RibbonToggleButton Label="Webcam" 
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
@@ -243,13 +258,13 @@
 
             </RibbonGroup>-->
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
 
@@ -265,10 +280,10 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
+                <RibbonButton Label="Group Send" Margin="35,0,0,0"
                               LargeImageSource="..\Images\GroupSubmit-icon32.png" 
                               Command="{Binding GroupSubmitPageCommand}"
-                              Visibility="{Binding SendButtonVisibility}"/>-->
+                              Visibility="{Binding SendButtonVisibility}"/>
 
             </RibbonGroup>
 

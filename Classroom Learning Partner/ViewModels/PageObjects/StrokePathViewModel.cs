@@ -7,7 +7,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         public StrokePathViewModel(Geometry pathData, SolidColorBrush pathColor, double width)
-            : base()
         {
             _pathData = pathData;
             _pathColor = pathColor;
@@ -20,19 +19,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        private Geometry _pathData;
+        private readonly Geometry _pathData;
         public Geometry PathData
         {
             get { return _pathData; }
         }
 
-        private SolidColorBrush _pathColor;
+        private readonly SolidColorBrush _pathColor;
         public SolidColorBrush PathColor
         {
             get { return _pathColor; }
         }
 
-        private double _pathWidth;
+        private readonly double _pathWidth;
         public double PathWidth
         {
             get { return _pathWidth; }
