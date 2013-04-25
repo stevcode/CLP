@@ -46,7 +46,11 @@ namespace CLP.Models
         public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            set 
+            { 
+                SetValue(ParentPageProperty, value); 
+                SetValue(ParentPageIDProperty, value.UniqueID);
+            }
         }
 
         [NonSerialized]
@@ -64,11 +68,9 @@ namespace CLP.Models
                 {
                     return tempValue;
                 }
-                else
-                {
-                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
-                    return ParentPage.UniqueID;
-                }
+
+                SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                return ParentPage.UniqueID;
             }
             set { SetValue(ParentPageIDProperty, value); }
         }
@@ -81,8 +83,7 @@ namespace CLP.Models
         public string ParentID
         {
             get { return GetValue<string>(ParentIDProperty); }
-            set
-            { SetValue(ParentIDProperty, value);}
+            set { SetValue(ParentIDProperty, value); }
         }
 
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
@@ -292,7 +293,7 @@ namespace CLP.Models
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
                     }
-                    catch(System.Exception)
+                    catch(Exception)
                     {
                         Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                     }

@@ -33,7 +33,7 @@ namespace CLP.Models
             Width = 300;
             Parts = 1;
 
-            CLPPageObjectBase.ApplyDistinctPosition(this);
+            ApplyDistinctPosition(this);
         }
 
         /// <summary>

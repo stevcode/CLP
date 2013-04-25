@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
         public CLPAggregationDataTableViewModel(CLPAggregationDataTable dataTable)
-            : base()
         {
             PageObject = dataTable;
             IsMouseOverShowEnabled = true;
