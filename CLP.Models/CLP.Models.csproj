@@ -104,6 +104,7 @@
     <Compile Include="CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
     <Compile Include="CLPPageObjects\CLPArray.cs" />
+    <Compile Include="CLPPageObjects\CLPArrayLabel.cs" />
     <Compile Include="CLPPageObjects\CLPImage.cs" />
     <Compile Include="CLPPageObjects\CLPShape.cs" />
     <Compile Include="CLPPageObjects\CLPSnapTileContainer.cs" />

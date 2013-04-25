@@ -30,6 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
             : base()
         {
             PageObject = array;
+            OpenAdornerTimeOut = 1.2;
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
@@ -37,6 +38,37 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EnterRowsCommand = new Command(OnEnterRowsCommandExecute);;
         }
+        
+        /// <summary>
+        /// Turns the grid on or off.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public Boolean IsGridOn
+        {
+            get { return GetValue<Boolean>(IsGridOnProperty); }
+            set { SetValue(IsGridOnProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsGridOn property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(Boolean));
+
+        /// <summary>
+        /// Turns division behavior on or off.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public Boolean IsDivisionBehaviorOn
+        {
+            get { return GetValue<Boolean>(IsDivisionBehaviorOnProperty); }
+            set { SetValue(IsDivisionBehaviorOnProperty, value); }
+        }
+        /// <summary>
+        /// Register the isDivisionBehaviorOn property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(Boolean), null);
+
+
 
         /// <summary>
         /// Gets or sets the IsDefaultAdornerVisible value.
@@ -134,6 +166,36 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets the HorizontalGridDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<double> HorizontalGridDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(HorizontalGridDivsProperty); }
+            set { SetValue(HorizontalGridDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalGridDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalGridDivsProperty = RegisterProperty("HorizontalGridDivs", typeof(ObservableCollection<double>));
+
+        /// <summary>
+        /// Gets or sets the VerticalGridDivs value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<double> VerticalGridDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(VerticalGridDivsProperty); }
+            set { SetValue(VerticalGridDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalGridDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalGridDivsProperty = RegisterProperty("VerticalGridDivs", typeof(ObservableCollection<double>));
+
+        /// <summary>
         /// Gets or sets the HorizontalDivs value.
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -164,49 +226,34 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>));
 
         /// <summary>
-        /// Gets or sets the RowDivs value.
+        /// Gets or sets the HorizontalDivLabels value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<int> RowDivs
+        public ObservableCollection<Tuple<double,int>> HorizontalDivLabels
         {
-            get { return GetValue<ObservableCollection<int>>(RowDivsProperty); }
-            set { SetValue(RowDivsProperty, value); }
+            get { return GetValue<ObservableCollection<Tuple<double,int>>>(HorizontalDivLabelsProperty); }
+            set { SetValue(HorizontalDivLabelsProperty, value); }
         }
 
         /// <summary>
-        /// Register the RowDivs property so it is known in the class.
+        /// Register the HorizontalDivLabels property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData RowDivsProperty = RegisterProperty("RowDivs", typeof(ObservableCollection<int>));
+        public static readonly PropertyData HorizontalDivLabelsProperty = RegisterProperty("HorizontalDivLabels", typeof(ObservableCollection<Tuple<double,int>>));
 
         /// <summary>
-        /// Gets or sets the ColumnDivs value.
+        /// Gets or sets the VerticalDivLabels value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<int> ColumnDivs
+        public ObservableCollection<Tuple<double,int>> VerticalDivLabels
         {
-            get { return GetValue<ObservableCollection<int>>(ColumnDivsProperty); }
-            set { SetValue(ColumnDivsProperty, value); }
+            get { return GetValue<ObservableCollection<Tuple<double,int>>>(VerticalDivLabelsProperty); }
+            set { SetValue(VerticalDivLabelsProperty, value); }
         }
 
         /// <summary>
-        /// Register the ColumnDivs property so it is known in the class.
+        /// Register the VerticalDivLabels property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ColumnDivsProperty = RegisterProperty("ColumnDivs", typeof(ObservableCollection<int>));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public CLPHandwritingRegion HandwritingRegionParts
-        {
-            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
-            set { SetValue(HandwritingRegionPartsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the HandwritingRegionParts property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion));
+        public static readonly PropertyData VerticalDivLabelsProperty = RegisterProperty("VerticalDivLabels", typeof(ObservableCollection<Tuple<double,int>>));
 
 
         /// <summary>
@@ -227,23 +274,36 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             double newHeight = PageObject.Height + e.VerticalChange;
-            double newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
+            double newWidth = newHeight * ((double)Columns) / ((double)Rows);
             if(newHeight < 100)
             {
                 newHeight = 100;
-                newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
+                newWidth = newHeight * ((double)Columns) / ((double)Rows);
             }
             if(newHeight + PageObject.YPosition > parentPage.PageHeight)
             {
                 newHeight = PageObject.Height;
-                newWidth = newHeight * ((double)this.Columns) / ((double)this.Rows);
+                newWidth = newHeight * ((double)Columns) / ((double)Rows);
             }
             if(newWidth + PageObject.XPosition > parentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
-                newHeight = newWidth * ((double)this.Rows) / ((double)this.Columns);
+                newHeight = newWidth * ((double)Rows) / ((double)Columns);
             }
-            //TO DO Liz - make sure resizing doesn't change ratio
+
+            //resize grid appropriately
+            double SquareSize = newWidth / Columns;
+            HorizontalGridDivs = new ObservableCollection<double>();
+            for(int i = 1; i < Rows; i++)
+            {
+                HorizontalGridDivs.Add(i * SquareSize);
+            }
+            VerticalGridDivs = new ObservableCollection<double>();
+            for(int i = 1; i < Columns; i++)
+            {
+                VerticalGridDivs.Add(i * SquareSize);
+            }
+
             //TO DO Liz - make it so resizing preserves divisions
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
@@ -260,7 +320,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            HorizontalDivs.Add(RightArrowPosition);
+            double Position = RightArrowPosition - 5;
+            HorizontalDivs.Add(Position);
+            if(HorizontalDivLabels.Count == 0)
+            {
+                HorizontalDivLabels.Add(Tuple.Create(Position / 2, -1));
+                HorizontalDivLabels.Add(Tuple.Create((Position + Width)/ 2, -1));
+            }
         }
 
         /// <summary>
@@ -273,7 +339,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnCreateVerticalDivisionCommandExecute()
         {
-             VerticalDivs.Add(BottomArrowPosition);
+             VerticalDivs.Add(BottomArrowPosition - 5);
         }
 
         /// <summary>
@@ -307,7 +373,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
             hoverTimer.Interval = 1000;
-            if(hitBoxName == "ArrayBodyHitBox")
+            if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
             {
                 IsDefaultAdornerVisible = true;
                 IsRightAdornerVisible = false;
@@ -341,31 +407,92 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            if(hitBoxName == "ArrayBottomHitBox")
+            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
             {
                 IsDefaultAdornerVisible = false;
                 IsRightAdornerVisible = false;
                 IsBottomAdornerVisible = true;
-                //TO DO Liz - create division
-                //use isMouseDown
-                if(isMouseDown)
-                {
-                    //CREATE DIVISION
-                }
 
             }
-            if(hitBoxName == "ArrayRightHitBox")
+            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
             {
                 IsDefaultAdornerVisible = false;
                 IsRightAdornerVisible = true;
                 IsBottomAdornerVisible = false;
-                //TO DO Liz - create division
             }
 
             return !hoverTimeElapsed;       
         }
 
+        public double LabelToPositionConverter(Tuple<double,int> label, System.Globalization.CultureInfo culture)
+        {
+            return label.Item1;
+        }
 
+        public String LabelToValueConverter(Tuple<double, int> label, System.Globalization.CultureInfo culture)
+        {
+            if(label.Item2 == -1)
+            {
+                return "?";
+            }
+            else
+            {
+                return (label.Item2).ToString();
+            }
+        }
+
+        public override void EraserHitTest(string hitBoxName)
+        {
+            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            {
+                //don't erase
+            }
+            else if(hitBoxName == "ArrayBodyHitBox")
+            {
+                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                if(notebookWorkspaceViewModel != null)
+                {
+                    CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                    if(parentPage != null)
+                    {
+                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                        {
+                            pageVM.IsInkCanvasHitTestVisible = true;
+                        }
+                    }
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                }
+            }
+            else if(hitBoxName == "HorizontalDivisionHitBox")
+            {
+                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                if(notebookWorkspaceViewModel != null)
+                {
+                    CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+
+                    if(parentPage != null)
+                    {
+                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+                        {
+                            pageVM.IsInkCanvasHitTestVisible = true;
+                        }
+
+                        //CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+
+                        foreach(Tuple<double, int> Label in HorizontalDivLabels)
+                        {
+                            //To Do Liz - figure out which division was erased
+                            if(Label.Item1 == YPosition)
+                            {
+                                HorizontalDivLabels.Remove(Label);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
 
         #endregion //Methods
     }

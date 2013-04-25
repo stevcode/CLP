@@ -20,32 +20,42 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base()
         {
-            this.Rows = rows;
-            this.Columns = columns;
-            this.HorizontalDivs = new ObservableCollection<double>();
-            this.VerticalDivs = new ObservableCollection<double>();
-            this.RowDivs = new ObservableCollection<int>();
-            this.ColumnDivs = new ObservableCollection<int>();
+            IsGridOn = true;
+            IsDivisionBehaviorOn = true;
+
+            Rows = rows;
+            Columns = columns;
+            HorizontalDivs = new ObservableCollection<double>();
+            VerticalDivs = new ObservableCollection<double>();
+            HorizontalDivLabels = new ObservableCollection<Tuple<double,int>>();
+            VerticalDivLabels = new ObservableCollection<Tuple<double, int>>();
             double Ratio = ((double)rows) / ((double)columns);
 
-            HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page);
-            HandwritingRegionParts.IsInternalPageObject = true;
-            HandwritingRegionParts.IsBackground = true;
-            HandwritingRegionParts.Height = 100*Ratio + 20;
 
             XPosition = 10;
             YPosition = 10;
             
-            Height = 750*Ratio;
-            Width = 750;
+            Height = 700*Ratio;
+            Width = 700;
 
-            if(Height + this.YPosition > page.PageHeight)
+            if(Height + YPosition > page.PageHeight - 150)
             {
-                Height = page.PageHeight - this.YPosition;
-                Width = Height * ((double)this.Columns) / ((double)this.Rows);
+                Height = page.PageHeight - YPosition - 150;
+                Width = Height * ((double)Columns) / ((double)Rows);
             }
 
-            
+            double SquareSize = Width/columns;
+            HorizontalGridDivs = new ObservableCollection<double>();
+            for(int i = 1; i < rows; i++)
+            {
+                HorizontalGridDivs.Add(i * SquareSize);
+            }
+            VerticalGridDivs = new ObservableCollection<double>();
+            for(int i = 1; i < columns; i++)
+            {
+                VerticalGridDivs.Add(i * SquareSize);
+            }
+
 
             ParentPage = page;
             ParentPageID = page.UniqueID;
@@ -73,6 +83,31 @@ namespace CLP.Models
         {
             get { return "CLPArray"; }
         }
+
+        /// <summary>
+        /// Turns the grid on or off.
+        /// </summary>
+        public Boolean IsGridOn
+        {
+            get { return GetValue<Boolean>(IsGridOnProperty); }
+            set { SetValue(IsGridOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(Boolean), true);
+
+        /// <summary>
+        /// Turns the division behavior on or off.
+        /// </summary>
+        public Boolean IsDivisionBehaviorOn
+        {
+            get { return GetValue<Boolean>(IsDivisionBehaviorOnProperty); }
+            set { SetValue(IsDivisionBehaviorOnProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the isDivisionBehaviorOn property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(Boolean), true);
 
         /// <summary>
         /// The number of rows in the array.
@@ -103,6 +138,34 @@ namespace CLP.Models
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int), null);
 
         /// <summary>
+        /// Gets or sets the HorizontalGridDivs value.
+        /// </summary>
+        public ObservableCollection<double> HorizontalGridDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(HorizontalGridDivsProperty); }
+            set { SetValue(HorizontalGridDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalGridDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalGridDivsProperty = RegisterProperty("HorizontalGridDivs", typeof(ObservableCollection<double>), null);
+
+        /// <summary>
+        /// Gets or sets the VerticalGridDivs value.
+        /// </summary>
+        public ObservableCollection<double> VerticalGridDivs
+        {
+            get { return GetValue<ObservableCollection<double>>(VerticalGridDivsProperty); }
+            set { SetValue(VerticalGridDivsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalGridDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalGridDivsProperty = RegisterProperty("VerticalGridDivs", typeof(ObservableCollection<double>), null);
+
+        /// <summary>
         /// Exact positions of where the horizontal divisions are placed on the array.
         /// </summary>
         public ObservableCollection<double> HorizontalDivs
@@ -131,27 +194,32 @@ namespace CLP.Models
         public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>), null);
 
         /// <summary>
-        /// A list of divisions in the rows of the array - based on labels
+        /// A list of labels for horizontal divisions - (position, value). -1 for unlabelled.
         /// </summary>
-        public ObservableCollection<int> RowDivs
+        public ObservableCollection<Tuple<double,int>> HorizontalDivLabels
         {
-            get { return GetValue<ObservableCollection<int>>(RowDivsProperty); }
-            set { SetValue(RowDivsProperty, value); }
+            get { return GetValue<ObservableCollection<Tuple<double,int>>>(HorizontalDivLabelsProperty); }
+            set { SetValue(HorizontalDivLabelsProperty, value); }
         }
 
         /// <summary>
-        /// Register the RowDivs property so it is known in the class.
+        /// Register the HorizontalDivLabels property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData RowDivsProperty = RegisterProperty("RowDivs", typeof(ObservableCollection<int>), null);
+        public static readonly PropertyData HorizontalDivLabelsProperty = RegisterProperty("HorizontalDivLabels", typeof(ObservableCollection<Tuple<double,int>>), null);
 
         /// <summary>
-        /// A list of divisions in the columns in the array - based on labels
+        /// A list of labels for vertical divisions - (position, value). -1 for unlabelled.
         /// </summary>
-        public ObservableCollection<int> ColumnDivs
+        public ObservableCollection<Tuple<double,int>> VerticalDivLabels
         {
-            get { return GetValue<ObservableCollection<int>>(ColumnDivsProperty); }
-            set { SetValue(ColumnDivsProperty, value); }
+            get { return GetValue<ObservableCollection<Tuple<double,int>>>(VerticalDivLabelsProperty); }
+            set { SetValue(VerticalDivLabelsProperty, value); }
         }
+
+        /// <summary>
+        /// Register the VerticalDivLabels property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalDivLabelsProperty = RegisterProperty("VerticalDivLabels", typeof(ObservableCollection<Tuple<double,int>>), null);
 
         /// <summary>
         /// Register the ColumnDivs property so it is known in the class.
@@ -159,50 +227,8 @@ namespace CLP.Models
         public static readonly PropertyData ColumnDivsProperty = RegisterProperty("ColumnDivs", typeof(ObservableCollection<int>), null);
 
 
-        /// <summary>
-        /// Internally contained Handwriting Region.
-        /// </summary>
-        public CLPHandwritingRegion HandwritingRegionParts
-        {
-            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
-            set { SetValue(HandwritingRegionPartsProperty, value); }
-        }
-
-        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion), null);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool PartsAutoGenerated
-        {
-            get { return GetValue<bool>(PartsAutoGeneratedProperty); }
-            set { SetValue(PartsAutoGeneratedProperty, value); }
-        }
-
-        public static readonly PropertyData PartsAutoGeneratedProperty = RegisterProperty("PartsAutoGenerated", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool PartsAuthorGenerated
-        {
-            get { return GetValue<bool>(PartsAuthorGeneratedProperty); }
-            set { SetValue(PartsAuthorGeneratedProperty, value); }
-        }
-
-        public static readonly PropertyData PartsAuthorGeneratedProperty = RegisterProperty("PartsAuthorGenerated", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool PartsInterpreted
-        {
-            get { return GetValue<bool>(PartsInterpretedProperty); }
-            set { SetValue(PartsInterpretedProperty, value); }
-        }
-
-        public static readonly PropertyData PartsInterpretedProperty = RegisterProperty("PartsInterpreted", typeof(bool), false);
-
+ 
+ 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -212,8 +238,6 @@ namespace CLP.Models
             set
             {
                 SetValue(ParentPageProperty, value);
-                HandwritingRegionParts.ParentPage = value;
-                HandwritingRegionParts.ParentPageID = value.UniqueID;
             }
         }
 
@@ -365,7 +389,6 @@ namespace CLP.Models
             set
             {
                 SetValue(WidthProperty, value);
-                HandwritingRegionParts.Width = Width + 20;
             }
         }
 
@@ -427,10 +450,6 @@ namespace CLP.Models
             CLPArray newArray = this.Clone() as CLPArray;
             newArray.UniqueID = Guid.NewGuid().ToString();
             newArray.ParentPage = ParentPage;
-            if(newArray.HandwritingRegionParts != null)
-            {
-                newArray.HandwritingRegionParts.ParentPage = ParentPage;
-            }
             return newArray;
         }
 
@@ -449,7 +468,6 @@ namespace CLP.Models
             if(CanAcceptStrokes)
             {
                 PageObjectStrokeParentIDs.Clear();
-                HandwritingRegionParts.PageObjectStrokeParentIDs.Clear();
 
                 Rect rect = new Rect(XPosition, YPosition, Width, Height);
                 var strokesOverObject =
@@ -469,44 +487,17 @@ namespace CLP.Models
                 try
                 {
                     PageObjectStrokeParentIDs.Remove(strokeID);
-                    HandwritingRegionParts.PageObjectStrokeParentIDs.Remove(strokeID);
                 }
                 catch(System.Exception)
                 {
                     Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                 }
             }
-
-            Rect rectParts = new Rect(XPosition, YPosition,
-                HandwritingRegionParts.Width, HandwritingRegionParts.Height);
-
-            StrokeCollection handwritingRegionStrokesAdd = new StrokeCollection();
-            foreach(Stroke stroke in addedStrokes)
-            {
-                if(stroke.HitTest(rectParts, 3))
-                {
-                    //TODO: Steve - this doesn't do anything because HandwritingRegionParts hasn't accepted strokes yet, move down.
-                    if(PartsAuthorGenerated)
-                    {
-                        ClearHandWritingPartsStrokes();
-                    }
-                    else
-                    {
-                        handwritingRegionStrokesAdd.Add(stroke);
-                        PartsAutoGenerated = false;
-                    }
-                }
-                PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
-            }
-
-            HandwritingRegionParts.AcceptStrokes(handwritingRegionStrokesAdd, new StrokeCollection());
-            UpdatePartsFromHandwritingRegion();
         }
 
         public void ResetParts()
         {
             Parts = 0;
-            PartsAutoGenerated = false;
         }
 
         public StrokeCollection GetStrokesOverPageObject()
@@ -521,32 +512,6 @@ namespace CLP.Models
             return inkStrokes;
         }
 
-        public void UpdatePartsFromHandwritingRegion()
-        {
-            HandwritingRegionParts.DoInterpretation();
-            int num;
-            bool success = int.TryParse(HandwritingRegionParts.StoredAnswer, out num);
-            if(success)
-            {
-                Parts = num;
-            }
-            // Set back to null otherwise you may accidentally keep reading the old value
-            HandwritingRegionParts.StoredAnswer = null;
-            Console.WriteLine("After interpret Parts: " + Parts);
-            PartsInterpreted = (HandwritingRegionParts.GetStrokesOverPageObject().Count > 0) ? true : false;
-        }
-
-        public void ClearHandWritingPartsStrokes()
-        {
-            //Console.WriteLine("hw strokes : " + HandwritingRegionParts.GetStrokesOverPageObject().Count);
-            foreach(Stroke stroke in HandwritingRegionParts.GetStrokesOverPageObject())
-            {
-                ParentPage.InkStrokes.Remove(stroke);
-            }
-            PartsInterpreted = false;
-
-            //TODO: Steve - call RefreshStrokeParentIDs() here?
-        }
 
         public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
@@ -563,36 +528,6 @@ namespace CLP.Models
 
         public void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
         {
-            bool changed = false;
-            if(CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject pageObject in removedPageObjects)
-                {
-                    if(PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
-                    {
-                        changed = true;
-                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
-                    }
-                }
-
-                foreach(ICLPPageObject pageObject in addedPageObjects)
-                {
-                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && !pageObject.GetType().Equals(typeof(CLPStamp)))
-                    {
-                        changed = true;
-                        Parts += pageObject.Parts;
-                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
-                    }
-                }
-
-                if(changed)
-                {
-                    PartsAutoGenerated = true;
-                    PartsInterpreted = false;
-                    ClearHandWritingPartsStrokes();
-                }
-            }
         }
 
         public ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject()

@@ -20,6 +20,18 @@
             <Setter Property="Canvas.Top"
                    Value="0" />
         </Style>
+        <!--<Style x:Key="HorizontalDivLabelStyle">
+            <Setter Property="Canvas.Right"
+                   Value="10" />
+            <Setter Property="Canvas.Top"
+                   Value="{Binding}.Item1" />
+        </Style>
+        <Style x:Key="VerticalDivLabelStyle">
+            <Setter Property="Canvas.Left"
+                   Value="{Binding}" />
+            <Setter Property="Canvas.Bottom"
+                   Value="10" />
+        </Style>-->
     </UserControl.Resources>
 
         <ac:AdornedControl Grid.RowSpan="3" Grid.ColumnSpan="3"
@@ -36,9 +48,9 @@
 
                     <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
                                RadiusX="10" RadiusY="10"
-                               Canvas.Top="-5" Canvas.Left="-5"
-                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=20}"
-                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=20}" 
+                               Canvas.Top="-50" Canvas.Left="-50"
+                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=70}"
+                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=70}" 
                                Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}"/>
 
                     <!--Close Button-->
@@ -60,9 +72,9 @@
                         </Button.Template>
                     </Button>
 
-                    <!--Drag Thumb-->
+                    <!--Drag Thumb: canvas.right was -50--> 
                     <Thumb x:Name="AdornerDrag"
-                           Canvas.Right="-50" Canvas.Top="-25"
+                           Canvas.Right="-75" Canvas.Top="-25" 
                            Width="40" Height="40"
                            Cursor="ScrollAll" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsDefaultAdornerVisible}">
                         <i:Interaction.Triggers>
@@ -124,7 +136,8 @@
                     
                     <!--Right Side Division Adorner-->
                     <Thumb x:Name="AdornerRightDivision"
-                           Canvas.Right="0" Canvas.Top="{Binding RightArrowPosition}"
+                           Canvas.Right="-20" 
+                           Canvas.Top="{Binding Path=RightArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=-40}"
                            Width="40" Height="40"
                            Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsRightAdornerVisible}">
 
@@ -150,7 +163,8 @@
 
                     <!--Bottom Side Division Adorner-->
                     <Thumb x:Name="AdornerBottomDivision"
-                           Canvas.Left="{Binding Path=BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=-20}" Canvas.Bottom="0"
+                           Canvas.Left="{Binding Path=BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=-40}" 
+                           Canvas.Bottom="-20"
                            Width="40" Height="40"
                            Cursor="SizeNWSE" Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsBottomAdornerVisible}">
                         <Thumb.Template>
@@ -174,30 +188,28 @@
 
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
-            
-            <Grid x:Name="TopGrid" Height="{Binding Height}" Width="{Binding Width}">
-                
+
+        <Grid x:Name="TopGrid" Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=70}"
+              Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=70}">
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="{Binding Height}"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="{Binding Width}"/>
+                <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" FontSize="18" />
-            <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" FontSize="18" />
+            <!--Labels-->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" />
+            <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" FontSize="24" />
 
-            <Rectangle Grid.Row="1" Grid.Column="1" Fill="Transparent" Stroke="Black" StrokeThickness="3"/>
-            
-            <!--<TextBlock Grid.Row="2" Grid.ColumnSpan="3" />
-            <TextBlock Grid.RowSpan="3" Grid.Column="2" />-->
-                
+            <!--Grid-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
-                          ItemsSource="{Binding HorizontalDivs}"
+                          ItemsSource="{Binding HorizontalGridDivs}"
                           ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -208,11 +220,74 @@
                     <DataTemplate>
                         <Rectangle Height="4" 
                                    Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
-                                   Stroke="Black" StrokeThickness="3" />
+                                   Stroke="AliceBlue" StrokeThickness="3" 
+                                   Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.IsGridOn}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl Grid.Row="1" Grid.Column="1" 
+                          ItemsSource="{Binding VerticalGridDivs}"
+                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
+                                   Width="4" Stroke="AliceBlue" StrokeThickness="3" 
+                                   Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.IsGridOn}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+                
+            <!--This is the actual array-->
+            <Rectangle Grid.Row="1" Grid.Column="1" Width="{Binding Width}" Height="{Binding Height}"
+                       Fill="Transparent" Stroke="Black" StrokeThickness="3"/>
+            
+            <!--Horizontal Division Labels-->
+            <!--<ItemsControl Grid.RowSpan="3" Grid.Column="2"
+                          ItemsSource="{Binding HorizontalDivLabels}"
+                          ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding.Item2}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>-->
+            
+            <!--Liz To Do: Vertical Division Labels-->
+
+            <!--Horizontal Divisions-->
+            <ItemsControl Grid.Row="1" Grid.Column="1" 
+                          ItemsSource="{Binding HorizontalDivs}"
+                          ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Canvas>
+                            <Rectangle Height="4" 
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
+                                       Stroke="Black" StrokeThickness="3" />
+                            <Rectangle Name="HorizontalDivisionHitBox" Height="10"
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
+                                       Stroke="Transparent" />
+                        </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <!--Vertical Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
                           ItemsSource="{Binding VerticalDivs}"
                           ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
@@ -231,14 +306,14 @@
 
             <Rectangle Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
                            Name="ArrayBodyHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
-                           Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
+                           Height="Auto" Width="Auto" />
 
             <Rectangle Grid.Row="2" Grid.Column="1"
-                           Name="ArrayBottomHitBox" Tag="1001" Fill="Transparent" Stretch="Fill"
+                           Name="ArrayBottomHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
                            Width="{Binding Width, Mode=TwoWay}" Height="40" MouseMove="ArrayBottomHitBox_MouseMove_1" />
 
             <Rectangle Grid.Row="1" Grid.Column="2" 
-                           Name="ArrayRightHitBox" Tag="1002" Fill="Transparent" Stretch="Fill"
+                           Name="ArrayRightHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
                            Width="40" Height="{Binding Height, Mode=TwoWay}" MouseMove="ArrayRightHitBox_MouseMove_1" />
 
             </Grid>

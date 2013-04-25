@@ -16,7 +16,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Content="Rows" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="87,50,87,69"/>
-        <!--Liz - not showing up-->
+
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -28,8 +28,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="1" Content="{Binding ElementName=Columns, Path=Text, Mode=TwoWay}" Height="35" HorizontalAlignment="Center" VerticalContentAlignment="Bottom"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="{Binding ElementName=Rows, Path=Text, Mode=TwoWay}" Width="35"  VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding ElementName=Columns, Path=Text, Mode=TwoWay}" 
+                   Height="35" HorizontalAlignment="Center" VerticalContentAlignment="Bottom" FontSize="12"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="{Binding ElementName=Rows, Path=Text, Mode=TwoWay}" 
+                   Width="35"  VerticalAlignment="Center" HorizontalContentAlignment="Right" FontSize="12"/>
             <Rectangle Grid.Row="1" Grid.Column="1" Fill="Transparent" Stroke="Black" StrokeThickness="3"/>
             <Label Grid.Row="2" Grid.Column="1" Content="" Height="35"/>
             <Label Grid.Row="1" Grid.Column="2" Content="" Width="35"/>
