@@ -114,6 +114,7 @@ namespace CLP.Models
             CanAcceptStrokes = true;
 
             ApplyDistinctPosition(this);
+
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace CLP.Models
             set { SetValue(IsGridOnProperty, value); }
         }
 
-        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool), false);
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool), true);
 
         /// <summary>
         /// Turns the division behavior on or off.

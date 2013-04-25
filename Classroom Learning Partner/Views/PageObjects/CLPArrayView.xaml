@@ -7,9 +7,22 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
+        <conv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter"/>
         <conv:IntToQuestionMarkConverter x:Key="IntToQuestionMarkConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <Style x:Key="HorizontalDivisionStyle">
+        <Style x:Key="HorizontalGridLineStyle">
+            <Setter Property="Canvas.Left"
+                   Value="0" />
+            <Setter Property="Canvas.Top"
+                   Value="{Binding}" />
+        </Style>
+        <Style x:Key="VerticalGridLineStyle">
+            <Setter Property="Canvas.Left"
+                   Value="{Binding}" />
+            <Setter Property="Canvas.Top"
+                   Value="0" />
+       </Style>
+       <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
                    Value="0" />
             <Setter Property="Canvas.Top"
@@ -206,12 +219,12 @@
 
             <!--Labels-->
             <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="20" />
-            <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" />
-
+            <TextBlock Grid.RowSpan="3" Grid.Column="0" Text="{Binding Path=Rows}" 
+                           VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" />
             <!--Grid-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
                           ItemsSource="{Binding HorizontalGridLines}"
-                          ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
+                          ItemContainerStyle="{StaticResource HorizontalGridLineStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
@@ -228,7 +241,7 @@
             </ItemsControl>
             <ItemsControl Grid.Row="1" Grid.Column="1" 
                           ItemsSource="{Binding VerticalGridLines}"
-                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
+                          ItemContainerStyle="{StaticResource VerticalGridLineStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Transparent" Height="Auto" Width="Auto"/>
@@ -285,8 +298,16 @@
                                        Canvas.Top="-5"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Transparent" Fill="Transparent"/>
-                            <Label Canvas.Right="-10" FontSize="16" VerticalAlignment="Center"
+                            <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth,
+                                                         Converter={StaticResource NegativeLengthSubtractConverter}, 
+                                                         ConverterParameter=20}"
+                                                         Height="{Binding Length}" Background="Aqua">
+
+                                <Label  
+                                   FontSize="36" VerticalContentAlignment="Center" Background="Pink" Height="30"
                                    Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
+                            </Grid>
+                            
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -303,16 +324,17 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Canvas Height="{Binding Length}" 
-                                Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}">
-                            <Rectangle Height="4" Canvas.Top="0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
+                        <Canvas Width="{Binding Length}" 
+                                Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}">
+                            <Rectangle Width="4" Canvas.Top="0"
+                                       Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
                                        Stroke="Black" StrokeThickness="3" />
-                            <Rectangle Name="DivisionHitBox" Height="10"
+                            <Rectangle Name="DivisionHitBox" Width="10"
                                        Canvas.Top="-5"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
+                                       Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}"  
                                        Stroke="Transparent" Fill="Transparent"/>
-                            <Label Canvas.Right="-10" FontSize="16" VerticalAlignment="Center"
+                            <Label Canvas.Bottom="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource NegativeLengthSubtractConverter}, Path=ActualHeight, ConverterParameter=20}" 
+                                   Canvas.Left="0" FontSize="36" HorizontalContentAlignment="Center" Width="{Binding Length}"
                                    Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
                         </Canvas>
                     </DataTemplate>
@@ -346,11 +368,11 @@
 
             <Rectangle Grid.Row="2" Grid.Column="1"
                            Name="ArrayBottomHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
-                           Width="{Binding Width, Mode=TwoWay}" Height="40" MouseMove="ArrayBottomHitBox_MouseMove_1" />
+                           Width="{Binding Width, Mode=TwoWay}" Height="80" MouseMove="ArrayBottomHitBox_MouseMove_1" />
 
             <Rectangle Grid.Row="1" Grid.Column="2" 
                            Name="ArrayRightHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
-                           Width="40" Height="{Binding Height, Mode=TwoWay}" MouseMove="ArrayRightHitBox_MouseMove_1" />
+                           Width="80" Height="{Binding Height, Mode=TwoWay}" MouseMove="ArrayRightHitBox_MouseMove_1" />
 
             </Grid>
 

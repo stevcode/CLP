@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
 
         /// <summary>
-        /// Gets or sets the HorizontalGridDivs value.
+        /// Gets or sets the HorizontalGridLines value.
         /// </summary>
         [ViewModelToModel("PageObject")]
         public ObservableCollection<double> HorizontalGridLines
@@ -96,7 +96,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData HorizontalGridLinesProperty = RegisterProperty("HorizontalGridLines", typeof(ObservableCollection<double>));
 
         /// <summary>
-        /// Gets or sets the VerticalGridDivs value.
+        /// Gets or sets the VerticalGridLines value.
         /// </summary>
         [ViewModelToModel("PageObject")]
         public ObservableCollection<double> VerticalGridLines
@@ -106,6 +106,36 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData VerticalGridLinesProperty = RegisterProperty("VerticalGridLines", typeof(ObservableCollection<double>));
+
+        /// <summary>
+        /// Gets or sets the HorizontalDivisions value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPArrayDivision> HorizontalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            set { SetValue(HorizontalDivisionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalDivisions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+
+        /// <summary>
+        /// Gets or sets the VerticalDivisions value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPArrayDivision> VerticalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            set { SetValue(VerticalDivisionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalDivisions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
 
         #endregion //Model
 
@@ -132,6 +162,39 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
+
+        /// <summary>
+        /// Whether or not default adorners are on.
+        /// </summary>
+        public bool IsDefaultAdornerVisible
+        {
+            get { return GetValue<bool>(IsDefaultAdornerVisibleProperty); }
+            set { SetValue(IsDefaultAdornerVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(bool), true);
+
+        /// <summary>
+        /// Whether or not adorner to create a division on right side of array is on.
+        /// </summary>
+        public bool IsRightAdornerVisible
+        {
+            get { return GetValue<bool>(IsRightAdornerVisibleProperty); }
+            set { SetValue(IsRightAdornerVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(bool), false);
+
+        /// <summary>
+        /// hether or not adorner to create a division on bottom side of array is on.
+        /// </summary>
+        public bool IsBottomAdornerVisible
+        {
+            get { return GetValue<bool>(IsBottomAdornerVisibleProperty); }
+            set { SetValue(IsBottomAdornerVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsBottomAdornerVisibleProperty = RegisterProperty("IsBottomAdornerVisible", typeof(bool), false);
 
         #endregion //Bindings
 
@@ -179,13 +242,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            //double Position = RightArrowPosition - 5;
-            //HorizontalDivs.Add(Position);
-            //if(HorizontalDivLabels.Count == 0)
-            //{
-            //    HorizontalDivLabels.Add(Tuple.Create(Position / 2, -1));
-            //    HorizontalDivLabels.Add(Tuple.Create((Position + Width)/ 2, -1));
-            //}
+            double position = RightArrowPosition - 5;
+
+            CLPArrayDivision divAbove = FindDivisionAbove(position, HorizontalDivisions);
+            CLPArrayDivision divBelow = FindDivisionBelow(position, HorizontalDivisions);
+
+            CLPArrayDivision topDiv;
+            if(divAbove == null)
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
+            }
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
+                HorizontalDivisions.Remove(divAbove);
+            }
+            HorizontalDivisions.Add(topDiv);
+           
+            CLPArrayDivision bottomDiv;
+            if(divBelow == null)
+            {
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, Height - position, 0);
+            }
+            else
+            {
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
+            }
+
+            HorizontalDivisions.Add(bottomDiv);
         }
 
         /// <summary>
@@ -195,7 +279,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateVerticalDivisionCommandExecute()
         {
-             //VerticalDivs.Add(BottomArrowPosition - 5);
+            double position = BottomArrowPosition - 5;
+
+            CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
+            CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
+
+            CLPArrayDivision topDiv;
+            if(divAbove == null)
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
+            }
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
+                VerticalDivisions.Remove(divAbove);
+            }
+            VerticalDivisions.Add(topDiv);
+
+            CLPArrayDivision bottomDiv;
+            if(divBelow == null)
+            {
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, Width - position, 0);
+            }
+            else
+            {
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+            }
+
+            VerticalDivisions.Add(bottomDiv);
         }
 
         #endregion //Commands
@@ -204,60 +315,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            //hoverTimer.Interval = 1000;
-            //if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
-            //{
-            //    IsDefaultAdornerVisible = true;
-            //    IsRightAdornerVisible = false;
-            //    IsBottomAdornerVisible = false;
-            //    if(IsBackground)
-            //    {
-            //        if(App.MainWindowViewModel.IsAuthoring)
-            //        {
-            //            IsMouseOverShowEnabled = true;
-            //            if(!timerRunning)
-            //            {
-            //                timerRunning = true;
-            //                hoverTimer.Start();
-            //            }
-            //        }
-            //        else
-            //        {
-            //            IsMouseOverShowEnabled = false;
-            //            hoverTimer.Stop();
-            //            timerRunning = false;
-            //            hoverTimeElapsed = false;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        IsMouseOverShowEnabled = true;
-            //        if(!timerRunning)
-            //        {
-            //            timerRunning = true;
-            //            hoverTimer.Start();
-            //        }
-            //    }
-            //}
-            //if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
-            //{
-            //    IsDefaultAdornerVisible = false;
-            //    IsRightAdornerVisible = false;
-            //    IsBottomAdornerVisible = true;
+            hoverTimer.Interval = 1000;
+            if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
+            {
+                IsDefaultAdornerVisible = true;
+                IsRightAdornerVisible = false;
+                IsBottomAdornerVisible = false;
+                if(IsBackground)
+                {
+                    if(App.MainWindowViewModel.IsAuthoring)
+                    {
+                        IsMouseOverShowEnabled = true;
+                        if(!timerRunning)
+                        {
+                            timerRunning = true;
+                            hoverTimer.Start();
+                        }
+                    }
+                    else
+                    {
+                        IsMouseOverShowEnabled = false;
+                        hoverTimer.Stop();
+                        timerRunning = false;
+                        hoverTimeElapsed = false;
+                    }
+                }
+                else
+                {
+                    IsMouseOverShowEnabled = true;
+                    if(!timerRunning)
+                    {
+                        timerRunning = true;
+                        hoverTimer.Start();
+                    }
+                }
+            }
+            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
+            {
+                IsDefaultAdornerVisible = false;
+                IsRightAdornerVisible = false;
+                IsBottomAdornerVisible = true;
 
-            //}
-            //if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
-            //{
-            //    IsDefaultAdornerVisible = false;
-            //    IsRightAdornerVisible = true;
-            //    IsBottomAdornerVisible = false;
-            //}
+            }
+            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
+            {
+                IsDefaultAdornerVisible = false;
+                IsRightAdornerVisible = true;
+                IsBottomAdornerVisible = false;
+            }
 
-            //return !hoverTimeElapsed;       
+            return !hoverTimeElapsed;       
 
-
-
-            return false;
         }
 
         public override void EraserHitTest(string hitBoxName)
@@ -310,6 +418,46 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
             //    }
             //}
+        }
+
+        public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divAbove = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divAbove == null)
+                {
+                    if(div.Position < position)
+                    {
+                        divAbove = div;
+                    }
+                }
+                else if(divAbove.Position < div.Position && div.Position < position)
+                {
+                    divAbove = div;
+                }
+            }
+            return divAbove;
+         }
+
+        public CLPArrayDivision FindDivisionBelow(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divBelow = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divBelow == null)
+                {
+                    if(div.Position > position)
+                    {
+                        divBelow = div;
+                    }
+                }
+                else if(divBelow.Position > div.Position && div.Position > position)
+                {
+                    divBelow = div;
+                }
+            }
+            return divBelow;
         }
 
         #endregion //Methods
