@@ -52,6 +52,63 @@ namespace Classroom_Learning_Partner.Resources
             throw new NotSupportedException("not implemented");
         }
     }
+    public class PagetToCorrectnessTagConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            CLPPage page = value as CLPPage;
+            string val = "Unknown";
+            if(page.PageTags != null)
+            {
+                foreach(Tag t in page.PageTags)
+                {
+                    if(t.TagType.Name =="Correctness")
+                    {
+                        if(t.Value.Count > 0)
+                        {
+                            val = t.Value.ElementAt(0).Value;
+                        }
+
+                    }
+                }
+
+            }
+            return val;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
+    public class PagetToStarredTagConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            CLPPage page = value as CLPPage;
+            string val = "Unstarred";
+            if(page.PageTags != null)
+            {
+                foreach(Tag t in page.PageTags)
+                {
+                    if(t.TagType.Name =="Starred")
+                    {
+                        if(t.Value.Count > 0)
+                        {
+                            val = t.Value.ElementAt(0).Value;
+                        }
+
+                    }
+                }
+
+            }
+            return val;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
 
     [ValueConversion(typeof(string), typeof(bool))]
     public class GrouptoBooleanConverter : IValueConverter
@@ -61,6 +118,30 @@ namespace Classroom_Learning_Partner.Resources
             int index = value.ToString().IndexOf("Group");
            int index2 = value.ToString().IndexOf("group"); 
             if(index != -1 || index2 != -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+    [ValueConversion(typeof(string), typeof(bool))]
+    public class TagToBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int index = value.ToString().IndexOf("Correct");
+            int index1 = value.ToString().IndexOf("Incorrect");
+            int index2 = value.ToString().IndexOf("Unknown");
+            int index3 = value.ToString().IndexOf("Starred");
+            int index4 = value.ToString().IndexOf("Unstarred");
+            if(index != -1 || index2 != -1 || index1!=-1 ||index3!=-1 || index4!=-1)
             {
                 return true;
             }

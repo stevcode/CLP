@@ -32,37 +32,53 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Page = page;
             IsCorrect = false;
-            IsUnknown = false;
+            IsUnknown = true;
             IsIncorrect = false;
             IsStarred = false;
             if(page.PageTags != null)
             {
+                
                 foreach(Tag tag in Page.PageTags)
                 {
 
-                    if(tag.TagType is CorrectnessTagType)
+                    if(tag.TagType.Name== "Correctness")
                     {
-                        /**  String correct = tag.Value.ElementAt(0).Value;
-                          if (correct=="Correct") {
-                              IsCorrect = true;
-                          }
-                          else if(correct == "Incorrect")
-                          {
-                              IsIncorrect = true;
-                          }
-                          else
-                          {
-                              IsUnknown = true;
+  
+                        if(tag.Value.Count > 0)
+                        {
+                            
+                            String correct = tag.Value.ElementAt(0).Value;
+                            if(correct == "Correct")
+                            {
+                                IsCorrect = true;
+                                IsIncorrect = false;
+                                IsUnknown = false;
+                            }
+                            else if(correct == "Incorrect")
+                            {
+                                IsIncorrect = true;
+                                IsCorrect = false;
+                                IsUnknown = false;
+                            }
+                            else
+                            {
+                                IsUnknown = true;
+                                IsCorrect = false;
+                                IsIncorrect = false;
 
-                          }*/
+                            }
+                        }
                     }
-                    if(tag.TagType is StarredTagType)
+                    if(tag.TagType.Name=="Starred")
                     {
-                        /** String star = tag.Value.ElementAt(0).Value;
-                         if(star == "Starred")
-                         {
-                             IsStarred = true;
-                         }*/
+                        if(tag.Value.Count > 0)
+                        {
+                            String star = tag.Value.ElementAt(0).Value;
+                            if(star == "Starred")
+                            {
+                                IsStarred = true;
+                            }
+                        }
                     }
 
                 }
@@ -265,8 +281,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType is CorrectnessTagType)
+                        if(tag.TagType.Name == "Correctness")
                         {
+                     
                             tag.Value.Clear();
                             tag.Value.Add(new TagOptionValue("Correct", "..\\Images\\Correct.png"));
 
@@ -275,7 +292,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 IsIncorrect = false;
                 IsUnknown = false;
-                System.Console.WriteLine("page tags:" + Page.PageTags.Count);
 
             }
            
@@ -287,7 +303,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkIncorrectCommandExecute(MouseEventArgs e)
         {
-            
+            System.Console.WriteLine("Marking INcorrect");
             IsIncorrect = !IsIncorrect;
             if(IsIncorrect == true)
             {
@@ -298,7 +314,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     System.Console.WriteLine("[age tags:" + Page.PageTags.Count);
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType is CorrectnessTagType)
+                        if(tag.TagType.Name == "Correctness")
                         {
                             tag.Value.Clear();
                             tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
@@ -316,7 +332,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkUnknownCommandExecute(MouseEventArgs e)
         {
-            
+            System.Console.WriteLine("Marking Unkown");
 
             IsUnknown = !IsUnknown;
             if(IsUnknown == true)
@@ -328,7 +344,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     System.Console.WriteLine("in unknown:" + Page.PageTags.Count);
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType is CorrectnessTagType)
+                        if(tag.TagType.Name == "Correctness")
                         {
                             tag.Value.Clear();
                             tag.Value.Add(new TagOptionValue("Unknown", ""));
@@ -351,8 +367,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType is StarredTagType)
+                        if(tag.TagType.Name =="Starred")
                         {
+                            System.Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value); 
+
                             tag.Value.Clear();
                             if(IsStarred)
                             {

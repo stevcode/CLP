@@ -9,7 +9,7 @@ using Catel.Data;
 
 namespace CLP.Models
 {
-    public interface TagType
+    public interface TagType : IDataObjectBase
     {
         String Name { get; set; }
         bool InElevatedMenu { get; set; }
