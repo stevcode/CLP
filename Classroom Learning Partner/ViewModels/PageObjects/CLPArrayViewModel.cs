@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Ink;
-using System.Windows.Media;
-using System.Windows.Threading;
-using System.Collections;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
-using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using Classroom_Learning_Partner.Views;
-using System.Windows.Input;
+using CLP.Models;
 
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -23,11 +15,12 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPArrayViewModel : ACLPPageObjectBaseViewModel
     {
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPArrayViewModel"/> class.
         /// </summary>
         public CLPArrayViewModel(CLPArray array)
-            : base()
         {
             PageObject = array;
             OpenAdornerTimeOut = 1.2;
@@ -36,109 +29,35 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
-            EnterRowsCommand = new Command(OnEnterRowsCommandExecute);;
         }
-        
+
+        #endregion //Constructor
+
+        #region Model
+
         /// <summary>
         /// Turns the grid on or off.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public Boolean IsGridOn
+        public bool IsGridOn
         {
-            get { return GetValue<Boolean>(IsGridOnProperty); }
+            get { return GetValue<bool>(IsGridOnProperty); }
             set { SetValue(IsGridOnProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsGridOn property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(Boolean));
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool));
 
         /// <summary>
         /// Turns division behavior on or off.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public Boolean IsDivisionBehaviorOn
+        public bool IsDivisionBehaviorOn
         {
-            get { return GetValue<Boolean>(IsDivisionBehaviorOnProperty); }
+            get { return GetValue<bool>(IsDivisionBehaviorOnProperty); }
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
-        /// <summary>
-        /// Register the isDivisionBehaviorOn property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(Boolean), null);
 
-
-
-        /// <summary>
-        /// Gets or sets the IsDefaultAdornerVisible value.
-        /// </summary>
-        public Boolean IsDefaultAdornerVisible
-        {
-            get { return GetValue<Boolean>(IsDefaultAdornerVisibleProperty); }
-            set { SetValue(IsDefaultAdornerVisibleProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsDefaultAdornerVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(Boolean), true);
-
-        /// <summary>
-        /// Gets or sets the IsRightAdornerVisible value.
-        /// </summary>
-        public Boolean IsRightAdornerVisible
-        {
-            get { return GetValue<Boolean>(IsRightAdornerVisibleProperty); }
-            set { SetValue(IsRightAdornerVisibleProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsRightAdornerVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(Boolean), false);
-
-        /// <summary>
-        /// Gets or sets the IsBottomAdornerVisible value.
-        /// </summary>
-        public Boolean IsBottomAdornerVisible
-        {
-            get { return GetValue<Boolean>(IsBottomAdornerVisibleProperty); }
-            set { SetValue(IsBottomAdornerVisibleProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsBottomAdornerVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsBottomAdornerVisibleProperty = RegisterProperty("IsBottomAdornerVisible", typeof(Boolean), false);
-
-        /// <summary>
-        /// Gets or sets the BottomArrowPosition value.
-        /// </summary>
-        public double BottomArrowPosition
-        {
-            get { return GetValue<double>(BottomArrowPositionProperty); }
-            set { SetValue(BottomArrowPositionProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the BottomArrowPosition property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData BottomArrowPositionProperty = RegisterProperty("BottomArrowPosition", typeof(double), 0.0);
-
-        /// <summary>
-        /// Gets or sets the RightArrowPosition value.
-        /// </summary>
-        public double RightArrowPosition
-        {
-            get { return GetValue<double>(RightArrowPositionProperty); }
-            set { SetValue(RightArrowPositionProperty, value); Console.WriteLine("RightArrowPosition: " + RightArrowPosition); }
-        }
-
-        /// <summary>
-        /// Register the RightArrowPosition property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));
 
         /// <summary>
         /// Gets or sets the Rows value
@@ -150,9 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RowsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Rows property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(int));
 
         /// <summary>
@@ -165,101 +81,59 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ColumnsProperty, value); }
         }
 
+        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
+
         /// <summary>
         /// Gets or sets the HorizontalGridDivs value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<double> HorizontalGridDivs
+        public ObservableCollection<double> HorizontalGridLines
         {
-            get { return GetValue<ObservableCollection<double>>(HorizontalGridDivsProperty); }
-            set { SetValue(HorizontalGridDivsProperty, value); }
+            get { return GetValue<ObservableCollection<double>>(HorizontalGridLinesProperty); }
+            set { SetValue(HorizontalGridLinesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HorizontalGridDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HorizontalGridDivsProperty = RegisterProperty("HorizontalGridDivs", typeof(ObservableCollection<double>));
+        public static readonly PropertyData HorizontalGridLinesProperty = RegisterProperty("HorizontalGridLines", typeof(ObservableCollection<double>));
 
         /// <summary>
         /// Gets or sets the VerticalGridDivs value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<double> VerticalGridDivs
+        public ObservableCollection<double> VerticalGridLines
         {
-            get { return GetValue<ObservableCollection<double>>(VerticalGridDivsProperty); }
-            set { SetValue(VerticalGridDivsProperty, value); }
+            get { return GetValue<ObservableCollection<double>>(VerticalGridLinesProperty); }
+            set { SetValue(VerticalGridLinesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the VerticalGridDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData VerticalGridDivsProperty = RegisterProperty("VerticalGridDivs", typeof(ObservableCollection<double>));
+        public static readonly PropertyData VerticalGridLinesProperty = RegisterProperty("VerticalGridLines", typeof(ObservableCollection<double>));
+
+        #endregion //Model
+
+        #region Bindings
 
         /// <summary>
-        /// Gets or sets the HorizontalDivs value.
+        /// Gets or sets the BottomArrowPosition value.
         /// </summary>
-        [ViewModelToModel("PageObject")]
-        public ObservableCollection<double> HorizontalDivs
+        public double BottomArrowPosition
         {
-            get { return GetValue<ObservableCollection<double>>(HorizontalDivsProperty); }
-            set { SetValue(HorizontalDivsProperty, value); }
+            get { return GetValue<double>(BottomArrowPositionProperty); }
+            set { SetValue(BottomArrowPositionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HorizontalDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HorizontalDivsProperty = RegisterProperty("HorizontalDivs", typeof(ObservableCollection<double>));
+        public static readonly PropertyData BottomArrowPositionProperty = RegisterProperty("BottomArrowPosition", typeof(double), 0.0);
 
         /// <summary>
-        /// Gets or sets the VerticalDivs value.
+        /// Gets or sets the RightArrowPosition value.
         /// </summary>
-        [ViewModelToModel("PageObject")]
-        public ObservableCollection<double> VerticalDivs
+        public double RightArrowPosition
         {
-            get { return GetValue<ObservableCollection<double>>(VerticalDivsProperty); }
-            set { SetValue(VerticalDivsProperty, value); }
+            get { return GetValue<double>(RightArrowPositionProperty); }
+            set { SetValue(RightArrowPositionProperty, value); Console.WriteLine("RightArrowPosition: " + RightArrowPosition); }
         }
 
-        /// <summary>
-        /// Register the VerticalDivs property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData VerticalDivsProperty = RegisterProperty("VerticalDivs", typeof(ObservableCollection<double>));
+        public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
 
-        /// <summary>
-        /// Gets or sets the HorizontalDivLabels value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public ObservableCollection<Tuple<double,int>> HorizontalDivLabels
-        {
-            get { return GetValue<ObservableCollection<Tuple<double,int>>>(HorizontalDivLabelsProperty); }
-            set { SetValue(HorizontalDivLabelsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the HorizontalDivLabels property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HorizontalDivLabelsProperty = RegisterProperty("HorizontalDivLabels", typeof(ObservableCollection<Tuple<double,int>>));
-
-        /// <summary>
-        /// Gets or sets the VerticalDivLabels value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public ObservableCollection<Tuple<double,int>> VerticalDivLabels
-        {
-            get { return GetValue<ObservableCollection<Tuple<double,int>>>(VerticalDivLabelsProperty); }
-            set { SetValue(VerticalDivLabelsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the VerticalDivLabels property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData VerticalDivLabelsProperty = RegisterProperty("VerticalDivLabels", typeof(ObservableCollection<Tuple<double,int>>));
-
-
-        /// <summary>
-        /// Register the Columns property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
+        #endregion //Bindings
 
         #region Commands
 
@@ -298,24 +172,20 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
-
         /// <summary>
         /// Gets the CreateHorizontalDivisionCommand command.
         /// </summary>
         public Command CreateHorizontalDivisionCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the CreateHorizontalDivisionCommand command is executed.
-        /// </summary>
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            double Position = RightArrowPosition - 5;
-            HorizontalDivs.Add(Position);
-            if(HorizontalDivLabels.Count == 0)
-            {
-                HorizontalDivLabels.Add(Tuple.Create(Position / 2, -1));
-                HorizontalDivLabels.Add(Tuple.Create((Position + Width)/ 2, -1));
-            }
+            //double Position = RightArrowPosition - 5;
+            //HorizontalDivs.Add(Position);
+            //if(HorizontalDivLabels.Count == 0)
+            //{
+            //    HorizontalDivLabels.Add(Tuple.Create(Position / 2, -1));
+            //    HorizontalDivLabels.Add(Tuple.Create((Position + Width)/ 2, -1));
+            //}
         }
 
         /// <summary>
@@ -323,164 +193,123 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command CreateVerticalDivisionCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the CreateVerticalDivisionCommand command is executed.
-        /// </summary>
         private void OnCreateVerticalDivisionCommandExecute()
         {
-             VerticalDivs.Add(BottomArrowPosition - 5);
-        }
-
-        /// <summary>
-        /// Shows Modal Window Keypad to input Parts manually.
-        /// </summary>
-        public Command EnterRowsCommand { get; private set; }
-
-        private void OnEnterRowsCommandExecute()
-        {
-            if(App.MainWindowViewModel.IsAuthoring || !(PageObject as CLPStamp).PartsAuthorGenerated)
-            {
-                KeypadWindowView keyPad = new KeypadWindowView();
-                keyPad.Owner = Application.Current.MainWindow;
-                keyPad.WindowStartupLocation = WindowStartupLocation.Manual;
-                keyPad.Top = 100;
-                keyPad.Left = 100;
-                keyPad.ShowDialog();
-                if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
-                {
-                    (PageObject as CLPArray).Rows = Int32.Parse(keyPad.NumbersEntered.Text);
-                }
-            }
+             //VerticalDivs.Add(BottomArrowPosition - 5);
         }
 
         #endregion //Commands
 
-
         #region Methods
-
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            hoverTimer.Interval = 1000;
-            if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
-            {
-                IsDefaultAdornerVisible = true;
-                IsRightAdornerVisible = false;
-                IsBottomAdornerVisible = false;
-                if(IsBackground)
-                {
-                    if(App.MainWindowViewModel.IsAuthoring)
-                    {
-                        IsMouseOverShowEnabled = true;
-                        if(!timerRunning)
-                        {
-                            timerRunning = true;
-                            hoverTimer.Start();
-                        }
-                    }
-                    else
-                    {
-                        IsMouseOverShowEnabled = false;
-                        hoverTimer.Stop();
-                        timerRunning = false;
-                        hoverTimeElapsed = false;
-                    }
-                }
-                else
-                {
-                    IsMouseOverShowEnabled = true;
-                    if(!timerRunning)
-                    {
-                        timerRunning = true;
-                        hoverTimer.Start();
-                    }
-                }
-            }
-            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
-            {
-                IsDefaultAdornerVisible = false;
-                IsRightAdornerVisible = false;
-                IsBottomAdornerVisible = true;
+            //hoverTimer.Interval = 1000;
+            //if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
+            //{
+            //    IsDefaultAdornerVisible = true;
+            //    IsRightAdornerVisible = false;
+            //    IsBottomAdornerVisible = false;
+            //    if(IsBackground)
+            //    {
+            //        if(App.MainWindowViewModel.IsAuthoring)
+            //        {
+            //            IsMouseOverShowEnabled = true;
+            //            if(!timerRunning)
+            //            {
+            //                timerRunning = true;
+            //                hoverTimer.Start();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            IsMouseOverShowEnabled = false;
+            //            hoverTimer.Stop();
+            //            timerRunning = false;
+            //            hoverTimeElapsed = false;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        IsMouseOverShowEnabled = true;
+            //        if(!timerRunning)
+            //        {
+            //            timerRunning = true;
+            //            hoverTimer.Start();
+            //        }
+            //    }
+            //}
+            //if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
+            //{
+            //    IsDefaultAdornerVisible = false;
+            //    IsRightAdornerVisible = false;
+            //    IsBottomAdornerVisible = true;
 
-            }
-            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
-            {
-                IsDefaultAdornerVisible = false;
-                IsRightAdornerVisible = true;
-                IsBottomAdornerVisible = false;
-            }
+            //}
+            //if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
+            //{
+            //    IsDefaultAdornerVisible = false;
+            //    IsRightAdornerVisible = true;
+            //    IsBottomAdornerVisible = false;
+            //}
 
-            return !hoverTimeElapsed;       
-        }
+            //return !hoverTimeElapsed;       
 
-        public double LabelToPositionConverter(Tuple<double,int> label, System.Globalization.CultureInfo culture)
-        {
-            return label.Item1;
-        }
 
-        public String LabelToValueConverter(Tuple<double, int> label, System.Globalization.CultureInfo culture)
-        {
-            if(label.Item2 == -1)
-            {
-                return "?";
-            }
-            else
-            {
-                return (label.Item2).ToString();
-            }
+
+            return false;
         }
 
         public override void EraserHitTest(string hitBoxName)
         {
-            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            {
-                //don't erase
-            }
-            else if(hitBoxName == "ArrayBodyHitBox")
-            {
-                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-                if(notebookWorkspaceViewModel != null)
-                {
-                    CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            //if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            //{
+            //    //don't erase
+            //}
+            //else if(hitBoxName == "ArrayBodyHitBox")
+            //{
+            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            //    if(notebookWorkspaceViewModel != null)
+            //    {
+            //        CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                    if(parentPage != null)
-                    {
-                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                        {
-                            pageVM.IsInkCanvasHitTestVisible = true;
-                        }
-                    }
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-                }
-            }
-            else if(hitBoxName == "HorizontalDivisionHitBox")
-            {
-                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-                if(notebookWorkspaceViewModel != null)
-                {
-                    CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            //        if(parentPage != null)
+            //        {
+            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+            //            {
+            //                pageVM.IsInkCanvasHitTestVisible = true;
+            //            }
+            //        }
+            //        CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+            //    }
+            //}
+            //else if(hitBoxName == "HorizontalDivisionHitBox")
+            //{
+            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            //    if(notebookWorkspaceViewModel != null)
+            //    {
+            //        CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-                    if(parentPage != null)
-                    {
-                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                        {
-                            pageVM.IsInkCanvasHitTestVisible = true;
-                        }
+            //        if(parentPage != null)
+            //        {
+            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
+            //            {
+            //                pageVM.IsInkCanvasHitTestVisible = true;
+            //            }
 
-                        //CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+            //            //CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
 
-                        foreach(Tuple<double, int> Label in HorizontalDivLabels)
-                        {
-                            //To Do Liz - figure out which division was erased
-                            if(Label.Item1 == YPosition)
-                            {
-                                HorizontalDivLabels.Remove(Label);
-                            }
-                        }
-                    }
-                }
-            }
-
+            //            foreach(Tuple<double, int> Label in HorizontalDivLabels)
+            //            {
+            //                //To Do Liz - figure out which division was erased
+            //                if(Label.Item1 == YPosition)
+            //                {
+            //                    HorizontalDivLabels.Remove(Label);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         #endregion //Methods
