@@ -291,18 +291,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newHeight = newWidth * ((double)Rows) / ((double)Columns);
             }
 
-            //resize grid appropriately
-            double SquareSize = newWidth / Columns;
-            HorizontalGridDivs = new ObservableCollection<double>();
-            for(int i = 1; i < Rows; i++)
-            {
-                HorizontalGridDivs.Add(i * SquareSize);
-            }
-            VerticalGridDivs = new ObservableCollection<double>();
-            for(int i = 1; i < Columns; i++)
-            {
-                VerticalGridDivs.Add(i * SquareSize);
-            }
+            (PageObject as CLPArray).CalculateGridLines();
 
             //TO DO Liz - make it so resizing preserves divisions
 

@@ -9,6 +9,77 @@ using Catel.Data;
 
 namespace CLP.Models
 {
+    public enum ArrayDivisionOrientation
+    {
+        Vertical,
+        Horizontal
+    }
+
+    [Serializable]
+    class CLPArrayDivision : DataObjectBase<CLPArrayDivision>
+    {
+
+        #region Constructors
+
+        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
+        {
+            Orientation = orientation;
+            Position = position;
+            Length = length;
+            Value = value;
+        }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Describes whether the division is horizontal or vertical.
+        /// </summary>
+        public ArrayDivisionOrientation Orientation
+        {
+            get { return GetValue<ArrayDivisionOrientation>(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
+        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof(ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
+
+        /// <summary>
+        /// The position of the top (for horizontal) or left (for vertical) of the array division.
+        /// </summary>
+        public double Position
+        {
+            get { return GetValue<double>(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
+        }
+
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0);
+
+        /// <summary>
+        /// The length of the array division.
+        /// </summary>
+        public double Length
+        {
+            get { return GetValue<double>(LengthProperty); }
+            set { SetValue(LengthProperty, value); }
+        }
+
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
+
+        /// <summary>
+        /// The value that was written by the student as the label on that side length. null if unlabelled.
+        /// </summary>
+        public int Value
+        {
+            get { return GetValue<int>(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(int), 0);
+
+        #endregion //Properties
+    }
+
     [Serializable]
     public class CLPArray : CLPPageObjectBase
     {
@@ -35,16 +106,7 @@ namespace CLP.Models
                 Width = Height * ((double)Columns) / ((double)Rows);
             }
 
-            double SquareSize = Width/columns;
-            for(int i = 1; i < rows; i++)
-            {
-                HorizontalGridLines.Add(i * SquareSize);
-            }
-            for(int i = 1; i < columns; i++)
-            {
-                VerticalGridLines.Add(i * SquareSize);
-            }
-
+            CalculateGridLines();
 
             ParentPage = page;
             CreationDate = DateTime.Now;
@@ -137,6 +199,34 @@ namespace CLP.Models
 
         public static readonly PropertyData VerticalGridLinesProperty = RegisterProperty("VerticalGridLines", typeof(ObservableCollection<double>), () => new ObservableCollection<double>());
 
+        /// <summary>
+        /// List of horizontal divisions in the array.
+        /// </summary>
+        public ObservableCollection<CLPArrayDivision> HorizontalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            set { SetValue(HorizontalDivisionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the HorizontalDivisions property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
+
+        /// <summary>
+        /// List of vertical divisions in the array.
+        /// </summary>
+        public ObservableCollection<CLPArrayDivision> VerticalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            set { SetValue(VerticalDivisionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the VerticalDivs property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
+
         #endregion //Properties
 
         #region Methods
@@ -147,6 +237,19 @@ namespace CLP.Models
             newArray.UniqueID = Guid.NewGuid().ToString();
             newArray.ParentPage = ParentPage;
             return newArray;
+        }
+
+        public void CalculateGridLines()
+        {
+            double SquareSize = Width / Columns;
+            for(int i = 1; i < Rows; i++)
+            {
+                HorizontalGridLines.Add(i * SquareSize);
+            }
+            for(int i = 1; i < Columns; i++)
+            {
+                VerticalGridLines.Add(i * SquareSize);
+            }
         }
 
         #endregion //Methods
