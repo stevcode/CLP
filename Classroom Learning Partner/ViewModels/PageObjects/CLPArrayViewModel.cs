@@ -210,7 +210,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(bool), false);
 
         /// <summary>
-        /// hether or not adorner to create a division on bottom side of array is on.
+        /// Whether or not adorner to create a division on bottom side of array is on.
         /// </summary>
         public bool IsBottomAdornerVisible
         {

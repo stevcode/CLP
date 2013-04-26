@@ -81,6 +81,8 @@ namespace CLP.Models
         // Return a CLPHistoryItem corresponding to what redoing this action would look like
         public abstract CLPHistoryItem GetRedoFingerprint();
 
+        public virtual void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) {}
+
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryItem))

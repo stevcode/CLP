@@ -1930,7 +1930,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     while(metaFuture.Count > 0)
                     {
                         CLPHistoryItem item = metaFuture.Pop();
-                        Thread.Sleep(400);
+                        if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
+                        {
+                            Thread.Sleep(50); // make intervals between move-steps less painfully slow
+                        }
+                        else
+                        {
+                            Thread.Sleep(400);
+                        }
                         Console.WriteLine("This is the action being REDONE: " + item.ItemType);
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (DispatcherOperationCallback)delegate(object arg)

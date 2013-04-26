@@ -107,25 +107,24 @@ namespace CLP.Models
             }
             if(!isExpected(item))
             {
-                Console.WriteLine("pushing a " + item.ItemType);
+                //Console.WriteLine("pushing a " + item.ItemType);
                 Past.Push(item);
                 MetaPast.Push(item);
                 Future.Clear();
             }
-            else
-            {
-                Console.WriteLine("expected " + item.ItemType);
-            }
+            //else
+            //{
+            //    Console.WriteLine("expected " + item.ItemType);
+            //}
             return true;
         }
         
         public void Undo()
         {
             if(Past.Count==0){
-                Console.WriteLine("told to undo, but nothing in stack");
+                //Console.WriteLine("told to undo, but nothing in stack");
                 return;
             }
-            Console.WriteLine("started undo");
             CLPHistoryItem lastAction = Past.Pop();
             CLPHistoryItem expected = lastAction.GetUndoFingerprint();
             if(expected != null)
@@ -148,7 +147,7 @@ namespace CLP.Models
         public void Redo(){
             if(Future.Count == 0)
             {
-               Console.WriteLine("told to redo, but nothing in stack");
+               //Console.WriteLine("told to redo, but nothing in stack");
                return;
             }
             CLPHistoryItem nextAction = (CLPHistoryItem)Future.Pop();
@@ -169,6 +168,14 @@ namespace CLP.Models
                 }
             }
         }
+
+        public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) 
+        {
+            foreach(CLPHistoryItem item in Past)
+            {
+                item.ReplaceHistoricalRecords(oldObject, newObject);
+            }
+        }   
 
         public void printMemStacks(String methodName, String pos)
         {

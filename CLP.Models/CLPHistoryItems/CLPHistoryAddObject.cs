@@ -66,6 +66,15 @@ namespace CLP.Models
             return new CLPHistoryAddObject(Page, PageObject);
         }
 
+        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
+        {
+            Console.WriteLine("editing history");
+            if(PageObject.UniqueID == oldObject.UniqueID)
+            {
+                PageObject = newObject;
+            }
+        }
+
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryAddObject) ||

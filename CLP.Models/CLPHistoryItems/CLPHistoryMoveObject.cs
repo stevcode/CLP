@@ -104,6 +104,15 @@ namespace CLP.Models
             return new CLPHistoryMoveObject(Page, PageObject, OldX, OldY, NewX, NewY);
         }
 
+
+        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
+        {
+            if(PageObject.UniqueID == oldObject.UniqueID)
+            {
+                PageObject = newObject;
+            }
+        }
+
         override public void Undo()
         {
             PageObject.XPosition = OldX;

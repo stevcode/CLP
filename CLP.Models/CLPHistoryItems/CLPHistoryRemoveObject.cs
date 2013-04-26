@@ -66,6 +66,14 @@ namespace CLP.Models
             Page.PageObjects.Remove(PageObject);
         }
 
+        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
+        {
+            if(PageObject.UniqueID == oldObject.UniqueID)
+            {
+                PageObject = newObject;
+            }
+        }
+
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryRemoveObject) ||
