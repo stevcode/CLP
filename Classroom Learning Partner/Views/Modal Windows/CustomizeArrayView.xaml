@@ -51,17 +51,17 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <TextBox x:Name="Rows" Grid.Row="0" Grid.ColumnSpan="3" Height="60" Text="" FontSize="26" />
-            <Button Grid.Column="0" Grid.Row="1" Height="30" Name="rowsButton1" Click="ValueButton_Click" Content="1" />
-            <Button Grid.Column="1" Grid.Row="1" Height="30" Name="rowsButton2" Click="ValueButton_Click" Content="2" />
-            <Button Grid.Column="2" Grid.Row="1" Height="30" Name="rowsButton3" Click="ValueButton_Click" Content="3" />
-            <Button Grid.Column="0" Grid.Row="2" Height="30" Name="rowsButton4" Click="ValueButton_Click" Content="4" />
-            <Button Grid.Column="1" Grid.Row="2" Height="30" Name="rowsButton5" Click="ValueButton_Click" Content="5" />
-            <Button Grid.Column="2" Grid.Row="2" Height="30" Name="rowsButton6" Click="ValueButton_Click" Content="6" />
-            <Button Grid.Column="0" Grid.Row="3" Height="30" Name="rowsButton7" Click="ValueButton_Click" Content="7" />
-            <Button Grid.Column="1" Grid.Row="3" Height="30" Name="rowsButton8" Click="ValueButton_Click" Content="8" />
-            <Button Grid.Column="2" Grid.Row="3" Height="30" Name="rowsButton9" Click="ValueButton_Click" Content="9" />
-            <Button Grid.Column="0" Grid.Row="4" Height="30" Name="rowsButton0" Click="ValueButton_Click" Content="0" />
-            <Button Grid.Column="2" Grid.Row="4" Height="30" Name="rowsButtonBackspace" Click="BackspaceButton_Click" Content="Backspace" />      
+            <Button Grid.Column="0" Grid.Row="1" Name="rowsButton1" Click="ValueButton_Click" Content="1" />
+            <Button Grid.Column="1" Grid.Row="1" Name="rowsButton2" Click="ValueButton_Click" Content="2" />
+            <Button Grid.Column="2" Grid.Row="1" Name="rowsButton3" Click="ValueButton_Click" Content="3" />
+            <Button Grid.Column="0" Grid.Row="2" Name="rowsButton4" Click="ValueButton_Click" Content="4" />
+            <Button Grid.Column="1" Grid.Row="2" Name="rowsButton5" Click="ValueButton_Click" Content="5" />
+            <Button Grid.Column="2" Grid.Row="2" Name="rowsButton6" Click="ValueButton_Click" Content="6" />
+            <Button Grid.Column="0" Grid.Row="3" Name="rowsButton7" Click="ValueButton_Click" Content="7" />
+            <Button Grid.Column="1" Grid.Row="3" Name="rowsButton8" Click="ValueButton_Click" Content="8" />
+            <Button Grid.Column="2" Grid.Row="3" Name="rowsButton9" Click="ValueButton_Click" Content="9" />
+            <Button Grid.Column="0" Grid.Row="4" Name="rowsButton0" Click="ValueButton_Click" Content="0" />
+            <Button Grid.Column="2" Grid.Row="4" Name="rowsButtonBackspace" Click="BackspaceButton_Click" Content="Backspace" />      
         </Grid>
         <Label Grid.RowSpan="3" Grid.Column="2" Width="10" />
         <Grid Grid.Row="1" Grid.Column="2" Height="Auto">
@@ -87,7 +87,7 @@
             <Button Grid.Column="0" Grid.Row="3" Name="colButton7" Click="ValueButton_Click" Content="7" />
             <Button Grid.Column="1" Grid.Row="3" Name="colButton8" Click="ValueButton_Click" Content="8" />
             <Button Grid.Column="2" Grid.Row="3" Name="colButton9" Click="ValueButton_Click" Content="9" />
-            <Button Grid.Column="0" Grid.Row="4" Name="colButton0" Click="ValueButton_Click" Content="0" />           
+            <Button Grid.Column="0" Grid.Row="4" Name="colButton0" Click="ValueButton_Click" Content="0" />
             <Button Grid.Column="2" Grid.Row="4" Name="colButtonBackspace" Click="BackspaceButton_Click" Content="Backspace" />
         </Grid>
         <Button Grid.Row="2" Grid.ColumnSpan="3" Height="30" Width="100" Name="buttonEnter" Click="EnterButton_Click" Content="Enter" />

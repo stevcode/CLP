@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -367,6 +368,18 @@ namespace CLP.Models
 
             ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
             return pageObjectsOver;
+        }
+
+        //aspectRatio is Width/Height
+        public virtual void EnforceAspectRatio(double aspectRatio)
+        {
+            Width = Height * aspectRatio;
+
+            if(Width + XPosition > ParentPage.PageWidth)
+            {
+                Width = ParentPage.PageWidth - XPosition;
+                Height = Width / aspectRatio;
+            }
         }
 
         #endregion

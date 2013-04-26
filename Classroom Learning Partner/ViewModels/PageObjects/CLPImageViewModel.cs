@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -15,43 +14,33 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
         public CLPImageViewModel(CLPImage image)
-            : base()
         {
             PageObject = image;
-            //CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
             try
             {
-                List<byte> ByteSource = image.ParentPage.ImagePool[image.ImageID];
-                LoadImageFromByteSource(ByteSource.ToArray());
+                var byteSource = image.ParentPage.ImagePool[image.ImageID];
+                LoadImageFromByteSource(byteSource.ToArray());
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
-                Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
+                Logger.Instance.WriteToLog(
+                    "ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
             }
 
             double aspectRatio = 1.0;
-            if(SourceImage.Width > 0)
+            if (SourceImage.Width > 0)
             {
-                aspectRatio = SourceImage.Height/SourceImage.Width;
+                aspectRatio = SourceImage.Width/SourceImage.Height;
             }
-            double newHeight, newWidth;
-            if(PageObject.Height > PageObject.Width)
-            {
-                newHeight = PageObject.Height;
-                newWidth = newHeight / aspectRatio;
-            }
-            else
-            {
-                newWidth = PageObject.Width;
-                newHeight = aspectRatio * newWidth;
-            }
-
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            PageObject.EnforceAspectRatio(aspectRatio);
 
             ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
         }
 
-        public override string Title { get { return "ImageVM"; } }
+        public override string Title
+        {
+            get { return "ImageVM"; }
+        }
 
         #region Binding
 
@@ -64,7 +53,8 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SourceImageProperty, value); }
         }
 
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource), null);
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource),
+            null);
 
         #endregion //Binding
 
@@ -97,45 +87,37 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnResizeImageCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            CLPPage parentPage =
+                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(
+                    PageObject.ParentPageID);
+
+            PageObject.Height = PageObject.Height + e.VerticalChange;
+            PageObject.Width = PageObject.Width + e.HorizontalChange;
+            if(PageObject.Height < 10)
+            {
+                PageObject.Height = 10;
+            }
+            if(PageObject.Width < 10)
+            {
+                PageObject.Width = 10;
+            }
+            if(PageObject.Height + PageObject.YPosition > parentPage.PageHeight)
+            {
+                PageObject.Height = PageObject.Height;
+            }
+            if(PageObject.Width + PageObject.XPosition > parentPage.PageWidth)
+            {
+                PageObject.Width = PageObject.Width;
+            }
 
             double aspectRatio = 1.0;
             if(SourceImage.Width > 0)
             {
-                aspectRatio = SourceImage.Height/SourceImage.Width;
+                aspectRatio = SourceImage.Width / SourceImage.Height;
             }
-            double newHeight, newWidth;
-            if(e.VerticalChange > e.HorizontalChange)
-            {
-                newHeight = PageObject.Height + e.VerticalChange;
-                if(newHeight < 10)
-                {
-                    newHeight = 10;
-                }
-                newWidth = newHeight / aspectRatio;
-            }
-            else
-            {
-                newWidth = PageObject.Width + e.HorizontalChange;
-                if(newWidth < 10)
-                {
-                    newWidth = 10;
-                }
-                newHeight = aspectRatio * newWidth;
-            }
+            PageObject.EnforceAspectRatio(aspectRatio);
 
-            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
-            {
-                newHeight = PageObject.Height;
-                newWidth = newHeight / aspectRatio;
-            }
-            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
-            {
-                newWidth = PageObject.Width;
-                newHeight = aspectRatio * newWidth;
-            }
-
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }
-            }
-        }
+    }
+}

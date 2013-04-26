@@ -83,6 +83,21 @@ namespace CLP.Models
     [Serializable]
     public class CLPArray : CLPPageObjectBase
     {
+        public static double LargeLabelLength
+        {
+            get
+            {
+                return 50;
+            }
+        }
+
+        public static double SmallLabelLength
+        {
+            get
+            {
+                return 40;
+            }
+        }
 
         #region Constructors
 
@@ -92,29 +107,18 @@ namespace CLP.Models
             Rows = rows;
             Columns = columns;
 
-            double Ratio = ((double)rows) / ((double)columns);
-
-            XPosition = 10;
-            YPosition = 10;
-            
-            Height = 700*Ratio;
-            Width = 700;
-
-            if(Height + YPosition > page.PageHeight - 150)
-            {
-                Height = page.PageHeight - YPosition - 150;
-                Width = Height * ((double)Columns) / ((double)Rows);
-            }
-
-            CalculateGridLines();
-
             ParentPage = page;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             CanAcceptStrokes = true;
 
+            ArrayHeight = 500;
+            ArrayWidth = 500;
+
+            EnforceAspectRatio(columns * 1.0 / rows);
             ApplyDistinctPosition(this);
 
+            CalculateGridLines();
         }
 
         /// <summary>
@@ -155,6 +159,28 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
+
+        /// <summary>
+        /// The Height of the Array.
+        /// </summary>
+        public double ArrayHeight
+        {
+            get { return GetValue<double>(ArrayHeightProperty); }
+            set { SetValue(ArrayHeightProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayHeightProperty = RegisterProperty("ArrayHeight", typeof(double), 0.0);
+
+        /// <summary>
+        /// The Width of the Array.
+        /// </summary>
+        public double ArrayWidth
+        {
+            get { return GetValue<double>(ArrayWidthProperty); }
+            set { SetValue(ArrayWidthProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayWidthProperty = RegisterProperty("ArrayWidth", typeof(double), 0.0);
 
         /// <summary>
         /// The number of rows in the array.
@@ -240,16 +266,43 @@ namespace CLP.Models
             return newArray;
         }
 
+        //aspectRatio is Width/Height
+        public override void EnforceAspectRatio(double aspectRatio)
+        {
+            ArrayWidth = ArrayHeight * aspectRatio;
+
+            if(ArrayWidth + LargeLabelLength + 2 * SmallLabelLength + XPosition > ParentPage.PageWidth)
+            {
+                ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength - 2 * SmallLabelLength;
+                ArrayHeight = ArrayWidth / aspectRatio;
+            }
+
+            if (ArrayHeight + LargeLabelLength + 2 * SmallLabelLength + YPosition > ParentPage.PageHeight)
+            {
+                ArrayHeight = ParentPage.PageHeight - YPosition - LargeLabelLength - 2 * SmallLabelLength;
+                ArrayWidth = ArrayHeight * aspectRatio;
+            }
+
+            Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
+            Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
+        }
+
+        public void RefreshArrayDimensions()
+        {
+            ArrayHeight = Height - LargeLabelLength - 2 * SmallLabelLength;
+            ArrayWidth = Width - LargeLabelLength - 2 * SmallLabelLength;
+        }
+
         public void CalculateGridLines()
         {
-            double SquareSize = Width / Columns;
+            double squareSize = ArrayWidth / Columns;
             for(int i = 1; i < Rows; i++)
             {
-                HorizontalGridLines.Add(i * SquareSize);
+                HorizontalGridLines.Add(i * squareSize);
             }
             for(int i = 1; i < Columns; i++)
             {
-                VerticalGridLines.Add(i * SquareSize);
+                VerticalGridLines.Add(i * squareSize);
             }
         }
 

@@ -561,5 +561,7 @@ namespace CLP.Models
         }
 
         #endregion //Methods
+
+        public void EnforceAspectRatio(double aspectRatio) {}
     }
 }

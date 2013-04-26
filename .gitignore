@@ -28,3 +28,4 @@ _ReSharper*/
 #ignore backup files from merge tools
 *.orig
 *.bak
+*.DotSettings

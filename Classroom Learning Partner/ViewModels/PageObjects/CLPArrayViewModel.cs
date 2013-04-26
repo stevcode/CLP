@@ -84,6 +84,30 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double ArrayHeight
+        {
+            get { return GetValue<double>(ArrayHeightProperty); }
+            set { SetValue(ArrayHeightProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayHeightProperty = RegisterProperty("ArrayHeight", typeof(double));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public double ArrayWidth
+        {
+            get { return GetValue<double>(ArrayWidthProperty); }
+            set { SetValue(ArrayWidthProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayWidthProperty = RegisterProperty("ArrayWidth", typeof(double));
+
+        /// <summary>
         /// Gets or sets the HorizontalGridLines value.
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -262,7 +286,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPArrayDivision bottomDiv;
             if(divBelow == null)
             {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, Height - position, 0);
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, ArrayHeight - position, 0);
             }
             else
             {
@@ -299,7 +323,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPArrayDivision bottomDiv;
             if(divBelow == null)
             {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, Width - position, 0);
+                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0);
             }
             else
             {

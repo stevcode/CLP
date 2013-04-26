@@ -1,11 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Runtime.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
-using System.Collections.Generic;
 
 namespace CLP.Models
 {
@@ -60,7 +55,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the ImageID property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ImageIDProperty = RegisterProperty("ImageID", typeof(string), null);
+        public static readonly PropertyData ImageIDProperty = RegisterProperty("ImageID", typeof(string));
 
         #endregion
 
@@ -73,7 +68,7 @@ namespace CLP.Models
 
         public override ICLPPageObject Duplicate()
         {
-            CLPImage newImage = this.Clone() as CLPImage;
+            var newImage = Clone() as CLPImage;
             newImage.UniqueID = Guid.NewGuid().ToString();
             newImage.ParentPage = ParentPage;
 
