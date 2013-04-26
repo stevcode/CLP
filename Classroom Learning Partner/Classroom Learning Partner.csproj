@@ -206,6 +206,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
@@ -251,6 +252,12 @@
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HoverBoxView.xaml.cs">
+      <DependentUpon>HoverBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
+      <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
       <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
@@ -361,6 +368,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HoverBoxView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -378,6 +389,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\PageTopicWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -618,6 +633,9 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\Unstarred.png" />
+    <Resource Include="Images\Starred.png" />
+    <Resource Include="Images\Unknown.png" />
     <Resource Include="Images\DisplayGroupSubmissionsButton.png" />
     <Resource Include="Images\GroupSubmit-icon32.png" />
     <Resource Include="Images\MakePageLonger.png" />

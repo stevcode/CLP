@@ -41,7 +41,6 @@
                         Height="40"
                         Canvas.Left="-50"
                         Canvas.Top="-25"
-                        Click="closeButton_Click"
                         Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -121,7 +120,7 @@
                               />
 
                     </Grid>
-                    <Thumb DragDelta="MoveThumb_DragDelta">
+                    <Thumb>
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Rectangle

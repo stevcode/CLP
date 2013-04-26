@@ -73,6 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnLogInCommandExecute(string userName)
         {
             App.Network.CurrentUser.FullName = userName.Split(new char[] { ',' })[0];
+            App.Network.CurrentUser.GroupName = userName.Split(new char[] { ',' })[1];
             App.Network.CurrentGroup.GroupName = userName.Split(new char[] { ',' })[1];
 
             new Thread(() =>

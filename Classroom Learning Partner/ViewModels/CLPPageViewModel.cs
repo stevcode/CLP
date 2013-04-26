@@ -7,7 +7,6 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -48,14 +47,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
         public CLPPageViewModel(CLPPage page)
-            : base()
         {
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             Page = page;
 
-            InkStrokes.StrokesChanged += new StrokeCollectionChangedEventHandler(InkStrokes_StrokesChanged);
-            Page.PageObjects.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(PageObjects_CollectionChanged);
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            Page.PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -209,6 +207,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Signifies the viewModel's view is a CLPPagePreviewView.
+        /// </summary>
+        public bool IsPagePreview
+        {
+            get { return GetValue<bool>(IsPagePreviewProperty); }
+            set { SetValue(IsPagePreviewProperty, value); }
+        }
+
+        public static readonly PropertyData IsPagePreviewProperty = RegisterProperty("IsPagePreview", typeof(bool), true);
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
@@ -298,7 +307,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool IsMouseDown = false;
+        private bool _isMouseDown;
         public Canvas TopCanvas = null;
 
         public T GetVisualChild<T>(Visual parent) where T : Visual
@@ -307,12 +316,8 @@ namespace Classroom_Learning_Partner.ViewModels
             int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
             for(int i = 0; i < numVisuals; i++)
             {
-                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
-                child = v as T;
-                if(child == null)
-                {
-                    child = GetVisualChild<T>(v);
-                }
+                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T ?? GetVisualChild<T>(v);
                 if(child != null)
                     break;
             }
@@ -321,21 +326,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public T GetVisualParent<T>(Visual child) where T : Visual
         {
-            T parent = default(T);
-
-            Visual p = (Visual)VisualTreeHelper.GetParent(child);
-            parent = p as T;
-            if(parent == null)
-            {
-                parent = GetVisualParent<T>(p);
-            }
+            var p = (Visual)VisualTreeHelper.GetParent(child);
+            var parent = p as T ?? GetVisualParent<T>(p);
 
             return parent;
         }
 
         public T FindNamedChild<T>(FrameworkElement obj, string name)
         {
-            DependencyObject dep = obj as DependencyObject;
+            var dep = obj as DependencyObject;
             T ret = default(T);
 
             if(dep != null)
@@ -343,10 +342,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 int childcount = VisualTreeHelper.GetChildrenCount(dep);
                 for(int i = 0; i < childcount; i++)
                 {
-                    DependencyObject childDep = VisualTreeHelper.GetChild(dep, i);
-                    FrameworkElement child = childDep as FrameworkElement;
+                    var childDep = VisualTreeHelper.GetChild(dep, i);
+                    var child = childDep as FrameworkElement;
 
-                    if(child.GetType() == typeof(T) && child.Name == name)
+                    if(child != null && (child.GetType() == typeof(T) && child.Name == name))
                     {
                         ret = (T)Convert.ChangeType(child, typeof(T));
                         break;
@@ -365,24 +364,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseMoveCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the MouseMoveCommand command is executed.
-        /// </summary>
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            if(TopCanvas != null)
+            if(TopCanvas == null || IsPagePreview)
             {
-                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-                if(!IsMouseDown)
-                {
-                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(HitResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-                }
+                return;
+            }
+            var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+            if(!_isMouseDown)
+            {
+                VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+            }
 
-                if((IsMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (IsMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
-                {
-                    VisualTreeHelper.HitTest(pageObjectCanvas, new HitTestFilterCallback(HitFilter), new HitTestResultCallback(EraseResult), new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-                }
-                
+            if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
+            {
+                VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, EraseResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
             }
         }
 
@@ -393,19 +389,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            IsMouseDown = true;
+            _isMouseDown = true;
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
             {
-                Canvas pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+                var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
                 Point pt = e.GetPosition(pageObjectCanvas);
-                CLPSnapTileContainer tile = new CLPSnapTileContainer(pt, Page);
+                var tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
             }
             else if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.EditObjectProperties) {
-                CLPShape dummyShape = new CLPShape(CLPShape.CLPShapeType.Rectangle, Page);
-                dummyShape.Height = 1;
-                dummyShape.Width = 1;
-                System.Windows.Point mousePosition = e.GetPosition(TopCanvas);
+                var dummyShape = new CLPShape(CLPShape.CLPShapeType.Rectangle, Page) {Height = 1, Width = 1};
+                Point mousePosition = e.GetPosition(TopCanvas);
                 dummyShape.XPosition = mousePosition.X;
                 dummyShape.YPosition = mousePosition.Y;
                 ICLPPageObject selectedObject = null;
@@ -414,46 +408,51 @@ namespace Classroom_Learning_Partner.ViewModels
                         selectedObject = po;
                     }
                 }
-                if (selectedObject != null)
+                if(selectedObject == null)
                 {
-                    UpdatePropertiesWindowView properties = new UpdatePropertiesWindowView();
-                    properties.Owner = Application.Current.MainWindow;
-                    properties.WindowStartupLocation = WindowStartupLocation.Manual;
-                    properties.Top = 100;
-                    properties.Left = 100;
-                    properties.UniqueIdTextBlock.Text = selectedObject.UniqueID;
-                    properties.ParentIdTextBox.Text = selectedObject.ParentID;
-                    properties.PartsTextBox.Text = selectedObject.Parts.ToString();
-                    properties.WidthTextBox.Text = selectedObject.Width.ToString();
-                    properties.HeightTextBox.Text = selectedObject.Height.ToString();
-                    properties.XPositionTextBox.Text = selectedObject.XPosition.ToString();
-                    properties.YPositionTextBox.Text = selectedObject.YPosition.ToString();
-                    properties.ShowDialog();
-                    if (properties.DialogResult == true)
-                    {
-                        int partNum;
-                        bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
-                        selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
-                                partNum : selectedObject.Parts;
-                        selectedObject.ParentID = properties.ParentIdTextBox.Text;
-                        int height;
-                        isNum = Int32.TryParse(properties.HeightTextBox.Text, out height);
-                        selectedObject.Height = (properties.HeightTextBox.Text.Length > 0 && isNum &&
-                            height <= Page.PageHeight) ? height : selectedObject.Height;
-                        int width;
-                        isNum = Int32.TryParse(properties.WidthTextBox.Text, out width);
-                        selectedObject.Width = (properties.WidthTextBox.Text.Length > 0 &&
-                            isNum && width <= Page.PageWidth) ? width : selectedObject.Width;
-                        int x;
-                        isNum = Int32.TryParse(properties.XPositionTextBox.Text, out x);
-                        selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
-                            x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
-                        int y;
-                        isNum = Int32.TryParse(properties.YPositionTextBox.Text, out y);
-                        selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
-                            && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
-                    }
+                    return;
                 }
+                var properties = new UpdatePropertiesWindowView
+                    {
+                        Owner = Application.Current.MainWindow,
+                        WindowStartupLocation = WindowStartupLocation.Manual,
+                        Top = 100,
+                        Left = 100,
+                        UniqueIdTextBlock = {Text = selectedObject.UniqueID},
+                        ParentIdTextBox = {Text = selectedObject.ParentID},
+                        PartsTextBox = {Text = selectedObject.Parts.ToString()},
+                        WidthTextBox = {Text = selectedObject.Width.ToString()},
+                        HeightTextBox = {Text = selectedObject.Height.ToString()},
+                        XPositionTextBox = {Text = selectedObject.XPosition.ToString()},
+                        YPositionTextBox = {Text = selectedObject.YPosition.ToString()}
+                    };
+                properties.ShowDialog();
+                if(properties.DialogResult != true)
+                {
+                    return;
+                }
+
+                int partNum;
+                bool isNum = Int32.TryParse(properties.PartsTextBox.Text, out partNum);
+                selectedObject.Parts = (properties.PartsTextBox.Text.Length > 0 && isNum) ?
+                                           partNum : selectedObject.Parts;
+                selectedObject.ParentID = properties.ParentIdTextBox.Text;
+                int height;
+                isNum = Int32.TryParse(properties.HeightTextBox.Text, out height);
+                selectedObject.Height = (properties.HeightTextBox.Text.Length > 0 && isNum &&
+                                         height <= Page.PageHeight) ? height : selectedObject.Height;
+                int width;
+                isNum = Int32.TryParse(properties.WidthTextBox.Text, out width);
+                selectedObject.Width = (properties.WidthTextBox.Text.Length > 0 &&
+                                        isNum && width <= Page.PageWidth) ? width : selectedObject.Width;
+                int x;
+                isNum = Int32.TryParse(properties.XPositionTextBox.Text, out x);
+                selectedObject.XPosition = (properties.XPositionTextBox.Text.Length > 0 && isNum &&
+                                            x + width <= Page.PageWidth) ? x : selectedObject.XPosition;
+                int y;
+                isNum = Int32.TryParse(properties.YPositionTextBox.Text, out y);
+                selectedObject.YPosition = (properties.YPositionTextBox.Text.Length > 0 && isNum
+                                            && y + height <= Page.PageHeight) ? y : selectedObject.YPosition;
             }
         }
 
@@ -464,268 +463,250 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
-            IsMouseDown = false;
+            _isMouseDown = false;
         }
 
         #endregion //Commands
 
         #region Methods
 
-        Type lastType = null;
+        Type _lastType;
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)
         {
-            if(lastType == typeof(Canvas) && o is Canvas)
+            if(_lastType == typeof(Canvas) && o is Canvas)
             {
                 IsInkCanvasHitTestVisible = true;
             }
             else
             {
-                //Console.WriteLine(o.GetType().ToString());
                 if(o is Shape)
                 {
                     if((o as Shape).Name.Contains("HitBox"))
                     {
-                        lastType = o.GetType();
+                        _lastType = o.GetType();
                         return HitTestFilterBehavior.Continue;
                     }
                 }
             }
 
-            lastType = o.GetType();
+            _lastType = o.GetType();
             return HitTestFilterBehavior.ContinueSkipSelf;
         }
 
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
-            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
-            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+            var pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            var pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
 
             //TODO: Steve - First Parameter, Tag, not needed
-            if (!pageObjectViewModel.IsInternalPageObject)
+            if(pageObjectViewModel == null || pageObjectViewModel.IsInternalPageObject)
             {
-                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility((result.VisualHit as Shape).Tag as string, (result.VisualHit as Shape).Name, IsInkCanvasHitTestVisible, IsMouseDown, false, false);
-                return HitTestResultBehavior.Stop;
+                return HitTestResultBehavior.Continue;
             }
-            
-            return HitTestResultBehavior.Continue;
+
+            var shape = result.VisualHit as Shape;
+            if(shape != null)
+            {
+                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility(shape.Tag as string, shape.Name, IsInkCanvasHitTestVisible, _isMouseDown, false, false);
+            }
+            return HitTestResultBehavior.Stop;
         }
 
         private HitTestResultBehavior EraseResult(HitTestResult result)
         {
-            Catel.Windows.Controls.UserControl pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
-            ACLPPageObjectBaseViewModel pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
+            var pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
+            var pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
 
-            if(!pageObjectViewModel.IsInternalPageObject)
+            if(pageObjectViewModel == null || pageObjectViewModel.IsInternalPageObject)
             {
-                pageObjectViewModel.EraserHitTest((result.VisualHit as Shape).Name);
-                return HitTestResultBehavior.Stop;
+                return HitTestResultBehavior.Continue;
             }
-
-            return HitTestResultBehavior.Continue;
+            var shape = result.VisualHit as Shape;
+            if(shape != null)
+            {
+                pageObjectViewModel.EraserHitTest(shape.Name);
+            }
+            return HitTestResultBehavior.Stop;
         }
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (IsPagePreview) return;
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - Catel? causing this to be called twice
             //Task.Factory.StartNew( () =>
             //    {
-                    try
+            try
+            {
+                foreach (ICLPPageObject pageObject in PageObjects)
+                {
+                    if (pageObject.CanAcceptPageObjects)
                     {
-                        foreach(ICLPPageObject pageObject in PageObjects)
+                        var removedPageObjects = new ObservableCollection<ICLPPageObject>();
+                        if (e.OldItems != null)
                         {
-                            if(pageObject.CanAcceptPageObjects)
+                            foreach (ICLPPageObject removedPageObject in e.OldItems)
                             {
-                                ObservableCollection<ICLPPageObject> removedPageObjects = new ObservableCollection<ICLPPageObject>();
-                                if(e.OldItems != null)
-                                {
-                                    foreach (ICLPPageObject removedPageObject in e.OldItems) {
-                                        removedPageObjects.Add(removedPageObject);
-                                    }
-                                }
-
-                                ObservableCollection<ICLPPageObject> addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                                if(e.NewItems != null)
-                                {
-                                    foreach(ICLPPageObject addedPageObject in e.NewItems)
-                                    {
-                                        if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
-                                            && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
-                                            && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
-                                            && pageObject.PageObjectIsOver(addedPageObject, .50))
-                                        {
-                                            addedPageObjects.Add(addedPageObject);
-                                        }
-                                    }
-                                }
-
-                                pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
+                                removedPageObjects.Add(removedPageObject);
                             }
                         }
-                    }
-                    catch(System.Exception ex)
-                    {
-                        Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
-                    }
-                //});
 
+                        var addedPageObjects = new ObservableCollection<ICLPPageObject>();
+                        if (e.NewItems != null)
+                        {
+                            foreach (ICLPPageObject addedPageObject in e.NewItems)
+                            {
+                                if (!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                    && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                    && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                    && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                {
+                                    addedPageObjects.Add(addedPageObject);
+                                }
+                            }
+                        }
+
+                        pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+            }
+            //});
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            if(!Page.IsInkAutoAdding)
+            if(Page.IsInkAutoAdding || IsPagePreview)
             {
-                App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-                App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
-
-
-                //TODO: Steve - do this in thread pool instead, strokes aren't arriving on projector in correct order.
-                Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            List<string> removedStrokeIDs = new List<string>();
-                            foreach(Stroke stroke in e.Removed)
-                            {
-                                removedStrokeIDs.Add(stroke.GetStrokeUniqueID());
-                            }
-
-                            foreach(Stroke stroke in e.Added)
-                            {
-                                if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
-                                {
-                                    string newUniqueID = Guid.NewGuid().ToString();
-                                    stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                                    //TODO: Steve - Add Property for time created if necessary.
-                                    //TODO: Steve - Add Property for Mutability.
-                                    //TODO: Steve - Add Property for UserName of person who created the stroke.
-                                }
-                                //Ensures truly uniqueIDs
-                                foreach(string id in removedStrokeIDs)
-                                {
-                                    if(id == stroke.GetStrokeUniqueID())
-                                    {
-                                        stroke.RemovePropertyData(CLPPage.StrokeIDKey);
-
-                                        string newUniqueID = Guid.NewGuid().ToString();
-                                        stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                                    }
-                                }
-                            }
-
-                            foreach(ICLPPageObject pageObject in PageObjects)
-                            {
-                                if(pageObject.CanAcceptStrokes)
-                                {
-                                    Rect rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
-
-                                    var addedStrokesOverObject =
-                                        from stroke in e.Added
-                                        where stroke.HitTest(rect, 3)
-                                        select stroke;
-
-                                    var removedStrokesOverObject =
-                                        from stroke in e.Removed
-                                        where stroke.HitTest(rect, 3)
-                                        select stroke;
-
-                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                        (DispatcherOperationCallback)delegate(object arg)
-                                        {
-                                            pageObject.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
-
-                                            return null;
-                                        }, null);
-                                }
-                            }
-
-                            if(App.CurrentUserMode == App.UserMode.Instructor)
-                            {
-                                List<List<byte>> add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
-                                List<List<byte>> remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
-
-                                string pageID;
-
-                                if(Page.IsSubmission)
-                                {
-                                    pageID = Page.SubmissionID;
-                                }
-                                else
-                                {
-                                    pageID = Page.UniqueID;
-                                }
-
-                                if(App.Network.ProjectorProxy != null)
-                                {
-                                    try
-                                    {
-                                        App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                    }
-                                    catch(System.Exception)
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-                                    //TODO: Steve - add pages to a queue and send when a projector is found
-                                    Console.WriteLine("Projector NOT Available");
-                                }
-
-                                if(App.MainWindowViewModel.Ribbon.BroadcastInkToStudents && !Page.IsSubmission)
-                                {
-                                    if(App.Network.ClassList.Count > 0)
-                                    {
-                                        foreach(Person student in App.Network.ClassList)
-                                        {
-                                            try
-                                            {
-                                                NetTcpBinding binding = new NetTcpBinding();
-                                                binding.Security.Mode = SecurityMode.None;
-                                                IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                                StudentProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                                (StudentProxy as ICommunicationObject).Close();
-                                            }
-                                            catch(System.Exception ex)
-                                            {
-                                                Console.WriteLine(ex.Message);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Logger.Instance.WriteToLog("No Students Found");
-                                    }
-                                }
-                            }
-                        }
-                        catch(System.Exception ex)
-                        {
-                            Console.WriteLine("InkStrokeCollectionChanged Exception: " + ex.Message);
-                        }
-                    });
+                return;
             }
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
+
+            //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
+        //    Task.Factory.StartNew(() =>
+          //      {
+                    try
+                    {
+                        var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+
+                        foreach(var stroke in e.Added)
+                        {
+                            //TODO: Steve - Add Property for time created if necessary.
+                            //TODO: Steve - Add Property for Mutability.
+                            //TODO: Steve - Add Property for UserName of person who created the stroke.
+                            if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                            {
+                                var newUniqueID = Guid.NewGuid().ToString();
+                                stroke.SetStrokeUniqueID(newUniqueID);
+                            }
+                            //Ensures truly uniqueIDs
+                            foreach(string id in removedStrokeIDs)
+                            {
+                                if(id != stroke.GetStrokeUniqueID())
+                                {
+                                    continue;
+                                }
+                                var newUniqueID = Guid.NewGuid().ToString();
+                                stroke.SetStrokeUniqueID(newUniqueID);
+                            }
+                        }
+
+
+                        foreach(ICLPPageObject pageObject in PageObjects)
+                        {
+                            if(!pageObject.CanAcceptStrokes)
+                            {
+                                continue;
+                            }
+
+                            var rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
+
+                            var addedStrokesOverObject =
+                                from stroke in e.Added
+                                where stroke.HitTest(rect, 3)
+                                select stroke;
+
+                            var removedStrokesOverObject =
+                                from stroke in e.Removed
+                                where stroke.HitTest(rect, 3)
+                                select stroke;
+
+                            ICLPPageObject o = pageObject;
+                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                                                       (DispatcherOperationCallback)delegate
+                                                                           {
+                                                                               o.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+
+                                                                               return null;
+                                                                           }, null);
+                        }
+
+                        if(App.CurrentUserMode != App.UserMode.Instructor)
+                        {
+                            return;
+                        }
+                        var add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
+                        var remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
+
+                        var pageID = Page.IsSubmission ? Page.SubmissionID : Page.UniqueID;
+
+                        if(App.Network.ProjectorProxy != null)
+                        {
+                            try
+                            {
+                                App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
+                            }
+                            catch(Exception)
+                            {
+                            }
+                        }
+                        //TODO: Steve - Add pages to a queue and send when a projector is found in Else statement
+
+                        if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.IsSubmission || !App.Network.ClassList.Any())
+                        {
+                            return;
+                        }
+
+                        foreach(var student in App.Network.ClassList)
+                        {
+                            try
+                            {
+                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                                studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                (studentProxy as ICommunicationObject).Close();
+                            }
+                            catch(Exception)
+                            {
+                            }
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                    }
+               // });
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if (propertyName == "EditingMode")
+            if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
             }
 
-            if(propertyName == "PenSize")
+            if(propertyName == "PenSize" && viewModel is RibbonViewModel)
             {
-                if(viewModel is RibbonViewModel)
-                {
-                    double x = (viewModel as RibbonViewModel).PenSize;
-                    EraserShape = new RectangleStylusShape(x, x);
-                    DefaultDA.Height = x;
-                    DefaultDA.Width = x;
-                }
+                double x = (viewModel as RibbonViewModel).PenSize;
+                EraserShape = new RectangleStylusShape(x, x);
+                DefaultDA.Height = x;
+                DefaultDA.Width = x;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
@@ -733,225 +714,213 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ICLPPageObject GetPageObjectByID(string uniqueID)
         {
-            if (PageHistory.TrashedPageObjects.ContainsKey(uniqueID))
-            {
-                return PageHistory.TrashedPageObjects[uniqueID];
-            }
-            foreach (var pageObject in PageObjects)
-            {
-                if (pageObject.UniqueID == uniqueID)
-                {
-                    return pageObject;
-                }
-            }
-
-            return null;
+            return PageHistory.TrashedPageObjects.ContainsKey(uniqueID) ? PageHistory.TrashedPageObjects[uniqueID] : PageObjects.FirstOrDefault(pageObject => pageObject.UniqueID == uniqueID);
         }
 
         /************** UNDO **************/
-        public void Undo()
-        {
-            PageHistory.IgnoreHistory = true;
-            if (PageHistory.HistoryItems.Count > 0)
-            {
-                CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
-                PageHistory.HistoryItems.Remove(item);
-                ICLPPageObject pageObject = null;
-                if (item.ObjectID != null)
-                {
-                    pageObject = GetPageObjectByID(item.ObjectID);
-                    //if (pageObject.PageID != Page.UniqueID)
-                    //{
-                    //    PageHistory.UndoneHistoryItems.Add(item);
-                    //    PageHistory.IgnoreHistory = false;
-                    //    return;
-                    //}
-                }
-                switch (item.ItemType)
-                {
-                    case HistoryItemType.AddPageObject:
-                        if (pageObject != null)
-                        {
-                            if (!PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-                            {
-                                PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
-                            }
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
-                        }
-                        break;
-                    case HistoryItemType.RemovePageObject:
-                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-                        break;
-                    case HistoryItemType.MovePageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
-                        }
-                        break;
-                    case HistoryItemType.ResizePageObject:
-                        break;
-                    case HistoryItemType.AddInk:
-                        //TODO: Steve - fix for no Page.InkStrokes
-                        //foreach (Stroke s in Page.InkStrokes )
-                        //{
-                        //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                        //    {
+        //public void Undo()
+        //{
+        //    PageHistory.IgnoreHistory = true;
+        //    if (PageHistory.HistoryItems.Count > 0)
+        //    {
+        //        CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
+        //        PageHistory.HistoryItems.Remove(item);
+        //        ICLPPageObject pageObject = null;
+        //        if (item.ObjectID != null)
+        //        {
+        //            pageObject = GetPageObjectByID(item.ObjectID);
+        //            //if (pageObject.PageID != Page.UniqueID)
+        //            //{
+        //            //    PageHistory.UndoneHistoryItems.Add(item);
+        //            //    PageHistory.IgnoreHistory = false;
+        //            //    return;
+        //            //}
+        //        }
+        //        switch (item.ItemType)
+        //        {
+        //            case HistoryItemType.AddPageObject:
+        //                if (pageObject != null)
+        //                {
+        //                    if (!PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
+        //                    {
+        //                        PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
+        //                    }
+        //                    CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
+        //                }
+        //                break;
+        //            case HistoryItemType.RemovePageObject:
+        //                CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+        //                break;
+        //            case HistoryItemType.MovePageObject:
+        //                if (pageObject != null)
+        //                {
+        //                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
+        //                }
+        //                break;
+        //            case HistoryItemType.ResizePageObject:
+        //                break;
+        //            case HistoryItemType.AddInk:
+        //                //TODO: Steve - fix for no Page.InkStrokes
+        //                //foreach (Stroke s in Page.InkStrokes )
+        //                //{
+        //                //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+        //                //    {
                                  
-                        //        Page.InkStrokes.Remove(s);
-                        //        PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-                        //        break;
-                        //    }
-                        //}
-                        //if its not in page.inkstrokes then maybe its in stamps inkstrokes?
-                        foreach (ICLPPageObject obj in Page.PageObjects)
-                        {
-                            //if (obj.CanAcceptStrokes && obj.PageObjectByteStrokes.Count > 0)
-                            //{
-                            //    foreach (byte[] s in obj.PageObjectByteStrokes)
-                            //    {
-                            //        if (s == item.ObjectID)
-                            //        {
+        //                //        Page.InkStrokes.Remove(s);
+        //                //        PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+        //                //        break;
+        //                //    }
+        //                //}
+        //                //if its not in page.inkstrokes then maybe its in stamps inkstrokes?
+        //                foreach (ICLPPageObject obj in Page.PageObjects)
+        //                {
+        //                    //if (obj.CanAcceptStrokes && obj.PageObjectByteStrokes.Count > 0)
+        //                    //{
+        //                    //    foreach (byte[] s in obj.PageObjectByteStrokes)
+        //                    //    {
+        //                    //        if (s == item.ObjectID)
+        //                    //        {
 
-                            //            obj.PageObjectByteStrokes.Remove(s.ToString());
-                            //            PageHistory.TrashedInkStrokes.Add((CLPPage.ByteToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
-                            //            break;
-                            //        }
-                            //    }
-                            //}
-                        }
-                        break;
-                    case HistoryItemType.EraseInk:
-                        /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-                         //{
-                         //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
-                         //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                         //    {
-                         //        PageHistory.TrashedInkStrokes.Remove(s);
-                         //        Page.InkStrokes.Add(inkStroke);
-                         //        break;
-                         //    }
-                         //}
-                         * } */
-                        //Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
-                        //Page.InkStrokes.Add(inkStroke);
-                        break;
+        //                    //            obj.PageObjectByteStrokes.Remove(s.ToString());
+        //                    //            PageHistory.TrashedInkStrokes.Add((CLPPage.ByteToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
+        //                    //            break;
+        //                    //        }
+        //                    //    }
+        //                    //}
+        //                }
+        //                break;
+        //            case HistoryItemType.EraseInk:
+        //                /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+        //                 //{
+        //                 //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
+        //                 //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+        //                 //    {
+        //                 //        PageHistory.TrashedInkStrokes.Remove(s);
+        //                 //        Page.InkStrokes.Add(inkStroke);
+        //                 //        break;
+        //                 //    }
+        //                 //}
+        //                 * } */
+        //                //Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
+        //                //Page.InkStrokes.Add(inkStroke);
+        //                break;
                         
-                    case HistoryItemType.SnapTileSnap:
-                        CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        if (t.NumberOfTiles != Int32.Parse(item.NewValue))
-                        {
-                            Console.WriteLine("not newvalue");
-                        }
-                        t.NumberOfTiles = Int32.Parse(item.OldValue);
+        //            case HistoryItemType.SnapTileSnap:
+        //                CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+        //                if (t.NumberOfTiles != Int32.Parse(item.NewValue))
+        //                {
+        //                    Console.WriteLine("not newvalue");
+        //                }
+        //                t.NumberOfTiles = Int32.Parse(item.OldValue);
                         
-                        break;
-                    case HistoryItemType.SnapTileRemoveTile:
-                        CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        tile.NumberOfTiles++;
-                        break;
-                    default:
-                        break;
-                }
+        //                break;
+        //            case HistoryItemType.SnapTileRemoveTile:
+        //                CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+        //                tile.NumberOfTiles++;
+        //                break;
+        //            default:
+        //                break;
+        //        }
 
-                PageHistory.UndoneHistoryItems.Add(item);
-            }
-            PageHistory.IgnoreHistory = false;
-        }
+        //        PageHistory.UndoneHistoryItems.Add(item);
+        //    }
+        //    PageHistory.IgnoreHistory = false;
+        //}
 
-        public void Redo()
-        {
-            PageHistory.IgnoreHistory = true;
-            if (PageHistory.UndoneHistoryItems.Count > 0)
-            {
-                CLPHistoryItem item = PageHistory.UndoneHistoryItems[PageHistory.UndoneHistoryItems.Count - 1];
-                //lock (_locker)
-                //{
-                //    PageHistory.UndoneHistoryItems.Remove(item);
-                //}
-                 ICLPPageObject pageObject = null;
-                 if (item.ObjectID != null)
-                 {
-                     pageObject = GetPageObjectByID(item.ObjectID);
-                     //if (pageObject.PageID != Page.UniqueID)
-                     //{
-                     //    PageHistory.HistoryItems.Add(item);
-                     //    PageHistory.IgnoreHistory = false;
-                     //    return;
-                     //}
-                 }
-                switch (item.ItemType)
-                {
-                    case HistoryItemType.AddPageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
-                            if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-                            {
-                                PageHistory.TrashedPageObjects.Remove(item.ObjectID);
-                            }
-                        }
-                        break;
-                    case HistoryItemType.RemovePageObject:
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-                        break;
-                    case HistoryItemType.MovePageObject:
-                        if (pageObject != null)
-                        {
-                            CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
-                        }
-                        break;
-                    case HistoryItemType.ResizePageObject:
-                        break;
-                    case HistoryItemType.AddInk:
-                        foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-                        {
-                            //Stroke inkStroke = CLPPage.ByteToStroke(PageHistory.TrashedInkStrokes[s]);
-                            //steve
-                            //if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                            //{
-                            //    Page.InkStrokes.Add(inkStroke);
-                            //    PageHistory.TrashedInkStrokes.Remove(s);
-                            //    break;
-                            //}
-                        } 
-                        break;
-                    case HistoryItemType.EraseInk:
-                        //steve
-                        //foreach (Stroke s in Page.InkStrokes)
-                        //{
-                        //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                        //    {
-                        //        Page.InkStrokes.Remove(s);
-                        //        //PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-                        //        break;
-                        //    }
-                        //}
+        //public void Redo()
+        //{
+        //    PageHistory.IgnoreHistory = true;
+        //    if (PageHistory.UndoneHistoryItems.Count > 0)
+        //    {
+        //        CLPHistoryItem item = PageHistory.UndoneHistoryItems[PageHistory.UndoneHistoryItems.Count - 1];
+        //        //lock (_locker)
+        //        //{
+        //        //    PageHistory.UndoneHistoryItems.Remove(item);
+        //        //}
+        //         ICLPPageObject pageObject = null;
+        //         if (item.ObjectID != null)
+        //         {
+        //             pageObject = GetPageObjectByID(item.ObjectID);
+        //             //if (pageObject.PageID != Page.UniqueID)
+        //             //{
+        //             //    PageHistory.HistoryItems.Add(item);
+        //             //    PageHistory.IgnoreHistory = false;
+        //             //    return;
+        //             //}
+        //         }
+        //        switch (item.ItemType)
+        //        {
+        //            case HistoryItemType.AddPageObject:
+        //                if (pageObject != null)
+        //                {
+        //                    CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
+        //                    if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
+        //                    {
+        //                        PageHistory.TrashedPageObjects.Remove(item.ObjectID);
+        //                    }
+        //                }
+        //                break;
+        //            case HistoryItemType.RemovePageObject:
+        //                CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
+        //                break;
+        //            case HistoryItemType.MovePageObject:
+        //                if (pageObject != null)
+        //                {
+        //                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
+        //                }
+        //                break;
+        //            case HistoryItemType.ResizePageObject:
+        //                break;
+        //            case HistoryItemType.AddInk:
+        //                foreach (string s in PageHistory.TrashedInkStrokes.Keys)
+        //                {
+        //                    //Stroke inkStroke = CLPPage.ByteToStroke(PageHistory.TrashedInkStrokes[s]);
+        //                    //steve
+        //                    //if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+        //                    //{
+        //                    //    Page.InkStrokes.Add(inkStroke);
+        //                    //    PageHistory.TrashedInkStrokes.Remove(s);
+        //                    //    break;
+        //                    //}
+        //                } 
+        //                break;
+        //            case HistoryItemType.EraseInk:
+        //                //steve
+        //                //foreach (Stroke s in Page.InkStrokes)
+        //                //{
+        //                //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
+        //                //    {
+        //                //        Page.InkStrokes.Remove(s);
+        //                //        //PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
+        //                //        break;
+        //                //    }
+        //                //}
                        
-                      //  Stroke ink = CLPPage.StringToStroke(item.OldValue);
-                      //  Page.InkStrokes.Add(ink);
-                        break;
-                    case HistoryItemType.SnapTileSnap:
-                        CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        if (t.NumberOfTiles != Int32.Parse(item.OldValue))
-                        {
-                            Console.WriteLine("not oldvalue");
-                        }
-                        t.NumberOfTiles = Int32.Parse(item.NewValue);
+        //              //  Stroke ink = CLPPage.StringToStroke(item.OldValue);
+        //              //  Page.InkStrokes.Add(ink);
+        //                break;
+        //            case HistoryItemType.SnapTileSnap:
+        //                CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+        //                if (t.NumberOfTiles != Int32.Parse(item.OldValue))
+        //                {
+        //                    Console.WriteLine("not oldvalue");
+        //                }
+        //                t.NumberOfTiles = Int32.Parse(item.NewValue);
                        
-                        break;
-                    case HistoryItemType.SnapTileRemoveTile:
-                        CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-                        tile.NumberOfTiles--;
-                        break;
-                    default:
-                        break;
-                }
+        //                break;
+        //            case HistoryItemType.SnapTileRemoveTile:
+        //                var tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
+        //                tile.NumberOfTiles--;
+        //                break;
+        //            default:
+        //                break;
+        //        }
 
-                Page.PageHistory.HistoryItems.Add(item);
-            }
+        //        Page.PageHistory.HistoryItems.Add(item);
+        //    }
 
-            PageHistory.IgnoreHistory = false;
-        }
+        //    PageHistory.IgnoreHistory = false;
+        //}
 
         #endregion //Methods
                 

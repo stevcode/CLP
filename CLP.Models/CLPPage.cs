@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -42,6 +43,10 @@ namespace CLP.Models
     KnownType(typeof(CLPTextBox)),
     KnownType(typeof(CLPDataTable)),
     KnownType(typeof(CLPGroupingRegion)),
+    KnownType(typeof(CorrectnessTagType)),
+    KnownType(typeof(StarredTagType)),
+    KnownType(typeof(PageTopicTagType)),
+    KnownType(typeof(DomainInterpretationTagType)),
     KnownType(typeof(CLPHandwritingRegion)),
     KnownType(typeof(CLPInkShapeRegion)),
     KnownType(typeof(CLPShadingRegion))]
@@ -77,6 +82,16 @@ namespace CLP.Models
             PageTopics = new ObservableCollection<string>();
             NumberOfSubmissions = 0;
             PageAspectRatio = PageWidth / PageHeight;
+
+            //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
+            PageTags = new ObservableCollection<Tag>();
+            Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
+            Tag starredTag  = new Tag("Teacher", new StarredTagType());
+            correctnessTag.AddTagOptonValue(new TagOptionValue("Unknown",""));
+            starredTag.AddTagOptonValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
+            PageTags.Add(correctnessTag);
+            PageTags.Add(starredTag);
+            
         }
 
         /// <summary>
@@ -95,7 +110,7 @@ namespace CLP.Models
 
         /// <summary>
         /// Pool of Images used on a page, so that duplications don't occur
-        /// <UniqueID, ByteSource>
+        /// UniqueID, ByteSource
         /// </summary>
         public Dictionary<string,List<byte>> ImagePool
         {
@@ -169,7 +184,7 @@ namespace CLP.Models
             set { SetValue(ParentNotebookIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), null);
+        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string));
 
         /// <summary>
         /// Gets a list of the serialized strokes for a page.
@@ -185,7 +200,7 @@ namespace CLP.Models
         /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
-        [XmlIgnore()]
+        [XmlIgnore]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -269,6 +284,17 @@ namespace CLP.Models
         public static readonly PropertyData PageIndexProperty = RegisterProperty("PageIndex", typeof(int), -1);
 
         /// <summary>
+        /// Author created pageTags associated with the page.
+        /// </summary>
+        public ObservableCollection<Tag> PageTags
+        {
+            get { return GetValue<ObservableCollection<Tag>>(PageTagsProperty); }
+            set { SetValue(PageTagsProperty, value); }
+        }
+
+        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>), () => new ObservableCollection<Tag>());
+
+        /// <summary>
         /// Author created pageTopics associated with the page.
         /// </summary>
         public ObservableCollection<string> PageTopics
@@ -288,7 +314,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
         /// Unique submission ID for submitted pages.
@@ -311,7 +337,7 @@ namespace CLP.Models
             set { SetValue(SubmitterNameProperty, value); }
         }
 
-        public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string), null);
+        public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string));
 
 
 
@@ -324,7 +350,7 @@ namespace CLP.Models
             set { SetValue(SubmissionTimeProperty, value); }
         }
 
-        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime), null);
+        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime));
 
         /// <summary>
         /// Availability of Group Submit option for a page.
@@ -357,7 +383,7 @@ namespace CLP.Models
             set { SetValue(SubmitterProperty, value); }
         }
 
-        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person), null);
+        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person));
 
         /// <summary>
         /// The Group that submitted the page.
@@ -369,20 +395,14 @@ namespace CLP.Models
 
         }
 
-        public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group), null);
+        public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group));
 
-        public string GroupName { 
+        public string GroupName 
+        { 
             get 
-            { 
-                if (GroupSubmitter != null)
-                {
-                    return GroupSubmitter.GroupName;
-                }
-                else
-                {
-                    return "No Group";
-                }
-            } 
+            {
+                return GroupSubmitter != null ? GroupSubmitter.GroupName : "No Group";
+            }
         }
 
         #endregion
@@ -391,74 +411,65 @@ namespace CLP.Models
 
         public CLPPage DuplicatePage()
         {
-            CLPPage newPage = new CLPPage();
-            newPage.PageTopics = PageTopics;
-            newPage.PageHeight = PageHeight;
-            newPage.PageWidth = PageWidth;
-            newPage.PageAspectRatio = PageAspectRatio;
-            newPage.ImagePool = ImagePool;
-            newPage.ParentNotebookID = ParentNotebookID;
+            var newPage = new CLPPage
+                {
+                    PageTopics = PageTopics,
+                    PageHeight = PageHeight,
+                    PageWidth = PageWidth,
+                    PageAspectRatio = PageAspectRatio,
+                    ImagePool = ImagePool,
+                    ParentNotebookID = ParentNotebookID,
+                    PageTags = PageTags
+                };
 
-            
+
             foreach(Stroke stroke in InkStrokes)
             {
                 Stroke s = stroke.Clone();
-                s.RemovePropertyData(CLPPage.StrokeIDKey);
+                s.RemovePropertyData(StrokeIDKey);
 
                 string newUniqueID = Guid.NewGuid().ToString();
-                s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                s.AddPropertyData(StrokeIDKey, newUniqueID);
 
                 newPage.InkStrokes.Add(s);
 
-                List<byte> b = CLPPage.StrokeToByte(s);
+                List<byte> b = StrokeToByte(s);
 
                 newPage.ByteStrokes.Add(b);
             }
 
-            foreach(ICLPPageObject pageObject in PageObjects)
+            foreach(ICLPPageObject clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
             {
-                ICLPPageObject clonedPageObject = pageObject.Duplicate();
                 clonedPageObject.ParentPage = newPage;
-                clonedPageObject.ParentPageID = clonedPageObject.ParentPage.UniqueID;
+                clonedPageObject.ParentPageID = newPage.UniqueID;
                 newPage.PageObjects.Add(clonedPageObject);
                 clonedPageObject.RefreshStrokeParentIDs();
             }
+
+
 
             return newPage;
         }
 
         public static Stroke ByteToStroke(List<byte> byteStroke)
         {
-            var m_stream = new MemoryStream(byteStroke.ToArray());
-            StrokeCollection sc = new StrokeCollection(m_stream);
+            var mStream = new MemoryStream(byteStroke.ToArray());
+            var sc = new StrokeCollection(mStream);
 
-            m_stream.Dispose();
+            mStream.Dispose();
 
-            return SanitizeStroke(sc[0]);
-
-            //return sc[0];
-        }
-
-        private static Stroke SanitizeStroke(Stroke s)
-        {
-            if (s.ContainsPropertyData(Immutable))
-            {
-                s.RemovePropertyData(Immutable);
-            }
-
-            return s;
+            return sc[0];
         }
 
         public static List<byte> StrokeToByte(Stroke stroke)
         {
-            StrokeCollection sc = new StrokeCollection();
-            sc.Add(stroke);
+            var sc = new StrokeCollection {stroke};
 
-            var m_stream = new MemoryStream();
-            sc.Save(m_stream, true);
-            List<byte> byteStroke = new List<byte>(m_stream.ToArray());
+            var mStream = new MemoryStream();
+            sc.Save(mStream, true);
+            var byteStroke = new List<byte>(mStream.ToArray());
 
-            m_stream.Dispose();
+            mStream.Dispose();
 
             return byteStroke;
         }
@@ -468,8 +479,8 @@ namespace CLP.Models
          */
         public static StrokeCollection BytesToStrokes(ObservableCollection<List<byte>> byteStrokes)
         {
-            StrokeCollection strokes = new StrokeCollection();
-            foreach(List<byte> s in byteStrokes)
+            var strokes = new StrokeCollection();
+            foreach(var s in byteStrokes)
             {
                 strokes.Add(ByteToStroke(s));
             }
@@ -482,8 +493,8 @@ namespace CLP.Models
          */
         public static ObservableCollection<List<byte>> StrokesToBytes(StrokeCollection strokes)
         {
-            ObservableCollection<List<byte>> byteStrokes = new ObservableCollection<List<byte>>();
-            foreach(Stroke stroke in strokes)
+            var byteStrokes = new ObservableCollection<List<byte>>();
+            foreach(var stroke in strokes)
             {
                 byteStrokes.Add(StrokeToByte(stroke));
             }
@@ -507,35 +518,18 @@ namespace CLP.Models
 
         public void TrimPage()
         {
-            double lowestY = 0;
-            foreach(ICLPPageObject pageObject in PageObjects)
+            double lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] { 0 }).Max();
+            foreach(Rect bounds in InkStrokes.Select(s => s.GetBounds()))
             {
-                double bottom = pageObject.YPosition + pageObject.Height;
-                lowestY = Math.Max(lowestY, bottom);
-            }
-            foreach(Stroke s in InkStrokes)
-            {
-                Rect bounds = s.GetBounds();
                 if(bounds.Bottom >= PageHeight)
                 {
                     lowestY = Math.Max(lowestY, PageHeight);
                     break;
                 }
-                else
-                {
-                    lowestY = Math.Max(lowestY, bounds.Bottom);
-                }
+                lowestY = Math.Max(lowestY, bounds.Bottom);
             }
 
-            double defaultHeight = 0;
-            if(PageWidth == LANDSCAPE_WIDTH)
-            {
-                defaultHeight = LANDSCAPE_HEIGHT;
-            }
-            else
-            {
-                defaultHeight = PORTRAIT_HEIGHT;
-            }
+            double defaultHeight = Math.Abs(PageWidth - LANDSCAPE_WIDTH) < .000001 ? LANDSCAPE_HEIGHT : PORTRAIT_HEIGHT;
 
             double newHeight = Math.Max(defaultHeight, lowestY);
             if (newHeight + 20 < PageHeight)

@@ -130,7 +130,7 @@
                 <ColumnDefinition Width="Auto" x:Name="NotebookPageColumn" />
                 <ColumnDefinition Width="Auto" x:Name="NotebookPageSplitterColumn"/>
 
-                <ColumnDefinition MinWidth="150" Width="Auto" x:Name="SubmissionColumn"/>
+                <ColumnDefinition MinWidth="200" Width="Auto" x:Name="SubmissionColumn"/>
                 <ColumnDefinition Width="Auto" x:Name="SubmissionSplitterColumn" />
 
                 <ColumnDefinition Width="*" MinWidth="150"/>
