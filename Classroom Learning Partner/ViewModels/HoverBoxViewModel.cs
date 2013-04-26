@@ -35,33 +35,44 @@ namespace Classroom_Learning_Partner.ViewModels
             IsUnknown = true;
             IsIncorrect = false;
             IsStarred = false;
-            if(page.PageTags != null)
+            Topics = "";
+
+            if(Page.PageTopics != null)
             {
-                
+                foreach(string topic in Page.PageTopics)
+                {
+                    Topics += "Page Topic: " + topic + "\n";
+                }
+            }
+            if(Page.PageTags != null)
+            {
                 foreach(Tag tag in Page.PageTags)
                 {
 
-                    if(tag.TagType.Name== "Correctness")
+                    if(tag.TagType.Name == "Correctness")
                     {
-  
+
                         if(tag.Value.Count > 0)
                         {
-                            
+
                             String correct = tag.Value.ElementAt(0).Value;
                             if(correct == "Correct")
                             {
+                                Topics += "Correctness: Correct \n";
                                 IsCorrect = true;
                                 IsIncorrect = false;
                                 IsUnknown = false;
                             }
                             else if(correct == "Incorrect")
                             {
+                                Topics += "Correctness: Incorrect \n";
                                 IsIncorrect = true;
                                 IsCorrect = false;
                                 IsUnknown = false;
                             }
                             else
                             {
+                                Topics += "Correctness: Unknown \n";
                                 IsUnknown = true;
                                 IsCorrect = false;
                                 IsIncorrect = false;
@@ -69,22 +80,27 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                         }
                     }
-                    if(tag.TagType.Name=="Starred")
+                    if(tag.TagType.Name == "Starred")
                     {
                         if(tag.Value.Count > 0)
                         {
                             String star = tag.Value.ElementAt(0).Value;
                             if(star == "Starred")
                             {
+                                Topics += "Starred: True \n";
                                 IsStarred = true;
+                            }
+                            else
+                            {
+                                Topics += "Starred: False \n";
                             }
                         }
                     }
 
                 }
+
+
             }
-
-
 
 
             MarkCorrectCommand = new Command<MouseEventArgs>(OnMarkCorrectCommandExecute);
@@ -137,6 +153,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the Page property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsStarredProperty = RegisterProperty("IsStarred", typeof(bool), false);
+       
+        public string Topics
+        {
+            get { return GetValue<string>(TopicsProperty); }
+            private set { SetValue(TopicsProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the Page property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData TopicsProperty = RegisterProperty("Topics", typeof(string), "");
 
         /// <summary>
         /// Gets or sets the property value.
@@ -274,6 +301,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkCorrectCommandExecute(MouseEventArgs e)
         {
+            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+             notebook.Submissions.Remove(Page.UniqueID);
             IsCorrect = !IsCorrect;
             if(IsCorrect == true)
             {
@@ -294,6 +323,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsUnknown = false;
 
             }
+            notebook.AddStudentSubmission(Page.UniqueID, Page);
            
         }
         /// <summary>
@@ -374,10 +404,12 @@ namespace Classroom_Learning_Partner.ViewModels
                             tag.Value.Clear();
                             if(IsStarred)
                             {
+                                Topics.Replace("Starred: True", "Starred: False");
                                 tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
                             }
                             else
                             {
+                                Topics.Replace("Starred: False", "Starred: True");
                                 tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
                             }
 

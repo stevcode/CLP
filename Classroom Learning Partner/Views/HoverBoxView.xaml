@@ -17,7 +17,7 @@
             <Button  Grid.Column="0" Command="{Binding ToggleStarCommand}"  BorderBrush="Black" BorderThickness="1" Name="Star" Content="Star" Width="20" Height="20" Margin="1">
                 <Button.Template>
                     <ControlTemplate>
-                        <Border BorderThickness="1" BorderBrush="Gray">
+                        <Border BorderThickness="1" BorderBrush="Gray" Background="White">
                             <Image Opacity="1">
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
@@ -27,7 +27,7 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsStarred}" Value="True">
                                                 <Setter Property="Source" Value="..\Images\Starred.png" />
-                                        </DataTrigger>
+                                            </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Image.Style>
@@ -45,10 +45,12 @@
                                 <Style TargetType="{x:Type Border}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsCorrect}" Value="True">
-                                            <Setter Property="Background" Value="LightBlue" />
+                                            <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsCorrect}" Value="False">
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Background" Value="White" />
+                                            
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -66,10 +68,11 @@
                                 <Style TargetType="{x:Type Border}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsIncorrect}" Value="True">
-                                            <Setter Property="Background" Value="LightBlue" />
+                                            <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsIncorrect}" Value="False">
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Background" Value="White" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -87,10 +90,11 @@
                                     <Style TargetType="{x:Type Border}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsUnknown}" Value="True">
-                                                <Setter Property="Background" Value="LightBlue" />
-                                            </DataTrigger>
+                                                <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
+                                        </DataTrigger>
                                             <DataTrigger Binding="{Binding IsUnknown}" Value="False">
-                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Background" Value="White" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -100,8 +104,13 @@
                     </Button.Template>
                 </Button>
             <Button  Grid.Column="4" Command="{Binding ShowTagsCommand}"  Name="tags" Content="..." Width="20" Height="20" Margin="1">
+                <Button.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="{Binding Topics}"></TextBlock>
+                    </ToolTip>
 
-        </Button>
+                </Button.ToolTip>
+            </Button>
     </Grid>
     </Border>
 </catel:UserControl>

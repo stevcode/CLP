@@ -75,14 +75,15 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Descending");
 
             ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
-            foreach(Tag t in tags)
+
+     /**       foreach(Tag t in tags)
             {
                 if(t.TagType != null)
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
             }   
-
+            */
         }
 
 
@@ -430,6 +431,8 @@ namespace Classroom_Learning_Partner.ViewModels
             names = names.Substring(0, names.Length - 2);
             return names;
         }
+
+
 
 
 

@@ -304,23 +304,21 @@
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                          <Grid>
+                       <!--   <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
-                            </Grid.RowDefinitions>
+                            </Grid.RowDefinitions> -->
                             
-                                <Views:CLPPagePreviewView Grid.Row="0"  DataContext="{Binding}"  x:Name="preview1">
-
-                                       
-                                    
+                                <Views:CLPPagePreviewView DataContext="{Binding}"  x:Name="preview1">
+   
 
                             </Views:CLPPagePreviewView>
-                            <Views:HoverBoxView Grid.Row="1" Width="150" Margin="0,0,0,0" DataContext="{Binding}">
+                          <!--  <Views:HoverBoxView Grid.Row="1" Width="150" Margin="0,-20,0,0" DataContext="{Binding}">
 
                             </Views:HoverBoxView>
 
-                        </Grid> 
+                        </Grid> -->
 
                         </Border>
 
