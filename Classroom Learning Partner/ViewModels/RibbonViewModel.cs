@@ -200,6 +200,9 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
             InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
+            InsertArrayCommand = new Command(OnInsertArrayCommandExecute);
+
+
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
@@ -2189,6 +2192,43 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the InsertArrayCommand command.
+        /// </summary>
+        public Command InsertArrayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the InsertArrayCommand command is executed.
+        /// </summary>
+        private void OnInsertArrayCommandExecute()
+        {
+            //pop up number pads to get dimensions
+            CustomizeArrayView dimensionChooser = new CustomizeArrayView();
+            //CustomizeDataTableView dimensionChooser = new CustomizeDataTableView();
+            dimensionChooser.Owner = Application.Current.MainWindow;
+            dimensionChooser.ShowDialog();
+            if(dimensionChooser.DialogResult == true)
+            {
+                //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+
+                int rows = 1;
+                try { rows = Convert.ToInt32(dimensionChooser.Rows.Text); }
+                catch(FormatException) { rows = 1; }
+
+                int cols = 1;
+                try { cols = Convert.ToInt32(dimensionChooser.Columns.Text); }
+                catch(FormatException) { cols = 1; }
+
+                CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+                CLPServiceAgent.Instance.AddPageObjectToPage(array);
+            }
+
+            if(EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
+        }
+
+        /// <summary>
         /// Gets the InsertAudioCommand command.
         /// </summary>
         public Command InsertAudioCommand { get; private set; }
@@ -2333,6 +2373,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException) { cols = 1; }
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+               
                 CLPServiceAgent.Instance.AddPageObjectToPage(region);
             }
         }

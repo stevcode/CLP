@@ -208,6 +208,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
@@ -257,6 +258,9 @@
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\CustomizeArrayView.xaml.cs">
+      <DependentUpon>CustomizeArrayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
     </Compile>
@@ -295,6 +299,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPAggregationDataTableView.xaml.cs">
       <DependentUpon>CLPAggregationDataTableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPArrayView.xaml.cs">
+      <DependentUpon>CLPArrayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
@@ -397,6 +404,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\CustomizeArrayView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -442,6 +453,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPAggregationDataTableView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPArrayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -631,6 +646,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\NumberPad.png" />
+    <Resource Include="Images\Array.png" />
     <Resource Include="Images\DisplayGroupSubmissionsButton.png" />
     <Resource Include="Images\GroupSubmit-icon32.png" />
     <Resource Include="Images\MakePageLonger.png" />

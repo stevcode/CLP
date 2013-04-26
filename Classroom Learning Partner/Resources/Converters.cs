@@ -36,7 +36,6 @@ namespace Classroom_Learning_Partner.Resources
             throw new NotImplementedException();
         }
     }
-
    
     public class GroupLabelConverter : IValueConverter
     {
@@ -44,8 +43,19 @@ namespace Classroom_Learning_Partner.Resources
         {
             string val = value as string;
             return "Group " + val;
-            
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
 
+    public class IntToQuestionMarkConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int val = (int)value;
+            return val == 0 ? "?" : val.ToString();
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -59,15 +69,13 @@ namespace Classroom_Learning_Partner.Resources
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             int index = value.ToString().IndexOf("Group");
-           int index2 = value.ToString().IndexOf("group"); 
+            int index2 = value.ToString().IndexOf("group"); 
             if(index != -1 || index2 != -1)
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -109,10 +117,8 @@ namespace Classroom_Learning_Partner.Resources
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            
+            return false;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -159,6 +165,7 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
     */
+
     public class PartsStringConverter : IMultiValueConverter
     {
         public object Convert(object[] value,
@@ -256,6 +263,26 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class MultiplyLengthConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return System.Convert.ToDouble(value) *
+                   System.Convert.ToDouble(parameter);
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class HalfLengthConverter : IValueConverter
     {
         public object Convert(object value,
@@ -275,7 +302,6 @@ namespace Classroom_Learning_Partner.Resources
             throw new NotImplementedException();
         }
     }
-
 
     public class HeaderVisibilityConverter : IMultiValueConverter
     {
@@ -337,6 +363,26 @@ namespace Classroom_Learning_Partner.Resources
 
         public object[] ConvertBack(object value,
             Type[] targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NegativeLengthSubtractConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            return - System.Convert.ToDouble(value) -
+                   System.Convert.ToDouble(parameter);
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
             object parameter,
             System.Globalization.CultureInfo culture)
         {
@@ -419,8 +465,6 @@ namespace Classroom_Learning_Partner.Resources
             return false;
         }
     }
-
-
 
     /// <summary>
     /// Converts a double to 3/4 of its value
