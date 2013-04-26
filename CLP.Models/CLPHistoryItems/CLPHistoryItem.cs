@@ -12,6 +12,8 @@ namespace CLP.Models
         RemoveObject,
         ResizeObject,
         MoveObject,
+        AddArrayLine,
+        RemoveArrayLine,
         Undo,
         Redo
     }

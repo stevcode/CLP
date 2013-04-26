@@ -268,8 +268,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             double position = RightArrowPosition - 5;
 
-            CLPArrayDivision divAbove = FindDivisionAbove(position, HorizontalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, HorizontalDivisions);
+            CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
+            CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
 
             CLPArrayDivision topDiv;
             if(divAbove == null)
@@ -294,6 +294,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             HorizontalDivisions.Add(bottomDiv);
+
+            PageObject.ParentPage.PageHistory.push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -305,8 +308,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             double position = BottomArrowPosition - 5;
 
-            CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
+            CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
+            CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
 
             CLPArrayDivision topDiv;
             if(divAbove == null)
@@ -331,6 +334,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             VerticalDivisions.Add(bottomDiv);
+
+            PageObject.ParentPage.PageHistory.push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         #endregion //Commands
@@ -442,46 +448,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
             //    }
             //}
-        }
-
-        public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)
-        {
-            CLPArrayDivision divAbove = null;
-            foreach(CLPArrayDivision div in divisionList)
-            {
-                if(divAbove == null)
-                {
-                    if(div.Position < position)
-                    {
-                        divAbove = div;
-                    }
-                }
-                else if(divAbove.Position < div.Position && div.Position < position)
-                {
-                    divAbove = div;
-                }
-            }
-            return divAbove;
-         }
-
-        public CLPArrayDivision FindDivisionBelow(double position, ObservableCollection<CLPArrayDivision> divisionList)
-        {
-            CLPArrayDivision divBelow = null;
-            foreach(CLPArrayDivision div in divisionList)
-            {
-                if(divBelow == null)
-                {
-                    if(div.Position > position)
-                    {
-                        divBelow = div;
-                    }
-                }
-                else if(divBelow.Position > div.Position && div.Position > position)
-                {
-                    divBelow = div;
-                }
-            }
-            return divBelow;
         }
 
         #endregion //Methods

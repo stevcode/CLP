@@ -306,6 +306,46 @@ namespace CLP.Models
             }
         }
 
+        public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divAbove = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divAbove == null)
+                {
+                    if(div.Position < position)
+                    {
+                        divAbove = div;
+                    }
+                }
+                else if(divAbove.Position < div.Position && div.Position < position)
+                {
+                    divAbove = div;
+                }
+            }
+            return divAbove;
+        }
+
+        public CLPArrayDivision FindDivisionBelow(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divBelow = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divBelow == null)
+                {
+                    if(div.Position > position)
+                    {
+                        divBelow = div;
+                    }
+                }
+                else if(divBelow.Position > div.Position && div.Position > position)
+                {
+                    divBelow = div;
+                }
+            }
+            return divBelow;
+        }
+
         #endregion //Methods
     }
 }
