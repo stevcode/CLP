@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
+            EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
         }
 
         #endregion //Constructor
@@ -182,7 +183,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public double RightArrowPosition
         {
             get { return GetValue<double>(RightArrowPositionProperty); }
-            set { SetValue(RightArrowPositionProperty, value); Console.WriteLine("RightArrowPosition: " + RightArrowPosition); }
+            set { SetValue(RightArrowPositionProperty, value); }
         }
 
         public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
@@ -234,29 +235,32 @@ namespace Classroom_Learning_Partner.ViewModels
             // TO DO Liz - 7x77 won't resize?
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-            double newHeight = PageObject.Height + e.VerticalChange;
-            double newWidth = newHeight * ((double)Columns) / ((double)Rows);
-            if(newHeight < 100)
+            Height = PageObject.Height + e.VerticalChange;
+            (PageObject as CLPArray).RefreshArrayDimensions();
+            (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
+            if(Height < 100)
             {
-                newHeight = 100;
-                newWidth = newHeight * ((double)Columns) / ((double)Rows);
+                Height = 100;
+                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
             }
-            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+            if(Height + PageObject.YPosition > parentPage.PageHeight)
             {
-                newHeight = PageObject.Height;
-                newWidth = newHeight * ((double)Columns) / ((double)Rows);
+                Height = parentPage.PageHeight - PageObject.YPosition;
+                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
             }
-            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+            if(Width + PageObject.XPosition > parentPage.PageWidth)
             {
-                newWidth = PageObject.Width;
-                newHeight = newWidth * ((double)Rows) / ((double)Columns);
+                Width = parentPage.PageWidth - PageObject.XPosition;
+                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
             }
 
+            //TODO: Liz - make it so resizing preserves divisions
+
+            //CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            //TODO: Steve - Make work with History.
+
+            (PageObject as CLPArray).ResizeDivisions();
             (PageObject as CLPArray).CalculateGridLines();
-
-            //TO DO Liz - make it so resizing preserves divisions
-
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
         /// <summary>
@@ -331,6 +335,34 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             VerticalDivisions.Add(bottomDiv);
+        }
+
+        /// <summary>
+        /// Gets the EditLabelCommand command.
+        /// </summary>
+        public Command<CLPArrayDivision> EditLabelCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the EditLabelCommand command is executed.
+        /// </summary>
+        private void OnEditLabelCommandExecute(CLPArrayDivision division)
+        {
+            Console.WriteLine("Label clicked");
+
+            // Pop up numberpad and save result as value of division
+            var keyPad = new KeypadWindowView
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Top = 100,
+                Left = 100
+            };
+            keyPad.ShowDialog();
+            if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+            {
+                division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
+            }
+
         }
 
         #endregion //Commands
