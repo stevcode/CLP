@@ -80,7 +80,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
-            }*/
+            }
+            */
            
 
         }
@@ -537,13 +538,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             else if(Sort == "Time In - Ascending")
             {
+              
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
 
                 FilteredSubmissions.SortDescriptions.Add(timeAscendingSort);
             }
             else if(Sort == "Time In - Descending")
             {
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
 
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }

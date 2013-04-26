@@ -13,6 +13,7 @@
         <res:GrouptoBooleanConverter x:Key="gConverter" />
         <res:SumbissiontoBooleanConverter x:Key="sConverter" />
         <res:HalfLengthConverter x:Key="halfConverter" />
+        <res:TimeToBooleanConverter x:Key="timeConverter" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -94,7 +95,32 @@
             </Grid>
 
         </ControlTemplate>
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="StudentNameForTimeTemplate">
+            <Grid Margin="0,2,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
+                <ToggleButton Grid.Row="0" x:Name="toggle" Width="120">
+                    <DockPanel>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
+                    </DockPanel>
+                </ToggleButton>
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="StudentsForTimeLoaded" />
+            </Grid>
+        </ControlTemplate>
+        
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="TimeTemplate">
+            <Grid Margin="0,2,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" />
+            </Grid>
+        </ControlTemplate>
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="GroupSubmissionsByGroupTemplate">
 
             <Grid Margin="0,20,0,0">
@@ -182,7 +208,7 @@
                     <Setter Property="BorderThickness" Value="0" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Alphabetical">
-                            <Setter Property="MaxHeight" Value="430" />
+                            <Setter Property="MaxHeight" Value="435" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -196,7 +222,27 @@
                                     <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
                                         <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
                                     </DataTrigger>
-                                    <MultiDataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending">
+                                    <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending">
+                                    <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
+                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
+                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
                                             <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
@@ -276,7 +322,7 @@
             </Border.Style>
             <DockPanel>
 
-                <TextBlock DockPanel.Dock="Top"  TextAlignment="Center" HorizontalAlignment="Center" Width="200"  FontWeight="Bold" FontSize="18" Text="No Submissions"/>
+                <TextBlock DockPanel.Dock="Top"  TextAlignment="Center" HorizontalAlignment="Center" Width="200"  FontWeight="Bold" FontSize="14" Text="No Submissions"/>
    
                     <TextBlock  DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontSize="12" Text="{Binding Path=StudentsWithNoSubmissions}"/>
               
