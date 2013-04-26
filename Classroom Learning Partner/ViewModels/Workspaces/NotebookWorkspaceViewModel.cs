@@ -348,6 +348,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel), new DisplayListPanelViewModel());
 
+        /// <summary>
+        /// HistoryPanel.
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryPagesProperty); }
+            set { SetValue(HistoryPagesProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<CLPPage>));
+
         #endregion //Panels
 
         #endregion //Bindings
@@ -360,6 +371,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
+            SetHistoryPages();
         }
 
         /// <summary>
@@ -536,6 +548,23 @@ namespace Classroom_Learning_Partner.ViewModels
               
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
+        }
+
+        public void SetHistoryPages()
+        {
+            string id = CurrentPage.UniqueID;
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> pages;
+            if(Notebook.Submissions.ContainsKey(id))
+            {
+                pages = Notebook.Submissions[id];
+            }
+            else
+            {
+                Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                pages = Notebook.Submissions[id];
+            }
+            HistoryPages = pages;
+
         }
 
         #endregion //Methods

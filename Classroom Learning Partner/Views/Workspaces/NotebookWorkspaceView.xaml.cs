@@ -193,5 +193,30 @@ namespace Classroom_Learning_Partner.Views
                 }
             }
         }
+        private void ToggleSubmissionHistory(object sender, RoutedEventArgs e)
+        {
+            if(SubmissionHistoryBorder.Visibility == System.Windows.Visibility.Collapsed)
+            {
+                var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
+                string id = viewModel.CurrentPage.UniqueID;
+
+                if(viewModel.Notebook.Submissions.ContainsKey(id))
+                {
+                    System.Collections.ObjectModel.ObservableCollection<CLPPage> pages = viewModel.Notebook.Submissions[id];
+                    viewModel.HistoryPages = pages;
+                }
+                else
+                {
+                    viewModel.Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                }
+                SubmissionHistoryBorder.Visibility = System.Windows.Visibility.Visible;
+                SubmissionHistoryButton.Text = "Close Page History";
+            }
+            else
+            {
+                SubmissionHistoryBorder.Visibility = System.Windows.Visibility.Collapsed;
+                SubmissionHistoryButton.Text = "Open Page History";
+            }
+        }
     }
 }

@@ -1365,7 +1365,17 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
+                CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+                CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
+
+
+                CLPPage submission = page.Clone() as CLPPage;
+
+                if(notebook != null && submission != null)
+                {
+                    notebook.AddStudentSubmission(submission.UniqueID, submission);
+                }
             }
             CanSendToTeacher = false;
         }
