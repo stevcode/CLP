@@ -525,7 +525,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var shape = result.VisualHit as Shape;
             if(shape != null)
             {
-                pageObjectViewModel.EraserHitTest(shape.Name);
+                pageObjectViewModel.EraserHitTest(shape.Name, shape.Tag);
             }
             return HitTestResultBehavior.Stop;
         }

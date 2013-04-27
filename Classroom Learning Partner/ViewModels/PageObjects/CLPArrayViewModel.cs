@@ -232,17 +232,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeArrayCommandExecute(DragDeltaEventArgs e)
         {
-            // TO DO Liz - 7x77 won't resize?
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             Height = PageObject.Height + e.VerticalChange;
+            if(Height < 200)
+            {
+                Height = 200;
+            }
             (PageObject as CLPArray).RefreshArrayDimensions();
             (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
-            if(Height < 100)
-            {
-                Height = 100;
-                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
-            }
             if(Height + PageObject.YPosition > parentPage.PageHeight)
             {
                 Height = parentPage.PageHeight - PageObject.YPosition;
@@ -254,7 +252,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
             }
 
-            //TODO: Liz - make it so resizing preserves divisions
 
             //CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
             //TODO: Steve - Make work with History.
@@ -347,8 +344,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEditLabelCommandExecute(CLPArrayDivision division)
         {
-            Console.WriteLine("Label clicked");
-
             // Pop up numberpad and save result as value of division
             var keyPad = new KeypadWindowView
             {
@@ -452,56 +447,47 @@ namespace Classroom_Learning_Partner.ViewModels
             return !hoverTimeElapsed;       
         }
 
-        public override void EraserHitTest(string hitBoxName)
+        public override void EraserHitTest(string hitBoxName, object tag)
         {
-            //if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            //{
-            //    //don't erase
-            //}
-            //else if(hitBoxName == "ArrayBodyHitBox")
-            //{
-            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            //    if(notebookWorkspaceViewModel != null)
-            //    {
-            //        CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
+            {
+                //don't erase
+            }
+            else if(hitBoxName == "DivisionHitBox")
+            {
+                CLPArrayDivision division = tag as CLPArrayDivision;
+                if(division.Position != 0.0) //don't delete first division
+                {
+                    if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(division);
 
-            //        if(parentPage != null)
-            //        {
-            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-            //            {
-            //                pageVM.IsInkCanvasHitTestVisible = true;
-            //            }
-            //        }
-            //        CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-            //    }
-            //}
-            //else if(hitBoxName == "HorizontalDivisionHitBox")
-            //{
-            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            //    if(notebookWorkspaceViewModel != null)
-            //    {
-            //        CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
+                        {
+                            double newLength = divAbove.Length + division.Length;
+                            CLPArrayDivision newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
+                        }
+                    }
+                    if(division.Orientation == ArrayDivisionOrientation.Vertical)
+                    {
+                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(division);
 
-            //        if(parentPage != null)
-            //        {
-            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-            //            {
-            //                pageVM.IsInkCanvasHitTestVisible = true;
-            //            }
-
-            //            //CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-
-            //            foreach(Tuple<double, int> Label in HorizontalDivLabels)
-            //            {
-            //                //To Do Liz - figure out which division was erased
-            //                if(Label.Item1 == YPosition)
-            //                {
-            //                    HorizontalDivLabels.Remove(Label);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).VerticalDivisions.Count > 0)
+                        {
+                            double newLength = divAbove.Length + division.Length;
+                            CLPArrayDivision newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
+                        }
+                    }
+                }
+            }
         }
 
         public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)

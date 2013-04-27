@@ -259,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return true;
         }
 
-        public override void EraserHitTest(string hitBoxName)
+        public override void EraserHitTest(string hitBoxName, object tag)
         {
             if(App.MainWindowViewModel.IsAuthoring && hitBoxName == "TopLeftHitBox")
             {
