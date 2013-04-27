@@ -315,7 +315,7 @@ namespace CLP.Models
                 where stroke.GetStrokeUniqueID() == strokeID
                 select stroke;
 
-            StrokeCollection inkStrokes = new StrokeCollection(strokes);
+            StrokeCollection inkStrokes = new StrokeCollection(strokes.Distinct());
             return inkStrokes;
         }
 
