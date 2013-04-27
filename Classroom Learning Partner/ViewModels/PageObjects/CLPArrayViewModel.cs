@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
-            OpenAdornerTimeOut = 1.2;
+            hoverTimer.Interval = 1500;
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
@@ -371,9 +371,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            hoverTimer.Interval = 1000;
+            
             if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
             {
+                if (IsRightAdornerVisible || IsBottomAdornerVisible)
+                {
+                    IsAdornerVisible = false;
+                }
+
+                OpenAdornerTimeOut = 0.0;
                 IsDefaultAdornerVisible = true;
                 IsRightAdornerVisible = false;
                 IsBottomAdornerVisible = false;
@@ -408,20 +414,42 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
             {
+                hoverTimer.Stop();
+                timerRunning = false;
+                hoverTimeElapsed = false;
+                OpenAdornerTimeOut = 0.0;
                 IsDefaultAdornerVisible = false;
                 IsRightAdornerVisible = false;
                 IsBottomAdornerVisible = true;
-
+                IsMouseOverShowEnabled = true;
+                IsAdornerVisible = true;
+                return false;
             }
             if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
             {
+                hoverTimer.Stop();
+                timerRunning = false;
+                hoverTimeElapsed = false;
+                OpenAdornerTimeOut = 0.0;
                 IsDefaultAdornerVisible = false;
                 IsRightAdornerVisible = true;
                 IsBottomAdornerVisible = false;
+                IsMouseOverShowEnabled = true;
+                IsAdornerVisible = true;
+                return false;
+            }
+            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn)
+            {
+                IsMouseOverShowEnabled = false;
+                return false;
+            }
+            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn)
+            {
+                IsMouseOverShowEnabled = false;
+                return false;
             }
 
             return !hoverTimeElapsed;       
-
         }
 
         public override void EraserHitTest(string hitBoxName)
