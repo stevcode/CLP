@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
     [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(HoverBoxViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         public MainWindowViewModel MainWindow
@@ -74,15 +75,15 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Descending");
 
             ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
-          /**  foreach(Tag t in tags)
+
+     /**       foreach(Tag t in tags)
             {
                 if(t.TagType != null)
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
-            }*/
-           
-
+            }   
+            */
         }
 
 
@@ -372,6 +373,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+
             if (propertyName == "IsAuthoring")
             {                
                 SelectedDisplay = LinkedDisplay;
@@ -386,6 +388,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
+            }
+            if(propertyName == "IsUnknown" || propertyName == "IsCorrect" || propertyName == "IsIncorrect" || propertyName == "IsStarred")
+            {
+                System.Console.WriteLine("changed");
+                //FilterSubmissions(SelectedFilterType);
             }
             if (propertyName == "SideBarVisibility")
             {
@@ -424,6 +431,8 @@ namespace Classroom_Learning_Partner.ViewModels
             names = names.Substring(0, names.Length - 2);
             return names;
         }
+
+
 
 
 
@@ -497,6 +506,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
             PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
             PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
+            PropertyGroupDescription correctnessDescription = new PropertyGroupDescription(null, new PagetToCorrectnessTagConverter());
+            PropertyGroupDescription starredDescription = new PropertyGroupDescription(null, new PagetToStarredTagConverter());
 
             SortDescription submitterNameSort = new SortDescription("SubmitterName", ListSortDirection.Ascending);
             SortDescription groupNameSort = new SortDescription("GroupName", ListSortDirection.Ascending);
@@ -537,15 +548,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
             else if(Sort == "Time In - Ascending")
             {
+              
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
 
                 FilteredSubmissions.SortDescriptions.Add(timeAscendingSort);
             }
             else if(Sort == "Time In - Descending")
             {
                 FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
 
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
+            }
+            else if(Sort == "Correctness")
+            {
+                FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            }
+            else if(Sort == "Starred")
+            {
+                FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(starredDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }
         }
 

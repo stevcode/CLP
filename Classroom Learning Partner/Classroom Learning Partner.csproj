@@ -650,6 +650,9 @@
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Resource Include="Images\NumberPad.png" />
     <Resource Include="Images\Array.png" />
+    <Resource Include="Images\Unstarred.png" />
+    <Resource Include="Images\Starred.png" />
+    <Resource Include="Images\Unknown.png" />
     <Resource Include="Images\DisplayGroupSubmissionsButton.png" />
     <Resource Include="Images\GroupSubmit-icon32.png" />
     <Resource Include="Images\MakePageLonger.png" />

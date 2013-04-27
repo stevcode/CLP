@@ -9,15 +9,24 @@ using Catel.Data;
 
 namespace CLP.Models
 {
+    [Serializable]
     public class TagOptionValue : DataObjectBase
     {
         #region Constructor
 
-        public TagOptionValue(string iconPath, string value)
+        public TagOptionValue(string value, string iconPath)
         {
             IconUri = new Uri(iconPath, UriKind.Relative); 
             Value = value;
         }
+
+        /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected TagOptionValue(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
 
 
         #endregion

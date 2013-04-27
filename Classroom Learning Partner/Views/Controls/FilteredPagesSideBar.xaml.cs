@@ -98,6 +98,27 @@ namespace Classroom_Learning_Partner.Views
         }
   */
 
+        private void StudentsForTimeLoaded(object sender, RoutedEventArgs e)
+        {
+            var itemsPresenter = sender as ItemsPresenter;
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
+
+            foreach(UIElement item in vsp.Children)
+            {
+
+                var b = GetVisualChild<Border>(item);
+                var border = b as Border;
+                if(border != null)
+                {
+
+                    var grid = GetVisualParent<Grid>(border);
+                    var stack = grid.Children[0];
+                    stack.Visibility = Visibility.Collapsed;
+
+                }
+            }
+        }
+
         private void toggle_Click_Group_Individual(object sender, RoutedEventArgs e)
         {
             var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
@@ -327,6 +348,7 @@ namespace Classroom_Learning_Partner.Views
 
             }
         }
+
 
         private void ShowAllSiblings(object sender, RoutedEventArgs e)
         {
