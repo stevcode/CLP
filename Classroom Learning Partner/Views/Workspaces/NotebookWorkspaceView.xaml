@@ -91,7 +91,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <!--Notebook Page-->
+                                <!--History Page-->
                                 <Border x:Name="SelectedBorder" Grid.Column="0"
                                         BorderThickness="2"
                                         BorderBrush="Transparent"
@@ -106,8 +106,8 @@
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
-                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="{StaticResource MainColor}" />
+                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="DarkOrange" />
+                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="DarkOrange" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -274,42 +274,72 @@
                         <TextBlock x:Name="SubmissionHistoryButton">Open Page History</TextBlock>
                     </Button>
                 </Border>
-                <Border x:Name="SubmissionHistoryBorder" Grid.Row="4" Height="120" Background="#F3F3F3" BorderThickness="0,5,0,0" BorderBrush="#D4D4D4" Visibility="Collapsed" >
-                    <ListBox x:Name="SubmissionHistoryPanel" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                        MinHeight="120"
-                        Height="{Binding ElementName=SubmissionHistoryBorder, Path=ActualHeight, Mode=OneWay}" 
-                        ItemsSource="{Binding Path=HistoryPages}"
-                        ItemContainerStyle="{StaticResource HistoryPagesContainer}"
-                        SelectionMode="Single"
-                             Background="#DDDDDD">
+                <!-- History Pages -->
+                <Grid Grid.Row="4" x:Name="SubmissionHistoryGrid" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" MinWidth="150"/>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="SubmissionCurrentPageBorder" Grid.Column="0" Height="120" Background="#F3F3F3" BorderThickness="0,5,5,0" BorderBrush="#D4D4D4">
+                        <ListBox x:Name="SubmissionCurrentPageList" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            MinHeight="137"
+                            Height="{Binding ElementName=SubmissionCurrentPageBorder, Path=ActualHeight, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=HistoryCurrentPage}"
+                            ItemContainerStyle="{StaticResource HistoryPagesContainer}"
+                            SelectionMode="Single"
+                                 Background="#DDDDDD">
 
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderThickness="0" Height="Auto">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDown">
-                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                    <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0" Height="Auto">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Border>
+                    <Border x:Name="SubmissionHistoryBorder" Grid.Column="1" Height="120" Background="#F3F3F3" BorderThickness="0,5,0,0" BorderBrush="#D4D4D4">
+                        <ListBox x:Name="SubmissionHistoryPanel" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            MinHeight="120"
+                            Height="{Binding ElementName=SubmissionHistoryBorder, Path=ActualHeight, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=HistoryPages}"
+                            ItemContainerStyle="{StaticResource HistoryPagesContainer}"
+                            SelectionMode="Single"
+                                 Background="#DDDDDD">
 
-                    </ListBox>
-                </Border>
-                
-                
-                
-                
-                
-                
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0" Height="Auto">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+
+                        </ListBox>
+                    </Border>
+                </Grid>
             </Grid>
 
             <ContentControl Grid.Column="5"

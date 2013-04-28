@@ -1529,6 +1529,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(notebook != null && submission != null)
                 {
+                    submission.IsSubmission = true;
                     notebook.AddStudentSubmission(submission.UniqueID, submission);
                 }
             }

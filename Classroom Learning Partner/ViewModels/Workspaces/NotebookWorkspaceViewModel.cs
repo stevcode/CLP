@@ -360,7 +360,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<CLPPage>));
+        
+        /// <summary>
+        /// First element in HistoryPanel
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryCurrentPage
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryCurrentPageProperty); }
+            set { SetValue(HistoryCurrentPageProperty, value); }
+        }
 
+        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<CLPPage>));
+         
         #endregion //Panels
 
         #endregion //Bindings
@@ -634,8 +645,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             HistoryPages = pages;
 
-        }
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> currentPage = new System.Collections.ObjectModel.ObservableCollection<CLPPage>();
+            foreach(CLPPage page in NotebookPages)
+            {
+                if(page.UniqueID == id)
+                {
+                    currentPage.Add(page);
+                    break;
+                }
+            }
+            HistoryCurrentPage = currentPage;
 
+        }
+        
+        
         #endregion //Methods
 
     }
