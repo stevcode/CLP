@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -46,7 +47,11 @@ namespace CLP.Models
         public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            set 
+            { 
+                SetValue(ParentPageProperty, value); 
+                SetValue(ParentPageIDProperty, value.UniqueID);
+            }
         }
 
         [NonSerialized]
@@ -64,11 +69,9 @@ namespace CLP.Models
                 {
                     return tempValue;
                 }
-                else
-                {
-                    SetValue(ParentPageIDProperty, ParentPage.UniqueID);
-                    return ParentPage.UniqueID;
-                }
+
+                SetValue(ParentPageIDProperty, ParentPage.UniqueID);
+                return ParentPage.UniqueID;
             }
             set { SetValue(ParentPageIDProperty, value); }
         }
@@ -81,8 +84,7 @@ namespace CLP.Models
         public string ParentID
         {
             get { return GetValue<string>(ParentIDProperty); }
-            set
-            { SetValue(ParentIDProperty, value);}
+            set { SetValue(ParentIDProperty, value); }
         }
 
         public static readonly PropertyData ParentIDProperty = RegisterProperty("ParentID", typeof(string), "");
@@ -292,7 +294,7 @@ namespace CLP.Models
                     {
                         PageObjectStrokeParentIDs.Remove(strokeID);
                     }
-                    catch(System.Exception)
+                    catch(Exception)
                     {
                         Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
                     }
@@ -313,7 +315,7 @@ namespace CLP.Models
                 where stroke.GetStrokeUniqueID() == strokeID
                 select stroke;
 
-            StrokeCollection inkStrokes = new StrokeCollection(strokes);
+            StrokeCollection inkStrokes = new StrokeCollection(strokes.Distinct());
             return inkStrokes;
         }
 
@@ -366,6 +368,18 @@ namespace CLP.Models
 
             ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
             return pageObjectsOver;
+        }
+
+        //aspectRatio is Width/Height
+        public virtual void EnforceAspectRatio(double aspectRatio)
+        {
+            Width = Height * aspectRatio;
+
+            if(Width + XPosition > ParentPage.PageWidth)
+            {
+                Width = ParentPage.PageWidth - XPosition;
+                Height = Width / aspectRatio;
+            }
         }
 
         #endregion

@@ -36,5 +36,6 @@ namespace CLP.Models
         bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
         void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects);
         ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
+        void EnforceAspectRatio(double aspectRatio);
     }
 }

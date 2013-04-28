@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
         public CLPAggregationDataTableViewModel(CLPAggregationDataTable dataTable)
-            : base()
         {
             PageObject = dataTable;
             IsMouseOverShowEnabled = true;
@@ -260,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return true;
         }
 
-        public override void EraserHitTest(string hitBoxName)
+        public override void EraserHitTest(string hitBoxName, object tag)
         {
             if(App.MainWindowViewModel.IsAuthoring && hitBoxName == "TopLeftHitBox")
             {

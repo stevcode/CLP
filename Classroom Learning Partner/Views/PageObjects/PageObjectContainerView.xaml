@@ -59,6 +59,10 @@
                 <Views:CLPTextBoxView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="CLPArrayTemplate">
+                <Views:CLPArrayView DataContext="{Binding}" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -128,6 +132,11 @@
                     <!-- CLPTextBox trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
                         <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPArray trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPArray">
+                        <Setter Property="Template" Value="{StaticResource CLPArrayTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>

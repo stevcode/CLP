@@ -153,7 +153,7 @@
                            Cursor="SizeNWSE">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="DragDelta">
-                                <catel:EventToCommand Command="{Binding ResizePageObjectCommand}" PassEventArgsToCommand="True" />
+                                <catel:EventToCommand Command="{Binding ResizeShapeCommand}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                             <i:EventTrigger EventName="DragStarted">
                                 <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />

@@ -405,7 +405,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return false;
         }
 
-        public override void EraserHitTest(string hitBoxName)
+        public override void EraserHitTest(string hitBoxName, object tag)
         {
             if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
             {
