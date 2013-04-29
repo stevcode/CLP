@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
-using System.IO;
-using System.Windows.Ink;
 
 namespace CLP.Models
 {
     [Serializable]
     public class CLPHistory : DataObjectBase<CLPHistory>
     {
-        public readonly double Sample_Rate = 9;
-        private bool frozen;
+        public const double SAMPLE_RATE = 9;
+        private bool _frozen;
 
         #region Constructor
 
         public CLPHistory()
         {
-            frozen = false;
         }
 
         /// <summary>
@@ -91,40 +86,33 @@ namespace CLP.Models
 
         public void Freeze()
         {
-            frozen = true;
+            _frozen = true;
         }
 
         public void Unfreeze()
         {
-            frozen = false;
+            _frozen = false;
         }
 
-        public Boolean push(CLPHistoryItem item)
+        public void Push(CLPHistoryItem item)
         {
-            if(frozen)
+            if(_frozen || IsExpected(item))
             {
-                return false;
+                return;
             }
-            if(!isExpected(item))
-            {
-                //Console.WriteLine("pushing a " + item.ItemType);
-                Past.Push(item);
-                MetaPast.Push(item);
-                Future.Clear();
-            }
-            //else
-            //{
-            //    Console.WriteLine("expected " + item.ItemType);
-            //}
-            return true;
+
+            Past.Push(item);
+            MetaPast.Push(item);
+            Future.Clear();
         }
         
         public void Undo()
         {
-            if(Past.Count==0){
-                //Console.WriteLine("told to undo, but nothing in stack");
+            if(Past.Count==0)
+            {
                 return;
             }
+
             CLPHistoryItem lastAction = Past.Pop();
             CLPHistoryItem expected = lastAction.GetUndoFingerprint();
             if(expected != null)
@@ -144,14 +132,14 @@ namespace CLP.Models
             }
         }
 
-        public void Redo(){
+        public void Redo()
+        {
             if(Future.Count == 0)
             {
-               //Console.WriteLine("told to redo, but nothing in stack");
                return;
             }
-            CLPHistoryItem nextAction = (CLPHistoryItem)Future.Pop();
-            CLPHistoryItem expected = nextAction.GetRedoFingerprint();
+            var nextAction = Future.Pop();
+            var expected = nextAction.GetRedoFingerprint();
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
@@ -177,24 +165,11 @@ namespace CLP.Models
             }
         }   
 
-        public void printMemStacks(String methodName, String pos)
-        {
-            Console.WriteLine(pos + " " + methodName + " Past");
-            foreach(CLPHistoryItem item in Past)
-            {
-                Console.WriteLine(item.ItemType);
-            }
-            Console.WriteLine(pos + " " + methodName + " Future");
-            foreach(CLPHistoryItem item in Future)
-            {
-                Console.WriteLine(item.ItemType);
-            }
-        }
-
-        private bool isExpected(CLPHistoryItem item)
+        private bool IsExpected(CLPHistoryItem item)
         {
             CLPHistoryItem match = null;
-            foreach (CLPHistoryItem expected in ExpectedEvents) {
+            foreach (CLPHistoryItem expected in ExpectedEvents) 
+            {
                 if(item.ItemType == expected.ItemType && expected.Equals(item))
                 {
                     match = expected;
@@ -205,11 +180,9 @@ namespace CLP.Models
             {
                 return false;
             }
-            else
-            {
-                ExpectedEvents.Remove(match);
-                return true;
-            }
+            
+            ExpectedEvents.Remove(match);
+            return true;
         }
     }
 }

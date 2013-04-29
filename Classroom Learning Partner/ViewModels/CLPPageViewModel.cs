@@ -538,14 +538,14 @@ namespace Classroom_Learning_Partner.ViewModels
             if(action == "Add"){
                 foreach(ICLPPageObject item in e.NewItems)
                 {
-                    Page.PageHistory.push(new CLPHistoryAddObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
                 }
             }
             else if(action == "Remove")
             {
                 foreach(ICLPPageObject item in e.OldItems)
                 {
-                    Page.PageHistory.push(new CLPHistoryRemoveObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
                 }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
@@ -612,7 +612,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
                         foreach (var stroke in e.Removed)
                         {
-                            Page.PageHistory.push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
@@ -627,7 +627,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                             
                                 
-                                Page.PageHistory.push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
+                                Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
 
                             
                             //Ensures truly uniqueIDs
