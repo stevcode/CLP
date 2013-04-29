@@ -241,10 +241,10 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
 
         /// <summary>
-        /// Whether or note the page is a submissions from a student.
+        /// Whether or not the page is a submissions from a student.
         /// </summary>
         public bool IsSubmission
         {
