@@ -375,6 +375,13 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
             {
+                if (isMouseDown)
+                {
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
+                    return true;
+                }
                 if (IsRightAdornerVisible || IsBottomAdornerVisible)
                 {
                     IsAdornerVisible = false;
