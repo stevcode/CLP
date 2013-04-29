@@ -168,7 +168,7 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />-->
 
-                <RibbonMenuButton Label="Eraser Type" x:Name="blah">
+                <RibbonMenuButton Label="Eraser Type">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource" Value="..\Images\StrokeEraser.png" />

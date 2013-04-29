@@ -329,9 +329,10 @@ namespace Classroom_Learning_Partner
             if(diff > CLPHistory.SAMPLE_RATE)
             {
                 page.PageHistory.Push(new CLPHistoryMoveObject(page, pageObject, oldXPos, oldYPos, pt.X, pt.Y));
-                pageObject.XPosition = pt.X;
-                pageObject.YPosition = pt.Y;
             }
+
+            pageObject.XPosition = pt.X;
+            pageObject.YPosition = pt.Y;
         }
 
         public void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
