@@ -14,6 +14,7 @@
         <res:SumbissiontoBooleanConverter x:Key="sConverter" />
         <res:HalfLengthConverter x:Key="halfConverter" />
         <res:TimeToBooleanConverter x:Key="timeConverter" />
+        <res:TagToBooleanConverter x:Key="tagConverter" />
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -73,6 +74,25 @@
                         <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
                     </DockPanel>
                </ToggleButton> 
+
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
+            </Grid>
+        </ControlTemplate>
+
+        <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="TagLabelTemplate">
+
+            <Grid Margin="0,2,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <ToggleButton Grid.Row="0" x:Name="tag" HorizontalAlignment="Left" HorizontalContentAlignment="Left"  Width="150" Height="40" Click="toggle_Click_student_name">
+                    <DockPanel>
+                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="120"/>
+                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="14" Text="{Binding Path=ItemCount}"/>
+                    </DockPanel>
+                </ToggleButton>
 
                 <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="allItems_Loaded" />
             </Grid>
@@ -228,6 +248,9 @@
                                 <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending">
                                     <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="True">
+                                    <Setter Property="Template" Value="{StaticResource TagLabelTemplate}" />
+                                </DataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
@@ -281,18 +304,22 @@
                                     <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <!--   <Grid>
+                       <!--   <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions> -->
-                            <Views:CLPPagePreviewView  DataContext="{Binding}"  x:Name="preview1">
+                            
+                                <Views:CLPPagePreviewView DataContext="{Binding}"  x:Name="preview1">
+   
+
                             </Views:CLPPagePreviewView>
-                            <!--      <Views:HoverBoxView Grid.Row="1"  DataContext="{Binding}" x:Name="hover1">
-                         </Views:HoverBoxView>
-                               
-                        </Grid> 
--->
+                          <!--  <Views:HoverBoxView Grid.Row="1" Width="150" Margin="0,-20,0,0" DataContext="{Binding}">
+
+                            </Views:HoverBoxView>
+
+                        </Grid> -->
+
                         </Border>
 
                     </DataTemplate>

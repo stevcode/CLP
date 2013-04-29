@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
+using System;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -34,11 +35,6 @@ namespace Classroom_Learning_Partner.Views
             {
                 clpArrayViewModel.RightArrowPosition = e.GetPosition(TopGrid).Y - CLPArray.LargeLabelLength;
             }
-        }
-
-        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            MessageBox.Show("CLICK!");
         }
     }
 }

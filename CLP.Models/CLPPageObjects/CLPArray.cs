@@ -117,13 +117,15 @@ namespace CLP.Models
             Rows = rows;
             Columns = columns;
 
+            YPosition = 150;
+
             ParentPage = page;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             CanAcceptStrokes = true;
 
-            ArrayHeight = 500;
-            ArrayWidth = 500;
+            ArrayHeight = 450;
+            ArrayWidth = 450;
 
             EnforceAspectRatio(columns * 1.0 / rows);
             ApplyDistinctPosition(this);
@@ -305,6 +307,8 @@ namespace CLP.Models
 
         public void CalculateGridLines()
         {
+            HorizontalGridLines.Clear();
+            VerticalGridLines.Clear();
             double squareSize = ArrayWidth / Columns;
             for(int i = 1; i < Rows; i++)
             {
@@ -313,6 +317,31 @@ namespace CLP.Models
             for(int i = 1; i < Columns; i++)
             {
                 VerticalGridLines.Add(i * squareSize);
+            }
+        }
+
+        public void ResizeDivisions()
+        {
+            double oldHeight = 0;
+            foreach(CLPArrayDivision division in HorizontalDivisions)
+            {
+                oldHeight = oldHeight + division.Length;
+            }
+            foreach(CLPArrayDivision division in HorizontalDivisions)
+            {
+                division.Position = division.Position * ArrayHeight / oldHeight;
+                division.Length = division.Length * ArrayHeight / oldHeight;
+            }
+
+            double oldWidth = 0;
+            foreach(CLPArrayDivision division in VerticalDivisions)
+            {
+                oldWidth = oldWidth + division.Length;
+            }
+            foreach(CLPArrayDivision division in VerticalDivisions)
+            {
+                division.Position = division.Position * ArrayWidth / oldWidth;
+                division.Length = division.Length * ArrayWidth / oldWidth;
             }
         }
 

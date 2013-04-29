@@ -5,7 +5,7 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
 >
-    <Border BorderBrush="Red"  BorderThickness="3">
+    <Border BorderBrush="Red"  BorderThickness="1" Background="LightPink">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -14,14 +14,29 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Button IsDefault="True" Grid.Column="0"  BorderBrush="Black" BorderThickness="1" Name="Star" Content="Star" Width="20" Height="20" Margin="2" Click="click">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <catel:EventToCommand Command="{Binding ToggleStarCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+            <Button  Grid.Column="0" Command="{Binding ToggleStarCommand}"  BorderBrush="Black" BorderThickness="1" Name="Star" Content="Star" Width="20" Height="20" Margin="1">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Border BorderThickness="1" BorderBrush="Gray" Background="White">
+                            <Image Opacity="1">
+                            <Image.Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStarred}" Value="False">
+                                                <Setter Property="Source" Value="..\Images\Unstarred.png" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsStarred}" Value="True">
+                                                <Setter Property="Source" Value="..\Images\Starred.png" />
+                                            </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                                </Image>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
         </Button>
-        <Button IsCancel="True" Grid.Column="1" Width="20" Height="20" Margin="5">
+            <Button  Grid.Column="1" Command="{Binding MarkCorrectCommand}" Name="correct" Width="20" Height="20" Margin="1">
             <Button.Template>
                 <ControlTemplate>
                     <Border BorderThickness="1" BorderBrush="Gray">
@@ -30,10 +45,12 @@
                                 <Style TargetType="{x:Type Border}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsCorrect}" Value="True">
-                                            <Setter Property="Background" Value="LightBlue" />
+                                            <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsCorrect}" Value="False">
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Background" Value="White" />
+                                            
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -41,13 +58,8 @@
                         </Border>
                 </ControlTemplate>
             </Button.Template>
-                <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <catel:EventToCommand Command="{Binding MarkCorrectCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
         </Button>
-            <Button IsCancel="True" Grid.Column="2"  Name="Incorrect" Width="20" Height="20" Margin="2">
+            <Button Grid.Column="2"  Name="Incorrect" Command="{Binding MarkIncorrectCommand}" Width="20" Height="20" Margin="1">
                 <Button.Template>
                     <ControlTemplate>
                         <Border BorderThickness="1" BorderBrush="Gray">
@@ -56,10 +68,11 @@
                                 <Style TargetType="{x:Type Border}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsIncorrect}" Value="True">
-                                            <Setter Property="Background" Value="LightBlue" />
+                                            <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsIncorrect}" Value="False">
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Background" Value="White" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -67,25 +80,21 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <catel:EventToCommand Command="{Binding MarkIncorrectCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </Button>
-            <Button IsCancel="True" Name="Unknown" Grid.Column="3" Width="20" Height="20" Margin="5">
+            <Button  Name="Unknown" Command="{Binding MarkUnknownCommand}" Grid.Column="3" Width="20" Height="20" Margin="1">
                     <Button.Template>
                         <ControlTemplate>
                             <Border BorderThickness="1" BorderBrush="Gray">
-                                <Image Source="..\Images\Correct.png" Opacity="1"/>
+                                <Image Source="..\Images\Unknown.png" Opacity="1"/>
                                 <Border.Style>
                                     <Style TargetType="{x:Type Border}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsUnknown}" Value="True">
-                                                <Setter Property="Background" Value="LightBlue" />
-                                            </DataTrigger>
+                                                <Setter Property="Background" Value="Purple" />
+                                            <Setter Property="BorderThickness" Value="2" />
+                                        </DataTrigger>
                                             <DataTrigger Binding="{Binding IsUnknown}" Value="False">
-                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Background" Value="White" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -93,19 +102,15 @@
                             </Border>
                         </ControlTemplate>
                     </Button.Template>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <catel:EventToCommand Command="{Binding MarkUnknownCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
                 </Button>
-                <Button IsCancel="True" Grid.Column="4" Content="..." Width="20" Height="20" Margin="2">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <catel:EventToCommand Command="{Binding ShowTagsCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Button>
+            <Button  Grid.Column="4" Command="{Binding ShowTagsCommand}"  Name="tags" Content="..." Width="20" Height="20" Margin="1">
+                <Button.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="{Binding Topics}"></TextBlock>
+                    </ToolTip>
+
+                </Button.ToolTip>
+            </Button>
     </Grid>
     </Border>
 </catel:UserControl>

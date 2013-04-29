@@ -258,7 +258,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return !hoverTimeElapsed;
         }
 
-        public virtual void EraserHitTest(string hitBoxName)
+        public virtual void EraserHitTest(string hitBoxName, object tag)
         {
             if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
             {

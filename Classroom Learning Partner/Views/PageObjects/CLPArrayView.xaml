@@ -45,11 +45,11 @@
                         CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <ac:AdornedControl.AdornerContent >
             <!--This is the adorner-->
-            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" 
                     Width="{Binding Path=Width}" Height="{Binding Path=Height}">
 
                 <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                            RadiusX="10" RadiusY="10"
+                            RadiusX="10" RadiusY="10" Fill="Transparent"
                             Canvas.Top="-5" Canvas.Left="-5"
                             Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
                             Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" 
@@ -136,7 +136,7 @@
                 </Thumb>
                     
                 <!--Right Side Division Adorner-->
-                <Thumb Cursor="SizeWE"
+                <Thumb Cursor="SizeWE" 
                         Canvas.Right="{Binding PageObject.SmallLabelLength}" 
                         Canvas.Top="{Binding Path=RightArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=30}"
                         Width="40" Height="40"
@@ -152,7 +152,7 @@
                                 </i:Interaction.Triggers>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <!--Array bottom adorner design defined here-->
+                                <!--Array right side adorner design defined here-->
                                 <Path Data="M0,1 L-.75,.5 L0,0 M-.75,.5 L1,.5" 
                                             Stretch="Fill" Margin="5"
                                             Stroke="Black" StrokeThickness="3" />
@@ -203,8 +203,8 @@
             </Grid.ColumnDefinitions>
 
             <!--Large Labels-->
-            <Label Grid.Row="0" Grid.ColumnSpan="3" Content="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="36" Height="{Binding PageObject.LargeLabelLength}"/>
-            <Label Grid.Column="0" Grid.RowSpan="3" Content="{Binding Path=Rows}" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="36" Width="{Binding PageObject.LargeLabelLength}" />
+            <Label Grid.Row="0" Grid.ColumnSpan="3" Content="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Height="{Binding PageObject.LargeLabelLength}"/>
+            <Label Grid.Column="0" Grid.RowSpan="3" Content="{Binding Path=Rows}" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="24" Width="{Binding PageObject.LargeLabelLength}" />
             
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
@@ -244,6 +244,9 @@
             <Rectangle Grid.Row="1" Grid.Column="1" Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
                        Fill="Transparent" Stroke="Black" StrokeThickness="3"/>
 
+            <Rectangle Name="ArrayBodyHitBox" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                       Fill="Transparent" Stretch="Fill" Height="Auto" Width="Auto" />
+
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
                           ItemsSource="{Binding HorizontalDivisions}"
@@ -260,19 +263,25 @@
                             <Rectangle Height="4"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Black" StrokeThickness="3" />
-                            <Rectangle Name="DivisionHitBox" Height="10"
+                            <Rectangle Name="DivisionHitBox" Height="30" Tag="{Binding}"
                                        Canvas.Top="-5"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Transparent" Fill="Transparent"/>
                             <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
                                   Height="{Binding Length}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                <Label FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
-                                <Rectangle Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
+                                <Rectangle x:Name="RightLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
-                                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                                        MouseDown="UIElement_OnMouseDown"/>
+                                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Rectangle>
+                                        
                             </Grid>
                             
                         </Canvas>
@@ -296,15 +305,23 @@
                             <Rectangle Width="4"
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
                                        Stroke="Black" StrokeThickness="3" />
-                            <Rectangle Name="DivisionHitBox" Width="10"
-                                       Canvas.Top="-5"
+                            <Rectangle Name="DivisionHitBox" Width="10" Tag="{Binding}" Canvas.Top="-5"
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}"  
                                        Stroke="Transparent" Fill="Transparent"/>
                             <Grid Canvas.Bottom="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
                                   Width="{Binding Length}" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="32" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                                <Label FontSize="18" HorizontalContentAlignment="Center" VerticalAlignment="Center"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
+                                <Rectangle x:Name="BottomLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
+                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
+                                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Rectangle>
                             </Grid>
                         </Canvas>
                     </DataTemplate>
@@ -312,19 +329,19 @@
             </ItemsControl>
 
             <!--HitBoxes-->
-            <Rectangle Name="ArrayBodyHitBox" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
-                       Fill="Transparent" Stretch="Fill" Height="Auto" Width="Auto" />
+            
 
             <Rectangle Name="ArrayBottomHitBox" Grid.Row="2" Grid.Column="1"
                        Fill="Transparent" Stretch="Fill" 
-                       Width="{Binding ArrayWidth}" Height="{Binding Path=PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=2}" 
+                       Width="{Binding ArrayWidth}" Height="{Binding Path=PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}" 
                        MouseMove="ArrayBottomHitBox_MouseMove" />
 
             <Rectangle Name="ArrayRightHitBox" Grid.Row="1" Grid.Column="2" 
                        Fill="Transparent" Stretch="Fill" 
-                       Width="{Binding Path=PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=2}" Height="{Binding ArrayHeight}" 
+                       Width="{Binding Path=PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}" Height="{Binding ArrayHeight}" 
                        MouseMove="ArrayRightHitBox_MouseMove" />
 
+            
         </Grid>
 
     </ac:AdornedControl>

@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     [InterestedIn(typeof(MainWindowViewModel))]
     [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(HoverBoxViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
     {
         public MainWindowViewModel MainWindow
@@ -48,6 +49,9 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedDisplay = LinkedDisplay;
             CurrentPage = Notebook.Pages[0];
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
+            TopThumbnailsVisible = App.MainWindowViewModel.Ribbon.ThumbnailsTop;
+            SideThumbnailsVisible = !TopThumbnailsVisible;
+
 
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -74,16 +78,15 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Descending");
 
             ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
-          /**  foreach(Tag t in tags)
+
+     /**       foreach(Tag t in tags)
             {
                 if(t.TagType != null)
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
-            }
+            }   
             */
-           
-
         }
 
 
@@ -187,6 +190,29 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
+
+        /// <summary>
+        /// Top Thumbnail Toggle
+        /// </summary>
+        public Boolean TopThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(TopThumbnailsVisibleProperty); }
+            set { SetValue(TopThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData TopThumbnailsVisibleProperty = RegisterProperty("TopThumbnailsVisible", typeof(Boolean));
+
+        /// <summary>
+        /// Side Thumbnail Toggle
+        /// </summary>
+        public Boolean SideThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(SideThumbnailsVisibleProperty); }
+            set { SetValue(SideThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData SideThumbnailsVisibleProperty = RegisterProperty("SideThumbnailsVisible", typeof(Boolean));
+
 
         #endregion //Displays
 
@@ -324,6 +350,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel), new DisplayListPanelViewModel());
 
+        /// <summary>
+        /// HistoryPanel.
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryPagesProperty); }
+            set { SetValue(HistoryPagesProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<CLPPage>));
+        
+        /// <summary>
+        /// First element in HistoryPanel
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryCurrentPage
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryCurrentPageProperty); }
+            set { SetValue(HistoryCurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<CLPPage>));
+         
         #endregion //Panels
 
         #endregion //Bindings
@@ -336,6 +384,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
+            SetHistoryPages();
         }
 
         /// <summary>
@@ -373,6 +422,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+
             if (propertyName == "IsAuthoring")
             {                
                 SelectedDisplay = LinkedDisplay;
@@ -388,11 +438,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
+            if(propertyName == "IsUnknown" || propertyName == "IsCorrect" || propertyName == "IsIncorrect" || propertyName == "IsStarred")
+            {
+                System.Console.WriteLine("changed");
+                //FilterSubmissions(SelectedFilterType);
+            }
             if (propertyName == "SideBarVisibility")
             {
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
+            if(propertyName == "ThumbnailsTop")
+            {
+                TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;
+                IsSideBarVisible = !TopThumbnailsVisible;
+            }
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
@@ -425,6 +485,8 @@ namespace Classroom_Learning_Partner.ViewModels
             names = names.Substring(0, names.Length - 2);
             return names;
         }
+
+
 
 
 
@@ -498,6 +560,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
             PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
             PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
+            PropertyGroupDescription correctnessDescription = new PropertyGroupDescription(null, new PagetToCorrectnessTagConverter());
+            PropertyGroupDescription starredDescription = new PropertyGroupDescription(null, new PagetToStarredTagConverter());
 
             SortDescription submitterNameSort = new SortDescription("SubmitterName", ListSortDirection.Ascending);
             SortDescription groupNameSort = new SortDescription("GroupName", ListSortDirection.Ascending);
@@ -552,8 +616,49 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
+            else if(Sort == "Correctness")
+            {
+                FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            }
+            else if(Sort == "Starred")
+            {
+                FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.GroupDescriptions.Add(starredDescription);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            }
         }
 
+        public void SetHistoryPages()
+        {
+            string id = CurrentPage.UniqueID;
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> pages;
+            if(Notebook.Submissions.ContainsKey(id))
+            {
+                pages = Notebook.Submissions[id];
+            }
+            else
+            {
+                Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                pages = Notebook.Submissions[id];
+            }
+            HistoryPages = pages;
+
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> currentPage = new System.Collections.ObjectModel.ObservableCollection<CLPPage>();
+            foreach(CLPPage page in NotebookPages)
+            {
+                if(page.UniqueID == id)
+                {
+                    currentPage.Add(page);
+                    break;
+                }
+            }
+            HistoryCurrentPage = currentPage;
+
+        }
+        
+        
         #endregion //Methods
 
     }

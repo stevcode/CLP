@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ServerVisibility = Visibility.Collapsed;
             HistoryVisibility = Visibility.Collapsed;
             DebugTabVisibility = Visibility.Collapsed;
+            
 
             switch(App.CurrentUserMode)
             {
@@ -84,6 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
             PageEraserInteractionMode = PageEraserInteractionMode.ObjectEraser;
+            ThumbnailsTop = false;
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -145,6 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
+            ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
@@ -253,6 +256,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PenSize property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Boolean ThumbnailsTop
+        {
+            get { return GetValue<Boolean>(ThumbnailsTopProperty); }
+            set { SetValue(ThumbnailsTopProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PenSize property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ThumbnailsTopProperty = RegisterProperty("ThumbnailsTop", typeof(Boolean), 5);
+
+
 
         /// <summary>
         /// Gets the DrawingAttributes of the Ribbon.
@@ -1509,7 +1528,18 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
+                CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+                CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
+
+
+                CLPPage submission = page.Clone() as CLPPage;
+
+                if(notebook != null && submission != null)
+                {
+                    submission.IsSubmission = true;
+                    notebook.AddStudentSubmission(submission.UniqueID, submission);
+                }
             }
             CanSendToTeacher = false;
         }
@@ -1724,6 +1754,20 @@ namespace Classroom_Learning_Partner.ViewModels
             //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = null;
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+        }
+
+
+        /// <summary>
+        /// Gets the ToggleThumbnailsCommand command.
+        /// </summary>
+        public Command ToggleThumbnailsCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MakePageLongerCommand command is executed.
+        /// </summary>
+        private void OnToggleThumbnailsCommandExecute()
+        {
+            ThumbnailsTop = (ThumbnailsTop == false);
         }
 
         #endregion //Display Commands
