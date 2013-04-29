@@ -381,10 +381,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-            if(!_isMouseDown)
-            {
+            //if(!_isMouseDown)
+            //{
                 VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            }
+            //}
 
             if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
             {

@@ -143,7 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            if(IsStamped)
+            if(IsStamped || !isMouseDown)
             {
                 if(IsBackground)
                 {
@@ -176,11 +176,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 return !hoverTimeElapsed;
             }
-            else
-            {
-                IsMouseOverShowEnabled = false;
-                return true;
-            }
+
+            hoverTimer.Stop();
+            hoverTimeElapsed = false;
+            timerRunning = false;
+            IsMouseOverShowEnabled = false;
+            return true;
         }
 
         #endregion //Methods
