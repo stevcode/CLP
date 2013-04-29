@@ -466,7 +466,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if(division.Orientation == ArrayDivisionOrientation.Horizontal)
                     {
-                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
                         (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
                         (PageObject as CLPArray).HorizontalDivisions.Remove(division);
 
@@ -480,7 +480,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     if(division.Orientation == ArrayDivisionOrientation.Vertical)
                     {
-                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
                         (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
                         (PageObject as CLPArray).VerticalDivisions.Remove(division);
 
