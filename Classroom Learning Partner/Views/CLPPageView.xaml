@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -41,7 +41,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Views:PageObjectContainerView DataContext="{Binding}" />
+                        <views:PageObjectContainerView DataContext="{Binding}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
@@ -51,7 +51,7 @@
                        IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                        EditingMode="{Binding EditingMode}"
-                       EditingModeInverted="EraseByPoint"
+                       EditingModeInverted="{Binding EraserMode}"
                        DefaultDrawingAttributes="{Binding DefaultDA}" />
 
         </Canvas>

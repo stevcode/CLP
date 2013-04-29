@@ -296,7 +296,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             HorizontalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
                         (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
@@ -336,7 +336,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             VerticalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
                         (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
@@ -375,6 +375,13 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
             {
+                if (isMouseDown)
+                {
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
+                    return true;
+                }
                 if (IsRightAdornerVisible || IsBottomAdornerVisible)
                 {
                     IsAdornerVisible = false;

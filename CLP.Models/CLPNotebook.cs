@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Ink;
 
 namespace CLP.Models
 {
@@ -17,9 +13,6 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
     {
-        
-        
-        //private readonly Memento initialMemento;
         #region Constructor
 
         /// <summary>
@@ -27,14 +20,9 @@ namespace CLP.Models
         /// </summary>
         public CLPNotebook()
         {
-            
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            Pages = new ObservableCollection<CLPPage>();
-            Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
-           
-
         }
 
         /// <summary>
@@ -57,11 +45,6 @@ namespace CLP.Models
             set { SetValue(UserNameProperty, value); }
         }
 
-       
-
-
-
-
         public static readonly PropertyData UserNameProperty = RegisterProperty("UserName", typeof(String), "NoName");
 
         /// <summary>
@@ -73,9 +56,6 @@ namespace CLP.Models
             private set { SetValue(PagesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Pages property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
@@ -87,9 +67,6 @@ namespace CLP.Models
             private set { SetValue(SubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Submissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>), () => new Dictionary<string, ObservableCollection<CLPPage>>());
 
         /// <summary>
@@ -101,10 +78,7 @@ namespace CLP.Models
             set { SetValue(NotebookNameProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NotebookName property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string), null);
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
 
         /// <summary>
         /// UniqueID assigned to the notebook.
@@ -115,9 +89,6 @@ namespace CLP.Models
             private set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
@@ -129,10 +100,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         #endregion
 

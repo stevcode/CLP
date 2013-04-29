@@ -50,6 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             Page = page;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
@@ -266,9 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
         
         /// <summary>
@@ -281,6 +279,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -372,10 +381,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-            if(!_isMouseDown)
-            {
+            //if(!_isMouseDown)
+            //{
                 VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            }
+            //}
 
             if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
             {
@@ -538,14 +547,14 @@ namespace Classroom_Learning_Partner.ViewModels
             if(action == "Add"){
                 foreach(ICLPPageObject item in e.NewItems)
                 {
-                    Page.PageHistory.push(new CLPHistoryAddObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
                 }
             }
             else if(action == "Remove")
             {
                 foreach(ICLPPageObject item in e.OldItems)
                 {
-                    Page.PageHistory.push(new CLPHistoryRemoveObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
                 }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
@@ -612,7 +621,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
                         foreach (var stroke in e.Removed)
                         {
-                            Page.PageHistory.push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
@@ -626,7 +635,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
    
-                            Page.PageHistory.push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));
+                            Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
                             
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
@@ -721,6 +730,11 @@ namespace Classroom_Learning_Partner.ViewModels
             if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
+            }
+
+            if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
+            {
+                EraserMode = (viewModel as RibbonViewModel).EraserMode;
             }
 
             if(propertyName == "PenSize" && viewModel is RibbonViewModel)

@@ -257,6 +257,50 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
 
+        private void EraserTypeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string EraserType
+        {
+            get { return GetValue<string>(EraserTypeProperty); }
+            set { SetValue(EraserTypeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserTypeProperty = RegisterProperty("EraserType", typeof(string), "Stroke Eraser", (sender, e) => ((RibbonViewModel)sender).OnEraserTypeChanged());
+
+        /// <summary>
+        /// Called when the EraserType property has changed.
+        /// </summary>
+        private void OnEraserTypeChanged()
+        {
+            if(EraserType == "Point Eraser")
+            {
+                EraserMode = InkCanvasEditingMode.EraseByPoint;
+                PageInteractionMode = PageInteractionMode.Eraser;
+            }
+            else if(EraserType == "Stroke Eraser")
+            {
+                EraserMode = InkCanvasEditingMode.EraseByStroke;
+                PageInteractionMode = PageInteractionMode.StrokeEraser;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -296,9 +340,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
@@ -1311,16 +1352,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Pen Commands
 
-        
-
         /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
         public Command SetPenCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetPenCommand command is executed.
-        /// </summary>
         private void OnSetPenCommandExecute()
         {
             EditingMode = InkCanvasEditingMode.Ink;
@@ -1332,9 +1368,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<string> SetEraserCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetEraserCommand command is executed.
-        /// </summary>
         private void OnSetEraserCommandExecute(string eraserStyle)
         {
             if(eraserStyle == "EraseByPoint")

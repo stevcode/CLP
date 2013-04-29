@@ -34,6 +34,7 @@ namespace CLP.Models
     /// </summary>
     [Serializable, 
     KnownType(typeof(CLPAggregationDataTable)),
+    KnownType(typeof(CLPArray)),
     KnownType(typeof(CLPAudio)),
     KnownType(typeof(CLPImage)),
     KnownType(typeof(CLPShape)),
@@ -56,13 +57,11 @@ namespace CLP.Models
         #region Variables
 
         public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-     
-        public static Guid Immutable = new Guid("00000000-0000-0000-0000-000000000003");
+
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
         public const double PORTRAIT_WIDTH = 816;
-        
 
         #endregion
 
@@ -75,24 +74,16 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            ByteStrokes = new ObservableCollection<List<byte>>();
-            ImagePool = new Dictionary<string, List<byte>>();
-            PageObjects = new ObservableCollection<ICLPPageObject>();
-            PageHistory = new CLPHistory();
-            PageIndex = -1;
-            PageTopics = new ObservableCollection<string>();
             NumberOfSubmissions = 0;
             PageAspectRatio = PageWidth / PageHeight;
 
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
-            PageTags = new ObservableCollection<Tag>();
             Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
             Tag starredTag  = new Tag("Teacher", new StarredTagType());
             correctnessTag.AddTagOptonValue(new TagOptionValue("Unknown",""));
             starredTag.AddTagOptonValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
             PageTags.Add(correctnessTag);
             PageTags.Add(starredTag);
-            
         }
      
 
@@ -218,10 +209,6 @@ namespace CLP.Models
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization:false);
-
-        void InkStrokesProperty_StrokesChanged(object sender, StrokeCollectionChangedEventArgs args) {
-            Console.WriteLine("came hereXXXXXXXXXXXXXXXXXXXXXXXXX: " );
-        }
         
         /// <summary>
         /// Set to True to ignore InkStrokeCollectionChange event.
@@ -345,8 +332,6 @@ namespace CLP.Models
 
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string));
 
-
-
         /// <summary>
         /// Time the page was submitted.
         /// </summary>
@@ -428,7 +413,6 @@ namespace CLP.Models
                     PageTags = PageTags
                 };
 
-
             foreach(Stroke stroke in InkStrokes)
             {
                 Stroke s = stroke.Clone();
@@ -451,8 +435,6 @@ namespace CLP.Models
                 newPage.PageObjects.Add(clonedPageObject);
                 clonedPageObject.RefreshStrokeParentIDs();
             }
-
-
 
             return newPage;
         }
@@ -512,14 +494,15 @@ namespace CLP.Models
         {
             base.OnDeserialized();
             InkStrokes = BytesToStrokes(ByteStrokes);
-
-            
         }
 
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            ByteStrokes = StrokesToBytes(InkStrokes);
+            if (InkStrokes != null)
+            {
+                ByteStrokes = StrokesToBytes(InkStrokes);
+            }
         }
 
         public void TrimPage()
