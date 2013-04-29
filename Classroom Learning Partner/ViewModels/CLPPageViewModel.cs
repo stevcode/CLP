@@ -50,6 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             Page = page;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
@@ -266,9 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
         
         /// <summary>
@@ -281,6 +279,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -723,6 +732,11 @@ namespace Classroom_Learning_Partner.ViewModels
             if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
+            }
+
+            if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
+            {
+                EraserMode = (viewModel as RibbonViewModel).EraserMode;
             }
 
             if(propertyName == "PenSize" && viewModel is RibbonViewModel)

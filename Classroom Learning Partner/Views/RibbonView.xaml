@@ -154,12 +154,9 @@
                             <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="5" Width="150" />
                             </RibbonGalleryItem>
-                            <!--<RibbonGalleryItem Height="30">
+                            <RibbonGalleryItem Height="30">
                                 <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="7" Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="12" Width="150" />
-                            </RibbonGalleryItem>-->
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
@@ -171,12 +168,31 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />-->
 
-                <RibbonToggleButton
-                    Click="ToolGroupToggle_Clicked"
-                    Label="Stroke Eraser"
-                    LargeImageSource="..\Images\StrokeEraser.png"
-                    Command="{Binding SetEraserCommand}"
-                    CommandParameter="EraseByStroke" />
+                <RibbonMenuButton Label="Eraser Type" x:Name="blah">
+                    <RibbonMenuButton.Style>
+                        <Style TargetType="{x:Type RibbonMenuButton}">
+                            <Setter Property="LargeImageSource" Value="..\Images\StrokeEraser.png" />
+                        </Style>
+                    </RibbonMenuButton.Style>
+
+                    <RibbonGallery SelectedValuePath="Content.Tag" SelectedValue="{Binding EraserType, Mode=TwoWay}"
+                                   ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <RibbonGalleryCategory>
+                            <RibbonGalleryItem Height="64">
+                                <StackPanel Tag="Stroke Eraser" Orientation="Horizontal">
+                                    <Image Source="..\Images\StrokeEraser.png" />
+                                    <Label>Stroke Eraser</Label>
+                                </StackPanel>
+                            </RibbonGalleryItem>
+                            <RibbonGalleryItem Height="64">
+                                <StackPanel Tag="Point Eraser" Orientation="Horizontal">
+                                    <Image Source="..\Images\Eraser.png" />
+                                    <Label>Point Eraser</Label>
+                                </StackPanel>
+                            </RibbonGalleryItem>
+                        </RibbonGalleryCategory>
+                    </RibbonGallery>
+                </RibbonMenuButton>
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -246,26 +262,6 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="History">
-
-                <RibbonToggleButton Visibility="{Binding Path=HistoryVisibility}"
-                        IsChecked="False"
-                        LargeImageSource="..\Images\video.png"
-                        Label="Enable Playback"
-                        Command="{Binding Path=EnablePlaybackCommand}" />
-
-                <RibbonButton
-                        Label="Undo"
-                        LargeImageSource="..\Images\Undo.png"
-                        Command="{Binding Path=UndoCommand}" />
-
-                <RibbonButton
-                        Label="Redo"
-                        LargeImageSource="..\Images\Redo.png"
-                        Command="{Binding Path=RedoCommand}" />
-
-            </RibbonGroup>-->
-
             <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
@@ -289,10 +285,10 @@
                         IsEnabled="False"
                         Visibility="{Binding Path=IsSentInfoVisibility}"/>
 
-                <RibbonButton Label="Group Send" Margin="35,0,0,0"
+                <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
                               LargeImageSource="..\Images\GroupSubmit-icon32.png" 
                               Command="{Binding GroupSubmitPageCommand}"
-                              Visibility="{Binding SendButtonVisibility}"/>
+                              Visibility="{Binding SendButtonVisibility}"/>-->
 
             </RibbonGroup>
 
@@ -345,17 +341,24 @@
                 </RibbonToggleButton>
 
             </RibbonGroup>
+            
             <RibbonGroup Header="History">
+                
                 <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\MakePageLonger.png"
-                              Command="{Binding Path=ReplayCommand}"/>
+                              LargeImageSource="..\Images\video.png"
+                              Command="{Binding Path=ReplayCommand}"
+                              Visibility="{Binding Path=InstructorVisibility}" />
+                
                 <RibbonButton Label="Undo"
                               LargeImageSource="..\Images\Undo.png"
-                              Command="{Binding Path=UndotCommand}"/>
+                              Command="{Binding Path=UndotCommand}" />
+                
                 <RibbonButton Label="Redo"
-                               LargeImageSource="..\Images\Redo.png"
-                              Command="{Binding Path=RedotCommand}"/>
+                              LargeImageSource="..\Images\Redo.png"
+                              Command="{Binding Path=RedotCommand}" />
+                
             </RibbonGroup>
+            
         </RibbonTab>
 
         <!--Test Tab-->
@@ -401,18 +404,6 @@
             </RibbonGroup>
             
         </RibbonTab>
-
-        <!--<RibbonTab Header="Page">
-
-            <RibbonGroup Header="Page Size">
-
-                <RibbonButton Label="Make Page Longer"
-                              LargeImageSource="..\Images\MakePageLonger.png"
-                              Command="{Binding Path=MakePageLongerCommand}"/>
-
-            </RibbonGroup>
-
-        </RibbonTab>-->
 
         <!--Editing Tab-->
         <RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
