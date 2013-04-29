@@ -254,7 +254,6 @@
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Memento.cs" />
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
     </Compile>
