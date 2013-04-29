@@ -384,7 +384,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MouseMoveCommand command.
+        /// Gets the MouseDownCommand command.
         /// </summary>
         public Command<MouseEventArgs> MouseDownCommand { get; private set; }
 
@@ -458,7 +458,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the MouseMoveCommand command.
+        /// Gets the MouseUpCommand command.
         /// </summary>
         public Command<MouseEventArgs> MouseUpCommand { get; private set; }
 
@@ -625,10 +625,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var newUniqueID = Guid.NewGuid().ToString();
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
-                            
-                                
-                                Page.PageHistory.push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
-
+   
+                            Page.PageHistory.push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));
                             
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
