@@ -84,6 +84,14 @@ namespace CLP.Models
 
         #endregion //Properties
 
+        //Forget everything that happened; lock the current state as the starting state.
+        public void ClearHistory()
+        {
+            Past.Clear();
+            MetaPast.Clear();
+            Future.Clear();
+        }
+
         public void Freeze()
         {
             _frozen = true;

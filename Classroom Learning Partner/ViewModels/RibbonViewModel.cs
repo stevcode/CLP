@@ -1026,10 +1026,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-               /* foreach(CLPPage page in notebook.Pages)
+                foreach(CLPPage page in notebook.Pages)
                 {
                     page.PageHistory.ClearHistory();
-                }*/
+                }
             }
         }
 
