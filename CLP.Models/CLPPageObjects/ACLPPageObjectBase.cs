@@ -150,7 +150,7 @@ namespace CLP.Models
         public bool CanAcceptPageObjects
         {
             get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
-            set { SetValue(CanAcceptPageObjectsProperty, false); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
         }
 
         public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
@@ -366,7 +366,7 @@ namespace CLP.Models
                 where pageObject.UniqueID == pageObjectID
                 select pageObject;
 
-            ObservableCollection<ICLPPageObject> pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
+            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.Distinct());
             return pageObjectsOver;
         }
 
