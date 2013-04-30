@@ -129,6 +129,13 @@ namespace CLP.Models
             ArrayWidth = 450;
 
             EnforceAspectRatio(columns * 1.0 / rows);
+
+            if (Width > page.PageWidth / 2)
+            {
+                ArrayHeight = 200;
+                EnforceAspectRatio(columns * 1.0 / rows);
+            }
+
             ApplyDistinctPosition(this);
 
             CalculateGridLines();
