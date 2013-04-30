@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 

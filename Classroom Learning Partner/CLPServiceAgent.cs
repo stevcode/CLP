@@ -64,13 +64,13 @@ namespace Classroom_Learning_Partner
                             page.SubmissionTime = DateTime.Now;
                             page.TrimPage();
 
-                            //var sPage = ObjectSerializer.ToString(page);
+                            var sPage = ObjectSerializer.ToString(page);
 
                             var byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             var pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            //App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
+                            //App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
                         catch(Exception ex)
                         {
