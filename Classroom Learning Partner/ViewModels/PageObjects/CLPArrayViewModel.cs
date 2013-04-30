@@ -363,7 +363,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
             }
-
         }
 
         #endregion //Commands

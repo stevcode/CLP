@@ -105,7 +105,7 @@ namespace CLP.Models
         {
             get
             {
-                return 40;
+                return 30;
             }
         }
 
@@ -114,6 +114,8 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base(page)
         {
+            IsGridOn = false;
+
             Rows = rows;
             Columns = columns;
 
@@ -334,6 +336,30 @@ namespace CLP.Models
             double deltaX = right - left;
             double intersectionArea = deltaY * deltaX;
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
+        }
+
+        public override void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
+        {
+            if(CanAcceptPageObjects)
+            {
+                foreach(ICLPPageObject pageObject in removedPageObjects)
+                {
+                    if(PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    }
+                }
+
+                foreach(ICLPPageObject pageObject in addedPageObjects)
+                {
+                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject is CLPStrokePathContainer)
+                    {
+                        Parts += pageObject.Parts;
+                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
+                }
+            }
         }
 
         public void RefreshArrayDimensions()

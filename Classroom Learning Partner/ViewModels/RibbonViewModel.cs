@@ -203,7 +203,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
             InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
-            InsertArrayCommand = new Command(OnInsertArrayCommandExecute);
+            InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute);
 
 
 
@@ -2278,12 +2278,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the InsertArrayCommand command.
         /// </summary>
-        public Command InsertArrayCommand { get; private set; }
+        public Command<string> InsertArrayCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the InsertArrayCommand command is executed.
         /// </summary>
-        private void OnInsertArrayCommandExecute()
+        private void OnInsertArrayCommandExecute(string useDivisions)
         {
             //pop up number pads to get dimensions
             CustomizeArrayView dimensionChooser = new CustomizeArrayView();
@@ -2303,6 +2303,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException) { cols = 1; }
 
                 CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+
+                if (useDivisions == "TRUE")
+                {
+                    array.IsDivisionBehaviorOn = true;
+                }
+                else if (useDivisions == "FALSE")
+                {
+                    array.IsDivisionBehaviorOn = false;
+                }
+
                 CLPServiceAgent.Instance.AddPageObjectToPage(array);
             }
 

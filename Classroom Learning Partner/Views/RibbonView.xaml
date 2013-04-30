@@ -210,8 +210,14 @@
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
                 <RibbonButton Label="Array"
-                        LargeImageSource="..\Images\Array.png"
-                        Command="{Binding Path=InsertArrayCommand}"/>
+                              LargeImageSource="..\Images\InkArray.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="FALSE" />
+
+                <RibbonButton Label="Array + Guides"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="TRUE" />
 
 		<!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
