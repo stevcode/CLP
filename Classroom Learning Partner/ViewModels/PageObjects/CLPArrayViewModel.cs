@@ -296,8 +296,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             HorizontalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
-                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
+            //PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+            //            (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -336,8 +336,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             VerticalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
-                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
+            //PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+            //            (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>

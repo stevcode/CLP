@@ -399,7 +399,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.BeginEventGroup();
+           // Page.PageHistory.BeginEventGroup();
             _isMouseDown = true;
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
             {
@@ -474,7 +474,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.EndEventGroup();
+           // Page.PageHistory.EndEventGroup();
             _isMouseDown = false;
         }
 
@@ -546,19 +546,19 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (IsPagePreview) return;
             String action = e.Action.ToString().Trim();
-            if(action == "Add"){
-                foreach(ICLPPageObject item in e.NewItems)
-                {
-                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
-                }
-            }
-            else if(action == "Remove")
-            {
-                foreach(ICLPPageObject item in e.OldItems)
-                {
-                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
-                }
-            }
+            //if(action == "Add"){
+            //    foreach(ICLPPageObject item in e.NewItems)
+            //    {
+            //        Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
+            //    }
+            //}
+            //else if(action == "Remove")
+            //{
+            //    foreach(ICLPPageObject item in e.OldItems)
+            //    {
+            //        Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
+            //    }
+            //}
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -621,10 +621,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     try
                     {
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
-                        foreach (var stroke in e.Removed)
-                        {
-                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
-                        }
+                        //foreach (var stroke in e.Removed)
+                        //{
+                        //    Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                        //}
 
                         foreach(var stroke in e.Added)
                         {
@@ -637,7 +637,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
    
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
+                            //Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
                             
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)

@@ -178,7 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                PageObject.ParentPage.PageHistory.ReplaceHistoricalRecords(PageObject, leftBehindStamp);
+                //PageObject.ParentPage.PageHistory.ReplaceHistoricalRecords(PageObject, leftBehindStamp);
                 if(leftBehindStamp != null)
                 {
                     leftBehindStamp.UniqueID = PageObject.UniqueID;
