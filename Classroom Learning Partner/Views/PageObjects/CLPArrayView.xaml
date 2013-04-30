@@ -276,7 +276,7 @@
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
+                                        <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
@@ -317,7 +317,7 @@
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
+                                        <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
