@@ -294,12 +294,6 @@ namespace Classroom_Learning_Partner
             }
             pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
             page.PageObjects.Add(pageObject);
-
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.AddPageObject, pageObject.UniqueID, null, null);
-            //    page.PageHistory.HistoryItems.Add(item);                  
-            //}
         }
 
         public void RemovePageObjectFromPage(ICLPPageObject pageObject)
@@ -321,23 +315,21 @@ namespace Classroom_Learning_Partner
             }
             pageObject.OnRemoved();
             page.PageObjects.Remove(pageObject);
-
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.RemovePageObject, pageObject.UniqueID, ObjectSerializer.ToString(pageObject), null);
-            //    page.PageHistory.HistoryItems.Add(item);
-            //}
         }
 
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         {
-
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    //steve - fix for lack of Position
-            //   //CLP.Models.CLPHistoryItem item = new CLP.Models.CLPHistoryItem(CLP.Models.HistoryItemType.MovePageObject, pageObject.UniqueID, pageObject.Position.ToString(), pt.ToString());
-            //   //page.PageHistory.HistoryItems.Add(item);
-            //}
+            double oldXPos = pageObject.XPosition;
+            double oldYPos = pageObject.YPosition;
+            CLPPage page = pageObject.ParentPage;
+            
+            double xDiff = Math.Abs(oldXPos - pt.X);
+            double yDiff = Math.Abs(oldYPos - pt.Y);
+            double diff = xDiff + yDiff;
+            if(diff > CLPHistory.SAMPLE_RATE)
+            {
+                page.PageHistory.Push(new CLPHistoryMoveObject(page, pageObject, oldXPos, oldYPos, pt.X, pt.Y));
+            }
 
             pageObject.XPosition = pt.X;
             pageObject.YPosition = pt.Y;
@@ -345,21 +337,17 @@ namespace Classroom_Learning_Partner
 
         public void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
         {
-            //Commented out for now because not useful at all. Just uncomment to start using.
-            //CLPPage page = GetPageFromID(pageObject.PageID);
-            //if (!page.PageHistory.IgnoreHistory)
-            //{
-            //    double oldHeight = pageObject.Height;
-            //    double oldWidth = pageObject.Width;
-            //    Tuple<double, double> oldValue = new Tuple<double, double>(oldHeight, oldWidth);
-            //    Tuple<double, double> newValue = new Tuple<double, double>(height, width);
-
-            //    CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.ResizePageObject, pageObject.UniqueID, oldValue.ToString(), newValue.ToString());
-            //    page.PageHistory.HistoryItems.Add(item);
-            //}
-
-            pageObject.Height = height;
-            pageObject.Width = width;
+            double oldHeight = pageObject.Height;
+            double oldWidth = pageObject.Width;
+            CLPPage page = pageObject.ParentPage;
+            double heightDiff = Math.Abs(oldHeight - height);
+            double widthDiff = Math.Abs(oldWidth - width);
+            double diff = heightDiff + widthDiff;
+            if(diff > CLPHistory.SAMPLE_RATE){
+                page.PageHistory.Push(new CLPHistoryResizeObject(page, pageObject, oldHeight, oldWidth, height, width)); 
+                pageObject.Height = height;
+                pageObject.Width = width;
+            }
         }
 
         public void InterpretRegion(ACLPInkRegion inkRegion) {

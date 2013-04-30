@@ -81,6 +81,40 @@
                 </Setter>
             </Style>
 
+            <!-- HistoryPages style -->
+            <Style x:Key="HistoryPagesContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Grid Margin="0,2,0,2">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <!--History Page-->
+                                <Border x:Name="SelectedBorder" Grid.Column="0"
+                                        BorderThickness="2"
+                                        BorderBrush="Transparent"
+                                        Margin="4">
+                                    <Border x:Name="PageBorder"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource GrayBorderColor}">
+                                        <ContentPresenter />
+                                    </Border>
+                                </Border>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="SelectedBorder" Property="BorderBrush" Value="DarkOrange" />
+                                    <Setter TargetName="PageBorder" Property="BorderBrush" Value="DarkOrange" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -93,7 +127,7 @@
         <!-- Content -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="150" Width="250" x:Name="NotebookPageColumn" />
+                <ColumnDefinition Width="Auto" x:Name="NotebookPageColumn" />
                 <ColumnDefinition Width="Auto" x:Name="NotebookPageSplitterColumn"/>
 
                 <ColumnDefinition MinWidth="200" Width="Auto" x:Name="SubmissionColumn"/>
@@ -154,7 +188,7 @@
             </Border>
 
             <GridSplitter x:Name="NotebookPagesSplitter" Grid.Column ="1" Background="#D4D4D4" Width="5"
-         HorizontalAlignment="Center" VerticalAlignment="Stretch"
+         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="{Binding SideThumbnailsVisible, Converter={StaticResource BoolConverter}}"
          />
 
             <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
@@ -163,37 +197,150 @@
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
 
             <!-- Control that dynamically determines what Display to show -->
-            <ContentControl DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" Grid.Column="4">
-                <ContentControl.Resources>
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition MinHeight="150" Height="*"/>
+                    <RowDefinition Height="Auto" x:Name="HistoryButtonRow"/>
+                    <RowDefinition Height="Auto" x:Name="HistoryPanelRow"/>
+                    <RowDefinition Height="0"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="NotebookPagesBorder1" Grid.Row="0" MinHeight="120" Background="#F3F3F3" Visibility="{Binding TopThumbnailsVisible, Converter={StaticResource BoolConverter}}">
+                    <ListBox x:Name="NotebookPageListBox1" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        MinHeight="120"
+                        Height="{Binding ElementName=NotebookPagesBorder1, Path=ActualHeight, Mode=OneWay}" 
+                        ItemsSource="{Binding Path=NotebookPages}"
+                        ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
+                        SelectionMode="Single">
 
-                    <ControlTemplate x:Key="LinkedDisplayTemplate">
-                        <Views:LinkedDisplayView />
-                    </ControlTemplate>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0" Height="Auto">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
 
-                    <ControlTemplate x:Key="GridDisplayTemplate">
-                        <Views:GridDisplayView />
-                    </ControlTemplate>
+                    </ListBox>
+                </Border>
+                <GridSplitter Grid.Row ="1" Background="#D4D4D4" Height="5" HorizontalAlignment="Stretch" Visibility="{Binding TopThumbnailsVisible, Converter={StaticResource BoolConverter}}"/>
+                <ContentControl Grid.Row="2" DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" >
 
-                </ContentControl.Resources>
+                    <ContentControl.Resources>
 
-                <ContentControl.Style>
-                    <Style TargetType="{x:Type ContentControl}">
-                        <Style.Triggers>
+                        <ControlTemplate x:Key="LinkedDisplayTemplate">
+                            <Views:LinkedDisplayView />
+                        </ControlTemplate>
 
-                            <!-- LinkedDisplay trigger -->
-                            <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                                <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
-                            </DataTrigger>
+                        <ControlTemplate x:Key="GridDisplayTemplate">
+                            <Views:GridDisplayView />
+                        </ControlTemplate>
 
-                            <!-- GridDisplay trigger -->
-                            <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                                <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
-                            </DataTrigger>
+                    </ContentControl.Resources>
 
-                        </Style.Triggers>
-                    </Style>
-                </ContentControl.Style>
-            </ContentControl>
+                    <ContentControl.Style>
+                        <Style TargetType="{x:Type ContentControl}">
+                            <Style.Triggers>
+
+                                <!-- LinkedDisplay trigger -->
+                                <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
+                                    <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
+                                </DataTrigger>
+
+                                <!-- GridDisplay trigger -->
+                                <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
+                                    <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <Border Grid.Row="3" Height="30" Background="#F3F3F3" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.StudentVisibility}">
+                    <Button Width="125"  BorderThickness="0" Margin="15,0,0,0" HorizontalAlignment="Left" Click="ToggleSubmissionHistory">
+                        <TextBlock x:Name="SubmissionHistoryButton">Open Page History</TextBlock>
+                    </Button>
+                </Border>
+                <!-- History Pages -->
+                <Grid Grid.Row="4" x:Name="SubmissionHistoryGrid" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" MinWidth="150"/>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="SubmissionCurrentPageBorder" Grid.Column="0" Height="120" Background="#F3F3F3" BorderThickness="0,5,5,0" BorderBrush="#D4D4D4">
+                        <ListBox x:Name="SubmissionCurrentPageList" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            MinHeight="137"
+                            Height="{Binding ElementName=SubmissionCurrentPageBorder, Path=ActualHeight, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=HistoryCurrentPage}"
+                            ItemContainerStyle="{StaticResource HistoryPagesContainer}"
+                            SelectionMode="Single"
+                                 Background="#DDDDDD">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0" Height="Auto">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Border>
+                    <Border x:Name="SubmissionHistoryBorder" Grid.Column="1" Height="120" Background="#F3F3F3" BorderThickness="0,5,0,0" BorderBrush="#D4D4D4">
+                        <ListBox x:Name="SubmissionHistoryPanel" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            MinHeight="120"
+                            Height="{Binding ElementName=SubmissionHistoryBorder, Path=ActualHeight, Mode=OneWay}" 
+                            ItemsSource="{Binding Path=HistoryPages}"
+                            ItemContainerStyle="{StaticResource HistoryPagesContainer}"
+                            SelectionMode="Single"
+                                 Background="#DDDDDD">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0" Height="Auto">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+
+                        </ListBox>
+                    </Border>
+                </Grid>
+            </Grid>
 
             <ContentControl Grid.Column="5"
                             DataContext="{Binding RightPanel, Mode=OneWay}">

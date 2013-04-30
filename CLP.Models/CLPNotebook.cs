@@ -22,8 +22,6 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            Pages = new ObservableCollection<CLPPage>();
-            Submissions = new Dictionary<string, ObservableCollection<CLPPage>>();
             AddPage(new CLPPage());
         }
 
@@ -46,6 +44,7 @@ namespace CLP.Models
             get { return GetValue<string>(UserNameProperty); }
             set { SetValue(UserNameProperty, value); }
         }
+
         public static readonly PropertyData UserNameProperty = RegisterProperty("UserName", typeof(String), "NoName");
 
         /// <summary>
@@ -57,9 +56,6 @@ namespace CLP.Models
             private set { SetValue(PagesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Pages property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
@@ -71,9 +67,6 @@ namespace CLP.Models
             private set { SetValue(SubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Submissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>), () => new Dictionary<string, ObservableCollection<CLPPage>>());
 
         /// <summary>
@@ -85,10 +78,7 @@ namespace CLP.Models
             set { SetValue(NotebookNameProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NotebookName property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string), null);
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
 
         /// <summary>
         /// UniqueID assigned to the notebook.
@@ -99,9 +89,6 @@ namespace CLP.Models
             private set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
@@ -113,10 +100,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         #endregion
 
@@ -138,14 +122,16 @@ namespace CLP.Models
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            
         }
 
         public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
-
             GenerateSubmissionViews(page.UniqueID);
             GeneratePageIndexes();
+            
+
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
@@ -158,6 +144,13 @@ namespace CLP.Models
 
         public void RemovePageAt(int index)
         {
+            CLPPage sPage = null;
+            try{
+                sPage = Pages[index]; 
+            }catch(Exception e){
+                Console.WriteLine(e.StackTrace);
+            }
+
             if(Pages.Count > index && index >= 0)
             {
                 Submissions.Remove(Pages[index].UniqueID);
@@ -168,6 +161,7 @@ namespace CLP.Models
                 AddPage(new CLPPage());
             }
             GeneratePageIndexes();
+           
         }
 
         public CLPPage GetPageAt(int pageIndex, int submissionIndex)

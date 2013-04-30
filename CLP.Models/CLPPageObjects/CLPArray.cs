@@ -29,6 +29,16 @@ namespace CLP.Models
             Value = value;
         }
 
+        /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected CLPArrayDivision(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
         #endregion //Constructors
 
         #region Properties
@@ -113,6 +123,7 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             CanAcceptStrokes = true;
+            CanAcceptPageObjects = true;
 
             ArrayHeight = 450;
             ArrayWidth = 450;
@@ -289,6 +300,35 @@ namespace CLP.Models
             Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
         }
 
+        public override void OnRemoved()
+        {
+            foreach(Stroke stroke in GetStrokesOverPageObject())
+            {
+                ParentPage.InkStrokes.Remove(stroke);
+            }
+
+            foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
+            }
+        }
+
+        public override bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double area = ArrayHeight * ArrayWidth;
+            double top = Math.Max(YPosition - LargeLabelLength, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + LargeLabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition + LargeLabelLength, pageObject.XPosition);
+            double right = Math.Min(XPosition + LargeLabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
+        }
+
         public void RefreshArrayDimensions()
         {
             ArrayHeight = Height - LargeLabelLength - 2 * SmallLabelLength;
@@ -333,6 +373,46 @@ namespace CLP.Models
                 division.Position = division.Position * ArrayWidth / oldWidth;
                 division.Length = division.Length * ArrayWidth / oldWidth;
             }
+        }
+
+        public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divAbove = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divAbove == null)
+                {
+                    if(div.Position < position)
+                    {
+                        divAbove = div;
+                    }
+                }
+                else if(divAbove.Position < div.Position && div.Position < position)
+                {
+                    divAbove = div;
+                }
+            }
+            return divAbove;
+        }
+
+        public CLPArrayDivision FindDivisionBelow(double position, ObservableCollection<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divBelow = null;
+            foreach(CLPArrayDivision div in divisionList)
+            {
+                if(divBelow == null)
+                {
+                    if(div.Position > position)
+                    {
+                        divBelow = div;
+                    }
+                }
+                else if(divBelow.Position > div.Position && div.Position > position)
+                {
+                    divBelow = div;
+                }
+            }
+            return divBelow;
         }
 
         #endregion //Methods

@@ -226,6 +226,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
+            if (isMouseDown)
+            {
+                hoverTimer.Stop();
+                hoverTimeElapsed = false;
+                timerRunning = false;
+                return true;
+            }
+
             if(IsBackground)
             {
                 if(App.MainWindowViewModel.IsAuthoring)

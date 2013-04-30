@@ -50,10 +50,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
+            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             Page = page;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             Page.PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            
         
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -265,9 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
         
         /// <summary>
@@ -280,6 +279,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -371,10 +381,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-            if(!_isMouseDown)
-            {
+            //if(!_isMouseDown)
+            //{
                 VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            }
+            //}
 
             if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
             {
@@ -533,6 +543,20 @@ namespace Classroom_Learning_Partner.ViewModels
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsPagePreview) return;
+            String action = e.Action.ToString().Trim();
+            if(action == "Add"){
+                foreach(ICLPPageObject item in e.NewItems)
+                {
+                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
+                }
+            }
+            else if(action == "Remove")
+            {
+                foreach(ICLPPageObject item in e.OldItems)
+                {
+                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
+                }
+            }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -595,6 +619,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     try
                     {
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+                        foreach (var stroke in e.Removed)
+                        {
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                        }
 
                         foreach(var stroke in e.Added)
                         {
@@ -606,6 +634,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var newUniqueID = Guid.NewGuid().ToString();
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
+                            
+                                
+                                Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
+
+                            
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
                             {
@@ -701,6 +734,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
             }
 
+            if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
+            {
+                EraserMode = (viewModel as RibbonViewModel).EraserMode;
+            }
+
             if(propertyName == "PenSize" && viewModel is RibbonViewModel)
             {
                 double x = (viewModel as RibbonViewModel).PenSize;
@@ -712,217 +750,6 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        public ICLPPageObject GetPageObjectByID(string uniqueID)
-        {
-            return PageHistory.TrashedPageObjects.ContainsKey(uniqueID) ? PageHistory.TrashedPageObjects[uniqueID] : PageObjects.FirstOrDefault(pageObject => pageObject.UniqueID == uniqueID);
-        }
-
-        /************** UNDO **************/
-        //public void Undo()
-        //{
-        //    PageHistory.IgnoreHistory = true;
-        //    if (PageHistory.HistoryItems.Count > 0)
-        //    {
-        //        CLPHistoryItem item = PageHistory.HistoryItems[PageHistory.HistoryItems.Count - 1];
-        //        PageHistory.HistoryItems.Remove(item);
-        //        ICLPPageObject pageObject = null;
-        //        if (item.ObjectID != null)
-        //        {
-        //            pageObject = GetPageObjectByID(item.ObjectID);
-        //            //if (pageObject.PageID != Page.UniqueID)
-        //            //{
-        //            //    PageHistory.UndoneHistoryItems.Add(item);
-        //            //    PageHistory.IgnoreHistory = false;
-        //            //    return;
-        //            //}
-        //        }
-        //        switch (item.ItemType)
-        //        {
-        //            case HistoryItemType.AddPageObject:
-        //                if (pageObject != null)
-        //                {
-        //                    if (!PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-        //                    {
-        //                        PageHistory.TrashedPageObjects.Add(item.ObjectID, pageObject);
-        //                    }
-        //                    CLPServiceAgent.Instance.RemovePageObjectFromPage(Page, pageObject);
-        //                }
-        //                break;
-        //            case HistoryItemType.RemovePageObject:
-        //                CLPServiceAgent.Instance.AddPageObjectToPage(Page, ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-        //                break;
-        //            case HistoryItemType.MovePageObject:
-        //                if (pageObject != null)
-        //                {
-        //                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.OldValue));
-        //                }
-        //                break;
-        //            case HistoryItemType.ResizePageObject:
-        //                break;
-        //            case HistoryItemType.AddInk:
-        //                //TODO: Steve - fix for no Page.InkStrokes
-        //                //foreach (Stroke s in Page.InkStrokes )
-        //                //{
-        //                //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-        //                //    {
-                                 
-        //                //        Page.InkStrokes.Remove(s);
-        //                //        PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-        //                //        break;
-        //                //    }
-        //                //}
-        //                //if its not in page.inkstrokes then maybe its in stamps inkstrokes?
-        //                foreach (ICLPPageObject obj in Page.PageObjects)
-        //                {
-        //                    //if (obj.CanAcceptStrokes && obj.PageObjectByteStrokes.Count > 0)
-        //                    //{
-        //                    //    foreach (byte[] s in obj.PageObjectByteStrokes)
-        //                    //    {
-        //                    //        if (s == item.ObjectID)
-        //                    //        {
-
-        //                    //            obj.PageObjectByteStrokes.Remove(s.ToString());
-        //                    //            PageHistory.TrashedInkStrokes.Add((CLPPage.ByteToStroke(s) as Stroke).GetPropertyData(CLPPage.StrokeIDKey).ToString(), s);
-        //                    //            break;
-        //                    //        }
-        //                    //    }
-        //                    //}
-        //                }
-        //                break;
-        //            case HistoryItemType.EraseInk:
-        //                /* foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-        //                 //{
-        //                 //    Stroke inkStroke = CLPPage.StringToStroke(PageHistory.TrashedInkStrokes[s]);
-        //                 //    if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-        //                 //    {
-        //                 //        PageHistory.TrashedInkStrokes.Remove(s);
-        //                 //        Page.InkStrokes.Add(inkStroke);
-        //                 //        break;
-        //                 //    }
-        //                 //}
-        //                 * } */
-        //                //Stroke inkStroke = CLPPage.StringToStroke(item.OldValue);
-        //                //Page.InkStrokes.Add(inkStroke);
-        //                break;
-                        
-        //            case HistoryItemType.SnapTileSnap:
-        //                CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-        //                if (t.NumberOfTiles != Int32.Parse(item.NewValue))
-        //                {
-        //                    Console.WriteLine("not newvalue");
-        //                }
-        //                t.NumberOfTiles = Int32.Parse(item.OldValue);
-                        
-        //                break;
-        //            case HistoryItemType.SnapTileRemoveTile:
-        //                CLPSnapTileContainer tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-        //                tile.NumberOfTiles++;
-        //                break;
-        //            default:
-        //                break;
-        //        }
-
-        //        PageHistory.UndoneHistoryItems.Add(item);
-        //    }
-        //    PageHistory.IgnoreHistory = false;
-        //}
-
-        //public void Redo()
-        //{
-        //    PageHistory.IgnoreHistory = true;
-        //    if (PageHistory.UndoneHistoryItems.Count > 0)
-        //    {
-        //        CLPHistoryItem item = PageHistory.UndoneHistoryItems[PageHistory.UndoneHistoryItems.Count - 1];
-        //        //lock (_locker)
-        //        //{
-        //        //    PageHistory.UndoneHistoryItems.Remove(item);
-        //        //}
-        //         ICLPPageObject pageObject = null;
-        //         if (item.ObjectID != null)
-        //         {
-        //             pageObject = GetPageObjectByID(item.ObjectID);
-        //             //if (pageObject.PageID != Page.UniqueID)
-        //             //{
-        //             //    PageHistory.HistoryItems.Add(item);
-        //             //    PageHistory.IgnoreHistory = false;
-        //             //    return;
-        //             //}
-        //         }
-        //        switch (item.ItemType)
-        //        {
-        //            case HistoryItemType.AddPageObject:
-        //                if (pageObject != null)
-        //                {
-        //                    CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject);
-        //                    if(PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-        //                    {
-        //                        PageHistory.TrashedPageObjects.Remove(item.ObjectID);
-        //                    }
-        //                }
-        //                break;
-        //            case HistoryItemType.RemovePageObject:
-        //                CLPServiceAgent.Instance.RemovePageObjectFromPage(ObjectSerializer.ToObject(item.OldValue) as ICLPPageObject);
-        //                break;
-        //            case HistoryItemType.MovePageObject:
-        //                if (pageObject != null)
-        //                {
-        //                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, Point.Parse(item.NewValue));
-        //                }
-        //                break;
-        //            case HistoryItemType.ResizePageObject:
-        //                break;
-        //            case HistoryItemType.AddInk:
-        //                foreach (string s in PageHistory.TrashedInkStrokes.Keys)
-        //                {
-        //                    //Stroke inkStroke = CLPPage.ByteToStroke(PageHistory.TrashedInkStrokes[s]);
-        //                    //steve
-        //                    //if (inkStroke.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-        //                    //{
-        //                    //    Page.InkStrokes.Add(inkStroke);
-        //                    //    PageHistory.TrashedInkStrokes.Remove(s);
-        //                    //    break;
-        //                    //}
-        //                } 
-        //                break;
-        //            case HistoryItemType.EraseInk:
-        //                //steve
-        //                //foreach (Stroke s in Page.InkStrokes)
-        //                //{
-        //                //    if (s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-        //                //    {
-        //                //        Page.InkStrokes.Remove(s);
-        //                //        //PageHistory.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-        //                //        break;
-        //                //    }
-        //                //}
-                       
-        //              //  Stroke ink = CLPPage.StringToStroke(item.OldValue);
-        //              //  Page.InkStrokes.Add(ink);
-        //                break;
-        //            case HistoryItemType.SnapTileSnap:
-        //                CLPSnapTileContainer t = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-        //                if (t.NumberOfTiles != Int32.Parse(item.OldValue))
-        //                {
-        //                    Console.WriteLine("not oldvalue");
-        //                }
-        //                t.NumberOfTiles = Int32.Parse(item.NewValue);
-                       
-        //                break;
-        //            case HistoryItemType.SnapTileRemoveTile:
-        //                var tile = GetPageObjectByID(item.ObjectID) as CLPSnapTileContainer;
-        //                tile.NumberOfTiles--;
-        //                break;
-        //            default:
-        //                break;
-        //        }
-
-        //        Page.PageHistory.HistoryItems.Add(item);
-        //    }
-
-        //    PageHistory.IgnoreHistory = false;
-        //}
-
-        #endregion //Methods
-                
+        #endregion //Methods        
     }
 }

@@ -49,6 +49,9 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedDisplay = LinkedDisplay;
             CurrentPage = Notebook.Pages[0];
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
+            TopThumbnailsVisible = App.MainWindowViewModel.Ribbon.ThumbnailsTop;
+            SideThumbnailsVisible = !TopThumbnailsVisible;
+
 
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
@@ -188,6 +191,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
+        /// <summary>
+        /// Top Thumbnail Toggle
+        /// </summary>
+        public Boolean TopThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(TopThumbnailsVisibleProperty); }
+            set { SetValue(TopThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData TopThumbnailsVisibleProperty = RegisterProperty("TopThumbnailsVisible", typeof(Boolean));
+
+        /// <summary>
+        /// Side Thumbnail Toggle
+        /// </summary>
+        public Boolean SideThumbnailsVisible
+        {
+            get { return GetValue<Boolean>(SideThumbnailsVisibleProperty); }
+            set { SetValue(SideThumbnailsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData SideThumbnailsVisibleProperty = RegisterProperty("SideThumbnailsVisible", typeof(Boolean));
+
+
         #endregion //Displays
 
         #region Submissions SideBar
@@ -324,6 +350,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel), new DisplayListPanelViewModel());
 
+        /// <summary>
+        /// HistoryPanel.
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryPagesProperty); }
+            set { SetValue(HistoryPagesProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<CLPPage>));
+        
+        /// <summary>
+        /// First element in HistoryPanel
+        /// </summary>
+        public ObservableCollection<CLPPage> HistoryCurrentPage
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(HistoryCurrentPageProperty); }
+            set { SetValue(HistoryCurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<CLPPage>));
+         
         #endregion //Panels
 
         #endregion //Bindings
@@ -336,6 +384,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
             CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
+            SetHistoryPages();
         }
 
         /// <summary>
@@ -399,6 +448,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
+            if(propertyName == "ThumbnailsTop")
+            {
+                TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;
+                IsSideBarVisible = !TopThumbnailsVisible;
+            }
             base.OnViewModelPropertyChanged(viewModel, propertyName);
             
         }
@@ -576,6 +630,35 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public void SetHistoryPages()
+        {
+            string id = CurrentPage.UniqueID;
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> pages;
+            if(Notebook.Submissions.ContainsKey(id))
+            {
+                pages = Notebook.Submissions[id];
+            }
+            else
+            {
+                Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                pages = Notebook.Submissions[id];
+            }
+            HistoryPages = pages;
+
+            System.Collections.ObjectModel.ObservableCollection<CLPPage> currentPage = new System.Collections.ObjectModel.ObservableCollection<CLPPage>();
+            foreach(CLPPage page in NotebookPages)
+            {
+                if(page.UniqueID == id)
+                {
+                    currentPage.Add(page);
+                    break;
+                }
+            }
+            HistoryCurrentPage = currentPage;
+
+        }
+        
+        
         #endregion //Methods
 
     }

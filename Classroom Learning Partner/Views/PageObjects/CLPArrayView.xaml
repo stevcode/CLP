@@ -263,8 +263,8 @@
                             <Rectangle Height="4"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Black" StrokeThickness="3" />
-                            <Rectangle Name="DivisionHitBox" Height="30" Tag="{Binding}"
-                                       Canvas.Top="-5"
+                            <!--TODO: Steve - DivisionHitBox can probably just be the above Rectangle-->
+                            <Rectangle Name="DivisionHitBox" Height="4" Tag="{Binding}"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Transparent" Fill="Transparent"/>
                             <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
@@ -276,7 +276,7 @@
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
+                                        <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
@@ -305,7 +305,7 @@
                             <Rectangle Width="4"
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
                                        Stroke="Black" StrokeThickness="3" />
-                            <Rectangle Name="DivisionHitBox" Width="10" Tag="{Binding}" Canvas.Top="-5"
+                            <Rectangle Name="DivisionHitBox" Width="4" Tag="{Binding}"
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}"  
                                        Stroke="Transparent" Fill="Transparent"/>
                             <Grid Canvas.Bottom="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
@@ -317,7 +317,7 @@
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
+                                        <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand Command="{Binding Path=DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>

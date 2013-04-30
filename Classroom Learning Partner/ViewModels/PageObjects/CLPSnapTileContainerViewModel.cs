@@ -107,11 +107,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                 int oldCount = otherTile.NumberOfTiles;
                                 otherTile.NumberOfTiles += NumberOfTiles;
                                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-                                if (!currentPage.PageHistory.IgnoreHistory)
+                               /* if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, otherTile.UniqueID, oldCount.ToString(), otherTile.NumberOfTiles.ToString());
                                     currentPage.PageHistory.HistoryItems.Add(item);
-                                }
+                                }*/
                                 //container.Height = (CLPSnapTileContainer.TILE_HEIGHT) * otherTile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");
                                 //container.PageObjectViewModel.PageViewModel.HistoryVM.AddHistoryItem(otherTile.PageObject, item);
@@ -144,11 +144,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //otherTile.NumberOfTiles += NumberOfTiles;
 
                                 CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
-                                if (!currentPage.PageHistory.IgnoreHistory)
+                                /*if (!currentPage.PageHistory.IgnoreHistory)
                                 {
                                     CLPHistoryItem item = new CLPHistoryItem(HistoryItemType.SnapTileSnap, PageObject.UniqueID, oldCount.ToString(), NumberOfTiles.ToString());
                                     currentPage.PageHistory.HistoryItems.Add(item);
-                                }
+                                }*/
                                 //pageObjectContainerViewModel.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //container.Height = (CLPSnapTile.TILE_HEIGHT) * tile.Tiles.Count;
                                 //CLPHistoryItem item = new CLPHistoryItem("STACK_TILE");

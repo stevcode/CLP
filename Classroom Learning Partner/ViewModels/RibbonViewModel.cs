@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,7 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
+using System.Collections;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -47,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ServerVisibility = Visibility.Collapsed;
             HistoryVisibility = Visibility.Collapsed;
             DebugTabVisibility = Visibility.Collapsed;
+            
 
             switch(App.CurrentUserMode)
             {
@@ -82,6 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.FitToCurve = true;
             EditingMode = InkCanvasEditingMode.Ink;
             PageEraserInteractionMode = PageEraserInteractionMode.ObjectEraser;
+            ThumbnailsTop = false;
 
             CurrentColorButton = new RibbonButton();
             CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
@@ -143,6 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
+            ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
@@ -152,8 +157,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //History
             EnablePlaybackCommand = new Command(OnEnablePlaybackCommandExecute);
-            UndoCommand = new Command(OnUndoCommandExecute);
-            RedoCommand = new Command(OnRedoCommandExecute);
+            
 
             //Submit
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
@@ -177,6 +181,10 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
             TrimPageCommand = new Command(OnTrimPageCommandExecute);
+            ReplayCommand = new Command(OnReplayCommandExecute);
+            RedotCommand = new Command(OnRedotCommandExecute);
+            UndotCommand = new Command(OnUndotCommandExecute);
+            
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -249,6 +257,66 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
 
+        private void EraserTypeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string EraserType
+        {
+            get { return GetValue<string>(EraserTypeProperty); }
+            set { SetValue(EraserTypeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserTypeProperty = RegisterProperty("EraserType", typeof(string), "Stroke Eraser", (sender, e) => ((RibbonViewModel)sender).OnEraserTypeChanged());
+
+        /// <summary>
+        /// Called when the EraserType property has changed.
+        /// </summary>
+        private void OnEraserTypeChanged()
+        {
+            if(EraserType == "Point Eraser")
+            {
+                EraserMode = InkCanvasEditingMode.EraseByPoint;
+                PageInteractionMode = PageInteractionMode.Eraser;
+            }
+            else if(EraserType == "Stroke Eraser")
+            {
+                EraserMode = InkCanvasEditingMode.EraseByStroke;
+                PageInteractionMode = PageInteractionMode.StrokeEraser;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Boolean ThumbnailsTop
+        {
+            get { return GetValue<Boolean>(ThumbnailsTopProperty); }
+            set { SetValue(ThumbnailsTopProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the PenSize property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ThumbnailsTopProperty = RegisterProperty("ThumbnailsTop", typeof(Boolean), 5);
+
+
+
         /// <summary>
         /// Gets the DrawingAttributes of the Ribbon.
         /// </summary>
@@ -272,9 +340,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(EditingModeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the EditingMode property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
@@ -961,10 +1026,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
+               /* foreach(CLPPage page in notebook.Pages)
                 {
                     page.PageHistory.ClearHistory();
-                }
+                }*/
             }
         }
 
@@ -1287,16 +1352,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Pen Commands
 
-        
-
         /// <summary>
         /// Gets the SetPenCommand command.
         /// </summary>
         public Command SetPenCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetPenCommand command is executed.
-        /// </summary>
         private void OnSetPenCommandExecute()
         {
             EditingMode = InkCanvasEditingMode.Ink;
@@ -1308,9 +1368,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<string> SetEraserCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetEraserCommand command is executed.
-        /// </summary>
         private void OnSetEraserCommandExecute(string eraserStyle)
         {
             if(eraserStyle == "EraseByPoint")
@@ -1496,7 +1553,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //Steve - change to different thread and do callback to make sure sent page has arrived
             IsSending = true;
-            Timer timer = new Timer();
+            System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 1000;
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Enabled = true;
@@ -1504,7 +1561,18 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, false);
+                CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+
+                CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
+
+
+                CLPPage submission = page.Clone() as CLPPage;
+
+                if(notebook != null && submission != null)
+                {
+                    submission.IsSubmission = true;
+                    notebook.AddStudentSubmission(submission.UniqueID, submission);
+                }
             }
             CanSendToTeacher = false;
         }
@@ -1533,7 +1601,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Timer timer = sender as Timer;
+            System.Timers.Timer timer = sender as System.Timers.Timer;
             timer.Stop();
             timer.Elapsed -= timer_Elapsed;
             IsSending = false;
@@ -1594,7 +1662,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGroupSubmitPageCommandExecute()
         {
             IsSending = true;
-            Timer timer = new Timer();
+            System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 1000;
             timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
             timer.Enabled = true;
@@ -1719,6 +1787,20 @@ namespace Classroom_Learning_Partner.ViewModels
             //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = null;
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+        }
+
+
+        /// <summary>
+        /// Gets the ToggleThumbnailsCommand command.
+        /// </summary>
+        public Command ToggleThumbnailsCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the MakePageLongerCommand command is executed.
+        /// </summary>
+        private void OnToggleThumbnailsCommandExecute()
+        {
+            ThumbnailsTop = (ThumbnailsTop == false);
         }
 
         #endregion //Display Commands
@@ -1868,6 +1950,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
+        
+
 
         private void OnMakePageLongerCommandExecute()
         {
@@ -1884,6 +1968,122 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
             }
         }
+
+        public Command ReplayCommand { get; private set; }
+        public Command RedotCommand { get; private set; }
+        public Command UndotCommand { get; private set; }
+
+        private void OnReplayCommandExecute()
+        {
+            Thread t = new Thread(() =>
+            {
+                try
+                {
+                    CLPHistory pageHistory = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.PageHistory;
+
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        pageHistory.Freeze();
+                        return null;
+                    }, null);
+
+                    Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
+                    Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
+
+                    while(metaPast.Count > 0) 
+                    {
+                        CLPHistoryItem item = metaPast.Pop();
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (DispatcherOperationCallback)delegate(object arg)
+                        {
+                            item.Undo();
+                            return null;
+                        }, null);
+                        metaFuture.Push(item);
+                    }
+
+                    Thread.Sleep(400);
+                    while(metaFuture.Count > 0)
+                    {
+                        CLPHistoryItem item = metaFuture.Pop();
+                        if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
+                        {
+                            Thread.Sleep(50); // make intervals between move-steps less painfully slow
+                        }
+                        else
+                        {
+                            Thread.Sleep(400);
+                        }
+                        Console.WriteLine("This is the action being REDONE: " + item.ItemType);
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                        (DispatcherOperationCallback)delegate(object arg)
+                        {
+                            item.Redo();
+                            return null;
+                        }, null);
+                    }
+                    Thread.Sleep(400);
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        pageHistory.Unfreeze();
+                        return null;
+                    }, null);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            t.Start();
+        }
+
+    
+
+        private void OnRedotCommandExecute() 
+        {
+            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            Thread ty = new Thread(() =>
+            {
+                try
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        page.PageHistory.Redo(); 
+                        return null;
+                    }, null);   
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            ty.Start(); 
+        }
+
+        private void OnUndotCommandExecute()
+        {
+            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            Thread tx = new Thread(() =>
+            {
+                try
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    (DispatcherOperationCallback)delegate(object arg)
+                    {
+                        page.PageHistory.Undo();
+                        return null;
+                    }, null);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            });
+            tx.Start(); 
+         }
 
         /// <summary>
         /// Trims the current page's excess height if free of ink strokes and pageObjects.

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows;
-using System.Linq;
 using Catel.Data;
 
 namespace CLP.Models
@@ -11,20 +8,13 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistory : DataObjectBase<CLPHistory>
     {
-        public const double SAMPLE_TIME = 100.0;
+        public const double SAMPLE_RATE = 9;
+        private bool _frozen;
 
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new object from scratch.
-        /// </summary>
         public CLPHistory()
         {
-            HistoryItems = new ObservableCollection<CLPHistoryItem>();
-            UndoneHistoryItems = new ObservableCollection<CLPHistoryItem>();
-            TrashedPageObjects = new Dictionary<string, ICLPPageObject>();
-            TrashedInkStrokes = new Dictionary<string, List<byte>>();
-            IgnoreHistory = false;
         }
 
         /// <summary>
@@ -33,692 +23,166 @@ namespace CLP.Models
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected CLPHistory(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+            : base(info, context)
+        {
+        }
 
-        #endregion
+        #endregion //Constructor
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The actions that have happened in the past.  "Undo" reverses the top action on the stack and pushes
+        /// it to Future.
         /// </summary>
-        public bool IgnoreHistory
+        public Stack<CLPHistoryItem> Past
         {
-            get { return GetValue<bool>(IgnoreHistoryProperty); }
-            set { SetValue(IgnoreHistoryProperty, value); }
+            get { return GetValue<Stack<CLPHistoryItem>>(PastProperty); }
+            set { SetValue(PastProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IgnoreHistory property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IgnoreHistoryProperty = RegisterProperty("IgnoreHistory", typeof(bool), false);
+        public static readonly PropertyData PastProperty = RegisterProperty("Past", 
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
-        /// List of history items.
+        /// The actions queued to happen in the future.  "Redo" performs the top action on the stack and pushes
+        /// it to Past.  Taking an action other than Undo or Redo clears the Future.
         /// </summary>
-        public ObservableCollection<CLPHistoryItem> HistoryItems
+        public Stack<CLPHistoryItem> Future
         {
-            get { return GetValue<ObservableCollection<CLPHistoryItem>>(HistoryItemsProperty); }
-            set { SetValue(HistoryItemsProperty, value); }
+            get { return GetValue<Stack<CLPHistoryItem>>(FutureProperty); }
+            set { SetValue(FutureProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HistoryItems property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HistoryItemsProperty = RegisterProperty("HistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
+        public static readonly PropertyData FutureProperty = RegisterProperty("Future", 
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
-        /// List to enable undo/redo functionality.
+        /// The actions that have happened in the past, *including* undos and redos.
         /// </summary>
-        public ObservableCollection<CLPHistoryItem> UndoneHistoryItems
+        public Stack<CLPHistoryItem> MetaPast
         {
-            get { return GetValue<ObservableCollection<CLPHistoryItem>>(UndoneHistoryItemsProperty); }
-            set { SetValue(UndoneHistoryItemsProperty, value); }
+            get { return GetValue<Stack<CLPHistoryItem>>(MetaPastProperty); }
+            set { SetValue(MetaPastProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UndoneHistoryItems property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData UndoneHistoryItemsProperty = RegisterProperty("UndoneHistoryItems", typeof(ObservableCollection<CLPHistoryItem>), () => new ObservableCollection<CLPHistoryItem>());
+        public static readonly PropertyData MetaPastProperty = RegisterProperty("MetaPast",
+            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The events that we have triggered and should therefore ignore when we're told they've
+        /// happened.
         /// </summary>
-        public Dictionary<string, ICLPPageObject> TrashedPageObjects
+        public List<CLPHistoryItem> ExpectedEvents
         {
-            get { return GetValue<Dictionary<string, ICLPPageObject>>(TrashedPageObjectsProperty); }
-            set { SetValue(TrashedPageObjectsProperty, value); }
+            get { return GetValue<List<CLPHistoryItem>>(ExpectedEventsProperty); }
+            set { SetValue(ExpectedEventsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the TrashedObjects property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(Dictionary<string, ICLPPageObject>), () => new Dictionary<string, ICLPPageObject>());
+        public static readonly PropertyData ExpectedEventsProperty = RegisterProperty("ExpectedEvents",
+            typeof(List<CLPHistoryItem>), () => new List<CLPHistoryItem>());
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Dictionary<string, List<byte>> TrashedInkStrokes
+        #endregion //Properties
+
+        public void Freeze()
         {
-            get { return GetValue<Dictionary<string, List<byte>>>(TrashedInkStrokesProperty); }
-            set { SetValue(TrashedInkStrokesProperty, value); }
+            _frozen = true;
         }
 
-        /// <summary>
-        /// Register the TrashedInkStrokes property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(Dictionary<string, List<byte>>), () => new Dictionary<string, List<byte>>());
-
-        #endregion
-
-        #region Methods
-
-        public static CLPHistory GenerateHistorySinceLastSubmission(CLPPage page)
+        public void Unfreeze()
         {
-            CLPHistory historySubset = GetSegmentedHistory(page);
-            bool start = true;
-            foreach(CLPHistoryItem item in page.PageHistory.HistoryItems)
+            _frozen = false;
+        }
+
+        public void Push(CLPHistoryItem item)
+        {
+            if(_frozen || IsExpected(item))
             {
-                if(item.ItemType == HistoryItemType.Submit)
-                {
-                    start = true;
-                }
-                if(start)
-                {
-                    historySubset.HistoryItems.Clear();
-                    historySubset.UndoneHistoryItems.Clear();
-                    historySubset.TrashedPageObjects.Clear();
-                    historySubset.TrashedInkStrokes.Clear();
-                    start = false;
-                }
-                historySubset.HistoryItems.Add(item);
-                if(item.ItemType == HistoryItemType.EraseInk)
-                {
-                    if(page.PageHistory.TrashedInkStrokes.ContainsKey(item.ObjectID))
-                    {
-                        historySubset.TrashedInkStrokes.Add(item.ObjectID, page.PageHistory.TrashedInkStrokes[item.ObjectID]);
-                    }
-                    //Steve - Fix for lack of InkStrokes in CLPPage now. Perhaps move this method to ViewModel?
-                    //foreach(Stroke s in page.InkStrokes)
-                    //{
-                    //    if(s.GetPropertyData(CLPPage.StrokeIDKey).ToString() == item.ObjectID)
-                    //    {
-                    //        page.InkStrokes.Remove(s);
-                    //        historySubset.TrashedInkStrokes.Add(s.GetPropertyData(CLPPage.StrokeIDKey).ToString(), CLPPage.StrokeToString(s));
-                    //        break;
-                    //    }
-                    //}
-                }
-                else if(item.ItemType == HistoryItemType.RemovePageObject)
-                {
-                    if(page.PageHistory.TrashedPageObjects.ContainsKey(item.ObjectID))
-                    {
-                        historySubset.TrashedPageObjects.Add(item.ObjectID, page.PageHistory.TrashedPageObjects[item.ObjectID]);
-                        break;
-                    }
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        if(pageObject.UniqueID == item.ObjectID)
-                        {
-                            historySubset.TrashedPageObjects.Add(item.ObjectID, pageObject);
-                            break;
-                        }
-                    }
+                return;
+            }
 
+            Past.Push(item);
+            MetaPast.Push(item);
+            Future.Clear();
+        }
+        
+        public void Undo()
+        {
+            if(Past.Count==0)
+            {
+                return;
+            }
+
+            CLPHistoryItem lastAction = Past.Pop();
+            CLPHistoryItem expected = lastAction.GetUndoFingerprint();
+            if(expected != null)
+            {
+                ExpectedEvents.Add(expected);
+            }
+            lastAction.Undo();
+            MetaPast.Push(expected);
+            Future.Push(lastAction);
+            if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
+            {
+                CLPHistoryItem penultimateAction = Past.Peek();
+                if((lastAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
+                {
+                    Undo();
                 }
             }
-            return historySubset;
         }
 
-        public static ObservableCollection<ICLPPageObject> PageObjectsSinceLastSubmission(CLPPage page, CLPHistory history)
+        public void Redo()
         {
-            ObservableCollection<ICLPPageObject> pageObjects = new ObservableCollection<ICLPPageObject>();
-            foreach(CLPHistoryItem item in history.HistoryItems)
+            if(Future.Count == 0)
             {
-                if(item.ItemType == HistoryItemType.AddPageObject)
+               return;
+            }
+            var nextAction = Future.Pop();
+            var expected = nextAction.GetRedoFingerprint();
+            if(expected != null)
+            {
+                ExpectedEvents.Add(expected);
+            }
+            nextAction.Redo();
+            MetaPast.Push(expected);
+            Past.Push(nextAction);
+            if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
+            {
+                CLPHistoryItem penultimateAction = Future.Peek();
+                if((nextAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
                 {
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        if(pageObject.UniqueID == item.ObjectID)
-                        {
-                            pageObjects.Add(pageObject);
-                            break;
-                        }
-                    }
+                    Redo();
                 }
             }
-            return pageObjects;
         }
 
-        public void ClearHistory()
+        public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) 
         {
-            HistoryItems.Clear();
-            UndoneHistoryItems.Clear();
-            TrashedPageObjects.Clear();
-            TrashedInkStrokes.Clear();
-        }
-
-        //IsSaved == true means that the history has not been updated since the last save
-        //(to be used by Jessie- DB stuff)
-        //dirty data returns false, pages 
-        public bool IsSaved()
-        {
-            if(HistoryItems.Count > 0)
+            foreach(CLPHistoryItem item in Past)
             {
-                return HistoryItems[HistoryItems.Count - 1].ItemType == HistoryItemType.Save;
+                item.ReplaceHistoricalRecords(oldObject, newObject);
             }
-            else
+        }   
+
+        private bool IsExpected(CLPHistoryItem item)
+        {
+            CLPHistoryItem match = null;
+            foreach (CLPHistoryItem expected in ExpectedEvents) 
+            {
+                if(item.ItemType == expected.ItemType && expected.Equals(item))
+                {
+                    match = expected;
+                    break;
+                }
+            }
+            if(match == null)
             {
                 return false;
             }
+            
+            ExpectedEvents.Remove(match);
+            return true;
         }
-
-        public static CLPHistory InterpolateHistory(CLPHistory history)
-        {
-            CLPHistory newHistory = new CLPHistory();
-            for(int i = 0; i < history.HistoryItems.Count; i++)
-            {
-                CLPHistoryItem item = history.HistoryItems[i];
-                if(((item.ItemType == HistoryItemType.MovePageObject && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == HistoryItemType.MovePageObject) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)) //|| (item.ItemType == "RESIZE" && history.HistoryItems.Count - 1 > i && history.HistoryItems[i + 1].ItemType == "RESIZE")) && item.ObjectID == history.HistoryItems[i + 1].ObjectID)
-                {
-                    newHistory.HistoryItems.Add(item);
-                    //get dx and dy
-                    //Logger.Instance.WriteToLog("Interpolated Endpt: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
-                    double dx = Point.Parse(history.HistoryItems[i + 1].NewValue).X - Point.Parse(item.NewValue).X;
-                    double dy = Point.Parse(history.HistoryItems[i + 1].NewValue).Y - Point.Parse(item.NewValue).Y;
-                    //dist is the distance between 2 points 
-                    double dist = Math.Sqrt((dx * dx) + (dy * dy));
-                    DateTime t0 = item.CreationDate;
-                    DateTime t1 = history.HistoryItems[i + 1].CreationDate;
-                    double timeDiff = (t1 - t0).TotalMilliseconds;
-
-                    if(timeDiff > SAMPLE_TIME)
-                    {
-                        int numNewPoints = (int)Math.Floor(timeDiff / SAMPLE_TIME);
-                        double[,] values = new double[2, 2];
-                        values[0, 0] = Point.Parse(item.NewValue).X;
-                        values[0, 1] = Point.Parse(item.NewValue).Y;
-                        values[1, 0] = Point.Parse(history.HistoryItems[i + 1].NewValue).X;
-                        values[1, 1] = Point.Parse(history.HistoryItems[i + 1].NewValue).Y;
-                        Tuple<double, double> fitLine = regress(values);
-                        double slope = fitLine.Item1;
-                        double intercept = fitLine.Item2;
-                        double section = dist / numNewPoints;
-
-                        //use quadratic eqn to get x displacement
-                        /* double a = 1 + slope * slope;
-                         double b = 2 * slope * intercept;
-                         double c = intercept * intercept - section * section;
-                         double d = b * b - 4 * a * c;
-                         double x1 = 0;
-                         double x2 = 0;
-                         if (d == 0) // If the discriminant is 0, both solutions are equal.
-                         {
-                             x1 = x2 = -b / (2 * a);
-                         }
-                         else if (d < 0) // If the discriminant is negative, there are no solutions.
-                         {
-                             Logger.Instance.WriteToLog("No solutions for the equation to add history points.");
-                            
-                         }
-                         else // In other cases the discriminant is positive, so there are two different solutions.
-                         {
-                             x1 = (-b - Math.Sqrt(d)) / (2 * a);
-                             x2 = (-b + Math.Sqrt(d)) / (2 * a);
-                         }*/
-                        double theta = Math.Atan2(dy, dx);
-
-                        for(int j = 1; j < numNewPoints; j++)
-                        {
-                            //double newX = Point.Parse(item.NewValue).X + x1;
-                            //double newY = slope * newX + intercept;
-                            double newdx = Math.Cos(theta) * (section * j);
-                            double newdy = Math.Sin(theta) * (section * j);
-                            double newX = Point.Parse(item.NewValue).X + newdx;
-                            double newY = Point.Parse(item.NewValue).Y + newdy;
-                            CLPHistoryItem newItem = new CLPHistoryItem(item.ItemType, item.ObjectID, newHistory.HistoryItems[newHistory.HistoryItems.Count - 1].NewValue, new Point(newX, newY).ToString());
-                            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)((SAMPLE_TIME) * j));
-                            newItem.CreationDate = item.CreationDate.Add(time);
-                            newHistory.HistoryItems.Add(newItem);
-                            //Logger.Instance.WriteToLog("Interpolated: " + Point.Parse(newItem.NewValue).X + ", " + Point.Parse(newItem.NewValue).Y + " " + newItem.MetaData.GetValue("CreationDate"));
-
-                        }
-                    }
-                }
-                else
-                {
-                    newHistory.HistoryItems.Add(item);
-                }
-            }
-
-            return newHistory;
-        }
-
-        public static CLPHistory GetSegmentedHistory(CLPPage page)
-        {
-            bool resizing = false;
-            bool moving = false;
-            //int total = HistoryItems.Count;
-            CLPHistory smallerHistory = new CLPHistory();
-            //smallerHistory.ObjectReferences = History.ObjectReferences;
-            smallerHistory.TrashedInkStrokes = page.PageHistory.TrashedInkStrokes;
-            smallerHistory.TrashedPageObjects = page.PageHistory.TrashedPageObjects;
-            int resizeCount = 0;
-            int fullNumHistoryItems = page.PageHistory.HistoryItems.Count;
-            double[] resizeX = new double[fullNumHistoryItems];
-            double[] resizeY = new double[fullNumHistoryItems];
-            DateTime[] resizeT = new DateTime[fullNumHistoryItems];
-            CLPHistoryItem[] resizeItems = new CLPHistoryItem[fullNumHistoryItems];
-            foreach(var item in page.PageHistory.HistoryItems)
-            {
-                /* if (item.ItemType == "RESIZE")
-                 {
-                     //not supporting this right now, the kids aren't doing it in lessons
-                    
-                     moving = false;
-                     resizing = true;
-                     resizeT[resizeCount] = DateTime.Parse(item.MetaData.GetValue("CreationDate"));
-                     int indexOfComma = item.NewValue.IndexOf(',');
-                     resizeY[resizeCount] = double.Parse(item.NewValue.Substring(indexOfComma + 2));
-                     resizeX[resizeCount] = double.Parse(item.NewValue.Substring(0, item.NewValue.Length - indexOfComma));
-                    // Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " +Point.Parse(item.NewValue).Y + " " + item.MetaData.GetValue("CreationDate"));
-                     resizeItems[resizeCount] = item;
-                    if(resizing == true)
-                    {
-                             int index = History.HistoryItems.IndexOf(item);
-                             resizeCount++;
-                            
-                                 if (index == History.HistoryItems.Count-1 || (item.ObjectID != History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (HistoryItems.Count > index + 1 && History.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != "MOVE"))
-                                 {
-                                     moving = false;
-                                    
-                                     int[] indices = History.segmentPath(resizeX, resizeY, resizeT);
-                                     for (int i = 0; i < indices.Length; i++)
-                                     {
-                                         smallerHistory.AddHistoryItem(resizeItems[indices[i]]);
-                                         CLPHistoryItem add = resizeItems[indices[i]];
-                                         //Logger.Instance.WriteToLog("Resize Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
-                    
-                                        /* CLPHistoryItem it = new CLPHistoryItem("ADD");
-                                         it.ObjectID = resizeItems[indices[i]].ObjectID;
-                                         it.NewValue = resizeItems[indices[i]].NewValue;
-                                         //item.MetaData = resizeItems[indices[i]].MetaData;
-                                         smallerHistory.AddHistoryItem(it);
-                                         */
-                /*
-                                    }
-                                    resizeCount = 0;
-                                    Array.Clear(resizeT, 0, resizeT.Length);
-                                    Array.Clear(resizeX, 0, resizeX.Length);
-                                    Array.Clear(resizeY, 0, resizeY.Length);
-                                }
-                            
-                        
-                    }
-                    else
-                    {
-                        
-                        resizing = true;
-                        resizeCount++;
-                    }
-                }
-                else */
-                if(item.ItemType == HistoryItemType.MovePageObject)
-                {
-                    resizing = false;
-                    resizeT[resizeCount] = item.CreationDate;
-                    resizeY[resizeCount] = Point.Parse(item.NewValue).Y;
-                    resizeX[resizeCount] = Point.Parse(item.NewValue).X;
-                    //Logger.Instance.WriteToLog("Full: " + Point.Parse(item.NewValue).X + ", " + Point.Parse(item.NewValue).Y + " " + item.CreationDate);
-                    resizeItems[resizeCount] = item;
-                    if(moving == true)
-                    {
-                        int index = page.PageHistory.HistoryItems.IndexOf(item);
-                        resizeCount++;
-
-                        if(index == page.PageHistory.HistoryItems.Count - 1 || (item.ObjectID != page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ObjectID) || (page.PageHistory.HistoryItems.Count > index + 1 && page.PageHistory.HistoryItems.ElementAt<CLPHistoryItem>(index + 1).ItemType != HistoryItemType.MovePageObject))
-                        {
-                            moving = false;
-
-                            int[] indices = segmentPath(resizeX, resizeY, resizeT);
-                            for(int i = 0; i < indices.Length; i++)
-                            {
-                                smallerHistory.HistoryItems.Add(resizeItems[indices[i]]);
-                                //CLPHistoryItem add = resizeItems[indices[i]];
-                                //Logger.Instance.WriteToLog("Segment: " + Point.Parse(add.NewValue).X + ", " + Point.Parse(add.NewValue).Y + " " + add.MetaData.GetValue("CreationDate"));
-
-                                /* CLPHistoryItem it = new CLPHistoryItem("ADD");
-                                 it.ObjectID = resizeItems[indices[i]].ObjectID;
-                                 it.NewValue = resizeItems[indices[i]].NewValue;
-                                 //item.MetaData = resizeItems[indices[i]].MetaData;
-                                 smallerHistory.AddHistoryItem(it);
-                                 */
-                            }
-                            resizeCount = 0;
-                            Array.Clear(resizeT, 0, resizeT.Length);
-                            Array.Clear(resizeX, 0, resizeX.Length);
-                            Array.Clear(resizeY, 0, resizeY.Length);
-                        }
-                    }
-                    else
-                    {
-                        moving = true;
-                        resizeCount++;
-                    }
-                }
-                else
-                {
-                    resizing = false;
-                    moving = false;
-                    smallerHistory.HistoryItems.Add(item);
-                }
-            }
-            return smallerHistory;
-        }
-
-        public static int[] segmentPath(double[] xpoints, double[] ypoints, DateTime[] times)
-        {
-            int numPoints = 0;
-            for(int i = 0; i < times.Length; i++)
-            {
-                if(times[i] != DateTime.MinValue)
-                {
-                    numPoints++;
-                }
-            }
-            double[] dx = new double[numPoints - 1];
-            double[] dy = new double[numPoints - 1];
-            double[] p = new double[numPoints - 1];
-            double[,] segPoints = new double[numPoints, 2];
-            double[] distance = new double[numPoints];
-            double[] speed = new double[numPoints];
-            double[] linTan = new double[numPoints];
-            double[] arcTan = new double[numPoints];
-            double[] bSlope = new double[numPoints];
-            double d0, d1;
-            DateTime t0, t1;
-
-            double currentDist = 0;
-            for(int i = 0; i < numPoints - 1; i++)
-            {
-                //populate the dx and dy arrays
-                dx[i] = xpoints[i + 1] - xpoints[i];
-                dy[i] = ypoints[i + 1] - ypoints[i];
-                //p[i] is the distance between 2 points 
-                p[i] = (dx[i] * dx[i]) + (dy[i] * dy[i]);
-                //distance is the total distance of the path so far
-                currentDist += p[i];
-                distance[i] = currentDist;
-                int k;
-                if(i < 2)
-                {
-                    k = 2;
-                }
-                else
-                {
-                    k = i;
-                }
-                if(distance.Length > 2)
-                {
-                    d0 = distance[k - 2];
-                    d1 = distance[k];
-                    t0 = times[k - 2];
-                    t1 = times[k];
-
-                    double timeDiff = (t1 - t0).TotalMilliseconds;
-                    speed[i] = Math.Abs((d1 - d0) / timeDiff);
-
-                }
-                else
-                {
-                    speed[i] = 0;
-                }
-            } // now the arrays are populated and we can calculate slope, curvature
-
-            double[,] values;
-            for(int i = 1; i < numPoints; i++)
-            {
-                int k = 0;
-                int windowSize = 11;
-                if(i <= Math.Floor(windowSize / 2.0))
-                {
-                    if(i == 1)
-                    {
-                        k = 1;
-                    }
-                    else
-                    {
-                        k = i;
-                    }
-                    windowSize = 2 * k - 1;
-                }
-                else if(i >= numPoints + Math.Floor(windowSize / 2.0))
-                {
-                    if(i == numPoints)
-                    {
-                        k = numPoints - 1;
-                    }
-                    else
-                    {
-                        k = i;
-                    }
-                    windowSize = 2 * (numPoints - k) - 1;
-                }
-                values = new double[windowSize, 2];
-                double winMin = i - Math.Floor(windowSize / 2.0);
-                double winMax = i + Math.Floor(windowSize / 2.0);
-                if(winMin == 0)
-                {
-                    winMin = 1;
-                }
-                int valCount = 0;
-                for(int w = (int)winMin + i; w < winMax + i; w++)
-                {
-                    if(w < numPoints - 1)
-                    {
-                        //do a least squares regression to get the slope of the best fit line for this segment
-                        values[valCount, 0] = xpoints[w];
-                        values[valCount, 1] = ypoints[w];
-                        valCount++;
-                    }
-                }
-
-                linTan[i] = regress(values).Item1;
-                arcTan[i] = Math.Atan(linTan[i]);
-            }
-
-            double[] correctedAngles = correctAngles(arcTan);
-            double[] dAngles = new double[numPoints];
-            double[] dDistance = new double[numPoints];
-            double[] curvature = new double[numPoints];
-            double curveSum = 0, speedSum = 0;
-            for(int i = 0; i < numPoints; i++)
-            {
-                int k = i;
-                if(i == 0)
-                {
-                    k = 1;
-                }
-                dAngles[i] = arcTan[k] - arcTan[k - 1];
-                dDistance[i] = distance[k] - distance[k - 1];
-                if(i == 0 || i == numPoints - 1)
-                {
-                    curvature[i] = 0;
-                }
-                else
-                {
-                    curvature[i] = dAngles[i] / dDistance[i];
-                }
-                curveSum += curvature[i];
-                speedSum += speed[i];
-            }
-            double avgCurve = curveSum / numPoints;
-            double curveThreshold = .6 * avgCurve;
-            double avgSpeed = speedSum / numPoints;
-            double speedThreshHigh = .8 * avgSpeed;
-            double speedThreshLow = .25 * avgSpeed;
-            double[] speedCorners = new double[numPoints];
-            double[] curveCorners = new double[numPoints];
-            int numSegPoints = 0;
-            for(int i = 1; i < numPoints - 2; i++)
-            {
-                //find local speed minima to detect corners
-                if(speed[i] < speedThreshHigh && speed[i] < speed[i + 1] && speed[i] < speed[i - 1])
-                {
-                    speedCorners[i] = 1;
-                }
-                //find local curvature maxima to detect corners
-                else if(curvature[i] > curveThreshold && curvature[i] > curvature[i + 1] && curvature[i] > curvature[i - 1])
-                {
-                    if(speed[i] < speedThreshLow)
-                    {
-                        curveCorners[i] = 1;
-                    }
-                }
-                //check if the corner points are too close together
-                //or too close to the ends
-                double pauseThreshold = 750; //double milliseconds
-                int y = 20;
-                if(speedCorners[i] == 1 || curveCorners[i] == 1)
-                {
-                    if(i > y && i < numPoints - y)
-                    {
-                        for(int k = i - y; k < i; k++)
-                        {
-                            DateTime time0 = times[k];
-                            DateTime time1 = times[i];
-                            double timeDiff = (time1 - time0).TotalMilliseconds;
-                            if(curveCorners[k] == 1)
-                            {
-                                curveCorners[k] = 0;
-                            }
-                            else if(speedCorners[k] == 1 && timeDiff < pauseThreshold)
-                            {
-                                speedCorners[k] = 0;
-                            }
-                        }
-                    }
-                }
-
-                //create segments from the corner points 
-                if(speedCorners[i] == 1 || curveCorners[i] == 1)
-                {
-                    segPoints[i, 0] = xpoints[i];
-                    segPoints[i, 1] = ypoints[i];
-                    numSegPoints += 1;
-                }
-            }
-
-            int[] indices = new int[numSegPoints + 2];
-            int count = 0;
-            for(int i = 0; i < numPoints; i++)
-            {
-                if(segPoints[i, 0] != 0 || i == numPoints - 1 || i == 0)
-                {
-                    indices[count] = i;
-                    count++;
-                }
-            }
-            double[] segTypes = new double[numSegPoints];
-
-            return indices;
-        }
-
-        private static double[] correctAngles(double[] angles)
-        {
-            double b = 0;
-            double[] corrected = new double[angles.Length];
-            for(int i = 1; i < angles.Length; i++)
-            {
-                double dif = angles[i - 1] - angles[i];
-                if(Math.Abs(dif) > 2.5)
-                {
-                    b = b + dif;
-                }
-                corrected[i] = b + angles[i];
-            }
-            return corrected;
-        }
-
-        private static Tuple<double, double> regress(double[,] values)
-        {
-            double xAvg = 0;
-            double yAvg = 0;
-
-            for(int x = 0; x < values.GetLength(0); x++)
-            {
-                xAvg += values[x, 0];
-                yAvg += values[x, 1];
-            }
-
-            xAvg = xAvg / values.Length;
-            yAvg = yAvg / values.Length;
-
-            double v1 = 0;
-            double v2 = 0;
-
-            for(int x = 0; x < values.GetLength(0); x++)
-            {
-                v1 += (values[x, 0] - xAvg) * (values[x, 1] - yAvg);
-                v2 += Math.Pow(values[x, 0] - xAvg, 2);
-            }
-
-            double a = v1 / v2;
-            double b = yAvg - a * xAvg;
-            return Tuple.Create<double, double>(a, b);
-            //Console.WriteLine("y = ax + b");
-            //Console.WriteLine("a = {0}, the slope of the trend line.", Math.Round(a, 2));
-            //Console.WriteLine("b = {0}, the intercept of the trend line.", Math.Round(b, 2));
-
-            //Console.ReadLine();
-        }
-
-        public static CLPHistory removeHistoryFromPage(CLPPage page)
-        {
-            CLPHistory tempHistory = new CLPHistory();
-            foreach(var key in page.PageHistory.TrashedPageObjects.Keys)
-            {
-                tempHistory.TrashedPageObjects.Add(key, page.PageHistory.TrashedPageObjects[key]);
-            }
-            foreach(var key in page.PageHistory.TrashedInkStrokes.Keys)
-            {
-                tempHistory.TrashedInkStrokes.Add(key, page.PageHistory.TrashedInkStrokes[key]);
-            }
-            foreach(CLPHistoryItem item in page.PageHistory.HistoryItems)
-            {
-                tempHistory.HistoryItems.Add(item);
-            }
-            foreach(CLPHistoryItem item in page.PageHistory.UndoneHistoryItems)
-            {
-                tempHistory.UndoneHistoryItems.Add(item);
-            }
-            page.PageHistory.ClearHistory();
-            return tempHistory;
-        }
-
-        public static void replaceHistoryInPage(CLPHistory tempHistory, CLPPage page)
-        {
-            //in case the page history wasn't already empty, clear it.
-            page.PageHistory.ClearHistory();
-
-            foreach(var key in tempHistory.TrashedPageObjects.Keys)
-            {
-                page.PageHistory.TrashedPageObjects.Add(key, tempHistory.TrashedPageObjects[key]);
-            }
-            foreach(var key in tempHistory.TrashedInkStrokes.Keys)
-            {
-                page.PageHistory.TrashedInkStrokes.Add(key, tempHistory.TrashedInkStrokes[key]);
-            }
-            foreach(CLPHistoryItem item in tempHistory.HistoryItems)
-            {
-                page.PageHistory.HistoryItems.Add(item);
-            }
-            foreach(CLPHistoryItem item in tempHistory.UndoneHistoryItems)
-            {
-                page.PageHistory.UndoneHistoryItems.Add(item);
-            }
-        }
-
-        #endregion
     }
 }

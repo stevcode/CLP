@@ -211,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(bool), false);
 
         /// <summary>
-        /// hether or not adorner to create a division on bottom side of array is on.
+        /// Whether or not adorner to create a division on bottom side of array is on.
         /// </summary>
         public bool IsBottomAdornerVisible
         {
@@ -269,8 +269,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             double position = RightArrowPosition - 5;
 
-            CLPArrayDivision divAbove = FindDivisionAbove(position, HorizontalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, HorizontalDivisions);
+            CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
+            CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
 
             CLPArrayDivision topDiv;
             if(divAbove == null)
@@ -295,6 +295,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             HorizontalDivisions.Add(bottomDiv);
+
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -306,8 +309,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             double position = BottomArrowPosition - 5;
 
-            CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
+            CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
+            CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
 
             CLPArrayDivision topDiv;
             if(divAbove == null)
@@ -332,6 +335,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             VerticalDivisions.Add(bottomDiv);
+
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
+                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -369,6 +375,13 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
             {
+                if (isMouseDown)
+                {
+                    hoverTimer.Stop();
+                    timerRunning = false;
+                    hoverTimeElapsed = false;
+                    return true;
+                }
                 if (IsRightAdornerVisible || IsBottomAdornerVisible)
                 {
                     IsAdornerVisible = false;
@@ -460,7 +473,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if(division.Orientation == ArrayDivisionOrientation.Horizontal)
                     {
-                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
                         (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
                         (PageObject as CLPArray).HorizontalDivisions.Remove(division);
 
@@ -474,7 +487,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     if(division.Orientation == ArrayDivisionOrientation.Vertical)
                     {
-                        CLPArrayDivision divAbove = FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
                         (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
                         (PageObject as CLPArray).VerticalDivisions.Remove(division);
 
@@ -488,46 +501,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-        }
-
-        public CLPArrayDivision FindDivisionAbove(double position, ObservableCollection<CLPArrayDivision> divisionList)
-        {
-            CLPArrayDivision divAbove = null;
-            foreach(CLPArrayDivision div in divisionList)
-            {
-                if(divAbove == null)
-                {
-                    if(div.Position < position)
-                    {
-                        divAbove = div;
-                    }
-                }
-                else if(divAbove.Position < div.Position && div.Position < position)
-                {
-                    divAbove = div;
-                }
-            }
-            return divAbove;
-         }
-
-        public CLPArrayDivision FindDivisionBelow(double position, ObservableCollection<CLPArrayDivision> divisionList)
-        {
-            CLPArrayDivision divBelow = null;
-            foreach(CLPArrayDivision div in divisionList)
-            {
-                if(divBelow == null)
-                {
-                    if(div.Position > position)
-                    {
-                        divBelow = div;
-                    }
-                }
-                else if(divBelow.Position > div.Position && div.Position > position)
-                {
-                    divBelow = div;
-                }
-            }
-            return divBelow;
         }
 
         #endregion //Methods

@@ -66,10 +66,22 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(DisplayedPageProperty, value);
                 ResizePage();
+                SetPageBorderColor();
             }
         }
 
         public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
+
+        /// <summary>
+        /// Specifies Border Color of main Page
+        /// </summary>
+        public String PageBorderColor
+        {
+            get { return GetValue<String>(PageBorderColorProperty); }
+            set { SetValue(PageBorderColorProperty, value); }
+        }
+
+        public static readonly PropertyData PageBorderColorProperty = RegisterProperty("PageBorderColor", typeof(String));
 
         #region Page Resizing
 
@@ -273,6 +285,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public void AddPageObjectToCurrentPage(ICLPPageObject pageObject)
         {
             CLPServiceAgent.Instance.AddPageObjectToPage(DisplayedPage, pageObject);
+        }
+
+        public void SetPageBorderColor()
+        {
+            if(!DisplayedPage.IsSubmission)
+            {
+                PageBorderColor = "#2F64B9";
+            }
+            else
+            {
+                PageBorderColor = "DarkOrange";
+            }
         }
 
         #endregion //Methods

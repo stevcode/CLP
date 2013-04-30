@@ -99,7 +99,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLPHistory.cs" />
-    <Compile Include="CLPHistoryItem.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryAddArrayLine.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryAddObject.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryAddStroke.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryItem.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryMoveObject.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryRemoveArrayLine.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryRemoveObject.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryRemoveStroke.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryResizeObject.cs" />
     <Compile Include="CLPNotebook.cs" />
     <Compile Include="CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
