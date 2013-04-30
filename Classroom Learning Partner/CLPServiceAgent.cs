@@ -264,10 +264,10 @@ namespace Classroom_Learning_Partner
         public void SaveNotebook(CLPNotebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
-            if(App.CurrentUserMode == App.UserMode.Student)
-            {
-                notebook.Submissions.Clear();
-            }
+            //if(App.CurrentUserMode == App.UserMode.Student)
+            //{
+            //    notebook.Submissions.Clear();
+            //}
             notebook.Save(filePath);
         }
 
