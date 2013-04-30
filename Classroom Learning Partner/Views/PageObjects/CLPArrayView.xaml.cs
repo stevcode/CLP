@@ -21,10 +21,14 @@ namespace Classroom_Learning_Partner.Views
 
         private void ArrayBottomHitBox_MouseMove(object sender, MouseEventArgs e)
         {
-            var clpArrayViewModel = ViewModel as CLPArrayViewModel;
+            var clpArrayViewModel = ViewModel as CLPArrayViewModel; 
             if(clpArrayViewModel != null)
             {
-                clpArrayViewModel.BottomArrowPosition = e.GetPosition(TopGrid).X - CLPArray.LargeLabelLength;
+                double newPos = e.GetPosition(TopGrid).X - CLPArray.LargeLabelLength;
+                if(newPos > CLPArray.SmallLabelLength * .75 && newPos < clpArrayViewModel.ArrayWidth - CLPArray.SmallLabelLength * .75)
+                {
+                    clpArrayViewModel.BottomArrowPosition = newPos;
+                }
             }
         }
 
@@ -33,7 +37,11 @@ namespace Classroom_Learning_Partner.Views
             var clpArrayViewModel = ViewModel as CLPArrayViewModel;
             if (clpArrayViewModel != null)
             {
-                clpArrayViewModel.RightArrowPosition = e.GetPosition(TopGrid).Y - CLPArray.LargeLabelLength;
+                double newPos = e.GetPosition(TopGrid).Y - CLPArray.LargeLabelLength;
+                if(newPos > CLPArray.SmallLabelLength * .75 && newPos < clpArrayViewModel.ArrayHeight - CLPArray.SmallLabelLength * .75)
+                {
+                    clpArrayViewModel.RightArrowPosition = newPos;
+                }
             }
         }
     }
