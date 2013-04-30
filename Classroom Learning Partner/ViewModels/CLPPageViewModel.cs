@@ -399,6 +399,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
+            Page.PageHistory.BeginEventGroup();
             _isMouseDown = true;
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
             {
@@ -473,6 +474,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
+            Page.PageHistory.EndEventGroup();
             _isMouseDown = false;
         }
 
