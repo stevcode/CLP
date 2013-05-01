@@ -195,6 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
+            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
@@ -2345,6 +2346,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+        }
+
+        /// <summary>
+        /// Gets the InsertProtractorCommand command.
+        /// </summary>
+        public Command InsertProtractorCommand { get; private set; }
+
+        private void OnInsertProtractorCommandExecute()
+        {
+            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            square.Height = 150;
+            square.Width = 2.0*square.Height;
+            
+            CLPServiceAgent.Instance.AddPageObjectToPage(square);
         }
 
         /// <summary>

@@ -13,7 +13,8 @@ namespace CLP.Models
             Ellipse,
             Triangle,
             HorizontalLine,
-            VerticalLine
+            VerticalLine,
+            Protractor
         }
 
         public static string Type = "CLPShape";

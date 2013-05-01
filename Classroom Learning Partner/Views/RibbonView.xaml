@@ -226,7 +226,12 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="TRUE" />
 
-		<!--<RibbonToggleButton Label="Webcam" 
+                <!--<RibbonButton
+                        Label="Protractor"
+                        LargeImageSource="..\Images\ProtractorWhite.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>-->
+
+                <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
                         Command="{Binding ToggleWebcamPanelCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
@@ -646,6 +651,14 @@
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
                                 <Label>Vertical Line</Label>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                                Command="{Binding Path=InsertProtractorCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\ProtractorWhite.png" />
+                                <Label>Protractor</Label>
                             </StackPanel>
                         </Button>
 

@@ -645,6 +645,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\ProtractorWhite.png" />
+    <Resource Include="Images\Protractor.png" />
     <Resource Include="Images\InkArray.png" />
     <Resource Include="Images\NumberPad.png" />
     <Resource Include="Images\Array.png" />
