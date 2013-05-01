@@ -254,7 +254,7 @@
                     </Style>
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black"/>
-                <RibbonButton Background="White"/>
+                <RibbonButton Background="White" Visibility="{Binding InstructorVisibility}"/>
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
                 <RibbonButton Background="DarkOrange" />
@@ -269,7 +269,6 @@
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue" />
-                <RibbonButton Background="#0098F7" />
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -356,7 +355,7 @@
 
             </RibbonGroup>
             
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -371,7 +370,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
-            </RibbonGroup>
+            </RibbonGroup>-->
             
         </RibbonTab>
 
