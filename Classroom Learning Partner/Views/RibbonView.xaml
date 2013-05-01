@@ -161,6 +161,13 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
+                <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
+                    IsChecked="False"
+                    Label="Highlighter"
+                    LargeImageSource="..\Images\Marker.png"
+                    Command="{Binding SetHighlighterCommand}"/>
+
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
@@ -168,7 +175,7 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />-->
 
-                <RibbonMenuButton Label="Eraser Type">
+                <!--<RibbonMenuButton Label="Eraser Type">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource" Value="..\Images\StrokeEraser.png" />
@@ -192,7 +199,7 @@
                             </RibbonGalleryItem>
                         </RibbonGalleryCategory>
                     </RibbonGallery>
-                </RibbonMenuButton>
+                </RibbonMenuButton>-->
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"

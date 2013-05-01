@@ -420,7 +420,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 hoverTimer.Stop();
                 timerRunning = false;
@@ -433,7 +433,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsAdornerVisible = true;
                 return false;
             }
-            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 hoverTimer.Stop();
                 timerRunning = false;
@@ -446,12 +446,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsAdornerVisible = true;
                 return false;
             }
-            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 IsMouseOverShowEnabled = false;
                 return false;
             }
-            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 IsMouseOverShowEnabled = false;
                 return false;
