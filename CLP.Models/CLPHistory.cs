@@ -94,7 +94,10 @@ namespace CLP.Models
             MetaPast.Clear();
             Future.Clear();
             ExpectedEvents.Clear();
-            groupEvents.Clear();
+            if(groupEvents != null)
+            {
+                groupEvents.Clear();
+            }
         }
 
         public void Freeze()
