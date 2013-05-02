@@ -473,6 +473,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 reader.Dispose();
             }
+
             foreach(CLPPage p in SubmissionPages) {
                 UserNames.Remove(p.SubmitterName);
 

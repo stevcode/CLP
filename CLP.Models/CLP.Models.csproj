@@ -87,6 +87,7 @@
       <HintPath>..\Classroom Learning Partner\External Libraries\Microsoft.Ink.resources.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -141,6 +142,7 @@
     <Compile Include="Extension Methods\StokeExtension.cs" />
     <Compile Include="Extension Methods\StrokeCollectionExtension.cs" />
     <Compile Include="Group.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />

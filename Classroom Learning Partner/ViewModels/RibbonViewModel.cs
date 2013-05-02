@@ -151,6 +151,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
+            SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
@@ -194,6 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
+            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
@@ -203,7 +205,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
             InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
             InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);
-            InsertArrayCommand = new Command(OnInsertArrayCommandExecute);
+            InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute);
 
 
 
@@ -256,11 +258,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PenSize property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
-
-        private void EraserTypeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            
-        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1361,6 +1358,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
+            DrawingAttributes.IsHighlighter = false;
+            DrawingAttributes.Height = PenSize;
+            DrawingAttributes.Width = PenSize;
+            DrawingAttributes.StylusTip = StylusTip.Ellipse;
+        }
+
+        /// <summary>
+        /// Gets the SetHighlighterCommand command.
+        /// </summary>
+        public Command SetHighlighterCommand { get; private set; }
+
+        private void OnSetHighlighterCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageInteractionMode = PageInteractionMode.Pen;
+            DrawingAttributes.IsHighlighter = true;
+            DrawingAttributes.Height = 12;
+            DrawingAttributes.Width = 12;
+            DrawingAttributes.StylusTip = StylusTip.Rectangle;
         }
 
         /// <summary>
@@ -1395,10 +1411,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = button as RibbonButton;
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
 
-            if(EditingMode != InkCanvasEditingMode.Ink)
-            {
-                SetPenCommand.Execute();
-            }
+            EditingMode = InkCanvasEditingMode.Ink;
         }
 
         /// <summary>
@@ -1564,7 +1577,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
                 CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
-
 
                 CLPPage submission = page.Clone() as CLPPage;
 
@@ -1975,10 +1987,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            Thread t = new Thread(() =>
-            {
-                try
-                {
+            //Thread t = new Thread(() =>
+            //{
+            //    try
+            //    {
                     CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     CLPHistory pageHistory = page.PageHistory;
 
@@ -2002,9 +2014,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 item.Undo(page);
                             }
-                            return null;
-                        }, null);
-                        metaFuture.Push(item);
                     }
 
                     Thread.Sleep(400);
@@ -2027,9 +2036,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 item.Redo(page);
                             }
-                            return null;
-                        }, null);
-                    }
                     Thread.Sleep(400);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
@@ -2058,7 +2064,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Redo(); 
+                       // page.PageHistory.Redo(); 
                         return null;
                     }, null);   
                 }
@@ -2080,7 +2086,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Undo();
+                       // page.PageHistory.Undo();
                         return null;
                     }, null);
                 }
@@ -2285,12 +2291,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the InsertArrayCommand command.
         /// </summary>
-        public Command InsertArrayCommand { get; private set; }
+        public Command<string> InsertArrayCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the InsertArrayCommand command is executed.
         /// </summary>
-        private void OnInsertArrayCommandExecute()
+        private void OnInsertArrayCommandExecute(string useDivisions)
         {
             //pop up number pads to get dimensions
             CustomizeArrayView dimensionChooser = new CustomizeArrayView();
@@ -2310,6 +2316,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException) { cols = 1; }
 
                 CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+
+                if (useDivisions == "TRUE")
+                {
+                    array.IsDivisionBehaviorOn = true;
+                }
+                else if (useDivisions == "FALSE")
+                {
+                    array.IsDivisionBehaviorOn = false;
+                }
+
                 CLPServiceAgent.Instance.AddPageObjectToPage(array);
             }
 
@@ -2331,6 +2347,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+        }
+
+        /// <summary>
+        /// Gets the InsertProtractorCommand command.
+        /// </summary>
+        public Command InsertProtractorCommand { get; private set; }
+
+        private void OnInsertProtractorCommandExecute()
+        {
+            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            square.Height = 150;
+            square.Width = 2.0*square.Height;
+            
+            CLPServiceAgent.Instance.AddPageObjectToPage(square);
         }
 
         /// <summary>

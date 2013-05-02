@@ -84,6 +84,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 newWidth = PageObject.Width;
             }
 
+            if((PageObject as CLPShape).ShapeType == CLPShape.CLPShapeType.Protractor)
+            {
+                newWidth = 2.0*newHeight;
+            }
+
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 

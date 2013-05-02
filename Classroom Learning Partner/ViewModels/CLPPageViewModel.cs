@@ -399,7 +399,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.BeginEventGroup();
+           // Page.PageHistory.BeginEventGroup();
             _isMouseDown = true;
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
             {
@@ -474,7 +474,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.EndEventGroup();
+           // Page.PageHistory.EndEventGroup();
             _isMouseDown = false;
         }
 
@@ -620,8 +620,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Console.WriteLine(e.Removed.Count);
             Console.WriteLine(e.Added.Count);
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
-        //    Task.Factory.StartNew(() =>
-          //      {
+            Task.Factory.StartNew(() =>
+                {
                     try
                     {
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
@@ -728,7 +728,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
                     }
-               // });
+               });
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)

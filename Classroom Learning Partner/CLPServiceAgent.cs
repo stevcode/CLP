@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -16,9 +18,11 @@ namespace Classroom_Learning_Partner
     //Sealed to allow the compiler to perform special optimizations during JIT
     public sealed class CLPServiceAgent
     {
+        private static System.Timers.Timer _autoSaveTimer = new System.Timers.Timer();
         private CLPServiceAgent()
         {
-
+            _autoSaveTimer.Interval = 60000;
+            _autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
         }
 
         //readonly allows thread-safety and means it can only be allocated once.
@@ -34,10 +38,7 @@ namespace Classroom_Learning_Partner
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
             //sync with database
             //run network disconnect
-            if (_autoSaveThread != null)
-            {
-                _autoSaveThread.Join(1500);
-            }
+            _autoSaveTimer.Stop();
             
             Environment.Exit(0);
         }
@@ -64,13 +65,13 @@ namespace Classroom_Learning_Partner
                             page.SubmissionTime = DateTime.Now;
                             page.TrimPage();
 
-                            //var sPage = ObjectSerializer.ToString(page);
+                            var sPage = ObjectSerializer.ToString(page);
 
                             var byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
                             var pageObjects = new ObservableCollection<ICLPPageObject>();
 
-                            //App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
-                            App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
+                            //App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
                         }
                         catch(Exception ex)
                         {
@@ -105,7 +106,6 @@ namespace Classroom_Learning_Partner
             //Jessie - grab notebookNames from database if using DB
         }
 
-        private Thread _autoSaveThread;
         public void OpenNotebook(string notebookName)
         {
 
@@ -172,8 +172,7 @@ namespace Classroom_Learning_Partner
 
                     if(App.CurrentUserMode == App.UserMode.Student)
                     {
-                        _autoSaveThread = new Thread(AutoSaveNotebook) {IsBackground = true};
-                        _autoSaveThread.Start();
+                        _autoSaveTimer.Start();
                     }
 
                 }
@@ -184,13 +183,12 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private void AutoSaveNotebook()
+        private bool _isAutoSaving;
+        void _autoSaveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            while(true)
-            {
-                Thread.Sleep(120000); //AutoSave every 2.5 minutes.
-                QuickSaveNotebook("AUTOSAVE");
-            }
+            _isAutoSaving = true;
+            QuickSaveNotebook("AUTOSAVE");
+            _isAutoSaving = false;
         }
 
         public void QuickSaveNotebook(string appendedFileName)
@@ -221,6 +219,10 @@ namespace Classroom_Learning_Partner
                 {
                     Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
                 }
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("***NOTEBOOK WORKSPACE VIEWMODEL BECAME NULL***");
             }
         }
 
@@ -264,11 +266,20 @@ namespace Classroom_Learning_Partner
         public void SaveNotebook(CLPNotebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
-            if(App.CurrentUserMode == App.UserMode.Student)
+            //if(App.CurrentUserMode == App.UserMode.Student)
+            //{
+            //    notebook.Submissions.Clear();
+            //}
+
+            _autoSaveTimer.Stop();
+
+            while(_isAutoSaving)
             {
-                notebook.Submissions.Clear();
             }
+            
             notebook.Save(filePath);
+
+            _autoSaveTimer.Start();
         }
 
         #endregion //Notebook
@@ -344,10 +355,10 @@ namespace Classroom_Learning_Partner
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;
             if(diff > CLPHistory.SAMPLE_RATE){
-                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width)); 
-                pageObject.Height = height;
-                pageObject.Width = width;
+                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width));     
             }
+            pageObject.Height = height;
+            pageObject.Width = width;
         }
 
         public void InterpretRegion(ACLPInkRegion inkRegion) {

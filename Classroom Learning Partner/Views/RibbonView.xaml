@@ -161,6 +161,13 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
+                <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
+                    IsChecked="False"
+                    Label="Highlighter"
+                    LargeImageSource="..\Images\Marker.png"
+                    Command="{Binding SetHighlighterCommand}"/>
+
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
@@ -168,7 +175,7 @@
                     Command="{Binding SetEraserCommand}" 
                     CommandParameter="EraseByPoint" />-->
 
-                <RibbonMenuButton Label="Eraser Type">
+                <!--<RibbonMenuButton Label="Eraser Type">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource" Value="..\Images\StrokeEraser.png" />
@@ -192,7 +199,7 @@
                             </RibbonGalleryItem>
                         </RibbonGalleryCategory>
                     </RibbonGallery>
-                </RibbonMenuButton>
+                </RibbonMenuButton>-->
 
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
@@ -210,10 +217,21 @@
                         Command="{Binding Path=InsertBlankStampCommand}"/>
 
                 <RibbonButton Label="Array"
-                        LargeImageSource="..\Images\Array.png"
-                        Command="{Binding Path=InsertArrayCommand}"/>
+                              LargeImageSource="..\Images\InkArray.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="FALSE" />
 
-		<!--<RibbonToggleButton Label="Webcam" 
+                <RibbonButton Label="Array + Guides"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="TRUE" />
+
+                <!--<RibbonButton
+                        Label="Protractor"
+                        LargeImageSource="..\Images\ProtractorWhite.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>-->
+
+                <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
                         Command="{Binding ToggleWebcamPanelCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
@@ -241,7 +259,7 @@
                     </Style>
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black"/>
-                <RibbonButton Background="White"/>
+                <RibbonButton Background="White" Visibility="{Binding InstructorVisibility}"/>
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
                 <RibbonButton Background="DarkOrange" />
@@ -256,7 +274,6 @@
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue" />
-                <RibbonButton Background="#0098F7" />
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -343,7 +360,7 @@
 
             </RibbonGroup>
             
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -358,7 +375,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
-            </RibbonGroup>
+            </RibbonGroup>-->
             
         </RibbonTab>
 
@@ -634,6 +651,14 @@
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
                                 <Label>Vertical Line</Label>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                                Command="{Binding Path=InsertProtractorCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\ProtractorWhite.png" />
+                                <Label>Protractor</Label>
                             </StackPanel>
                         </Button>
 
