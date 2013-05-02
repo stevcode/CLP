@@ -13,8 +13,9 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistory()
+        public CLPHistory(CLPPage page)
         {
+            Page = page;
         }
 
         /// <summary>
@@ -30,6 +31,15 @@ namespace CLP.Models
         #endregion //Constructor
 
         #region Properties
+
+        public CLPPage Page
+        {
+            get { return GetValue<CLPPage>(PageProperty); }
+            set { SetValue(PageProperty, value); }
+        }
+
+        [NonSerialized]
+        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage), null, includeInSerialization: false);
 
         /// <summary>
         /// The actions that have happened in the past.  "Undo" reverses the top action on the stack and pushes
@@ -122,12 +132,12 @@ namespace CLP.Models
             }
 
             CLPHistoryItem lastAction = Past.Pop();
-            CLPHistoryItem expected = lastAction.GetUndoFingerprint();
+            CLPHistoryItem expected = lastAction.GetUndoFingerprint(Page);
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
             }
-            lastAction.Undo();
+            lastAction.Undo(Page);
             MetaPast.Push(expected);
             Future.Push(lastAction);
             if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
@@ -147,12 +157,12 @@ namespace CLP.Models
                return;
             }
             var nextAction = Future.Pop();
-            var expected = nextAction.GetRedoFingerprint();
+            var expected = nextAction.GetRedoFingerprint(Page);
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
             }
-            nextAction.Redo();
+            nextAction.Redo(Page);
             MetaPast.Push(expected);
             Past.Push(nextAction);
             if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
@@ -164,14 +174,6 @@ namespace CLP.Models
                 }
             }
         }
-
-        public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) 
-        {
-            foreach(CLPHistoryItem item in Past)
-            {
-                item.ReplaceHistoricalRecords(oldObject, newObject);
-            }
-        }   
 
         private bool IsExpected(CLPHistoryItem item)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -11,10 +12,10 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryMoveObject(CLPPage page, ICLPPageObject pageObject, double oldX,
-                double oldY, double newX, double newY) : base(HistoryItemType.MoveObject, page)
+        public CLPHistoryMoveObject(String objectID, double oldX,
+                double oldY, double newX, double newY) : base(HistoryItemType.MoveObject)
         {
-            PageObject = pageObject;
+            ObjectId = objectID;
             OldX = oldX;
             OldY = oldY;
             NewX = newX;
@@ -36,16 +37,16 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Page objects resized in this historical event
+        /// Page object moved in this historical event
         /// </summary>
-        public ICLPPageObject PageObject
+        public String ObjectId
         {
-            get { return GetValue<ICLPPageObject>(PageObjectProperty); }
-            set { SetValue(PageObjectProperty, value); }
+            get { return GetValue<String>(ObjectIdProperty); }
+            set { SetValue(ObjectIdProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject), null);
-
+        public static readonly PropertyData ObjectIdProperty = RegisterProperty("ObjectId", typeof(String), null);
+        
         /// <summary>
         /// The page object's X position before the resizing
         /// </summary>
@@ -94,35 +95,45 @@ namespace CLP.Models
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryMoveObject(Page, PageObject, NewX, NewY, OldX, OldY);
+            return new CLPHistoryMoveObject(ObjectId, NewX, NewY, OldX, OldY);
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryMoveObject(Page, PageObject, OldX, OldY, NewX, NewY);
+            return new CLPHistoryMoveObject(ObjectId, OldX, OldY, NewX, NewY);
         }
 
-
-        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
+        override public void Undo(CLPPage page)
         {
-            if(PageObject.UniqueID == oldObject.UniqueID)
+            Console.WriteLine("Attempting to unmove " + ObjectId);
+            ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            obj.XPosition = OldX;
+            obj.YPosition = OldY;
+            if(obj.CanAcceptPageObjects)
             {
-                PageObject = newObject;
+                foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
+                {
+                    pageObject.XPosition = (OldX - NewX + pageObject.XPosition);
+                    pageObject.YPosition = (OldY - NewY + pageObject.YPosition);
+                }
             }
         }
 
-        override public void Undo()
+        override public void Redo(CLPPage page)
         {
-            PageObject.XPosition = OldX;
-            PageObject.YPosition = OldY;
-        }
-
-        override public void Redo()
-        {
-            PageObject.XPosition = NewX;
-            PageObject.YPosition = NewY;
+            ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            obj.XPosition = NewX;
+            obj.YPosition = NewY;
+            if(obj.CanAcceptPageObjects)
+            {
+                foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
+                {
+                    pageObject.XPosition = (NewX - OldX + pageObject.XPosition);
+                    pageObject.YPosition = (NewY - OldY + pageObject.YPosition);
+                }
+            }
         }
 
         public override bool Equals(object obj)
@@ -132,7 +143,7 @@ namespace CLP.Models
                 return false;
             }
             CLPHistoryMoveObject other = obj as CLPHistoryMoveObject;
-            if (other.PageObject.UniqueID != PageObject.UniqueID ||
+            if (other.ObjectId != ObjectId ||
                 other.OldX != OldX ||
                 other.OldY != OldY ||
                 other.NewX != NewX ||
@@ -147,7 +158,7 @@ namespace CLP.Models
         {
             if(other is CLPHistoryMoveObject)
             {
-                if((other as CLPHistoryMoveObject).PageObject.UniqueID == PageObject.UniqueID)
+                if((other as CLPHistoryMoveObject).ObjectId == ObjectId)
                 {
                     return true;
                 }

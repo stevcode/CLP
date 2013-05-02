@@ -1979,7 +1979,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
-                    CLPHistory pageHistory = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.PageHistory;
+                    CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                    CLPHistory pageHistory = page.PageHistory;
 
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
@@ -1997,7 +1998,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (DispatcherOperationCallback)delegate(object arg)
                         {
-                            item.Undo();
+                            if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
+                            {
+                                item.Undo(page);
+                            }
                             return null;
                         }, null);
                         metaFuture.Push(item);
@@ -2019,7 +2023,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (DispatcherOperationCallback)delegate(object arg)
                         {
-                            item.Redo();
+                            if(item != null)
+                            {
+                                item.Redo(page);
+                            }
                             return null;
                         }, null);
                     }

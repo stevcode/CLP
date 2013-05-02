@@ -10,10 +10,10 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public CLPHistoryResizeObject(CLPPage page, ICLPPageObject pageObject, double oldHeight, 
-                double oldWidth, double newHeight, double newWidth) : base(HistoryItemType.ResizeObject, page)
+        public CLPHistoryResizeObject(String objectId, double oldHeight, 
+                double oldWidth, double newHeight, double newWidth) : base(HistoryItemType.ResizeObject)
         {
-            PageObject = pageObject;
+            ObjectId = objectId;
             OldHeight = oldHeight;
             OldWidth = oldWidth;
             NewHeight = newHeight;
@@ -35,15 +35,15 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Page objects resized in this historical event
+        /// Page object (by unique ID) resized in this historical event
         /// </summary>
-        public ICLPPageObject PageObject
+        public String ObjectId
         {
-            get { return GetValue<ICLPPageObject>(PageObjectProperty); }
-            set { SetValue(PageObjectProperty, value); }
+            get { return GetValue<String>(ObjectIdProperty); }
+            set { SetValue(ObjectIdProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject), null);
+        public static readonly PropertyData ObjectIdProperty = RegisterProperty("ObjectId", typeof(String), null);
 
         /// <summary>
         /// The page object's height before the resizing
@@ -93,35 +93,26 @@ namespace CLP.Models
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryResizeObject(Page, PageObject, NewHeight, NewWidth, OldHeight, OldWidth);
+            return new CLPHistoryResizeObject(ObjectId, NewHeight, NewWidth, OldHeight, OldWidth);
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryResizeObject(Page, PageObject, OldHeight, OldWidth, NewHeight, NewWidth);
+            return new CLPHistoryResizeObject(ObjectId, OldHeight, OldWidth, NewHeight, NewWidth);
         }
 
-        override public void Undo()
+        override public void Undo(CLPPage page)
         {
-            PageObject.Height = OldHeight;
-            PageObject.Width = OldWidth;
-           
+            GetPageObjectByUniqueID(page, ObjectId).Height = OldHeight;
+            GetPageObjectByUniqueID(page, ObjectId).Width = OldWidth;    
         }
 
-        override public void Redo()
+        override public void Redo(CLPPage page)
         {
-            PageObject.Height = NewHeight;
-            PageObject.Width = NewWidth;
-        }
-
-        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
-        {
-            if(PageObject.UniqueID == oldObject.UniqueID)
-            {
-                PageObject = newObject;
-            }
+            GetPageObjectByUniqueID(page, ObjectId).Height = NewHeight;
+            GetPageObjectByUniqueID(page, ObjectId).Width = NewWidth;
         }
 
         public override bool Equals(object obj)
@@ -131,7 +122,7 @@ namespace CLP.Models
                 return false;
             }
             CLPHistoryResizeObject other = obj as CLPHistoryResizeObject;
-            if(other.PageObject.UniqueID != PageObject.UniqueID ||
+            if(other.ObjectId !=  ObjectId ||
                 other.OldHeight != OldHeight ||
                 other.OldWidth != OldWidth ||
                 other.NewHeight != NewHeight ||

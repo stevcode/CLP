@@ -547,14 +547,14 @@ namespace Classroom_Learning_Partner.ViewModels
             if(action == "Add"){
                 foreach(ICLPPageObject item in e.NewItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
                 }
             }
             else if(action == "Remove")
             {
                 foreach(ICLPPageObject item in e.OldItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
+                    Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
                 }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
@@ -613,6 +613,10 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
+            Console.WriteLine(e.GetType());
+            Console.WriteLine(e.ToString());
+            Console.WriteLine(e.Removed.Count);
+            Console.WriteLine(e.Added.Count);
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
         //    Task.Factory.StartNew(() =>
           //      {
@@ -621,7 +625,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
                         foreach (var stroke in e.Removed)
                         {
-                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
@@ -635,7 +639,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
    
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
+                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));  
                             
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)

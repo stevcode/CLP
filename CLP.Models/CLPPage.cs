@@ -76,6 +76,7 @@ namespace CLP.Models
             UniqueID = Guid.NewGuid().ToString();
             NumberOfSubmissions = 0;
             PageAspectRatio = PageWidth / PageHeight;
+            PageHistory = new CLPHistory(this);
 
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
             Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
@@ -241,7 +242,7 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), null);
 
         /// <summary>
         /// Whether or not the page is a submissions from a student.

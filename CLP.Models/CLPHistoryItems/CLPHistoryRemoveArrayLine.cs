@@ -11,11 +11,11 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryRemoveArrayLine(CLPPage page, CLPArray array, CLPArrayDivision oldDiv,
+        public CLPHistoryRemoveArrayLine(String arrayId, CLPArrayDivision oldDiv,
             CLPArrayDivision newTopDiv, CLPArrayDivision newBottomDiv)
-            : base(HistoryItemType.RemoveArrayLine, page)
+            : base(HistoryItemType.RemoveArrayLine)
         {
-            Array = array;
+            ArrayId = arrayId;
             OldDivision = oldDiv;
             NewTopDivision = newTopDiv;
             NewBottomDivision = newBottomDiv;
@@ -36,16 +36,16 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Array to which a line was added
+        /// Array (by unique ID) from which a line was removed
         /// </summary>
-        public CLPArray Array
+        public String ArrayId
         {
-            get { return GetValue<CLPArray>(ArrayProperty); }
-            set { SetValue(ArrayProperty, value); }
+            get { return GetValue<String>(ArrayIdProperty); }
+            set { SetValue(ArrayIdProperty, value); }
         }
 
-        public static readonly PropertyData ArrayProperty =
-            RegisterProperty("Array", typeof(CLPArray), null);
+        public static readonly PropertyData ArrayIdProperty =
+            RegisterProperty("ArrayId", typeof(String), null);
 
         /// <summary>
         /// Division replaced by two new ones
@@ -87,56 +87,58 @@ namespace CLP.Models
 
         #region Methods
 
-        public override void Undo()
+        public override void Undo(CLPPage page)
         {
+            CLPArray array = (GetPageObjectByUniqueID(page, ArrayId) as CLPArray);
             if(NewTopDivision.Orientation == ArrayDivisionOrientation.Horizontal)
             {
-                Array.HorizontalDivisions.Add(NewTopDivision);
-                Array.HorizontalDivisions.Add(NewBottomDivision);
+                array.HorizontalDivisions.Add(NewTopDivision);
+                array.HorizontalDivisions.Add(NewBottomDivision);
                 if(OldDivision != null)
                 {
-                    Array.HorizontalDivisions.Remove(OldDivision);
+                    array.HorizontalDivisions.Remove(OldDivision);
                 }
             }
             else
             {
-                Array.VerticalDivisions.Add(NewTopDivision);
-                Array.VerticalDivisions.Add(NewBottomDivision);
+                array.VerticalDivisions.Add(NewTopDivision);
+                array.VerticalDivisions.Add(NewBottomDivision);
                 if(OldDivision != null)
                 {
-                    Array.VerticalDivisions.Remove(OldDivision);
+                    array.VerticalDivisions.Remove(OldDivision);
                 }
             }
         }
 
-        override public void Redo()
+        override public void Redo(CLPPage page)
         {
+            CLPArray array = (GetPageObjectByUniqueID(page, ArrayId) as CLPArray);
             if(NewTopDivision.Orientation == ArrayDivisionOrientation.Horizontal)
             {
-                Array.HorizontalDivisions.Remove(NewTopDivision);
-                Array.HorizontalDivisions.Remove(NewBottomDivision);
+                array.HorizontalDivisions.Remove(NewTopDivision);
+                array.HorizontalDivisions.Remove(NewBottomDivision);
                 if(OldDivision != null)
                 {
-                    Array.HorizontalDivisions.Add(OldDivision);
+                    array.HorizontalDivisions.Add(OldDivision);
                 }
             }
             else
             {
-                Array.VerticalDivisions.Remove(NewTopDivision);
-                Array.VerticalDivisions.Remove(NewBottomDivision);
+                array.VerticalDivisions.Remove(NewTopDivision);
+                array.VerticalDivisions.Remove(NewBottomDivision);
                 if(OldDivision != null)
                 {
-                    Array.VerticalDivisions.Add(OldDivision);
+                    array.VerticalDivisions.Add(OldDivision);
                 }
             }
         }
 
-        override public CLPHistoryItem GetUndoFingerprint()
+        override public CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
             return null;
         }
 
-        override public CLPHistoryItem GetRedoFingerprint()
+        override public CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
             return null;
         }
@@ -144,7 +146,7 @@ namespace CLP.Models
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryRemoveArrayLine) ||
-                (obj as CLPHistoryRemoveArrayLine).Array.UniqueID != Array.UniqueID ||
+                (obj as CLPHistoryRemoveArrayLine).ArrayId != ArrayId ||
                 (obj as CLPHistoryRemoveArrayLine).OldDivision != OldDivision ||
                 (obj as CLPHistoryRemoveArrayLine).NewTopDivision != NewTopDivision ||
                 (obj as CLPHistoryRemoveArrayLine).NewBottomDivision != NewBottomDivision)

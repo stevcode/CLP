@@ -328,7 +328,7 @@ namespace Classroom_Learning_Partner
             double diff = xDiff + yDiff;
             if(diff > CLPHistory.SAMPLE_RATE)
             {
-                page.PageHistory.Push(new CLPHistoryMoveObject(page, pageObject, oldXPos, oldYPos, pt.X, pt.Y));
+                page.PageHistory.Push(new CLPHistoryMoveObject(pageObject.UniqueID, oldXPos, oldYPos, pt.X, pt.Y));
             }
 
             pageObject.XPosition = pt.X;
@@ -344,7 +344,7 @@ namespace Classroom_Learning_Partner
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;
             if(diff > CLPHistory.SAMPLE_RATE){
-                page.PageHistory.Push(new CLPHistoryResizeObject(page, pageObject, oldHeight, oldWidth, height, width)); 
+                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width)); 
                 pageObject.Height = height;
                 pageObject.Width = width;
             }
