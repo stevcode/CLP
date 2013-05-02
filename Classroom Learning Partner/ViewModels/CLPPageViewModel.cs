@@ -631,12 +631,19 @@ namespace Classroom_Learning_Partner.ViewModels
                             //TODO: Steve - Add Property for time created if necessary.
                             //TODO: Steve - Add Property for Mutability.
                             //TODO: Steve - Add Property for UserName of person who created the stroke.
-                            if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                            try
                             {
-                                var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
+                                if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                                {
+                                    var newUniqueID = Guid.NewGuid().ToString();
+                                    stroke.SetStrokeUniqueID(newUniqueID);
+                                }
                             }
-   
+                            catch (Exception ex)
+                            {
+                                Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 636, CLPPageViewModel.cs): " + ex.Message);
+                            }
+
                             //Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
                             
                             //Ensures truly uniqueIDs
