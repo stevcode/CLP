@@ -123,6 +123,7 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             CanAcceptStrokes = true;
+            CanAcceptPageObjects = true;
 
             ArrayHeight = 450;
             ArrayWidth = 450;
@@ -297,6 +298,35 @@ namespace CLP.Models
 
             Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
             Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
+        }
+
+        public override void OnRemoved()
+        {
+            foreach(Stroke stroke in GetStrokesOverPageObject())
+            {
+                ParentPage.InkStrokes.Remove(stroke);
+            }
+
+            foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
+            {
+                //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
+                po.OnRemoved();
+                ParentPage.PageObjects.Remove(po);
+            }
+        }
+
+        public override bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        {
+            double areaObject = pageObject.Height * pageObject.Width;
+            double area = ArrayHeight * ArrayWidth;
+            double top = Math.Max(YPosition - LargeLabelLength, pageObject.YPosition);
+            double bottom = Math.Min(YPosition + LargeLabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
+            double left = Math.Max(XPosition + LargeLabelLength, pageObject.XPosition);
+            double right = Math.Min(XPosition + LargeLabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
+            double deltaY = bottom - top;
+            double deltaX = right - left;
+            double intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
         public void RefreshArrayDimensions()

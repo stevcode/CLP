@@ -102,6 +102,7 @@
     <Compile Include="CLPHistoryItems\CLPHistoryAddArrayLine.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryAddObject.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryAddStroke.cs" />
+    <Compile Include="CLPHistoryItems\CLPHistoryAggregation.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryItem.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryMoveObject.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryRemoveArrayLine.cs" />

@@ -486,10 +486,6 @@ namespace Classroom_Learning_Partner.ViewModels
             return names;
         }
 
-
-
-
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

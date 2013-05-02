@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -10,6 +11,8 @@ namespace CLP.Models
     {
         public const double SAMPLE_RATE = 9;
         private bool _frozen;
+        private bool _ingroup;
+        private Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
 
@@ -118,12 +121,88 @@ namespace CLP.Models
             {
                 return;
             }
-
-            Past.Push(item);
-            MetaPast.Push(item);
-            Future.Clear();
+            if(_ingroup)
+            {
+                Console.WriteLine("pushing a " + item.ItemType + " to group");
+                groupEvents.Push(item);
+            }
+            else
+            {
+                Console.WriteLine("pushing a " + item.ItemType);
+                Past.Push(item);
+                MetaPast.Push(item);
+                Future.Clear();
+            }
         }
-        
+
+        public void BeginEventGroup()
+        {
+            _ingroup = true;
+            groupEvents = new Stack<CLPHistoryItem>();
+        }
+
+        public void EndEventGroup()
+        {
+            _ingroup = false;
+            CLPHistoryItem group = AggregateItems(groupEvents);
+            if(group != null)
+            {
+                Past.Push(group);
+                MetaPast.Push(group);
+                Future.Clear();
+            }
+        }
+
+        public CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack)
+        {
+            List<CLPHistoryItem> itemList = new List<CLPHistoryItem>();
+            List<bool> deleted = new List<bool>();
+            while(itemStack.Count > 0){
+                CLPHistoryItem item = itemStack.Pop();
+                itemList.Add(item);
+                deleted.Add(false);
+            }
+
+            //search for removes followed by adds, since we're going backwards in time, and
+            //eliminate such redundancies
+            for(int i = 0; i < itemList.Count; i++)
+            {
+                if(!deleted[i] && itemList[i] is CLPHistoryRemoveStroke)
+                {
+                    for(int j = i; j < itemList.Count; j++)
+                    {
+                        if(!deleted[j] && itemList[j] is CLPHistoryAddStroke &&
+                            CLPPage.ByteToStroke((itemList[i] as CLPHistoryRemoveStroke).Bytestroke).GetStrokeUniqueID() ==
+                            CLPPage.ByteToStroke((itemList[j] as CLPHistoryAddStroke).Bytestroke).GetStrokeUniqueID())
+                        {
+                            deleted[i] = true;
+                            deleted[j] = true;
+                        }
+                    }
+                }
+            }
+
+            List<CLPHistoryItem> finalItemList = new List<CLPHistoryItem>();
+            for(int i = 0; i < itemList.Count; i++)
+            {
+                if(!deleted[i])
+                {
+                    finalItemList.Add(itemList[i]);
+                }
+            }
+
+            if(finalItemList.Count == 0)
+            {
+                return null;
+            }
+            else if(finalItemList.Count == 1)
+            {
+                return finalItemList[0];
+            }
+
+            return new CLPHistoryAggregation(finalItemList[0].Page, finalItemList);
+        }
+
         public void Undo()
         {
             if(Past.Count==0)
@@ -135,7 +214,17 @@ namespace CLP.Models
             CLPHistoryItem expected = lastAction.GetUndoFingerprint(Page);
             if(expected != null)
             {
-                ExpectedEvents.Add(expected);
+                if(expected is CLPHistoryAggregation)
+                {
+                    foreach(CLPHistoryItem item in (expected as CLPHistoryAggregation).Events)
+                    {
+                        ExpectedEvents.Add(item);
+                    }
+                }
+                else
+                {
+                    ExpectedEvents.Add(expected);
+                }
             }
             lastAction.Undo(Page);
             MetaPast.Push(expected);
