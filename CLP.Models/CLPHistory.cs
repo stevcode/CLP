@@ -200,7 +200,7 @@ namespace CLP.Models
                 return finalItemList[0];
             }
 
-            return new CLPHistoryAggregation(finalItemList[0].Page, finalItemList);
+            return new CLPHistoryAggregation(finalItemList);
         }
 
         public void Undo()

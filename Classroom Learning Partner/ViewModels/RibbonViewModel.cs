@@ -1987,10 +1987,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            //Thread t = new Thread(() =>
-            //{
-            //    try
-            //    {
+            Thread t = new Thread(() =>
+            {
+                Console.WriteLine("Replay");
+                try
+                {
                     CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     CLPHistory pageHistory = page.PageHistory;
 
@@ -2014,8 +2015,12 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 item.Undo(page);
                             }
+                            return null;
+                        }, null);
+                        metaFuture.Push(item);
                     }
 
+                    Console.WriteLine("done undoing");
                     Thread.Sleep(400);
                     while(metaFuture.Count > 0)
                     {
@@ -2036,6 +2041,9 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 item.Redo(page);
                             }
+                            return null;
+                        }, null);
+                    }
                     Thread.Sleep(400);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
@@ -2064,7 +2072,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                       // page.PageHistory.Redo(); 
+                        page.PageHistory.Redo(); 
                         return null;
                     }, null);   
                 }
@@ -2086,7 +2094,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                       // page.PageHistory.Undo();
+                        page.PageHistory.Undo();
                         return null;
                     }, null);
                 }
