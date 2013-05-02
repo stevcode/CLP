@@ -13,26 +13,26 @@ namespace CLP.Models
             {
                 if(s == null)
                 {
-                    Console.WriteLine("Null Stroke");
+                    Logger.Instance.WriteToLog("Null Stroke");
                     return null;
                 }
 
-                try
-                {
-                    if(!s.ContainsPropertyData(CLPPage.StrokeIDKey))
-                    {
-                        try
-                        {
-                            var newUniqueID = Guid.NewGuid().ToString();
-                            s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                        }
-                        catch(System.Exception ex)
-                        {
-                            Logger.Instance.WriteToLog("GetStrokeUniqueID Fail as AddPropertyData (Line 31): " + ex.Message);
-                            return null;
-                        }
+                //try
+                //{
+                    //if(!s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                    //{
+                    //    try
+                    //    {
+                    //        var newUniqueID = Guid.NewGuid().ToString();
+                    //        s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    //    }
+                    //    catch(System.Exception ex)
+                    //    {
+                    //        Logger.Instance.WriteToLog("GetStrokeUniqueID Fail as AddPropertyData (Line 31): " + ex.Message);
+                    //        return null;
+                    //    }
                         
-                    }
+                    //}
 
                     try
                     {
@@ -44,12 +44,12 @@ namespace CLP.Models
                         return null;
                     }
                     
-                }
-                catch(System.Exception ex)
-                {
-                    Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 22): " + ex.Message);
-                    return null;
-                }
+                //}
+                //catch(System.Exception ex)
+                //{
+                //    Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 22): " + ex.Message);
+                //    return null;
+                //}
                 
             }
             catch(Exception ex)
