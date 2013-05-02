@@ -40,7 +40,7 @@ namespace CLP.Models
 
         public void WriteToLog(string s)
         {
-            File.AppendAllText(filePath, Environment.NewLine + s);
+            File.AppendAllText(filePath, Environment.NewLine + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
             Console.WriteLine(DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
         }
     }
