@@ -226,10 +226,10 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="TRUE" />
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Protractor"
-                        LargeImageSource="..\Images\ProtractorWhite.png"
-                        Command="{Binding Path=InsertProtractorCommand}"/>-->
+                        LargeImageSource="..\Images\Protractor64.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>
 
                 <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"

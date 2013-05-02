@@ -24,8 +24,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //IsDivisionBehaviorOn = false; //Renee's class to force this behavior instead of batch changing them all.
             PageObject = array;
-            hoverTimer.Interval = 1500;
-            CloseAdornerTimeOut = 0.25;
+            hoverTimer.Interval = 1800;
+            CloseAdornerTimeOut = 0.15;
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
