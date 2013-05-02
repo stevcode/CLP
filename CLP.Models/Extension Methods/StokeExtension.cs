@@ -17,16 +17,44 @@ namespace CLP.Models
                     return null;
                 }
 
-                if (!s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                try
                 {
-                    var newUniqueID = Guid.NewGuid().ToString();
-                    s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                    if(!s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                    {
+                        try
+                        {
+                            var newUniqueID = Guid.NewGuid().ToString();
+                            s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                        }
+                        catch(System.Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("GetStrokeUniqueID Fail as AddPropertyData (Line 31): " + ex.Message);
+                            return null;
+                        }
+                        
+                    }
+
+                    try
+                    {
+                        return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                    }
+                    catch(System.Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at GetPropertyData (Line 43): " + ex.Message);
+                        return null;
+                    }
+                    
                 }
-                return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
+                catch(System.Exception ex)
+                {
+                    Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 22): " + ex.Message);
+                    return null;
+                }
+                
             }
             catch(Exception ex)
             {
-                Console.WriteLine("GetStrokeUniqueID Fail: " + ex.Message);
+                Logger.Instance.WriteToLog("GetStrokeUniqueID Fail: " + ex.Message);
                 return null;
             }
         }
@@ -39,7 +67,7 @@ namespace CLP.Models
             }
             catch(Exception ex)
             {
-                Console.WriteLine("SetStrokeUniqueID Fail: " + ex.Message);
+                Logger.Instance.WriteToLog("SetStrokeUniqueID Fail (Top level): " + ex.Message);
             }
         }
     }
