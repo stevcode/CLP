@@ -70,12 +70,18 @@ namespace CLP.Models
         override public void Undo(CLPPage page)
         {
             Bytestroke = GetBytestrokeByUniqueID(page, StrokeId); // remember in case we put it back
+            if(Bytestroke == null)
+            {
+                Console.WriteLine("undo: null bytestroke");
+                return;
+            }
             int indexToRemove = -1;
             foreach(Stroke otherstroke in page.InkStrokes)
             {
                 if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
                     indexToRemove = page.InkStrokes.IndexOf(otherstroke);
+                    Bytestroke = CLPPage.StrokeToByte(otherstroke);
                     break;
                 }
             }
@@ -87,6 +93,11 @@ namespace CLP.Models
 
         override public void Redo(CLPPage page)
         {
+            if(Bytestroke == null)
+            {
+                Console.WriteLine("redo: null bytestroke");
+                return;
+            }
             Stroke s = CLPPage.ByteToStroke(Bytestroke);
             bool shouldAdd = true;
             foreach(Stroke otherstroke in page.InkStrokes)

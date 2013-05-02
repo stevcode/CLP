@@ -549,14 +549,20 @@ namespace Classroom_Learning_Partner.ViewModels
             if(action == "Add"){
                 foreach(ICLPPageObject item in e.NewItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
+                    if(item != null)
+                    {
+                        Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
+                    }
                 }
             }
             else if(action == "Remove")
             {
                 foreach(ICLPPageObject item in e.OldItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
+                    if(item != null)
+                    {
+                        Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
+                    }
                 }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;

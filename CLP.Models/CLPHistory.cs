@@ -16,9 +16,8 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistory(CLPPage page)
+        public CLPHistory()
         {
-            Page = page;
         }
 
         /// <summary>
@@ -34,15 +33,6 @@ namespace CLP.Models
         #endregion //Constructor
 
         #region Properties
-
-        public CLPPage Page
-        {
-            get { return GetValue<CLPPage>(PageProperty); }
-            set { SetValue(PageProperty, value); }
-        }
-
-        [NonSerialized]
-        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage), null, includeInSerialization: false);
 
         /// <summary>
         /// The actions that have happened in the past.  "Undo" reverses the top action on the stack and pushes
@@ -203,7 +193,7 @@ namespace CLP.Models
             return new CLPHistoryAggregation(finalItemList);
         }
 
-        public void Undo()
+        public void Undo(CLPPage page)
         {
             if(Past.Count==0)
             {
@@ -211,7 +201,7 @@ namespace CLP.Models
             }
 
             CLPHistoryItem lastAction = Past.Pop();
-            CLPHistoryItem expected = lastAction.GetUndoFingerprint(Page);
+            CLPHistoryItem expected = lastAction.GetUndoFingerprint(page);
             if(expected != null)
             {
                 if(expected is CLPHistoryAggregation)
@@ -226,7 +216,7 @@ namespace CLP.Models
                     ExpectedEvents.Add(expected);
                 }
             }
-            lastAction.Undo(Page);
+            lastAction.Undo(page);
             MetaPast.Push(expected);
             Future.Push(lastAction);
             if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
@@ -234,24 +224,24 @@ namespace CLP.Models
                 CLPHistoryItem penultimateAction = Past.Peek();
                 if((lastAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
                 {
-                    Undo();
+                    Undo(page);
                 }
             }
         }
 
-        public void Redo()
+        public void Redo(CLPPage page)
         {
             if(Future.Count == 0)
             {
                return;
             }
             var nextAction = Future.Pop();
-            var expected = nextAction.GetRedoFingerprint(Page);
+            var expected = nextAction.GetRedoFingerprint(page);
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
             }
-            nextAction.Redo(Page);
+            nextAction.Redo(page);
             MetaPast.Push(expected);
             Past.Push(nextAction);
             if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
@@ -259,7 +249,7 @@ namespace CLP.Models
                 CLPHistoryItem penultimateAction = Future.Peek();
                 if((nextAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
                 {
-                    Redo();
+                    Redo(page);
                 }
             }
         }

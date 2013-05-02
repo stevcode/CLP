@@ -2072,7 +2072,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Redo(); 
+                        page.PageHistory.Redo(page); 
                         return null;
                     }, null);   
                 }
@@ -2094,7 +2094,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Undo();
+                        page.PageHistory.Undo(page);
                         return null;
                     }, null);
                 }
