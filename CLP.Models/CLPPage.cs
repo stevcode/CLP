@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
+using Catel;
 using Catel.Data;
 
 namespace CLP.Models
@@ -451,6 +452,12 @@ namespace CLP.Models
 
         public static List<byte> StrokeToByte(Stroke stroke)
         {
+            if (stroke == null)
+            {
+                Logger.Instance.WriteToLog("***INDIVIDUAL STROKE IS NULL***");
+                System.Windows.MessageBox.Show("One Stroke Null");
+            }
+
             var sc = new StrokeCollection {stroke};
 
             var mStream = new MemoryStream();
@@ -481,6 +488,11 @@ namespace CLP.Models
          */
         public static ObservableCollection<List<byte>> StrokesToBytes(StrokeCollection strokes)
         {
+            if (strokes == null)
+            {
+                Logger.Instance.WriteToLog("***STROKES is NULL***");
+                System.Windows.MessageBox.Show("STROKES Null");
+            }
             var byteStrokes = new ObservableCollection<List<byte>>();
             foreach(var stroke in strokes)
             {

@@ -21,10 +21,10 @@ namespace ConsoleScripts
         {
             foreach (var page in notebookToStrip.Pages)
             {
-                page.PageHistory.ClearHistory();
+               // page.PageHistory.ClearHistory();
                 foreach (var submission in notebookToStrip.Submissions[page.UniqueID])
                 {
-                    submission.PageHistory.ClearHistory();
+                  //  submission.PageHistory.ClearHistory();
                 }
             }
         }
