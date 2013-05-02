@@ -12,7 +12,7 @@ namespace ConsoleScripts
         {
             Console.WriteLine("Starting");
 
-            NotebookMerge.Replace();
+            StripHistory.StripAll();
 
             Console.WriteLine("Ended");
             Console.ReadLine();
