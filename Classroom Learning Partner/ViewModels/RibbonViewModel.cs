@@ -12,6 +12,7 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
@@ -1096,6 +1097,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         currentPageView.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1183,6 +1191,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1264,6 +1279,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
