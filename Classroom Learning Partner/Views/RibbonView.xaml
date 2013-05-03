@@ -218,7 +218,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
 
                 <!--<RibbonButton
                         Label="Stamp"
@@ -401,6 +401,62 @@
                 
             </RibbonGroup>
             
+        </RibbonTab>
+
+        <!--Insert Tab-->
+        <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
+
+            <RibbonGroup Header="Stamps">
+
+                <RibbonButton
+                        Label="Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
+
+                <RibbonButton
+                        Label="Image Stamp"
+                        LargeImageSource="..\Images\PictureStamp.png"
+                        Command="{Binding Path=InsertImageStampCommand}"/>
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Arrays">
+
+                <RibbonButton Label="Array"
+                              LargeImageSource="..\Images\InkArray.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="FALSE" />
+
+                <RibbonButton Label="Array + Guides"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="TRUE" />
+            </RibbonGroup>
+
+            <RibbonGroup Header="Shapes">
+
+                <RibbonButton
+                        Label="Protractor"
+                        LargeImageSource="..\Images\Protractor64.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>
+
+                <RibbonButton
+                        Label="Square"
+                        LargeImageSource="..\Images\AddSquare.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Vertical Line"
+                        LargeImageSource="..\Images\VerticalLineIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>
+
+            </RibbonGroup>
+
         </RibbonTab>
 
         <!--Test Tab-->
