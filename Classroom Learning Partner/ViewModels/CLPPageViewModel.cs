@@ -621,10 +621,6 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
-            Console.WriteLine(e.GetType());
-            Console.WriteLine(e.ToString());
-            Console.WriteLine(e.Removed.Count);
-            Console.WriteLine(e.Added.Count);
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
             Task.Factory.StartNew(() =>
                 {
@@ -688,11 +684,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                 where stroke.HitTest(rect, 3)
                                 select stroke;
 
+                            var addStrokes = new StrokeCollection(addedStrokesOverObject);
+                            var removeStrokes = new StrokeCollection(removedStrokesOverObject);
                             ICLPPageObject o = pageObject;
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                                                        (DispatcherOperationCallback)delegate
                                                                            {
-                                                                               o.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+                                                                               o.AcceptStrokes(addStrokes, removeStrokes);
 
                                                                                return null;
                                                                            }, null);

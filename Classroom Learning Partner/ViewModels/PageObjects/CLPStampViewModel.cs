@@ -410,14 +410,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if (hitBoxName == "PartsHitBox")
             {
-                if (IsAdornerVisible)
-                {
-                    IsMouseOverShowEnabled = true;
-                }
-                else
-                {
-                    IsMouseOverShowEnabled = false;
-                }
+                IsMouseOverShowEnabled = IsAdornerVisible;
             }
 
             return false;

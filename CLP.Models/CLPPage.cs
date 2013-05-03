@@ -200,9 +200,9 @@ namespace CLP.Models
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
             set
             {
-                if (InkStrokes != null)
+                if(InkStrokes != null)
                 {
-                	ByteStrokes = StrokesToBytes(InkStrokes);
+                    ByteStrokes = StrokesToBytes(InkStrokes);
                 }
                 SetValue(InkStrokesProperty, value);
             }
