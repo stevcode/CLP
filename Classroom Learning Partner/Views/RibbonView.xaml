@@ -220,10 +220,10 @@
 
             <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
 
-                <!--<RibbonButton
+                <RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}"/>-->
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
 
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\InkArray.png"

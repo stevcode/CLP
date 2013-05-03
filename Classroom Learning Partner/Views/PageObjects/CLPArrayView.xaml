@@ -220,7 +220,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Rectangle Height="4" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
-                                   Stroke="LightBlue" StrokeThickness="3" />
+                                   Stroke="PowderBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -237,7 +237,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Rectangle Width="4" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
-                                   Stroke="LightBlue" StrokeThickness="3" />
+                                   Stroke="PowderBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -272,7 +272,7 @@
                             <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=30}" 
                                   Height="{Binding Length}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                <Label FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
                                 <Rectangle x:Name="RightLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
@@ -313,7 +313,7 @@
                             <Grid Canvas.Bottom="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=30}" 
                                   Width="{Binding Length}" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="16" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                                <Label FontSize="18" HorizontalContentAlignment="Center" VerticalAlignment="Center"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
                                 <Rectangle x:Name="BottomLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"

@@ -119,12 +119,12 @@ namespace CLP.Models
             }
             if(_ingroup)
             {
-                Console.WriteLine("pushing a " + item.ItemType + " to group");
+                //Console.WriteLine("pushing a " + item.ItemType + " to group");
                 groupEvents.Push(item);
             }
             else
             {
-                Console.WriteLine("pushing a " + item.ItemType);
+                //Console.WriteLine("pushing a " + item.ItemType);
                 Past.Push(item);
                 MetaPast.Push(item);
                 Future.Clear();

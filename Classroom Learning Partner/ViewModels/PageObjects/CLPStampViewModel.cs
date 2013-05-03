@@ -404,11 +404,22 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 return false;
             }
-            if(hitBoxName == "StampBodyHitBox" || hitBoxName == "HandwritingHitBox")
+            if(hitBoxName == "StampBodyHitBox")
             {
                 return true;
             }
-            IsMouseOverShowEnabled = false;
+            if (hitBoxName == "PartsHitBox")
+            {
+                if (IsAdornerVisible)
+                {
+                    IsMouseOverShowEnabled = true;
+                }
+                else
+                {
+                    IsMouseOverShowEnabled = false;
+                }
+            }
+
             return false;
         }
 
