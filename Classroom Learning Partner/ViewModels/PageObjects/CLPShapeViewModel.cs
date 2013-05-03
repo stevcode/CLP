@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPShapeViewModel(CLPShape shape)
         {
-            hoverTimer.Interval = 2000;
+            hoverTimer.Interval = 2300;
             CloseAdornerTimeOut = 0.15;
             PageObject = shape;
 

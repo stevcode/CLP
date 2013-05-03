@@ -60,12 +60,12 @@
                 <RibbonApplicationMenuItem Header="Convert To XPS"
                                             Command="{Binding ConvertToXPSCommand}"
                                             ImageSource="..\Images\ConvertToXPS.png"
-                                            Visibility="{Binding Path=InstructorVisibility}"/>
+                                            />
 
                 <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
                                             Command="{Binding ConvertAllSubmissionsToXPSCommand}"
                                             ImageSource="..\Images\ConvertToXPS.png"
-                                            Visibility="{Binding Path=InstructorVisibility}"/>
+                                            />
 
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
                                             Command="{Binding ConvertPageSubmissionToXPSCommand}"
@@ -211,10 +211,10 @@
 
             <RibbonGroup Header="Insert">
 
-                <RibbonButton
+                <!--<RibbonButton
                         Label="Stamp"
                         LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}"/>
+                        Command="{Binding Path=InsertBlankStampCommand}"/>-->
 
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\InkArray.png"
@@ -230,6 +230,21 @@
                         Label="Protractor"
                         LargeImageSource="..\Images\Protractor64.png"
                         Command="{Binding Path=InsertProtractorCommand}"/>
+
+                <RibbonButton
+                        Label="Square"
+                        LargeImageSource="..\Images\AddSquare.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Vertical Line"
+                        LargeImageSource="..\Images\VerticalLineIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>
 
                 <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
