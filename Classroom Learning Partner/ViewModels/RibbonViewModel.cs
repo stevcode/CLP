@@ -148,6 +148,8 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
+            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
@@ -1020,14 +1022,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
         }
 
         /// <summary>
@@ -1317,6 +1311,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     Console.WriteLine("Instructor NOT Available");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the ClearHistoryCommand command.
+        /// </summary>
+        public Command ClearHistoryCommand { get; private set; }
+
+        private void OnClearHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the DisableHistoryCommand command.
+        /// </summary>
+        public Command DisableHistoryCommand { get; private set; }
+
+        private void OnDisableHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory._useHistory = false;
                 }
             }
         }

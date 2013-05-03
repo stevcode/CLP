@@ -83,6 +83,15 @@
                                                   ImageSource="..\Images\NewNotebook.png"
                                                   Command="{Binding Path=ToggleThumbnailsCommand}"/>
 
+                <RibbonApplicationMenuItem Header="Clear History"
+                                           ImageSource="..\Images\LargeIcon.png"
+                                           Command="{Binding Path=ClearHistoryCommand}"
+                                           Visibility="{Binding Path=InstructorVisibility}" />
+
+                <RibbonApplicationMenuItem Header="DisableHistory"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Command="{Binding Path=DisableHistoryCommand}"/>
+
                 <RibbonApplicationMenu.FooterPaneContent>
                     <DockPanel LastChildFill="False">
                         <RibbonButton Command="{Binding Path=ExitCommand}"
@@ -790,6 +799,10 @@
                 <RibbonButton Label="Convert to XPS"
                             Command="{Binding Path=ConvertToXPSCommand}"
                             LargeImageSource="..\Images\ConvertToXPS.png" />
+
+                <RibbonButton Label="Clear History"
+                                           LargeImageSource="..\Images\LargeIcon.png"
+                                           Command="{Binding Path=ClearHistoryCommand}" />
 
             </RibbonGroup>
 
