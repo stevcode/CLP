@@ -2365,7 +2365,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertProtractorCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            square.Height = 150;
+            square.Height = 200;
             square.Width = 2.0*square.Height;
             
             CLPServiceAgent.Instance.AddPageObjectToPage(square);

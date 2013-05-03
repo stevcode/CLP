@@ -134,6 +134,8 @@ namespace Classroom_Learning_Partner
 
                     foreach(CLPPage page in notebook.Pages)
                     {
+                        page.PageHistory.ClearHistory();
+
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
                             pageObject.ParentPage = page;
