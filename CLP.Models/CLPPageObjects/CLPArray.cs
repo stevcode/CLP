@@ -111,7 +111,7 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base(page)
         {
-            IsGridOn = false;
+            IsGridOn = true;
 
             Rows = rows;
             Columns = columns;

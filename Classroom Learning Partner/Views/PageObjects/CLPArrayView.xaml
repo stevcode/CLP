@@ -220,7 +220,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Rectangle Height="4" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
-                                   Stroke="AliceBlue" StrokeThickness="3" />
+                                   Stroke="LightBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -237,7 +237,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Rectangle Width="4" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}" 
-                                   Stroke="AliceBlue" StrokeThickness="3" />
+                                   Stroke="LightBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
