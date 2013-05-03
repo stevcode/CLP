@@ -12,6 +12,7 @@ namespace CLP.Models
         public const double SAMPLE_RATE = 9;
         private bool _frozen;
         private bool _ingroup;
+        private bool _useHistory = true;
         private Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
@@ -107,7 +108,7 @@ namespace CLP.Models
 
         public void Push(CLPHistoryItem item)
         {
-            if(_frozen || IsExpected(item))
+            if(!_useHistory || _frozen || IsExpected(item))
             {
                 return;
             }
@@ -195,7 +196,7 @@ namespace CLP.Models
 
         public void Undo(CLPPage page)
         {
-            if(Past.Count==0)
+            if(!_useHistory || Past.Count==0)
             {
                 return;
             }
@@ -231,7 +232,7 @@ namespace CLP.Models
 
         public void Redo(CLPPage page)
         {
-            if(Future.Count == 0)
+            if(!_useHistory || Future.Count == 0)
             {
                return;
             }
