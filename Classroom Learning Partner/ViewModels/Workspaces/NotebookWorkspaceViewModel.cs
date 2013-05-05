@@ -573,6 +573,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
+               FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
 
             else if(Sort == "Group Submissions")

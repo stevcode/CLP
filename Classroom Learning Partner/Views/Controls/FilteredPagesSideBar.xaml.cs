@@ -53,7 +53,7 @@ namespace Classroom_Learning_Partner.Views
                     }
 
                 }
-                if(item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[0])
                 {
                     if((bool)(sender as ToggleButton).IsChecked)
                     {
@@ -220,7 +220,7 @@ namespace Classroom_Learning_Partner.Views
                     show_stacks(border, true);
                 }
                 //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
-                if(item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[0])
                 {
                     item.Visibility = Visibility.Collapsed;
                 }
