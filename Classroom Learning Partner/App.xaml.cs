@@ -113,7 +113,6 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        //TODO: Steve - Make this a String Resource
         private static string _notebookDirectory;
         public static string NotebookDirectory
         {

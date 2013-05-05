@@ -65,6 +65,7 @@ namespace Classroom_Learning_Partner
             imagePO.Width = 600;
             imagePO.YPosition = 225;
             imagePO.XPosition = 108;
+            
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
