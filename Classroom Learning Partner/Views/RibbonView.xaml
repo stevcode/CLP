@@ -235,7 +235,7 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="TRUE" />
 
-                <RibbonButton
+                <!--<RibbonButton
                         Label="Protractor"
                         LargeImageSource="..\Images\Protractor64.png"
                         Command="{Binding Path=InsertProtractorCommand}"/>
@@ -253,7 +253,7 @@
                 <RibbonButton
                         Label="Vertical Line"
                         LargeImageSource="..\Images\VerticalLineIcon.png"
-                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>-->
 
                 <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
@@ -384,7 +384,7 @@
 
             </RibbonGroup>
             
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -399,7 +399,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
-            </RibbonGroup>
+            </RibbonGroup>-->
             
         </RibbonTab>
 

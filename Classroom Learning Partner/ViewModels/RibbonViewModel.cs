@@ -1633,6 +1633,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(notebook != null && submission != null)
                 {
                     submission.IsSubmission = true;
+                    foreach (var pageObject in submission.PageObjects)
+                    {
+                        pageObject.ParentPage = submission;
+                    }
                     notebook.AddStudentSubmission(submission.UniqueID, submission);
                 }
             }
