@@ -626,28 +626,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+                        var removedStrokeIDs = new List<string>();
                         foreach (var stroke in e.Removed)
                         {
+                            removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
                         {
-                            //TODO: Steve - Add Property for time created if necessary.
-                            //TODO: Steve - Add Property for Mutability.
-                            //TODO: Steve - Add Property for UserName of person who created the stroke.
-                            try
+                            if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                             {
-                                if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
-                                {
-                                    var newUniqueID = Guid.NewGuid().ToString();
-                                    stroke.SetStrokeUniqueID(newUniqueID);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 636, CLPPageViewModel.cs): " + ex.Message);
+                                var newUniqueID = Guid.NewGuid().ToString();
+                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                             }
 
                             Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));  
@@ -655,12 +647,11 @@ namespace Classroom_Learning_Partner.ViewModels
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
                             {
-                                if(id != stroke.GetStrokeUniqueID())
+                                if(id == stroke.GetStrokeUniqueID())
                                 {
-                                    continue;
+                                    var newUniqueID = Guid.NewGuid().ToString();
+                                    stroke.SetStrokeUniqueID(newUniqueID);
                                 }
-                                var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
                             }
                         }
 
