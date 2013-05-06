@@ -79,14 +79,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
 
-     /**       foreach(Tag t in tags)
+            foreach(Tag t in tags)
             {
                 if(t.TagType != null)
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
             }   
-            */
+            
         }
 
 
@@ -620,12 +620,14 @@ namespace Classroom_Learning_Partner.ViewModels
             else if(Sort == "Correctness")
             {
                 FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.SortDescriptions.Clear();
                 FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
                 FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }
             else if(Sort == "Starred")
             {
                 FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.SortDescriptions.Clear();
                 FilteredSubmissions.GroupDescriptions.Add(starredDescription);
                 FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }
