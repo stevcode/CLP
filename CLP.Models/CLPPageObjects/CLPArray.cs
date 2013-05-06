@@ -254,9 +254,6 @@ namespace CLP.Models
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HorizontalDivisions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
 
         /// <summary>
@@ -268,9 +265,6 @@ namespace CLP.Models
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the VerticalDivs property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
 
         #endregion //Properties
