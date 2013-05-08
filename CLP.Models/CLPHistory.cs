@@ -12,7 +12,7 @@ namespace CLP.Models
         public const double SAMPLE_RATE = 9;
         private bool _frozen;
         private bool _ingroup;
-        private bool _useHistory = true;
+        public bool _useHistory = true;
         private Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
@@ -94,6 +94,11 @@ namespace CLP.Models
             Past.Clear();
             MetaPast.Clear();
             Future.Clear();
+            ExpectedEvents.Clear();
+            if(groupEvents != null)
+            {
+                groupEvents.Clear();
+            }
         }
 
         public void Freeze()
@@ -114,12 +119,12 @@ namespace CLP.Models
             }
             if(_ingroup)
             {
-                Console.WriteLine("pushing a " + item.ItemType + " to group");
+                //Console.WriteLine("pushing a " + item.ItemType + " to group");
                 groupEvents.Push(item);
             }
             else
             {
-                Console.WriteLine("pushing a " + item.ItemType);
+                //Console.WriteLine("pushing a " + item.ItemType);
                 if(item is CLPHistoryAddStroke)
                 {
                     Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);

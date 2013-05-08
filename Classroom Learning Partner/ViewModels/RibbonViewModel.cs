@@ -12,6 +12,7 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
@@ -148,6 +149,8 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
+            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
@@ -1020,14 +1023,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
         }
 
         /// <summary>
@@ -1102,6 +1097,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         currentPageView.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1189,6 +1191,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1270,6 +1279,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1317,6 +1333,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     Console.WriteLine("Instructor NOT Available");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the ClearHistoryCommand command.
+        /// </summary>
+        public Command ClearHistoryCommand { get; private set; }
+
+        private void OnClearHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the DisableHistoryCommand command.
+        /// </summary>
+        public Command DisableHistoryCommand { get; private set; }
+
+        private void OnDisableHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory._useHistory = false;
                 }
             }
         }
@@ -1583,6 +1633,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(notebook != null && submission != null)
                 {
                     submission.IsSubmission = true;
+                    foreach (var pageObject in submission.PageObjects)
+                    {
+                        pageObject.ParentPage = submission;
+                    }
                     notebook.AddStudentSubmission(submission.UniqueID, submission);
                 }
             }
@@ -2365,7 +2419,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertProtractorCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
-            square.Height = 150;
+            square.Height = 200;
             square.Width = 2.0*square.Height;
             
             CLPServiceAgent.Instance.AddPageObjectToPage(square);

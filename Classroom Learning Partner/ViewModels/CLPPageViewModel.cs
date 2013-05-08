@@ -626,35 +626,33 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+                        var removedStrokeIDs = new List<string>();
                         Page.PageHistory.BeginEventGroup();
                         foreach (var stroke in e.Removed)
                         {
+                            removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
                         {
-                            //TODO: Steve - Add Property for time created if necessary.
-                            //TODO: Steve - Add Property for Mutability.
-                            //TODO: Steve - Add Property for UserName of person who created the stroke.
                             if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                             {
                                 var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
+                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                             }
-   
+
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
                             {
-                                if(id != stroke.GetStrokeUniqueID())
+                                if(id == stroke.GetStrokeUniqueID())
                                 {
-                                    continue;
-                                }
-                                var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
-                            }
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));  
+                                    var newUniqueID = Guid.NewGuid().ToString();
+                                    stroke.SetStrokeUniqueID(newUniqueID);
+                                }  
+                            }                            
+                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));
                         }
                         Page.PageHistory.EndEventGroup();
 
@@ -677,11 +675,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                 where stroke.HitTest(rect, 3)
                                 select stroke;
 
+                            var addStrokes = new StrokeCollection(addedStrokesOverObject);
+                            var removeStrokes = new StrokeCollection(removedStrokesOverObject);
                             ICLPPageObject o = pageObject;
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                                                        (DispatcherOperationCallback)delegate
                                                                            {
-                                                                               o.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+                                                                               o.AcceptStrokes(addStrokes, removeStrokes);
 
                                                                                return null;
                                                                            }, null);

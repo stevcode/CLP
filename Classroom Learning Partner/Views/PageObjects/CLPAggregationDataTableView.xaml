@@ -5,7 +5,7 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
@@ -255,7 +255,7 @@
                                         </MultiBinding>
                                     </Rectangle.StrokeThickness>
                                 </Rectangle>
-                                <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                <views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                                            TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight" TextBlock.TextAlignment="Center"
                                                            VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
                                                            Background="Transparent" Padding="5"
@@ -313,7 +313,7 @@
                                         </MultiBinding>
                                     </Rectangle.StrokeThickness>
                                 </Rectangle>
-                                <Views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                <views:BindableRichTextBox RTFText="{Binding Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                                             TextBlock.LineHeight="1.0" TextBlock.LineStackingStrategy="MaxHeight"
                                                             VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden"
                                                             Background="Transparent" Padding="5"

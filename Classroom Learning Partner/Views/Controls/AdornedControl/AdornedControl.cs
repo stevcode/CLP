@@ -467,6 +467,7 @@ namespace AdornedControl
 
         public static UserControl GetLinkedDisplayView(DependencyObject child)
         {
+            //TODO: Steve - refactor this to not use a while(true)
             while(true)
             {
                 var parentObject = VisualTreeHelper.GetParent(child);
