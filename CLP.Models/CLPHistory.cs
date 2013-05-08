@@ -120,6 +120,14 @@ namespace CLP.Models
             else
             {
                 Console.WriteLine("pushing a " + item.ItemType);
+                if(item is CLPHistoryAddStroke)
+                {
+                    Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);
+                }
+                if(item is CLPHistoryRemoveStroke)
+                {
+                    Console.WriteLine((item as CLPHistoryRemoveStroke).StrokeId);
+                }
                 Past.Push(item);
                 MetaPast.Push(item);
                 Future.Clear();
@@ -135,9 +143,9 @@ namespace CLP.Models
         public void EndEventGroup()
         {
             _ingroup = false;
-            CLPHistoryItem group = AggregateItems(groupEvents);
-            if(group != null)
+            if(groupEvents.Count > 0)
             {
+                CLPHistoryItem group = AggregateItems(groupEvents);
                 Past.Push(group);
                 MetaPast.Push(group);
                 Future.Clear();
@@ -147,51 +155,11 @@ namespace CLP.Models
         public CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack)
         {
             List<CLPHistoryItem> itemList = new List<CLPHistoryItem>();
-            List<bool> deleted = new List<bool>();
-            while(itemStack.Count > 0){
-                CLPHistoryItem item = itemStack.Pop();
-                itemList.Add(item);
-                deleted.Add(false);
-            }
-
-            //search for removes followed by adds, since we're going backwards in time, and
-            //eliminate such redundancies
-            for(int i = 0; i < itemList.Count; i++)
+            while(itemStack.Count > 0)
             {
-                if(!deleted[i] && itemList[i] is CLPHistoryRemoveStroke)
-                {
-                    for(int j = i; j < itemList.Count; j++)
-                    {
-                        if(!deleted[j] && itemList[j] is CLPHistoryAddStroke &&
-                            CLPPage.ByteToStroke((itemList[i] as CLPHistoryRemoveStroke).Bytestroke).GetStrokeUniqueID() ==
-                            CLPPage.ByteToStroke((itemList[j] as CLPHistoryAddStroke).Bytestroke).GetStrokeUniqueID())
-                        {
-                            deleted[i] = true;
-                            deleted[j] = true;
-                        }
-                    }
-                }
+                itemList.Add(itemStack.Pop());
             }
-
-            List<CLPHistoryItem> finalItemList = new List<CLPHistoryItem>();
-            for(int i = 0; i < itemList.Count; i++)
-            {
-                if(!deleted[i])
-                {
-                    finalItemList.Add(itemList[i]);
-                }
-            }
-
-            if(finalItemList.Count == 0)
-            {
-                return null;
-            }
-            else if(finalItemList.Count == 1)
-            {
-                return finalItemList[0];
-            }
-
-            return new CLPHistoryAggregation(finalItemList);
+            return new CLPHistoryAggregation(itemList);
         }
 
         public void Undo(CLPPage page)

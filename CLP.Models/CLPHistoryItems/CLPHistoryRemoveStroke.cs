@@ -71,6 +71,11 @@ namespace CLP.Models
 
         override public void Undo(CLPPage page)
         {
+            if(Bytestroke == null)
+            {
+                Console.WriteLine("RemoveStroke undo failure: No stroke to add.");
+                return;
+            }
             bool shouldAdd = true;
             foreach(Stroke otherstroke in page.InkStrokes)
             {
@@ -90,6 +95,11 @@ namespace CLP.Models
         override public void Redo(CLPPage page)
         {
             Bytestroke = GetBytestrokeByUniqueID(page, StrokeId);
+            if(Bytestroke == null)
+            {
+                Console.WriteLine("RemoveStroke redo failure: No stroke to remove.");
+                return;
+            }
             int indexToRemove = -1;
             foreach(Stroke otherstroke in page.InkStrokes)
             {

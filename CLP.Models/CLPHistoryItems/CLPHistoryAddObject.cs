@@ -62,11 +62,21 @@ namespace CLP.Models
         public override void Undo(CLPPage page)
         {
             PageObject = GetPageObjectByUniqueID(page, ObjectId); // store it in case we need to put it back later
+            if(PageObject == null)
+            {
+                Console.WriteLine("AddObject Undo Failure: No object to remove.");
+                return;
+            }
             page.PageObjects.Remove(PageObject);
         }
 
         override public void Redo(CLPPage page)
         {
+            if(PageObject == null)
+            {
+                Console.WriteLine("AddObject Redo Failure: No object to add.");
+                return;
+            }
             page.PageObjects.Add(PageObject);
             PageObject = null; // don't need to put it back later anymore
         }

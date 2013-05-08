@@ -72,7 +72,7 @@ namespace CLP.Models
             Bytestroke = GetBytestrokeByUniqueID(page, StrokeId); // remember in case we put it back
             if(Bytestroke == null)
             {
-                Console.WriteLine("undo: null bytestroke");
+                Console.WriteLine("AddStroke undo failure: No stroke to remove");
                 return;
             }
             int indexToRemove = -1;
@@ -95,7 +95,7 @@ namespace CLP.Models
         {
             if(Bytestroke == null)
             {
-                Console.WriteLine("redo: null bytestroke");
+                Console.WriteLine("AddStroke redo failure: No stroke to add");
                 return;
             }
             Stroke s = CLPPage.ByteToStroke(Bytestroke);

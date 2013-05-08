@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Models
@@ -107,16 +108,28 @@ namespace CLP.Models
 
         override public void Undo(CLPPage page)
         {
-            Console.WriteLine("Attempting to unmove " + ObjectId);
             ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            double currentX = obj.XPosition;
+            double currentY = obj.YPosition;
             obj.XPosition = OldX;
             obj.YPosition = OldY;
             if(obj.CanAcceptPageObjects)
             {
                 foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
                 {
-                    pageObject.XPosition = (OldX - NewX + pageObject.XPosition);
-                    pageObject.YPosition = (OldY - NewY + pageObject.YPosition);
+                    pageObject.XPosition = (OldX - currentX + pageObject.XPosition);
+                    pageObject.YPosition = (OldY - currentY + pageObject.YPosition);
+                }
+            }
+            if(obj.CanAcceptStrokes)
+            {
+                Matrix moveStroke = new Matrix();
+                moveStroke.Translate(OldX - currentX, OldY - currentY);
+
+                StrokeCollection strokesToMove = obj.GetStrokesOverPageObject();
+                foreach(Stroke stroke in strokesToMove)
+                {
+                    stroke.Transform(moveStroke, true);
                 }
             }
         }
@@ -124,14 +137,27 @@ namespace CLP.Models
         override public void Redo(CLPPage page)
         {
             ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            double currentX = obj.XPosition;
+            double currentY = obj.YPosition;
             obj.XPosition = NewX;
             obj.YPosition = NewY;
             if(obj.CanAcceptPageObjects)
             {
                 foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
                 {
-                    pageObject.XPosition = (NewX - OldX + pageObject.XPosition);
-                    pageObject.YPosition = (NewY - OldY + pageObject.YPosition);
+                    pageObject.XPosition = (NewX - currentX + pageObject.XPosition);
+                    pageObject.YPosition = (NewY - currentY + pageObject.YPosition);
+                }
+            }
+            if(obj.CanAcceptStrokes)
+            {
+                Matrix moveStroke = new Matrix();
+                moveStroke.Translate(NewX - currentX, NewY - currentY);
+
+                StrokeCollection strokesToMove = obj.GetStrokesOverPageObject();
+                foreach(Stroke stroke in strokesToMove)
+                {
+                    stroke.Transform(moveStroke, true);
                 }
             }
         }

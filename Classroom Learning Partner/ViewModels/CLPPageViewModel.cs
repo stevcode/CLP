@@ -621,16 +621,13 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
-            Console.WriteLine(e.GetType());
-            Console.WriteLine(e.ToString());
-            Console.WriteLine(e.Removed.Count);
-            Console.WriteLine(e.Added.Count);
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
             Task.Factory.StartNew(() =>
                 {
                     try
                     {
                         var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+                        Page.PageHistory.BeginEventGroup();
                         foreach (var stroke in e.Removed)
                         {
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
@@ -647,8 +644,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
    
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));  
-                            
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
                             {
@@ -659,8 +654,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var newUniqueID = Guid.NewGuid().ToString();
                                 stroke.SetStrokeUniqueID(newUniqueID);
                             }
+                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));  
                         }
-
+                        Page.PageHistory.EndEventGroup();
 
                         foreach(ICLPPageObject pageObject in PageObjects)
                         {
