@@ -142,6 +142,9 @@
     <Compile Include="Extension Methods\StokeExtension.cs" />
     <Compile Include="Extension Methods\StrokeCollectionExtension.cs" />
     <Compile Include="Group.cs" />
+    <Compile Include="Ink DTO\DrawingAttributesDTO.cs" />
+    <Compile Include="Ink DTO\StrokeDTO.cs" />
+    <Compile Include="Ink DTO\StylusPointDTO.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
