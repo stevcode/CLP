@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -38,6 +39,8 @@ namespace CLP.Models
         #endregion
 
         #region Properties
+
+        
 
         public String UserName
         {
