@@ -12,9 +12,10 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryRemoveStroke(CLPPage page, List<byte> bytestroke) : base(HistoryItemType.RemoveStroke, page)
+        public CLPHistoryRemoveStroke(List<byte> bytestroke) : base(HistoryItemType.RemoveStroke)
         {
             Bytestroke = bytestroke;
+            StrokeId = CLPPage.ByteToStroke(bytestroke).GetStrokeUniqueID();
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Bytestroke corresponding to the stroke added
+        /// Bytestroke corresponding to the stroke removed (null if this event is in the Future)
         /// </summary>
         public List<byte> Bytestroke
         {
@@ -42,27 +43,43 @@ namespace CLP.Models
 
         public static readonly PropertyData BytestrokeProperty = RegisterProperty("Bytestroke", typeof(List<byte>), null);
 
+        /// <summary>
+        /// Unique ID of the stroke removed
+        /// </summary>
+        public String StrokeId
+        {
+            get { return GetValue<String>(StrokeIdProperty); }
+            set { SetValue(StrokeIdProperty, value); }
+        }
+
+        public static readonly PropertyData StrokeIdProperty = RegisterProperty("StrokeId", typeof(String), null);
+
+
         #endregion //Properties
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryAddStroke(Page, Bytestroke);
+            return new CLPHistoryAddStroke(StrokeId);
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryRemoveStroke(Page, Bytestroke);
+            return new CLPHistoryRemoveStroke(GetBytestrokeByUniqueID(page, StrokeId));
         }
 
-        override public void Undo()
+        override public void Undo(CLPPage page)
         {
-            Stroke strokeRemoved = CLPPage.ByteToStroke(Bytestroke);
-            bool shouldAdd = true;
-            foreach(Stroke otherstroke in Page.InkStrokes)
+            if(Bytestroke == null)
             {
-                if(otherstroke.GetStrokeUniqueID() == strokeRemoved.GetStrokeUniqueID())
+                Console.WriteLine("RemoveStroke undo failure: No stroke to add.");
+                return;
+            }
+            bool shouldAdd = true;
+            foreach(Stroke otherstroke in page.InkStrokes)
+            {
+                if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
                     shouldAdd = false;
                     break;
@@ -70,25 +87,31 @@ namespace CLP.Models
             }
             if(shouldAdd)
             {
-                Page.InkStrokes.Add(strokeRemoved);
+                page.InkStrokes.Add(CLPPage.ByteToStroke(Bytestroke));
             }
+            Bytestroke = null;
         }
 
-        override public void Redo()
+        override public void Redo(CLPPage page)
         {
-            Stroke s = CLPPage.ByteToStroke(Bytestroke);
-            int indexToRemove = -1;
-            foreach(Stroke otherstroke in Page.InkStrokes)
+            Bytestroke = GetBytestrokeByUniqueID(page, StrokeId);
+            if(Bytestroke == null)
             {
-                if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                Console.WriteLine("RemoveStroke redo failure: No stroke to remove.");
+                return;
+            }
+            int indexToRemove = -1;
+            foreach(Stroke otherstroke in page.InkStrokes)
+            {
+                if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
-                    indexToRemove = Page.InkStrokes.IndexOf(otherstroke);
+                    indexToRemove = page.InkStrokes.IndexOf(otherstroke);
                     break;
                 }
             }
             if(indexToRemove != -1)
             {
-                Page.InkStrokes.RemoveAt(indexToRemove);
+                page.InkStrokes.RemoveAt(indexToRemove);
             }
         }
 

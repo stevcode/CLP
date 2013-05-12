@@ -12,9 +12,9 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryAddStroke(CLPPage page, List<byte> bytestroke) : base(HistoryItemType.AddStroke, page)
+        public CLPHistoryAddStroke(String strokeId) : base(HistoryItemType.AddStroke)
         {
-            Bytestroke = bytestroke;
+            StrokeId = strokeId;
         }
 
         /// <summary>
@@ -32,7 +32,18 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Bytestroke corresponding to the stroke added
+        /// Unique ID of the stroke added
+        /// </summary>
+        public String StrokeId
+        {
+            get { return GetValue<String>(StrokeIdProperty); }
+            set { SetValue(StrokeIdProperty, value); }
+        }
+
+        public static readonly PropertyData StrokeIdProperty = RegisterProperty("StrokeId", typeof(String), null);
+
+        /// <summary>
+        /// Bytestroke corresponding to the stroke added (null unless this event is in the Future)
         /// </summary>
         public List<byte> Bytestroke
         {
@@ -46,41 +57,52 @@ namespace CLP.Models
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryRemoveStroke(Page, Bytestroke);
+            return new CLPHistoryRemoveStroke(GetBytestrokeByUniqueID(page, StrokeId));
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryAddStroke(Page, Bytestroke);
+            return new CLPHistoryAddStroke(StrokeId);
         }
 
-        override public void Undo()
+        override public void Undo(CLPPage page)
         {
-            Stroke strokeAdded = CLPPage.ByteToStroke(Bytestroke);
-            int indexToRemove = -1;
-            foreach(Stroke otherstroke in Page.InkStrokes)
+            Bytestroke = GetBytestrokeByUniqueID(page, StrokeId); // remember in case we put it back
+            if(Bytestroke == null)
             {
-                if(otherstroke.GetStrokeUniqueID() == strokeAdded.GetStrokeUniqueID())
+                Console.WriteLine("AddStroke undo failure: No stroke to remove");
+                return;
+            }
+            int indexToRemove = -1;
+            foreach(Stroke otherstroke in page.InkStrokes)
+            {
+                if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
-                    indexToRemove = Page.InkStrokes.IndexOf(otherstroke);
+                    indexToRemove = page.InkStrokes.IndexOf(otherstroke);
+                    Bytestroke = CLPPage.StrokeToByte(otherstroke);
                     break;
                 }
             }
             if(indexToRemove != -1)
             {
-                Page.InkStrokes.RemoveAt(indexToRemove);
+                page.InkStrokes.RemoveAt(indexToRemove);
             }
         }
 
-        override public void Redo()
+        override public void Redo(CLPPage page)
         {
+            if(Bytestroke == null)
+            {
+                Console.WriteLine("AddStroke redo failure: No stroke to add");
+                return;
+            }
             Stroke s = CLPPage.ByteToStroke(Bytestroke);
             bool shouldAdd = true;
-            foreach(Stroke otherstroke in Page.InkStrokes)
+            foreach(Stroke otherstroke in page.InkStrokes)
             {
-                if(otherstroke.GetStrokeUniqueID() == s.GetStrokeUniqueID())
+                if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
                     shouldAdd = false;
                     break;
@@ -88,8 +110,9 @@ namespace CLP.Models
             }
             if(shouldAdd)
             {
-                Page.InkStrokes.Add(s);
+                page.InkStrokes.Add(s);
             }
+            Bytestroke = null; //don't need to remember anymore
         }
 
         public override bool Equals(object obj)
@@ -98,9 +121,8 @@ namespace CLP.Models
             {
                 return false;
             }
-            Stroke thisStroke = CLPPage.ByteToStroke(Bytestroke);
-            Stroke otherStroke = CLPPage.ByteToStroke((obj as CLPHistoryAddStroke).Bytestroke);
-            if (thisStroke.GetStrokeUniqueID() != otherStroke.GetStrokeUniqueID()) 
+
+            if (StrokeId != (obj as CLPHistoryAddStroke).StrokeId) 
             {
                 return false;
             }

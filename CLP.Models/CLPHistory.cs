@@ -12,6 +12,7 @@ namespace CLP.Models
         public const double SAMPLE_RATE = 9;
         private bool _frozen;
         private bool _ingroup;
+        public bool _useHistory = true;
         private Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
@@ -93,6 +94,11 @@ namespace CLP.Models
             Past.Clear();
             MetaPast.Clear();
             Future.Clear();
+            ExpectedEvents.Clear();
+            if(groupEvents != null)
+            {
+                groupEvents.Clear();
+            }
         }
 
         public void Freeze()
@@ -107,18 +113,26 @@ namespace CLP.Models
 
         public void Push(CLPHistoryItem item)
         {
-            if(_frozen || IsExpected(item))
+            if(!_useHistory || _frozen || IsExpected(item))
             {
                 return;
             }
             if(_ingroup)
             {
-                Console.WriteLine("pushing a " + item.ItemType + " to group");
+                //Console.WriteLine("pushing a " + item.ItemType + " to group");
                 groupEvents.Push(item);
             }
             else
             {
-                Console.WriteLine("pushing a " + item.ItemType);
+                //Console.WriteLine("pushing a " + item.ItemType);
+                if(item is CLPHistoryAddStroke)
+                {
+                    Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);
+                }
+                if(item is CLPHistoryRemoveStroke)
+                {
+                    Console.WriteLine((item as CLPHistoryRemoveStroke).StrokeId);
+                }
                 Past.Push(item);
                 MetaPast.Push(item);
                 Future.Clear();
@@ -134,9 +148,9 @@ namespace CLP.Models
         public void EndEventGroup()
         {
             _ingroup = false;
-            CLPHistoryItem group = AggregateItems(groupEvents);
-            if(group != null)
+            if(groupEvents.Count > 0)
             {
+                CLPHistoryItem group = AggregateItems(groupEvents);
                 Past.Push(group);
                 MetaPast.Push(group);
                 Future.Clear();
@@ -146,62 +160,22 @@ namespace CLP.Models
         public CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack)
         {
             List<CLPHistoryItem> itemList = new List<CLPHistoryItem>();
-            List<bool> deleted = new List<bool>();
-            while(itemStack.Count > 0){
-                CLPHistoryItem item = itemStack.Pop();
-                itemList.Add(item);
-                deleted.Add(false);
-            }
-
-            //search for removes followed by adds, since we're going backwards in time, and
-            //eliminate such redundancies
-            for(int i = 0; i < itemList.Count; i++)
+            while(itemStack.Count > 0)
             {
-                if(!deleted[i] && itemList[i] is CLPHistoryRemoveStroke)
-                {
-                    for(int j = i; j < itemList.Count; j++)
-                    {
-                        if(!deleted[j] && itemList[j] is CLPHistoryAddStroke &&
-                            CLPPage.ByteToStroke((itemList[i] as CLPHistoryRemoveStroke).Bytestroke).GetStrokeUniqueID() ==
-                            CLPPage.ByteToStroke((itemList[j] as CLPHistoryAddStroke).Bytestroke).GetStrokeUniqueID())
-                        {
-                            deleted[i] = true;
-                            deleted[j] = true;
-                        }
-                    }
-                }
+                itemList.Add(itemStack.Pop());
             }
-
-            List<CLPHistoryItem> finalItemList = new List<CLPHistoryItem>();
-            for(int i = 0; i < itemList.Count; i++)
-            {
-                if(!deleted[i])
-                {
-                    finalItemList.Add(itemList[i]);
-                }
-            }
-
-            if(finalItemList.Count == 0)
-            {
-                return null;
-            }
-            else if(finalItemList.Count == 1)
-            {
-                return finalItemList[0];
-            }
-
-            return new CLPHistoryAggregation(finalItemList[0].Page, finalItemList);
+            return new CLPHistoryAggregation(itemList);
         }
 
-        public void Undo()
+        public void Undo(CLPPage page)
         {
-            if(Past.Count==0)
+            if(!_useHistory || Past.Count==0)
             {
                 return;
             }
 
             CLPHistoryItem lastAction = Past.Pop();
-            CLPHistoryItem expected = lastAction.GetUndoFingerprint();
+            CLPHistoryItem expected = lastAction.GetUndoFingerprint(page);
             if(expected != null)
             {
                 if(expected is CLPHistoryAggregation)
@@ -216,7 +190,7 @@ namespace CLP.Models
                     ExpectedEvents.Add(expected);
                 }
             }
-            lastAction.Undo();
+            lastAction.Undo(page);
             MetaPast.Push(expected);
             Future.Push(lastAction);
             if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
@@ -224,24 +198,24 @@ namespace CLP.Models
                 CLPHistoryItem penultimateAction = Past.Peek();
                 if((lastAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
                 {
-                    Undo();
+                    Undo(page);
                 }
             }
         }
 
-        public void Redo()
+        public void Redo(CLPPage page)
         {
-            if(Future.Count == 0)
+            if(!_useHistory || Future.Count == 0)
             {
                return;
             }
             var nextAction = Future.Pop();
-            var expected = nextAction.GetRedoFingerprint();
+            var expected = nextAction.GetRedoFingerprint(page);
             if(expected != null)
             {
                 ExpectedEvents.Add(expected);
             }
-            nextAction.Redo();
+            nextAction.Redo(page);
             MetaPast.Push(expected);
             Past.Push(nextAction);
             if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
@@ -249,18 +223,10 @@ namespace CLP.Models
                 CLPHistoryItem penultimateAction = Future.Peek();
                 if((nextAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
                 {
-                    Redo();
+                    Redo(page);
                 }
             }
         }
-
-        public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) 
-        {
-            foreach(CLPHistoryItem item in Past)
-            {
-                item.ReplaceHistoricalRecords(oldObject, newObject);
-            }
-        }   
 
         private bool IsExpected(CLPHistoryItem item)
         {

@@ -60,12 +60,12 @@
                 <RibbonApplicationMenuItem Header="Convert To XPS"
                                             Command="{Binding ConvertToXPSCommand}"
                                             ImageSource="..\Images\ConvertToXPS.png"
-                                            Visibility="{Binding Path=InstructorVisibility}"/>
+                                            />
 
                 <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
                                             Command="{Binding ConvertAllSubmissionsToXPSCommand}"
                                             ImageSource="..\Images\ConvertToXPS.png"
-                                            Visibility="{Binding Path=InstructorVisibility}"/>
+                                            />
 
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
                                             Command="{Binding ConvertPageSubmissionToXPSCommand}"
@@ -82,6 +82,15 @@
                 <RibbonApplicationMenuItem Header="Toggle Thumbnail Location"
                                                   ImageSource="..\Images\NewNotebook.png"
                                                   Command="{Binding Path=ToggleThumbnailsCommand}"/>
+
+                <RibbonApplicationMenuItem Header="Clear History"
+                                           ImageSource="..\Images\LargeIcon.png"
+                                           Command="{Binding Path=ClearHistoryCommand}"
+                                           Visibility="{Binding Path=InstructorVisibility}" />
+
+                <RibbonApplicationMenuItem Header="DisableHistory"
+                                                  ImageSource="..\Images\LargeIcon.png"
+                                                  Command="{Binding Path=DisableHistoryCommand}"/>
 
                 <RibbonApplicationMenu.FooterPaneContent>
                     <DockPanel LastChildFill="False">
@@ -161,6 +170,13 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
+                <RibbonToggleButton
+                    Click="ToolGroupToggle_Clicked"
+                    IsChecked="False"
+                    Label="Highlighter"
+                    LargeImageSource="..\Images\Marker.png"
+                    Command="{Binding SetHighlighterCommand}"/>
+
                 <!--<RibbonToggleButton
                     Click="ToolGroupToggle_Clicked"
                     Label="Point Eraser"
@@ -202,7 +218,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
 
                 <RibbonButton
                         Label="Stamp"
@@ -219,7 +235,27 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="TRUE" />
 
-		<!--<RibbonToggleButton Label="Webcam" 
+                <!--<RibbonButton
+                        Label="Protractor"
+                        LargeImageSource="..\Images\Protractor64.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>
+
+                <RibbonButton
+                        Label="Square"
+                        LargeImageSource="..\Images\AddSquare.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Vertical Line"
+                        LargeImageSource="..\Images\VerticalLineIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>-->
+
+                <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
                         Command="{Binding ToggleWebcamPanelCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
@@ -247,7 +283,7 @@
                     </Style>
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black"/>
-                <RibbonButton Background="White"/>
+                <RibbonButton Background="White" Visibility="{Binding InstructorVisibility}"/>
                 <RibbonButton Background="Red"/>
                 <!--<RibbonButton Background="Bisque"/>-->
                 <RibbonButton Background="DarkOrange" />
@@ -262,7 +298,6 @@
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue" />
-                <RibbonButton Background="#0098F7" />
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
@@ -349,7 +384,7 @@
 
             </RibbonGroup>
             
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -364,8 +399,64 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
-            </RibbonGroup>
+            </RibbonGroup>-->
             
+        </RibbonTab>
+
+        <!--Insert Tab-->
+        <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
+
+            <RibbonGroup Header="Stamps">
+
+                <RibbonButton
+                        Label="Stamp"
+                        LargeImageSource="..\Images\AddPathStamp.png"
+                        Command="{Binding Path=InsertBlankStampCommand}"/>
+
+                <RibbonButton
+                        Label="Image Stamp"
+                        LargeImageSource="..\Images\PictureStamp.png"
+                        Command="{Binding Path=InsertImageStampCommand}"/>
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Arrays">
+
+                <RibbonButton Label="Array"
+                              LargeImageSource="..\Images\InkArray.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="FALSE" />
+
+                <RibbonButton Label="Array + Guides"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="TRUE" />
+            </RibbonGroup>
+
+            <RibbonGroup Header="Shapes">
+
+                <RibbonButton
+                        Label="Protractor"
+                        LargeImageSource="..\Images\Protractor64.png"
+                        Command="{Binding Path=InsertProtractorCommand}"/>
+
+                <RibbonButton
+                        Label="Square"
+                        LargeImageSource="..\Images\AddSquare.png"
+                        Command="{Binding Path=InsertSquareShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Horizontal Line"
+                        LargeImageSource="..\Images\HorizontalLineIcon.png"
+                        Command="{Binding Path=InsertHorizontalLineShapeCommand}"/>
+
+                <RibbonButton
+                        Label="Vertical Line"
+                        LargeImageSource="..\Images\VerticalLineIcon.png"
+                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>
+
+            </RibbonGroup>
+
         </RibbonTab>
 
         <!--Test Tab-->
@@ -643,6 +734,14 @@
                             </StackPanel>
                         </Button>
 
+                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                                Command="{Binding Path=InsertProtractorCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="..\Images\ProtractorWhite.png" />
+                                <Label>Protractor</Label>
+                            </StackPanel>
+                        </Button>
+
                     </RibbonGallery>
                 </RibbonMenuButton>
 
@@ -756,6 +855,10 @@
                 <RibbonButton Label="Convert to XPS"
                             Command="{Binding Path=ConvertToXPSCommand}"
                             LargeImageSource="..\Images\ConvertToXPS.png" />
+
+                <RibbonButton Label="Clear History"
+                                           LargeImageSource="..\Images\LargeIcon.png"
+                                           Command="{Binding Path=ClearHistoryCommand}" />
 
             </RibbonGroup>
 

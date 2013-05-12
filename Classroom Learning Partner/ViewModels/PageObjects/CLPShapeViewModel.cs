@@ -12,13 +12,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the CLPShapeViewModel class.
         /// </summary>
         public CLPShapeViewModel(CLPShape shape)
-            : base()
         {
+            hoverTimer.Interval = 2300;
+            CloseAdornerTimeOut = 0.15;
             PageObject = shape;
 
             ResizeShapeCommand = new Command<DragDeltaEventArgs>(OnResizeShapeCommandExecute);
         }
-
 
         /// <summary>
         /// Gets or sets the property value.
@@ -36,8 +36,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(CLPShape.CLPShapeType));
 
         public override string Title { get { return "ShapeVM"; } }
-
-
 
         /// <summary> 
         /// Gets the ResizeShapeCommand command.
@@ -82,6 +80,11 @@ namespace Classroom_Learning_Partner.ViewModels
             if(newWidth + PageObject.XPosition > parentPage.PageWidth)
             {
                 newWidth = PageObject.Width;
+            }
+
+            if((PageObject as CLPShape).ShapeType == CLPShape.CLPShapeType.Protractor)
+            {
+                newWidth = 2.0*newHeight;
             }
 
             CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);

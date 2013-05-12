@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CLP.Models;
 
 namespace ConsoleScripts
@@ -19,9 +15,9 @@ namespace ConsoleScripts
             Console.WriteLine("From Notebook Open");
             CLPNotebook toNotebook = MassSubmit.OpenNotebook(toFilePath);
             Console.WriteLine("To Notebook Open");
-            CLPNotebook mergedNotebook1 = ReplacePageFromToAtIndex(fromNotebook, toNotebook, 2);
+            CLPNotebook mergedNotebook1 = ReplacePageFromToAtIndex(fromNotebook, toNotebook, 0);
             Console.WriteLine("First Merge");
-            CLPNotebook mergedNotebook2 = ReplacePageFromToAtIndex(fromNotebook, mergedNotebook1, 3);
+            CLPNotebook mergedNotebook2 = ReplacePageFromToAtIndex(fromNotebook, mergedNotebook1, 1);
             Console.WriteLine("Second Merge");
             mergedNotebook2.Save(toFilePath);
             Console.WriteLine("Notebook Saved at {0}", toFilePath);

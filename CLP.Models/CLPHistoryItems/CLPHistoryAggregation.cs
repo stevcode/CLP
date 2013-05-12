@@ -12,7 +12,7 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryAggregation(CLPPage page, List<CLPHistoryItem> events) : base(HistoryItemType.Aggregation, page)
+        public CLPHistoryAggregation(List<CLPHistoryItem> events) : base(HistoryItemType.Aggregation)
         {
             Events = events;
         }
@@ -46,37 +46,37 @@ namespace CLP.Models
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
             List<CLPHistoryItem> inverse = new List<CLPHistoryItem>();
             foreach(CLPHistoryItem item in Events) 
             {
-                inverse.Add(item.GetUndoFingerprint());
+                inverse.Add(item.GetUndoFingerprint(page));
             }
             inverse.Reverse();
-            return new CLPHistoryAggregation(Page, inverse);		  
+            return new CLPHistoryAggregation(inverse);		  
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
             return this;
         }
 
-        override public void Undo()
+        override public void Undo(CLPPage page)
         {
             Console.WriteLine("Undoing an aggregation");
             foreach(CLPHistoryItem item in Events) 
             {
                 Console.WriteLine("Undoing a " + item.ItemType);
-                item.Undo();
+                item.Undo(page);
             }
         }
 
-        override public void Redo()
+        override public void Redo(CLPPage page)
         {
             foreach(CLPHistoryItem item in Events)
             {
-                item.Redo();
+                item.Redo(page);
             }
         }
 

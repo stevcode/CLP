@@ -12,6 +12,7 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
@@ -148,9 +149,12 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
+            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
 
             //Tools
             SetPenCommand = new Command(OnSetPenCommandExecute);
+            SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
@@ -194,6 +198,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
+            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
             InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
@@ -256,11 +261,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the PenSize property so it is known in the class.
         /// </summary>
         public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 5);
-
-        private void EraserTypeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            
-        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1023,14 +1023,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
         }
 
         /// <summary>
@@ -1105,6 +1097,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         currentPageView.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1192,6 +1191,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1273,6 +1279,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
+                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
                         grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
@@ -1325,6 +1338,40 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the ClearHistoryCommand command.
+        /// </summary>
+        public Command ClearHistoryCommand { get; private set; }
+
+        private void OnClearHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the DisableHistoryCommand command.
+        /// </summary>
+        public Command DisableHistoryCommand { get; private set; }
+
+        private void OnDisableHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(CLPPage page in notebook.Pages)
+                {
+                    page.PageHistory._useHistory = false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the RefreshNetworkCommand command.
         /// </summary>
         public Command RefreshNetworkCommand { get; private set; }
@@ -1361,6 +1408,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
+            DrawingAttributes.IsHighlighter = false;
+            DrawingAttributes.Height = PenSize;
+            DrawingAttributes.Width = PenSize;
+            DrawingAttributes.StylusTip = StylusTip.Ellipse;
+        }
+
+        /// <summary>
+        /// Gets the SetHighlighterCommand command.
+        /// </summary>
+        public Command SetHighlighterCommand { get; private set; }
+
+        private void OnSetHighlighterCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageInteractionMode = PageInteractionMode.Pen;
+            DrawingAttributes.IsHighlighter = true;
+            DrawingAttributes.Height = 12;
+            DrawingAttributes.Width = 12;
+            DrawingAttributes.StylusTip = StylusTip.Rectangle;
         }
 
         /// <summary>
@@ -1395,10 +1461,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = button as RibbonButton;
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
 
-            if(EditingMode != InkCanvasEditingMode.Ink)
-            {
-                SetPenCommand.Execute();
-            }
+            EditingMode = InkCanvasEditingMode.Ink;
         }
 
         /// <summary>
@@ -1570,6 +1633,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(notebook != null && submission != null)
                 {
                     submission.IsSubmission = true;
+                    foreach (var pageObject in submission.PageObjects)
+                    {
+                        pageObject.ParentPage = submission;
+                    }
                     notebook.AddStudentSubmission(submission.UniqueID, submission);
                 }
             }
@@ -1976,9 +2043,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Thread t = new Thread(() =>
             {
+                Console.WriteLine("Replay");
                 try
                 {
-                    CLPHistory pageHistory = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage.PageHistory;
+                    CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                    CLPHistory pageHistory = page.PageHistory;
 
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
@@ -1996,12 +2065,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (DispatcherOperationCallback)delegate(object arg)
                         {
-                            item.Undo();
+                            if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
+                            {
+                                item.Undo(page);
+                            }
                             return null;
                         }, null);
                         metaFuture.Push(item);
                     }
 
+                    Console.WriteLine("done undoing");
                     Thread.Sleep(400);
                     while(metaFuture.Count > 0)
                     {
@@ -2018,7 +2091,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                         (DispatcherOperationCallback)delegate(object arg)
                         {
-                            item.Redo();
+                            if(item != null)
+                            {
+                                item.Redo(page);
+                            }
                             return null;
                         }, null);
                     }
@@ -2050,7 +2126,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Redo(); 
+                        page.PageHistory.Redo(page); 
                         return null;
                     }, null);   
                 }
@@ -2072,7 +2148,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
                     {
-                        page.PageHistory.Undo();
+                        page.PageHistory.Undo(page);
                         return null;
                     }, null);
                 }
@@ -2333,6 +2409,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+        }
+
+        /// <summary>
+        /// Gets the InsertProtractorCommand command.
+        /// </summary>
+        public Command InsertProtractorCommand { get; private set; }
+
+        private void OnInsertProtractorCommandExecute()
+        {
+            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            square.Height = 200;
+            square.Width = 2.0*square.Height;
+            
+            CLPServiceAgent.Instance.AddPageObjectToPage(square);
         }
 
         /// <summary>

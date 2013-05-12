@@ -178,7 +178,6 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                PageObject.ParentPage.PageHistory.ReplaceHistoricalRecords(PageObject, leftBehindStamp);
                 if(leftBehindStamp != null)
                 {
                     leftBehindStamp.UniqueID = PageObject.UniqueID;
@@ -203,7 +202,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             ICLPPageObject newObject = pageObject.Duplicate();
                             pageObject.Parts = 0;
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(parentPage, newObject));
+                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(newObject.UniqueID));
                             parentPage.PageObjects.Add(newObject);
                             pageObject.CanAdornersShow = false;
                             leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
@@ -211,7 +210,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         if(stampIndex > -1)
                         {
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(parentPage, leftBehindStamp));
+                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
                             parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
                             foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
                             {
@@ -221,7 +220,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         else
                         {
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(parentPage, leftBehindStamp));
+                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
                             parentPage.PageObjects.Add(leftBehindStamp);
                         }
                     }
@@ -288,13 +287,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                         {
-                            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject.ParentPage, po));
+                            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(po));
                             CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
                         }
                     }
                 }
 
-                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject.ParentPage, PageObject));
+                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject));
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
@@ -333,15 +332,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(PageObject.ParentPage, 
-                    pageObject, pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
+                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(pageObject.UniqueID, 
+                    pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
                 CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             var pt = new Point(x, y);
 
-            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(PageObject.ParentPage,
-                PageObject, PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
+            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(PageObject.UniqueID,
+                PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
             CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
@@ -405,11 +404,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 return false;
             }
-            if(hitBoxName == "StampBodyHitBox" || hitBoxName == "HandwritingHitBox")
+            if(hitBoxName == "StampBodyHitBox")
             {
                 return true;
             }
-            IsMouseOverShowEnabled = false;
+            if (hitBoxName == "PartsHitBox")
+            {
+                IsMouseOverShowEnabled = IsAdornerVisible;
+            }
+
             return false;
         }
 

@@ -206,6 +206,11 @@ namespace Classroom_Learning_Partner
                 submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
+
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                }
             }
 
             var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);

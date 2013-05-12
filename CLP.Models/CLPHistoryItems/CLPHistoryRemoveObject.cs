@@ -11,9 +11,10 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryRemoveObject(CLPPage page, ICLPPageObject item) : base(HistoryItemType.RemoveObject, page)
+        public CLPHistoryRemoveObject(ICLPPageObject item) : base(HistoryItemType.RemoveObject)
         {
             PageObject = item;
+            ObjectId = item.UniqueID;
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Page object removed in this historical event
+        /// Page object removed in this historical event; null if this event is in the Future
         /// </summary>
         public ICLPPageObject PageObject
         {
@@ -42,42 +43,58 @@ namespace CLP.Models
         public static readonly PropertyData PageObjectProperty = 
             RegisterProperty("PageObject", typeof(ICLPPageObject), null);
 
+        /// <summary>
+        /// Unique ID of page object removed in this historical event
+        /// </summary>
+        public String ObjectId
+        {
+            get { return GetValue<String>(ObjectIdProperty); }
+            set { SetValue(ObjectIdProperty, value); }
+        }
+
+        public static readonly PropertyData ObjectIdProperty =
+            RegisterProperty("ObjectId", typeof(String), null);
+
         #endregion //Properties
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint()
+        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryAddObject(Page, PageObject);
+            return new CLPHistoryAddObject(ObjectId);
         }
 
-        public override CLPHistoryItem GetRedoFingerprint()
+        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryRemoveObject(Page, PageObject);
+            return new CLPHistoryRemoveObject(PageObject);
         }
 
-        override public void Undo()
+        override public void Undo(CLPPage page)
         {
-            Page.PageObjects.Add(PageObject);
-        }
-
-        override public void Redo()
-        {
-            Page.PageObjects.Remove(PageObject);
-        }
-
-        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
-        {
-            if(PageObject.UniqueID == oldObject.UniqueID)
+            if(PageObject == null)
             {
-                PageObject = newObject;
+                Console.WriteLine("RemoveObject Undo Failure: No object to add.");
+                return;
             }
+            page.PageObjects.Add(PageObject);
+            PageObject = null; //forget it because we don't need it anymore
+        }
+
+        override public void Redo(CLPPage page)
+        {
+            PageObject = GetPageObjectByUniqueID(page, ObjectId);  //remember in case we need to add it back later
+            if(PageObject == null)
+            {
+                Console.WriteLine("RemoveObject Redo Failure: No object to remove.");
+                return;
+            }
+            page.PageObjects.Remove(PageObject);
         }
 
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryRemoveObject) ||
-                (obj as CLPHistoryRemoveObject).PageObject.UniqueID != PageObject.UniqueID)
+                (obj as CLPHistoryRemoveObject).ObjectId != ObjectId)
             {
                 return false;
             }

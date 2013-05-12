@@ -399,7 +399,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.BeginEventGroup();
+           // Page.PageHistory.BeginEventGroup();
             _isMouseDown = true;
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
             {
@@ -474,7 +474,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
-            Page.PageHistory.EndEventGroup();
+           // Page.PageHistory.EndEventGroup();
             _isMouseDown = false;
         }
 
@@ -549,14 +549,20 @@ namespace Classroom_Learning_Partner.ViewModels
             if(action == "Add"){
                 foreach(ICLPPageObject item in e.NewItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryAddObject(Page, item));
+                    if(item != null)
+                    {
+                        Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
+                    }
                 }
             }
             else if(action == "Remove")
             {
                 foreach(ICLPPageObject item in e.OldItems)
                 {
-                    Page.PageHistory.Push(new CLPHistoryRemoveObject(Page, item));
+                    if(item != null)
+                    {
+                        Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
+                    }
                 }
             }
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
@@ -616,41 +622,39 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
-        //    Task.Factory.StartNew(() =>
-          //      {
+            Task.Factory.StartNew(() =>
+                {
                     try
                     {
-                        var removedStrokeIDs = e.Removed.Select(stroke => stroke.GetStrokeUniqueID()).ToList();
+                        var removedStrokeIDs = new List<string>();
+                        Page.PageHistory.BeginEventGroup();
                         foreach (var stroke in e.Removed)
                         {
-                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(Page, CLPPage.StrokeToByte(stroke)));
+                            removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
                         {
-                            //TODO: Steve - Add Property for time created if necessary.
-                            //TODO: Steve - Add Property for Mutability.
-                            //TODO: Steve - Add Property for UserName of person who created the stroke.
                             if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                             {
                                 var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
+                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
                             }
-   
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(Page, CLPPage.StrokeToByte(stroke)));  
-                            
+
                             //Ensures truly uniqueIDs
                             foreach(string id in removedStrokeIDs)
                             {
-                                if(id != stroke.GetStrokeUniqueID())
+                                if(id == stroke.GetStrokeUniqueID())
                                 {
-                                    continue;
-                                }
-                                var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.SetStrokeUniqueID(newUniqueID);
-                            }
+                                    var newUniqueID = Guid.NewGuid().ToString();
+                                    stroke.SetStrokeUniqueID(newUniqueID);
+                                }  
+                            }                            
+                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));
                         }
-
+                        Page.PageHistory.EndEventGroup();
 
                         foreach(ICLPPageObject pageObject in PageObjects)
                         {
@@ -671,11 +675,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                 where stroke.HitTest(rect, 3)
                                 select stroke;
 
+                            var addStrokes = new StrokeCollection(addedStrokesOverObject);
+                            var removeStrokes = new StrokeCollection(removedStrokesOverObject);
                             ICLPPageObject o = pageObject;
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                                                        (DispatcherOperationCallback)delegate
                                                                            {
-                                                                               o.AcceptStrokes(new StrokeCollection(addedStrokesOverObject), new StrokeCollection(removedStrokesOverObject));
+                                                                               o.AcceptStrokes(addStrokes, removeStrokes);
 
                                                                                return null;
                                                                            }, null);
@@ -724,7 +730,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
                     }
-               // });
+               });
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)

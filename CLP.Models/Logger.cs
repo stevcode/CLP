@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Classroom_Learning_Partner
+namespace CLP.Models
 {
     public class Logger
     {
@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner
         }
 
         private string fileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs";
-        private string fileName = "CLPLog" + App.CurrentUserMode.ToString() + ".log";
+        private string fileName = "CLPLogModel" + ".log";
         
         private string filePath;
 

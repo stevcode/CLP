@@ -167,6 +167,11 @@ namespace Classroom_Learning_Partner
             submission.Submitter = submitter;
             submission.GroupSubmitter = groupSubmitter;
 
+            foreach(ICLPPageObject pageObject in submission.PageObjects)
+            {
+                pageObject.ParentPage = submission;
+            }
+
             CLPNotebook currentNotebook = null;
 
             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
