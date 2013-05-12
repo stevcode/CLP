@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using Catel.Data;
 
 namespace CLP.Models
 {
+    [DataContract]
     [Serializable]
-    public class StylusPointDTO : DataObjectBase<StylusPointDTO>
+    public class StylusPointDTO
     {
         public StylusPointDTO(StylusPoint source)
         {
@@ -16,47 +16,22 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// X coordinate of the point.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected StylusPointDTO(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        [DataMember]
+        public double X { get; set; }
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Y coordinate of the point.
         /// </summary>
-        public double X
-        {
-            get { return GetValue<double>(XProperty); }
-            set { SetValue(XProperty, value); }
-        }
-
-        public static readonly PropertyData XProperty = RegisterProperty("X", typeof(double), 0.0);
+        [DataMember]
+        public double Y { get; set; }
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Amount of pressure exerted by Stylus, determining variable width of stroke at this point.
         /// </summary>
-        public double Y
-        {
-            get { return GetValue<double>(YProperty); }
-            set { SetValue(YProperty, value); }
-        }
-
-        public static readonly PropertyData YProperty = RegisterProperty("Y", typeof(double), 0.0);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public float PressureFactor
-        {
-            get { return GetValue<float>(PressureFactorProperty); }
-            set { SetValue(PressureFactorProperty, value); }
-        }
-
-        public static readonly PropertyData PressureFactorProperty = RegisterProperty("PressureFactor", typeof(float), 0.0);
+        [DataMember]
+        public float PressureFactor { get; set; }
 
         public StylusPoint ToStylusPoint()
         {

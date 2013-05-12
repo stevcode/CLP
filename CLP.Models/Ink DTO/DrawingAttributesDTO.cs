@@ -2,12 +2,12 @@
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Media;
-using Catel.Data;
 
 namespace CLP.Models
 {
+    [DataContract]
     [Serializable]
-    public class DrawingAttributesDTO : DataObjectBase<DrawingAttributesDTO>
+    public class DrawingAttributesDTO
     {
 
         #region Constructors
@@ -24,16 +24,6 @@ namespace CLP.Models
             StylusTripTransform = source.StylusTipTransform;
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
-        /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected DrawingAttributesDTO(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
         #endregion //Constructors
 
         #region Properties
@@ -41,90 +31,50 @@ namespace CLP.Models
         /// <summary>
         /// Height of StylusTip
         /// </summary>
-        public double Height
-        {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
-        }
-
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 0.0);
+        [DataMember]
+        public double Height { get; set; }
 
         /// <summary>
         /// Width of StylusTip
         /// </summary>
-        public double Width
-        {
-            get { return GetValue<double>(WidthProperty); }
-            set { SetValue(WidthProperty, value); }
-        }
-
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 0.0);
+        [DataMember]
+        public double Width { get; set; }
 
         /// <summary>
         /// Signifies Stroke is translucent.
         /// </summary>
-        public bool IsHighlighter
-        {
-            get { return GetValue<bool>(IsHighlighterProperty); }
-            set { SetValue(IsHighlighterProperty, value); }
-        }
-
-        public static readonly PropertyData IsHighlighterProperty = RegisterProperty("IsHighlighter", typeof(bool), false);
+        [DataMember]
+        public bool IsHighlighter { get; set; }
 
         /// <summary>
         /// Signifies Stroke is using Beizer Curves for smoothing.
         /// </summary>
-        public bool FitToCurve
-        {
-            get { return GetValue<bool>(FitToCurveProperty); }
-            set { SetValue(FitToCurveProperty, value); }
-        }
-
-        public static readonly PropertyData FitToCurveProperty = RegisterProperty("FitToCurve", typeof(bool), false);
+        [DataMember]
+        public bool FitToCurve { get; set; }
 
         /// <summary>
         /// Signifies Stroke is using pressure information.
         /// </summary>
-        public bool IgnorePressure
-        {
-            get { return GetValue<bool>(IgnorePressureProperty); }
-            set { SetValue(IgnorePressureProperty, value); }
-        }
-
-        public static readonly PropertyData IgnorePressureProperty = RegisterProperty("IgnorePressure", typeof(bool), false);
+        [DataMember]
+        public bool IgnorePressure { get; set; }
 
         /// <summary>
         /// Color of the Stroke.
         /// </summary>
-        public string StrokeColor
-        {
-            get { return GetValue<string>(StrokeColorProperty); }
-            set { SetValue(StrokeColorProperty, value); }
-        }
-
-        public static readonly PropertyData StrokeColorProperty = RegisterProperty("StrokeColor", typeof(string), @"#FF000000");
+        [DataMember]
+        public string StrokeColor { get; set; }
 
         /// <summary>
         /// StylusTip of Stroke.
         /// </summary>
-        public StylusTip StylusTip
-        {
-            get { return GetValue<StylusTip>(StylusTipProperty); }
-            set { SetValue(StylusTipProperty, value); }
-        }
-
-        public static readonly PropertyData StylusTipProperty = RegisterProperty("StylusTip", typeof(StylusTip), () => new StylusTip());
+        [DataMember]
+        public StylusTip StylusTip { get; set; }
 
         /// <summary>
         /// Transformation Matrix of StylusTip of Stroke.
         /// </summary>
-        public Matrix StylusTripTransform
-        {
-            get { return GetValue<Matrix>(StylusTripTransformProperty); }
-            set { SetValue(StylusTripTransformProperty, value); }
-        }
-
-        public static readonly PropertyData StylusTripTransformProperty = RegisterProperty("StylusTripTransform", typeof(Matrix), Matrix.Identity);
+        [DataMember]
+        public Matrix StylusTripTransform { get; set; }
 
         #endregion //Properties
 
