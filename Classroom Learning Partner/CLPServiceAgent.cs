@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner
 
                             var sPage = ObjectSerializer.ToString(page);
 
-                            var byteStrokes = CLPPage.StrokesToBytes(page.InkStrokes);
+                            var byteStrokes = CLPPage.SaveInkStrokes(page.InkStrokes);
                             var pageObjects = new ObservableCollection<ICLPPageObject>();
 
                             App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);

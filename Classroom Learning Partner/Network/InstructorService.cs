@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+        void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+        public void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -81,8 +81,8 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
-                submission.ByteStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+                submission.SerializedStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(byteStrokes);
 
                 submission.IsSubmission = true;
                 submission.IsGroupSubmission = isGroupSubmission;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -125,14 +124,14 @@ namespace CLP.Models
             else
             {
                 //Console.WriteLine("pushing a " + item.ItemType);
-                if(item is CLPHistoryAddStroke)
-                {
-                    Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);
-                }
-                if(item is CLPHistoryRemoveStroke)
-                {
-                    Console.WriteLine((item as CLPHistoryRemoveStroke).StrokeId);
-                }
+                //if(item is CLPHistoryAddStroke)
+                //{
+                //    Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);
+                //}
+                //if(item is CLPHistoryRemoveStroke)
+                //{
+                //    Console.WriteLine((item as CLPHistoryRemoveStroke).StrokeId);
+                //}
                 Past.Push(item);
                 MetaPast.Push(item);
                 Future.Clear();

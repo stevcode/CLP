@@ -632,7 +632,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
 
-                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(CLPPage.StrokeToByte(stroke)));
+                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(new StrokeDTO(stroke)));
                         }
 
                         foreach(var stroke in e.Added)
@@ -691,8 +691,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             return;
                         }
-                        var add = new List<List<byte>>(CLPPage.StrokesToBytes(e.Added));
-                        var remove = new List<List<byte>>(CLPPage.StrokesToBytes(e.Removed));
+                        var add = new List<StrokeDTO>(CLPPage.SaveInkStrokes(e.Added));
+                        var remove = new List<StrokeDTO>(CLPPage.SaveInkStrokes(e.Removed));
 
                         var pageID = Page.IsSubmission ? Page.SubmissionID : Page.UniqueID;
 

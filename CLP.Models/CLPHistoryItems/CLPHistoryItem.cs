@@ -92,14 +92,14 @@ namespace CLP.Models
             return result;
         }
 
-        public List<byte> GetBytestrokeByUniqueID(CLPPage page, String uniqueID)
+        public StrokeDTO GetSerializedStrokeByUniqueID(CLPPage page, String uniqueID)
         {
-            List<byte> result = null;
+            StrokeDTO result = null;
             foreach(Stroke s in page.InkStrokes)
             {
                 if(s.GetStrokeUniqueID() == uniqueID)
                 {
-                    result = CLPPage.StrokeToByte(s);
+                    result = new StrokeDTO(s);
                     break;
                 }
             }

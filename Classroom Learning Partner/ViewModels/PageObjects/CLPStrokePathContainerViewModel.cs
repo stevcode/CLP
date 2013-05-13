@@ -121,23 +121,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ScribblesToStrokePaths()
         {
-            foreach (Stroke stroke in CLPPage.BytesToStrokes((PageObject as CLPStrokePathContainer).ByteStrokes))
+            var clpStrokePathContainer = PageObject as CLPStrokePathContainer;
+            if(clpStrokePathContainer != null)
             {
-                StylusPoint firstPoint = stroke.StylusPoints[0];
-
-                StreamGeometry geometry = new StreamGeometry();
-                using (StreamGeometryContext geometryContext = geometry.Open())
+                foreach (Stroke stroke in CLPPage.LoadInkStrokes(clpStrokePathContainer.SerializedStrokes))
                 {
-                    geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
-                    foreach (StylusPoint point in stroke.StylusPoints)
-                    {
-                        geometryContext.LineTo(new Point(point.X, point.Y), true, true);
-                    }
-                }
-                geometry.Freeze();
+                    StylusPoint firstPoint = stroke.StylusPoints[0];
 
-                StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
-                StrokePathViewModels.Add(strokePathViewModel);
+                    StreamGeometry geometry = new StreamGeometry();
+                    using (StreamGeometryContext geometryContext = geometry.Open())
+                    {
+                        geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
+                        foreach (StylusPoint point in stroke.StylusPoints)
+                        {
+                            geometryContext.LineTo(new Point(point.X, point.Y), true, true);
+                        }
+                    }
+                    geometry.Freeze();
+
+                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
+                    StrokePathViewModels.Add(strokePathViewModel);
+                }
             }
         }
 

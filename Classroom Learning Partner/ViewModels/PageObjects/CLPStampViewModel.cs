@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                StrokePathContainer.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
+                StrokePathContainer.SerializedStrokes = CLPPage.SaveInkStrokes(clonedStrokes);    //.StrokesToBytes(clonedStrokes);
                 StrokePathContainer.IsStrokePathsVisible = true;
             } else {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

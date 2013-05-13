@@ -430,10 +430,6 @@ namespace CLP.Models
                 s.AddPropertyData(StrokeIDKey, newUniqueID);
 
                 newPage.InkStrokes.Add(s);
-
-                List<byte> b = StrokeToByte(s);
-
-                newPage.ByteStrokes.Add(b);
             }
 
             foreach(ICLPPageObject clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
@@ -53,13 +54,25 @@ namespace CLP.Models
 
         public static readonly PropertyData BytestrokeProperty = RegisterProperty("Bytestroke", typeof(List<byte>), null);
 
+        /// <summary>
+        /// Ink Stroke serialized via Data Transfer Object, StrokeDTO.
+        /// </summary>
+        public StrokeDTO SerializedStroke
+        {
+            get { return GetValue<StrokeDTO>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(StrokeDTO));
+
+
         #endregion //Properties
 
         #region Methods
 
         public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
         {
-            return new CLPHistoryRemoveStroke(GetBytestrokeByUniqueID(page, StrokeId));
+            return new CLPHistoryRemoveStroke(GetSerializedStrokeByUniqueID(page, StrokeId));
         }
 
         public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
@@ -69,8 +82,8 @@ namespace CLP.Models
 
         override public void Undo(CLPPage page)
         {
-            Bytestroke = GetBytestrokeByUniqueID(page, StrokeId); // remember in case we put it back
-            if(Bytestroke == null)
+            SerializedStroke = GetSerializedStrokeByUniqueID(page, StrokeId); // remember in case we put it back
+            if(SerializedStroke == null)
             {
                 Console.WriteLine("AddStroke undo failure: No stroke to remove");
                 return;
@@ -81,7 +94,7 @@ namespace CLP.Models
                 if(otherstroke.GetStrokeUniqueID() == StrokeId)
                 {
                     indexToRemove = page.InkStrokes.IndexOf(otherstroke);
-                    Bytestroke = CLPPage.StrokeToByte(otherstroke);
+                    SerializedStroke = new StrokeDTO(otherstroke);
                     break;
                 }
             }
@@ -93,12 +106,12 @@ namespace CLP.Models
 
         override public void Redo(CLPPage page)
         {
-            if(Bytestroke == null)
+            if(SerializedStroke == null)
             {
                 Console.WriteLine("AddStroke redo failure: No stroke to add");
                 return;
             }
-            Stroke s = CLPPage.ByteToStroke(Bytestroke);
+            Stroke s = SerializedStroke.ToStroke();
             bool shouldAdd = true;
             foreach(Stroke otherstroke in page.InkStrokes)
             {
@@ -112,7 +125,7 @@ namespace CLP.Models
             {
                 page.InkStrokes.Add(s);
             }
-            Bytestroke = null; //don't need to remember anymore
+            SerializedStroke = null; //don't need to remember anymore
         }
 
         public override bool Equals(object obj)

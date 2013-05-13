@@ -143,6 +143,18 @@ namespace CLP.Models
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
+        /// Ink Strokes serialized via Data Transfer Object, StrokeDTO.
+        /// </summary>
+        public ObservableCollection<StrokeDTO> SerializedStrokes
+        {
+            get { return GetValue<ObservableCollection<StrokeDTO>>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
+
+
+        /// <summary>
         /// Signifies that this GridPart will be aggregated on submit.
         /// </summary>
         public bool IsAggregated
@@ -444,7 +456,7 @@ namespace CLP.Models
                         {
                             var strokesToRemove =
                                 from pageStroke in ParentPage.InkStrokes
-                                from objectStroke in CLPPage.BytesToStrokes(Rows[replaceIndex].ByteStrokes)
+                                from objectStroke in CLPPage.LoadInkStrokes(Rows[replaceIndex].SerializedStrokes)   //CLPPage.BytesToStrokes(Rows[replaceIndex].ByteStrokes)
                                 where pageStroke.GetStrokeUniqueID() == objectStroke.GetStrokeUniqueID()
                                 select pageStroke;
 
@@ -486,9 +498,9 @@ namespace CLP.Models
                             { 
                                 AddGridPart(gridPart); 
                             }
-                        }                       
+                        }
 
-                        StrokeCollection gridPartStrokes = CLPPage.BytesToStrokes(gridPart.ByteStrokes);
+                        StrokeCollection gridPartStrokes = CLPPage.LoadInkStrokes(gridPart.SerializedStrokes);            //.BytesToStrokes(gridPart.ByteStrokes);
                         foreach(Stroke stroke in gridPartStrokes)
                         {
                             Matrix transform = new Matrix();
@@ -576,7 +588,7 @@ namespace CLP.Models
                                 clonedStrokes.Add(newStroke);
                             }
                         }
-                        gridPart.ByteStrokes = CLPPage.StrokesToBytes(clonedStrokes);
+                        gridPart.SerializedStrokes = CLPPage.SaveInkStrokes(clonedStrokes);
                     }
                 }
             }

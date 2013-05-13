@@ -12,10 +12,10 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryRemoveStroke(List<byte> bytestroke) : base(HistoryItemType.RemoveStroke)
+        public CLPHistoryRemoveStroke(StrokeDTO serializedStroke) : base(HistoryItemType.RemoveStroke)
         {
-            Bytestroke = bytestroke;
-            StrokeId = CLPPage.ByteToStroke(bytestroke).GetStrokeUniqueID();
+            SerializedStroke = serializedStroke;
+            StrokeId = serializedStroke.StrokeID;
         }
 
         /// <summary>
@@ -31,6 +31,19 @@ namespace CLP.Models
         #endregion //Constructor
 
         #region Properties
+
+        /// <summary>
+        /// Ink Stroke serialized via Data Transfer Object, StrokeDTO.
+        /// Corresponds to the stroke removed (null if this event is in the Future)
+        /// </summary>
+        public StrokeDTO SerializedStroke
+        {
+            get { return GetValue<StrokeDTO>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(StrokeDTO));
+
 
         /// <summary>
         /// Bytestroke corresponding to the stroke removed (null if this event is in the Future)
@@ -66,12 +79,12 @@ namespace CLP.Models
 
         public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
         {
-            return new CLPHistoryRemoveStroke(GetBytestrokeByUniqueID(page, StrokeId));
+            return new CLPHistoryRemoveStroke(GetSerializedStrokeByUniqueID(page, StrokeId));
         }
 
         override public void Undo(CLPPage page)
         {
-            if(Bytestroke == null)
+            if(SerializedStroke == null)
             {
                 Console.WriteLine("RemoveStroke undo failure: No stroke to add.");
                 return;
@@ -87,15 +100,15 @@ namespace CLP.Models
             }
             if(shouldAdd)
             {
-                page.InkStrokes.Add(CLPPage.ByteToStroke(Bytestroke));
+                page.InkStrokes.Add(SerializedStroke.ToStroke());
             }
-            Bytestroke = null;
+            SerializedStroke = null;
         }
 
         override public void Redo(CLPPage page)
         {
-            Bytestroke = GetBytestrokeByUniqueID(page, StrokeId);
-            if(Bytestroke == null)
+            SerializedStroke = GetSerializedStrokeByUniqueID(page, StrokeId);
+            if(SerializedStroke == null)
             {
                 Console.WriteLine("RemoveStroke redo failure: No stroke to remove.");
                 return;
@@ -121,8 +134,8 @@ namespace CLP.Models
             {
                 return false;
             }
-            Stroke thisStroke = CLPPage.ByteToStroke(Bytestroke);
-            Stroke otherStroke = CLPPage.ByteToStroke((obj as CLPHistoryRemoveStroke).Bytestroke);
+            Stroke thisStroke = SerializedStroke.ToStroke();
+            Stroke otherStroke = (obj as CLPHistoryRemoveStroke).SerializedStroke.ToStroke();
             if(thisStroke.GetStrokeUniqueID() != otherStroke.GetStrokeUniqueID())
             {
                 return false;
