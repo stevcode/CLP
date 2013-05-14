@@ -729,6 +729,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     catch(Exception ex)
                     {
                         Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                        Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                        Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                        Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                        Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                        Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
                     }
                });
         }

@@ -37,10 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CLP.Models, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\CLP.Models.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,6 +54,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
+      <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
+      <Name>CLP.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

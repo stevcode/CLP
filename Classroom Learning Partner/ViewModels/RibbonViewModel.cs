@@ -1639,6 +1639,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
 
                 CLPPage submission = page.Clone() as CLPPage;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
 
                 if(notebook != null && submission != null)
                 {

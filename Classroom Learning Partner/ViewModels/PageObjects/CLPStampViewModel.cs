@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if (!handwritingStrokes.Contains(stroke))
                     {
-                        Stroke newStroke = stroke.Clone();
+                        Stroke newStroke = (new StrokeDTO(stroke)).ToStroke();
                         var transform = new Matrix();
                         transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
                         newStroke.Transform(transform, true);

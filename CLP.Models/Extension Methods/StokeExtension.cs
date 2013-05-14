@@ -9,7 +9,7 @@ namespace CLP.Models
         {
             try
             {
-                if(s == null || !s.ContainsPropertyData(CLPPage.StrokeIDKey))
+                if(s == null) //|| !s.ContainsPropertyData(CLPPage.StrokeIDKey)
                 {
                     Logger.Instance.WriteToLog("Null Stroke or Missing StrokeID");
                     return null;
