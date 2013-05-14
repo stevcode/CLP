@@ -144,7 +144,7 @@ namespace Classroom_Learning_Partner
                         App.Network.ProjectorProxy.AddSerializedSubmission(sPage, submitter, groupSubmitter,
             submissionTime, isGroupSubmission, notebookID, submissionID);
                     }
-                    catch(System.Exception ex)
+                    catch(Exception ex)
                     {
                         Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
                     }
@@ -166,6 +166,7 @@ namespace Classroom_Learning_Partner
             submission.SubmitterName = submitter.FullName;
             submission.Submitter = submitter;
             submission.GroupSubmitter = groupSubmitter;
+            submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
 
             foreach(ICLPPageObject pageObject in submission.PageObjects)
             {
@@ -182,7 +183,6 @@ namespace Classroom_Learning_Partner
                     break;
                 }
             }
-
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)

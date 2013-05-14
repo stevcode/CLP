@@ -206,6 +206,7 @@ namespace Classroom_Learning_Partner
                 submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
 
                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                 {

@@ -483,7 +483,7 @@ namespace CLP.Models
             if (stroke == null)
             {
                 Logger.Instance.WriteToLog("***INDIVIDUAL STROKE IS NULL***");
-                System.Windows.MessageBox.Show("One Stroke Null");
+                MessageBox.Show("One Stroke Null");
             }
 
             var sc = new StrokeCollection {stroke};
@@ -519,7 +519,7 @@ namespace CLP.Models
             if (strokes == null)
             {
                 Logger.Instance.WriteToLog("***STROKES is NULL***");
-                System.Windows.MessageBox.Show("STROKES Null");
+                MessageBox.Show("STROKES Null");
             }
             var byteStrokes = new ObservableCollection<List<byte>>();
             foreach(var stroke in strokes)
