@@ -5,52 +5,18 @@ namespace CLP.Models
 {
     public static class StokeExtension
     {
-        public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-
         public static string GetStrokeUniqueID(this Stroke s)
         {
             try
             {
-                if(s == null)
+                if(s == null || !s.ContainsPropertyData(CLPPage.StrokeIDKey))
                 {
-                    Logger.Instance.WriteToLog("Null Stroke");
+                    Logger.Instance.WriteToLog("Null Stroke or Missing StrokeID");
                     return null;
                 }
 
-                //try
-                //{
-                    //if(!s.ContainsPropertyData(CLPPage.StrokeIDKey))
-                    //{
-                    //    try
-                    //    {
-                    //        var newUniqueID = Guid.NewGuid().ToString();
-                    //        s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                    //    }
-                    //    catch(System.Exception ex)
-                    //    {
-                    //        Logger.Instance.WriteToLog("GetStrokeUniqueID Fail as AddPropertyData (Line 31): " + ex.Message);
-                    //        return null;
-                    //    }
-                        
-                    //}
+                return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
 
-                    try
-                    {
-                        return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
-                    }
-                    catch(System.Exception ex)
-                    {
-                        Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at GetPropertyData (Line 43): " + ex.Message);
-                        return null;
-                    }
-                    
-                //}
-                //catch(System.Exception ex)
-                //{
-                //    Logger.Instance.WriteToLog("GetStrokeUniqueID Fail at ContainsPropertyData (Line 22): " + ex.Message);
-                //    return null;
-                //}
-                
             }
             catch(Exception ex)
             {

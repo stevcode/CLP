@@ -12,6 +12,7 @@
             <RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding Path=AuthoringTabVisibility}" Background="Red" />
             <RibbonContextualTabGroup Header="Server and Page Viewer" Visibility="{Binding Path=PageViewerVisibility}" Background="Green" />
             <RibbonContextualTabGroup Header="Debugging" Visibility="{Binding Path=DebugTabVisibility}" Background="Violet" />
+            <RibbonContextualTabGroup Header="Extras" Visibility="{Binding ExtrasTabVisibility}" Background="DarkOrange" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
@@ -230,10 +231,10 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
 
-                <RibbonButton Label="Array + Guides"
+                <!--<RibbonButton Label="Array + Dividers"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="TRUE" />
+                              CommandParameter="TRUE" />-->
 
                 <!--<RibbonButton
                         Label="Protractor"
@@ -384,7 +385,7 @@
 
             </RibbonGroup>
             
-            <!--<RibbonGroup Header="History">
+            <RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -399,7 +400,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
-            </RibbonGroup>-->
+            </RibbonGroup>
             
         </RibbonTab>
 
@@ -824,6 +825,28 @@
                         Label="Copy This Page"
                         LargeImageSource="..\Images\LargeIcon.png"
                         Command="{Binding Path=CopyPageCommand}" />
+
+            </RibbonGroup>
+
+        </RibbonTab>
+
+        <!--Extras Tab-->
+        <RibbonTab Header="Extras" ContextualTabGroupHeader="Extras">
+
+            <RibbonGroup Header="Insert">
+
+                <RibbonButton Label="Array + Dividers"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding Path=InsertArrayCommand}"
+                              CommandParameter="TRUE" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="History">
+
+                <RibbonButton Label="Replay"
+                              LargeImageSource="..\Images\video.png"
+                              Command="{Binding Path=ReplayCommand}" />
 
             </RibbonGroup>
 

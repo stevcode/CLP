@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ServerVisibility = Visibility.Collapsed;
             HistoryVisibility = Visibility.Collapsed;
             DebugTabVisibility = Visibility.Collapsed;
-            
+            ExtrasTabVisibility = Visibility.Collapsed;
 
             switch(App.CurrentUserMode)
             {
@@ -499,6 +499,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData DebugTabVisibilityProperty = RegisterProperty("DebugTabVisibility", typeof(Visibility));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Visibility ExtrasTabVisibility
+        {
+            get { return GetValue<Visibility>(ExtrasTabVisibilityProperty); }
+            set { SetValue(ExtrasTabVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData ExtrasTabVisibilityProperty = RegisterProperty("ExtrasTabVisibility", typeof(Visibility));
 
         /// <summary>
         /// Gets or sets the property value.

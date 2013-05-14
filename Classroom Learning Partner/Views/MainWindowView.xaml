@@ -34,6 +34,8 @@
               Gesture="CTRL+SHIFT+D" />
         <KeyBinding Command="{Binding Path=ToggleDebugCommand}"
               Gesture="CTRL+SHIFT+K" />
+        <KeyBinding Command="{Binding Path=ToggleExtrasCommand}"
+              Gesture="CTRL+SHIFT+E" />
     </Window.InputBindings>
 
     <Grid x:Name="LayoutRoot">
