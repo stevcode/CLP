@@ -19,16 +19,30 @@ namespace CLP.Models
 
         public StrokeDTO(Stroke source)
         {
-            StrokePoints = new List<StylusPointDTO>();
-            ExtendedProperties = new Dictionary<StrokeProperty, object>();
-
-            foreach(var point in source.StylusPoints)
+            try
             {
-                StrokePoints.Add(new StylusPointDTO(point));
-            }
+                StrokePoints = new List<StylusPointDTO>();
+                ExtendedProperties = new Dictionary<StrokeProperty, object>();
 
-            StrokeDrawingAttributes = new DrawingAttributesDTO(source.DrawingAttributes);
-            StrokeID = source.GetStrokeUniqueID();
+                foreach(var point in source.StylusPoints)
+                {
+                    StrokePoints.Add(new StylusPointDTO(point));
+                }
+
+                StrokeDrawingAttributes = new DrawingAttributesDTO(source.DrawingAttributes);
+                StrokeID = source.GetStrokeUniqueID();
+            }
+            catch(Exception ex)
+            {
+                var nullTest = source == null ? "TRUE" : "FALSE";
+                Logger.Instance.WriteToLog("Source is null: " + nullTest);
+                Logger.Instance.WriteToLog("StrokeDTO Constructor Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+            }
         }
 
         #endregion //Constructors
