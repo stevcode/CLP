@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Timers;
@@ -196,6 +197,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageCommand = new Command(OnInsertImageCommandExecute);
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
@@ -2212,6 +2214,63 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
+        }
+
+        /// <summary>
+        /// Gets the InsertStaticImageCommand command.
+        /// </summary>
+        public Command<string> InsertStaticImageCommand { get; private set; }
+
+        private void OnInsertStaticImageCommandExecute(string fileName)
+        {
+            var uri = new Uri("pack://application:,,,/Classroom Learning Partner;component/Images/Money/" + fileName);
+            var info = Application.GetResourceStream(uri);
+            var memoryStream = new MemoryStream();
+            info.Stream.CopyTo(memoryStream);
+
+            byte[] byteSource = memoryStream.ToArray();
+
+            var ByteSource = new List<byte>(byteSource);
+
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] hash = md5.ComputeHash(byteSource);
+            string imageID = Convert.ToBase64String(hash);
+
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+
+
+            if(!page.ImagePool.ContainsKey(imageID))
+            {
+                page.ImagePool.Add(imageID, ByteSource);
+            }
+            CLPImage image = new CLPImage(imageID, page);
+            CLPStamp stamp = new CLPStamp(image, page);
+
+            switch(fileName)
+            {
+                case "penny.png":
+                    stamp.Height = 190;
+                    stamp.Width = 90;
+                    break;
+                case "dime.png":
+                    stamp.Height = 180;
+                    stamp.Width = 80;
+                    break;
+                case "nickel.png":
+                    stamp.Height = 210;
+                    stamp.Width = 100;
+                    break;
+                case "quarter.png":
+                    stamp.Height = 230;
+                    stamp.Width = 120;
+                    break;
+                default:
+                    stamp.Height = 235;
+                    stamp.Width = 300;
+                    break;
+            }
+
+            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
         }
 
         /// <summary>

@@ -405,6 +405,55 @@
         </RibbonTab>
 
         <!--Insert Tab-->
+        <RibbonTab Header="Insert" Visibility="{Binding Path=StudentVisibility}">
+
+            <RibbonGroup Header="Money Stamps">
+
+                <RibbonButton Label="Penny"
+                              LargeImageSource="..\Images\Money\penny.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="penny.png" />
+
+                <RibbonButton Label="Nickel"
+                              LargeImageSource="..\Images\Money\nickel.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="nickel.png" />
+
+                <RibbonButton Label="Dime"
+                              LargeImageSource="..\Images\Money\dime.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="dime.png" />
+
+                <RibbonButton Label="Quarter"
+                              LargeImageSource="..\Images\Money\quarter.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="quarter.png" />
+
+                <RibbonButton Label="1 Dollar"
+                              LargeImageSource="..\Images\Money\1dollar.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="1dollar.png" />
+
+                <RibbonButton Label="5 Dollars"
+                              LargeImageSource="..\Images\Money\5dollars.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="5dollars.png" />
+
+                <RibbonButton Label="10 Dollars"
+                              LargeImageSource="..\Images\Money\10dollars.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="10dollars.png" />
+
+                <RibbonButton Label="20 Dollars"
+                              LargeImageSource="..\Images\Money\20dollars.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="20dollars.png" />
+
+            </RibbonGroup>
+            
+        </RibbonTab>
+
+        <!--Insert Tab-->
         <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
 
             <RibbonGroup Header="Stamps">
@@ -849,7 +898,7 @@
                               Command="{Binding Path=ReplayCommand}" />
 
             </RibbonGroup>
-
+            
         </RibbonTab>
 
         <!--Debug Tab-->

@@ -155,6 +155,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\ServiceModelEx.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -633,6 +634,14 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\Money\10dollars.png" />
+    <Resource Include="Images\Money\1dollar.png" />
+    <Resource Include="Images\Money\20dollars.png" />
+    <Resource Include="Images\Money\5dollars.png" />
+    <Resource Include="Images\Money\dime.png" />
+    <Resource Include="Images\Money\nickel.png" />
+    <Resource Include="Images\Money\penny.png" />
+    <Resource Include="Images\Money\quarter.png" />
     <Resource Include="Images\VerticalLineIcon.png" />
     <Resource Include="Images\Protractor64.png" />
     <Resource Include="Images\ProtractorWhite.png" />
