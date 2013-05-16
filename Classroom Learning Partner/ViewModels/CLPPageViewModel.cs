@@ -622,8 +622,8 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
-            Task.Factory.StartNew(() =>
-                {
+        //    Task.Factory.StartNew(() =>
+          //      {
                     try
                     {
                         var removedStrokeIDs = new List<string>();
@@ -735,7 +735,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
                         Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
                     }
-               });
+             //  });
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
