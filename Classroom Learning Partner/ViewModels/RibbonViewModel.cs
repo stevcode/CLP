@@ -1636,6 +1636,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(CanSendToTeacher)
             {
                 CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                page.SerializedStrokes = CLPPage.SaveInkStrokes(page.InkStrokes);
                 CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
                 CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);

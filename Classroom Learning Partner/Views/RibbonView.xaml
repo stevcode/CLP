@@ -405,9 +405,9 @@
         </RibbonTab>
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert" Visibility="{Binding Path=StudentVisibility}">
+        <RibbonTab Header="Insert Money">
 
-            <RibbonGroup Header="Money Stamps">
+            <RibbonGroup Header="Money Images">
 
                 <RibbonButton Label="Penny"
                               LargeImageSource="..\Images\Money\penny.png"
