@@ -449,6 +449,11 @@
                               Command="{Binding Path=InsertStaticImageCommand}"
                               CommandParameter="20dollars.png" />
 
+                <RibbonButton Label="50 Dollars"
+                              LargeImageSource="..\Images\Money\50dollars.png"
+                              Command="{Binding Path=InsertStaticImageCommand}"
+                              CommandParameter="50dollars.png" />
+
             </RibbonGroup>
             
         </RibbonTab>

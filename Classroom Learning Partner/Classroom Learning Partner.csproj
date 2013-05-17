@@ -634,6 +634,7 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\Money\50dollars.png" />
     <Resource Include="Images\Money\10dollars.png" />
     <Resource Include="Images\Money\1dollar.png" />
     <Resource Include="Images\Money\20dollars.png" />

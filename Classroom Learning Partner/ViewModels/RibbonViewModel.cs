@@ -2244,33 +2244,33 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.ImagePool.Add(imageID, ByteSource);
             }
             CLPImage image = new CLPImage(imageID, page);
-            CLPStamp stamp = new CLPStamp(image, page);
+           // CLPStamp stamp = new CLPStamp(image, page);
 
             switch(fileName)
             {
                 case "penny.png":
-                    stamp.Height = 190;
-                    stamp.Width = 90;
+                    image.Height = 90;
+                    image.Width = 90;
                     break;
                 case "dime.png":
-                    stamp.Height = 180;
-                    stamp.Width = 80;
+                    image.Height = 80;
+                    image.Width = 80;
                     break;
                 case "nickel.png":
-                    stamp.Height = 210;
-                    stamp.Width = 100;
+                    image.Height = 100;
+                    image.Width = 100;
                     break;
                 case "quarter.png":
-                    stamp.Height = 230;
-                    stamp.Width = 120;
+                    image.Height = 120;
+                    image.Width = 120;
                     break;
                 default:
-                    stamp.Height = 235;
-                    stamp.Width = 300;
+                    image.Height = 128;
+                    image.Width = 300;
                     break;
             }
 
-            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+            CLPServiceAgent.Instance.AddPageObjectToPage(image);
         }
 
         /// <summary>
