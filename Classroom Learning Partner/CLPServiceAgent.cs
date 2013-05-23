@@ -144,7 +144,7 @@ namespace Classroom_Learning_Partner
                         {
                             foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
                             {
-                                page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes);
+                                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
                                     pageObject.ParentPage = submission;
