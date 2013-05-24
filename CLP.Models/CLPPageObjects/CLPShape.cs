@@ -13,7 +13,8 @@ namespace CLP.Models
             Ellipse,
             Triangle,
             HorizontalLine,
-            VerticalLine
+            VerticalLine,
+            Protractor
         }
 
         public static string Type = "CLPShape";
@@ -27,8 +28,8 @@ namespace CLP.Models
             ShapeType = shapeType;
             XPosition = 10;
             YPosition = 10;
-            Height = 100;
-            Width = 100;
+            Height = 200;
+            Width = 200;
             if(shapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
             {
                 Width = 20;

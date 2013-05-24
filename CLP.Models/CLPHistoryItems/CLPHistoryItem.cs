@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -14,8 +16,7 @@ namespace CLP.Models
         MoveObject,
         AddArrayLine,
         RemoveArrayLine,
-        Undo,
-        Redo
+        Aggregation
     }
 
     /// <summary>
@@ -25,10 +26,9 @@ namespace CLP.Models
     [Serializable]
     public abstract class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
-        public CLPHistoryItem(HistoryItemType type, CLPPage page)
+        public CLPHistoryItem(HistoryItemType type)
         {
             ItemType = type;
-            Page = page;
         }
 
         /// <summary>
@@ -54,34 +54,21 @@ namespace CLP.Models
 
         public static readonly PropertyData ItemTypeProperty = RegisterProperty("ItemType", typeof(HistoryItemType), null);
 
-        /// <summary>
-        /// Page on which this action happened
-        /// </summary>
-        public CLPPage Page
-        {
-            get { return GetValue<CLPPage>(PageProperty); }
-            set { SetValue(PageProperty, value); }
-        }
-
-        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage), null);
-
         #endregion //Properties
 
         #region Methods
 
         // Undo this action
-        public abstract void Undo();
+        public abstract void Undo(CLPPage page);
 
         // Redo this action
-        public abstract void Redo();
+        public abstract void Redo(CLPPage page);
 
         // Return a CLPHistoryItem corresponding to what undoing this action would look like
-        public abstract CLPHistoryItem GetUndoFingerprint();
+        public abstract CLPHistoryItem GetUndoFingerprint(CLPPage page);
 
         // Return a CLPHistoryItem corresponding to what redoing this action would look like
-        public abstract CLPHistoryItem GetRedoFingerprint();
-
-        public virtual void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject) {}
+        public abstract CLPHistoryItem GetRedoFingerprint(CLPPage page);
 
         public override bool Equals(object obj)
         {
@@ -89,7 +76,34 @@ namespace CLP.Models
             {
                 return false;
             }
-            return ((obj as CLPHistoryItem).Page.UniqueID == Page.UniqueID);
+            return true;
+        }
+
+        public ICLPPageObject GetPageObjectByUniqueID(CLPPage page, String uniqueID)
+        {
+            ICLPPageObject result = null;
+            foreach(ICLPPageObject obj in page.PageObjects) {
+                if(obj.UniqueID == uniqueID)
+                {
+                    result = obj;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        public StrokeDTO GetSerializedStrokeByUniqueID(CLPPage page, String uniqueID)
+        {
+            StrokeDTO result = null;
+            foreach(Stroke s in page.InkStrokes)
+            {
+                if(s.GetStrokeUniqueID() == uniqueID)
+                {
+                    result = new StrokeDTO(s);
+                    break;
+                }
+            }
+            return result;
         }
 
         #endregion //Methods

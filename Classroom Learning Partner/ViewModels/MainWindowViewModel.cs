@@ -48,6 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetServerCommand = new Command(OnSetServerCommandExecute);
 
             ToggleDebugCommand = new Command(OnToggleDebugCommandExecute);
+            ToggleExtrasCommand = new Command(OnToggleExtrasCommandExecute);
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -255,14 +256,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnToggleDebugCommandExecute()
         {
-            if(Ribbon.DebugTabVisibility == Visibility.Collapsed)
-            {
-                Ribbon.DebugTabVisibility = Visibility.Visible;
-            }
-            else
-            {
-                Ribbon.DebugTabVisibility = Visibility.Collapsed;
-            }
+            Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Gets the ToggleExtrasCommand command.
+        /// </summary>
+        public Command ToggleExtrasCommand { get; private set; }
+
+        private void OnToggleExtrasCommandExecute()
+        {
+            Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion //Commands

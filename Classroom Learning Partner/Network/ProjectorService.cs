@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
-        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes,
+        void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes,
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+        public void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -138,8 +138,8 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
-                submission.ByteStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+                submission.SerializedStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(byteStrokes);
 
                 submission.IsSubmission = true;
                 submission.IsGroupSubmission = true;
@@ -206,6 +206,12 @@ namespace Classroom_Learning_Partner
                 submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+
+                foreach(ICLPPageObject pageObject in submission.PageObjects)
+                {
+                    pageObject.ParentPage = submission;
+                }
             }
 
             var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);
@@ -256,7 +262,7 @@ namespace Classroom_Learning_Partner
 
         #region INotebookContract Members
 
-        public void ModifyPageInkStrokes(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID)
+        public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate
@@ -272,7 +278,7 @@ namespace Classroom_Learning_Partner
 
                         if(page != null)
                         {
-                            StrokeCollection strokesToRemove = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesRemoved));
+                            StrokeCollection strokesToRemove = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
 
                             var strokes =
                                 from externalStroke in strokesToRemove
@@ -284,7 +290,7 @@ namespace Classroom_Learning_Partner
 
                             page.InkStrokes.Remove(actualStrokesToRemove);
 
-                            StrokeCollection strokesToAdd = CLPPage.BytesToStrokes(new ObservableCollection<List<byte>>(strokesAdded));
+                            StrokeCollection strokesToAdd = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
                             page.InkStrokes.Add(strokesToAdd);
                             break;
                         }

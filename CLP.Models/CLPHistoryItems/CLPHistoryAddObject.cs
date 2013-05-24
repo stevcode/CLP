@@ -11,9 +11,9 @@ namespace CLP.Models
 
         #region Constructor
 
-        public CLPHistoryAddObject(CLPPage page, ICLPPageObject item) : base(HistoryItemType.AddObject, page)
+        public CLPHistoryAddObject(String objectId) : base(HistoryItemType.AddObject)
         {
-            PageObject = item;
+            ObjectId = objectId;
         }
 
         /// <summary>
@@ -31,7 +31,19 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
-        /// Page object added in this historical event
+        /// Unique ID of page object added in this historical event
+        /// </summary>
+        public String ObjectId
+        {
+            get { return GetValue<String>(ObjectIdProperty); }
+            set { SetValue(ObjectIdProperty, value); }
+        }
+
+        public static readonly PropertyData ObjectIdProperty = 
+            RegisterProperty("ObjectId", typeof(String), null);
+
+        /// <summary>
+        /// The page object itself; null unless this event is in the Future
         /// </summary>
         public ICLPPageObject PageObject
         {
@@ -39,46 +51,50 @@ namespace CLP.Models
             set { SetValue(PageObjectProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectProperty = 
+        public static readonly PropertyData PageObjectProperty =
             RegisterProperty("PageObject", typeof(ICLPPageObject), null);
+
 
         #endregion //Properties
 
         #region Methods
 
-        public override void Undo()
+        public override void Undo(CLPPage page)
         {
-            Page.PageObjects.Remove(PageObject);
-        }
-
-        override public void Redo()
-        {
-            Page.PageObjects.Add(PageObject);
-        }
-
-        override public CLPHistoryItem GetUndoFingerprint()
-        {
-            return new CLPHistoryRemoveObject(Page, PageObject);
-        }
-
-        override public CLPHistoryItem GetRedoFingerprint()
-        {
-            return new CLPHistoryAddObject(Page, PageObject);
-        }
-
-        override public void ReplaceHistoricalRecords(ICLPPageObject oldObject, ICLPPageObject newObject)
-        {
-            Console.WriteLine("editing history");
-            if(PageObject.UniqueID == oldObject.UniqueID)
+            PageObject = GetPageObjectByUniqueID(page, ObjectId); // store it in case we need to put it back later
+            if(PageObject == null)
             {
-                PageObject = newObject;
+                Console.WriteLine("AddObject Undo Failure: No object to remove.");
+                return;
             }
+            page.PageObjects.Remove(PageObject);
+        }
+
+        override public void Redo(CLPPage page)
+        {
+            if(PageObject == null)
+            {
+                Console.WriteLine("AddObject Redo Failure: No object to add.");
+                return;
+            }
+            page.PageObjects.Add(PageObject);
+            PageObject = null; // don't need to put it back later anymore
+        }
+
+        override public CLPHistoryItem GetUndoFingerprint(CLPPage page)
+        {
+            return new CLPHistoryRemoveObject(GetPageObjectByUniqueID(page, ObjectId));
+        }
+
+        override public CLPHistoryItem GetRedoFingerprint(CLPPage page)
+        {
+            return new CLPHistoryAddObject(ObjectId);
         }
 
         public override bool Equals(object obj)
         {
             if(!(obj is CLPHistoryAddObject) ||
-                (obj as CLPHistoryAddObject).PageObject.UniqueID != PageObject.UniqueID)
+                (obj as CLPHistoryAddObject).ObjectId != ObjectId)
             {
                 return false;
             }

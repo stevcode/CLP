@@ -22,8 +22,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPArrayViewModel(CLPArray array)
         {
+            //IsDivisionBehaviorOn = false; //Renee's class to force this behavior instead of batch changing them all.
             PageObject = array;
-            hoverTimer.Interval = 1500;
+            hoverTimer.Interval = 2300;
+            CloseAdornerTimeOut = 0.15;
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
@@ -296,8 +298,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             HorizontalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
-                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.UniqueID, divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -336,8 +337,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             VerticalDivisions.Add(bottomDiv);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.ParentPage,
-                        (PageObject as CLPArray), divAbove, topDiv, bottomDiv));
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryAddArrayLine(PageObject.UniqueID, divAbove, topDiv, bottomDiv));
         }
 
         /// <summary>
@@ -363,7 +363,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
             }
-
         }
 
         #endregion //Commands
@@ -420,7 +419,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 hoverTimer.Stop();
                 timerRunning = false;
@@ -433,7 +432,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsAdornerVisible = true;
                 return false;
             }
-            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 hoverTimer.Stop();
                 timerRunning = false;
@@ -446,12 +445,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsAdornerVisible = true;
                 return false;
             }
-            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 IsMouseOverShowEnabled = false;
                 return false;
             }
-            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn)
+            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
             {
                 IsMouseOverShowEnabled = false;
                 return false;

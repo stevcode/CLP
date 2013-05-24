@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -105,7 +102,7 @@ namespace CLP.Models
         {
             get
             {
-                return  40;
+                return 30;
             }
         }
 
@@ -114,6 +111,8 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base(page)
         {
+            IsGridOn = true;
+
             Rows = rows;
             Columns = columns;
 
@@ -129,6 +128,13 @@ namespace CLP.Models
             ArrayWidth = 450;
 
             EnforceAspectRatio(columns * 1.0 / rows);
+
+            if (Width > page.PageWidth / 2)
+            {
+                ArrayHeight = 200;
+                EnforceAspectRatio(columns * 1.0 / rows);
+            }
+
             ApplyDistinctPosition(this);
 
             CalculateGridLines();
@@ -248,9 +254,6 @@ namespace CLP.Models
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the HorizontalDivisions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
 
         /// <summary>
@@ -262,9 +265,6 @@ namespace CLP.Models
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the VerticalDivs property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
 
         #endregion //Properties
@@ -445,6 +445,30 @@ namespace CLP.Models
             double deltaX = right - left;
             double intersectionArea = deltaY * deltaX;
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
+        }
+
+        public override void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
+        {
+            if(CanAcceptPageObjects)
+            {
+                foreach(ICLPPageObject pageObject in removedPageObjects)
+                {
+                    if(PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                    {
+                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                    }
+                }
+
+                foreach(ICLPPageObject pageObject in addedPageObjects)
+                {
+                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject is CLPStrokePathContainer)
+                    {
+                        Parts += pageObject.Parts;
+                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
+                }
+            }
         }
 
         public void RefreshArrayDimensions()

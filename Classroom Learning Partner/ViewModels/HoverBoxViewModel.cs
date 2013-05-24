@@ -301,8 +301,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkCorrectCommandExecute(MouseEventArgs e)
         {
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-             notebook.Submissions.Remove(Page.UniqueID);
+
+            
             IsCorrect = !IsCorrect;
             if(IsCorrect == true)
             {
@@ -323,7 +323,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsUnknown = false;
 
             }
-            notebook.AddStudentSubmission(Page.UniqueID, Page);
+          //  CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+          //  notebook.Submissions.Remove(Page.UniqueID);
+            //notebook.AddStudentSubmission(Page.UniqueID, Page);
+            NotebookWorkspaceViewModel notebookViewModel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel);
+            notebookViewModel.SubmissionPages.Remove(Page);
+            notebookViewModel.SubmissionPages.Add(Page);
            
         }
         /// <summary>
@@ -354,6 +359,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
             }
+            NotebookWorkspaceViewModel notebookViewModel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel);
+            notebookViewModel.SubmissionPages.Remove(Page);
+            notebookViewModel.SubmissionPages.Add(Page);
         }
         /// <summary>
         /// Gets the MarkCorrectCommand command.
@@ -384,6 +392,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 }
             }
+            NotebookWorkspaceViewModel notebookViewModel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel);
+            notebookViewModel.SubmissionPages.Remove(Page);
+            notebookViewModel.SubmissionPages.Add(Page);
         }
         /// <summary>
         /// Gets the MarkCorrectCommand command.
@@ -416,6 +427,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
             }
+                   NotebookWorkspaceViewModel notebookViewModel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel);
+                   notebookViewModel.SubmissionPages.Remove(Page);
+                   notebookViewModel.SubmissionPages.Add(Page);
         }
         /// <summary>
         /// Gets the MarkCorrectCommand command.

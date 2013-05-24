@@ -5,28 +5,22 @@ namespace CLP.Models
 {
     public static class StokeExtension
     {
-        public static Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-
         public static string GetStrokeUniqueID(this Stroke s)
         {
             try
             {
-                if(s == null)
+                if(s == null) //|| !s.ContainsPropertyData(CLPPage.StrokeIDKey)
                 {
-                    Console.WriteLine("Null Stroke");
+                    Logger.Instance.WriteToLog("Null Stroke or Missing StrokeID");
                     return null;
                 }
 
-                if (!s.ContainsPropertyData(CLPPage.StrokeIDKey))
-                {
-                    var newUniqueID = Guid.NewGuid().ToString();
-                    s.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
-                }
                 return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
+
             }
             catch(Exception ex)
             {
-                Console.WriteLine("GetStrokeUniqueID Fail: " + ex.Message);
+                Logger.Instance.WriteToLog("GetStrokeUniqueID Fail: " + ex.Message);
                 return null;
             }
         }
@@ -39,7 +33,7 @@ namespace CLP.Models
             }
             catch(Exception ex)
             {
-                Console.WriteLine("SetStrokeUniqueID Fail: " + ex.Message);
+                Logger.Instance.WriteToLog("SetStrokeUniqueID Fail (Top level): " + ex.Message);
             }
         }
     }

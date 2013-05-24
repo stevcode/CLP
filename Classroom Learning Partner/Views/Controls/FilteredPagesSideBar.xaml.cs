@@ -53,7 +53,7 @@ namespace Classroom_Learning_Partner.Views
                     }
 
                 }
-                if(item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[0])
                 {
                     if((bool)(sender as ToggleButton).IsChecked)
                     {
@@ -72,6 +72,50 @@ namespace Classroom_Learning_Partner.Views
                         item.Visibility = Visibility.Collapsed;
                     }
                 }
+            }
+        }
+
+        private void toggle_Click_tag(object sender, RoutedEventArgs e)
+        {
+            var itemsPresenter = ((sender as ToggleButton).Parent as Grid).Children[1] as ItemsPresenter;
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
+
+            foreach(UIElement item in vsp.Children)
+            {
+
+                var bord = GetVisualChild<Border>(item);
+                var border = bord as Border;
+                if(border != null)
+                {
+                    
+
+                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
+                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
+
+                        hide_stacks(border, e);
+           
+
+                }
+
+                    if((bool)(sender as ToggleButton).IsChecked)
+                    {
+
+                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
+                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
+
+                        item.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                      
+
+                            //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Collapsed;
+                            //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Visible;
+
+                            item.Visibility = Visibility.Collapsed;
+                        
+                    }
+                
             }
         }
 
@@ -220,7 +264,30 @@ namespace Classroom_Learning_Partner.Views
                     show_stacks(border, true);
                 }
                 //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
-                if(item != vsp.Children[vsp.Children.Count - 1])
+                if(item != vsp.Children[0])
+                {
+                    item.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void allTags_Loaded(object sender, RoutedEventArgs e)
+        {
+            var itemsPresenter = sender as ItemsPresenter;
+            var vsp = GetVisualChild<WrapPanel>(itemsPresenter);
+
+            foreach(UIElement item in vsp.Children)
+            {
+                var border = GetVisualChild<Border>(item);
+                if(border != null)
+                {
+                    //var grid = GetVisualParent<Grid>(border);
+                    // var stack = grid.Children[0];
+                    //  stack.Visibility = Visibility.Visible;
+                    show_stacks(border, true);
+                }
+                //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
+                if(item != vsp.Children[vsp.Children.Count-1])
                 {
                     item.Visibility = Visibility.Collapsed;
                 }

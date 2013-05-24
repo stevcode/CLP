@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.Logging;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 
@@ -113,7 +114,6 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        //TODO: Steve - Make this a String Resource
         private static string _notebookDirectory;
         public static string NotebookDirectory
         {

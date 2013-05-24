@@ -100,6 +100,18 @@ namespace CLP.Models
 
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
+        /// <summary>
+        /// Ink Strokes serialized via Data Transfer Object, StrokeDTO.
+        /// </summary>
+        public ObservableCollection<StrokeDTO> SerializedStrokes
+        {
+            get { return GetValue<ObservableCollection<StrokeDTO>>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
+
+
         public override string PageObjectType
         {
             get { return Type; }

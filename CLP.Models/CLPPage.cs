@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
+using Catel;
 using Catel.Data;
 
 namespace CLP.Models
@@ -50,6 +51,9 @@ namespace CLP.Models
     KnownType(typeof(DomainInterpretationTagType)),
     KnownType(typeof(CLPHandwritingRegion)),
     KnownType(typeof(CLPInkShapeRegion)),
+    KnownType(typeof(StrokeDTO)),
+    KnownType(typeof(StylusPointDTO)),
+    KnownType(typeof(DrawingAttributesDTO)),
     KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
     public class CLPPage : DataObjectBase<CLPPage>
@@ -198,20 +202,24 @@ namespace CLP.Models
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
 
         /// <summary>
+        /// Ink Strokes serialized via Data Transfer Object, StrokeDTO.
+        /// </summary>
+        public ObservableCollection<StrokeDTO> SerializedStrokes
+        {
+            get { return GetValue<ObservableCollection<StrokeDTO>>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
+
+        /// <summary>
         /// Deserialized Ink Strokes.
         /// </summary>
         [XmlIgnore]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set
-            {
-                if (InkStrokes != null)
-                {
-                	ByteStrokes = StrokesToBytes(InkStrokes);
-                }
-                SetValue(InkStrokesProperty, value);
-            }
+            set { SetValue(InkStrokesProperty, value); }
         }
 
         [NonSerialized]
@@ -429,10 +437,6 @@ namespace CLP.Models
                 s.AddPropertyData(StrokeIDKey, newUniqueID);
 
                 newPage.InkStrokes.Add(s);
-
-                List<byte> b = StrokeToByte(s);
-
-                newPage.ByteStrokes.Add(b);
             }
 
             foreach(ICLPPageObject clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
@@ -444,6 +448,31 @@ namespace CLP.Models
             }
 
             return newPage;
+        }
+
+        public static ObservableCollection<StrokeDTO> SaveInkStrokes(StrokeCollection strokes)
+        {
+            var serializedStrokes = new ObservableCollection<StrokeDTO>();
+            foreach(var stroke in strokes)
+            {
+                serializedStrokes.Add(new StrokeDTO(stroke));
+            }
+
+            return serializedStrokes;
+        }
+
+        public static StrokeCollection LoadInkStrokes(ObservableCollection<StrokeDTO> serializedStrokes)
+        {
+            var strokes = new StrokeCollection();
+            foreach(var strokeDTO in serializedStrokes)
+            {
+                if(strokeDTO.StrokePoints.Any())
+                {
+                    strokes.Add(strokeDTO.ToStroke());
+                }
+            }
+
+            return strokes;
         }
 
         public static Stroke ByteToStroke(List<byte> byteStroke)
@@ -458,6 +487,12 @@ namespace CLP.Models
 
         public static List<byte> StrokeToByte(Stroke stroke)
         {
+            if (stroke == null)
+            {
+                Logger.Instance.WriteToLog("***INDIVIDUAL STROKE IS NULL***");
+                MessageBox.Show("One Stroke Null");
+            }
+
             var sc = new StrokeCollection {stroke};
 
             var mStream = new MemoryStream();
@@ -488,6 +523,11 @@ namespace CLP.Models
          */
         public static ObservableCollection<List<byte>> StrokesToBytes(StrokeCollection strokes)
         {
+            if (strokes == null)
+            {
+                Logger.Instance.WriteToLog("***STROKES is NULL***");
+                MessageBox.Show("STROKES Null");
+            }
             var byteStrokes = new ObservableCollection<List<byte>>();
             foreach(var stroke in strokes)
             {
@@ -500,7 +540,7 @@ namespace CLP.Models
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-            InkStrokes = BytesToStrokes(ByteStrokes);
+            //InkStrokes = BytesToStrokes(ByteStrokes);
         }
 
         [OnSerializing]
@@ -508,7 +548,7 @@ namespace CLP.Models
         {
             if (InkStrokes != null)
             {
-                ByteStrokes = StrokesToBytes(InkStrokes);
+                SerializedStrokes = SaveInkStrokes(InkStrokes);
             }
         }
 

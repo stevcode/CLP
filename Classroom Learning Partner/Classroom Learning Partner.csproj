@@ -142,14 +142,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Microsoft.Ink.resources.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=1.2.0.4274, Culture=neutral, PublicKeyToken=f686731cfb9cc103, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External Libraries\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver, Version=1.2.0.4274, Culture=neutral, PublicKeyToken=f686731cfb9cc103, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External Libraries\MongoDB.Driver.dll</HintPath>
-    </Reference>
     <Reference Include="NAudio, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NAudio.dll</HintPath>
@@ -158,15 +150,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NRtfTree.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.480, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External Libraries\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="ServiceModelEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d0f8277329bba7a0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\ServiceModelEx.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -646,6 +635,20 @@
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
     <Resource Include="Images\scissors.png" />
+    <Resource Include="Images\Money\50dollars.png" />
+    <Resource Include="Images\Money\10dollars.png" />
+    <Resource Include="Images\Money\1dollar.png" />
+    <Resource Include="Images\Money\20dollars.png" />
+    <Resource Include="Images\Money\5dollars.png" />
+    <Resource Include="Images\Money\dime.png" />
+    <Resource Include="Images\Money\nickel.png" />
+    <Resource Include="Images\Money\penny.png" />
+    <Resource Include="Images\Money\quarter.png" />
+    <Resource Include="Images\VerticalLineIcon.png" />
+    <Resource Include="Images\Protractor64.png" />
+    <Resource Include="Images\ProtractorWhite.png" />
+    <Resource Include="Images\Protractor.png" />
+    <Resource Include="Images\InkArray.png" />
     <Resource Include="Images\NumberPad.png" />
     <Resource Include="Images\Array.png" />
     <Resource Include="Images\Unstarred.png" />
@@ -688,9 +691,6 @@
     <Content Include="External Libraries\IAWinFX.dll" />
     <Content Include="External Libraries\Microsoft.Ink.dll" />
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
-    <Content Include="External Libraries\MongoDB.Bson.dll" />
-    <Content Include="External Libraries\MongoDB.Driver.dll" />
-    <Content Include="External Libraries\protobuf-net.dll" />
     <Resource Include="Images\Inkwell.ico" />
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />

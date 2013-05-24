@@ -79,14 +79,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
 
-     /**       foreach(Tag t in tags)
+            foreach(Tag t in tags)
             {
                 if(t.TagType != null)
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
             }   
-            */
+            
         }
 
 
@@ -473,6 +473,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 reader.Dispose();
             }
+            else
+            {
+                return "";
+            }
             foreach(CLPPage p in SubmissionPages) {
                 UserNames.Remove(p.SubmitterName);
 
@@ -485,10 +489,6 @@ namespace Classroom_Learning_Partner.ViewModels
             names = names.Substring(0, names.Length - 2);
             return names;
         }
-
-
-
-
 
         /// <summary>
         /// Gets or sets the property value.
@@ -573,6 +573,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
+               FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
 
             else if(Sort == "Group Submissions")
@@ -619,12 +620,14 @@ namespace Classroom_Learning_Partner.ViewModels
             else if(Sort == "Correctness")
             {
                 FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.SortDescriptions.Clear();
                 FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
                 FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }
             else if(Sort == "Starred")
             {
                 FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.SortDescriptions.Clear();
                 FilteredSubmissions.GroupDescriptions.Add(starredDescription);
                 FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             }

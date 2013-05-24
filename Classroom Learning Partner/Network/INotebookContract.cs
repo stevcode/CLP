@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner
 {
@@ -7,7 +8,7 @@ namespace Classroom_Learning_Partner
     public interface INotebookContract
     {
         [OperationContract]
-        void ModifyPageInkStrokes(List<List<byte>> strokesAdded, List<List<byte>> strokesRemoved, string pageID);
+        void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID);
 
         [OperationContract]
         void AddNewPage(string s_page, int index);

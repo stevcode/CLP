@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+        void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(ObservableCollection<List<byte>> byteStrokes, 
+        public void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
             ObservableCollection<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
@@ -81,8 +81,8 @@ namespace Classroom_Learning_Partner
 
             if(submission != null)
             {
-                submission.ByteStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.BytesToStrokes(byteStrokes);
+                submission.SerializedStrokes = byteStrokes;
+                submission.InkStrokes = CLPPage.LoadInkStrokes(byteStrokes);
 
                 submission.IsSubmission = true;
                 submission.IsGroupSubmission = isGroupSubmission;
@@ -144,7 +144,7 @@ namespace Classroom_Learning_Partner
                         App.Network.ProjectorProxy.AddSerializedSubmission(sPage, submitter, groupSubmitter,
             submissionTime, isGroupSubmission, notebookID, submissionID);
                     }
-                    catch(System.Exception ex)
+                    catch(Exception ex)
                     {
                         Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
                     }
@@ -166,6 +166,12 @@ namespace Classroom_Learning_Partner
             submission.SubmitterName = submitter.FullName;
             submission.Submitter = submitter;
             submission.GroupSubmitter = groupSubmitter;
+            submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+
+            foreach(ICLPPageObject pageObject in submission.PageObjects)
+            {
+                pageObject.ParentPage = submission;
+            }
 
             CLPNotebook currentNotebook = null;
 
@@ -177,7 +183,6 @@ namespace Classroom_Learning_Partner
                     break;
                 }
             }
-
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate(object arg)

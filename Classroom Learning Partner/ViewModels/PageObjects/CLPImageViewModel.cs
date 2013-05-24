@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 aspectRatio = SourceImage.Width/SourceImage.Height;
             }
-            PageObject.EnforceAspectRatio(aspectRatio);
+           // PageObject.EnforceAspectRatio(aspectRatio);
 
             ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
         }
