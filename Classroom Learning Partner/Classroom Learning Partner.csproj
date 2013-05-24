@@ -645,6 +645,7 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\scissors.png" />
     <Resource Include="Images\NumberPad.png" />
     <Resource Include="Images\Array.png" />
     <Resource Include="Images\Unstarred.png" />

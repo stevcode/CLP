@@ -184,7 +184,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplayCommand = new Command(OnReplayCommandExecute);
             RedotCommand = new Command(OnRedotCommandExecute);
             UndotCommand = new Command(OnUndotCommandExecute);
-            
+            EnableCutCommand = new Command(OnEnableCutCommandExecute);
+
 
             //Insert
             InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
@@ -1972,6 +1973,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command ReplayCommand { get; private set; }
         public Command RedotCommand { get; private set; }
         public Command UndotCommand { get; private set; }
+        public Command EnableCutCommand { get; private set; }
 
         private void OnReplayCommandExecute()
         {
@@ -2039,8 +2041,6 @@ namespace Classroom_Learning_Partner.ViewModels
             t.Start();
         }
 
-    
-
         private void OnRedotCommandExecute() 
         {
             CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
@@ -2084,6 +2084,19 @@ namespace Classroom_Learning_Partner.ViewModels
             });
             tx.Start(); 
          }
+
+        private void OnEnableCutCommandExecute()
+        {
+            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            if(page.CutEnabled)
+            {
+                page.CutEnabled = false;
+            }
+            else
+            {
+                page.CutEnabled = true;
+            }
+        }
 
         /// <summary>
         /// Trims the current page's excess height if free of ink strokes and pageObjects.

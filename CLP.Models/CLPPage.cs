@@ -101,6 +101,13 @@ namespace CLP.Models
 
         #region Properties
 
+        public Boolean CutEnabled
+        {
+            get { return GetValue<bool>(CutEnabledProperty); }
+            set { SetValue(CutEnabledProperty, value); }
+        }
+        public static readonly PropertyData CutEnabledProperty = RegisterProperty("CutEnabled", typeof(bool), false);
+
         /// <summary>
         /// Pool of Images used on a page, so that duplications don't occur
         /// UniqueID, ByteSource
@@ -527,8 +534,95 @@ namespace CLP.Models
             }        
         }
 
+        public List<ObservableCollection<ICLPPageObject>> CutObjects(double leftX, double rightX, double topY, double botY)
+        {
+            List<ObservableCollection<ICLPPageObject>> lr = new List<ObservableCollection<ICLPPageObject>>();
+            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c1 = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
+            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c2 = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
+            if(Math.Abs(leftX - rightX) < Math.Abs(topY - botY))
+            {
+                double Ave = (rightX + leftX) / 2;
+                foreach(ICLPPageObject o in this.PageObjects)
+                {
+                    double otopYVal = o.YPosition;
+                    double obotYVal = otopYVal + o.Height;
+                    double oLeftXVal = o.XPosition;
+                    double oRightXVal = o.XPosition + o.Width;
+                    if(o.PageObjectType.Equals("CLPArray"))
+                    {
+                        if(((oLeftXVal <= leftX) && (oRightXVal >= rightX)) &&
+                           (((topY - otopYVal) < 100) &&
+                            ((obotYVal - botY) < 100)))
+                        {
+                            ObservableCollection<ICLPPageObject> c = o.SplitAtX(Ave);
+                            foreach(ICLPPageObject no in c)
+                            {
+                                c1.Add(no);
+                            }
+                            c2.Add(o);
+                        }
+                    }
+                    else if(o.PageObjectType.Equals(CLPShape.Type))
+                    {
+                        CLPShape oc = (CLPShape)o;
+                        if(oc.ShapeType.Equals(CLPShape.CLPShapeType.Rectangle)){
+                            if(((otopYVal >= topY) && (obotYVal <= botY)) &&
+                             ((oLeftXVal <= leftX) && (oRightXVal >= rightX)))
+                            {
+                                ObservableCollection<ICLPPageObject> c = o.SplitAtX(Ave);
+                                foreach(ICLPPageObject no in c)
+                                {
+                                    c1.Add(no);
+                                }
+                                c2.Add(o);
+                            }
+                        }
+                    }
+                }
+            }
+            else{ 
+                double Ave = (topY + botY) / 2;
+                foreach(ICLPPageObject o in this.PageObjects)
+                {
+                    double otopYVal = o.YPosition;
+                    double obotYVal = otopYVal + o.Height;
+                    double oLeftXVal = o.XPosition;
+                    double oRightXVal = o.XPosition + o.Width;
+                    if(o.PageObjectType.Equals("CLPArray"))
+                    {
+                        if(((otopYVal <= topY) && (obotYVal >= botY)) &&
+                           (((leftX - oLeftXVal) < 100) &&
+                            ((oRightXVal - rightX) < 100)))
+                        {
+                            ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
+                            foreach(ICLPPageObject no in c)
+                            {
+                                c1.Add(no);
+                            }
+                            c2.Add(o);
+                        }
+                    }
+                    else if(o.PageObjectType.Equals(CLPShape.Type))
+                    {
+                        CLPShape oc = (CLPShape)o;
+                        if(oc.ShapeType.Equals(CLPShape.CLPShapeType.Rectangle)){
+                            if(((otopYVal <= topY) && (obotYVal >= botY)) &&
+                               ((oLeftXVal >= leftX) && (oRightXVal <= rightX))){
+                                ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
+                                foreach(ICLPPageObject no in c){
+                                    c1.Add(no);
+                                }
+                                c2.Add(o);
+                            }
+                        }
+                    }
+               }  
+            }
+            lr.Add(c1);
+            lr.Add(c2);
+            return lr;
+        }
         #endregion
     }
-
 }
 

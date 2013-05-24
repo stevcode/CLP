@@ -77,5 +77,67 @@ namespace CLP.Models
 
             return newShape;
         }
+        
+        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtX(double Ave)
+        {
+            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
+            if(CLPShapeType.Rectangle.CompareTo(this.ShapeType) == 0)
+            {
+                Console.Write("Shape identified correctly");
+                double shape1X = this.XPosition;
+                double shape1Y = this.YPosition;
+                double shape2Y = this.YPosition;
+                double shape2X = Ave;
+                double shapeHeight = this.Height;
+                double shape1Width = Ave - shape1X;
+                double shape2Width = this.XPosition + this.Width - Ave;
+                CLPShape square1 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
+                square1.XPosition = shape1X;
+                square1.YPosition = shape1Y;
+                square1.Width = shape1Width;
+                square1.Height = shapeHeight;
+                CLPShape square2 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
+                square2.XPosition = shape2X;
+                square2.YPosition = shape2Y;
+                square2.Width = shape2Width;
+                square2.Height = shapeHeight;
+                c.Add(square1);
+                c.Add(square2);
+
+            }
+            return c;
+            //throw new NotImplementedException();
+        }
+
+        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
+        {
+            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
+            if(CLPShapeType.Rectangle.CompareTo(this.ShapeType) == 0)
+            {
+                Console.Write("Shape identified correctly");
+                double shapeX = this.XPosition;
+                double shape1Y = this.YPosition;
+                double shape2Y = Ave;
+                double shape1Height = Ave - shape1Y;
+                double shape2Height = this.Height - shape1Height;
+                double shapeWidth = this.Width;
+                
+                CLPShape square1 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
+                square1.XPosition = shapeX;
+                square1.YPosition = shape1Y;
+                square1.Width = shapeWidth;
+                square1.Height = shape1Height;
+                
+                CLPShape square2 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
+                square2.XPosition = shapeX;
+                square2.YPosition = shape2Y;
+                square2.Width = shapeWidth;
+                square2.Height = shape2Height;
+                c.Add(square1);
+                c.Add(square2);
+            }
+            return c;
+        }  
+
     }
 }

@@ -606,6 +606,42 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
+            foreach(Stroke stroke in e.Added)
+            {
+                if(Page.CutEnabled)
+                {
+                    Page.CutEnabled = false;
+                    //double bl = stroke.GetBounds().BottomLeft.X;
+                    //double br = stroke.GetBounds().BottomRight.X;
+                    //double botXAve = (bl + br) / 2;
+                    //double tl = stroke.GetBounds().TopLeft.X;
+                    //double tr = stroke.GetBounds().TopRight.X;
+                    //double topXAve = (tl + tr) / 2;
+                    //double ave = (stroke.GetBounds().Left + stroke.GetBounds().Right)//(botXAve + topXAve) / 2;
+                    double topY = stroke.GetBounds().Top;//Math.Min(stroke.GetBounds().TopLeft.Y, stroke.GetBounds().TopRight.Y);
+                    double leftX = stroke.GetBounds().Left;//Math.Min(stroke.GetBounds().TopLeft.X, stroke.GetBounds().BottomLeft.X);
+                    double rightX = stroke.GetBounds().Right;//Math.Max(stroke.GetBounds().TopRight.X, stroke.GetBounds().BottomRight.X);
+                    double botY = stroke.GetBounds().Bottom;//Math.Max(stroke.GetBounds().BottomLeft.Y, stroke.GetBounds().BottomRight.Y);
+                    List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
+                    ObservableCollection<ICLPPageObject> c1 = lr[0];
+                    ObservableCollection<ICLPPageObject> c2 = lr[1];
+                    
+                    foreach(ICLPPageObject no in c2)
+                    {
+                        Page.PageObjects.Remove(no);
+                        //CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
+                        
+                    }
+                    foreach(ICLPPageObject no in c1)
+                    {
+                        Page.PageObjects.Add(no);
+                        //CLPServiceAgent.Instance.AddPageObjectToPage(no);
+                    }
+                    //Page.CutEnabled = true;
+                    Page.InkStrokes.Remove(stroke);
+                }
+            }
+
             if(Page.IsInkAutoAdding || IsPagePreview)
             {
                 return;

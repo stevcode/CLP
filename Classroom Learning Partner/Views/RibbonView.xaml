@@ -358,6 +358,9 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding Path=RedotCommand}" />
                 
+                <RibbonButton Label="Cut"
+                               LargeImageSource="..\Images\scissors.png"
+                              Command="{Binding Path=EnableCutCommand}"/>
             </RibbonGroup>
             
         </RibbonTab>
@@ -472,21 +475,21 @@
                         Command="{Binding Path=InsertTextBoxCommand}" />
 
                 <RibbonControlGroup>
-                    <!--<ComboBox x:Name="FontFamilyComboBox"
+                    <ComboBox x:Name="FontFamilyComboBox"
                             ItemsSource="{Binding Path=Fonts}"
                             SelectedItem="{Binding Path=CurrentFontFamily, Mode=TwoWay}"
-                            Width="130"/>-->
-                    <!--<ComboBox x:Name="FontSizeComboBox"
+                            Width="130"/>
+                    <ComboBox x:Name="FontSizeComboBox"
                             ItemsSource="{Binding Path=FontSizes}"
                             SelectedItem="{Binding Path=CurrentFontSize, Mode=TwoWay}"
-                            Width="45"/>-->
-                    <Views:XComboBox ItemsSource="{Binding Path=Fonts}" 
+                            Width="45"/>
+                   <!-- <Views:XComboBox ItemsSource="{Binding Path=Fonts}" 
                                      Command="{x:Static Views:MyCommands.SetFontFamily}"
                                      Width="130"/>
 
                     <Views:XComboBox ItemsSource="{Binding Path=FontSizes}" 
                                      Command="{x:Static Views:MyCommands.SetFontSize}"
-                                     Width="45"/>
+                                     Width="45"/> -->
                 </RibbonControlGroup>
 
                 <RibbonControlGroup>
@@ -520,7 +523,7 @@
 
                     <Label Content="Font Color" />
 
-                    <!--<ComboBox x:Name="FontColorComboBox"
+                    <ComboBox x:Name="FontColorComboBox"
                             ItemsSource="{Binding Path=FontColors}"
                             SelectedItem="{Binding Path=CurrentFontColor, Mode=TwoWay}"
                             Width="45">
@@ -529,8 +532,8 @@
                                 <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>-->
-                    <Views:XComboBox ItemsSource="{Binding Path=FontColors}" 
+                    </ComboBox>
+                <!--    <Views:XComboBox ItemsSource="{Binding Path=FontColors}" 
                                      Command="{x:Static Views:MyCommands.SetFontColor}"
                                      Width="45">
                         <ComboBox.ItemTemplate>
@@ -538,7 +541,7 @@
                                 <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </Views:XComboBox>
+                    </Views:XComboBox> -->
 
                 </RibbonControlGroup>
 
