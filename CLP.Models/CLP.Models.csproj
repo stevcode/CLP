@@ -72,7 +72,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core">
+    <Reference Include="Catel.Core, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Core.dll</HintPath>
     </Reference>
     <Reference Include="IAWinFX">
