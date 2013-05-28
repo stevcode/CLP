@@ -151,10 +151,6 @@
       <HintPath>External Libraries\NRtfTree.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
-    <Reference Include="ServiceModelEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d0f8277329bba7a0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External Libraries\ServiceModelEx.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Printing" />
@@ -615,6 +611,10 @@
     <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
       <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
       <Name>CLP.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
+      <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
+      <Name>ServiceModelEx</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
