@@ -7,7 +7,7 @@ using System.Collections;
 namespace CLP.Models
 {
     [Serializable]
-    public class Group : DataObjectBase<Group>, IComparable, IComparer
+    public class Group : ModelBase, IComparable, IComparer
     {
         #region Constructors
 

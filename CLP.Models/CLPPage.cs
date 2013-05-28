@@ -56,7 +56,7 @@ namespace CLP.Models
     KnownType(typeof(DrawingAttributesDTO)),
     KnownType(typeof(CLPShadingRegion))]
     [AllowNonSerializableMembers]
-    public class CLPPage : DataObjectBase<CLPPage>
+    public class CLPPage : ModelBase
     {
         #region Variables
 

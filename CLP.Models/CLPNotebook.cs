@@ -12,7 +12,7 @@ namespace CLP.Models
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
-    public class CLPNotebook : SavableDataObjectBase<CLPNotebook>
+    public class CLPNotebook : SavableModelBase<CLPNotebook>
     {
         #region Constructor
 

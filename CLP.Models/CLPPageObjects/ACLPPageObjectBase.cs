@@ -12,7 +12,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    abstract public class CLPPageObjectBase : DataObjectBase<CLPPageObjectBase>, ICLPPageObject
+    abstract public class CLPPageObjectBase : ModelBase, ICLPPageObject
     {
         #region Constructor
 

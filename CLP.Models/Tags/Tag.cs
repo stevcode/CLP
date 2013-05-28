@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class Tag : DataObjectBase
+    public class Tag : ModelBase
     {
            #region Constructors
 

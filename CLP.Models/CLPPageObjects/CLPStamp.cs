@@ -9,7 +9,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable, KnownType(typeof(CLPImage))]
-    public class CLPStamp : DataObjectBase<CLPStamp>, ICLPPageObject
+    public class CLPStamp : ModelBase, ICLPPageObject
     {
         #region Constants
 

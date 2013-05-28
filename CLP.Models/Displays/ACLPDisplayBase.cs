@@ -28,7 +28,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    abstract public class ACLPDisplayBase : DataObjectBase<ACLPDisplayBase>
+    abstract public class ACLPDisplayBase : ModelBase
     {
 
         #region Constructor & destructor

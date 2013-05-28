@@ -13,7 +13,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    public class CLPArrayDivision : DataObjectBase<CLPArrayDivision>
+    public class CLPArrayDivision : ModelBase
     {
 
         #region Constructors

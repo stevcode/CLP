@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPNamedInkSet : DataObjectBase<CLPNamedInkSet>
+    public class CLPNamedInkSet : ModelBase
     {
         public CLPNamedInkSet(string shapeName, ObservableCollection<List<byte>> strokes)
         {

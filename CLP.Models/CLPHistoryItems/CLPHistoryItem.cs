@@ -24,7 +24,7 @@ namespace CLP.Models
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
-    public abstract class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
+    public abstract class CLPHistoryItem : ModelBase
     {
         public CLPHistoryItem(HistoryItemType type)
         {

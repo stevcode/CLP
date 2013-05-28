@@ -10,7 +10,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class TagOptionValue : DataObjectBase
+    public class TagOptionValue : ModelBase
     {
         #region Constructor
 

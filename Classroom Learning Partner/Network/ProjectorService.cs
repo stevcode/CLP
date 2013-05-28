@@ -245,7 +245,7 @@ namespace Classroom_Learning_Partner
                     {
                         if(submissionID == "" || submissionID == currentPage.SubmissionID)
                         {
-                            var viewManager = ServiceLocator.Instance.ResolveType<IViewManager>();
+                            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
                             var views = viewManager.GetViewsOfViewModel((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel);
 
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

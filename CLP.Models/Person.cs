@@ -16,7 +16,7 @@ namespace CLP.Models
     /// backwards compatibility and error checking.
     /// </summary>
     [Serializable]
-    public class Person : DataObjectBase<Person>
+    public class Person : ModelBase
     {
         #region Constructors
 

@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory : DataObjectBase<CLPHistory>
+    public class CLPHistory : ModelBase
     {
         public const double SAMPLE_RATE = 9;
         private bool _frozen;

@@ -25,7 +25,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    public class CLPGridPart : DataObjectBase<CLPGridPart>
+    public class CLPGridPart : ModelBase
     {
         #region Constructor
 

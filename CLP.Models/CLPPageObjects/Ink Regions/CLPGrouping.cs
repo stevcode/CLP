@@ -8,7 +8,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPGrouping : DataObjectBase<CLPNamedInkSet>
+    public class CLPGrouping : ModelBase
     {
 
         #region Constructor
