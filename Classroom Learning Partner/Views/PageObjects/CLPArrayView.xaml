@@ -137,7 +137,7 @@
                     
                 <!--Right Side Division Adorner-->
                 <Thumb Cursor="SizeWE" 
-                        Canvas.Right="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=-10}" 
+                        Canvas.Right="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}" 
                         Canvas.Top="{Binding Path=RightArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=30}"
                         Width="40" Height="40"
                         Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsRightAdornerVisible}">
@@ -165,7 +165,7 @@
                 <!--Bottom Side Division Adorner-->
                 <Thumb Cursor="SizeNS"
                         Canvas.Left="{Binding Path=BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=30}" 
-                        Canvas.Bottom="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=-10}"
+                        Canvas.Bottom="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}"
                         Width="40" Height="40"
                         Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=IsBottomAdornerVisible}">
                     <Thumb.Template>
@@ -203,9 +203,9 @@
             </Grid.ColumnDefinitions>
 
             <!--Large Labels-->
-            <Label Grid.Row="0" Grid.ColumnSpan="3" Content="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Height="{Binding PageObject.LargeLabelLength}"/>
+            <Label Grid.Row="0" Grid.ColumnSpan="3" Content="{Binding Path=Columns}" HorizontalAlignment="Center" VerticalContentAlignment="Bottom" FontSize="28" Height="{Binding PageObject.LargeLabelLength}"/>
             
-            <Label Grid.Column="0" Grid.RowSpan="3" Content="{Binding Path=Rows}" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="24" Width="{Binding PageObject.LargeLabelLength}" />
+            <Label Grid.Column="0" Grid.RowSpan="3" Content="{Binding Path=Rows}" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="28" Width="{Binding PageObject.LargeLabelLength}" />
             
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
@@ -269,10 +269,10 @@
                             <Rectangle Name="DivisionHitBox" Height="4" Tag="{Binding}"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualWidth}" 
                                        Stroke="Transparent" Fill="Transparent"/>
-                            <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=30}" 
+                            <Grid Canvas.Right="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
                                   Height="{Binding Length}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                <Label FontSize="22" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="Blue"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
                                 <Rectangle x:Name="RightLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
@@ -310,10 +310,10 @@
                             <Rectangle Name="DivisionHitBox" Width="4" Tag="{Binding}"
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=ActualHeight}"  
                                        Stroke="Transparent" Fill="Transparent"/>
-                            <Grid Canvas.Bottom="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=30}" 
+                            <Grid Canvas.Bottom="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength, Converter={StaticResource NegativeLengthSubtractConverter}, ConverterParameter=40}" 
                                   Width="{Binding Length}" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}">
 
-                                <Label FontSize="18" HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                                <Label FontSize="22" HorizontalContentAlignment="Center" VerticalAlignment="Center" Foreground="Red"
                                        Content="{Binding Converter={StaticResource IntToQuestionMarkConverter},Path=Value}" />
                                 <Rectangle x:Name="BottomLabelHitBox" Fill="Transparent" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"
                                         Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Path=DataContext.PageObject.SmallLabelLength}"

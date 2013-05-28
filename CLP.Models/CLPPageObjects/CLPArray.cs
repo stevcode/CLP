@@ -102,7 +102,7 @@ namespace CLP.Models
         {
             get
             {
-                return 30;
+                return 40;
             }
         }
 
@@ -111,7 +111,7 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base(page)
         {
-            IsGridOn = true;
+            IsGridOn = false;
 
             Rows = rows;
             Columns = columns;
