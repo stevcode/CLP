@@ -150,7 +150,7 @@
                     LargeImageSource="..\Images\Pen.png"
                     Command="{Binding SetPenCommand}"/>
 
-                <RibbonMenuButton Label="Pen Size"
+                <RibbonMenuButton Label="Pen Size" Visibility="{Binding Path=InstructorVisibility}"
                          LargeImageSource="..\Images\PenSize-icon32.png">
                     <RibbonGallery SelectedValuePath="Content.Height" SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                               ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -221,40 +221,15 @@
 
             <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
 
-                <RibbonButton
-                        Label="Stamp"
-                        LargeImageSource="..\Images\AddPathStamp.png"
-                        Command="{Binding Path=InsertBlankStampCommand}"/>
-
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\InkArray.png"
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
 
-                <!--<RibbonButton Label="Array + Dividers"
+                <RibbonButton Label="Array + Dividers"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="TRUE" />-->
-
-                <!--<RibbonButton
-                        Label="Protractor"
-                        LargeImageSource="..\Images\Protractor64.png"
-                        Command="{Binding Path=InsertProtractorCommand}"/>
-
-                <RibbonButton
-                        Label="Square"
-                        LargeImageSource="..\Images\AddSquare.png"
-                        Command="{Binding Path=InsertSquareShapeCommand}"/>
-
-                <RibbonButton
-                        Label="Horizontal Line"
-                        LargeImageSource="..\Images\HorizontalLineIcon.png"
-                        Command="{Binding Path=InsertHorizontalLineShapeCommand}"/>
-
-                <RibbonButton
-                        Label="Vertical Line"
-                        LargeImageSource="..\Images\VerticalLineIcon.png"
-                        Command="{Binding Path=InsertVerticalLineShapeCommand}"/>-->
+                              CommandParameter="TRUE" />
 
                 <!--<RibbonToggleButton Label="Webcam" 
                         LargeImageSource="..\Images\camera.png"
@@ -299,19 +274,20 @@
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue" />
+                <RibbonButton Background="Turquoise" Visibility="{Binding InstructorVisibility}"/>
                 <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
                     <RibbonButton Background="{Binding Path=CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
                 </Border>
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Page Size">
+            <RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding Path=MakePageLongerCommand}"/>
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
 
             <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
@@ -405,7 +381,7 @@
         </RibbonTab>
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert Money">
+        <!--<RibbonTab Header="Insert Money">
 
             <RibbonGroup Header="Money Images">
 
@@ -456,7 +432,7 @@
 
             </RibbonGroup>
             
-        </RibbonTab>
+        </RibbonTab>-->
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
@@ -482,7 +458,7 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
 
-                <RibbonButton Label="Array + Guides"
+                <RibbonButton Label="Array + Dividers"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="TRUE" />
