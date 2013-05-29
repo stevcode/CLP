@@ -1,17 +1,16 @@
 ﻿<RibbonWindow x:Class="Classroom_Learning_Partner.Views.MainWindowView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
-        xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-        Icon="..\Images\InkWell.ico"
-        Height="800"
-        Width="1280"
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        WindowState="Maximized"
-        Closing="RibbonWindow_Closing"
-        Title="{Binding Path=TitleBarText}"
-        UseLayoutRounding="True">
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+            Icon="..\Images\InkWell.ico"
+            Height="800"
+            Width="1280"
+            WindowStartupLocation="CenterScreen"
+            WindowStyle="None"
+            WindowState="Maximized"
+            Closing="RibbonWindow_Closing"
+            Title="{Binding Path=TitleBarText}"
+            UseLayoutRounding="True">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -44,34 +43,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Views:RibbonView Grid.Row="0" DataContext="{Binding Ribbon}"/>
+        <views:RibbonView Grid.Row="0" DataContext="{Binding Ribbon}"/>
 
         <!-- Control that dynamically determines what Display to show -->
-        <ContentControl x:Name="WorkSpace" Grid.Row="1" DataContext="{Binding SelectedWorkspace}">
+        <ContentControl Grid.Row="1" DataContext="{Binding SelectedWorkspace}">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <Views:BlankWorkspaceView DataContext="{Binding }" />
+                    <views:BlankWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <Views:NotebookChooserWorkspaceView DataContext="{Binding }" />
+                    <views:NotebookChooserWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <Views:NotebookWorkspaceView DataContext="{Binding }" />
+                    <views:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <Views:NotebookWorkspaceView DataContext="{Binding }" />
+                    <views:NotebookWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ServerWorkspaceTemplate">
-                    <Views:ServerWorkspaceView DataContext="{Binding }" />
+                    <views:ServerWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <Views:UserLoginWorkspaceView DataContext="{Binding }" />
+                    <views:UserLoginWorkspaceView DataContext="{Binding }" />
                 </ControlTemplate>
 
             </ContentControl.Resources>
