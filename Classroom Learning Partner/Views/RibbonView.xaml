@@ -217,6 +217,11 @@
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding SetSnapTileCommand}" />-->
 
+                <RibbonToggleButton Label="Cut"
+                                    LargeImageSource="..\Images\scissors.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding EnableCutCommand}"/>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
@@ -361,9 +366,6 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding RedoCommand}" />
                 
-                <RibbonButton Label="Cut"
-                               LargeImageSource="..\Images\scissors.png"
-                              Command="{Binding Path=EnableCutCommand}"/>
             </RibbonGroup>
             
         </RibbonTab>
@@ -629,9 +631,10 @@
                         <Button Content="Portrait Page" Height="60" Width="200"
                                 Command="{Binding AddNewPageCommand}"
                                 CommandParameter="Portrait" />
-                        <Button Content="Proof Page" Height="60" Width="200"
-                                    Command="{Binding Path=AddNewProofPageCommand}"
-                                    CommandParameter="Portrait" />
+                        
+                        <Button Content="Portrait Proof Page" Height="60" Width="200"
+                                Command="{Binding AddNewProofPageCommand}"
+                                CommandParameter="Portrait" />
                         
                     </RibbonGallery>
                 </RibbonMenuButton>

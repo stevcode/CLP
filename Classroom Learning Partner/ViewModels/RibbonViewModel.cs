@@ -109,6 +109,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
+            EnableCutCommand = new Command(OnEnableCutCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //Submission
@@ -121,12 +122,9 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
 
             //History
-            AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
-            //AddNewProofPageCommand
             ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute);
             RedoCommand = new Command(OnRedoCommandExecute);
-            EnableCutCommand = new Command(OnEnableCutCommandExecute);
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
@@ -157,6 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
@@ -1101,6 +1100,24 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Sets Cut Mode.
+        /// </summary>
+        public Command EnableCutCommand { get; private set; }
+
+        private void OnEnableCutCommandExecute()
+        {
+            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            if(page.CutEnabled)
+            {
+                page.CutEnabled = false;
+            }
+            else
+            {
+                page.CutEnabled = true;
+            }
+        }
+
+        /// <summary>
         /// Sets the Pen Color.
         /// </summary>
         public Command<RibbonButton> SetPenColorCommand { get; private set; }
@@ -1625,7 +1642,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Command<string> AddNewProofPageCommand { get; private set; }
 
-
         private void OnAddNewProofPageCommandExecute(string pageOrientation)
         {
             //Steve - clpserviceagent
@@ -1640,19 +1656,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-
-            CLPTextBox textBox = new CLPTextBox(page);
-            CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
-            textBox.Width = page.PageWidth - 100;
-            textBox.Height = (page.PageHeight / 3);
-            textBox.XPosition = 50;
-            textBox.YPosition = page.PageHeight - textBox.Height - 50;
         }
-
-
-
-
-
 
         /// <summary>
         /// Converts current page between landscape and portrait.
@@ -1776,20 +1780,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command EnableCutCommand { get; private set; }
-
-        private void OnEnableCutCommandExecute()
-        {
-            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            if(page.CutEnabled)
-            {
-                page.CutEnabled = false;
-            }
-            else
-            {
-                page.CutEnabled = true;
-            }
-        }
         /// <summary>
         /// Trims the current page's excess height if free of ink strokes and pageObjects.
         /// </summary>
