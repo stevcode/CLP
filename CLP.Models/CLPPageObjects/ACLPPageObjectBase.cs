@@ -25,7 +25,6 @@ namespace CLP.Models
             ParentPageID = page.UniqueID;
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            CanAcceptPageObjects = true;
             Parts = -1;
         }
 

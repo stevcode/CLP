@@ -7,6 +7,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Catel.Windows;
+using Classroom_Learning_Partner.Views;
 
 namespace AdornedControl
 {
@@ -535,7 +537,7 @@ namespace AdornedControl
             {
                 if(_adornerLayer == null)
                 {
-                    UserControl linkedDisplay = GetLinkedDisplayView(this);
+                    UserControl linkedDisplay = this.GetAncestorObject<LinkedDisplayView>(); //GetLinkedDisplayView(this);
                     if (linkedDisplay != null)
                     {
                         _adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);

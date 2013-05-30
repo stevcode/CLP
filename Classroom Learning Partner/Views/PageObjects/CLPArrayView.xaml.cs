@@ -1,8 +1,6 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using CLP.Models;
 using Classroom_Learning_Partner.ViewModels;
-using System;
 
 namespace Classroom_Learning_Partner.Views
 {
