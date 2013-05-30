@@ -1,24 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Timers;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Media;
-using System.Windows.Xps;
-using System.Windows.Xps.Packaging;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-//using Classroom_Learning_Partner.Resources;
-using Classroom_Learning_Partner.Views;
-using Classroom_Learning_Partner.Views.Modal_Windows;
-using System.Security.Cryptography;
-using System.Windows.Controls.Ribbon;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -31,7 +15,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the MainWindowViewModel class.
         /// </summary>
         public MainWindowViewModel()
-            : base()
         {
             TitleBarText = clpText;
             InitializeCommands();
@@ -167,7 +150,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            Ribbon.IsMinimized = false;
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
@@ -178,7 +160,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
-                    Ribbon.IsMinimized = true;
                     break;
                 case App.UserMode.Student:
                     SelectedWorkspace = new UserLoginWorkspaceViewModel();

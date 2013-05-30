@@ -145,7 +145,7 @@
                 </Grid>
             </Button>
 
-            <Slider Value="{Binding Path=CurrentSliderValue}" Height="22" Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Visibility="{Binding Path=PlayingAudioVisibility}"/>
+            <Slider Value="{Binding Path=CurrentSliderValue}" Height="22" Minimum="0" Maximum="10" Margin="1" Width="200" Grid.Row="1" VerticalAlignment="Bottom"  HorizontalAlignment="Center" />
         </Grid>
         
     </ac:AdornedControl>
