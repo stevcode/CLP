@@ -339,7 +339,7 @@ namespace CLP.Models
         //*******************************
         public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
         {
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
+            var c = new ObservableCollection<ICLPPageObject>();
             if(this.Rows == 1)
             {
                 c.Add(this);

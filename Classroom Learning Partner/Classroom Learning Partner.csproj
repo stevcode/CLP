@@ -142,6 +142,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Microsoft.Ink.resources.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="NAudio, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NAudio.dll</HintPath>
@@ -151,6 +152,7 @@
       <HintPath>External Libraries\NRtfTree.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
+    <Reference Include="ribboncontrolslibrary, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="ServiceModelEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d0f8277329bba7a0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\ServiceModelEx.dll</HintPath>
@@ -195,12 +197,16 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\CLPProofPageViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\CLPProofPageView.xaml.cs">
+      <DependentUpon>CLPProofPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Controls\VisualGrid.cs" />
@@ -360,6 +366,10 @@
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\CLPProofPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

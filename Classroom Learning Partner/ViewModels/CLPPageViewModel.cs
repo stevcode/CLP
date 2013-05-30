@@ -60,6 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+            
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -117,7 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public CLPHistory PageHistory
+        public virtual CLPHistory PageHistory
         {
             get { return GetValue<CLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
@@ -478,6 +479,11 @@ namespace Classroom_Learning_Partner.ViewModels
             _isMouseDown = false;
         }
 
+     
+
+
+        
+        
         #endregion //Commands
 
         #region Methods
@@ -669,6 +675,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
 
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(new StrokeDTO(stroke)));
+                  
                         }
 
                         foreach(var stroke in e.Added)

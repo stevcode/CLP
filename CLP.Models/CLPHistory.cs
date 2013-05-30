@@ -9,10 +9,10 @@ namespace CLP.Models
     public class CLPHistory : DataObjectBase<CLPHistory>
     {
         public const double SAMPLE_RATE = 9;
-        private bool _frozen;
-        private bool _ingroup;
+        protected bool _frozen;
+        protected bool _ingroup;
         public bool _useHistory = true;
-        private Stack<CLPHistoryItem> groupEvents;
+        protected Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
 
@@ -110,7 +110,7 @@ namespace CLP.Models
             _frozen = false;
         }
 
-        public void Push(CLPHistoryItem item)
+        public virtual void Push(CLPHistoryItem item)
         {
             if(!_useHistory || _frozen || IsExpected(item))
             {
@@ -227,7 +227,7 @@ namespace CLP.Models
             }
         }
 
-        private bool IsExpected(CLPHistoryItem item)
+        protected bool IsExpected(CLPHistoryItem item)
         {
             CLPHistoryItem match = null;
             foreach (CLPHistoryItem expected in ExpectedEvents) 

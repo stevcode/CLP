@@ -180,6 +180,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute);
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
+            //AddNewProofPageCommand
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
@@ -1911,6 +1913,38 @@ namespace Classroom_Learning_Partner.ViewModels
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
         }
+
+
+        public Command<string> AddNewProofPageCommand { get; private set; }
+
+
+        private void OnAddNewProofPageCommandExecute(string pageOrientation)
+        {
+            //Steve - clpserviceagent
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            index++;
+            CLPPage page = new CLPProofPage();
+            if(pageOrientation == "Portrait")
+            {
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+
+            CLPTextBox textBox = new CLPTextBox(page);
+            CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
+            textBox.Width = page.PageWidth - 100;
+            textBox.Height = (page.PageHeight / 3);
+            textBox.XPosition = 50;
+            textBox.YPosition = page.PageHeight - textBox.Height - 50;
+        }
+
+
+
+
+
 
         /// <summary>
         /// Gets the SwitchPageLayoutCommand command.

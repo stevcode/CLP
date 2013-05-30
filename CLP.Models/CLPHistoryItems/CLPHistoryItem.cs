@@ -54,6 +54,14 @@ namespace CLP.Models
 
         public static readonly PropertyData ItemTypeProperty = RegisterProperty("ItemType", typeof(HistoryItemType), null);
 
+        public bool wasPaused{
+            get { return GetValue<bool>(wasPausedProperty); }
+            set { SetValue(wasPausedProperty, value); }
+        }
+        public static readonly PropertyData wasPausedProperty = RegisterProperty("wasPaused", typeof(bool), false);
+
+
+
         #endregion //Properties
 
         #region Methods
