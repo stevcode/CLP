@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -22,7 +23,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPArrayViewModel(CLPArray array)
         {
-            //IsDivisionBehaviorOn = false; //Renee's class to force this behavior instead of batch changing them all.
             PageObject = array;
             hoverTimer.Interval = 2300;
             CloseAdornerTimeOut = 0.15;
@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
+            ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
         }
 
         #endregion //Constructor
@@ -199,7 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsDefaultAdornerVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(bool), true);
+        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(bool), false);
 
         /// <summary>
         /// Whether or not adorner to create a division on right side of array is on.
@@ -362,6 +363,29 @@ namespace Classroom_Learning_Partner.ViewModels
             if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
             {
                 division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
+            }
+        }
+
+        /// <summary>
+        /// Toggles the main adorners for the array.
+        /// </summary>
+        public Command<MouseButtonEventArgs> ToggleMainArrayAdornersCommand { get; private set; }
+
+        private void OnToggleMainArrayAdornersCommandExecute(MouseButtonEventArgs e)
+        {
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
+            {
+                return;
+            }
+
+            if(e.ChangedButton == MouseButton.Left)
+            {
+                var tempAdornerState = IsAdornerVisible;
+                CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
+                IsAdornerVisible = !tempAdornerState;
+                IsDefaultAdornerVisible = !tempAdornerState;
+                IsBottomAdornerVisible = tempAdornerState;
+                IsRightAdornerVisible = tempAdornerState;
             }
         }
 

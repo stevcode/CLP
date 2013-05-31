@@ -6,6 +6,7 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+    
     <UserControl.Resources>
         <conv:ThicknessConverter x:Key="ThicknessConverter"/>
         <conv:LengthConverter x:Key="LengthConverter"/>

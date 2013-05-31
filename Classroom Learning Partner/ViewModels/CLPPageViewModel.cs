@@ -203,6 +203,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+                ClearAdorners();
             }
         }
 
@@ -489,11 +490,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ClearAdorners()
         {
-            foreach(var pageObject in PageObjects)
+            if(PageObjects != null)
             {
-                foreach(var viewModel in ViewModelManager.GetViewModelsOfModel(pageObject))
+                foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
                 {
-                    (viewModel as ACLPPageObjectBaseViewModel).IsAdornerVisible = false;
+                    aclpPageObjectBaseViewModel.IsAdornerVisible = false;
                 }
             }
         }
