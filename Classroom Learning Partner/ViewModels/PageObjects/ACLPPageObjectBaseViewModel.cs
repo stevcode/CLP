@@ -453,9 +453,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var tempAdornerState = IsAdornerVisible;
-            CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
-            IsAdornerVisible = !tempAdornerState;
+            if(e.ChangedButton == MouseButton.Left)
+            {
+                var tempAdornerState = IsAdornerVisible;
+                CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
+                IsAdornerVisible = !tempAdornerState;
+            }
         }
 
         #endregion //Control Adorners
