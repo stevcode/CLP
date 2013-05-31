@@ -450,6 +450,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
+        public void ClearAdorners()
+        {
+            foreach(var pageObject in PageObjects)
+            {
+                foreach(var viewModel in ViewModelManager.GetViewModelsOfModel(pageObject))
+                {
+                    (viewModel as ACLPPageObjectBaseViewModel).IsAdornerVisible = false;
+                }
+            }
+        }
+
         Type _lastType;
 
         private HitTestFilterBehavior HitFilter(DependencyObject o)

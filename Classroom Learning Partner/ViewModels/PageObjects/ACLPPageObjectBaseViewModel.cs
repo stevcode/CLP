@@ -153,26 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsAdornerVisible
         {
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
-            set
-            {
-                SetValue(IsAdornerVisibleProperty, value);
-                if(!value)
-                {
-                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
-                    if(parentPage != null)
-                    {
-                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                        {
-                            pageVM.IsInkCanvasHitTestVisible = true;
-                        }
-
-                        hoverTimer.Stop();
-                        timerRunning = false;
-                        hoverTimeElapsed = false;
-                    }
-                }
-            }
+            set { SetValue(IsAdornerVisibleProperty, value); }
         }
 
         public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
@@ -298,11 +279,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(parentPage != null)
             {
-                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                {
-                    pageVM.IsInkCanvasHitTestVisible = true;
-                }
-
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
@@ -472,7 +448,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
         {
-            IsAdornerVisible = !IsAdornerVisible;
+            var tempAdornerState = IsAdornerVisible;
+            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage).OfType<CLPPageViewModel>()) 
+            {
+                clpPageViewModel.ClearAdorners();
+            }
+            IsAdornerVisible = !tempAdornerState;
         }
 
         #endregion //Control Adorners
