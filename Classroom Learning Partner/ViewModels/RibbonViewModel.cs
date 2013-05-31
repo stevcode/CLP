@@ -105,6 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
             NextPageCommand = new Command(OnNextPageCommandExecute);
 
             //Tools
+            SetSelectCommand = new Command(OnSetSelectCommandExecute);
             SetPenCommand = new Command(OnSetPenCommandExecute);
             SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
@@ -220,12 +221,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if(EraserType == "Point Eraser")
             {
                 EraserMode = InkCanvasEditingMode.EraseByPoint;
-                PageInteractionMode = PageInteractionMode.Eraser;
             }
             else if(EraserType == "Stroke Eraser")
             {
                 EraserMode = InkCanvasEditingMode.EraseByStroke;
-                PageInteractionMode = PageInteractionMode.StrokeEraser;
             }
         }
 
@@ -283,17 +282,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public PageEraserInteractionMode PageEraserInteractionMode
-        {
-            get { return GetValue<PageEraserInteractionMode>(PageEraserInteractionModeProperty); }
-            set { SetValue(PageEraserInteractionModeProperty, value); }
-        }
-
-        public static readonly PropertyData PageEraserInteractionModeProperty = RegisterProperty("PageEraserInteractionMode", typeof(PageEraserInteractionMode));
 
         /// <summary>
         /// Enables pictures taken with Webcam to be shared with Group Members.
@@ -1038,6 +1026,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Tool Commands
 
         /// <summary>
+        /// Set Select Mode.
+        /// </summary>
+        public Command SetSelectCommand { get; private set; }
+
+        private void OnSetSelectCommandExecute()
+        {
+            PageInteractionMode = PageInteractionMode.Select;
+        }
+
+        /// <summary>
         /// Set Pen/Inking mode.
         /// </summary>
         public Command SetPenCommand { get; private set; }
@@ -1077,12 +1075,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if(eraserStyle == "EraseByPoint")
             {
                 EditingMode = InkCanvasEditingMode.EraseByPoint;
-                PageInteractionMode = PageInteractionMode.Eraser;
             }
             else if(eraserStyle == "EraseByStroke")
             {
                 EditingMode = InkCanvasEditingMode.EraseByStroke;
-                PageInteractionMode = PageInteractionMode.StrokeEraser;
             }
         }
 
@@ -1094,7 +1090,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
         {
             EditingMode = InkCanvasEditingMode.None;
-            PageInteractionMode = PageInteractionMode.SnapTile;
+            PageInteractionMode = PageInteractionMode.Tile;
         }
 
         /// <summary>

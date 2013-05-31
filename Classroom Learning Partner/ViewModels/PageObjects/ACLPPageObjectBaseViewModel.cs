@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
@@ -17,7 +18,6 @@ namespace Classroom_Learning_Partner.ViewModels
     abstract public class ACLPPageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
         protected ACLPPageObjectBaseViewModel()
-            : base()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
 
@@ -28,6 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
+
+            ToggleMainAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainAdornersCommandExecute);
 
             //TODO: Steve - move this to Adorner.cs and expand adorner API
             hoverTimer = new Timer();
@@ -461,12 +463,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Default Adorners
 
+        #region Control Adorners
+
+        /// <summary>
+        /// Gets the ToggleMainAdornersCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> ToggleMainAdornersCommand { get; private set; }
+
+        private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
+        {
+            IsAdornerVisible = !IsAdornerVisible;
+        }
+
+        #endregion //Control Adorners
+
         #endregion //Commands
-
-        #region Methods
-
-        
-
-        #endregion //Methods
     }
 }
