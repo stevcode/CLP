@@ -4,12 +4,12 @@
                    xmlns:ac="clr-namespace:AdornedControl"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+    
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
         <conv:PartsStringConverter x:Key="PartsStringConverter"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <conv:PartsLineVisibilityConverter x:Key="PartsLineVisibilityConverter" />
     </UserControl.Resources>
 
@@ -19,41 +19,39 @@
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
+        <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent >
-            <!--This is the adorner-->
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Width="{Binding Path=Width}" Height="{Binding Path=Height}">
+                    Width="{Binding Width}" Height="{Binding Height}">
 
                 <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                               RadiusX="10" RadiusY="10"
-                               Canvas.Top="-5" Canvas.Left="-5"
-                               Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                               Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
+                           RadiusX="10" RadiusY="10"
+                           Canvas.Top="-5" Canvas.Left="-5"
+                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
                 <!--Close Button-->
-                <Button x:Name="AdornerClose"
-                        Click="AdornerClose_Click"
+                <Button Command="{Binding RemovePageObjectCommand}"
+                        Cursor="Hand"
                         Width="40" Height="40"
-                        Canvas.Left="-50" Canvas.Top="-25"
-                        Cursor="Hand">
+                        Canvas.Left="-40" Canvas.Top="-40">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                        Stretch="Fill" Margin="5"
-                                        Stroke="Red" StrokeThickness="3" />
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="Red" StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
 
                 <!--Drag Thumb-->
-                <Thumb x:Name="AdornerDrag"
-                           Canvas.Right="-50" Canvas.Top="-25"
-                           Width="40" Height="40"
-                           Cursor="ScrollAll">
+                <Thumb Cursor="ScrollAll"
+                       Width="40" Height="40"
+                       Canvas.Right="-40" Canvas.Top="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -69,29 +67,28 @@
                         <ControlTemplate>
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 5,20 L 10,15 L 10,25 L 5,20" />
+                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 35,20 L 30,15 L 30,25 L 35,20" />
+                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 20,5 L 20,35" />
+                                      Data="M 20,5 L 20,35" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 20,35 L 15,30 L 25,30 L 20,35" />
+                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 20,5 L 15,10 L 25,10 L 20,5" />
+                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
                                 <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                          Data="M 5,20 L 35,20" />
+                                      Data="M 5,20 L 35,20" />
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
 
                 <!--Resize Thumb-->
-                <Thumb x:Name="AdornerResize"
-                           Canvas.Right="-50" Canvas.Bottom="-50"
-                           Width="40" Height="40"
-                           Cursor="SizeNWSE">
+                <Thumb Cursor="SizeNWSE"
+                       Width="40" Height="40"
+                       Canvas.Right="-40" Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizePageObjectCommand}" PassEventArgsToCommand="True" />
@@ -107,11 +104,11 @@
                         <ControlTemplate>
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Stroke="Black" StrokeThickness="1"
-                                          Data="M 8,23 L 23,23 L 23,8" />
+                                      Data="M 8,23 L 23,23 L 23,8" />
                                 <Path Stroke="Black" StrokeThickness="1"
-                                          Data="M 12,27 L 27,27 L 27,12" />
+                                      Data="M 12,27 L 27,27 L 27,12" />
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
@@ -126,15 +123,17 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
+            
             <Thumb Grid.Row="0" 
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon x:Name="StampHandleHitBox"  
+                        <Polygon Tag="StampHandleHitBox"  
+                                 Height="{Binding PageObject.HandleHeight}" 
                                  Width="{Binding Width}" MinWidth="50"  
-                                 Height="{Binding PageObject.HandleHeight}" Stretch="Fill"
-                                 HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0"
+                                 HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                                 Margin="0" Stretch="Fill"
                                  Stroke="Black" StrokeThickness="0" Fill="{Binding StampHandleColor}" 
                                  Points="0,0 3,0 2,1 1,1" >
                         </Polygon>
@@ -142,45 +141,52 @@
                 </Thumb.Template>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding Path=DragStampCommand}" 
-                                              PassEventArgsToCommand="True"/>
+                        <catel:EventToCommand Command="{Binding DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
-                        <catel:EventToCommand Command="{Binding Path=CopyStampCommand}"/>
+                        <catel:EventToCommand Command="{Binding CopyStampCommand}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
-                        <catel:EventToCommand Command="{Binding Path=PlaceStampCommand}"/>
+                        <catel:EventToCommand Command="{Binding PlaceStampCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>
-            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2"
-                    Width="{Binding Width, Mode=TwoWay}" 
+            
+            <Border Grid.Row="1" 
                     Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
+                    Width="{Binding Width, Mode=TwoWay}" 
+                    BorderBrush="Black" BorderThickness="2"
                     VerticalAlignment="Top" Margin="0">
                 <Grid x:Name="StampBodyGrid">
-                    <Views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}"
-                                                  Width="{Binding Width, Mode=TwoWay}" 
-                                                  Height="{Binding Height, Mode=TwoWay}" />
-                    <Rectangle x:Name="StampBodyHitBox" Fill="Transparent"
-                            Width="{Binding ElementName=StampBodyGrid, Path=Width}" 
-                            Height="{Binding ElementName=StampBodyGrid, Path=Height}" />
+                    <views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}"
+                                                      Height="{Binding Height, Mode=TwoWay}"
+                                                      Width="{Binding Width, Mode=TwoWay}" />
+                    <Rectangle Tag="StampBodyHitBox" Fill="Transparent"
+                               Height="{Binding ElementName=StampBodyGrid, Path=Height}"
+                               Width="{Binding ElementName=StampBodyGrid, Path=Width}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Rectangle>
                 </Grid>
             </Border>
+            
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
 
-                <Border x:Name="PartsHandwritingBox" Visibility="{Binding Converter={StaticResource PartsLineVisibilityConverter}, Path=PageObject.PartsAuthorGenerated}"
-                            BorderBrush="Black" BorderThickness="0,0,0,2"
-                            Width="{Binding Width}"
+                <Border Visibility="{Binding PageObject.PartsAuthorGenerated, Converter={StaticResource PartsLineVisibilityConverter}}"
+                        IsHitTestVisible="False"
+                        BorderBrush="Black" BorderThickness="0,0,0,2"
+                        Height="{Binding PageObject.PartsHeight}"
+                        Width="{Binding Width}"
+                        HorizontalAlignment="Center" Margin="0" />
+                
+                <TextBlock  FontFamily="SketchFlow Print" FontSize="72"
+                            TextAlignment="Center"
                             Height="{Binding PageObject.PartsHeight}"
-                            HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False" />
-                <TextBlock x:Name="PartsAuto"
-                       FontFamily="SketchFlow Print" FontSize="72"
-                       Width="{Binding Width}"
-                       Height="{Binding PageObject.PartsHeight}"
-                       HorizontalAlignment="Center"
-                       TextAlignment="Center"
-                       VerticalAlignment="Bottom"
-                       ><!--Visibility="{Binding Converter={StaticResource BooleanToVisibilityConverter}, Path=PageObject.PartsAutoGenerated}"-->
+                            Width="{Binding Width}"
+                            HorizontalAlignment="Center" VerticalAlignment="Bottom">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
                             <Binding Path="PageObject.Parts" />
@@ -188,18 +194,21 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <Rectangle x:Name="PartsHitBox" Fill="Transparent" StrokeThickness="0" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
-                        Width="{Binding Width}"
-                        Height="{Binding PageObject.PartsHeight}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top">
+                
+                <Rectangle Tag="PartsHitBox" Fill="Transparent" 
+                           StrokeThickness="0" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
+                           Height="{Binding PageObject.PartsHeight}"
+                           Width="{Binding Width}"
+                           HorizontalAlignment="Left" VerticalAlignment="Top">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
-                            <catel:EventToCommand Command="{Binding Path=ShowKeyPadCommand}"/>
+                            <catel:EventToCommand Command="{Binding Path=ShowKeyPadCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Rectangle>
+                
             </Grid>
+            
         </Grid>
 
     </ac:AdornedControl>
