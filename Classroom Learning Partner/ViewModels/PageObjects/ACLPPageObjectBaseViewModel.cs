@@ -326,7 +326,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if (PageObject.PageObjectObjectParentIDs.Count > 0)
+            if (PageObject.PageObjectObjectParentIDs.Any())
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
