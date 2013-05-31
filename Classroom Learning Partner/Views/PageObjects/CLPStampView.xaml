@@ -182,11 +182,11 @@
                         Width="{Binding Width}"
                         HorizontalAlignment="Center" Margin="0" />
                 
-                <TextBlock  FontFamily="SketchFlow Print" FontSize="72"
-                            TextAlignment="Center"
-                            Height="{Binding PageObject.PartsHeight}"
-                            Width="{Binding Width}"
-                            HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <TextBlock FontFamily="SketchFlow Print" FontSize="72"
+                           TextAlignment="Center"
+                           Height="{Binding PageObject.PartsHeight}"
+                           Width="{Binding Width}"
+                           HorizontalAlignment="Center" VerticalAlignment="Bottom">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
                             <Binding Path="PageObject.Parts" />
@@ -202,7 +202,7 @@
                            HorizontalAlignment="Left" VerticalAlignment="Top">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
-                            <catel:EventToCommand Command="{Binding Path=ShowKeyPadCommand}" />
+                            <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Rectangle>
