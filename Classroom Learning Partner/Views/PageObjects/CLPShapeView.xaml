@@ -33,7 +33,7 @@
                 <Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
-                        Canvas.Left="-25" Canvas.Top="-25">
+                        Canvas.Left="-40" Canvas.Top="-40">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -50,7 +50,7 @@
                 <!--Drag Thumb-->
                 <Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
-                       Canvas.Right="-25" Canvas.Top="-25">
+                       Canvas.Right="-40" Canvas.Top="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -87,7 +87,7 @@
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
                        Width="40" Height="40"
-                       Canvas.Right="-25" Canvas.Bottom="-25">
+                       Canvas.Right="-40" Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizeShapeCommand}" PassEventArgsToCommand="True" />
