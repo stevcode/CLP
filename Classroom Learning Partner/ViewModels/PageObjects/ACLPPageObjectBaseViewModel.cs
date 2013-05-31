@@ -448,11 +448,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
         {
-            var tempAdornerState = IsAdornerVisible;
-            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(PageObject.ParentPage).OfType<CLPPageViewModel>()) 
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
             {
-                clpPageViewModel.ClearAdorners();
+                return;
             }
+
+            var tempAdornerState = IsAdornerVisible;
+            CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
             IsAdornerVisible = !tempAdornerState;
         }
 

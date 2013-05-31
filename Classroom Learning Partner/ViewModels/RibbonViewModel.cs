@@ -585,6 +585,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 
+        //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
         /// <summary>
         /// Puts current notebook in Authoring Mode.
         /// </summary>
@@ -593,6 +594,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                var currentPage = notebookWorkspaceViewModel.CurrentPage;
+                CLPPageViewModel.ClearAdorners(currentPage);
+            }
         }
 
         /// <summary>
@@ -603,6 +611,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDoneEditingNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = false;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null) 
+            {
+                var currentPage = notebookWorkspaceViewModel.CurrentPage;
+                CLPPageViewModel.ClearAdorners(currentPage);
+            }
         }
 
         /// <summary>

@@ -39,6 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page)
         {
+            PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
@@ -47,7 +48,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             Page.PageObjects.CollectionChanged += PageObjects_CollectionChanged;
             
-        
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
@@ -174,7 +174,36 @@ namespace Classroom_Learning_Partner.ViewModels
         public PageInteractionMode PageInteractionMode
         {
             get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
-            set { SetValue(PageInteractionModeProperty, value); }
+            set
+            {
+                SetValue(PageInteractionModeProperty, value);
+                switch(value)
+                {
+                    case PageInteractionMode.Select:
+                        IsInkCanvasHitTestVisible = false;
+                        PageCursor = Cursors.Hand;
+                        break;
+                    case PageInteractionMode.Tile:
+                        IsInkCanvasHitTestVisible = false;
+                        break;
+                    case PageInteractionMode.Pen:
+                        IsInkCanvasHitTestVisible = true;
+                        PageCursor = Cursors.Pen;
+                        break;
+                    case PageInteractionMode.PenAndSelect:
+                        IsInkCanvasHitTestVisible = true;
+                        PageCursor = Cursors.Pen;
+                        break;
+                    case PageInteractionMode.Scissors:
+                        IsInkCanvasHitTestVisible = true;
+                        break;
+                    case PageInteractionMode.EditObjectProperties:
+                        IsInkCanvasHitTestVisible = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode), PageInteractionMode.Pen);
@@ -449,6 +478,14 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+
+        public static void ClearAdorners(CLPPage page)
+        {
+            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<CLPPageViewModel>())
+            {
+                clpPageViewModel.ClearAdorners();
+            }
+        }
 
         public void ClearAdorners()
         {
@@ -740,32 +777,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)
             {
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
-                switch((viewModel as RibbonViewModel).PageInteractionMode)
-                {
-                    case PageInteractionMode.Select:
-                        IsInkCanvasHitTestVisible = false;
-                        PageCursor = Cursors.Hand;
-                        break;
-                    case PageInteractionMode.Tile:
-                        IsInkCanvasHitTestVisible = false;
-                        break;
-                    case PageInteractionMode.Pen:
-                        IsInkCanvasHitTestVisible = true;
-                        PageCursor = Cursors.Pen;
-                        break;
-                    case PageInteractionMode.PenAndSelect:
-                        IsInkCanvasHitTestVisible = true;
-                        PageCursor = Cursors.Pen;
-                        break;
-                    case PageInteractionMode.Scissors:
-                        IsInkCanvasHitTestVisible = true;
-                        break;
-                    case PageInteractionMode.EditObjectProperties:
-                        IsInkCanvasHitTestVisible = false;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
