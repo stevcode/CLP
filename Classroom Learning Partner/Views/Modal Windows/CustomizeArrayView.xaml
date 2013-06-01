@@ -48,7 +48,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="Rows" Grid.Row="0" Grid.ColumnSpan="3" Text="" FontSize="24" />
+            <TextBox x:Name="Rows" Grid.Row="0" Grid.ColumnSpan="3" Text="" FontSize="24" Padding="0,-5,0,0" />
             <Button Grid.Column="0" Grid.Row="1" Name="rowsButton1" Click="ValueButton_Click" Content="1" />
             <Button Grid.Column="1" Grid.Row="1" Name="rowsButton2" Click="ValueButton_Click" Content="2" />
             <Button Grid.Column="2" Grid.Row="1" Name="rowsButton3" Click="ValueButton_Click" Content="3" />
@@ -75,7 +75,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="Columns" Grid.Row="0" Grid.ColumnSpan="3" Text="" FontSize="24" />
+            <TextBox x:Name="Columns" Grid.Row="0" Grid.ColumnSpan="3" Text="" FontSize="24" Padding="0,-5,0,0" />
             <Button Grid.Column="0" Grid.Row="1" Name="colButton1" Click="ValueButton_Click" Content="1" />
             <Button Grid.Column="1" Grid.Row="1" Name="colButton2" Click="ValueButton_Click" Content="2" />
             <Button Grid.Column="2" Grid.Row="1" Name="colButton3" Click="ValueButton_Click" Content="3" />
