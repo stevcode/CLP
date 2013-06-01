@@ -294,7 +294,7 @@
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
       <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPHandwritingRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml.cs">
       <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
@@ -303,16 +303,16 @@
     <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPInkShapeRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Regions\CLPInkShapeRegionView.xaml.cs">
       <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPDataTableView.xaml.cs">
+    <Compile Include="Views\PageObjects\Regions\CLPDataTableView.xaml.cs">
       <DependentUpon>CLPDataTableView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPShadingRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Regions\CLPShadingRegionView.xaml.cs">
       <DependentUpon>CLPShadingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPGroupingRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Regions\CLPGroupingRegionView.xaml.cs">
       <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
@@ -452,7 +452,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPHandwritingRegionView.xaml">
+    <Page Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -464,19 +464,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPInkShapeRegionView.xaml">
+    <Page Include="Views\PageObjects\Regions\CLPInkShapeRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPDataTableView.xaml">
+    <Page Include="Views\PageObjects\Regions\CLPDataTableView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPShadingRegionView.xaml">
+    <Page Include="Views\PageObjects\Regions\CLPShadingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPGroupingRegionView.xaml">
+    <Page Include="Views\PageObjects\Regions\CLPGroupingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

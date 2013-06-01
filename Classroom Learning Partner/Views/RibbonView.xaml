@@ -421,6 +421,21 @@
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
+            
+            <RibbonGroup Header="Tools">
+
+                <RibbonToggleButton Label="Select"
+                                    LargeImageSource="..\Images\HandIcon.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding SetSelectCommand}" />
+
+                <RibbonToggleButton Label="Pen"
+                                    IsChecked="True"
+                                    LargeImageSource="..\Images\Pen.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding SetPenCommand}" />
+
+            </RibbonGroup>
 
             <RibbonGroup Header="Images">
 
@@ -653,6 +668,21 @@
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TrimPageCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Tools">
+
+                <RibbonToggleButton Label="Select"
+                                    LargeImageSource="..\Images\HandIcon.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding SetSelectCommand}" />
+
+                <RibbonToggleButton Label="Pen"
+                                    IsChecked="True"
+                                    LargeImageSource="..\Images\Pen.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding SetPenCommand}" />
 
             </RibbonGroup>
 

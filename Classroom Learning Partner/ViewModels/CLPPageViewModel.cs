@@ -21,21 +21,12 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public enum PageInteractionMode
     {
-        None,
-        SnapTile,
+        Select,
+        Tile,
         Pen,
-        Marker,
-        Eraser,
-        StrokeEraser,
+        PenAndSelect,
+        Scissors,
         EditObjectProperties
-    }
-
-    public enum PageEraserInteractionMode
-    {
-        None,
-        Eraser,
-        StrokeEraser,
-        ObjectEraser
     }
 
     [InterestedIn(typeof(RibbonViewModel))]
@@ -48,6 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPPageViewModel(CLPPage page)
         {
+            PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
             EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
@@ -56,7 +48,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             Page.PageObjects.CollectionChanged += PageObjects_CollectionChanged;
             
-        
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
@@ -78,9 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(PageProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Page property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
 
         /// <summary>
@@ -93,9 +81,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ByteStrokesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ByteStrokes property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>));
 
         /// <summary>
@@ -108,9 +93,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageObjectsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageObjects property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<ICLPPageObject>));
 
         /// <summary>
@@ -123,9 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageHistory property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
 
         /// <summary>
@@ -138,9 +117,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageHeightProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageHeight property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
 
         /// <summary>
@@ -153,9 +129,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageWidthProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageWidth property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double));
 
         /// <summary>
@@ -168,9 +141,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageAspectRatioProperty, value); }
         }
 
-        /// <summary>
-        /// Register the PageAspectRatio property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double));
 
         //Steve - Replace with User's UniqueID to match against Person Model
@@ -184,9 +154,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SubmitterNameProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SubmitterName property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string));
 
         /// <summary>
@@ -199,10 +166,59 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsSubmissionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsSubmission property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsSubmissionProperty = RegisterProperty("IsSubmission", typeof(bool));
+
+        /// <summary>
+        /// Sets the PageInteractionMode.
+        /// </summary>
+        public PageInteractionMode PageInteractionMode
+        {
+            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            set
+            {
+                SetValue(PageInteractionModeProperty, value);
+                switch(value)
+                {
+                    case PageInteractionMode.Select:
+                        IsInkCanvasHitTestVisible = false;
+                        PageCursor = Cursors.Hand;
+                        break;
+                    case PageInteractionMode.Tile:
+                        IsInkCanvasHitTestVisible = false;
+                        break;
+                    case PageInteractionMode.Pen:
+                        IsInkCanvasHitTestVisible = true;
+                        PageCursor = Cursors.Pen;
+                        break;
+                    case PageInteractionMode.PenAndSelect:
+                        IsInkCanvasHitTestVisible = true;
+                        PageCursor = Cursors.Pen;
+                        break;
+                    case PageInteractionMode.Scissors:
+                        IsInkCanvasHitTestVisible = true;
+                        break;
+                    case PageInteractionMode.EditObjectProperties:
+                        IsInkCanvasHitTestVisible = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                ClearAdorners();
+            }
+        }
+
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode), PageInteractionMode.Pen);
+
+        /// <summary>
+        /// Sets the page's visible cursor.
+        /// </summary>
+        public Cursor PageCursor
+        {
+            get { return GetValue<Cursor>(PageCursorProperty); }
+            set { SetValue(PageCursorProperty, value); }
+        }
+
+        public static readonly PropertyData PageCursorProperty = RegisterProperty("PageCursor", typeof(Cursor), Cursors.Pen);
 
         #endregion //Properties
 
@@ -253,9 +269,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberOfGroupSubmissionsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the NumberOfGroupSubmissions property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int));
 
         /// <summary>
@@ -320,20 +333,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool _isMouseDown;
         public Canvas TopCanvas = null;
 
-        public T GetVisualChild<T>(Visual parent) where T : Visual
-        {
-            T child = default(T);
-            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
-            for(int i = 0; i < numVisuals; i++)
-            {
-                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
-                child = v as T ?? GetVisualChild<T>(v);
-                if(child != null)
-                    break;
-            }
-            return child;
-        }
-
         public T GetVisualParent<T>(Visual child) where T : Visual
         {
             var p = (Visual)VisualTreeHelper.GetParent(child);
@@ -376,20 +375,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseMoveCommandExecute(MouseEventArgs e)
         {
-            if(TopCanvas == null || IsPagePreview)
+            if(TopCanvas == null || IsPagePreview || PageInteractionMode == PageInteractionMode.Pen)
             {
                 return;
             }
-            var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-            //if(!_isMouseDown)
-            //{
-                VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            //}
 
-            if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
-            {
-                VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, EraseResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            }
+
+
+            //var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
+
+            //VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+
+            //if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
+            //{
+            //    VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, EraseResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
+            //}
         }
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
            // Page.PageHistory.BeginEventGroup();
             _isMouseDown = true;
-            if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.SnapTile)
+            if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Tile)
             {
                 var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
                 Point pt = e.GetPosition(pageObjectCanvas);
@@ -481,6 +481,25 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+
+        public static void ClearAdorners(CLPPage page)
+        {
+            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<CLPPageViewModel>())
+            {
+                clpPageViewModel.ClearAdorners();
+            }
+        }
+
+        public void ClearAdorners()
+        {
+            if(PageObjects != null)
+            {
+                foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
+                {
+                    aclpPageObjectBaseViewModel.IsAdornerVisible = false;
+                }
+            }
+        }
 
         Type _lastType;
 
@@ -756,6 +775,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 EraserShape = new RectangleStylusShape(x, x);
                 DefaultDA.Height = x;
                 DefaultDA.Width = x;
+            }
+
+            if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)
+            {
+                PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
