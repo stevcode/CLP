@@ -439,6 +439,24 @@ namespace CLP.Models
             return divBelow;
         }
 
+        public ObservableCollection<int> GetHorizontalRegionLabels()
+        {
+            ObservableCollection<int> labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in HorizontalDivisions){
+                labels.Add(div.Value);
+            }
+            return labels;
+        }
+
+        public ObservableCollection<int> GetVerticalRegionLabels()
+        {
+            ObservableCollection<int> labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in VerticalDivisions){
+                labels.Add(div.Value);
+            }
+            return labels;
+        }
+
         #endregion //Methods
     }
 }

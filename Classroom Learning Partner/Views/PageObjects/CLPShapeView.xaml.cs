@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls.Primitives;
+﻿using System;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -7,7 +6,7 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for CLPSquareShapeView.xaml.
     /// </summary>
-    public partial class CLPShapeView : Catel.Windows.Controls.UserControl
+    public partial class CLPShapeView
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CLPSquareShapeView"/> class.
@@ -17,10 +16,9 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
         }
 
-        protected override System.Type GetViewModelType()
+        protected override Type GetViewModelType()
         {
             return typeof(CLPShapeViewModel);
         }
-
     }
 }

@@ -5,7 +5,7 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for CLPImageView.xaml
     /// </summary>
-    public partial class CLPImageView : Catel.Windows.Controls.UserControl
+    public partial class CLPImageView
     {
         public CLPImageView()
         {
@@ -16,6 +16,5 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(CLPImageViewModel);
         }
-       
     }
 }

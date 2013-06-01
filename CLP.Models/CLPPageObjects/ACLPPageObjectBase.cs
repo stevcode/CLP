@@ -209,6 +209,7 @@ namespace CLP.Models
 
         public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool), false);
 
+        //TODO: Steve - Remove
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

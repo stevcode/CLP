@@ -4,7 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
 
-    <Control x:Name="PageObjectView">
+    <Control>
         <Control.Resources>
 
             <ControlTemplate x:Key="CLPAudioTemplate">
@@ -82,11 +82,11 @@
                     <!-- CLPHandwritingRegion trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPHandwritingRegion">
                         <Setter Property="Template" Value="{StaticResource CLPHandwritingRegionTemplate}" />
-                                </DataTrigger>
+                    </DataTrigger>
 
-                                <!-- CLPGroupingRegion trigger -->
-                                <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPGroupingRegion">
-                                    <Setter Property="Template" Value="{StaticResource CLPGroupingRegionTemplate}" />
+                    <!-- CLPGroupingRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPGroupingRegion">
+                        <Setter Property="Template" Value="{StaticResource CLPGroupingRegionTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPImage trigger -->
