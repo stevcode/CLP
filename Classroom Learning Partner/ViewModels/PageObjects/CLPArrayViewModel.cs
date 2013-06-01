@@ -372,7 +372,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnEraseDivisionCommandExecute(MouseEventArgs e)
         {
-            if((e.StylusDevice != null && e.StylusDevice.Inverted) || e.MiddleButton == MouseButtonState.Pressed)
+            if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) || e.MiddleButton == MouseButtonState.Pressed)
             {
                 var rectangle = e.Source as Rectangle;
                 if(rectangle != null) 
@@ -428,7 +428,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(e.ChangedButton == MouseButton.Left)
+            if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
                 var tempAdornerState = IsAdornerVisible;
                 CLPPageViewModel.ClearAdorners(PageObject.ParentPage);

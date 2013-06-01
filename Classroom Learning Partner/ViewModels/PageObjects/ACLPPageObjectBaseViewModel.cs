@@ -292,7 +292,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if((e.StylusDevice != null && e.StylusDevice.Inverted) || e.MiddleButton == MouseButtonState.Pressed)
+            if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) || e.MiddleButton == MouseButtonState.Pressed)
             {
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
@@ -468,7 +468,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(e.ChangedButton == MouseButton.Left)
+            if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
                 var tempAdornerState = IsAdornerVisible;
                 CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
