@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
         protected ACLPPageObjectBaseViewModel()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
+            ErasePageObjectCommand = new Command<MouseEventArgs>(OnErasePageObjectCommandExecute);
 
             DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
             DragStartPageObjectCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectCommandExecute);
@@ -269,15 +270,29 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Default Adorners
 
         /// <summary>
-        /// Gets the RemovePageObjectCommand command.
+        /// Removes pageObject from page when Delete button is pressed.
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
         private void OnRemovePageObjectCommandExecute()
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+        }
 
-            if(parentPage != null)
+        /// <summary>
+        /// Removes pageObject from page if back of pen (or middle mouse button)
+        /// is pressed while passing over the pageObject.
+        /// </summary>
+        public Command<MouseEventArgs> ErasePageObjectCommand { get; set; }
+
+        private void OnErasePageObjectCommandExecute(MouseEventArgs e)
+        {
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
+            {
+                return;
+            }
+
+            if((e.StylusDevice != null && e.StylusDevice.Inverted) || e.MiddleButton == MouseButtonState.Pressed)
             {
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
@@ -444,7 +459,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the ToggleMainAdornersCommand command.
         /// </summary>
-        public Command<MouseButtonEventArgs> ToggleMainAdornersCommand { get; private set; }
+        public Command<MouseButtonEventArgs> ToggleMainAdornersCommand { get; set; }
 
         private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
         {

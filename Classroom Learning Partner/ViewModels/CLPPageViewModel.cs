@@ -380,6 +380,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+
+
             //var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
 
             //VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));

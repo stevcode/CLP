@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -32,6 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
+            EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
             ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
         }
 
@@ -346,9 +348,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<CLPArrayDivision> EditLabelCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the EditLabelCommand command is executed.
-        /// </summary>
         private void OnEditLabelCommandExecute(CLPArrayDivision division)
         {
             // Pop up numberpad and save result as value of division
@@ -363,6 +362,57 @@ namespace Classroom_Learning_Partner.ViewModels
             if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
             {
                 division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
+            }
+        }
+
+        /// <summary>
+        /// Gets the EraseDivisionCommand command.
+        /// </summary>
+        public Command<MouseEventArgs> EraseDivisionCommand { get; private set; }
+
+        private void OnEraseDivisionCommandExecute(MouseEventArgs e)
+        {
+            if((e.StylusDevice != null && e.StylusDevice.Inverted) || e.MiddleButton == MouseButtonState.Pressed)
+            {
+                var rectangle = e.Source as Rectangle;
+                if(rectangle != null) 
+                {
+                    var division = rectangle.DataContext as CLPArrayDivision;
+
+                    if(division == null ||
+                       division.Position == 0.0)
+                    {
+                        return;
+                    }
+                    if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(division);
+
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
+                        {
+                            double newLength = divAbove.Length + division.Length;
+                            CLPArrayDivision newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
+                        }
+                    }
+                    if(division.Orientation == ArrayDivisionOrientation.Vertical)
+                    {
+                        CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(division);
+
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).VerticalDivisions.Count > 0)
+                        {
+                            double newLength = divAbove.Length + division.Length;
+                            CLPArrayDivision newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
+                        }
+                    }
+                }
             }
         }
 

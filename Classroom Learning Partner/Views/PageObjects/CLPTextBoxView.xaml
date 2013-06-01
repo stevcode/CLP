@@ -8,8 +8,8 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
-        <conv:ThicknessConverter x:Key="ThicknessConverter"/>
-        <conv:LengthConverter x:Key="LengthConverter"/>
+        <conv:ThicknessConverter x:Key="ThicknessConverter" />
+        <conv:LengthConverter x:Key="LengthConverter" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -124,6 +124,9 @@
                     <i:EventTrigger EventName="MouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
 
@@ -140,6 +143,9 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </views:BindableRichTextBox>

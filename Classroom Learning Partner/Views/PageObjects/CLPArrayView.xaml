@@ -269,11 +269,17 @@
                     <DataTemplate>
                         <Canvas Height="{Binding Length}"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                            <!--TODO: Steve - May need to use Tag to pass in {Binding}, if so, convert all Tags back to Names-->
                             <Rectangle Tag="DivisionHitBox"
                                        Height="4"
                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
-                                       Stroke="Black" StrokeThickness="3" Fill="Transparent" />
+                                       Stroke="Black" StrokeThickness="3" Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseEnter">
+                                        <catel:EventToCommand Command="{Binding DataContext.EraseDivisionCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
+                                                              PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
                             <Grid Canvas.Right="{Binding DataContext.PageObject.SmallLabelLength, 
                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                          Converter={StaticResource NegativeLengthSubtractConverter}, 
@@ -315,7 +321,14 @@
                             <Rectangle Tag="DivisionHitBox"
                                        Width="4"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
-                                       Stroke="Black" StrokeThickness="3" Fill="Transparent" />
+                                       Stroke="Black" StrokeThickness="3" Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseEnter">
+                                        <catel:EventToCommand Command="{Binding DataContext.EraseDivisionCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
+                                                              PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
                             <Grid Canvas.Bottom="{Binding DataContext.PageObject.SmallLabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                           Converter={StaticResource NegativeLengthSubtractConverter}, 

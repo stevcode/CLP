@@ -149,6 +149,9 @@
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding PlaceStampCommand}"/>
                     </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>
             

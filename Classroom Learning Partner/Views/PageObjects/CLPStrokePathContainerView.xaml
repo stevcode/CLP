@@ -155,6 +155,9 @@
                     <i:EventTrigger EventName="MouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
             
