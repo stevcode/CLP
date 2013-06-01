@@ -20,6 +20,12 @@ namespace CLP.Models
             Value = value;
         }
 
+        public TagOptionValue(string value)
+        {
+            IconUri = null;
+            Value = value;
+        }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
