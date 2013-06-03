@@ -283,7 +283,13 @@ namespace CLP.Models
         public override void EnforceAspectRatio(double aspectRatio)
         {
             ArrayWidth = ArrayHeight * aspectRatio;
-
+            if(ArrayWidth < 10)
+            {
+                ArrayWidth = 10;
+                ArrayHeight = ArrayWidth / aspectRatio;
+                Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
+                Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
+            }
             if(ArrayWidth + LargeLabelLength + 2 * SmallLabelLength + XPosition > ParentPage.PageWidth)
             {
                 ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength - 2 * SmallLabelLength;

@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Resources;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
@@ -24,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
         Select,
         Tile,
         Pen,
+        Highlighter,
         PenAndSelect,
         Scissors,
         EditObjectProperties
@@ -188,11 +190,18 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
-                        PageCursor = Cursors.Pen;
+                        var penStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
+                        PageCursor = new Cursor(penStream.Stream); 
+                        break;
+                    case PageInteractionMode.Highlighter:
+                        IsInkCanvasHitTestVisible = true;
+                        var hightlighterStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/HighlighterCursor.cur", UriKind.Relative));
+                        PageCursor = new Cursor(hightlighterStream.Stream);
                         break;
                     case PageInteractionMode.PenAndSelect:
                         IsInkCanvasHitTestVisible = true;
-                        PageCursor = Cursors.Pen;
+                        var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
+                        PageCursor = new Cursor(penAndSelectStream.Stream); 
                         break;
                     case PageInteractionMode.Scissors:
                         IsInkCanvasHitTestVisible = true;
@@ -775,6 +784,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 EraserShape = new RectangleStylusShape(x, x);
                 DefaultDA.Height = x;
                 DefaultDA.Width = x;
+                PageInteractionMode = PageInteractionMode.Pen;
             }
 
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)

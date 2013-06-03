@@ -145,7 +145,7 @@
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding SetSelectCommand}" />
 
-                <RibbonToggleButton Label="Pen"
+                <RibbonToggleButton Label="Pen" x:Name="PenButton"
                                     IsChecked="True"
                                     LargeImageSource="..\Images\Pen.png"
                                     Click="ToolGroupToggle_Clicked"
@@ -243,6 +243,7 @@
                                 <Binding Path="SetPenColorCommand"/>
                             </Setter.Value>
                         </Setter>
+                        <EventSetter Event="Click" Handler="ToolGroupToggle_Clicked"/>
                         <Setter Property="CommandParameter">
                             <Setter.Value>
                                 <Binding RelativeSource="{RelativeSource Self}"/>
