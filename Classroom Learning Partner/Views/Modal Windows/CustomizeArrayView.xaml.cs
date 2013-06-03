@@ -37,16 +37,31 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            int partNum;
-            bool isRowsNum = Int32.TryParse(Rows.Text, out partNum);
-            bool isColsNum = Int32.TryParse(Columns.Text, out partNum);
-            if(Rows.Text.Length > 0 && Columns.Text.Length > 0&& isRowsNum && isColsNum)
+            int rowNum;
+            int colNum;
+            bool isRowsNum = Int32.TryParse(Rows.Text, out rowNum);
+            bool isColsNum = Int32.TryParse(Columns.Text, out colNum);
+
+
+            if(!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
             {
-                this.DialogResult = true;
+                MessageBox.Show("Oops, it looks like one of the values you entered is not a positive integer", "Oops");
+            }
+            else if(rowNum < 1 || colNum < 1)
+            {
+                MessageBox.Show("Oops, it looks like one of the values you entered is not a positive integer", "Oops");
             }
             else
             {
-                MessageBox.Show("Oops, the parts doesn't look quite right. Are you sure it is a positive integer?", "Oops");
+                double ratio = (double)rowNum / (double)colNum;
+                if(ratio > 25 || 1 / ratio > 50)
+                {
+                    MessageBox.Show("The ratio between the numbers you entered is too large. Please try again.", "Okay");
+                }
+                else
+                {
+                    this.DialogResult = true;
+                }
             }
         }
 
