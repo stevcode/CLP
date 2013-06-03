@@ -430,7 +430,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
-                var tempAdornerState = IsAdornerVisible;
+                var tempAdornerState = IsDefaultAdornerVisible;
                 CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
                 IsAdornerVisible = !tempAdornerState;
                 IsDefaultAdornerVisible = !tempAdornerState;
