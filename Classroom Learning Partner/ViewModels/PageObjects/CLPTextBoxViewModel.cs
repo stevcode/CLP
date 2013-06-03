@@ -8,7 +8,6 @@ namespace Classroom_Learning_Partner.ViewModels
     public class CLPTextBoxViewModel : ACLPPageObjectBaseViewModel
     {
         public CLPTextBoxViewModel(CLPTextBox textBox)
-            : base()
         {
             PageObject = textBox;
         }

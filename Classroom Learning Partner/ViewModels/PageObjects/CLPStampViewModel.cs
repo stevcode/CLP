@@ -322,9 +322,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 x = PageObject.ParentPage.PageWidth - PageObject.Width;
             }
-            if(y > PageObject.ParentPage.PageHeight - PageObject.Height)
+            if(y > PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight)
             {
-                y = PageObject.ParentPage.PageHeight - PageObject.Height;
+                y = PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight;
             }
 
             double xDelta = x - PageObject.XPosition;

@@ -165,5 +165,13 @@ namespace Classroom_Learning_Partner.Views
         }
 
         #endregion //Font Style Methods
+
+        private void TextBox_OnIsHitTestVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(IsHitTestVisible)
+            {
+                TextBox.Focus();
+            }
+        }
     }
 }
