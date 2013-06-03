@@ -167,6 +167,9 @@ namespace Classroom_Learning_Partner.ViewModels
             UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);   
+
+            //Authoring
+            EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
         }
 
         /// <summary>
@@ -2043,6 +2046,29 @@ namespace Classroom_Learning_Partner.ViewModels
             if(EditingMode != InkCanvasEditingMode.Ink)
             {
                 SetPenCommand.Execute();
+            }
+        }
+
+        /// <summary>
+        /// Gets the EditPageDefinitionCommand command.
+        /// </summary>
+        public Command EditPageDefinitionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the EditPageDefinitionCommand command is executed.
+        /// </summary>
+        private void OnEditPageDefinitionCommandExecute()
+        {
+
+            Logger.Instance.WriteToLog("Page Definition");
+
+            PageDefinitionView definitionView = new PageDefinitionView(new ProductRelationViewModel(new ProductRelation()));
+            definitionView.Owner = Application.Current.MainWindow;
+            definitionView.ShowDialog();
+
+            if(definitionView.DialogResult == true)
+            {
+                // Todo: Update this page's definition tag
             }
         }
 

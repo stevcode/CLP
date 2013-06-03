@@ -145,6 +145,9 @@
     <Compile Include="Ink DTO\StrokeDTO.cs" />
     <Compile Include="Ink DTO\StylusPointDTO.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Math\MathRelation.cs" />
+    <Compile Include="Math\MathPageDefinition.cs" />
+    <Compile Include="Math\ProductRelation.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />

@@ -196,6 +196,7 @@
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
+    <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
@@ -248,6 +249,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\CustomizeArrayView.xaml.cs">
       <DependentUpon>CustomizeArrayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\PageDefinitionView.xaml.cs">
+      <DependentUpon>PageDefinitionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
@@ -385,6 +389,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\PageDefinitionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

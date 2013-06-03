@@ -473,6 +473,11 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TRUE" />
+
+                <RibbonButton Label="Page Definition"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding EditPageDefinitionCommand}" />
+                
             </RibbonGroup>
 
             <RibbonGroup Header="Shapes">
