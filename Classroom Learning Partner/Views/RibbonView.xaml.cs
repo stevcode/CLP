@@ -35,13 +35,23 @@ namespace Classroom_Learning_Partner.Views
                         toggleButton.IsChecked = false;
                     }
                 }
-            }
-            EditObjectPropertiesToggleButton.IsChecked = false;
 
-            var button = sender as RibbonToggleButton;
-            if(button != null)
+                ribbonToggleButton.IsChecked = true;
+            }
+            else
             {
-                button.IsChecked = true;
+                var ribbonViewModel = ViewModel as RibbonViewModel;
+                if(ribbonViewModel == null ||
+                   (ribbonViewModel.PageInteractionMode == PageInteractionMode.Pen ||
+                    ribbonViewModel.PageInteractionMode == PageInteractionMode.Highlighter))
+                {
+                    return;
+                }
+                foreach(var toggleButton in ToolsRibbonGroup.Items.Cast<object>().Where(item => item.GetType() == typeof(RibbonToggleButton)).OfType<RibbonToggleButton>())
+                {
+                    toggleButton.IsChecked = false;
+                }
+                PenButton.IsChecked = true;
             }
         }
 
