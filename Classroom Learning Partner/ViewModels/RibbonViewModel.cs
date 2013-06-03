@@ -1073,7 +1073,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetHighlighterCommandExecute()
         {
             EditingMode = InkCanvasEditingMode.Ink;
-            PageInteractionMode = PageInteractionMode.Pen;
+            PageInteractionMode = PageInteractionMode.Highlighter;
             DrawingAttributes.IsHighlighter = true;
             DrawingAttributes.Height = 12;
             DrawingAttributes.Width = 12;
@@ -1119,6 +1119,10 @@ namespace Classroom_Learning_Partner.ViewModels
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
 
             EditingMode = InkCanvasEditingMode.Ink;
+            if(!(PageInteractionMode == PageInteractionMode.Pen || PageInteractionMode == PageInteractionMode.Highlighter))
+            {
+                PageInteractionMode = PageInteractionMode.Pen;
+            }
         }
 
         #endregion //Tool Commands
