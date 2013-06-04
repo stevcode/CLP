@@ -4,6 +4,10 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
+    <UserControl.Resources>
+        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
+    </UserControl.Resources>
+
     <!--Ribbon-->
     <Ribbon x:Name="Ribbon" IsMinimized="{Binding IsMinimized}">
 
@@ -56,7 +60,7 @@
                 <RibbonApplicationMenuItem Header="Submit Whole Notebook"
                                            ImageSource="..\Images\LargeIcon.png"
                                            Command="{Binding SubmitNotebookToTeacherCommand}"
-                                           Visibility="{Binding Path=StudentVisibility}" />
+                                           Visibility="{Binding StudentVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Convert To XPS"
                                            ImageSource="..\Images\ConvertToXPS.png"
@@ -219,7 +223,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert" Visibility="{Binding Path=StudentVisibility}">
+            <RibbonGroup Header="Insert" Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\InkArray.png"
@@ -283,7 +287,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Share" Visibility="{Binding Path=StudentVisibility}">
+            <RibbonGroup Header="Share" Visibility="{Binding StudentVisibility}">
 
                 <RibbonButton Label="Send To Teacher"
                               LargeImageSource="..\Images\Send.png" 
@@ -302,7 +306,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Projected Displays" Visibility="{Binding Path=InstructorVisibility}">
+            <RibbonGroup Header="Projected Displays" Visibility="{Binding InstructorVisibility}">
 
                 <RibbonButton Label="Send To Projector"
                               LargeImageSource="..\Images\Projector.png"
@@ -421,7 +425,7 @@
         </RibbonTab>-->
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert" Visibility="{Binding Path=InstructorVisibility}">
+        <RibbonTab Header="Insert" Visibility="{Binding StudentVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
             
             <RibbonGroup Header="Tools">
 
