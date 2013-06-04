@@ -939,6 +939,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRefreshNetworkCommandExecute()
         {
+            CanSendToTeacher = true;
             CLPServiceAgent.Instance.NetworkReconnect();
         }
 

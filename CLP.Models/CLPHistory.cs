@@ -11,7 +11,7 @@ namespace CLP.Models
         public const double SAMPLE_RATE = 9;
         private bool _frozen;
         private bool _ingroup;
-        public bool _useHistory = true;
+        public bool _useHistory = false;  //History currently disabled due to bugs.
         private Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor

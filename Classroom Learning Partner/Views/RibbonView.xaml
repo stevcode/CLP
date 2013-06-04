@@ -347,7 +347,7 @@
 
             </RibbonGroup>
             
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
@@ -362,7 +362,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding RedoCommand}" />
                 
-            </RibbonGroup>
+            </RibbonGroup>-->
             
         </RibbonTab>
 
