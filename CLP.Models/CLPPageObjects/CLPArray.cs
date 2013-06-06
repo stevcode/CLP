@@ -271,127 +271,116 @@ namespace CLP.Models
 
         #region Methods
 
-        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtX(double Ave)
-        {
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
-            if(this.Columns==1){
-                c.Add(this);
-                return c;
-            }
-            double shape1X = this.XPosition;
-            double shape2X = Ave;
-            double shapeY = this.YPosition;
-
-            double shapeHeight = this.Height;
-            double shape1Width = Ave - shape1X;
-            double shape2Width = this.Width - shape1Width;
-            
-            int shape1Cols = Convert.ToInt32(Math.Round((shape1Width / this.Width)*this.Columns));
-            int shape2Cols = this.Columns - shape1Cols;
-            int shapeRows = this.Rows;
-            
-
-            if(shape1Cols != 0 && shape1Width != 0)
-            {
-                CLPArray array1 = new CLPArray(shapeRows, shape1Cols, this.ParentPage);
-                array1.XPosition = shape1X;
-                array1.YPosition = shapeY;
-                array1.Width = shape1Width + 0.5 * LargeLabelLength + SmallLabelLength;
-                array1.Height = shapeHeight;
-                array1.SetParent(this.ParentPage);
-                /*if(shape1Cols == 1){
-                    array1.Width = array1.Width + 2 * LargeLabelLength;
-                }
-                if (shapeRows==1){
-                    array1.Height = array1.Height + 2 * LargeLabelLength;
-                }*/
-                //array1.CalculateGridLines();
-                //array1.ResizeDivisions();
-                array1.RefreshArrayDimensions();
-                array1.CalculateGridLines(); //doesn't work?!
-                c.Add(array1);
-            }
-
-            if(shape2Cols != 0 && shape2Width != 0)
-            {
-                CLPArray array2 = new CLPArray(shapeRows, shape2Cols, this.ParentPage);
-                array2.XPosition = shape2X - 0.5 * LargeLabelLength - SmallLabelLength;
-                array2.YPosition = shapeY;
-                array2.Width = shape2Width + 0.5 * LargeLabelLength + SmallLabelLength;
-                array2.Height = shapeHeight;
-                array2.SetParent(this.ParentPage);
-                /*if(shape1Cols == 1)
-                {
-                    array2.Width = array2.Width + 2 * LargeLabelLength;
-                }
-                if(shapeRows == 1)
-                {
-                    array2.Height = array2.Height + 2 * LargeLabelLength;
-                }*/
-                //array2.CalculateGridLines();
-                //array2.ResizeDivisions();
-                array2.RefreshArrayDimensions();
-                array2.CalculateGridLines(); //doesn't work?!
-                c.Add(array2);
-            }
-            return c;
-        }  
-        //*******************************
-        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
+        public override ObservableCollection<ICLPPageObject> SplitAtX(double average)
         {
             var c = new ObservableCollection<ICLPPageObject>();
-            if(this.Rows == 1)
+            if(Columns == 1)
             {
                 c.Add(this);
                 return c;
             }
-            double shape1Y = this.YPosition;
-            double shapeX = this.XPosition;
-            double shape2Y = Ave;
 
-            double shape1Height = Ave - shape1Y;
-            double shape2Height = this.Height - shape1Height;
-            double shapeWidth = this.Width;
+            double relativeAverage = average - LargeLabelLength - XPosition;
 
-            int shapeCols = this.Columns;
-            int shape1Rows = Convert.ToInt32(Math.Round((shape1Height / this.Height) * this.Rows));
-            int shape2Rows = this.Rows - shape1Rows;
-
-
-            if(shape1Rows != 0 && shape1Height != 0)
+            double minDistance = ArrayWidth;
+            double closestLinePosition = 0;
+            int closestLineIndex = 0;
+            foreach(var line in VerticalGridLines)
             {
-                CLPArray array1 = new CLPArray(shape1Rows, shapeCols, this.ParentPage);
-                array1.XPosition = shapeX;
-                array1.YPosition = shape1Y;
-                array1.Width = shapeWidth;
-                array1.Height = shape1Height + 0.5*LargeLabelLength + SmallLabelLength;//((1 / 1) * (LargeLabelLength + (2 * SmallLabelLength)));
-                array1.SetParent(this.ParentPage);
-
-                array1.RefreshArrayDimensions();
-                array1.CalculateGridLines(); //doesn't work?!
-                c.Add(array1);
+                var distance = Math.Abs(relativeAverage - line);
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestLinePosition = line;
+                    closestLineIndex = VerticalGridLines.IndexOf(line);
+                }
             }
 
-            if(shape2Rows != 0 && shape2Height != 0)
-            {
-                CLPArray array2 = new CLPArray(shape2Rows, shapeCols, this.ParentPage);
-                array2.XPosition = shapeX;
-                array2.YPosition = shape2Y - 0.5*LargeLabelLength - SmallLabelLength;
-                array2.Width = shapeWidth;
-                array2.Height = shape2Height + 0.5*LargeLabelLength + SmallLabelLength;
-                array2.SetParent(this.ParentPage);
+            var leftArray = new CLPArray(Rows, closestLineIndex + 1, ParentPage)
+                            {
+                                IsGridOn = IsGridOn,
+                                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                XPosition = XPosition,
+                                YPosition = YPosition,
+                                ArrayHeight = ArrayHeight
+                            };
+            leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
+            leftArray.CalculateGridLines();
+            c.Add(leftArray);
 
-                array2.RefreshArrayDimensions();
-                array2.CalculateGridLines(); //doesn't work?!
-                
-                c.Add(array2);
+            var rightArray = new CLPArray(Rows, Columns - closestLineIndex - 1, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition + closestLinePosition,
+                YPosition = YPosition,
+                ArrayHeight = ArrayHeight
+            };
+            rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
+            rightArray.CalculateGridLines();
+            c.Add(rightArray);
+
+            return c;
+        }  
+
+        //*******************************
+        public override ObservableCollection<ICLPPageObject> SplitAtY(double average)
+        {
+            var c = new ObservableCollection<ICLPPageObject>();
+            if(Rows == 1)
+            {
+                c.Add(this);
+                return c;
             }
+
+            double relativeAverage = average - LargeLabelLength - YPosition;
+
+            double minDistance = ArrayHeight;
+            double closestLinePosition = 0;
+            int closestLineIndex = 0;
+            foreach(var line in HorizontalGridLines)
+            {
+                var distance = Math.Abs(relativeAverage - line);
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestLinePosition = line;
+                    closestLineIndex = HorizontalGridLines.IndexOf(line);
+                }
+            }
+
+            var topArray = new CLPArray(closestLineIndex + 1, Columns, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition,
+                YPosition = YPosition,
+                ArrayWidth = ArrayWidth
+            };
+            topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
+            topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
+            topArray.CalculateGridLines();
+            c.Add(topArray);
+
+            var bottomArray = new CLPArray(Rows - closestLineIndex - 1, Columns, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition,
+                YPosition = YPosition + closestLinePosition,
+                ArrayWidth = ArrayWidth
+            };
+            bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
+            bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
+            bottomArray.CalculateGridLines();
+            c.Add(bottomArray);
             return c;
         }  
         //*******************************
+
         public override ICLPPageObject Duplicate()
         {
-            CLPArray newArray = Clone() as CLPArray;
+            var newArray = Clone() as CLPArray;
             newArray.UniqueID = Guid.NewGuid().ToString();
             newArray.ParentPage = ParentPage;
             return newArray;

@@ -37,7 +37,7 @@ namespace CLP.Models
         void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects);
         ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
         void EnforceAspectRatio(double aspectRatio);
-        ObservableCollection<ICLPPageObject> SplitAtX(double Ave);
+        ObservableCollection<ICLPPageObject> SplitAtX(double ave);
         ObservableCollection<ICLPPageObject> SplitAtY(double Ave);
     }
 }

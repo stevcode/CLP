@@ -79,7 +79,7 @@ namespace CLP.Models
             return newShape;
         }
         
-        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtX(double Ave)
+        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtX(double ave)
         {
             System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
             if(CLPShapeType.Rectangle.CompareTo(this.ShapeType) == 0)
@@ -88,10 +88,10 @@ namespace CLP.Models
                 double shape1X = this.XPosition;
                 double shape1Y = this.YPosition;
                 double shape2Y = this.YPosition;
-                double shape2X = Ave;
+                double shape2X = ave;
                 double shapeHeight = this.Height;
-                double shape1Width = Ave - shape1X;
-                double shape2Width = this.XPosition + this.Width - Ave;
+                double shape1Width = ave - shape1X;
+                double shape2Width = this.XPosition + this.Width - ave;
                 CLPShape square1 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
                 square1.XPosition = shape1X;
                 square1.YPosition = shape1Y;

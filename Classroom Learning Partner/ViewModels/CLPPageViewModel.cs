@@ -677,7 +677,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     ObservableCollection<ICLPPageObject> c1 = lr[0];
                     ObservableCollection<ICLPPageObject> c2 = lr[1];
                     var AllShapesInkStrokes = new ObservableCollection<Stroke>();
-                    
 
                     foreach(ICLPPageObject no in c2)
                     {
@@ -688,6 +687,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
                     }
+
                     foreach(ICLPPageObject no in c1)
                     {
                         CLPServiceAgent.Instance.AddPageObjectToPage(no);
@@ -698,7 +698,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         Page.InkStrokes.Add(inkStroke);
 
                     }
-                    //Page.CutEnabled = true;
+
                     Page.InkStrokes.Remove(stroke);
                     RefreshInkStrokes();
                     Page.PageHistory.SingleCutting = false;

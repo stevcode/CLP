@@ -362,7 +362,7 @@ namespace CLP.Models
         #endregion //Properties
 
         #region Methods
-        public virtual ObservableCollection<ICLPPageObject> SplitAtX(double Ave)
+        public virtual ObservableCollection<ICLPPageObject> SplitAtX(double ave)
         {
 
             System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
