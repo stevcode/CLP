@@ -539,7 +539,7 @@ namespace CLP.Models
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            if (InkStrokes != null)
+            if (InkStrokes != null && InkStrokes.Any())
             {
                 SerializedStrokes = SaveInkStrokes(InkStrokes);
             }

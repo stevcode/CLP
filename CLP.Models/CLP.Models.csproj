@@ -150,6 +150,9 @@
     <Compile Include="Math\ProductRelation.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tags\ArrayOrientationTagType.cs" />
+    <Compile Include="Tags\ArrayStrategyTagType.cs" />
+    <Compile Include="Tags\ArrayDivisionCorrectnessTagType.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />
     <Compile Include="Tags\DomainInterpretatoinTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
