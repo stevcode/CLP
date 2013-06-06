@@ -546,7 +546,7 @@ namespace CLP.Models
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            if (InkStrokes != null)
+            if (InkStrokes != null && InkStrokes.Any())
             {
                 SerializedStrokes = SaveInkStrokes(InkStrokes);
             }
@@ -568,9 +568,9 @@ namespace CLP.Models
             double defaultHeight = Math.Abs(PageWidth - LANDSCAPE_WIDTH) < .000001 ? LANDSCAPE_HEIGHT : PORTRAIT_HEIGHT;
 
             double newHeight = Math.Max(defaultHeight, lowestY);
-            if (newHeight + 20 < PageHeight)
+            if (newHeight < PageHeight)
             {
-                PageHeight = newHeight + 20;
+                PageHeight = newHeight;
             }        
         }
 

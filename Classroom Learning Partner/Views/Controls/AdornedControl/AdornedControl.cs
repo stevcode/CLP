@@ -375,7 +375,8 @@ namespace AdornedControl
         public void FadeInAdorner()
         {
             if (_adornerShowState == AdornerShowState.Visible ||
-                _adornerShowState == AdornerShowState.FadingIn)
+                _adornerShowState == AdornerShowState.FadingIn ||
+                _adorner == null)
             {
                 // Already visible or fading in.
                 return;
@@ -388,13 +389,13 @@ namespace AdornedControl
                 _adorner.Opacity = 0.0;
             }
 
+            _adornerShowState = AdornerShowState.FadingIn;
+
             var doubleAnimation = new DoubleAnimation(1.0, new Duration(TimeSpan.FromSeconds(FadeInTime)));
             doubleAnimation.Completed += fadeInAnimation_Completed;
             doubleAnimation.Freeze();
                 
             _adorner.BeginAnimation(OpacityProperty, doubleAnimation);
-
-            _adornerShowState = AdornerShowState.FadingIn;
         }
 
         /// <summary>
@@ -402,33 +403,21 @@ namespace AdornedControl
         /// </summary>
         public void FadeOutAdorner()
         {
-            if (_adornerShowState == AdornerShowState.FadingOut)
+            if (_adornerShowState == AdornerShowState.FadingOut ||
+                _adornerShowState == AdornerShowState.Hidden ||
+                _adorner == null)
             {
-                //
-                // Already fading out.
-                //
+                // Already fading out or hidden.
                 return;
             }
 
-            if (_adornerShowState == AdornerShowState.Hidden)
-            {
-                //
-                // Adorner has already been hidden.
-                //
-                return;
-            }
+            _adornerShowState = AdornerShowState.FadingOut;
 
             var fadeOutAnimation = new DoubleAnimation(0.0, new Duration(TimeSpan.FromSeconds(FadeOutTime)));
             fadeOutAnimation.Completed += fadeOutAnimation_Completed;
             fadeOutAnimation.Freeze();
 
-            if(_adorner == null)
-            {
-                return;
-            }
             _adorner.BeginAnimation(OpacityProperty, fadeOutAnimation);
-
-            _adornerShowState = AdornerShowState.FadingOut;
         }
 
         /// <summary>
@@ -465,30 +454,6 @@ namespace AdornedControl
             }
 
             return null;
-        }
-
-        public static UserControl GetLinkedDisplayView(DependencyObject child)
-        {
-            //TODO: Steve - refactor this to not use a while(true)
-            while(true)
-            {
-                var parentObject = VisualTreeHelper.GetParent(child);
-                if(parentObject == null)
-                {
-                    return null;
-                }
-                var parent = parentObject as UserControl;
-                if(parent != null)
-                {
-                    if(parent.Name == "LinkedDisplay")
-                    {
-                        return parent;
-                    }
-                    child = parentObject;
-                    continue;
-                }
-                child = parentObject;
-            }
         }
 
         #endregion //Public Methods
@@ -622,10 +587,10 @@ namespace AdornedControl
         /// </summary>
         private void MouseLeaveLogic()
         {
-            //if(!IsMouseOverShowEnabled)
-            //{
-            //    return;
-            //}
+            if(!IsMouseOverShowEnabled)
+            {
+                return;
+            }
 
             _openAdornerTimer.Stop();
 

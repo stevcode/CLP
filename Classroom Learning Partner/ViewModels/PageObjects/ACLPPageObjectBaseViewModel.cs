@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
@@ -17,9 +18,9 @@ namespace Classroom_Learning_Partner.ViewModels
     abstract public class ACLPPageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
         protected ACLPPageObjectBaseViewModel()
-            : base()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
+            ErasePageObjectCommand = new Command<MouseEventArgs>(OnErasePageObjectCommandExecute);
 
             DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
             DragStartPageObjectCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectCommandExecute);
@@ -28,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
+
+            ToggleMainAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainAdornersCommandExecute);
 
             //TODO: Steve - move this to Adorner.cs and expand adorner API
             hoverTimer = new Timer();
@@ -151,26 +154,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsAdornerVisible
         {
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
-            set
-            {
-                SetValue(IsAdornerVisibleProperty, value);
-                if(!value)
-                {
-                    CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
-                    if(parentPage != null)
-                    {
-                        foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                        {
-                            pageVM.IsInkCanvasHitTestVisible = true;
-                        }
-
-                        hoverTimer.Stop();
-                        timerRunning = false;
-                        hoverTimeElapsed = false;
-                    }
-                }
-            }
+            set { SetValue(IsAdornerVisibleProperty, value); }
         }
 
         public static readonly PropertyData IsAdornerVisibleProperty = RegisterProperty("IsAdornerVisible", typeof(bool), false);
@@ -286,21 +270,30 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Default Adorners
 
         /// <summary>
-        /// Gets the RemovePageObjectCommand command.
+        /// Removes pageObject from page when Delete button is pressed.
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
         private void OnRemovePageObjectCommandExecute()
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+        }
 
-            if(parentPage != null)
+        /// <summary>
+        /// Removes pageObject from page if back of pen (or middle mouse button)
+        /// is pressed while passing over the pageObject.
+        /// </summary>
+        public Command<MouseEventArgs> ErasePageObjectCommand { get; set; }
+
+        private void OnErasePageObjectCommandExecute(MouseEventArgs e)
+        {
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
             {
-                foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-                {
-                    pageVM.IsInkCanvasHitTestVisible = true;
-                }
+                return;
+            }
 
+            if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) || e.MiddleButton == MouseButtonState.Pressed)
+            {
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
             }
         }
@@ -348,7 +341,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if (PageObject.PageObjectObjectParentIDs.Count > 0)
+            if (PageObject.PageObjectObjectParentIDs.Any())
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
@@ -461,12 +454,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Default Adorners
 
+        #region Control Adorners
+
+        /// <summary>
+        /// Gets the ToggleMainAdornersCommand command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> ToggleMainAdornersCommand { get; set; }
+
+        private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
+        {
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
+            {
+                return;
+            }
+
+            if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
+            {
+                var tempAdornerState = IsAdornerVisible;
+                CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
+                IsAdornerVisible = !tempAdornerState;
+            }
+        }
+
+        #endregion //Control Adorners
+
         #endregion //Commands
-
-        #region Methods
-
-        
-
-        #endregion //Methods
     }
 }

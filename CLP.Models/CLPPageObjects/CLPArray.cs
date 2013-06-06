@@ -401,7 +401,13 @@ namespace CLP.Models
         public override void EnforceAspectRatio(double aspectRatio)
         {
             ArrayWidth = ArrayHeight * aspectRatio;
-
+            if(ArrayWidth < 10)
+            {
+                ArrayWidth = 10;
+                ArrayHeight = ArrayWidth / aspectRatio;
+                Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
+                Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
+            }
             if(ArrayWidth + LargeLabelLength + 2 * SmallLabelLength + XPosition > ParentPage.PageWidth)
             {
                 ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength - 2 * SmallLabelLength;
@@ -555,6 +561,24 @@ namespace CLP.Models
                 }
             }
             return divBelow;
+        }
+
+        public ObservableCollection<int> GetHorizontalRegionLabels()
+        {
+            ObservableCollection<int> labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in HorizontalDivisions){
+                labels.Add(div.Value);
+            }
+            return labels;
+        }
+
+        public ObservableCollection<int> GetVerticalRegionLabels()
+        {
+            ObservableCollection<int> labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in VerticalDivisions){
+                labels.Add(div.Value);
+            }
+            return labels;
         }
 
         #endregion //Methods

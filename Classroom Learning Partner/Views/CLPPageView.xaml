@@ -34,7 +34,7 @@
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas x:Name="PageObjectCanvas" Background="Transparent"
+                        <Canvas x:Name="PageObjectCanvas" Background="Transparent" Cursor="{Binding PageCursor}"
                                 Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -52,7 +52,8 @@
                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                        EditingMode="{Binding EditingMode}"
                        EditingModeInverted="{Binding EraserMode}"
-                       DefaultDrawingAttributes="{Binding DefaultDA}" />
+                       DefaultDrawingAttributes="{Binding DefaultDA}"
+                       Cursor="{Binding PageCursor}" ForceCursor="True" />
 
         </Canvas>
 
