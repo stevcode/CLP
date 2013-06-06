@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
 {
     public class CLPProofHistory : CLPHistory
-    {
-        
+    {      
 
         public enum CLPProofPageAction
         {
@@ -24,14 +16,18 @@ namespace CLP.Models
         }
 
         #region Constructor
-        public CLPProofHistory() : base() { }
+
+        public CLPProofHistory() {}
 
         protected CLPProofHistory(SerializationInfo info, StreamingContext context)
-        : base(info, context){}
+            : base(info, context)
+        {
+        }
 
         #endregion //Constructor
 
         #region Properties
+
         public CLPProofPageAction ProofPageAction
         {
             get { return GetValue<CLPProofPageAction>(ProofPageActionProperty); }
@@ -43,25 +39,26 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData ProofPageActionProperty = RegisterProperty("ProofPageAction", typeof(CLPProofPageAction), CLPProofPageAction.Pause);
 
-        public bool isPaused
+        public bool IsPaused
         {
-            get { return GetValue<bool>(isPausedProperty); }
-            set { SetValue(isPausedProperty, value); }
+            get { return GetValue<bool>(IsPausedProperty); }
+            set { SetValue(IsPausedProperty, value); }
         }
         
-        public static readonly PropertyData isPausedProperty = RegisterProperty("isPaused", typeof(bool), false);
+        public static readonly PropertyData IsPausedProperty = RegisterProperty("IsPaused", typeof(bool), false);
+
         #endregion//Properties
 
         #region Methods
         public override void Push(CLPHistoryItem item)
         {
-            if(isPaused){ 
+            if(IsPaused){ 
                 item.wasPaused = true; 
             }
-            if(singleCutting){
+            if(SingleCutting){
                 item.singleCut = true;
             }
-            if(!_useHistory || _frozen || IsExpected(item))
+            if(!UseHistory || _frozen || IsExpected(item))
             {
                 return;
             }

@@ -75,7 +75,7 @@ namespace Classroom_Learning_Partner.ViewModels
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
            proofPageHistory1.Future.Clear();
-           proofPageHistory1.isPaused = false;
+           proofPageHistory1.IsPaused = false;
            proofPageHistory1.Unfreeze();
            base.EditingMode = InkCanvasEditingMode.Ink;
            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
@@ -86,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void OnInsertProofCommandExecute(){
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-           proofPageHistory1.isPaused = false;
+           proofPageHistory1.IsPaused = false;
            proofPageHistory1.Unfreeze();
            base.EditingMode = InkCanvasEditingMode.Ink;
            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
@@ -119,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void OnPauseProofCommandExecute(){
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-           if(proofPageHistory1.isPaused)
+           if(proofPageHistory1.IsPaused)
            { 
                if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play){
                    //proofPageHistory1.isPaused = false;
@@ -134,11 +134,11 @@ namespace Classroom_Learning_Partner.ViewModels
                    //proofPageHistory1.isPaused = false;
                    this.OnRewindProofCommandExecute();
                } else {
-                   proofPageHistory1.isPaused = false;
+                   proofPageHistory1.IsPaused = false;
                    proofPageHistory1.Unfreeze();
                }
            }else{ 
-               proofPageHistory1.isPaused = true;
+               proofPageHistory1.IsPaused = true;
                proofPageHistory1.Freeze();
                //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
            }
@@ -193,7 +193,7 @@ namespace Classroom_Learning_Partner.ViewModels
                Console.WriteLine("This is the total: " + count); 
 
 
-                proofPageHistory1.isPaused = false;
+                proofPageHistory1.IsPaused = false;
                 proofPageHistory1.ProofPageAction = action;
                 proofPageHistory1.Freeze();
                 base.EditingMode = InkCanvasEditingMode.None;
@@ -204,7 +204,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         count = from.Count + to.Count;
                         Console.WriteLine("This is the new total on loop " + i + ": " + count);
                         i++;
-                        if(proofPageHistory1.isPaused)
+                        if(proofPageHistory1.IsPaused)
                            {
                                //break;
                                base.EditingMode = InkCanvasEditingMode.Ink;

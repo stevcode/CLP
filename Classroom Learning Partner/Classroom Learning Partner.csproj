@@ -569,6 +569,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
+    <None Include="Images\ScissorsCursor.ani" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -642,7 +643,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
-    <Resource Include="Images\scissors.png" />
+    <Resource Include="Images\ScissorsCursor.cur" />
+    <Resource Include="Images\Scissors.png" />
     <Resource Include="Images\HighlighterCursor.cur" />
     <Resource Include="Images\PenCursor.cur" />
     <Resource Include="Images\HandIcon.png" />

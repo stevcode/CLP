@@ -11,7 +11,6 @@ namespace CLP.Models
         public const double SAMPLE_RATE = 9;
         protected bool _frozen;
         protected bool _ingroup;
-        public bool _useHistory = false;  //History currently disabled due to bugs.
         protected Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
@@ -73,20 +72,22 @@ namespace CLP.Models
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
 
-        public bool _useHistory 
+        public bool UseHistory 
         {
-            get { return GetValue<bool>(_useHistoryProperty); }
-            set { SetValue(_useHistoryProperty, value); }
+            get { return GetValue<bool>(UseHistoryProperty); }
+            set { SetValue(UseHistoryProperty, value); }
         }
 
-        public static readonly PropertyData _useHistoryProperty = RegisterProperty("_useHistory",
+        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory",
             typeof(bool), true);
-        public bool singleCutting {
-            get { return GetValue<bool>(singleCuttingProperty); }
-            set { SetValue(singleCuttingProperty, value); }
+
+        public bool SingleCutting {
+            get { return GetValue<bool>(SingleCuttingProperty); }
+            set { SetValue(SingleCuttingProperty, value); }
         
         }
-        public static readonly PropertyData singleCuttingProperty = RegisterProperty("singleCutting",
+
+        public static readonly PropertyData SingleCuttingProperty = RegisterProperty("SingleCutting",
            typeof(bool), false);
         
         /// <summary>
@@ -129,7 +130,7 @@ namespace CLP.Models
 
         public virtual void Push(CLPHistoryItem item)
         {
-            if(!_useHistory || _frozen || IsExpected(item))
+            if(!UseHistory || _frozen || IsExpected(item))
             {
                 return;
             }
@@ -185,7 +186,7 @@ namespace CLP.Models
 
         public virtual void Undo(CLPPage page)
         {
-            if(!_useHistory || Past.Count==0)
+            if(!UseHistory || Past.Count==0)
             {
                 return;
             }
@@ -221,7 +222,7 @@ namespace CLP.Models
 
         public virtual void Redo(CLPPage page)
         {
-            if(!_useHistory || Future.Count == 0)
+            if(!UseHistory || Future.Count == 0)
             {
                return;
             }

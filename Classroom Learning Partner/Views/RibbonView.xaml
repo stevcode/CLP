@@ -222,7 +222,7 @@
                                     Command="{Binding SetSnapTileCommand}" />-->
 
                 <RibbonToggleButton Label="Cut"
-                                    LargeImageSource="..\Images\scissors.png"
+                                    LargeImageSource="..\Images\Scissors.png"
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding EnableCutCommand}"/>
 
@@ -234,11 +234,6 @@
                               LargeImageSource="..\Images\InkArray.png"
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
-
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="TRUE" />
 
             </RibbonGroup>
 

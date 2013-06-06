@@ -984,7 +984,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
                 foreach(CLPPage page in notebook.Pages)
                 {
-                    page.PageHistory._useHistory = false;
+                    page.PageHistory.UseHistory = false;
                 }
             }
         }
@@ -1118,15 +1118,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnEnableCutCommandExecute()
         {
-            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            if(page.CutEnabled)
-            {
-                page.CutEnabled = false;
-            }
-            else
-            {
-                page.CutEnabled = true;
-            }
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageInteractionMode = PageInteractionMode.Scissors;
         }
 
         /// <summary>

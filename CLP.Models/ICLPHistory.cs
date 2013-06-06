@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CLP.Models
 {
@@ -10,27 +6,27 @@ namespace CLP.Models
     {
         Stack<CLPHistoryItem> Future { get; set; }  
         Stack<CLPHistoryItem> MetaPast { get; set; }
-         List<CLPHistoryItem> ExpectedEvents { get; set; }
+        List<CLPHistoryItem> ExpectedEvents { get; set; }
          
-         bool _useHistory { get; set; }
-         bool singleCutting { get; set; }
+        bool UseHistory { get; set; }
+        bool SingleCutting { get; set; }
         
         //Forget everything that happened; lock the current state as the starting state.
-         void ClearHistory();
+        void ClearHistory();
 
-         void Freeze();
+        void Freeze();
 
-         void Unfreeze();
+        void Unfreeze();
 
-         void Push(CLPHistoryItem item);
+        void Push(CLPHistoryItem item);
 
-         void BeginEventGroup();
+        void BeginEventGroup();
 
-         void EndEventGroup();
+        void EndEventGroup();
 
-         CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack); 
+        CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack); 
 
-         void Undo(CLPPage page);
+        void Undo(CLPPage page);
 
         void Redo(CLPPage page);
 

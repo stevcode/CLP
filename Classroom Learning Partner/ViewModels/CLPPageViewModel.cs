@@ -207,6 +207,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Scissors:
                         IsInkCanvasHitTestVisible = true;
+                        var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
+                        PageCursor = new Cursor(scissorsStream.Stream); 
                         break;
                     case PageInteractionMode.EditObjectProperties:
                         IsInkCanvasHitTestVisible = false;
@@ -656,10 +658,10 @@ namespace Classroom_Learning_Partner.ViewModels
             
             foreach(Stroke stroke in e.Added)
             {
-                if(Page.CutEnabled)
+                if(PageInteractionMode == PageInteractionMode.Scissors)
                 {
-                    Page.CutEnabled = false;
-                    Page.PageHistory.singleCutting = true;
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    Page.PageHistory.SingleCutting = true;
                     //double bl = stroke.GetBounds().BottomLeft.X;
                     //double br = stroke.GetBounds().BottomRight.X;
                     //double botXAve = (bl + br) / 2;
@@ -698,8 +700,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     //Page.CutEnabled = true;
                     Page.InkStrokes.Remove(stroke);
-                    refreshInkStrokes();
-                    Page.PageHistory.singleCutting = false;
+                    RefreshInkStrokes();
+                    Page.PageHistory.SingleCutting = false;
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     return;
                 }
             }
@@ -855,7 +858,7 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        private void refreshInkStrokes() {
+        private void RefreshInkStrokes() {
             var pageObjects = Page.PageObjects;
             foreach(ICLPPageObject po in pageObjects) {
                 po.RefreshStrokeParentIDs();
