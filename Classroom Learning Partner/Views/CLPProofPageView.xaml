@@ -70,11 +70,11 @@
             <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=RecordProofCommand}">Record</Button>
             <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=InsertProofCommand}">Insert</Button>
             <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=RewindProofCommand}">Rewind</Button>
-            <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button>
+           <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button> -->
             <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=PlayProofCommand}">Play</Button>
-            <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button>
+           <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button> -->
             <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=PauseProofCommand}">Pause</Button>
-            <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=StopProofCommand}">Stop</Button>
+            <!--<Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=StopProofCommand}">Stop</Button> -->
         </StackPanel>
         
     </Grid>

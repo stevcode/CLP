@@ -1663,6 +1663,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.PageWidth = CLPPage.PORTRAIT_WIDTH;
                 page.PageAspectRatio = page.PageWidth / page.PageHeight;
             }
+            else if(pageOrientation == "Landscape") 
+            {
+                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
+                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
         }

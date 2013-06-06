@@ -165,7 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
        {
            Thread t = new Thread(() =>
                 { 
-                PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 50, 400);
+                PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 200, 400); //was 50, 400
                 });
            t.Start();
        
@@ -250,6 +250,10 @@ namespace Classroom_Learning_Partner.ViewModels
                    catch(Exception e)
                    {
                        Console.WriteLine(e.Message);
+                       proofPageHistory1.Unfreeze();
+                       base.EditingMode = InkCanvasEditingMode.Ink;
+                       proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                       return;
                    }
            }
        }
