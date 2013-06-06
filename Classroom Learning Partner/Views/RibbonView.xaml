@@ -279,13 +279,13 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding StudentVisibility}">
 
@@ -676,10 +676,9 @@
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
-                              Command="{Binding }"/>
-                                  <!--MakePageLongerCommand-->
+                              Command="{Binding MakePageLongerCommand}"/>
 
-                    <RibbonButton Label="Trim Page"
+                <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TrimPageCommand}" />
 
