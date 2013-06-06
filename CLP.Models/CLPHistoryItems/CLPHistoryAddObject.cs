@@ -62,22 +62,65 @@ namespace CLP.Models
         public override void Undo(CLPPage page)
         {
             PageObject = GetPageObjectByUniqueID(page, ObjectId); // store it in case we need to put it back later
+            //var future = page.PageHistory.Future;
+            //var metaPast = page.PageHistory.MetaPast;
+            
             if(PageObject == null)
             {
+                /*if(metaPast.Count > 0)
+                {
+                    var last = metaPast.Pop();
+                    last.Undo(page);
+                    future.Push(last);
+                }*/
                 Console.WriteLine("AddObject Undo Failure: No object to remove.");
                 return;
             }
+            
             page.PageObjects.Remove(PageObject);
+            /////////////////////////////////
+            /*if(metaPast.Count>0)
+            {
+                    CLPHistoryItem prev = metaPast.Peek();
+                    if(this.singleCut == true && prev.singleCut == true)
+                    {
+                        metaPast.Pop();
+                        prev.Undo(page);
+                        future.Push(prev);
+                    }
+                    
+                }*/
+            /////////////////////////////////
         }
 
         override public void Redo(CLPPage page)
         {
+            //var future = page.PageHistory.Future;
+            //var metaPast = page.PageHistory.MetaPast;
+            
             if(PageObject == null)
-            {
+            { 
+                /*if(future.Count>0){
+                    var next = future.Pop();
+                    next.Redo(page);
+                    metaPast.Push(next);
+                }*/
                 Console.WriteLine("AddObject Redo Failure: No object to add.");
                 return;
             }
             page.PageObjects.Add(PageObject);
+            /////////////////////////////////
+            /*if(future.Count>0)
+            {
+                CLPHistoryItem next = page.PageHistory.Future.Peek();
+                if(this.singleCut == true && next.singleCut == true)
+                {
+                    future.Pop();
+                    next.Redo(page);
+                    metaPast.Push(next);
+                }
+            }*/
+            /////////////////////////////////
             PageObject = null; // don't need to put it back later anymore
         }
 

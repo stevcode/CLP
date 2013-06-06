@@ -1392,7 +1392,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 try
                 {
                     CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    CLPHistory pageHistory = page.PageHistory;
+                    ICLPHistory pageHistory = page.PageHistory;
 
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)

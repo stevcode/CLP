@@ -143,6 +143,7 @@
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Extension Methods\StokeExtension.cs" />
     <Compile Include="Group.cs" />
+    <Compile Include="ICLPHistory.cs" />
     <Compile Include="Ink DTO\DrawingAttributesDTO.cs" />
     <Compile Include="Ink DTO\StrokeDTO.cs" />
     <Compile Include="Ink DTO\StylusPointDTO.cs" />

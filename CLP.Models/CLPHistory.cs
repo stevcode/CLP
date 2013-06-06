@@ -6,12 +6,12 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory : DataObjectBase<CLPHistory>
+    public class CLPHistory : DataObjectBase<CLPHistory> , ICLPHistory
     {
         public const double SAMPLE_RATE = 9;
         protected bool _frozen;
         protected bool _ingroup;
-        public bool _useHistory = true;
+       // public bool _useHistory = true;
         protected Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
@@ -44,7 +44,7 @@ namespace CLP.Models
             set { SetValue(PastProperty, value); }
         }
 
-        public static readonly PropertyData PastProperty = RegisterProperty("Past", 
+        public volatile static  PropertyData PastProperty = RegisterProperty("Past", 
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace CLP.Models
             set { SetValue(FutureProperty, value); }
         }
 
-        public static readonly PropertyData FutureProperty = RegisterProperty("Future", 
+        public volatile static  PropertyData FutureProperty = RegisterProperty("Future", 
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
@@ -69,9 +69,26 @@ namespace CLP.Models
             set { SetValue(MetaPastProperty, value); }
         }
 
-        public static readonly PropertyData MetaPastProperty = RegisterProperty("MetaPast",
+        public volatile static  PropertyData MetaPastProperty = RegisterProperty("MetaPast",
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
+
+        public bool _useHistory 
+        {
+            get { return GetValue<bool>(_useHistoryProperty); }
+            set { SetValue(_useHistoryProperty, value); }
+        }
+
+        public static readonly PropertyData _useHistoryProperty = RegisterProperty("_useHistory",
+            typeof(bool), true);
+        public bool singleCutting {
+            get { return GetValue<bool>(singleCuttingProperty); }
+            set { SetValue(singleCuttingProperty, value); }
+        
+        }
+        public static readonly PropertyData singleCuttingProperty = RegisterProperty("singleCutting",
+           typeof(bool), false);
+        
         /// <summary>
         /// The events that we have triggered and should therefore ignore when we're told they've
         /// happened.
@@ -144,7 +161,7 @@ namespace CLP.Models
             groupEvents = new Stack<CLPHistoryItem>();
         }
 
-        public void EndEventGroup()
+        public virtual void EndEventGroup()
         {
             _ingroup = false;
             if(groupEvents.Count > 0)
@@ -166,7 +183,7 @@ namespace CLP.Models
             return new CLPHistoryAggregation(itemList);
         }
 
-        public void Undo(CLPPage page)
+        public virtual void Undo(CLPPage page)
         {
             if(!_useHistory || Past.Count==0)
             {
@@ -202,7 +219,7 @@ namespace CLP.Models
             }
         }
 
-        public void Redo(CLPPage page)
+        public virtual void Redo(CLPPage page)
         {
             if(!_useHistory || Future.Count == 0)
             {

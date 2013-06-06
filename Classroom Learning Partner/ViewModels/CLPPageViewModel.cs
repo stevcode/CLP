@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -118,16 +119,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public virtual CLPHistory PageHistory
+        public virtual ICLPHistory PageHistory
         {
-            get { return GetValue<CLPHistory>(PageHistoryProperty); }
+            get { return GetValue<ICLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
         }
 
         /// <summary>
         /// Register the PageHistory property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -620,11 +621,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
+            if(Page.IsInkAutoAdding || IsPagePreview)
+            {
+                return;
+            }
+            
             foreach(Stroke stroke in e.Added)
             {
                 if(Page.CutEnabled)
                 {
                     Page.CutEnabled = false;
+                    Page.PageHistory.singleCutting = true;
                     //double bl = stroke.GetBounds().BottomLeft.X;
                     //double br = stroke.GetBounds().BottomRight.X;
                     //double botXAve = (bl + br) / 2;
@@ -639,27 +646,37 @@ namespace Classroom_Learning_Partner.ViewModels
                     List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
                     ObservableCollection<ICLPPageObject> c1 = lr[0];
                     ObservableCollection<ICLPPageObject> c2 = lr[1];
+                    var AllShapesInkStrokes = new ObservableCollection<Stroke>();
                     
+
                     foreach(ICLPPageObject no in c2)
                     {
-                        Page.PageObjects.Remove(no);
-                        //CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
-                        
+                        StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
+                        foreach(Stroke inkStroke in shapeInkStrokes)
+                        {
+                            AllShapesInkStrokes.Add(inkStroke);
+                        }
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
                     }
                     foreach(ICLPPageObject no in c1)
                     {
-                        Page.PageObjects.Add(no);
-                        //CLPServiceAgent.Instance.AddPageObjectToPage(no);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(no);
+                    }
+                    
+                    foreach(Stroke inkStroke in AllShapesInkStrokes)
+                    {
+                        Page.InkStrokes.Add(inkStroke);
+
                     }
                     //Page.CutEnabled = true;
                     Page.InkStrokes.Remove(stroke);
+                    refreshInkStrokes();
+                    Page.PageHistory.singleCutting = false;
+                    return;
                 }
             }
 
-            if(Page.IsInkAutoAdding || IsPagePreview)
-            {
-                return;
-            }
+            
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -804,6 +821,12 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
+        private void refreshInkStrokes() {
+            var pageObjects = Page.PageObjects;
+            foreach(ICLPPageObject po in pageObjects) {
+                po.RefreshStrokeParentIDs();
+            }
+        }
         #endregion //Methods        
     }
 }

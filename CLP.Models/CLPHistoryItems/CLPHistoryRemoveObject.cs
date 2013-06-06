@@ -13,8 +13,13 @@ namespace CLP.Models
 
         public CLPHistoryRemoveObject(ICLPPageObject item) : base(HistoryItemType.RemoveObject)
         {
-            PageObject = item;
-            ObjectId = item.UniqueID;
+            try
+            {
+                PageObject = item;
+                ObjectId = item.UniqueID;
+            }catch(Exception e){
+                Console.Write(e.Message);
+            }
         }
 
         /// <summary>
@@ -71,24 +76,67 @@ namespace CLP.Models
 
         override public void Undo(CLPPage page)
         {
+            //var metaPast = page.PageHistory.MetaPast;
+            //var future = page.PageHistory.Future;
+            
             if(PageObject == null)
             {
+               /* if(metaPast.Count>0){
+                    var last = metaPast.Pop();
+                    last.Undo(page);
+                    future.Push(last);
+                }*/
                 Console.WriteLine("RemoveObject Undo Failure: No object to add.");
                 return;
             }
             page.PageObjects.Add(PageObject);
+            /////////////////////////////////
+            /*if(metaPast.Count > 0)
+            {
+                CLPHistoryItem prev = metaPast.Peek();
+                if(this.singleCut == true && prev.singleCut == true)
+                {
+                    metaPast.Pop();
+                    prev.Undo(page);
+                    future.Push(prev);
+                }
+
+            }*/
+            /////////////////////////////////
             PageObject = null; //forget it because we don't need it anymore
         }
 
+        
         override public void Redo(CLPPage page)
         {
             PageObject = GetPageObjectByUniqueID(page, ObjectId);  //remember in case we need to add it back later
+            //var future = page.PageHistory.Future;
+            //var metaPast = page.PageHistory.MetaPast;
+            
             if(PageObject == null)
             {
+               /* if(future.Count > 0)
+                {
+                    var next = future.Pop();
+                    next.Redo(page);
+                    metaPast.Push(next);
+                }*/
                 Console.WriteLine("RemoveObject Redo Failure: No object to remove.");
                 return;
             }
             page.PageObjects.Remove(PageObject);
+            /////////////////////////////////
+            /*if(future.Count > 0)
+            {
+                CLPHistoryItem next = future.Peek();
+                if(this.singleCut == true && next.singleCut == true)
+                {
+                    future.Pop();
+                    next.Redo(page);
+                    metaPast.Push(next);
+                }
+            }*/
+            /////////////////////////////////
         }
 
         public override bool Equals(object obj)

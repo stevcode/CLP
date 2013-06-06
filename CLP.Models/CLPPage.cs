@@ -250,13 +250,13 @@ namespace CLP.Models
         /// <summary>
         /// Gets the CLPPage history.
         /// </summary>
-        public CLPHistory PageHistory
+        public virtual ICLPHistory PageHistory
         {
-            get { return GetValue<CLPHistory>(PageHistoryProperty); }
+            get { return GetValue<ICLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory), () => new CLPHistory());
 
         /// <summary>
         /// Whether or not the page is a submissions from a student.
