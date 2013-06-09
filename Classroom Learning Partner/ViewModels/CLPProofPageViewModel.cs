@@ -81,24 +81,30 @@ namespace Classroom_Learning_Partner.ViewModels
        //enables editing of proof page
        //enables recording of proof page history
        private void OnRecordProofCommandExecute(){
-           CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-           CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-           proofPageHistory1.Future.Clear();
-           proofPageHistory1.IsPaused = false;
-           proofPageHistory1.Unfreeze();
-           base.EditingMode = InkCanvasEditingMode.Ink;
-           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+           lock(obj)
+           {
+               CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+               CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
+               proofPageHistory1.Future.Clear();
+               proofPageHistory1.IsPaused = false;
+               proofPageHistory1.Unfreeze();
+               base.EditingMode = InkCanvasEditingMode.Ink;
+               proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+           }
        }
 
        //enables editing of proof page
        //enables recording of proof page history
        private void OnInsertProofCommandExecute(){
-           CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-           CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-           proofPageHistory1.IsPaused = false;
-           proofPageHistory1.Unfreeze();
-           base.EditingMode = InkCanvasEditingMode.Ink;
-           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
+           lock(obj)
+           {
+               CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+               CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
+               proofPageHistory1.IsPaused = false;
+               proofPageHistory1.Unfreeze();
+               base.EditingMode = InkCanvasEditingMode.Ink;
+               proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
+           }
        }
 
        //plays the entire proof backwards to the beginning
@@ -147,14 +153,20 @@ namespace Classroom_Learning_Partner.ViewModels
                }
                else
                {
-                   proofPageHistory1.IsPaused = false;
-                   proofPageHistory1.Unfreeze();
+                   lock(obj)
+                   {
+                       proofPageHistory1.IsPaused = false;
+                       proofPageHistory1.Unfreeze();
+                   }
                }
            }
            else
            {
                proofPageHistory1.IsPaused = true;
-               proofPageHistory1.Freeze();
+               lock(obj)
+               {
+                   proofPageHistory1.Freeze();
+               }
                //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
            }
        }
@@ -310,17 +322,30 @@ namespace Classroom_Learning_Partner.ViewModels
                                     }, null);
                            }
                        }
-                    proofPageHistory1.Unfreeze();
-                    base.EditingMode = InkCanvasEditingMode.Ink;
-                    proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                    ///////////////////
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                     (DispatcherOperationCallback)delegate(object arg)
+                                     {
+                                         proofPageHistory1.Unfreeze();
+                                         base.EditingMode = InkCanvasEditingMode.Ink;
+                                         proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                         return null;
+                                     }, null);
+                    //////////////////
                     return;
                    }
                    catch(Exception e)
                    {
-                       Console.WriteLine(e.Message);
-                       proofPageHistory1.Unfreeze();
-                       base.EditingMode = InkCanvasEditingMode.Ink;
-                       proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                       ///////////////////
+                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                        (DispatcherOperationCallback)delegate(object arg)
+                                        {
+                                            proofPageHistory1.Unfreeze();
+                                            base.EditingMode = InkCanvasEditingMode.Ink;
+                                            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                            return null;
+                                        }, null);
+                       //////////////////
                        return;
                    }
            }
