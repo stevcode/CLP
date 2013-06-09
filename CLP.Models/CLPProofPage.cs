@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Catel.Data;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
-using System.Windows.Ink;
-using System.Xml.Serialization;
-using Catel;
 using Catel.Data;
 
 namespace CLP.Models
 {
+    [Serializable]
     public class CLPProofPage : CLPPage
     {
         #region Variables
@@ -28,6 +19,11 @@ namespace CLP.Models
             this.PageHistory.Freeze();    
 
         }
+        
+    protected CLPProofPage(SerializationInfo info, StreamingContext context)
+           : base(info, context)
+       {
+       }
         #endregion
 
         #region Properties
