@@ -12,7 +12,8 @@ namespace CLP.Models
             Rewind,
             Forward,
             Record,
-            Pause
+            Pause,
+            Insert
         }
 
         #region Constructor
@@ -52,6 +53,7 @@ namespace CLP.Models
         #region Methods
         public override void Push(CLPHistoryItem item)
         {
+
             if(IsPaused){ 
                 item.wasPaused = true; 
             }

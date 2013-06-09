@@ -146,6 +146,15 @@ namespace CLP.Models
 
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
 
+        public double ProofProgressCurrent
+        {
+            get { return GetValue<double>(ProofProgressCurrentProperty); }
+            set { SetValue(ProofProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double),0);
+
+
         /// <summary>
         /// Aspect Ratio of page = PageWidth / PageHeight.
         /// </summary>
@@ -663,6 +672,36 @@ namespace CLP.Models
             lr.Add(c1);
             lr.Add(c2);
             return lr;
+        }
+
+        public void updateProgress()
+        {
+            try
+            {
+                //CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
+                double FutureItemsNumber = proofPageHistory1.Future.Count;
+                double pastItemsNumber = proofPageHistory1.MetaPast.Count;
+                double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
+                if(totalItemsNumber == 0)
+                {
+                    ProofProgressCurrent = PageWidth*0.7175;
+                    Console.WriteLine("This is the current value"+ProofProgressCurrent);
+                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
+                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                    return;
+                }
+                ProofProgressCurrent =
+
+                    (pastItemsNumber * PageWidth*0.7175) /
+                    totalItemsNumber;
+                    
+                Console.WriteLine("This is the current value" + ProofProgressCurrent);
+                Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
+                Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+            }catch(Exception e){
+                Console.WriteLine(e.Message);
+            }
         }
         #endregion
     }

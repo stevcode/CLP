@@ -45,8 +45,5 @@ namespace Classroom_Learning_Partner.Views
             base.OnViewModelChanged();
         }
 
-
-
-
     }
 }

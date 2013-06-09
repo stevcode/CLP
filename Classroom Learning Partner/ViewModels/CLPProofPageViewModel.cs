@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -22,11 +26,12 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertProofCommand = new Command(OnInsertProofCommandExecute);
             RewindProofCommand = new Command(OnRewindProofCommandExecute);
             ForwardProofCommand = new Command(OnForwardProofCommandExecute);
-            PauseProofCommand = new Command(OnPauseProofCommandExecute);
+            PauseProofCommand = new Command<StackPanel>(OnPauseProofCommandExecute);
             StopProofCommand = new Command(OnStopProofCommandExecute);
-            OnPauseProofCommandExecute();
+            OnPauseProofCommandExecutePure();
             CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory; 
             proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
+            ProofProgressCurrent = page.PageWidth *0.7175;
 
         }
        #endregion //Constructors
@@ -46,16 +51,20 @@ namespace Classroom_Learning_Partner.ViewModels
        /// Register the PageHistory property so it is known in the class.
        /// </summary>
        public static volatile  PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory));
+       
+     
+       
        #endregion //Properties
 
        #region Commands
+       
        public Command PlayProofCommand  { get; private set; }
        public Command ReplayProofCommand { get; private set; }
        public Command RecordProofCommand  { get; private set; }
        public Command InsertProofCommand { get; private set; }
        public Command RewindProofCommand { get; private set; }
        public Command ForwardProofCommand { get; private set; }
-       public Command PauseProofCommand { get; private set; }
+       public Command<StackPanel> PauseProofCommand { get; private set; }
        public Command StopProofCommand { get; private set; }
        public MainWindowViewModel MainWindow
        {
@@ -89,7 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
            proofPageHistory1.IsPaused = false;
            proofPageHistory1.Unfreeze();
            base.EditingMode = InkCanvasEditingMode.Ink;
-           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
        }
 
        //plays the entire proof backwards to the beginning
@@ -116,16 +125,18 @@ namespace Classroom_Learning_Partner.ViewModels
       
        //sets isPaused property to its opposite (if true -> false, if false -> true)
        //Calls command for action being carried out before pause (if page was already paused)
-       private void OnPauseProofCommandExecute(){
+       private void OnPauseProofCommandExecutePure() {
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
            if(proofPageHistory1.IsPaused)
-           { 
-               if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play){
+           {
+               if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play)
+               {
                    //proofPageHistory1.isPaused = false;
                    this.OnPlayProofCommandExecute();
                }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Forward) {
+               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Forward)
+               {
                    //proofPageHistory1.isPaused = false;
                    this.OnForwardProofCommandExecute();
                }
@@ -133,15 +144,70 @@ namespace Classroom_Learning_Partner.ViewModels
                {
                    //proofPageHistory1.isPaused = false;
                    this.OnRewindProofCommandExecute();
-               } else {
+               }
+               else
+               {
                    proofPageHistory1.IsPaused = false;
                    proofPageHistory1.Unfreeze();
                }
-           }else{ 
+           }
+           else
+           {
                proofPageHistory1.IsPaused = true;
                proofPageHistory1.Freeze();
                //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
            }
+       }
+
+
+       private void setButtonFocus(StackPanel ButtonsGrid, String s) {
+           foreach(UIElement bt in ButtonsGrid.Children)
+           {
+               Console.WriteLine(((Button)bt).Name.Trim());
+               if(((Button)bt).Name.Trim().Equals(s.Trim()))
+               {
+                   bt.Focus();
+               }
+           }
+       
+       }
+       
+       private void OnPauseProofCommandExecute(StackPanel ButtonsGrid)
+       {
+           CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+           CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
+           if(proofPageHistory1.IsPaused)
+           {
+               if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play)
+               {
+                   setButtonFocus(ButtonsGrid, "PlayButton");
+               }
+               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Rewind)
+               {
+                   setButtonFocus(ButtonsGrid, "RewindButton");
+               }
+               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Insert)
+               {
+                   setButtonFocus(ButtonsGrid, "InsertButton");
+               }
+               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Record)
+               {
+                   setButtonFocus(ButtonsGrid, "RecordButton");
+               }
+               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Pause)
+               {
+                   //focus is already correct, do nothing
+               }
+               else
+               {
+                   //code should never come here
+               }
+           }
+           else
+           {
+               //focus is already correct, do nothing
+           }
+           OnPauseProofCommandExecutePure();
        }
        
        //disables editing of proof page
@@ -152,7 +218,7 @@ namespace Classroom_Learning_Partner.ViewModels
                PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
            });
            t.Start();
-           OnPauseProofCommandExecute();
+           OnPauseProofCommandExecutePure();
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
@@ -174,6 +240,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause)
        {
            lock(obj){
+               
                CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                Stack<CLPHistoryItem> from = null;
@@ -188,7 +255,8 @@ namespace Classroom_Learning_Partner.ViewModels
                    from = proofPageHistory1.MetaPast;
                    to = proofPageHistory1.Future;
                }
-
+              
+               
                int count = from.Count + to.Count;
                Console.WriteLine("This is the total: " + count); 
 
@@ -202,7 +270,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     while(from.Count > 0)
                        {
                         count = from.Count + to.Count;
-                        Console.WriteLine("This is the new total on loop " + i + ": " + count);
+                        //Console.WriteLine("This is the new total on loop " + i + ": " + count);
                         i++;
                         if(proofPageHistory1.IsPaused)
                            {
@@ -237,7 +305,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                             proofPageHistory1.Freeze();
                                             item.Undo(page);
                                         }
-                                        
+                                        page.updateProgress();
                                         return null;
                                     }, null);
                            }
@@ -257,6 +325,8 @@ namespace Classroom_Learning_Partner.ViewModels
                    }
            }
        }
+
+      
        #endregion //Commands
 
        #region previousCommands

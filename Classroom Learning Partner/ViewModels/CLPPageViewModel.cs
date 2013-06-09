@@ -62,7 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructors
 
         #region Properties
-
+       
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -74,6 +74,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
+
+        [ViewModelToModel("Page")]
+        public double ProofProgressCurrent
+        {
+            get { return GetValue<double>(ProofProgressCurrentProperty); }
+            set { SetValue(ProofProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
+
+       
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -499,6 +511,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+       
 
         public static void ClearAdorners(CLPPage page)
         {
@@ -589,6 +602,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(item != null)
                     {
                         Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
+                        Page.updateProgress();
                     }
                 }
             }
@@ -599,6 +613,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(item != null)
                     {
                         Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
+                        Page.updateProgress();
                     }
                 }
             }
@@ -647,6 +662,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
             //});
+            Page.updateProgress();
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -723,6 +739,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
 
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(new StrokeDTO(stroke)));
+                            Page.updateProgress();
                   
                         }
 
@@ -744,6 +761,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }  
                             }                            
                             Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));
+                            Page.updateProgress();
                         }
                         Page.PageHistory.EndEventGroup();
 
