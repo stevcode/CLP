@@ -238,31 +238,46 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnResizeArrayCommandExecute(DragDeltaEventArgs e)
         {
             CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var clpArray = PageObject as CLPArray;
+            if(clpArray == null)
+            {
+                return;
+            }
 
-            Height = PageObject.Height + e.VerticalChange;
-            if(Height < 200)
+            var tempHeight = PageObject.Height + e.VerticalChange;
+            if(clpArray.ArrayHeight > clpArray.ArrayWidth && tempHeight < 200)
             {
                 Height = 200;
             }
-            (PageObject as CLPArray).RefreshArrayDimensions();
-            (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
+            else if(clpArray.ArrayHeight < clpArray.ArrayWidth && tempHeight < 145)
+            {
+                Height = 145;
+            }
+            else
+            {
+                Height = tempHeight;
+            }
+
+            clpArray.RefreshArrayDimensions();
+            clpArray.EnforceAspectRatio(Columns * 1.0 / Rows);
+
             if(Height + PageObject.YPosition > parentPage.PageHeight)
             {
                 Height = parentPage.PageHeight - PageObject.YPosition;
-                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
+
+                clpArray.EnforceAspectRatio(Columns*1.0/Rows);
             }
             if(Width + PageObject.XPosition > parentPage.PageWidth)
             {
                 Width = parentPage.PageWidth - PageObject.XPosition;
-                (PageObject as CLPArray).EnforceAspectRatio(Columns * 1.0 / Rows);
+                clpArray.EnforceAspectRatio(Columns * 1.0 / Rows);
             }
-
 
             //CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
             //TODO: Steve - Make work with History.
 
-            (PageObject as CLPArray).ResizeDivisions();
-            (PageObject as CLPArray).CalculateGridLines();
+            clpArray.ResizeDivisions();
+            clpArray.CalculateGridLines();
         }
 
         /// <summary>
