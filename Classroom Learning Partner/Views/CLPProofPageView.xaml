@@ -57,7 +57,8 @@
                        Width="{Binding PageWidth}" Height="{Binding PageHeight}"
                        EditingMode="{Binding EditingMode}"
                        EditingModeInverted="{Binding EraserMode}"
-                       DefaultDrawingAttributes="{Binding DefaultDA}" >
+                       DefaultDrawingAttributes="{Binding DefaultDA}"
+                           Cursor="{Binding PageCursor}" ForceCursor="True" >
 
                     <!-- insert content here-->
 

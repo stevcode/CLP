@@ -425,7 +425,7 @@
         </RibbonTab>-->
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert" Visibility="{Binding StudentVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+        <RibbonTab Header="Insert" Visibility="{Binding InstructorVisibility}">
             
             <RibbonGroup Header="Tools">
 

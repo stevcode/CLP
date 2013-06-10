@@ -604,7 +604,7 @@ namespace CLP.Models
                     if(pageObject.PageObjectType.Equals("CLPArray"))
                     {
                         if((oLeftXVal + CLPArray.LargeLabelLength <= leftX && oRightXVal - 2*CLPArray.SmallLabelLength >= rightX) &&
-                           (topY - otopYVal - CLPArray.LargeLabelLength < 100 && obotYVal - 2*CLPArray.SmallLabelLength - botY < 100))
+                           (topY - otopYVal - CLPArray.LargeLabelLength < 15 && obotYVal - 2*CLPArray.SmallLabelLength - botY < 15))
                         {
                             ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
                             foreach(ICLPPageObject no in c)
@@ -643,7 +643,7 @@ namespace CLP.Models
                     if(o.PageObjectType.Equals("CLPArray"))
                     {
                         if((otopYVal + CLPArray.LargeLabelLength <= topY && obotYVal - 2*CLPArray.SmallLabelLength >= botY) &&
-                           (leftX - oLeftXVal - CLPArray.LargeLabelLength < 100 && oRightXVal - 2*CLPArray.SmallLabelLength - rightX < 100))
+                           (leftX - oLeftXVal - CLPArray.LargeLabelLength < 15 && oRightXVal - 2*CLPArray.SmallLabelLength - rightX < 15))
                         {
                             ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
                             foreach(ICLPPageObject no in c)
