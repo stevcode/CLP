@@ -4,19 +4,16 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Resources;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels

@@ -1,25 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-using System.Runtime.InteropServices;
-using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
    class CLPProofPageViewModel : CLPPageViewModel
    {
-       public static volatile object obj = new object();
+       private static volatile object obj = new object();
+
+       private MainWindowViewModel MainWindow
+       {
+           get { return App.MainWindowViewModel; }
+       }
+
        #region Constructors
-       public CLPProofPageViewModel(CLPPage page):base(page)
-        {
+
+       public CLPProofPageViewModel(CLPPage page)
+           : base(page)
+       {
             PlayProofCommand = new Command(OnPlayProofCommandExecute);
             ReplayProofCommand = new Command(OnReplayProofCommandExecute);
             RecordProofCommand = new Command(OnRecordProofCommandExecute);
@@ -39,28 +43,24 @@ namespace Classroom_Learning_Partner.ViewModels
             ProofProgressCurrent = page.PageWidth *0.7175;
             ProofProgressVisible = "Hidden";
             ProofPresent = "Hidden";
+       }
 
-        }
        #endregion //Constructors
 
        #region Properties
-       [ViewModelToModel("Page")]
+       
        /// <summary>
        /// Gets or sets the property value.
        /// </summary>
+       [ViewModelToModel("Page")]
        public override ICLPHistory PageHistory
        {
            get { return GetValue<CLPProofHistory>(ProofPageHistoryProperty); }
            set { SetValue(ProofPageHistoryProperty, value); }
        }
 
-       /// <summary>
-       /// Register the PageHistory property so it is known in the class.
-       /// </summary>
        public static volatile  PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory));
-       
-     
-       
+
        #endregion //Properties
 
        #region Commands
@@ -73,11 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
        public Command ForwardProofCommand { get; private set; }
        public Command<StackPanel> PauseProofCommand { get; private set; }
        public Command StopProofCommand { get; private set; }
-       public MainWindowViewModel MainWindow
-       {
-           get { return App.MainWindowViewModel; }
-       }
-       
+
        //replays the entire proof from the beginning
        //disables editing of proof for duration of method
        private void OnReplayProofCommandExecute() {
@@ -95,7 +91,7 @@ namespace Classroom_Learning_Partner.ViewModels
                proofPageHistory1.Future.Clear();
                proofPageHistory1.IsPaused = false;
                proofPageHistory1.Unfreeze();
-               base.EditingMode = InkCanvasEditingMode.Ink;
+               EditingMode = InkCanvasEditingMode.Ink;
                proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
                page.updateProgress();
            }
@@ -110,7 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
                CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                proofPageHistory1.IsPaused = false;
                proofPageHistory1.Unfreeze();
-               base.EditingMode = InkCanvasEditingMode.Ink;
+               EditingMode = InkCanvasEditingMode.Ink;
                proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
                page.updateProgress();
            }

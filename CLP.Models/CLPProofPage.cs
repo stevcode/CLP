@@ -1,29 +1,24 @@
 ﻿using System;
 using Catel.Data;
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
     public class CLPProofPage : CLPPage
     {
-        #region Variables
-        #endregion
+        #region Constructors
 
-        #region Constructor & destructor
-        public CLPProofPage() :base()
+        public CLPProofPage()
         {
-            this.PageHistory.Freeze();    
-
+            PageHistory.Freeze();    
         }
         
-    protected CLPProofPage(SerializationInfo info, StreamingContext context)
-           : base(info, context)
-       {
-       }
+        protected CLPProofPage(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
         #endregion
 
         #region Properties
@@ -37,13 +32,10 @@ namespace CLP.Models
             set { SetValue(ProofPageHistoryProperty, value); }
         }
 
-        public static volatile  PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory), () => new CLPProofHistory());
+        // TODO: Steve - is volatile necessary?
+        public static volatile PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory), () => new CLPProofHistory());
         
         #endregion
 
-        #region Methods
-
-
-        #endregion
     }
 }
