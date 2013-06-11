@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner
         private static System.Timers.Timer _autoSaveTimer = new System.Timers.Timer();
         private CLPServiceAgent()
         {
-            _autoSaveTimer.Interval = 60000;
+            _autoSaveTimer.Interval = 123000;
             _autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
         }
 
