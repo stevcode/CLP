@@ -84,7 +84,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
 
-       
+        ////////////////////////////////
+        [ViewModelToModel("Page")]
+        public string ProofProgressVisible
+        {
+            get { return GetValue<string>(ProofProgressVisibleProperty); }
+            set { SetValue(ProofProgressVisibleProperty, value); }
+        }
+
+        
+        public static volatile PropertyData ProofProgressVisibleProperty = RegisterProperty("ProofProgressVisible", typeof(string));
+
+        [ViewModelToModel("Page")]
+        public string ProofPresent
+        {
+            get { return GetValue<string>(ProofPresentProperty); }
+            set { SetValue(ProofPresentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string));
+
+        /////////////////////////////////
 
 
         /// <summary>

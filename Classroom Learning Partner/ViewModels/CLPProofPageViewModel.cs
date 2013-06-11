@@ -28,10 +28,17 @@ namespace Classroom_Learning_Partner.ViewModels
             ForwardProofCommand = new Command(OnForwardProofCommandExecute);
             PauseProofCommand = new Command<StackPanel>(OnPauseProofCommandExecute);
             StopProofCommand = new Command(OnStopProofCommandExecute);
-            OnPauseProofCommandExecutePure();
+            //OnPauseProofCommandExecutePure();
             CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory; 
             proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
+            proofPageHistory1.IsPaused = true;
+            lock(obj)
+            {
+                proofPageHistory1.Freeze();
+            }
             ProofProgressCurrent = page.PageWidth *0.7175;
+            ProofProgressVisible = "Hidden";
+            ProofPresent = "Hidden";
 
         }
        #endregion //Constructors
@@ -90,6 +97,7 @@ namespace Classroom_Learning_Partner.ViewModels
                proofPageHistory1.Unfreeze();
                base.EditingMode = InkCanvasEditingMode.Ink;
                proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+               page.updateProgress();
            }
        }
 
@@ -104,6 +112,7 @@ namespace Classroom_Learning_Partner.ViewModels
                proofPageHistory1.Unfreeze();
                base.EditingMode = InkCanvasEditingMode.Ink;
                proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
+               page.updateProgress();
            }
        }
 
@@ -169,6 +178,10 @@ namespace Classroom_Learning_Partner.ViewModels
                }
                //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
            }
+           lock(obj)
+           {
+               page.updateProgress();
+           }
        }
 
 
@@ -230,10 +243,18 @@ namespace Classroom_Learning_Partner.ViewModels
                PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
            });
            t.Start();
-           OnPauseProofCommandExecutePure();
+           //OnPauseProofCommandExecutePure();
            CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
+           proofPageHistory1.IsPaused = true;
            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
+           lock(obj)
+           {
+               proofPageHistory1.Freeze();
+               page.updateProgress();
+           }
+           
+           
        }
 
        //plays the entire proof forwards (more slowly than forward) to the end
@@ -329,6 +350,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                          proofPageHistory1.Unfreeze();
                                          base.EditingMode = InkCanvasEditingMode.Ink;
                                          proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                         page.updateProgress();
                                          return null;
                                      }, null);
                     //////////////////
@@ -343,6 +365,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                             proofPageHistory1.Unfreeze();
                                             base.EditingMode = InkCanvasEditingMode.Ink;
                                             proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                            page.updateProgress();
                                             return null;
                                         }, null);
                        //////////////////

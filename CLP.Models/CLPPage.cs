@@ -153,7 +153,25 @@ namespace CLP.Models
         }
 
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double),0);
+        
+        ////////////////////////////////
+        public string ProofProgressVisible
+        {
+            get { return GetValue<string>(ProofProgressVisibleProperty); }
+            set { SetValue(ProofProgressVisibleProperty, value); }
+        }
 
+        public static volatile PropertyData ProofProgressVisibleProperty = RegisterProperty("ProofProgressVisible", typeof(string), "Hidden");
+        
+        public string ProofPresent
+        {
+            get { return GetValue<string>(ProofPresentProperty); }
+            set { SetValue(ProofPresentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string), "Hidden");
+
+        /////////////////////////////////
 
         /// <summary>
         /// Aspect Ratio of page = PageWidth / PageHeight.
@@ -685,20 +703,36 @@ namespace CLP.Models
                 double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
                 if(totalItemsNumber == 0)
                 {
-                    ProofProgressCurrent = PageWidth*0.7175;
-                    Console.WriteLine("This is the current value"+ProofProgressCurrent);
+                    ProofPresent = "Hidden";
+                    ProofProgressCurrent = PageWidth * 0.7175;
+                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
                     Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
                     Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
                     return;
                 }
-                ProofProgressCurrent =
+                else
+                {
+                    ProofPresent = "Visible";
+                    ProofProgressCurrent =
 
-                    (pastItemsNumber * PageWidth*0.7175) /
-                    totalItemsNumber;
+                        (pastItemsNumber * PageWidth * 0.7175) /
+                        totalItemsNumber;
+
+                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
+                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
+                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                }
+
+                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
+                {
+                    ProofProgressVisible = "Hidden";
+                }
+                else {
+                    ProofProgressVisible = "Visible";
                     
-                Console.WriteLine("This is the current value" + ProofProgressCurrent);
-                Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
-                Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                }
+
+
             }catch(Exception e){
                 Console.WriteLine(e.Message);
             }
