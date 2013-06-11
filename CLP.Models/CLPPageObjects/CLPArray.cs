@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -461,6 +462,34 @@ namespace CLP.Models
                     {
                         Parts += pageObject.Parts;
                         PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
+                }
+            }
+        }
+
+        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            if(CanAcceptStrokes)
+            {
+                foreach(Stroke s in removedStrokes)
+                {
+                    string strokeID = s.GetStrokeUniqueID();
+                    try
+                    {
+                        PageObjectStrokeParentIDs.Remove(strokeID);
+                    }
+                    catch(Exception)
+                    {
+                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                    }
+                }
+
+                foreach(Stroke s in addedStrokes)
+                {
+                    var rect = new Rect(XPosition + LargeLabelLength, YPosition + LargeLabelLength, ArrayWidth, ArrayHeight);
+                    if(s.HitTest(rect,80))
+                    {
+                        PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
                     }
                 }
             }
