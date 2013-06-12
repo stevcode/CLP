@@ -20,7 +20,7 @@
 
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
-            <RibbonApplicationMenu SmallImageSource="..\Images\File.png">
+            <RibbonApplicationMenu SmallImageSource="..\Images\File.png" Background="Purple">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"

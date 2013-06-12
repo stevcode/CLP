@@ -19,8 +19,8 @@ namespace Classroom_Learning_Partner
         private static System.Timers.Timer _autoSaveTimer = new System.Timers.Timer();
         private CLPServiceAgent()
         {
-            _autoSaveTimer.Interval = 123000;
-            _autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
+            //_autoSaveTimer.Interval = 123000;
+            //_autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
         }
 
         //readonly allows thread-safety and means it can only be allocated once.
@@ -172,7 +172,7 @@ namespace Classroom_Learning_Partner
 
                     if(App.CurrentUserMode == App.UserMode.Student)
                     {
-                        _autoSaveTimer.Start();
+                       // _autoSaveTimer.Start();
                     }
 
                 }
