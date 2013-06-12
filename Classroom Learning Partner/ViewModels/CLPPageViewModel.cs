@@ -708,9 +708,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     double botY = stroke.GetBounds().Bottom;//Math.Max(stroke.GetBounds().BottomLeft.Y, stroke.GetBounds().BottomRight.Y);
                     List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
                     ObservableCollection<ICLPPageObject> c1 = lr[0];
+                    List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
                     ObservableCollection<ICLPPageObject> c2 = lr[1];
                     var AllShapesInkStrokes = new ObservableCollection<Stroke>();
 
+                    int i = 0;
                     foreach(ICLPPageObject no in c2)
                     {
                         StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
@@ -719,12 +721,19 @@ namespace Classroom_Learning_Partner.ViewModels
                             AllShapesInkStrokes.Add(inkStroke);
                         }
                         CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
+
+                        ICLPPageObject noc1 = c1List[i];
+                        CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
+
+                        ICLPPageObject noc2 = c1List[i + 1];
+                        CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
+                        i = i + 2;
                     }
 
-                    foreach(ICLPPageObject no in c1)
+                    /*foreach(ICLPPageObject no in c1)
                     {
                         CLPServiceAgent.Instance.AddPageObjectToPage(no);
-                    }
+                    }*/
                     
                     foreach(Stroke inkStroke in AllShapesInkStrokes)
                     {
