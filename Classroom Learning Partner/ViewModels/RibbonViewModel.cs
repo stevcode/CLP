@@ -526,7 +526,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentFontSizeProperty = RegisterProperty("CurrentFontSize", typeof(double));
 
-        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.Blue, Colors.Purple, Colors.Brown, Colors.Green };
+        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.DarkOrange, Colors.Tan, Colors.Gold, Colors.SaddleBrown, Colors.DarkGreen, Colors.MediumSeaGreen, Colors.Blue, Colors.HotPink, Colors.BlueViolet, Colors.Aquamarine, Colors.SlateGray, Colors.SkyBlue, Colors.Turquoise };
         private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
 
         public ObservableCollection<Brush> FontColors
