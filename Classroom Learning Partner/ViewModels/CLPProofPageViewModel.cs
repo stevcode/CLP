@@ -256,13 +256,6 @@ namespace Classroom_Learning_Partner.ViewModels
            {
                return;
            }
-           proofPageHistory1.IsPaused = true;
-           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
-           lock(obj)
-           {
-               proofPageHistory1.Freeze();
-               Page.updateProgress();
-           }
        }
 
        //plays the entire proof forwards (more slowly than forward) to the end
@@ -370,9 +363,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                      (DispatcherOperationCallback)delegate(object arg)
                                      {
-                                         proofPageHistory1.Unfreeze();
+                                         proofPageHistory1.IsPaused = true;
+                                         proofPageHistory1.Freeze();
                                          base.EditingMode = InkCanvasEditingMode.Ink;
-                                         proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                         proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
                                          Page.updateProgress();
                                          return null;
                                      }, null);
@@ -385,9 +379,10 @@ namespace Classroom_Learning_Partner.ViewModels
                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                         (DispatcherOperationCallback)delegate(object arg)
                                         {
-                                            proofPageHistory1.Unfreeze();
+                                            proofPageHistory1.IsPaused = true;
+                                            proofPageHistory1.Freeze();
                                             base.EditingMode = InkCanvasEditingMode.Ink;
-                                            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
+                                            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
                                             Page.updateProgress();
                                             return null;
                                         }, null);
