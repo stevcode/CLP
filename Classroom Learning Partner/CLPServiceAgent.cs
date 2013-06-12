@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
             //sync with database
             //run network disconnect
-            _autoSaveTimer.Stop();
+            //_autoSaveTimer.Stop();
             
             Environment.Exit(0);
         }
@@ -271,15 +271,15 @@ namespace Classroom_Learning_Partner
             //    notebook.Submissions.Clear();
             //}
 
-            _autoSaveTimer.Stop();
+            //_autoSaveTimer.Stop();
 
-            while(_isAutoSaving)
-            {
-            }
+            //while(_isAutoSaving)
+            //{
+            //}
             
             notebook.Save(filePath);
 
-            _autoSaveTimer.Start();
+            //_autoSaveTimer.Start();
         }
 
         #endregion //Notebook
