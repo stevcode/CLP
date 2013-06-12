@@ -308,13 +308,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 proofPageHistory1.ProofPageAction = action;
                 proofPageHistory1.Freeze();
                 base.EditingMode = InkCanvasEditingMode.None;
-                int i = 0;
+                //int i = 0;
                try{
-                    while(from.Count > 0)
+                   int singleCut = 0;  
+                   while(from.Count > 0)
                        {
                         count = from.Count + to.Count;
                         //Console.WriteLine("This is the new total on loop " + i + ": " + count);
-                        i++;
+                        //i++;
                         if(proofPageHistory1.IsPaused)
                            {
                                //break;
@@ -335,6 +336,18 @@ namespace Classroom_Learning_Partner.ViewModels
                                    Thread.Sleep(largePause);
                                }
                            }
+                           if(item.singleCut)
+                           {
+                               singleCut++;
+                               singleCut = singleCut % 3;
+                               if(singleCut == 1 && smallPause != 0)
+                               {
+                                   Thread.Sleep(300);
+
+                               }
+
+                           }
+
                            if(item != null)
                            {
                                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

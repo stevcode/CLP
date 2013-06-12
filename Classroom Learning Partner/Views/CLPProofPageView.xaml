@@ -87,8 +87,8 @@
 
         <StackPanel x:Name="ButtonsGrid" Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
             <Button x:Name="RecordButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=RecordProofCommand}">Record</Button>
-            <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=InsertProofCommand}">Insert</Button>
-            <Button x:Name="RewindButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=RewindProofCommand}">Rewind</Button>
+            <!-- <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=InsertProofCommand}">Insert</Button>
+            <Button x:Name="RewindButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=RewindProofCommand}">Rewind</Button> -->
            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button> -->
             <Button x:Name="PlayButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=PlayProofCommand}">Play</Button>
            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button> -->
