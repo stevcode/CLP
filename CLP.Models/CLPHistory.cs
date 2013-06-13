@@ -6,13 +6,12 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory : ModelBase
+    public class CLPHistory : ModelBase, ICLPHistory
     {
         public const double SAMPLE_RATE = 9;
-        private bool _frozen;
-        private bool _ingroup;
-        public bool _useHistory = true;
-        private Stack<CLPHistoryItem> groupEvents;
+        protected bool _frozen;
+        protected bool _ingroup;
+        protected Stack<CLPHistoryItem> groupEvents;
 
         #region Constructor
 
@@ -44,7 +43,7 @@ namespace CLP.Models
             set { SetValue(PastProperty, value); }
         }
 
-        public static readonly PropertyData PastProperty = RegisterProperty("Past", 
+        public volatile static  PropertyData PastProperty = RegisterProperty("Past", 
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace CLP.Models
             set { SetValue(FutureProperty, value); }
         }
 
-        public static readonly PropertyData FutureProperty = RegisterProperty("Future", 
+        public volatile static  PropertyData FutureProperty = RegisterProperty("Future", 
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
         /// <summary>
@@ -69,9 +68,28 @@ namespace CLP.Models
             set { SetValue(MetaPastProperty, value); }
         }
 
-        public static readonly PropertyData MetaPastProperty = RegisterProperty("MetaPast",
+        public volatile static  PropertyData MetaPastProperty = RegisterProperty("MetaPast",
             typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
 
+
+        public bool UseHistory 
+        {
+            get { return GetValue<bool>(UseHistoryProperty); }
+            set { SetValue(UseHistoryProperty, value); }
+        }
+
+        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory",
+            typeof(bool), true);
+
+        public bool SingleCutting {
+            get { return GetValue<bool>(SingleCuttingProperty); }
+            set { SetValue(SingleCuttingProperty, value); }
+        
+        }
+
+        public static readonly PropertyData SingleCuttingProperty = RegisterProperty("SingleCutting",
+           typeof(bool), false);
+        
         /// <summary>
         /// The events that we have triggered and should therefore ignore when we're told they've
         /// happened.
@@ -110,9 +128,9 @@ namespace CLP.Models
             _frozen = false;
         }
 
-        public void Push(CLPHistoryItem item)
+        public virtual void Push(CLPHistoryItem item)
         {
-            if(!_useHistory || _frozen || IsExpected(item))
+            if(!UseHistory || _frozen || IsExpected(item))
             {
                 return;
             }
@@ -144,7 +162,7 @@ namespace CLP.Models
             groupEvents = new Stack<CLPHistoryItem>();
         }
 
-        public void EndEventGroup()
+        public virtual void EndEventGroup()
         {
             _ingroup = false;
             if(groupEvents.Count > 0)
@@ -166,9 +184,9 @@ namespace CLP.Models
             return new CLPHistoryAggregation(itemList);
         }
 
-        public void Undo(CLPPage page)
+        public virtual void Undo(CLPPage page)
         {
-            if(!_useHistory || Past.Count==0)
+            if(!UseHistory || Past.Count==0)
             {
                 return;
             }
@@ -202,9 +220,9 @@ namespace CLP.Models
             }
         }
 
-        public void Redo(CLPPage page)
+        public virtual void Redo(CLPPage page)
         {
-            if(!_useHistory || Future.Count == 0)
+            if(!UseHistory || Future.Count == 0)
             {
                return;
             }
@@ -227,7 +245,7 @@ namespace CLP.Models
             }
         }
 
-        private bool IsExpected(CLPHistoryItem item)
+        protected bool IsExpected(CLPHistoryItem item)
         {
             CLPHistoryItem match = null;
             foreach (CLPHistoryItem expected in ExpectedEvents) 

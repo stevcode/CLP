@@ -145,6 +145,7 @@
 
                 <!--Right Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter"
                         Cursor="SizeWE" 
                         Width="40" Height="40"
                         Canvas.Right="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}" 
@@ -153,7 +154,7 @@
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White" MouseLeave="DivisorButton_Leave"
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Data="M0,1 L-.75,.5 L0,0 M-.75,.5 L1,.5" 
                                       Stretch="Fill" Margin="5"
@@ -165,6 +166,7 @@
 
                 <!--Bottom Divisor Button-->
                 <Button Command="{Binding CreateVerticalDivisionCommand}"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter"
                         Cursor="SizeNS" 
                         Width="40" Height="40"
                         Canvas.Bottom="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}" 
@@ -173,7 +175,7 @@
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White" MouseLeave="DivisorButton_Leave"
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Data="M-.5,.5 L0,0 L.5,.5 M0,0 L0,1" 
                                       Stretch="Fill" Margin="5"
@@ -360,13 +362,15 @@
                        Fill="Transparent" Stretch="Fill" 
                        Width="{Binding ArrayWidth}" 
                        Height="{Binding PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}" 
-                       MouseMove="ArrayBottomHitBox_MouseMove" />
+                       MouseMove="ArrayBottomHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave" />
 
             <Rectangle Tag="ArrayRightHitBox" Grid.Row="1" Grid.Column="2" 
                        Fill="Transparent" Stretch="Fill" 
                        Height="{Binding ArrayHeight}"
                        Width="{Binding PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}"  
-                       MouseMove="ArrayRightHitBox_MouseMove" />
+                       MouseMove="ArrayRightHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave" />
             
         </Grid>
 

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Models
@@ -382,6 +379,17 @@ namespace CLP.Models
             }
         }
 
+        public virtual ObservableCollection<ICLPPageObject> SplitAtX(double ave)
+        {
+            ObservableCollection<ICLPPageObject> c = new ObservableCollection<ICLPPageObject>();
+            return c;
+        }
+
+        public virtual ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
+        {
+            ObservableCollection<ICLPPageObject> c = new ObservableCollection<ICLPPageObject>();
+            return c;
+        }
         #endregion
 
         #region Utility Methods

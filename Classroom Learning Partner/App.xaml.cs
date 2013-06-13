@@ -34,6 +34,7 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
             _currentUserMode = UserMode.Instructor;
+            //_currentUserMode = UserMode.Student;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
@@ -125,6 +126,7 @@ namespace Classroom_Learning_Partner
         }
 
         private static UserMode _currentUserMode = UserMode.Instructor;
+        //private static UserMode _currentUserMode = UserMode.Student;
         public static UserMode CurrentUserMode
         {
             get

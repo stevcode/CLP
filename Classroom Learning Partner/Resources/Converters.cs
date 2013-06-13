@@ -36,6 +36,32 @@ namespace Classroom_Learning_Partner.Resources
             throw new NotImplementedException();
         }
     }
+
+    public class PageTypeConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if(value is CLPProofPage)
+            {
+                return "CLPProofPage";
+            }
+            else
+            {
+                return "CLPPage";
+            }
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
    
     public class GroupLabelConverter : IValueConverter
     {

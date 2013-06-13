@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -22,8 +19,8 @@ namespace Classroom_Learning_Partner
         private static System.Timers.Timer _autoSaveTimer = new System.Timers.Timer();
         private CLPServiceAgent()
         {
-            _autoSaveTimer.Interval = 60000;
-            _autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
+            //_autoSaveTimer.Interval = 123000;
+            //_autoSaveTimer.Elapsed += _autoSaveTimer_Elapsed;
         }
 
         //readonly allows thread-safety and means it can only be allocated once.
@@ -39,7 +36,7 @@ namespace Classroom_Learning_Partner
             //ask to save notebooks, large window with checks for all notebooks (possibly also converter?)
             //sync with database
             //run network disconnect
-            _autoSaveTimer.Stop();
+            //_autoSaveTimer.Stop();
             
             Environment.Exit(0);
         }
@@ -175,7 +172,7 @@ namespace Classroom_Learning_Partner
 
                     if(App.CurrentUserMode == App.UserMode.Student)
                     {
-                        _autoSaveTimer.Start();
+                       // _autoSaveTimer.Start();
                     }
 
                 }
@@ -274,15 +271,15 @@ namespace Classroom_Learning_Partner
             //    notebook.Submissions.Clear();
             //}
 
-            _autoSaveTimer.Stop();
+            //_autoSaveTimer.Stop();
 
-            while(_isAutoSaving)
-            {
-            }
+            //while(_isAutoSaving)
+            //{
+            //}
             
             notebook.Save(filePath);
 
-            _autoSaveTimer.Start();
+            //_autoSaveTimer.Start();
         }
 
         #endregion //Notebook
@@ -343,6 +340,7 @@ namespace Classroom_Learning_Partner
             if(diff > CLPHistory.SAMPLE_RATE)
             {
                 page.PageHistory.Push(new CLPHistoryMoveObject(pageObject.UniqueID, oldXPos, oldYPos, pt.X, pt.Y));
+                page.updateProgress();
             }
 
             pageObject.XPosition = pt.X;
@@ -358,7 +356,8 @@ namespace Classroom_Learning_Partner
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;
             if(diff > CLPHistory.SAMPLE_RATE){
-                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width));     
+                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width));
+                page.updateProgress();
             }
             pageObject.Height = height;
             pageObject.Width = width;

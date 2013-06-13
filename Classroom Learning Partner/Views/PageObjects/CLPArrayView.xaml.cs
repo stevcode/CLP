@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.Views
         private void ArrayBottomHitBox_MouseMove(object sender, MouseEventArgs e)
         {
             _divisorHideTimer.Stop();
-            var clpArrayViewModel = ViewModel as CLPArrayViewModel;
+            var clpArrayViewModel = ViewModel as CLPArrayViewModel; 
             if(clpArrayViewModel != null && clpArrayViewModel.IsDivisionBehaviorOn && !clpArrayViewModel.IsDefaultAdornerVisible)
             {
                 clpArrayViewModel.BottomArrowPosition = e.GetPosition(TopGrid).X - CLPArray.LargeLabelLength;
@@ -50,6 +50,7 @@ namespace Classroom_Learning_Partner.Views
 
         private void DivisorButton_Leave(object sender, MouseEventArgs e)
         {
+            _overDivisionAdorner = false;
             _divisorHideTimer.Start();
         }
 
@@ -59,13 +60,28 @@ namespace Classroom_Learning_Partner.Views
         {
             _divisorHideTimer.Stop();
             var clpArrayViewModel = ViewModel as CLPArrayViewModel;
-            if(clpArrayViewModel != null)
+            if(clpArrayViewModel != null && !_overDivisionAdorner && !clpArrayViewModel.IsDefaultAdornerVisible)
             {
                 clpArrayViewModel.IsBottomAdornerVisible = false;
                 clpArrayViewModel.IsRightAdornerVisible = false;
                 clpArrayViewModel.IsAdornerVisible = false;
-                clpArrayViewModel.IsDefaultAdornerVisible = false;
             }
+        }
+
+        private void ArrayDivisionHitBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var clpArrayViewModel = ViewModel as CLPArrayViewModel;
+            if(clpArrayViewModel != null && !clpArrayViewModel.IsDefaultAdornerVisible)
+            {
+                _divisorHideTimer.Start();
+            }
+        }
+
+        private bool _overDivisionAdorner;
+        private void DivisorButton_Enter(object sender, MouseEventArgs e)
+        {
+            _overDivisionAdorner = true;
+            _divisorHideTimer.Stop();
         }
     }
 }

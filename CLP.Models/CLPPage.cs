@@ -105,6 +105,13 @@ namespace CLP.Models
 
         #region Properties
 
+        public Boolean CutEnabled
+        {
+            get { return GetValue<bool>(CutEnabledProperty); }
+            set { SetValue(CutEnabledProperty, value); }
+        }
+        public static readonly PropertyData CutEnabledProperty = RegisterProperty("CutEnabled", typeof(bool), false);
+
         /// <summary>
         /// Pool of Images used on a page, so that duplications don't occur
         /// UniqueID, ByteSource
@@ -138,6 +145,33 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double), LANDSCAPE_WIDTH);
+
+        public double ProofProgressCurrent
+        {
+            get { return GetValue<double>(ProofProgressCurrentProperty); }
+            set { SetValue(ProofProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double),0);
+        
+        ////////////////////////////////
+        public string ProofProgressVisible
+        {
+            get { return GetValue<string>(ProofProgressVisibleProperty); }
+            set { SetValue(ProofProgressVisibleProperty, value); }
+        }
+
+        public static volatile PropertyData ProofProgressVisibleProperty = RegisterProperty("ProofProgressVisible", typeof(string), "Hidden");
+        
+        public string ProofPresent
+        {
+            get { return GetValue<string>(ProofPresentProperty); }
+            set { SetValue(ProofPresentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string), "Hidden");
+
+        /////////////////////////////////
 
         /// <summary>
         /// Aspect Ratio of page = PageWidth / PageHeight.
@@ -243,13 +277,13 @@ namespace CLP.Models
         /// <summary>
         /// Gets the CLPPage history.
         /// </summary>
-        public CLPHistory PageHistory
+        public virtual ICLPHistory PageHistory
         {
-            get { return GetValue<CLPHistory>(PageHistoryProperty); }
+            get { return GetValue<ICLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory), () => new CLPHistory());
 
         /// <summary>
         /// Whether or not the page is a submissions from a student.
@@ -539,7 +573,7 @@ namespace CLP.Models
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            if (InkStrokes != null)
+            if (InkStrokes != null && InkStrokes.Any())
             {
                 SerializedStrokes = SaveInkStrokes(InkStrokes);
             }
@@ -567,8 +601,145 @@ namespace CLP.Models
             }        
         }
 
+        public List<ObservableCollection<ICLPPageObject>> CutObjects(double leftX, double rightX, double topY, double botY)
+        {
+            var lr = new List<ObservableCollection<ICLPPageObject>>();
+            var c1 = new ObservableCollection<ICLPPageObject>();
+            var c2 = new ObservableCollection<ICLPPageObject>();
+
+            //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
+            // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
+            // cut instead of the vertical cut that was intended.
+            if(Math.Abs(leftX - rightX) < Math.Abs(topY - botY))
+            {
+                double Ave = (rightX + leftX) / 2;
+                foreach(ICLPPageObject pageObject in PageObjects)
+                {
+                    double otopYVal = pageObject.YPosition;
+                    double obotYVal = otopYVal + pageObject.Height;
+                    double oLeftXVal = pageObject.XPosition;
+                    double oRightXVal = pageObject.XPosition + pageObject.Width;
+                    if(pageObject.PageObjectType.Equals("CLPArray"))
+                    {
+                        if((oLeftXVal + CLPArray.LargeLabelLength <= leftX && oRightXVal - 2*CLPArray.SmallLabelLength >= rightX) &&
+                           (topY - otopYVal - CLPArray.LargeLabelLength < 15 && obotYVal - 2*CLPArray.SmallLabelLength - botY < 15))
+                        {
+                            ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
+                            foreach(ICLPPageObject no in c)
+                            {
+                                c1.Add(no);
+                            }
+                            c2.Add(pageObject);
+                        }
+                    }
+                    else if(pageObject.PageObjectType.Equals(CLPShape.Type))
+                    {
+                        CLPShape oc = (CLPShape)pageObject;
+                        if(oc.ShapeType.Equals(CLPShape.CLPShapeType.Rectangle)){
+                            if(((otopYVal >= topY) && (obotYVal <= botY)) &&
+                             ((oLeftXVal <= leftX) && (oRightXVal >= rightX)))
+                            {
+                                ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
+                                foreach(ICLPPageObject no in c)
+                                {
+                                    c1.Add(no);
+                                }
+                                c2.Add(pageObject);
+                            }
+                        }
+                    }
+                }
+            }
+            else{ 
+                double Ave = (topY + botY) / 2;
+                foreach(ICLPPageObject o in this.PageObjects)
+                {
+                    double otopYVal = o.YPosition;
+                    double obotYVal = otopYVal + o.Height;
+                    double oLeftXVal = o.XPosition;
+                    double oRightXVal = o.XPosition + o.Width;
+                    if(o.PageObjectType.Equals("CLPArray"))
+                    {
+                        if((otopYVal + CLPArray.LargeLabelLength <= topY && obotYVal - 2*CLPArray.SmallLabelLength >= botY) &&
+                           (leftX - oLeftXVal - CLPArray.LargeLabelLength < 15 && oRightXVal - 2*CLPArray.SmallLabelLength - rightX < 15))
+                        {
+                            ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
+                            foreach(ICLPPageObject no in c)
+                            {
+                                c1.Add(no);
+                            }
+                            c2.Add(o);
+                        }
+                    }
+                    else if(o.PageObjectType.Equals(CLPShape.Type))
+                    {
+                        CLPShape oc = (CLPShape)o;
+                        if(oc.ShapeType.Equals(CLPShape.CLPShapeType.Rectangle)){
+                            if(((otopYVal <= topY) && (obotYVal >= botY)) &&
+                               ((oLeftXVal >= leftX) && (oRightXVal <= rightX))){
+                                ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
+                                foreach(ICLPPageObject no in c){
+                                    c1.Add(no);
+                                }
+                                c2.Add(o);
+                            }
+                        }
+                    }
+               }  
+            }
+            lr.Add(c1);
+            lr.Add(c2);
+            return lr;
+        }
+
+        public void updateProgress()
+        {
+            try
+            {
+                //CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
+                double FutureItemsNumber = proofPageHistory1.Future.Count;
+                double pastItemsNumber = proofPageHistory1.MetaPast.Count;
+                double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
+
+                if(totalItemsNumber == 0)
+                {
+                    
+                    ProofPresent = "Hidden";
+                    ProofProgressCurrent = 0;
+                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
+                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
+                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                    return;
+                }
+                else
+                {
+                    ProofPresent = "Visible";
+                    ProofProgressCurrent =
+
+                        (pastItemsNumber * PageWidth * 0.7175) /
+                        totalItemsNumber;
+
+                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
+                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
+                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                }
+
+                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
+                {
+                    ProofProgressVisible = "Hidden";
+                }
+                else {
+                    ProofProgressVisible = "Visible";
+                    
+                }
+
+
+            }catch(Exception e){
+                Console.WriteLine(e.Message);
+            }
+        }
         #endregion
     }
-
 }
 
