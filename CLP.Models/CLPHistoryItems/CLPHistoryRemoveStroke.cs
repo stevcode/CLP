@@ -130,7 +130,7 @@ namespace CLP.Models
 
         public override bool Equals(object obj)
         {
-            if(!(obj is CLPHistoryRemoveStroke))
+            if(!(obj is CLPHistoryRemoveStroke) || SerializedStroke == null)
             {
                 return false;
             }
