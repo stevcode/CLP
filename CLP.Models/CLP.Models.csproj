@@ -155,6 +155,7 @@
     <Compile Include="Tags\ArrayDivisionCorrectnessTagType.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />
     <Compile Include="Tags\DomainInterpretatoinTagType.cs" />
+    <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
     <Compile Include="Tags\StarredTagType.cs" />
     <Compile Include="Tags\Tag.cs" />
