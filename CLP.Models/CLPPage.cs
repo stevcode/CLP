@@ -701,8 +701,10 @@ namespace CLP.Models
                 double FutureItemsNumber = proofPageHistory1.Future.Count;
                 double pastItemsNumber = proofPageHistory1.MetaPast.Count;
                 double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
+
                 if(totalItemsNumber == 0)
                 {
+                    
                     ProofPresent = "Hidden";
                     ProofProgressCurrent = PageWidth * 0.7175;
                     Console.WriteLine("This is the current value" + ProofProgressCurrent);
@@ -723,7 +725,8 @@ namespace CLP.Models
                     Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
                 }
 
-                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
+                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record)||
+                    (FutureItemsNumber==0))
                 {
                     ProofProgressVisible = "Hidden";
                 }

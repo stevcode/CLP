@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void OnRewindProofCommandExecute() {
            Thread t = new Thread(() =>
            {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 25, 200);
+               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
            });
            t.Start();
        }
@@ -245,17 +245,17 @@ namespace Classroom_Learning_Partner.ViewModels
        //disables editing of proof page
        //disables recording of history 
        private void OnStopProofCommandExecute() {
-           Thread t = new Thread(() =>
-           {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
-           });
-           t.Start();
-           //OnPauseProofCommandExecutePure();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
                return;
            }
+           proofPageHistory1.IsPaused = true;
+               lock(obj)
+               {
+                   proofPageHistory1.Freeze();
+                   Page.updateProgress();
+               }
        }
 
        //plays the entire proof forwards (more slowly than forward) to the end
@@ -273,7 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause)
        {
            lock(obj){
-
+               
                var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
                if(proofPageHistory1 == null)
                {
@@ -293,20 +293,28 @@ namespace Classroom_Learning_Partner.ViewModels
                }
               
                
-               int count = from.Count + to.Count;
-               Console.WriteLine("This is the total: " + count); 
+               //int count = from.Count + to.Count;
+               //Console.WriteLine("This is the total: " + count); 
 
 
-                proofPageHistory1.IsPaused = false;
-                proofPageHistory1.ProofPageAction = action;
-                proofPageHistory1.Freeze();
-                base.EditingMode = InkCanvasEditingMode.None;
+               
+               ///////////////////////////////
+                
+                                         proofPageHistory1.IsPaused = false;
+                                         proofPageHistory1.ProofPageAction = action;
+                                         proofPageHistory1.Freeze();
+                                         base.EditingMode = InkCanvasEditingMode.None;
+                                         base.PageInteractionMode = PageInteractionMode.Pen; 
+                                         
+               ////////////////////////////////
+
+
                 //int i = 0;
                try{
                    int singleCut = 0;  
                    while(from.Count > 0)
                        {
-                        count = from.Count + to.Count;
+                        //count = from.Count + to.Count;
                         //Console.WriteLine("This is the new total on loop " + i + ": " + count);
                         //i++;
                         if(proofPageHistory1.IsPaused)
@@ -320,6 +328,7 @@ namespace Classroom_Learning_Partner.ViewModels
                            to.Push(item);
                            if(!item.wasPaused && !item.singleCut)
                            {
+                               
                                if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
                                {
                                    Thread.Sleep(smallPause); // make intervals between move-steps less painfully slow
@@ -328,6 +337,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                {
                                    Thread.Sleep(largePause);
                                }
+                               
+
                            }
                            if(item.singleCut)
                            {

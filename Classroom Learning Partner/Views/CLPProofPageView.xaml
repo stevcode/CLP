@@ -74,7 +74,7 @@
         </ProgressBar> -->
         <Rectangle x:Name= "ProofPresentRect1" Grid.Row="1" Grid.Column="0"  Height="20" Width="20" Fill="White" HorizontalAlignment="Left">
         </Rectangle>
-        <Rectangle x:Name= "ProofPresentRect2" Grid.Row="1" Grid.Column="0"  Height="20" Width="20" Fill="Black" HorizontalAlignment="Left"  Visibility ="{Binding Path = ProofPresent}">
+        <Rectangle x:Name= "ProofPresentRect2" Grid.Row="1" Grid.Column="0"  Height="20" Width="20" Fill="RoyalBlue" HorizontalAlignment="Left"  Visibility ="{Binding Path = ProofPresent}">
         </Rectangle>
 
         <Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Grid.Column="0"  Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" Visibility ="{Binding Path = ProofProgressVisible}">
@@ -86,14 +86,14 @@
         <!--Height="20" Width="200" -->
 
         <StackPanel x:Name="ButtonsGrid" Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-            <Button x:Name="RecordButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=RecordProofCommand}">Record</Button>
-            <!-- <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=InsertProofCommand}">Insert</Button>
-            <Button x:Name="RewindButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=RewindProofCommand}">Rewind</Button> -->
+            <Button x:Name="RecordButton" FontSize="12" FontWeight="Bold" Background="Red" Command="{Binding Path=RecordProofCommand}">Record</Button>
+            <!-- <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=InsertProofCommand}">Insert</Button> -->
+            <Button x:Name="RewindButton" FontSize="12" FontWeight="Bold" Background="Purple" Command="{Binding Path=RewindProofCommand}">Rewind</Button> 
            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button> -->
-            <Button x:Name="PlayButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=PlayProofCommand}">Play</Button>
+            <Button x:Name="PlayButton" FontSize="12" FontWeight="Bold" Background="Green" Command="{Binding Path=PlayProofCommand}">Play</Button>
            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button> -->
-            <Button x:Name="PauseButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=PauseProofCommand}" CommandParameter="{Binding ElementName=ButtonsGrid, Path=.}">Pause</Button>
-            <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=StopProofCommand}">Done</Button>
+           <!-- <Button x:Name="PauseButton" FontSize="12" FontWeight="Bold"  Command="{Binding Path=PauseProofCommand}" CommandParameter="{Binding ElementName=ButtonsGrid, Path=.}">Pause</Button> -->
+            <Button FontSize="12" FontWeight="Bold" Background="Gray" Command="{Binding Path=StopProofCommand}">Stop</Button>
             <!-- CommandParameter="{Binding ElementName=PauseButton, Path=.}" -->
         </StackPanel>
 
