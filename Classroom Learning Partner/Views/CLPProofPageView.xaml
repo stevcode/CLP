@@ -80,7 +80,7 @@
         <Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Grid.Column="0"  Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" Visibility ="{Binding Path = ProofProgressVisible}">
         </Rectangle>
 
-        <Rectangle x:Name= "ProofProgressRect2" Grid.Row="1" Grid.Column="0"  Height="20" Width="{Binding Path =ProofProgressCurrent}" Margin="24,0,24,0" Fill="Brown" HorizontalAlignment="Left" Visibility ="{Binding Path = ProofProgressVisible}" >
+        <Rectangle x:Name= "ProofProgressRect2" Grid.Row="1" Grid.Column="0"  Height="20" Width="{Binding Path =ProofProgressCurrent}" Margin="24,0,24,0" Fill="Yellow" HorizontalAlignment="Left" Visibility ="{Binding Path = ProofProgressVisible}" >
         </Rectangle>
 
         <!--Height="20" Width="200" -->
