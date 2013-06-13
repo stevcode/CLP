@@ -89,28 +89,33 @@ namespace Classroom_Learning_Partner.ViewModels
                proofPageHistory1.ClearHistory();
                proofPageHistory1.Freeze();
            }
-           
+
            List<ICLPPageObject> rpo = new List<ICLPPageObject>();
-           foreach(ICLPPageObject po in Page.PageObjects) {
-               if(po.IsBackground != true) {
+           foreach(ICLPPageObject po in Page.PageObjects)
+           {
+               if(po.IsBackground != true)
+               {
                    rpo.Add(po);
                }
            }
 
-           for(int i = 0; i < rpo.Count; i++) {
+           for(int i = 0; i < rpo.Count; i++)
+           {
                ICLPPageObject po = rpo[i];
                CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
            }
 
-            List<Stroke> istl = new List<Stroke>();
-            foreach(var ist in Page.InkStrokes) {
-                istl.Add(ist);
-            }
+           List<Stroke> istl = new List<Stroke>();
+           foreach(var ist in Page.InkStrokes)
+           {
+               istl.Add(ist);
+           }
 
-            for(int i = 0; i < istl.Count;i++) {
-                Stroke ist = istl[i];
-                Page.InkStrokes.Remove(ist);
-            }
+           for(int i = 0; i < istl.Count; i++)
+           {
+               Stroke ist = istl[i];
+               Page.InkStrokes.Remove(ist);
+           }
        }
 
        //replays the entire proof from the beginning
