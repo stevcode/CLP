@@ -55,16 +55,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public string Value
+        public Object Value
         {
-            get { return GetValue<string>(ValueProperty); }
+            get { return GetValue<Object>(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
         /// <summary>
         /// Register the Value property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(string), "");
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(Object), "");
         #endregion
     }
 }
