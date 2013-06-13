@@ -705,17 +705,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     Page.PageHistory.SingleCutting = true;
-                    //double bl = stroke.GetBounds().BottomLeft.X;
-                    //double br = stroke.GetBounds().BottomRight.X;
-                    //double botXAve = (bl + br) / 2;
-                    //double tl = stroke.GetBounds().TopLeft.X;
-                    //double tr = stroke.GetBounds().TopRight.X;
-                    //double topXAve = (tl + tr) / 2;
-                    //double ave = (stroke.GetBounds().Left + stroke.GetBounds().Right)//(botXAve + topXAve) / 2;
-                    double topY = stroke.GetBounds().Top;//Math.Min(stroke.GetBounds().TopLeft.Y, stroke.GetBounds().TopRight.Y);
-                    double leftX = stroke.GetBounds().Left;//Math.Min(stroke.GetBounds().TopLeft.X, stroke.GetBounds().BottomLeft.X);
-                    double rightX = stroke.GetBounds().Right;//Math.Max(stroke.GetBounds().TopRight.X, stroke.GetBounds().BottomRight.X);
-                    double botY = stroke.GetBounds().Bottom;//Math.Max(stroke.GetBounds().BottomLeft.Y, stroke.GetBounds().BottomRight.Y);
+                    double topY = stroke.GetBounds().Top;
+                    double leftX = stroke.GetBounds().Left;
+                    double rightX = stroke.GetBounds().Right;
+                    double botY = stroke.GetBounds().Bottom;
+                    Page.InkStrokes.Remove(stroke);
                     List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
                     ObservableCollection<ICLPPageObject> c1 = lr[0];
                     List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
@@ -748,10 +742,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(Stroke inkStroke in AllShapesInkStrokes)
                     {
                         Page.InkStrokes.Add(inkStroke);
-
                     }
 
-                    Page.InkStrokes.Remove(stroke);
+                    
                     RefreshInkStrokes();
                     Page.PageHistory.SingleCutting = false;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
