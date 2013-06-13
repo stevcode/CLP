@@ -264,6 +264,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             DisplayedPage = page;
+            if(page is CLPProofPage)
+            {
+                (page as CLPProofPage).updateProgress();
+            }
             if(IsOnProjector)
             {
                 string pageID;
