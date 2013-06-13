@@ -109,6 +109,9 @@ namespace CLP.Models
         override public void Undo(CLPPage page)
         {
             ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            if(obj==null){
+                return;
+            }
             double currentX = obj.XPosition;
             double currentY = obj.YPosition;
             obj.XPosition = OldX;
@@ -137,6 +140,9 @@ namespace CLP.Models
         override public void Redo(CLPPage page)
         {
             ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
+            if(obj==null){
+                return;
+            }
             double currentX = obj.XPosition;
             double currentY = obj.YPosition;
             obj.XPosition = NewX;

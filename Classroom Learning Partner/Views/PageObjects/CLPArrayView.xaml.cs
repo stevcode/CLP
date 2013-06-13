@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.Views
         private void ArrayBottomHitBox_MouseMove(object sender, MouseEventArgs e)
         {
             _divisorHideTimer.Stop();
-            var clpArrayViewModel = ViewModel as CLPArrayViewModel;
+            var clpArrayViewModel = ViewModel as CLPArrayViewModel; 
             if(clpArrayViewModel != null && clpArrayViewModel.IsDivisionBehaviorOn && !clpArrayViewModel.IsDefaultAdornerVisible)
             {
                 clpArrayViewModel.BottomArrowPosition = e.GetPosition(TopGrid).X - CLPArray.LargeLabelLength;

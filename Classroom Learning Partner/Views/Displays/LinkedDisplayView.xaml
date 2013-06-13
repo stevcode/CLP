@@ -5,7 +5,12 @@
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    x:Name="LinkedDisplay">
+    
+    <UserControl.Resources>
+        <conv:PageTypeConverter x:Key="PageTypeConverter" />
+    </UserControl.Resources>
 
     <!-- Used for page Zooming, Not active in this first test -->
     <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">-->
@@ -22,7 +27,39 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
-                <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
+                <!--<Views:CLPPageView DataContext="{Binding DisplayedPage}" />-->
+
+                <Control x:Name="PageView">
+                    <Control.Resources>
+
+                        <ControlTemplate x:Key="CLPPageTemplate">
+                            <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
+                        </ControlTemplate>
+
+                        <ControlTemplate x:Key="CLPProofPageTemplate">
+                            <Views:CLPProofPageView DataContext="{Binding DisplayedPage}" />
+                        </ControlTemplate>
+
+                    </Control.Resources>
+
+                    <Control.Style>
+                        <Style TargetType="{x:Type Control}">
+                            <Style.Triggers>
+
+                                <!-- CLPPage trigger -->
+                                <DataTrigger Binding="{Binding DisplayedPage, Converter={StaticResource PageTypeConverter}}" Value="CLPPage">
+                                    <Setter Property="Template" Value="{StaticResource CLPPageTemplate}" />
+                                </DataTrigger>
+
+                                <!-- CLPProofPage trigger -->
+                                <DataTrigger Binding="{Binding DisplayedPage, Converter={StaticResource PageTypeConverter}}" Value="CLPProofPage">
+                                    <Setter Property="Template" Value="{StaticResource CLPProofPageTemplate}" />
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </Control.Style>
+                </Control>
             </Border>
             </ScrollViewer>
     </Border>

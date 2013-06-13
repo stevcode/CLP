@@ -195,6 +195,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\CLPProofPageViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
@@ -202,6 +203,9 @@
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\CLPProofPageView.xaml.cs">
+      <DependentUpon>CLPProofPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Controls\VisualGrid.cs" />
@@ -364,6 +368,10 @@
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\CLPProofPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -569,6 +577,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
+    <None Include="Images\ScissorsCursor.ani" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -642,6 +651,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\ScissorsCursor.cur" />
+    <Resource Include="Images\Scissors.png" />
     <Resource Include="Images\HighlighterCursor.cur" />
     <Resource Include="Images\PenCursor.cur" />
     <Resource Include="Images\HandIcon.png" />

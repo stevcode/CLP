@@ -110,6 +110,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
             SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
+            EnableCutCommand = new Command(OnEnableCutCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //Submission
@@ -155,6 +156,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
+            AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
@@ -492,7 +494,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentFontFamilyProperty = RegisterProperty("CurrentFontFamily", typeof(FontFamily));
 
-        private ObservableCollection<double> _fontSizes = new ObservableCollection<double>(){3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
+        private ObservableCollection<double> _fontSizes = new ObservableCollection<double> {3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
 		                                                                                    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 15.0,
 		                                                                                    16.0, 17.0, 18.0, 19.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0,
 		                                                                                    32.0, 34.0, 36.0, 38.0, 40.0, 44.0, 48.0, 52.0, 56.0, 60.0, 64.0, 68.0, 72.0, 76.0,
@@ -527,7 +529,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentFontSizeProperty = RegisterProperty("CurrentFontSize", typeof(double));
 
-        private List<Color> _colors = new List<Color>() { Colors.Black, Colors.Red, Colors.Blue, Colors.Purple, Colors.Brown, Colors.Green };
+        private List<Color> _colors = new List<Color> { Colors.Black, Colors.Red, Colors.DarkOrange, Colors.Tan, Colors.Gold, Colors.SaddleBrown, Colors.DarkGreen, Colors.MediumSeaGreen, Colors.Blue, Colors.HotPink, Colors.BlueViolet, Colors.Aquamarine, Colors.SlateGray, Colors.SkyBlue, Colors.Turquoise };
         private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
 
         public ObservableCollection<Brush> FontColors
@@ -985,7 +987,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
                 foreach(CLPPage page in notebook.Pages)
                 {
-                    page.PageHistory._useHistory = false;
+                    page.PageHistory.UseHistory = false;
                 }
             }
         }
@@ -1110,6 +1112,17 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             EditingMode = InkCanvasEditingMode.None;
             PageInteractionMode = PageInteractionMode.Tile;
+        }
+
+        /// <summary>
+        /// Sets Cut Mode.
+        /// </summary>
+        public Command EnableCutCommand { get; private set; }
+
+        private void OnEnableCutCommandExecute()
+        {
+            EditingMode = InkCanvasEditingMode.Ink;
+            PageInteractionMode = PageInteractionMode.Scissors;
         }
 
         /// <summary>
@@ -1391,7 +1404,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 try
                 {
                     CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    CLPHistory pageHistory = page.PageHistory;
+                    ICLPHistory pageHistory = page.PageHistory;
 
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (DispatcherOperationCallback)delegate(object arg)
@@ -1632,6 +1645,31 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
                 page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
+        }
+
+
+        public Command<string> AddNewProofPageCommand { get; private set; }
+
+        private void OnAddNewProofPageCommandExecute(string pageOrientation)
+        {
+            //Steve - clpserviceagent
+            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
+            index++;
+            CLPPage page = new CLPProofPage();
+            if(pageOrientation == "Portrait")
+            {
+                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
+                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
+                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+            else if(pageOrientation == "Landscape") 
+            {
+                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
+                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
                 page.PageAspectRatio = page.PageWidth / page.PageHeight;
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;

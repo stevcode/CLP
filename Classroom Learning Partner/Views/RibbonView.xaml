@@ -20,7 +20,7 @@
 
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
-            <RibbonApplicationMenu SmallImageSource="..\Images\File.png">
+            <RibbonApplicationMenu SmallImageSource="..\Images\File.png" Background="Purple">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"
@@ -221,6 +221,11 @@
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding SetSnapTileCommand}" />-->
 
+                <RibbonToggleButton Label="Cut"
+                                    LargeImageSource="..\Images\Scissors.png"
+                                    Click="ToolGroupToggle_Clicked"
+                                    Command="{Binding EnableCutCommand}"/>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Insert" Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
@@ -229,11 +234,6 @@
                               LargeImageSource="..\Images\InkArray.png"
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
-
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="TRUE" />
 
             </RibbonGroup>
 
@@ -279,13 +279,13 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page Size">
+            <!--<RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding MakePageLongerCommand}"/>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Share" Visibility="{Binding StudentVisibility}">
 
@@ -425,7 +425,7 @@
         </RibbonTab>-->
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert" Visibility="{Binding StudentVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+        <RibbonTab Header="Insert" Visibility="{Binding InstructorVisibility}">
             
             <RibbonGroup Header="Tools">
 
@@ -652,6 +652,14 @@
                                 Command="{Binding AddNewPageCommand}"
                                 CommandParameter="Portrait" />
                         
+                        <Button Content="Portrait Proof Page" Height="60" Width="200"
+                                Command="{Binding AddNewProofPageCommand}"
+                                CommandParameter="Portrait" />
+
+                        <Button Content="Landscape Proof Page" Height="60" Width="200"
+                                Command="{Binding AddNewProofPageCommand}"
+                                CommandParameter="Landscape" />
+
                     </RibbonGallery>
                 </RibbonMenuButton>
 
@@ -938,6 +946,10 @@
                           Checked="MinimizeButton_Checked" 
                           Unchecked="MinimizeButton_Unchecked"/>
         </Ribbon.HelpPaneContent>
+
+       
+
     </Ribbon>
+    
 
 </catel:UserControl>

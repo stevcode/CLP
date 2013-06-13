@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -111,7 +112,7 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, CLPPage page)
             : base(page)
         {
-            IsGridOn = false;
+            IsGridOn = true;
 
             Rows = rows;
             Columns = columns;
@@ -271,9 +272,116 @@ namespace CLP.Models
 
         #region Methods
 
+        public override ObservableCollection<ICLPPageObject> SplitAtX(double average)
+        {
+            var c = new ObservableCollection<ICLPPageObject>();
+            if(Columns == 1)
+            {
+                c.Add(this);
+                return c;
+            }
+
+            double relativeAverage = average - LargeLabelLength - XPosition;
+
+            double minDistance = ArrayWidth;
+            double closestLinePosition = 0;
+            int closestLineIndex = 0;
+            foreach(var line in VerticalGridLines)
+            {
+                var distance = Math.Abs(relativeAverage - line);
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestLinePosition = line;
+                    closestLineIndex = VerticalGridLines.IndexOf(line);
+                }
+            }
+
+            var leftArray = new CLPArray(Rows, closestLineIndex + 1, ParentPage)
+                            {
+                                IsGridOn = IsGridOn,
+                                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                XPosition = XPosition,
+                                YPosition = YPosition,
+                                ArrayHeight = ArrayHeight
+                            };
+            leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
+            leftArray.CalculateGridLines();
+            c.Add(leftArray);
+
+            var rightArray = new CLPArray(Rows, Columns - closestLineIndex - 1, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition + closestLinePosition,
+                YPosition = YPosition,
+                ArrayHeight = ArrayHeight
+            };
+            rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
+            rightArray.CalculateGridLines();
+            c.Add(rightArray);
+
+            return c;
+        }  
+
+        //*******************************
+        public override ObservableCollection<ICLPPageObject> SplitAtY(double average)
+        {
+            var c = new ObservableCollection<ICLPPageObject>();
+            if(Rows == 1)
+            {
+                c.Add(this);
+                return c;
+            }
+
+            double relativeAverage = average - LargeLabelLength - YPosition;
+
+            double minDistance = ArrayHeight;
+            double closestLinePosition = 0;
+            int closestLineIndex = 0;
+            foreach(var line in HorizontalGridLines)
+            {
+                var distance = Math.Abs(relativeAverage - line);
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestLinePosition = line;
+                    closestLineIndex = HorizontalGridLines.IndexOf(line);
+                }
+            }
+
+            var topArray = new CLPArray(closestLineIndex + 1, Columns, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition,
+                YPosition = YPosition,
+                ArrayWidth = ArrayWidth
+            };
+            topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
+            topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
+            topArray.CalculateGridLines();
+            c.Add(topArray);
+
+            var bottomArray = new CLPArray(Rows - closestLineIndex - 1, Columns, ParentPage)
+            {
+                IsGridOn = IsGridOn,
+                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                XPosition = XPosition,
+                YPosition = YPosition + closestLinePosition,
+                ArrayWidth = ArrayWidth
+            };
+            bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
+            bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
+            bottomArray.CalculateGridLines();
+            c.Add(bottomArray);
+            return c;
+        }  
+        //*******************************
+
         public override ICLPPageObject Duplicate()
         {
-            CLPArray newArray = Clone() as CLPArray;
+            var newArray = Clone() as CLPArray;
             newArray.UniqueID = Guid.NewGuid().ToString();
             newArray.ParentPage = ParentPage;
             return newArray;
@@ -354,6 +462,34 @@ namespace CLP.Models
                     {
                         Parts += pageObject.Parts;
                         PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                    }
+                }
+            }
+        }
+
+        public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            if(CanAcceptStrokes)
+            {
+                foreach(Stroke s in removedStrokes)
+                {
+                    string strokeID = s.GetStrokeUniqueID();
+                    try
+                    {
+                        PageObjectStrokeParentIDs.Remove(strokeID);
+                    }
+                    catch(Exception)
+                    {
+                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                    }
+                }
+
+                foreach(Stroke s in addedStrokes)
+                {
+                    var rect = new Rect(XPosition + LargeLabelLength, YPosition + LargeLabelLength, ArrayWidth, ArrayHeight);
+                    if(s.HitTest(rect,80))
+                    {
+                        PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
                     }
                 }
             }

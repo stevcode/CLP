@@ -4,24 +4,23 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Resources;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public enum PageInteractionMode
     {
+        None,
         Select,
         Tile,
         Pen,
@@ -53,6 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+            
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructors
 
         #region Properties
-
+       
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -72,6 +72,38 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
+
+        [ViewModelToModel("Page")]
+        public double ProofProgressCurrent
+        {
+            get { return GetValue<double>(ProofProgressCurrentProperty); }
+            set { SetValue(ProofProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
+
+        ////////////////////////////////
+        [ViewModelToModel("Page")]
+        public string ProofProgressVisible
+        {
+            get { return GetValue<string>(ProofProgressVisibleProperty); }
+            set { SetValue(ProofProgressVisibleProperty, value); }
+        }
+
+        
+        public static volatile PropertyData ProofProgressVisibleProperty = RegisterProperty("ProofProgressVisible", typeof(string));
+
+        [ViewModelToModel("Page")]
+        public string ProofPresent
+        {
+            get { return GetValue<string>(ProofPresentProperty); }
+            set { SetValue(ProofPresentProperty, value); }
+        }
+
+        public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string));
+
+        /////////////////////////////////
+
 
         /// <summary>
         /// Gets or sets the property value.
@@ -101,13 +133,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public CLPHistory PageHistory
+        public virtual ICLPHistory PageHistory
         {
-            get { return GetValue<CLPHistory>(PageHistoryProperty); }
+            get { return GetValue<ICLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -181,6 +213,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(PageInteractionModeProperty, value);
                 switch(value)
                 {
+                    case PageInteractionMode.None:
+                        IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.None;
+                        PageCursor = Cursors.No;
+                        break;
                     case PageInteractionMode.Select:
                         IsInkCanvasHitTestVisible = false;
                         PageCursor = Cursors.Hand;
@@ -190,21 +227,27 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var penStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(penStream.Stream); 
                         break;
                     case PageInteractionMode.Highlighter:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var hightlighterStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/HighlighterCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(hightlighterStream.Stream);
                         break;
                     case PageInteractionMode.PenAndSelect:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(penAndSelectStream.Stream); 
                         break;
                     case PageInteractionMode.Scissors:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
+                        var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
+                        PageCursor = new Cursor(scissorsStream.Stream); 
                         break;
                     case PageInteractionMode.EditObjectProperties:
                         IsInkCanvasHitTestVisible = false;
@@ -487,9 +530,15 @@ namespace Classroom_Learning_Partner.ViewModels
             _isMouseDown = false;
         }
 
+     
+
+
+        
+        
         #endregion //Commands
 
         #region Methods
+       
 
         public static void ClearAdorners(CLPPage page)
         {
@@ -580,6 +629,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(item != null)
                     {
                         Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
+                        Page.updateProgress();
                     }
                 }
             }
@@ -590,6 +640,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(item != null)
                     {
                         Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
+                        Page.updateProgress();
                     }
                 }
             }
@@ -638,6 +689,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
             //});
+            Page.updateProgress();
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -646,6 +698,61 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+            
+            foreach(Stroke stroke in e.Added)
+            {
+                if(PageInteractionMode == PageInteractionMode.Scissors)
+                {
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    Page.PageHistory.SingleCutting = true;
+                    double topY = stroke.GetBounds().Top;
+                    double leftX = stroke.GetBounds().Left;
+                    double rightX = stroke.GetBounds().Right;
+                    double botY = stroke.GetBounds().Bottom;
+                    Page.InkStrokes.Remove(stroke);
+                    List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
+                    ObservableCollection<ICLPPageObject> c1 = lr[0];
+                    List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
+                    ObservableCollection<ICLPPageObject> c2 = lr[1];
+                    var AllShapesInkStrokes = new ObservableCollection<Stroke>();
+
+                    int i = 0;
+                    foreach(ICLPPageObject no in c2)
+                    {
+                        StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
+                        foreach(Stroke inkStroke in shapeInkStrokes)
+                        {
+                            AllShapesInkStrokes.Add(inkStroke);
+                        }
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
+
+                        ICLPPageObject noc1 = c1List[i];
+                        CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
+
+                        ICLPPageObject noc2 = c1List[i + 1];
+                        CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
+                        i = i + 2;
+                    }
+
+                    /*foreach(ICLPPageObject no in c1)
+                    {
+                        CLPServiceAgent.Instance.AddPageObjectToPage(no);
+                    }*/
+                    
+                    foreach(Stroke inkStroke in AllShapesInkStrokes)
+                    {
+                        Page.InkStrokes.Add(inkStroke);
+                    }
+
+                    
+                    RefreshInkStrokes();
+                    Page.PageHistory.SingleCutting = false;
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    return;
+                }
+            }
+
+            
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -661,6 +768,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
 
                             Page.PageHistory.Push(new CLPHistoryRemoveStroke(new StrokeDTO(stroke)));
+                            Page.updateProgress();
+                  
                         }
 
                         foreach(var stroke in e.Added)
@@ -681,6 +790,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }  
                             }                            
                             Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));
+                            Page.updateProgress();
                         }
                         Page.PageHistory.EndEventGroup();
 
@@ -795,6 +905,12 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
+        private void RefreshInkStrokes() {
+            var pageObjects = Page.PageObjects;
+            foreach(ICLPPageObject po in pageObjects) {
+                po.RefreshStrokeParentIDs();
+            }
+        }
         #endregion //Methods        
     }
 }

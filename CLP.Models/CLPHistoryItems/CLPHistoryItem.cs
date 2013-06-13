@@ -26,6 +26,7 @@ namespace CLP.Models
     [Serializable]
     public abstract class CLPHistoryItem : DataObjectBase<CLPHistoryItem>
     {
+        
         public CLPHistoryItem(HistoryItemType type)
         {
             ItemType = type;
@@ -54,6 +55,22 @@ namespace CLP.Models
 
         public static readonly PropertyData ItemTypeProperty = RegisterProperty("ItemType", typeof(HistoryItemType), null);
 
+        
+        public bool wasPaused{
+            get { return GetValue<bool>(wasPausedProperty); }
+            set { SetValue(wasPausedProperty, value); }
+        }
+        public static readonly PropertyData wasPausedProperty = RegisterProperty("wasPaused", typeof(bool), null);
+
+
+        public bool singleCut {
+            get { return GetValue<bool>(singleCutProperty); }
+            set { SetValue(singleCutProperty, value); }
+        }
+
+        public static readonly PropertyData singleCutProperty = RegisterProperty("singleCut", typeof(bool), null);
+
+        
         #endregion //Properties
 
         #region Methods
@@ -83,7 +100,7 @@ namespace CLP.Models
         {
             ICLPPageObject result = null;
             foreach(ICLPPageObject obj in page.PageObjects) {
-                if(obj.UniqueID == uniqueID)
+                if(obj.UniqueID.Equals(uniqueID))
                 {
                     result = obj;
                     break;
