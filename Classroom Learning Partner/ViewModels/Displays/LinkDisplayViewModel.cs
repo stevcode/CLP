@@ -261,6 +261,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         clpProofHistory.Freeze();
                     }
                 }
+
+                SetPageBorderColor();
             }
 
             DisplayedPage = page;

@@ -78,6 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnClearProofCommandExecute()
        {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
@@ -121,7 +122,10 @@ namespace Classroom_Learning_Partner.ViewModels
       
        //enables editing of proof page
        //enables recording of proof page history
-       private void OnRecordProofCommandExecute(){
+       private void OnRecordProofCommandExecute()
+       {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.PageBorderColor =
+               "Red";
            lock(obj)
            {
                var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
@@ -142,6 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
        //enables editing of proof page
        //enables recording of proof page history
        private void OnInsertProofCommandExecute(){
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            lock(obj)
            {
                var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
@@ -161,6 +166,7 @@ namespace Classroom_Learning_Partner.ViewModels
        //undoes pause if proof/page was paused
        //disables editing of proof for duration of method
        private void OnRewindProofCommandExecute() {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
            {
                PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
@@ -172,6 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
        //undoes pause if proof/page was paused
        //disables editing of proof for duration of method
        private void OnForwardProofCommandExecute() {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
            {
                PlayProof(CLPProofHistory.CLPProofPageAction.Forward, 1, 25, 200);
@@ -244,6 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
        
        private void OnPauseProofCommandExecute(StackPanel ButtonsGrid)
        {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
@@ -287,6 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
        //disables editing of proof page
        //disables recording of history 
        private void OnStopProofCommandExecute() {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
@@ -305,6 +314,7 @@ namespace Classroom_Learning_Partner.ViewModels
        //disables editing of proof for duration of method
        private void OnPlayProofCommandExecute()
        {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
                 { 
                 PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 200, 400); //was 50, 400
