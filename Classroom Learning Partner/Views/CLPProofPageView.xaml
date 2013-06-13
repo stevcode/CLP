@@ -35,13 +35,13 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <ItemsControl ItemsSource="{Binding Path=PageObjects}"
+                <ItemsControl ItemsSource="{Binding Path=PageObjects}" 
                           ItemContainerStyle="{StaticResource ContainerStyle}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas x:Name="PageObjectCanvas" Background="Transparent"
+                            <Canvas x:Name="PageObjectCanvas" Background="Transparent" Cursor="{Binding PageCursor}"
                                 Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>

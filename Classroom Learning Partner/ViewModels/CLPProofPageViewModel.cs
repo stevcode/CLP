@@ -312,8 +312,10 @@ namespace Classroom_Learning_Partner.ViewModels
            t.Start();
        }
       
+       private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
        private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause)
        {
+           _oldPageInteractionMode = PageInteractionMode;
            lock(obj){
                
                var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
@@ -345,8 +347,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                          proofPageHistory1.IsPaused = false;
                                          proofPageHistory1.ProofPageAction = action;
                                          proofPageHistory1.Freeze();
-                                         base.EditingMode = InkCanvasEditingMode.None;
-                                         base.PageInteractionMode = PageInteractionMode.Pen; 
+                                         PageInteractionMode = PageInteractionMode.None;
                                          
                ////////////////////////////////
 
@@ -362,7 +363,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(proofPageHistory1.IsPaused)
                            {
                                //break;
-                               base.EditingMode = InkCanvasEditingMode.Ink;
+                               PageInteractionMode = _oldPageInteractionMode;
                                return;
                            }
 
@@ -418,7 +419,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                      {
                                          proofPageHistory1.IsPaused = true;
                                          proofPageHistory1.Freeze();
-                                         base.EditingMode = InkCanvasEditingMode.Ink;
+                                         PageInteractionMode = _oldPageInteractionMode;
                                          proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
                                          Page.updateProgress();
                                          return null;
@@ -434,7 +435,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                         {
                                             proofPageHistory1.IsPaused = true;
                                             proofPageHistory1.Freeze();
-                                            base.EditingMode = InkCanvasEditingMode.Ink;
+                                            PageInteractionMode = _oldPageInteractionMode;
                                             proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
                                             Page.updateProgress();
                                             return null;

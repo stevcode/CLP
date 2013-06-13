@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public enum PageInteractionMode
     {
+        None,
         Select,
         Tile,
         Pen,
@@ -212,6 +213,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(PageInteractionModeProperty, value);
                 switch(value)
                 {
+                    case PageInteractionMode.None:
+                        IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.None;
+                        PageCursor = Cursors.No;
+                        break;
                     case PageInteractionMode.Select:
                         IsInkCanvasHitTestVisible = false;
                         PageCursor = Cursors.Hand;
@@ -221,21 +227,25 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var penStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(penStream.Stream); 
                         break;
                     case PageInteractionMode.Highlighter:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var hightlighterStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/HighlighterCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(hightlighterStream.Stream);
                         break;
                     case PageInteractionMode.PenAndSelect:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(penAndSelectStream.Stream); 
                         break;
                     case PageInteractionMode.Scissors:
                         IsInkCanvasHitTestVisible = true;
+                        EditingMode = InkCanvasEditingMode.Ink;
                         var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
                         PageCursor = new Cursor(scissorsStream.Stream); 
                         break;
