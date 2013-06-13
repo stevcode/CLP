@@ -19,5 +19,9 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         {
             InitializeComponent();
         }
+        private void OKButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true;
+        }
     }
 }

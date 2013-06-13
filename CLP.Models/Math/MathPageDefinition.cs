@@ -14,6 +14,9 @@ namespace CLP.Models
     /// <summary>
     /// MathPageDefinition : Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
+    /// 
+    /// This object specifies the math content of a notebook page. It consists of a collection of MathRelations
+    /// and a collection of MathConstraints.
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]
