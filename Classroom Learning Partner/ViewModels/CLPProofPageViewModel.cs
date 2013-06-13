@@ -95,6 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
                proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
                Page.updateProgress();
            }
+           
        }
 
        //enables editing of proof page

@@ -706,7 +706,7 @@ namespace CLP.Models
                 {
                     
                     ProofPresent = "Hidden";
-                    ProofProgressCurrent = PageWidth * 0.7175;
+                    ProofProgressCurrent = 0;
                     Console.WriteLine("This is the current value" + ProofProgressCurrent);
                     Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
                     Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
