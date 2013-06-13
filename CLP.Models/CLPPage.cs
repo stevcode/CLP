@@ -725,8 +725,7 @@ namespace CLP.Models
                     Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
                 }
 
-                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record)||
-                    (FutureItemsNumber==0))
+                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
                 {
                     ProofProgressVisible = "Hidden";
                 }
