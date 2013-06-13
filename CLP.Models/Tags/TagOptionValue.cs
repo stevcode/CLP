@@ -14,13 +14,13 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public TagOptionValue(string value, string iconPath)
+        public TagOptionValue(Object value, string iconPath)
         {
             IconUri = new Uri(iconPath, UriKind.Relative); 
             Value = value;
         }
 
-        public TagOptionValue(string value)
+        public TagOptionValue(Object value)
         {
             IconUri = null;
             Value = value;
