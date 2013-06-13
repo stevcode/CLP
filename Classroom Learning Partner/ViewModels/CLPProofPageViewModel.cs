@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -27,6 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ForwardProofCommand = new Command(OnForwardProofCommandExecute);
             PauseProofCommand = new Command<StackPanel>(OnPauseProofCommandExecute);
             StopProofCommand = new Command(OnStopProofCommandExecute);
+            ClearProofCommand = new Command(OnClearProofCommandExecute);
             //OnPauseProofCommandExecutePure();
             CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory; 
             proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
@@ -39,6 +41,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ProofProgressVisible = "Hidden";
             ProofPresent = "Hidden";
        }
+
+     
 
        #endregion //Constructors
 
@@ -70,6 +74,43 @@ namespace Classroom_Learning_Partner.ViewModels
        public Command ForwardProofCommand { get; private set; }
        public Command<StackPanel> PauseProofCommand { get; private set; }
        public Command StopProofCommand { get; private set; }
+       public Command ClearProofCommand { get; private set; }
+
+       private void OnClearProofCommandExecute()
+       {
+           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+           if(proofPageHistory1 == null)
+           {
+               return;
+           }
+           proofPageHistory1.IsPaused = true;
+           lock(obj){
+               proofPageHistory1.ClearHistory();
+               proofPageHistory1.Freeze();
+           }
+           
+           List<ICLPPageObject> rpo = new List<ICLPPageObject>();
+           foreach(ICLPPageObject po in Page.PageObjects) {
+               if(po.IsBackground != true) {
+                   rpo.Add(po);
+               }
+           }
+
+           for(int i = 0; i < rpo.Count; i++) {
+               ICLPPageObject po = rpo[i];
+               CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
+           }
+
+            List<Stroke> istl = new List<Stroke>();
+            foreach(var ist in Page.InkStrokes) {
+                istl.Add(ist);
+            }
+
+            for(int i = 0; i < istl.Count;i++) {
+                Stroke ist = istl[i];
+                Page.InkStrokes.Remove(ist);
+            }
+       }
 
        //replays the entire proof from the beginning
        //disables editing of proof for duration of method
