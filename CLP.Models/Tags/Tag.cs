@@ -81,7 +81,7 @@ namespace CLP.Models
 
             #region Methods
 
-            public void AddTagOptonValue(TagOptionValue t)
+            public void AddTagOptionValue(TagOptionValue t)
               {
                   if(TagType.ValueOptions.Contains(t))
                   {
