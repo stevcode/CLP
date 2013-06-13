@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(tag.Value.Count > 0)
                         {
 
-                            String correct = tag.Value.ElementAt(0).Value;
+                            String correct = (String) tag.Value.ElementAt(0).Value;
                             if(correct == "Correct")
                             {
                                 Topics += "Correctness: Correct \n";
@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if(tag.Value.Count > 0)
                         {
-                            String star = tag.Value.ElementAt(0).Value;
+                            String star = (String) tag.Value.ElementAt(0).Value;
                             if(star == "Starred")
                             {
                                 Topics += "Starred: True \n";

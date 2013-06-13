@@ -102,7 +102,7 @@ namespace Classroom_Learning_Partner.Resources
                     {
                         if(t.Value.Count > 0)
                         {
-                            val = t.Value.ElementAt(0).Value;
+                            val = (String) t.Value.ElementAt(0).Value;
                         }
 
                     }
@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner.Resources
                     {
                         if(t.Value.Count > 0)
                         {
-                            val = t.Value.ElementAt(0).Value;
+                            val = (String) t.Value.ElementAt(0).Value;
                         }
 
                     }
