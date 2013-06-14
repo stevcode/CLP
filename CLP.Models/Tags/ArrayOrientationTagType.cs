@@ -22,6 +22,7 @@ namespace CLP.Models
             ValueOptions = new ObservableCollection<TagOptionValue>(); 
             ValueOptions.Add(new TagOptionValue("x*y"));
             ValueOptions.Add(new TagOptionValue("y*x"));
+            ValueOptions.Add(new TagOptionValue("unknown"));
 
         }
 

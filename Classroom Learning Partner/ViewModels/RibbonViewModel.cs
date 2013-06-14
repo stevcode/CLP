@@ -172,6 +172,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Authoring
             EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
+
+            //Analysis
+            AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
         }
 
         /// <summary>
@@ -2102,18 +2105,153 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEditPageDefinitionCommandExecute()
         {
-
+            // Get the tags on this page
             Logger.Instance.WriteToLog("Page Definition");
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
 
-            PageDefinitionView definitionView = new PageDefinitionView(new ProductRelationViewModel(new ProductRelation()));
+            // If the page already has a Page Definition tag, use that one
+            Tag oldTag = null;
+            ProductRelation oldRelation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    oldTag = tag;
+                    oldRelation = (ProductRelation) oldTag.Value[0].Value;
+                    break;
+                }
+            }
+
+            // Otherwise, create a new page definition tag
+            if(oldTag == null)
+            {
+                oldRelation = new ProductRelation();
+            }
+
+            ProductRelationViewModel viewModel = new ProductRelationViewModel(oldRelation);
+            PageDefinitionView definitionView = new PageDefinitionView(viewModel);
             definitionView.Owner = Application.Current.MainWindow;
             definitionView.ShowDialog();
 
             if(definitionView.DialogResult == true)
             {
-                // Todo: Update this page's definition tag
+                // Update this page's definition tag
 
+                if(oldTag != null)
+                {
+                    tags.Remove(oldTag);
+                }
+
+                Tag newTag = new Tag("author", new PageDefinitionTagType());
+                newTag.Value.Add(new TagOptionValue(viewModel.Model));
+
+                tags.Add(newTag);
             }
+
+            // Logs the currently tagged relation. TODO: Remove after testing
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
+                }
+            }
+            Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeArrayCommand command.
+        /// </summary>
+        public Command AnalyzeArrayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeArrayCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeArrayCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation == null)
+            {
+                // No definition for the page!
+                Logger.Instance.WriteToLog("No page definition found! :(");
+                return;
+            }
+
+
+            // Find an array object on the page (just use the first one we find), or be sad if we don't find one
+            ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            CLPArray array = null;
+
+            foreach(ICLPPageObject pageObject in objects)
+            {
+                if(pageObject.GetType() == typeof(CLPArray))
+                {
+                    array = (CLPArray)pageObject;
+                    break;
+                }
+            }
+
+            if(array == null)
+            {
+                // No array on the page!
+                Logger.Instance.WriteToLog("No array found! :(");
+                return;
+            }
+
+            // We have a page definition and an array, so we're good to go!
+            Logger.Instance.WriteToLog("Array found! Dimensions: " + array.Columns + " by " + array.Rows);
+
+            int arrayWidth = array.Columns;
+            int arrayHeight = array.Rows;
+            int arrayArea = arrayWidth * arrayHeight;
+
+            // TODO: Add handling for variables in math relation
+            int factor1 = Convert.ToInt32(relation.Factor1);
+            int factor2 = Convert.ToInt32(relation.Factor2);
+            int product = Convert.ToInt32(relation.Product);
+
+            // Make a tag based on the array's orientation
+            // First, clear out any old ArrayOrientationTagTypes
+            foreach(Tag tag in tags.ToList())
+            {
+                if(tag.TagType.Name == "Array Orientation")
+                {
+                    tags.Remove(tag);
+                }
+            }
+
+            
+            Tag orientationTag = new Tag("generated", new ArrayOrientationTagType());
+            if(arrayWidth == factor1 && arrayHeight == factor2)
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
+            }
+            else if(arrayWidth == factor2 && arrayHeight == factor1)
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("y*x"));
+            }
+            else
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("unknown"));
+            }
+            tags.Add(orientationTag);
+            Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
+
         }
 
         /// <summary>

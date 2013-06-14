@@ -184,7 +184,10 @@ namespace CLP.Models
 
         public override String GetExampleNumberSentence()
         {
-            return this.Factor1 + " * " + this.Factor2 + " = " + this.Product;
+            String factor1String = (Factor1Given ? Factor1 : "[" + Factor1 + "]");
+            String factor2String = (Factor2Given ? Factor2 : "[" + Factor2 + "]");
+            String productString = (ProductGiven ? Product : "[" + Product + "]");
+            return factor1String + " * " + factor2String + " = " + productString;
         }
 
         #endregion

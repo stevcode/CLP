@@ -21,7 +21,7 @@ namespace CLP.Models
             AccessLevels = new ObservableCollection<string>();
             AccessLevels.Add("Teacher");
 
-            ExclusiveValue = false;
+            ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();
 
         }
