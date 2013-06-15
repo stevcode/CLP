@@ -14,7 +14,7 @@
 
     <!-- Used for page Zooming, Not active in this first test -->
     <!--<ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Padding="0">-->
-    <Border x:Name="PageBorder"  BorderThickness="1" BorderBrush="{Binding PageBorderColor}" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
+    <Border x:Name="PageBorder"  BorderThickness="3" BorderBrush="{Binding PageBorderColor}" Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
             <ScrollViewer x:Name="MirrorDisplayScroller"
                           HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
                           Padding="0">
