@@ -103,6 +103,7 @@ namespace CLP.Models
                 if(obj.UniqueID.Equals(uniqueID))
                 {
                     result = obj;
+                    result.ParentPage = page;
                     break;
                 }
             }
