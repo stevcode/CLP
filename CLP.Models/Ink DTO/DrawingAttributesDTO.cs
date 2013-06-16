@@ -14,14 +14,28 @@ namespace CLP.Models
 
         public DrawingAttributesDTO(DrawingAttributes source)
         {
-            Height = source.Height;
-            Width = source.Width;
-            IsHighlighter = source.IsHighlighter;
-            FitToCurve = source.FitToCurve;
-            IgnorePressure = source.IgnorePressure;
-            StrokeColor = source.Color.ToString();
-            StylusTip = source.StylusTip;
-            StylusTripTransform = source.StylusTipTransform;
+            try
+            {
+                Height = source.Height;
+                Width = source.Width;
+                IsHighlighter = source.IsHighlighter;
+                FitToCurve = source.FitToCurve;
+                IgnorePressure = source.IgnorePressure;
+                StrokeColor = source.Color.ToString();
+                StylusTip = source.StylusTip;
+                StylusTripTransform = source.StylusTipTransform;
+            }
+            catch(Exception ex)
+            {
+                var nullTest = source == null ? "TRUE" : "FALSE";
+                Logger.Instance.WriteToLog("Source is null: " + nullTest);
+                Logger.Instance.WriteToLog("DrawingAttributesDTO Constructor Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+            }
         }
 
         #endregion //Constructors
@@ -82,28 +96,43 @@ namespace CLP.Models
 
         public DrawingAttributes ToDrawingAttributes()
         {
-            var drawingAttributes = new DrawingAttributes
-                                    {
-                                        Height = Height,
-                                        Width = Width,
-                                        IsHighlighter = IsHighlighter,
-                                        FitToCurve = FitToCurve,
-                                        IgnorePressure = IgnorePressure,
-                                        StylusTip = StylusTip,
-                                        StylusTipTransform = StylusTripTransform
-                                    };
-
-            var convertFromString = ColorConverter.ConvertFromString(StrokeColor);
-            if(convertFromString != null)
+            try
             {
-                drawingAttributes.Color = (Color)convertFromString;
-            }
-            else
-            {
-                drawingAttributes.Color = Colors.Black;
-            }
+                var drawingAttributes = new DrawingAttributes
+                                        {
+                                            Height = Height,
+                                            Width = Width,
+                                            IsHighlighter = IsHighlighter,
+                                            FitToCurve = FitToCurve,
+                                            IgnorePressure = IgnorePressure,
+                                            StylusTip = StylusTip,
+                                            StylusTipTransform = StylusTripTransform
+                                        };
 
-            return drawingAttributes;
+                var convertFromString = ColorConverter.ConvertFromString(StrokeColor);
+                if(convertFromString != null)
+                {
+                    drawingAttributes.Color = (Color)convertFromString;
+                }
+                else
+                {
+                    drawingAttributes.Color = Colors.Black;
+                }
+
+                return drawingAttributes;
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("ToDrawingAttributes() Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
+                                           (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+
+                return null;
+            }
         }
 
         #endregion //Methods

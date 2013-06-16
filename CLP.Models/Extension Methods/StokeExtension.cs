@@ -9,18 +9,25 @@ namespace CLP.Models
         {
             try
             {
-                if(s == null) //|| !s.ContainsPropertyData(CLPPage.StrokeIDKey)
+                if(s == null)
                 {
                     Logger.Instance.WriteToLog("Null Stroke or Missing StrokeID");
                     return null;
                 }
 
                 return s.GetPropertyData(CLPPage.StrokeIDKey) as string;
-
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog("GetStrokeUniqueID Fail: " + ex.Message);
+                var nullTest = s == null ? "TRUE" : "FALSE";
+                Logger.Instance.WriteToLog("Stroke is null: " + nullTest);
+                Logger.Instance.WriteToLog("GetStrokeUniqueID Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
+                                           (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
                 return null;
             }
         }
@@ -33,7 +40,16 @@ namespace CLP.Models
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog("SetStrokeUniqueID Fail (Top level): " + ex.Message);
+                var nullTest = s == null ? "TRUE" : "FALSE";
+                Logger.Instance.WriteToLog("SetStrokeUniqueID Fail. uniqueID is: " + uniqueID);
+                Logger.Instance.WriteToLog("Stroke is null: " + nullTest);
+                Logger.Instance.WriteToLog("SetStrokeUniqueID Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
+                                           (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
             }
         }
     }

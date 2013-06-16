@@ -491,12 +491,8 @@ namespace CLP.Models
         public static StrokeCollection LoadInkStrokes(ObservableCollection<StrokeDTO> serializedStrokes)
         {
             var strokes = new StrokeCollection();
-            foreach(var strokeDTO in serializedStrokes)
-            {
-                if(strokeDTO.StrokePoints.Any())
-                {
-                    strokes.Add(strokeDTO.ToStroke());
-                }
+            foreach(var strokeDTO in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any())) {
+                strokes.Add(strokeDTO.ToStroke());
             }
 
             return strokes;

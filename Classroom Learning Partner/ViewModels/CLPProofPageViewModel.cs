@@ -78,14 +78,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnClearProofCommandExecute()
        {
+           if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
+                               "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+           {
+               return;
+           }
+
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
                return;
            }
+
            proofPageHistory1.IsPaused = true;
-           lock(obj){
+           lock(obj)
+           {
                proofPageHistory1.ClearHistory();
                proofPageHistory1.Freeze();
            }
@@ -129,11 +137,22 @@ namespace Classroom_Learning_Partner.ViewModels
        //enables recording of proof page history
        private void OnRecordProofCommandExecute()
        {
+           //////////////////////
+           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+           if(proofPageHistory1.Future.Count>0) {
+               if(MessageBox.Show("Are you sure you want to record over your animation?",
+                                   "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+               {
+                   return;
+               }
+           
+           }
+           ////////////////////////
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.PageBorderColor =
                "Red";
            lock(obj)
            {
-               var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+               
                if(proofPageHistory1 == null)
                {
                    return;
@@ -384,7 +403,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                            CLPHistoryItem item = from.Pop();
                            to.Push(item);
-                           if(!item.wasPaused && !item.singleCut)
+                           if(!item.wasPaused && !item.singleCut && (item.ItemType != HistoryItemType.RemoveStroke)
+                               && (item.ItemType != HistoryItemType.AddStroke))
                            {
                                
                                if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
@@ -405,7 +425,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                if(singleCut == 1 && smallPause != 0)
                                {
                                    Thread.Sleep(300);
-
                                }
 
                            }
@@ -417,11 +436,41 @@ namespace Classroom_Learning_Partner.ViewModels
                                     {
                                         if(direction >= 0)
                                         {
-                                            proofPageHistory1.Freeze();
-                                            item.Redo(Page);
+                                            if(singleCut == 1)
+                                            {
+                                                CLPHistoryItem item2 = from.Pop();
+                                                to.Push(item2);
+                                                CLPHistoryItem item3 = from.Pop();
+                                                to.Push(item3);
+                                                singleCut = (singleCut + 2) % 3;
+                                                proofPageHistory1.Freeze();
+                                                item.Redo(Page);
+                                                item2.Redo(Page);
+                                                item3.Redo(Page);
+                                            }
+                                            else
+                                            {
+                                                proofPageHistory1.Freeze();
+                                                item.Redo(Page);
+                                            }
                                         }else{
-                                            proofPageHistory1.Freeze();
-                                            item.Undo(Page);
+                                            if(singleCut == 1)
+                                            {
+                                                CLPHistoryItem item2 = from.Pop();
+                                                to.Push(item2);
+                                                CLPHistoryItem item3 = from.Pop();
+                                                to.Push(item3);
+                                                singleCut = (singleCut + 2) % 3;
+                                                proofPageHistory1.Freeze();
+                                                item.Undo(Page);
+                                                item2.Undo(Page);
+                                                item3.Undo(Page);
+                                            }
+                                            else
+                                            {
+                                                proofPageHistory1.Freeze();
+                                                item.Undo(Page);
+                                            }
                                         }
                                         Page.updateProgress();
                                         return null;
