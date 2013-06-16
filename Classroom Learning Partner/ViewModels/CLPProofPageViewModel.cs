@@ -78,14 +78,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnClearProofCommandExecute()
        {
+           if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
+                               "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+           {
+               return;
+           }
+
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
            if(proofPageHistory1 == null)
            {
                return;
            }
+
            proofPageHistory1.IsPaused = true;
-           lock(obj){
+           lock(obj)
+           {
                proofPageHistory1.ClearHistory();
                proofPageHistory1.Freeze();
            }
