@@ -542,6 +542,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ClearAdorners(CLPPage page)
         {
+            if(page == null)
+            {
+                return;
+            }
             foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<CLPPageViewModel>())
             {
                 clpPageViewModel.ClearAdorners();

@@ -85,16 +85,36 @@ namespace CLP.Models
 
         public Stroke ToStroke()
         {
-            var points = new StylusPointCollection();
-            foreach(var stylusPointDTO in StrokePoints)
+            try
             {
-                points.Add(stylusPointDTO.ToStylusPoint());
+                var points = new StylusPointCollection();
+                foreach(var stylusPointDTO in StrokePoints)
+                {
+                    points.Add(stylusPointDTO.ToStylusPoint());
+                }
+
+                var stroke = new Stroke(points) {DrawingAttributes = StrokeDrawingAttributes.ToDrawingAttributes()};
+                stroke.SetStrokeUniqueID(StrokeID);
+
+                return stroke;
             }
+            catch(Exception ex)
+            {
+                var strokePointsNullTest = StrokePoints == null ? "TRUE" : "FALSE";
+                var drawingAttributesNullTest = StrokeDrawingAttributes == null ? "TRUE" : "FALSE";
+                Logger.Instance.WriteToLog("StrokeID is: " + StrokeID);
+                Logger.Instance.WriteToLog("StrokePoints is null: " + strokePointsNullTest);
+                Logger.Instance.WriteToLog("StrokeDrawingAttributes is null: " + drawingAttributesNullTest);
+                Logger.Instance.WriteToLog("ToStroke() Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
+                                           (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
 
-            var stroke = new Stroke(points) {DrawingAttributes = StrokeDrawingAttributes.ToDrawingAttributes()};
-            stroke.SetStrokeUniqueID(StrokeID);
-
-            return stroke;
+                return null;
+            }
         }
 
         #endregion //Methods
