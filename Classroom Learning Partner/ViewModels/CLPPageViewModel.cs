@@ -211,6 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(PageInteractionModeProperty, value);
+                Logger.Instance.WriteToLog("PageInteractionMode Set to: " + value);
                 switch(value)
                 {
                     case PageInteractionMode.None:
@@ -882,6 +883,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+            if(IsPagePreview)
+            {
+                return;
+            }
+
             if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
@@ -903,6 +909,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)
             {
+                Logger.Instance.WriteToLog("PageViewModel Received PageInteractionMode Command: " + PageInteractionMode);
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
             }
 
