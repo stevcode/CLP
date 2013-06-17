@@ -384,7 +384,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                          PageInteractionMode = PageInteractionMode.None;
                                          
                ////////////////////////////////
-
+                                         bool integrityCheckBool = integrityCheck();
 
                 //int i = 0;
                try{
@@ -422,7 +422,7 @@ namespace Classroom_Learning_Partner.ViewModels
                            {
                                singleCut++;
                                singleCut = singleCut % 3;
-                               if(singleCut == 1 && smallPause != 0)
+                               if(singleCut == 1 && smallPause != 0 && integrityCheckBool)
                                {
                                    Thread.Sleep(300);
                                }
@@ -436,7 +436,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     {
                                         if(direction >= 0)
                                         {
-                                            if(singleCut == 1)
+                                            if(singleCut == 1 && integrityCheckBool)
                                             {
                                                 CLPHistoryItem item2 = from.Pop();
                                                 to.Push(item2);
@@ -454,7 +454,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                 item.Redo(Page);
                                             }
                                         }else{
-                                            if(singleCut == 1)
+                                            if(singleCut == 1 && integrityCheckBool)
                                             {
                                                 CLPHistoryItem item2 = from.Pop();
                                                 to.Push(item2);
@@ -509,7 +509,60 @@ namespace Classroom_Learning_Partner.ViewModels
                    }
            }
        }
-
+       private bool integrityCheck()
+       {
+           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+           if(proofPageHistory1 == null)
+           {
+               return false;
+           }
+           Stack<CLPHistoryItem> future = new Stack<CLPHistoryItem>(
+                                          new Stack<CLPHistoryItem>(proofPageHistory1.Future));
+           Stack<CLPHistoryItem> past = new Stack<CLPHistoryItem>(
+                                          new Stack<CLPHistoryItem>(proofPageHistory1.MetaPast));
+           while(past.Count > 0)
+           {
+               CLPHistoryItem item = past.Pop();
+               future.Push(item);
+           }
+           int j = 0;
+           while(future.Count > 0)
+           {
+               CLPHistoryItem item = future.Pop();
+               past.Push(item);
+               if(item.singleCut == true)
+               {
+                   j++;
+                   j = j % 3;
+                   if(j == 1)
+                   {
+                       if(item.ItemType != HistoryItemType.RemoveObject)
+                       {
+                           return false;
+                       }
+                   }
+                   else if(j == 2 || j == 0)
+                   {
+                       if(item.ItemType != HistoryItemType.AddObject)
+                       {
+                           return false;
+                       }
+                   }
+               }
+               else
+               {
+                   if(j != 0)
+                   {
+                       return false;
+                   }
+               }
+           }
+           if(j != 0)
+           {
+               return false;
+           }
+           return true;
+       }
       
        #endregion //Commands
 
