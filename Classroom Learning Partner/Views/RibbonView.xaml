@@ -235,6 +235,10 @@
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
 
+                <RibbonButton Label="Stamp"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding Path=InsertBlankStampCommand}" />
+
             </RibbonGroup>
 
             <RibbonGroup Header="Pen Color">
@@ -371,7 +375,7 @@
         </RibbonTab>
 
         <!--Insert Tab-->
-        <!--<RibbonTab Header="Insert Money">
+        <RibbonTab Header="Insert Money">
 
             <RibbonGroup Header="Money Images">
 
@@ -422,7 +426,7 @@
 
             </RibbonGroup>
             
-        </RibbonTab>-->
+        </RibbonTab>
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert" Visibility="{Binding InstructorVisibility}">
