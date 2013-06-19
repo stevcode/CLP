@@ -76,23 +76,32 @@
                    Visibility ="{Binding ProofProgressVisible}" />
 
         <StackPanel x:Name="ButtonsGrid" Grid.Row="2" Orientation="Horizontal" Height="30">
-            <Button Width="100" Margin="0,0,100,0"
+            <Button Width="90" Margin="0,0,100,0"
                     FontSize="12" FontWeight="Bold" Background="White" 
                     Command="{Binding ClearProofCommand}">Clear</Button>
-            <Button Width="100"  
+            <Button Width="90"  
                     FontSize="12" FontWeight="Bold" Background="Red" 
                     Command="{Binding RecordProofCommand}">Record</Button>
             <!-- <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding InsertProofCommand}">Insert</Button> -->
-            <Button Width="100"  
+            <Button Width="90"  
                     FontSize="12" FontWeight="Bold" Background="Purple" 
                     Command="{Binding RewindProofCommand}">Rewind</Button> 
             <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button> -->
-            <Button Width="100" 
+            <Button Width="90" 
                     FontSize="12" FontWeight="Bold" Background="Green" 
                     Command="{Binding PlayProofCommand}">Play</Button>
+
+            <Button Width="90" 
+                    FontSize="12" FontWeight="Bold" Background="Gray" 
+                    Command="{Binding UndoProofCommand}">Undo</Button>
+
+            <Button Width="90" 
+                    FontSize="12" FontWeight="Bold" Background="Gray" 
+                    Command="{Binding RedoProofCommand}">Redo</Button>
+            
             <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button> -->
             <!-- <Button x:Name="PauseButton" FontSize="12" FontWeight="Bold"  Command="{Binding PauseProofCommand}" CommandParameter="{Binding ElementName=ButtonsGrid, Path=.}">Pause</Button> -->
-            <Button Width="100" 
+            <Button Width="90" 
                     FontSize="12" FontWeight="Bold" Background="Gray" 
                     Command="{Binding StopProofCommand}">Stop</Button>
             <!-- CommandParameter="{Binding ElementName=PauseButton, Path=.}" -->

@@ -720,6 +720,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
                     ObservableCollection<ICLPPageObject> c2 = lr[1];
                     var AllShapesInkStrokes = new ObservableCollection<Stroke>();
+                    var AllShapesPageObjects = new ObservableCollection<ICLPPageObject>();
 
                     int i = 0;
                     foreach(ICLPPageObject no in c2)
@@ -729,6 +730,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             AllShapesInkStrokes.Add(inkStroke);
                         }
+
+                        var shapePageObjects = no.GetPageObjectsOverPageObject();
+                        foreach(ICLPPageObject po in shapePageObjects) {
+                            AllShapesPageObjects.Add(po);
+                        }
+
                         CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
 
                         ICLPPageObject noc1 = c1List[i];
@@ -749,6 +756,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         Page.InkStrokes.Add(inkStroke);
                     }
 
+                    foreach(ICLPPageObject po in AllShapesPageObjects) {
+                        CLPServiceAgent.Instance.AddPageObjectToPage(po);
+                    }
                     
                     RefreshInkStrokes();
                     Page.PageHistory.SingleCutting = false;
