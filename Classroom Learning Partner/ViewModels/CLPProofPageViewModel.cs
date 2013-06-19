@@ -580,6 +580,7 @@ namespace Classroom_Learning_Partner.ViewModels
                past.Push(item);
                if(item.singleCut == true)
                {
+                   Console.WriteLine(item.ItemType);
                    j++;
                    j = j % 3;
                    if(j == 1)
@@ -599,6 +600,7 @@ namespace Classroom_Learning_Partner.ViewModels
                }
                else
                {
+                   Console.WriteLine("***********************");
                    if(j != 0)
                    {
                        return false;

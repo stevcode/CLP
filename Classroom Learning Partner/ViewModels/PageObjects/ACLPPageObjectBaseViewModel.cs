@@ -340,8 +340,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     stroke.Transform(moveStroke, true);  
                 }
             }
-
-            if (PageObject.PageObjectObjectParentIDs.Any())
+            
+            /*if (PageObject.PageObjectObjectParentIDs.Any())
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
@@ -351,9 +351,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
                     CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
                 }
-            }
-
-            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+            }*/
+            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt, x, y, true);
         }
 
         /// <summary>

@@ -10,6 +10,20 @@ using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using Catel.Data;
+using Catel.MVVM;
+using CLP.Models;
+using System.Windows.Threading;
+using System;
+using System.Timers;
 
 namespace Classroom_Learning_Partner
 {
@@ -328,8 +342,30 @@ namespace Classroom_Learning_Partner
             page.PageObjects.Remove(pageObject);
         }
 
+
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
+        { 
+        ChangePageObjectPosition( pageObject,  pt, 0, 0, false);
+        
+        }
+
+        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, double x, double y, bool usexy)
         {
+            if(usexy)
+            {
+                if(pageObject.PageObjectObjectParentIDs.Any())
+                {
+                    double xDelta = x - pageObject.XPosition;
+                    double yDelta = y - pageObject.YPosition;
+
+                    foreach(ICLPPageObject pageObject1 in pageObject.GetPageObjectsOverPageObject())
+                    {
+                        Point pageObjectPt = new Point((xDelta + pageObject1.XPosition), (yDelta + pageObject1.YPosition));
+                        CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject1, pageObjectPt);
+                    }
+                }
+            }
+
             double oldXPos = pageObject.XPosition;
             double oldYPos = pageObject.YPosition;
             CLPPage page = pageObject.ParentPage;
