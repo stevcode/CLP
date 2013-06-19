@@ -366,6 +366,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
             PageObject.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
+            foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
+            {
+                po.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
+            }
             PageObject.ParentPage.updateProgress();
         }
 
@@ -377,6 +381,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
             PageObject.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
+            foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
+            {
+                po.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
+            }
             PageObject.ParentPage.updateProgress();
 
             AddRemovePageObjectFromOtherObjects();

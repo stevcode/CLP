@@ -696,7 +696,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //});
             Page.updateProgress();
         }
-        ////////////////////////////////////////
+        ///////////////////////////////////////
+        /*
         private bool integrityCheck()
         {
             var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
@@ -754,6 +755,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return true;
         }
         ///////////////////////////////////////////
+         */
 
 
 
@@ -770,7 +772,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(PageInteractionMode == PageInteractionMode.Scissors)
                 {
 
-                    integrityCheck();
+                    //integrityCheck();
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
                     Page.PageHistory.SingleCutting = true;
@@ -834,7 +836,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Page.PageHistory.SingleCutting = false;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                    integrityCheck();
+                    //integrityCheck();
                     return;
                 }
             }
