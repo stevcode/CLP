@@ -563,7 +563,10 @@ namespace CLP.Models
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-            //InkStrokes = BytesToStrokes(ByteStrokes);
+            //if(!SerializedStrokes.Any() && ByteStrokes.Any())
+            //{
+            //    InkStrokes = BytesToStrokes(ByteStrokes);
+            //}
         }
 
         [OnSerializing]

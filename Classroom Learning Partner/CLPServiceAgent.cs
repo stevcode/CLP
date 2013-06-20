@@ -10,20 +10,7 @@ using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using Catel.Data;
-using Catel.MVVM;
-using CLP.Models;
-using System.Windows.Threading;
-using System;
-using System.Timers;
 
 namespace Classroom_Learning_Partner
 {
@@ -146,7 +133,16 @@ namespace Classroom_Learning_Partner
 
                     foreach(CLPPage page in notebook.Pages)
                     {
-                        page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes);
+                        if(!page.SerializedStrokes.Any() &&
+                           page.ByteStrokes.Any())
+                        {
+                            page.InkStrokes = CLPPage.BytesToStrokes(page.ByteStrokes);
+                        }
+                        else
+                        {
+                            page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes); 
+                        }
+                        
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
                             pageObject.ParentPage = page;
@@ -155,7 +151,15 @@ namespace Classroom_Learning_Partner
                         {
                             foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
                             {
-                                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                                if(!submission.SerializedStrokes.Any() &&
+                                   submission.ByteStrokes.Any())
+                                {
+                                    submission.InkStrokes = CLPPage.BytesToStrokes(submission.ByteStrokes);
+                                }
+                                else
+                                {
+                                    submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                                }
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
                                     pageObject.ParentPage = submission;
