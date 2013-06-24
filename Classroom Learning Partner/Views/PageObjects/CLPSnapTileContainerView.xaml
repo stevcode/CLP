@@ -5,8 +5,10 @@
              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:catel="http://catel.codeplex.com">
+    
     <UserControl.Resources>
         <conv:LengthConverter x:Key="LengthConverter"/>
+        
         <ControlTemplate x:Key="ListViewNewTemplate" TargetType="{x:Type ListBox}">
             <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="0" SnapsToDevicePixels="True">
                 <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}">
@@ -181,8 +183,17 @@
                 </Canvas>
             </ac:AdornedControl.AdornerContent>
 
-            <Rectangle Name="PageObjectHitBox" Tag="0" Fill="Transparent" Stretch="Fill"
-                       Height="{Binding Path=Height}" Width="{Binding Path=Width}" />
+            <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
+                       Height="{Binding Path=Height}" Width="{Binding Path=Width}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
 
         </ac:AdornedControl>
     </Grid>

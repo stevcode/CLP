@@ -225,6 +225,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Tile:
                         IsInkCanvasHitTestVisible = false;
+                        var tileStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/GreenTile.cur", UriKind.Relative));
+                        PageCursor = new Cursor(tileStream.Stream);
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
@@ -433,8 +435,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-
-
             //var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
 
             //VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
@@ -457,7 +457,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Tile)
             {
                 var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-                Point pt = e.GetPosition(pageObjectCanvas);
+                var pt = e.GetPosition(pageObjectCanvas);
                 var tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
             }
@@ -538,8 +538,7 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #endregion //Commands
 
-        #region Methods
-       
+        #region Methods     
 
         public static void ClearAdorners(CLPPage page)
         {
