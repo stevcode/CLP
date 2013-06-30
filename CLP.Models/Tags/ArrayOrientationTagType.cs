@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayOrientationTagType :  DataObjectBase, TagType
+    public class ArrayOrientationTagType :  ModelBase, TagType
     {
         #region Constructors
 

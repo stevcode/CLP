@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayDivisionCorrectnessTagType :  DataObjectBase, TagType
+    public class ArrayDivisionCorrectnessTagType :  ModelBase, TagType
     {
         #region Constructors
 
