@@ -714,6 +714,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Pages)
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 
@@ -792,6 +797,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 
@@ -880,6 +890,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 

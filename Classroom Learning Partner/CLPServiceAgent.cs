@@ -10,6 +10,7 @@ using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Classroom_Learning_Partner
 {
@@ -132,7 +133,16 @@ namespace Classroom_Learning_Partner
 
                     foreach(CLPPage page in notebook.Pages)
                     {
-                        page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes);
+                        if(!page.SerializedStrokes.Any() &&
+                           page.ByteStrokes.Any())
+                        {
+                            page.InkStrokes = CLPPage.BytesToStrokes(page.ByteStrokes);
+                        }
+                        else
+                        {
+                            page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes); 
+                        }
+                        
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
                             pageObject.ParentPage = page;
@@ -141,7 +151,15 @@ namespace Classroom_Learning_Partner
                         {
                             foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
                             {
-                                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                                if(!submission.SerializedStrokes.Any() &&
+                                   submission.ByteStrokes.Any())
+                                {
+                                    submission.InkStrokes = CLPPage.BytesToStrokes(submission.ByteStrokes);
+                                }
+                                else
+                                {
+                                    submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                                }
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
                                     pageObject.ParentPage = submission;
@@ -328,8 +346,30 @@ namespace Classroom_Learning_Partner
             page.PageObjects.Remove(pageObject);
         }
 
+
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
+        { 
+        ChangePageObjectPosition( pageObject,  pt, 0, 0, false);
+        
+        }
+
+        public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, double x, double y, bool usexy)
         {
+            if(usexy)
+            {
+                if(pageObject.PageObjectObjectParentIDs.Any())
+                {
+                    double xDelta = x - pageObject.XPosition;
+                    double yDelta = y - pageObject.YPosition;
+
+                    foreach(ICLPPageObject pageObject1 in pageObject.GetPageObjectsOverPageObject())
+                    {
+                        Point pageObjectPt = new Point((xDelta + pageObject1.XPosition), (yDelta + pageObject1.YPosition));
+                        CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject1, pageObjectPt);
+                    }
+                }
+            }
+
             double oldXPos = pageObject.XPosition;
             double oldYPos = pageObject.YPosition;
             CLPPage page = pageObject.ParentPage;

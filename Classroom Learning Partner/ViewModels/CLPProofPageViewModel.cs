@@ -21,6 +21,8 @@ namespace Classroom_Learning_Partner.ViewModels
            : base(page)
        {
             PlayProofCommand = new Command(OnPlayProofCommandExecute);
+            UndoProofCommand = new Command(OnUndoProofCommandExecute);
+            RedoProofCommand = new Command(OnRedoProofCommandExecute);
             ReplayProofCommand = new Command(OnReplayProofCommandExecute);
             RecordProofCommand = new Command(OnRecordProofCommandExecute);
             InsertProofCommand = new Command(OnInsertProofCommandExecute);
@@ -67,6 +69,8 @@ namespace Classroom_Learning_Partner.ViewModels
        #region Commands
        
        public Command PlayProofCommand  { get; private set; }
+       public Command UndoProofCommand { get; private set; }
+       public Command RedoProofCommand { get; private set; }
        public Command ReplayProofCommand { get; private set; }
        public Command RecordProofCommand  { get; private set; }
        public Command InsertProofCommand { get; private set; }
@@ -193,7 +197,7 @@ namespace Classroom_Learning_Partner.ViewModels
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
            {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0);
+               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0, -1);
            });
            t.Start();
        }
@@ -205,7 +209,7 @@ namespace Classroom_Learning_Partner.ViewModels
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
            {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Forward, 1, 25, 200);
+               PlayProof(CLPProofHistory.CLPProofPageAction.Forward, 1, 25, 200, -1);
            });
            t.Start();
        }
@@ -341,13 +345,34 @@ namespace Classroom_Learning_Partner.ViewModels
            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
            Thread t = new Thread(() =>
                 { 
-                PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 200, 400); //was 50, 400
+                PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 200, 400, -1); //was 50, 400
                 });
            t.Start();
        }
+
+       private void OnUndoProofCommandExecute()
+       {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
+           Thread t = new Thread(() =>
+           {
+               PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, 1); //was 50, 400
+           });
+           t.Start();
+       }
+
+       private void OnRedoProofCommandExecute()
+       {
+           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
+           Thread t = new Thread(() =>
+           {
+               PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, 1); //was 50, 400
+           });
+           t.Start();
+       }
+
       
        private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
-       private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause)
+       private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause, int UnRedo)
        {
            _oldPageInteractionMode = PageInteractionMode;
            lock(obj){
@@ -384,14 +409,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                          PageInteractionMode = PageInteractionMode.None;
                                          
                ////////////////////////////////
-
+                                         bool integrityCheckBool = integrityCheck();
 
                 //int i = 0;
                try{
                    int singleCut = 0;  
-                   while(from.Count > 0)
+                   while(from.Count > 0 && UnRedo!=0)
                        {
-                        //count = from.Count + to.Count;
+                           UnRedo--; 
+                       //count = from.Count + to.Count;
                         //Console.WriteLine("This is the new total on loop " + i + ": " + count);
                         //i++;
                         if(proofPageHistory1.IsPaused)
@@ -402,9 +428,28 @@ namespace Classroom_Learning_Partner.ViewModels
                            }
 
                            CLPHistoryItem item = from.Pop();
+                           ////////////////////////////////////
+                           bool childObject = false;
+                           try
+                           {
+                               if(item.ItemType == HistoryItemType.MoveObject)
+                               {
+                                   ICLPPageObject mi = item.GetPageObjectByUniqueID(Page, ((CLPHistoryMoveObject)item).ObjectId);
+                                   var pid = mi.ParentID;
+                                   if(pid == null) { pid = ""; }
+                                   pid = pid.Trim();
+                                   if(!pid.Equals("".Trim()))
+                                   {
+                                       childObject = true;
+                                   }
+                               }
+                           }catch(Exception e){
+                               Console.WriteLine(e.Message);
+                           }
+                           /////////////////////////////////////
                            to.Push(item);
                            if(!item.wasPaused && !item.singleCut && (item.ItemType != HistoryItemType.RemoveStroke)
-                               && (item.ItemType != HistoryItemType.AddStroke))
+                               && (item.ItemType != HistoryItemType.AddStroke) && !childObject)
                            {
                                
                                if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
@@ -422,9 +467,9 @@ namespace Classroom_Learning_Partner.ViewModels
                            {
                                singleCut++;
                                singleCut = singleCut % 3;
-                               if(singleCut == 1 && smallPause != 0)
+                               if(singleCut == 1 && smallPause != 0 && integrityCheckBool)
                                {
-                                   Thread.Sleep(300);
+                                   Thread.Sleep(750);
                                }
 
                            }
@@ -436,7 +481,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     {
                                         if(direction >= 0)
                                         {
-                                            if(singleCut == 1)
+                                            if(singleCut == 1 && integrityCheckBool)
                                             {
                                                 CLPHistoryItem item2 = from.Pop();
                                                 to.Push(item2);
@@ -454,7 +499,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                 item.Redo(Page);
                                             }
                                         }else{
-                                            if(singleCut == 1)
+                                            if(singleCut == 1 && integrityCheckBool)
                                             {
                                                 CLPHistoryItem item2 = from.Pop();
                                                 to.Push(item2);
@@ -476,6 +521,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                         return null;
                                     }, null);
                            }
+                           //if(UnRedo == 1) {
+                           //    break;
+                           //}
                        }
                     ///////////////////
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -509,7 +557,62 @@ namespace Classroom_Learning_Partner.ViewModels
                    }
            }
        }
-
+       private bool integrityCheck()
+       {
+           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+           if(proofPageHistory1 == null)
+           {
+               return false;
+           }
+           Stack<CLPHistoryItem> future = new Stack<CLPHistoryItem>(
+                                          new Stack<CLPHistoryItem>(proofPageHistory1.Future));
+           Stack<CLPHistoryItem> past = new Stack<CLPHistoryItem>(
+                                          new Stack<CLPHistoryItem>(proofPageHistory1.MetaPast));
+           while(past.Count > 0)
+           {
+               CLPHistoryItem item = past.Pop();
+               future.Push(item);
+           }
+           int j = 0;
+           while(future.Count > 0)
+           {
+               CLPHistoryItem item = future.Pop();
+               past.Push(item);
+               if(item.singleCut == true)
+               {
+                   Console.WriteLine(item.ItemType);
+                   j++;
+                   j = j % 3;
+                   if(j == 1)
+                   {
+                       if(item.ItemType != HistoryItemType.RemoveObject)
+                       {
+                           return false;
+                       }
+                   }
+                   else if(j == 2 || j == 0)
+                   {
+                       if(item.ItemType != HistoryItemType.AddObject)
+                       {
+                           return false;
+                       }
+                   }
+               }
+               else
+               {
+                   Console.WriteLine("***********************");
+                   if(j != 0)
+                   {
+                       return false;
+                   }
+               }
+           }
+           if(j != 0)
+           {
+               return false;
+           }
+           return true;
+       }
       
        #endregion //Commands
 
