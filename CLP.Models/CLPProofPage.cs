@@ -11,7 +11,8 @@ namespace CLP.Models
 
         public CLPProofPage()
         {
-            PageHistory.Freeze();    
+            PageHistory.Freeze();
+            base.PageType = PageTypeEnum.CLPProofPage;
         }
         
         protected CLPProofPage(SerializationInfo info, StreamingContext context)
@@ -37,5 +38,8 @@ namespace CLP.Models
         
         #endregion
 
+        #region Methods
+        
+        #endregion
     }
 }

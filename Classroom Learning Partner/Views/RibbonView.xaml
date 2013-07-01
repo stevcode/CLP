@@ -666,6 +666,10 @@
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding SwitchPageLayoutCommand}" />
 
+                <RibbonButton Label="Switch Page Type"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding SwitchPageTypeCommand}" />
+
                 <RibbonButton Label="Delete This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding DeletePageCommand}" />
