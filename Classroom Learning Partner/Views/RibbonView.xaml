@@ -216,10 +216,10 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <!--<RibbonToggleButton Label="Tile"
+                <RibbonToggleButton Label="Tile"
                                     LargeImageSource="..\Images\SnapTileIcon.png"
                                     Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetSnapTileCommand}" />-->
+                                    Command="{Binding SetSnapTileCommand}" />
 
                 <RibbonToggleButton Label="Cut"
                                     LargeImageSource="..\Images\Scissors.png"
@@ -234,6 +234,11 @@
                               LargeImageSource="..\Images\InkArray.png"
                               Command="{Binding Path=InsertArrayCommand}"
                               CommandParameter="FALSE" />
+
+                <RibbonButton Label="Array + Dividers"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="TRUE" />
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="..\Images\AddPathStamp.png"
