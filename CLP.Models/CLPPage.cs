@@ -90,8 +90,8 @@ namespace CLP.Models
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
             Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
             Tag starredTag  = new Tag("Teacher", new StarredTagType());
-            correctnessTag.AddTagOptonValue(new TagOptionValue("Unknown",""));
-            starredTag.AddTagOptonValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Unknown",""));
+            starredTag.AddTagOptionValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
             PageTags.Add(correctnessTag);
             PageTags.Add(starredTag);
         }

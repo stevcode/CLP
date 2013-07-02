@@ -6,23 +6,19 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayOrientationTagType :  ModelBase, TagType
+    public class ArrayVerticalDivisionsTagType : DataObjectBase, TagType
     {
         #region Constructors
 
-        public ArrayOrientationTagType()
+        public ArrayVerticalDivisionsTagType()
         {
-            Name = "Array Orientation";
+            Name = "Array Vertical Divisions";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<string>();
             AccessLevels.Add("Teacher");
             AccessLevels.Add("Researcher");
 
             ExclusiveValue = true;
-            ValueOptions = new ObservableCollection<TagOptionValue>(); 
-            ValueOptions.Add(new TagOptionValue("x*y"));
-            ValueOptions.Add(new TagOptionValue("y*x"));
-            ValueOptions.Add(new TagOptionValue("unknown"));
 
         }
 
@@ -31,7 +27,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected ArrayOrientationTagType(SerializationInfo info, StreamingContext context)
+        protected ArrayVerticalDivisionsTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors

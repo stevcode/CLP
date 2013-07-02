@@ -14,13 +14,13 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public TagOptionValue(string value, string iconPath)
+        public TagOptionValue(Object value, string iconPath)
         {
             IconUri = new Uri(iconPath, UriKind.Relative); 
             Value = value;
         }
 
-        public TagOptionValue(string value)
+        public TagOptionValue(Object value)
         {
             IconUri = null;
             Value = value;
@@ -55,16 +55,16 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public string Value
+        public Object Value
         {
-            get { return GetValue<string>(ValueProperty); }
+            get { return GetValue<Object>(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
         /// <summary>
         /// Register the Value property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(string), "");
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(Object), "");
         #endregion
     }
 }

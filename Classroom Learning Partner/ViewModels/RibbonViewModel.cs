@@ -171,6 +171,12 @@ namespace Classroom_Learning_Partner.ViewModels
             UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
             ZoomToPageWidthCommand = new Command(OnZoomToPageWidthCommandExecute);
             ZoomToWholePageCommand = new Command(OnZoomToWholePageCommandExecute);   
+
+            //Authoring
+            EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
+
+            //Analysis
+            AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
         }
 
         /// <summary>
@@ -2168,6 +2174,373 @@ namespace Classroom_Learning_Partner.ViewModels
             if(EditingMode != InkCanvasEditingMode.Ink)
             {
                 SetPenCommand.Execute();
+            }
+        }
+
+        /// <summary>
+        /// Gets the EditPageDefinitionCommand command.
+        /// </summary>
+        public Command EditPageDefinitionCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the EditPageDefinitionCommand command is executed.
+        /// </summary>
+        private void OnEditPageDefinitionCommandExecute()
+        {
+            // Get the tags on this page
+            Logger.Instance.WriteToLog("Page Definition");
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
+
+            // If the page already has a Page Definition tag, use that one
+            Tag oldTag = null;
+            ProductRelation oldRelation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    oldTag = tag;
+                    oldRelation = (ProductRelation) oldTag.Value[0].Value;
+                    break;
+                }
+            }
+
+            // Otherwise, create a new page definition tag
+            if(oldTag == null)
+            {
+                oldRelation = new ProductRelation();
+            }
+
+            ProductRelationViewModel viewModel = new ProductRelationViewModel(oldRelation);
+            PageDefinitionView definitionView = new PageDefinitionView(viewModel);
+            definitionView.Owner = Application.Current.MainWindow;
+            definitionView.ShowDialog();
+
+            if(definitionView.DialogResult == true)
+            {
+                // Update this page's definition tag
+
+                if(oldTag != null)
+                {
+                    tags.Remove(oldTag);
+                }
+
+                Tag newTag = new Tag("author", new PageDefinitionTagType());
+                newTag.Value.Add(new TagOptionValue(viewModel.Model));
+
+                tags.Add(newTag);
+            }
+
+            // Logs the currently tagged relation. TODO: Remove after testing
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
+                }
+            }
+            Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeArrayCommand command.
+        /// </summary>
+        public Command AnalyzeArrayCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeArrayCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeArrayCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == "Page Definition")
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation == null)
+            {
+                // No definition for the page!
+                Logger.Instance.WriteToLog("No page definition found! :(");
+                return;
+            }
+
+
+            // Find an array object on the page (just use the first one we find), or be sad if we don't find one
+            ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            CLPArray array = null;
+
+            foreach(ICLPPageObject pageObject in objects)
+            {
+                if(pageObject.GetType() == typeof(CLPArray))
+                {
+                    array = (CLPArray)pageObject;
+                    break;
+                }
+            }
+
+            if(array == null)
+            {
+                // No array on the page!
+                Logger.Instance.WriteToLog("No array found! :(");
+                return;
+            }
+
+            // We have a page definition and an array, so we're good to go!
+            Logger.Instance.WriteToLog("Array found! Dimensions: " + array.Columns + " by " + array.Rows);
+
+            int arrayWidth = array.Columns;
+            int arrayHeight = array.Rows;
+            int arrayArea = arrayWidth * arrayHeight;
+
+            // TODO: Add handling for variables in math relation
+            int factor1 = Convert.ToInt32(relation.Factor1);
+            int factor2 = Convert.ToInt32(relation.Factor2);
+            int product = Convert.ToInt32(relation.Product);
+
+            // Make a tag based on the array's orientation
+            // First, clear out any old ArrayOrientationTagTypes
+            foreach(Tag tag in tags.ToList())
+            {
+                if(tag.TagType.Name == "Array Orientation" || tag.TagType.Name == "Array Strategy" || tag.TagType.Name == "Array Division Correctness"
+                    || tag.TagType.Name == "Array Vertical Divisions" || tag.TagType.Name == "Array Horizontal Divisions")
+                {
+                    tags.Remove(tag);
+                }
+            }
+
+            // Apply an orientation tag
+            Tag orientationTag = new Tag("generated", new ArrayOrientationTagType());
+            if(arrayWidth == factor1 && arrayHeight == factor2)
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
+            }
+            else if(arrayWidth == factor2 && arrayHeight == factor1)
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("y*x"));
+            }
+            else
+            {
+                orientationTag.AddTagOptionValue(new TagOptionValue("unknown"));
+            }
+            tags.Add(orientationTag);
+            Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
+
+            // Apply a strategy tag
+            Tag strategyTag = new Tag("generated", new ArrayStrategyTagType());
+
+            // First check the horizontal divisions
+            // Create a sorted list of the divisions' labels (as entered by the student)
+            List<int> horizDivs = new List<int>();
+            foreach(CLPArrayDivision div in array.HorizontalDivisions)
+            {
+                horizDivs.Add(div.Value);
+            }
+            horizDivs.Sort();
+            /*String horizDivsString = "";
+            foreach(int x in horizDivs)
+            {
+                horizDivsString += (x.ToString() + " ");
+            }
+            Logger.Instance.WriteToLog("Number of horizontal regions: " + horizDivs.Count);
+            Logger.Instance.WriteToLog("Student's horizontal divisions (sorted): " + horizDivsString);*/
+
+            // Now check the student's divisions against known strategies
+            if(array.HorizontalDivisions.Count == 0)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("none")); 
+            }
+            else if(horizDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayHeight)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+            }
+            else if (arrayHeight > 20 && arrayHeight < 100 && horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+            }
+            else if ((arrayHeight % 2 == 0) && horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+            }
+            else
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+            }
+
+            // Then the vertical divisions
+            List<int> vertDivs = new List<int>();
+            foreach(CLPArrayDivision div in array.VerticalDivisions)
+            {
+                vertDivs.Add(div.Value);
+            }
+            vertDivs.Sort();
+
+            // Now check the student's divisions against known strategies
+            if(array.VerticalDivisions.Count == 0)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("none"));
+            }
+            else if(vertDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayWidth)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+            }
+            else if(arrayWidth > 20 && arrayWidth < 100 && vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+            }
+            else if((arrayWidth % 2 == 0) && vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+            }
+            else
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+            }
+
+            tags.Add(strategyTag);
+
+            Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value + ", " + strategyTag.Value[1].Value);
+
+            // Add an array division correctness tag
+            Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
+            tags.Add(divisionCorrectnessTag);
+
+            Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
+
+            // Add tags for the number of horizontal and vertical divisions
+            Tag horizDivsTag = new Tag("generated", new ArrayHorizontalDivisionsTagType());
+            horizDivsTag.Value.Add(new TagOptionValue(array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count));
+            tags.Add(horizDivsTag);
+
+            Tag vertDivsTag = new Tag("generated", new ArrayVerticalDivisionsTagType());
+            vertDivsTag.Value.Add(new TagOptionValue(array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count));
+            tags.Add(vertDivsTag);
+
+            Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
+            Logger.Instance.WriteToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
+        }
+
+        // Get the (sorted) list of subdivisions of startingValue, using the place value strategy
+        private List<int> PlaceValueStrategyDivisions(int startingValue)
+        {
+            int currentValue = startingValue;
+            int currentPlace = 1;
+            List<int> output = new List<int>();
+            while(currentValue > 0)
+            {
+                if(currentValue % 10 > 0)
+                {
+                    output.Add((currentValue % 10) * currentPlace);
+                }
+                currentValue /= 10;
+                currentPlace *= 10;
+            }
+            output.Sort();
+
+            /*String outputString = "";
+            foreach(int x in output)
+            {
+                outputString += (x.ToString() + " ");
+            }
+            Logger.Instance.WriteToLog("Place value divisions of " + startingValue + ": " + outputString);*/
+
+            return output;
+        }
+
+        // Get the (sorted) list of subdivisions of startingValue, using the tens strategy
+        // Assumes 20 < startingValue < 100
+        private List<int> TensStrategyDivisions(int startingValue)
+        {
+            int currentValue = startingValue;
+            List<int> output = new List<int>();
+            if (currentValue % 10 > 0) {
+                output.Add(currentValue % 10);
+                currentValue -= (currentValue % 10);
+            }
+            while (currentValue > 0)
+            {
+                output.Add(10);
+                currentValue -= 10;
+            }
+            output.Sort();
+
+            return output;
+        }
+
+        // Get the (sorted) list of subdivisions of startingValue, using the halving strategy
+        // Assumes startingValue is even
+        private List<int> HalvingStrategyDivisions(int startingValue)
+        {
+            List<int> output = new List<int>();
+            output.Add(startingValue / 2);
+            output.Add(startingValue / 2);
+
+            return output;
+        }
+
+        private Tag CheckArrayDivisionCorrectness(CLPArray array)
+        {
+            Tag tag = new Tag("generated", new ArrayDivisionCorrectnessTagType());
+
+            bool horizUnfinished = false;
+            bool vertUnfinished = false;
+
+            // First check horizontal divisions
+            if(array.HorizontalDivisions.Count > 0)
+            {
+                int sum = 0;
+                foreach(CLPArrayDivision div in array.HorizontalDivisions)
+                {
+                    if(div.Value == 0) 
+                    {
+                        horizUnfinished = true;
+                    }
+                    sum += div.Value;
+                }
+                if(!horizUnfinished && sum != array.Rows)
+                {
+                    tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
+                    return tag;
+                }
+            }
+
+            // Then check vertical divisions
+            if(array.VerticalDivisions.Count > 0)
+            {
+                int sum = 0;
+                foreach(CLPArrayDivision div in array.VerticalDivisions)
+                {
+                    if(div.Value == 0)
+                    {
+                        vertUnfinished = true;
+                    }
+                    sum += div.Value;
+                }
+                if(!vertUnfinished && sum != array.Columns)
+                {
+                    tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
+                    return tag;
+                }
+            }
+
+            if(horizUnfinished || vertUnfinished)
+            {
+                tag.AddTagOptionValue(new TagOptionValue("Unfinished"));
+                return tag;
+            }
+            else
+            {
+                tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                return tag;
             }
         }
 
