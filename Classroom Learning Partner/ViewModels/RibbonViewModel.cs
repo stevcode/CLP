@@ -158,6 +158,8 @@ namespace Classroom_Learning_Partner.ViewModels
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
+            SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
+
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
@@ -720,6 +722,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Pages)
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 
@@ -798,6 +805,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 
@@ -886,6 +898,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach(CLPPage page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+
                     page.TrimPage();
                     double printHeight = page.PageWidth / page.PageAspectRatio;
 
@@ -1683,6 +1700,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Converts current page between landscape and portrait.
         /// </summary>
         public Command SwitchPageLayoutCommand { get; private set; }
+       
 
         private void OnSwitchPageLayoutCommandExecute()
         {
@@ -1723,6 +1741,70 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
                 page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
                 page.PageAspectRatio = page.PageWidth / page.PageHeight;
+            }
+        }
+
+        public Command SwitchPageTypeCommand { get; private set; }
+
+        public void OnSwitchPageTypeCommandExecute(){
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            int index = page.PageIndex;
+            double pageheight = page.PageHeight;
+            double pagewidth = page.PageWidth;
+            double pageaspectratio = page.PageAspectRatio;
+
+            if(page.PageType == PageTypeEnum.CLPProofPage) {
+                CLPProofPage proofpage = (CLPProofPage)page;
+                CLPProofHistory proofhistory = (CLPProofHistory)page.PageHistory;
+                if(proofhistory.Future.Count > 0 || proofhistory.MetaPast.Count > 0)
+                {
+                    if(MessageBox.Show("Are you sure you want to switch to a different page type? Your animation will be lost!",
+                                   "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+                CLPPage newpage = new CLPPage();
+                CLPHistory newpagehistory = (CLPHistory)newpage.PageHistory;
+
+                newpage.PageHeight = pageheight;
+                newpage.PageWidth = pagewidth;
+                newpage.PageAspectRatio = pageaspectratio;
+
+                newpagehistory.Past = proofhistory.Past;
+                newpagehistory.MetaPast = proofhistory.MetaPast;
+                newpagehistory.Future = proofhistory.Future;
+
+                newpage.PageObjects = proofpage.PageObjects;
+                newpage.InkStrokes = proofpage.InkStrokes;
+
+                page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+                CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                            nb.InsertPageAt(index, newpage);
+                            nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
+                            nb.Pages.RemoveAt(index - 1);
+                            nb.GeneratePageIndexes();
+                            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newpage;      
+            }else{
+                CLPHistory pagehistory = (CLPHistory)page.PageHistory;
+
+                CLPProofPage newproofpage = new CLPProofPage();
+                CLPProofHistory newproofpagehistory = (CLPProofHistory)newproofpage.PageHistory;
+
+                newproofpage.PageHeight = pageheight;
+                newproofpage.PageWidth = pagewidth;
+                newproofpage.PageAspectRatio = pageaspectratio;
+
+                newproofpage.PageObjects = page.PageObjects;
+                newproofpage.InkStrokes =  page.InkStrokes;
+
+                page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+                CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                            nb.InsertPageAt(index, newproofpage);
+                            nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
+                            nb.Pages.RemoveAt(index - 1);
+                            nb.GeneratePageIndexes();
+                            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newproofpage; 
             }
         }
 

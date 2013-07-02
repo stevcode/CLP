@@ -26,6 +26,12 @@ namespace CLP.Models
         Force
     }
 
+    public enum PageTypeEnum
+    {
+        CLPPage,
+        CLPProofPage
+    }
+
     /// <summary>
     /// CLPPage Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
@@ -111,6 +117,16 @@ namespace CLP.Models
             set { SetValue(CutEnabledProperty, value); }
         }
         public static readonly PropertyData CutEnabledProperty = RegisterProperty("CutEnabled", typeof(bool), false);
+
+        public PageTypeEnum PageType
+        {
+            get { return GetValue<PageTypeEnum>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypeEnum), PageTypeEnum.CLPPage);
+
+
 
         /// <summary>
         /// Pool of Images used on a page, so that duplications don't occur
@@ -441,6 +457,8 @@ namespace CLP.Models
         #endregion
 
         #region Methods
+        
+
 
         public CLPPage DuplicatePage()
         {
@@ -491,12 +509,8 @@ namespace CLP.Models
         public static StrokeCollection LoadInkStrokes(ObservableCollection<StrokeDTO> serializedStrokes)
         {
             var strokes = new StrokeCollection();
-            foreach(var strokeDTO in serializedStrokes)
-            {
-                if(strokeDTO.StrokePoints.Any())
-                {
-                    strokes.Add(strokeDTO.ToStroke());
-                }
+            foreach(var strokeDTO in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any())) {
+                strokes.Add(strokeDTO.ToStroke());
             }
 
             return strokes;
@@ -567,7 +581,10 @@ namespace CLP.Models
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-            //InkStrokes = BytesToStrokes(ByteStrokes);
+            //if(!SerializedStrokes.Any() && ByteStrokes.Any())
+            //{
+            //    InkStrokes = BytesToStrokes(ByteStrokes);
+            //}
         }
 
         [OnSerializing]
@@ -625,11 +642,13 @@ namespace CLP.Models
                            (topY - otopYVal - CLPArray.LargeLabelLength < 15 && obotYVal - 2*CLPArray.SmallLabelLength - botY < 15))
                         {
                             ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
-                            foreach(ICLPPageObject no in c)
-                            {
-                                c1.Add(no);
+                            if(c.Count == 2){
+                                foreach(ICLPPageObject no in c)
+                                {
+                                    c1.Add(no);
+                                }
+                                c2.Add(pageObject);
                             }
-                            c2.Add(pageObject);
                         }
                     }
                     else if(pageObject.PageObjectType.Equals(CLPShape.Type))
@@ -664,11 +683,13 @@ namespace CLP.Models
                            (leftX - oLeftXVal - CLPArray.LargeLabelLength < 15 && oRightXVal - 2*CLPArray.SmallLabelLength - rightX < 15))
                         {
                             ObservableCollection<ICLPPageObject> c = o.SplitAtY(Ave);
-                            foreach(ICLPPageObject no in c)
-                            {
-                                c1.Add(no);
+                            if(c.Count == 2){
+                                foreach(ICLPPageObject no in c)
+                                {
+                                    c1.Add(no);
+                                }
+                                c2.Add(o);
                             }
-                            c2.Add(o);
                         }
                     }
                     else if(o.PageObjectType.Equals(CLPShape.Type))
@@ -707,9 +728,6 @@ namespace CLP.Models
                     
                     ProofPresent = "Hidden";
                     ProofProgressCurrent = 0;
-                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
-                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
-                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
                     return;
                 }
                 else
@@ -720,9 +738,7 @@ namespace CLP.Models
                         (pastItemsNumber * PageWidth * 0.7175) /
                         totalItemsNumber;
 
-                    Console.WriteLine("This is the current value" + ProofProgressCurrent);
-                    Console.WriteLine("pastItemsNumber =" + pastItemsNumber);
-                    Console.WriteLine("FutureItemsNumber = " + FutureItemsNumber);
+                    
                 }
 
                 if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))

@@ -651,6 +651,7 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\GreenTile.cur" />
     <Resource Include="Images\ScissorsCursor.cur" />
     <Resource Include="Images\Scissors.png" />
     <Resource Include="Images\HighlighterCursor.cur" />

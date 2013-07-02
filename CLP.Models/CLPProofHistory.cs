@@ -74,7 +74,7 @@ namespace CLP.Models
             {
                 Past.Push(item);
                 MetaPast.Push(item);
-                //Future.Clear(); does not clear future items unlike overridden method
+                Future.Clear(); 
             }
         }
 

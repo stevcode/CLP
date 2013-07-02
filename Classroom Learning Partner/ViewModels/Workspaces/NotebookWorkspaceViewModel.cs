@@ -438,11 +438,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
-            if(propertyName == "IsUnknown" || propertyName == "IsCorrect" || propertyName == "IsIncorrect" || propertyName == "IsStarred")
-            {
-                System.Console.WriteLine("changed");
-                //FilterSubmissions(SelectedFilterType);
-            }
             if (propertyName == "SideBarVisibility")
             {
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;

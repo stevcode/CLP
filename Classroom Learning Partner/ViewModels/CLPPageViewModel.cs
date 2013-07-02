@@ -30,6 +30,8 @@ namespace Classroom_Learning_Partner.ViewModels
         EditObjectProperties
     }
 
+   
+
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
@@ -81,6 +83,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
+
+        [ViewModelToModel("Page")]
+        public PageTypeEnum PageType
+        {
+            get { return GetValue<PageTypeEnum>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypeEnum));
 
         ////////////////////////////////
         [ViewModelToModel("Page")]
@@ -211,6 +222,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(PageInteractionModeProperty, value);
+                Logger.Instance.WriteToLog("PageInteractionMode Set to: " + value);
                 switch(value)
                 {
                     case PageInteractionMode.None:
@@ -224,6 +236,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionMode.Tile:
                         IsInkCanvasHitTestVisible = false;
+                        var tileStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/GreenTile.cur", UriKind.Relative));
+                        PageCursor = new Cursor(tileStream.Stream);
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
@@ -432,8 +446,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-
-
             //var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
 
             //VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
@@ -456,7 +468,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Tile)
             {
                 var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-                Point pt = e.GetPosition(pageObjectCanvas);
+                var pt = e.GetPosition(pageObjectCanvas);
                 var tile = new CLPSnapTileContainer(pt, Page);
                 Page.PageObjects.Add(tile);
             }
@@ -537,11 +549,14 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #endregion //Commands
 
-        #region Methods
-       
+        #region Methods     
 
         public static void ClearAdorners(CLPPage page)
         {
+            if(page == null)
+            {
+                return;
+            }
             foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<CLPPageViewModel>())
             {
                 clpPageViewModel.ClearAdorners();
@@ -691,6 +706,69 @@ namespace Classroom_Learning_Partner.ViewModels
             //});
             Page.updateProgress();
         }
+        ///////////////////////////////////////
+        /*
+        private bool integrityCheck()
+        {
+            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
+            if(proofPageHistory1 == null)
+            {
+                return false;
+            }
+            Stack<CLPHistoryItem> future = new Stack<CLPHistoryItem>(
+                                           new Stack<CLPHistoryItem>(proofPageHistory1.Future));
+            Stack<CLPHistoryItem> past = new Stack<CLPHistoryItem>(
+                                           new Stack<CLPHistoryItem>(proofPageHistory1.MetaPast));
+            while(past.Count > 0)
+            {
+                CLPHistoryItem item = past.Pop();
+                future.Push(item);
+            }
+            int j = 0;
+            while(future.Count > 0)
+            {
+                CLPHistoryItem item = future.Pop();
+                past.Push(item);
+                if(item.singleCut == true)
+                {
+                    Console.WriteLine(item.ItemType);
+                    j++;
+                    j = j % 3;
+                    if(j == 1)
+                    {
+                        if(item.ItemType != HistoryItemType.RemoveObject)
+                        {
+                            return false;
+                        }
+                    }
+                    else if(j == 2 || j == 0)
+                    {
+                        if(item.ItemType != HistoryItemType.AddObject)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("***********************");
+                    if(j != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            if(j != 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        ///////////////////////////////////////////
+         */
+
+
+
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
@@ -703,7 +781,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(PageInteractionMode == PageInteractionMode.Scissors)
                 {
+
+                    //integrityCheck();
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
                     Page.PageHistory.SingleCutting = true;
                     double topY = stroke.GetBounds().Top;
                     double leftX = stroke.GetBounds().Left;
@@ -715,6 +796,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
                     ObservableCollection<ICLPPageObject> c2 = lr[1];
                     var AllShapesInkStrokes = new ObservableCollection<Stroke>();
+                    var AllShapesPageObjects = new ObservableCollection<ICLPPageObject>();
 
                     int i = 0;
                     foreach(ICLPPageObject no in c2)
@@ -724,13 +806,22 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             AllShapesInkStrokes.Add(inkStroke);
                         }
+
+                        var shapePageObjects = no.GetPageObjectsOverPageObject();
+                        foreach(ICLPPageObject po in shapePageObjects) {
+                            AllShapesPageObjects.Add(po);
+                        }
+
                         CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
+                        Page.PageHistory.Push(new CLPHistoryRemoveObject(no));
 
                         ICLPPageObject noc1 = c1List[i];
                         CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
+                        Page.PageHistory.Push(new CLPHistoryAddObject(noc1.UniqueID));
 
                         ICLPPageObject noc2 = c1List[i + 1];
                         CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
+                        Page.PageHistory.Push(new CLPHistoryAddObject(noc2.UniqueID));
                         i = i + 2;
                     }
 
@@ -744,10 +835,18 @@ namespace Classroom_Learning_Partner.ViewModels
                         Page.InkStrokes.Add(inkStroke);
                     }
 
+                    //Page.PageHistory.Freeze();
+                    foreach(ICLPPageObject po in AllShapesPageObjects) {
+                        CLPServiceAgent.Instance.AddPageObjectToPage(po);
+                    }
+                    //Page.PageHistory.Unfreeze();
                     
                     RefreshInkStrokes();
+                    RefreshPageObjects(AllShapesPageObjects);
                     Page.PageHistory.SingleCutting = false;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+                    //integrityCheck();
                     return;
                 }
             }
@@ -878,6 +977,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+            if(IsPagePreview)
+            {
+                return;
+            }
+
             if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
             {
                 EditingMode = (viewModel as RibbonViewModel).EditingMode;
@@ -899,17 +1003,63 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)
             {
+                Logger.Instance.WriteToLog("PageViewModel Received PageInteractionMode Command: " + PageInteractionMode);
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        private void RefreshInkStrokes() {
+        private void RefreshInkStrokes()
+        {
             var pageObjects = Page.PageObjects;
-            foreach(ICLPPageObject po in pageObjects) {
+            foreach(ICLPPageObject po in pageObjects)
+            {
                 po.RefreshStrokeParentIDs();
             }
+        }
+        
+        private void RefreshPageObjects(ObservableCollection<ICLPPageObject> AllShapesPageObjects) {
+                try
+                {
+                    foreach(ICLPPageObject pageObject in PageObjects)
+                    {
+                        if(pageObject.CanAcceptPageObjects)
+                        {
+                            var removedPageObjects = new ObservableCollection<ICLPPageObject>();
+                            /*if(e.OldItems != null)
+                            {
+                                foreach(ICLPPageObject removedPageObject in e.OldItems)
+                                {
+                                    removedPageObjects.Add(removedPageObject);
+                                }
+                            }*/
+
+                            var addedPageObjects = new ObservableCollection<ICLPPageObject>();
+                            if(AllShapesPageObjects.Count!=0)
+                            {
+                                foreach(ICLPPageObject addedPageObject in AllShapesPageObjects)
+                                {
+                                    if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
+                                        && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
+                                        && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
+                                        && pageObject.PageObjectIsOver(addedPageObject, .50))
+                                    {
+                                        addedPageObjects.Add(addedPageObject);
+                                    }
+                                }
+                            }
+
+                            pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                }
+                /////////////////////////////
+            
         }
         #endregion //Methods        
     }

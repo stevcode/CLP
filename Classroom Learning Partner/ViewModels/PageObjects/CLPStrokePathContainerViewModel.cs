@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -7,6 +8,8 @@ using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using Microsoft.Ink;
+using Stroke = System.Windows.Ink.Stroke;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -124,7 +127,20 @@ namespace Classroom_Learning_Partner.ViewModels
             var clpStrokePathContainer = PageObject as CLPStrokePathContainer;
             if(clpStrokePathContainer != null)
             {
-                foreach (Stroke stroke in CLPPage.LoadInkStrokes(clpStrokePathContainer.SerializedStrokes))
+                StrokeCollection inkStrokes;
+
+                if(!clpStrokePathContainer.SerializedStrokes.Any() &&
+                           clpStrokePathContainer.ByteStrokes.Any())
+                {
+                    inkStrokes = CLPPage.BytesToStrokes(clpStrokePathContainer.ByteStrokes);
+                }
+                else
+                {
+                    inkStrokes = CLPPage.LoadInkStrokes(clpStrokePathContainer.SerializedStrokes);
+                }
+
+
+                foreach (Stroke stroke in inkStrokes)
                 {
                     StylusPoint firstPoint = stroke.StylusPoints[0];
 
