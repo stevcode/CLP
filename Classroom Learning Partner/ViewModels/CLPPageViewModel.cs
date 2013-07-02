@@ -30,6 +30,8 @@ namespace Classroom_Learning_Partner.ViewModels
         EditObjectProperties
     }
 
+   
+
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
@@ -81,6 +83,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
+
+        [ViewModelToModel("Page")]
+        public PageTypeEnum PageType
+        {
+            get { return GetValue<PageTypeEnum>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypeEnum));
 
         ////////////////////////////////
         [ViewModelToModel("Page")]
