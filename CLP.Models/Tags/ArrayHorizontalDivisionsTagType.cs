@@ -6,25 +6,19 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayStrategyTagType :  DataObjectBase, TagType
+    public class ArrayHorizontalDivisionsTagType : DataObjectBase, TagType
     {
         #region Constructors
 
-        public ArrayStrategyTagType()
+        public ArrayHorizontalDivisionsTagType()
         {
-            Name = "Array Strategy";
+            Name = "Array Horizontal Divisions";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<string>();
             AccessLevels.Add("Teacher");
             AccessLevels.Add("Researcher");
 
-            ExclusiveValue = false;
-            ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("place value")); // e.g. 43 -> 40 | 3
-            ValueOptions.Add(new TagOptionValue("half")); // e.g., 18 -> 9 | 9
-            ValueOptions.Add(new TagOptionValue("10's")); // e.g. 43 -> 10 | 10 | 10 | 10 | 3
-            ValueOptions.Add(new TagOptionValue("none")); // No dividing lines were added
-            ValueOptions.Add(new TagOptionValue("other")); // None of the above
+            ExclusiveValue = true;
 
         }
 
@@ -33,7 +27,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected ArrayStrategyTagType(SerializationInfo info, StreamingContext context)
+        protected ArrayHorizontalDivisionsTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors

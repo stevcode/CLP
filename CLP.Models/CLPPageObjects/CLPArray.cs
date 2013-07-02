@@ -75,7 +75,7 @@ namespace CLP.Models
         public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
 
         /// <summary>
-        /// The value that was written by the student as the label on that side length. null if unlabelled.
+        /// The value that was written by the student as the label on that side length. 0 if unlabelled.
         /// </summary>
         public int Value
         {
