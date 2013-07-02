@@ -10,7 +10,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class PageDefinitionTagType : DataObjectBase, TagType
+    public class PageDefinitionTagType : ModelBase, TagType
     {
         #region Constructors
 

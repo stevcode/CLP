@@ -21,7 +21,7 @@ namespace CLP.Models
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class MathPageDefinition : DataObjectBase<MathPageDefinition>
+    public class MathPageDefinition : ModelBase
     {
         #region Fields
         #endregion

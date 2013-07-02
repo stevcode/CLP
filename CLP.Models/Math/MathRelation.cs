@@ -17,7 +17,7 @@ namespace CLP.Models
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public abstract class MathRelation : DataObjectBase<MathRelation>
+    public abstract class MathRelation : ModelBase
     {
         #region Fields
         #endregion
