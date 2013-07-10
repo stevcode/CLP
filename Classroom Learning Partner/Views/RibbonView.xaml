@@ -1,7 +1,7 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.RibbonView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
@@ -9,28 +9,36 @@
     </UserControl.Resources>
 
     <!--Ribbon-->
-    <Ribbon x:Name="Ribbon" IsMinimized="{Binding IsMinimized}">
+    <Ribbon x:Name="Ribbon"
+            IsMinimized="{Binding IsMinimized}">
 
         <!--Contextual Tab Definitions-->
         <Ribbon.ContextualTabGroups>
-            <RibbonContextualTabGroup Header="Authoring Tools" Visibility="{Binding AuthoringTabVisibility}" Background="Red" />
-            <RibbonContextualTabGroup Header="Debugging" Visibility="{Binding DebugTabVisibility}" Background="Violet" />
-            <RibbonContextualTabGroup Header="Extras" Visibility="{Binding ExtrasTabVisibility}" Background="DarkOrange" />
+            <RibbonContextualTabGroup Header="Authoring Tools"
+                                      Visibility="{Binding AuthoringTabVisibility}"
+                                      Background="Red" />
+            <RibbonContextualTabGroup Header="Debugging"
+                                      Visibility="{Binding DebugTabVisibility}"
+                                      Background="Violet" />
+            <RibbonContextualTabGroup Header="Extras"
+                                      Visibility="{Binding ExtrasTabVisibility}"
+                                      Background="DarkOrange" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
-            <RibbonApplicationMenu SmallImageSource="..\Images\File.png" Background="Purple">
+            <RibbonApplicationMenu SmallImageSource="..\Images\File.png"
+                                   Background="Purple">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"
                                            ImageSource="..\Images\NewNotebook.png"
                                            Command="{Binding NewNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
-                
+
                 <RibbonApplicationMenuItem Header="Open Notebook"
                                            KeyTip="O"
-                                           ImageSource="..\Images\OpenNotebook.png" 
+                                           ImageSource="..\Images\OpenNotebook.png"
                                            Command="{Binding OpenNotebookCommand}" />
 
                 <RibbonApplicationMenuItem Header="Edit Notebook"
@@ -40,7 +48,7 @@
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <!--TODO: Steve - Make this a toggle with Edit Notebook above-->
-                <RibbonApplicationMenuItem Header="Done Editing Notebook"    
+                <RibbonApplicationMenuItem Header="Done Editing Notebook"
                                            KeyTip="D"
                                            ImageSource="..\Images\DoneEditingNotebook.png"
                                            Command="{Binding DoneEditingNotebookCommand}"
@@ -53,10 +61,10 @@
 
                 <RibbonApplicationMenuItem Header="Save All Notebooks"
                                            KeyTip="A"
-                                           ImageSource="..\Images\SaveAllNotebooks.png" 
+                                           ImageSource="..\Images\SaveAllNotebooks.png"
                                            Command="{Binding SaveAllNotebooksCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
-               
+
                 <RibbonApplicationMenuItem Header="Submit Whole Notebook"
                                            ImageSource="..\Images\LargeIcon.png"
                                            Command="{Binding SubmitNotebookToTeacherCommand}"
@@ -81,7 +89,7 @@
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
                                            ImageSource="..\Images\ReconnectToNetwork.png"
                                            Command="{Binding RefreshNetworkCommand}" />
-                
+
                 <RibbonApplicationMenuItem Header="Toggle Thumbnail Location"
                                            ImageSource="..\Images\NewNotebook.png"
                                            Command="{Binding ToggleThumbnailsCommand}" />
@@ -98,15 +106,16 @@
                 <RibbonApplicationMenu.FooterPaneContent>
                     <DockPanel LastChildFill="False">
                         <RibbonButton Command="{Binding ExitCommand}"
-                                         Label="Exit"
-                                         ToolTipTitle="Exit"
-                                         KeyTip="X"
-                                         DockPanel.Dock="Right"
-                                         Margin="2"
-                                         BorderBrush="#B8114EAF"
-                                         LargeImageSource="..\Images\Exit.png"
-                                         SmallImageSource="..\Images\Exit.png"
-                                         Height="60" Width="75"/>
+                                      Label="Exit"
+                                      ToolTipTitle="Exit"
+                                      KeyTip="X"
+                                      DockPanel.Dock="Right"
+                                      Margin="2"
+                                      BorderBrush="#B8114EAF"
+                                      LargeImageSource="..\Images\Exit.png"
+                                      SmallImageSource="..\Images\Exit.png"
+                                      Height="60"
+                                      Width="75" />
                     </DockPanel>
                 </RibbonApplicationMenu.FooterPaneContent>
 
@@ -122,10 +131,13 @@
                                     IsChecked="{Binding SideBarVisibility}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Show Pages"/>
+                            <Setter Property="Label"
+                                    Value="Show Pages" />
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Hide Pages"/>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Pages" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -134,22 +146,24 @@
 
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="..\Images\PreviousPage.png"
-                              Command="{Binding PreviousPageCommand}"/>
+                              Command="{Binding PreviousPageCommand}" />
 
                 <RibbonButton Label="Next Page"
                               LargeImageSource="..\Images\NextPage.png"
-                              Command="{Binding NextPageCommand}"/>
+                              Command="{Binding NextPageCommand}" />
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Tools" x:Name="ToolsRibbonGroup">
+            <RibbonGroup Header="Tools"
+                         x:Name="ToolsRibbonGroup">
 
                 <RibbonToggleButton Label="Select"
                                     LargeImageSource="..\Images\HandIcon.png"
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding SetSelectCommand}" />
 
-                <RibbonToggleButton Label="Pen" x:Name="PenButton"
+                <RibbonToggleButton Label="Pen"
+                                    x:Name="PenButton"
                                     IsChecked="True"
                                     LargeImageSource="..\Images\Pen.png"
                                     Click="ToolGroupToggle_Clicked"
@@ -160,54 +174,67 @@
                                     Click="ToolGroupToggle_Clicked"
                                     Command="{Binding SetHighlighterCommand}" />
 
-                <RibbonMenuButton Label="Brush Size" 
+                <RibbonMenuButton Label="Brush Size"
                                   LargeImageSource="..\Images\PenSize-icon32.png"
                                   Visibility="{Binding InstructorVisibility}">
-                    <RibbonGallery SelectedValuePath="Content.Height" 
+                    <RibbonGallery SelectedValuePath="Content.Height"
                                    SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="2" Width="150" />
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
+                                           Height="2"
+                                           Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="3" Width="150" />
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
+                                           Height="3"
+                                           Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="5" Width="150" />
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
+                                           Height="5"
+                                           Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30">
-                                <Rectangle VerticalAlignment="Center" StrokeThickness="0" Fill="Black" Height="7" Width="150" />
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
+                                           Height="7"
+                                           Width="150" />
                             </RibbonGalleryItem>
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <!--<RibbonToggleButton Label="Point Eraser"
-                                    LargeImageSource="..\Images\Eraser.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetEraserCommand}" 
-                                    CommandParameter="EraseByPoint" />-->
-
                 <RibbonMenuButton Label="Eraser Type">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
-                            <Setter Property="LargeImageSource" Value="..\Images\StrokeEraser.png" />
+                            <Setter Property="LargeImageSource"
+                                    Value="..\Images\StrokeEraser.png" />
                         </Style>
                     </RibbonMenuButton.Style>
 
-                    <RibbonGallery SelectedValuePath="Content.Tag" 
+                    <RibbonGallery SelectedValuePath="Content.Tag"
                                    SelectedValue="{Binding EraserType, Mode=TwoWay}"
                                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <RibbonGalleryCategory>
                             <RibbonGalleryItem Height="64">
-                                <StackPanel Tag="Stroke Eraser" Orientation="Horizontal">
+                                <StackPanel Tag="Stroke Eraser"
+                                            Orientation="Horizontal">
                                     <Image Source="..\Images\StrokeEraser.png" />
                                     <Label>Stroke Eraser</Label>
                                 </StackPanel>
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="64">
-                                <StackPanel Tag="Point Eraser" Orientation="Horizontal">
+                                <StackPanel Tag="Point Eraser"
+                                            Orientation="Horizontal">
                                     <Image Source="..\Images\Eraser.png" />
                                     <Label>Point Eraser</Label>
                                 </StackPanel>
@@ -224,11 +251,12 @@
                 <RibbonToggleButton Label="Cut"
                                     LargeImageSource="..\Images\Scissors.png"
                                     Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding EnableCutCommand}"/>
+                                    Command="{Binding EnableCutCommand}" />
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert" Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+            <RibbonGroup Header="Insert"
+                         Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
                 <RibbonButton Label="Array"
                               LargeImageSource="..\Images\InkArray.png"
@@ -248,43 +276,61 @@
 
             <RibbonGroup Header="Pen Color">
                 <RibbonGroup.Resources>
-                    <Style x:Name="ColorButtonStyle" TargetType="{x:Type RibbonButton}">
-                        <Setter Property="Width" Value="25"/>
-                        <Setter Property="Height" Value="25"/>
+                    <Style x:Name="ColorButtonStyle"
+                           TargetType="{x:Type RibbonButton}">
+                        <Setter Property="Width"
+                                Value="25" />
+                        <Setter Property="Height"
+                                Value="25" />
                         <Setter Property="Command">
                             <Setter.Value>
-                                <Binding Path="SetPenColorCommand"/>
+                                <Binding Path="SetPenColorCommand" />
                             </Setter.Value>
                         </Setter>
-                        <EventSetter Event="Click" Handler="ToolGroupToggle_Clicked"/>
+                        <EventSetter Event="Click"
+                                     Handler="ToolGroupToggle_Clicked" />
                         <Setter Property="CommandParameter">
                             <Setter.Value>
-                                <Binding RelativeSource="{RelativeSource Self}"/>
+                                <Binding RelativeSource="{RelativeSource Self}" />
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Margin" Value="1"/>
-                        <Setter Property="BorderBrush" Value="White"/>
-                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Margin"
+                                Value="1" />
+                        <Setter Property="BorderBrush"
+                                Value="White" />
+                        <Setter Property="BorderThickness"
+                                Value="0" />
                     </Style>
                 </RibbonGroup.Resources>
-                <RibbonButton Background="Black"/>
-                <RibbonButton Background="White" Visibility="{Binding InstructorVisibility}"/>
-                <RibbonButton Background="Red"/>
+                <RibbonButton Background="Black" />
+                <RibbonButton Background="White"
+                              Visibility="{Binding InstructorVisibility}" />
+                <RibbonButton Background="Red" />
                 <RibbonButton Background="DarkOrange" />
                 <RibbonButton Background="Tan" />
                 <RibbonButton Background="Gold" />
                 <RibbonButton Background="SaddleBrown" />
-                <RibbonButton Background="DarkGreen"/>
+                <RibbonButton Background="DarkGreen" />
                 <RibbonButton Background="MediumSeaGreen" />
-                <RibbonButton Background="Blue"/>
+                <RibbonButton Background="Blue" />
                 <RibbonButton Background="HotPink" />
                 <RibbonButton Background="BlueViolet" />
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue" />
-                <RibbonButton Background="Turquoise" Visibility="{Binding InstructorVisibility}"/>
-                <Border BorderBrush="Black" BorderThickness="2" Background="White" Height="40" Width="40" Margin="7" Padding="1"  >
-                    <RibbonButton Background="{Binding CurrentColorButton.Background}" IsEnabled="False" Width="Auto" Height="Auto"/>
+                <RibbonButton Background="Turquoise"
+                              Visibility="{Binding InstructorVisibility}" />
+                <Border BorderBrush="Black"
+                        BorderThickness="2"
+                        Background="White"
+                        Height="40"
+                        Width="40"
+                        Margin="7"
+                        Padding="1">
+                    <RibbonButton Background="{Binding CurrentColorButton.Background}"
+                                  IsEnabled="False"
+                                  Width="Auto"
+                                  Height="Auto" />
                 </Border>
             </RibbonGroup>
 
@@ -296,16 +342,17 @@
 
             </RibbonGroup>-->
 
-            <RibbonGroup Header="Share" Visibility="{Binding StudentVisibility}">
+            <RibbonGroup Header="Share"
+                         Visibility="{Binding StudentVisibility}">
 
                 <RibbonButton Label="Send To Teacher"
-                              LargeImageSource="..\Images\Send.png" 
-                              Command="{Binding SubmitPageCommand}" 
+                              LargeImageSource="..\Images\Send.png"
+                              Command="{Binding SubmitPageCommand}"
                               Visibility="{Binding SendButtonVisibility}" />
 
                 <RibbonButton Label="Thank you!"
                               IsEnabled="False"
-                              LargeImageSource="..\Images\Happy.png" 
+                              LargeImageSource="..\Images\Happy.png"
                               Visibility="{Binding IsSentInfoVisibility}" />
 
                 <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
@@ -315,7 +362,8 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Projected Displays" Visibility="{Binding InstructorVisibility}">
+            <RibbonGroup Header="Projected Displays"
+                         Visibility="{Binding InstructorVisibility}">
 
                 <RibbonButton Label="Send To Projector"
                               LargeImageSource="..\Images\Projector.png"
@@ -333,10 +381,13 @@
                                     LargeImageSource="..\Images\OpenNotebook.png">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Show Grid Displays"/>
+                            <Setter Property="Label"
+                                    Value="Show Grid Displays" />
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Hide Grid Displays"/>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Grid Displays" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -346,12 +397,17 @@
                 <RibbonToggleButton IsChecked="{Binding BroadcastInkToStudents}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Send Ink to Students Off"/>
-                            <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOff.png"/>
+                            <Setter Property="Label"
+                                    Value="Send Ink to Students Off" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/InkToStudentsOff.png" />
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Send Ink to Students On"/>
-                                    <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/InkToStudentsOn.png"/>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Send Ink to Students On" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/InkToStudentsOn.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -359,7 +415,7 @@
                 </RibbonToggleButton>
 
             </RibbonGroup>
-            
+
             <!--<RibbonGroup Header="History">
                 
                 <RibbonButton Label="Replay"
@@ -376,7 +432,7 @@
                               Command="{Binding RedoCommand}" />
                 
             </RibbonGroup>-->
-            
+
         </RibbonTab>
 
         <!--Insert Tab-->
@@ -430,12 +486,13 @@
                               CommandParameter="50dollars.png" />
 
             </RibbonGroup>
-            
+
         </RibbonTab>
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert" Visibility="{Binding InstructorVisibility}">
-            
+        <RibbonTab Header="Insert"
+                   Visibility="{Binding InstructorVisibility}">
+
             <RibbonGroup Header="Tools">
 
                 <RibbonToggleButton Label="Select"
@@ -453,7 +510,7 @@
 
             <RibbonGroup Header="Images">
 
-                <RibbonToggleButton Label="Webcam" 
+                <RibbonToggleButton Label="Webcam"
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
@@ -461,7 +518,7 @@
                 <RibbonButton Label="Insert Image"
                               LargeImageSource="..\Images\AddImage.png"
                               Command="{Binding InsertImageCommand}" />
-                
+
             </RibbonGroup>
 
             <RibbonGroup Header="Stamps">
@@ -495,7 +552,7 @@
                 <RibbonButton Label="Analyze Array"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding AnalyzeArrayCommand}" />
-                
+
             </RibbonGroup>
 
             <RibbonGroup Header="Shapes">
@@ -530,52 +587,55 @@
 
                 <RibbonControlGroup>
 
-                    <views:XComboBox ItemsSource="{Binding Path=Fonts}" 
+                    <views:XComboBox ItemsSource="{Binding Path=Fonts}"
                                      Command="{x:Static views:MyCommands.SetFontFamily}"
-                                     Width="130"/>
+                                     Width="130" />
 
-                    <views:XComboBox ItemsSource="{Binding Path=FontSizes}" 
+                    <views:XComboBox ItemsSource="{Binding Path=FontSizes}"
                                      Command="{x:Static views:MyCommands.SetFontSize}"
-                                     Width="45"/>
+                                     Width="45" />
                 </RibbonControlGroup>
 
                 <RibbonControlGroup>
 
-                    <RibbonToggleButton
-                            x:Name="BoldButton"
-                            SmallImageSource="..\Images\Bold16.png"
-                            Command="{x:Static EditingCommands.ToggleBold}">
+                    <RibbonToggleButton x:Name="BoldButton"
+                                        SmallImageSource="..\Images\Bold16.png"
+                                        Command="{x:Static EditingCommands.ToggleBold}">
                         <RibbonToggleButton.ControlSizeDefinition>
-                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            <RibbonControlSizeDefinition ImageSize="Small"
+                                                         IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>
                     </RibbonToggleButton>
 
-                    <RibbonToggleButton
-                            x:Name="ItalicButton"
-                            SmallImageSource="..\Images\Italic16.png"
-                            Command="{x:Static EditingCommands.ToggleItalic}">
+                    <RibbonToggleButton x:Name="ItalicButton"
+                                        SmallImageSource="..\Images\Italic16.png"
+                                        Command="{x:Static EditingCommands.ToggleItalic}">
                         <RibbonToggleButton.ControlSizeDefinition>
-                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            <RibbonControlSizeDefinition ImageSize="Small"
+                                                         IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>
                     </RibbonToggleButton>
 
-                    <RibbonToggleButton
-                            x:Name="UnderlineButton"
-                            SmallImageSource="..\Images\Underline16.png"
-                            Command="{x:Static EditingCommands.ToggleUnderline}">
+                    <RibbonToggleButton x:Name="UnderlineButton"
+                                        SmallImageSource="..\Images\Underline16.png"
+                                        Command="{x:Static EditingCommands.ToggleUnderline}">
                         <RibbonToggleButton.ControlSizeDefinition>
-                            <RibbonControlSizeDefinition ImageSize="Small" IsLabelVisible="False" />
+                            <RibbonControlSizeDefinition ImageSize="Small"
+                                                         IsLabelVisible="False" />
                         </RibbonToggleButton.ControlSizeDefinition>
                     </RibbonToggleButton>
 
                     <Label Content="Font Color" />
 
-                    <views:XComboBox ItemsSource="{Binding Path=FontColors}" 
+                    <views:XComboBox ItemsSource="{Binding Path=FontColors}"
                                      Command="{x:Static views:MyCommands.SetFontColor}"
                                      Width="45">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <Rectangle Margin="1" Height="15" Width="15" Fill="{Binding}" />
+                                <Rectangle Margin="1"
+                                           Height="15"
+                                           Width="15"
+                                           Fill="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </views:XComboBox>
@@ -587,33 +647,39 @@
         </RibbonTab>
 
         <!--Test Tab-->
-        <RibbonTab Header="Test Features" Visibility="{Binding Path=InstructorVisibility}">
-            
+        <RibbonTab Header="Test Features"
+                   Visibility="{Binding Path=InstructorVisibility}">
+
             <RibbonGroup Header="ClassList Commands">
 
                 <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Allow Students Pen"/>
-                            <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                            <Setter Property="Label"
+                                    Value="Allow Students Pen" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/LargeIcon.png" />
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Deny Students Pen"/>
-                                    <Setter Property="LargeImageSource" Value="pack://application:,,,/Images/LargeIcon.png"/>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Deny Students Pen" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
-                
+
                 <RibbonButton Label="Turn Off Webcam Sharing"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TurnOffWebcamSharing}" />
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Page">
-                
+
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding BroadcastPageCommand}" />
@@ -627,11 +693,12 @@
                               Command="{Binding RemoveAllSubmissionsCommand}" />
 
             </RibbonGroup>
-            
+
         </RibbonTab>
 
         <!--Editing Tab-->
-        <RibbonTab Header="General Editing" ContextualTabGroupHeader="Authoring Tools">
+        <RibbonTab Header="General Editing"
+                   ContextualTabGroupHeader="Authoring Tools">
 
             <RibbonGroup Header="Page">
 
@@ -643,33 +710,41 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
                                         <ContentPresenter Grid.Column="1"
-                                                          ContentTemplate="{TemplateBinding HeaderTemplate}" 
-                                                          Content="{TemplateBinding Header}" 
-                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
-                                                          ContentSource="Header" 
-                                                          Margin="{TemplateBinding Padding}" 
-                                                          RecognizesAccessKey="True" 
-                                                          VerticalAlignment="Center"/>
+                                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                          Content="{TemplateBinding Header}"
+                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                          ContentSource="Header"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          RecognizesAccessKey="True"
+                                                          VerticalAlignment="Center" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style>
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                        
-                        <Button Content="Landscape Page" Height="60" Width="200"
+
+                        <Button Content="Landscape Page"
+                                Height="60"
+                                Width="200"
                                 Command="{Binding AddNewPageCommand}"
                                 CommandParameter="Landscape" />
-                        
-                        <Button Content="Portrait Page" Height="60" Width="200"
+
+                        <Button Content="Portrait Page"
+                                Height="60"
+                                Width="200"
                                 Command="{Binding AddNewPageCommand}"
                                 CommandParameter="Portrait" />
-                        
-                        <Button Content="Portrait Proof Page" Height="60" Width="200"
+
+                        <Button Content="Portrait Proof Page"
+                                Height="60"
+                                Width="200"
                                 Command="{Binding AddNewProofPageCommand}"
                                 CommandParameter="Portrait" />
 
-                        <Button Content="Landscape Proof Page" Height="60" Width="200"
+                        <Button Content="Landscape Proof Page"
+                                Height="60"
+                                Width="200"
                                 Command="{Binding AddNewProofPageCommand}"
                                 CommandParameter="Landscape" />
 
@@ -698,7 +773,7 @@
 
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
-                              Command="{Binding MakePageLongerCommand}"/>
+                              Command="{Binding MakePageLongerCommand}" />
 
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
@@ -723,24 +798,29 @@
 
             <RibbonGroup Header="Insert">
 
-                <RibbonButton
-                        Label="Insert Image"
-                        LargeImageSource="..\Images\AddImage.png"
-                        Command="{Binding Path=InsertImageCommand}" />
+                <RibbonButton Label="Insert Image"
+                              LargeImageSource="..\Images\AddImage.png"
+                              Command="{Binding Path=InsertImageCommand}" />
 
-                <RibbonButton
-                        Label="Insert AggregationDataTable"
-                        LargeImageSource="..\Images\AddImage.png"
-                        Command="{Binding Path=InsertAggregationDataTableCommand}" />
+                <RibbonButton Label="Insert AggregationDataTable"
+                              LargeImageSource="..\Images\AddImage.png"
+                              Command="{Binding Path=InsertAggregationDataTableCommand}" />
 
                 <RibbonMenuButton Label="Stamps"
-                         LargeImageSource="..\Images\LargeIcon.png">
+                                  LargeImageSource="..\Images\LargeIcon.png">
                     <RibbonMenuButton.ItemContainerStyle>
                         <Style TargetType="RibbonGalleryItem">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
-                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                          Content="{TemplateBinding Header}"
+                                                          Grid.Column="1"
+                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                          ContentSource="Header"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          RecognizesAccessKey="True"
+                                                          VerticalAlignment="Center" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -748,7 +828,9 @@
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertBlankStampCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\AddPathStamp.png" />
@@ -756,7 +838,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertImageStampCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\PictureStamp.png" />
@@ -768,13 +852,20 @@
                 </RibbonMenuButton>
 
                 <RibbonMenuButton Label="Shapes"
-                         LargeImageSource="..\Images\LargeIcon.png">
+                                  LargeImageSource="..\Images\LargeIcon.png">
                     <RibbonMenuButton.ItemContainerStyle>
                         <Style TargetType="RibbonGalleryItem">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
-                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                          Content="{TemplateBinding Header}"
+                                                          Grid.Column="1"
+                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                          ContentSource="Header"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          RecognizesAccessKey="True"
+                                                          VerticalAlignment="Center" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -782,7 +873,9 @@
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertSquareShapeCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\AddSquare.png" />
@@ -790,7 +883,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertCircleShapeCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\AddCircle.png" />
@@ -798,7 +893,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertHorizontalLineShapeCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\HorizontalLineIcon.png" />
@@ -806,7 +903,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertVerticalLineShapeCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
@@ -814,7 +913,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertProtractorCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\ProtractorWhite.png" />
@@ -826,13 +927,20 @@
                 </RibbonMenuButton>
 
                 <RibbonMenuButton Label="Recognition Regions"
-                         LargeImageSource="..\Images\LargeIcon.png">
+                                  LargeImageSource="..\Images\LargeIcon.png">
                     <RibbonMenuButton.ItemContainerStyle>
                         <Style TargetType="RibbonGalleryItem">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
-                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.Column="1" ContentStringFormat="{TemplateBinding HeaderStringFormat}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                          Content="{TemplateBinding Header}"
+                                                          Grid.Column="1"
+                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                          ContentSource="Header"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          RecognizesAccessKey="True"
+                                                          VerticalAlignment="Center" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -840,7 +948,9 @@
                     </RibbonMenuButton.ItemContainerStyle>
                     <RibbonGallery ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertHandwritingRegionCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
@@ -848,7 +958,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertInkShapeRegionCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
@@ -856,7 +968,9 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertDataTableCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
@@ -864,14 +978,18 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertShadingRegionCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
                                 <Label>Shading Region</Label>
                             </StackPanel>
                         </Button>
-                        <Button Height="60" Width="200" HorizontalContentAlignment="Left"
+                        <Button Height="60"
+                                Width="200"
+                                HorizontalContentAlignment="Left"
                                 Command="{Binding Path=InsertGroupingRegionCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="..\Images\LargeIcon.png" />
@@ -886,7 +1004,8 @@
         </RibbonTab>
 
         <!--Extras Tab-->
-        <RibbonTab Header="Extras" ContextualTabGroupHeader="Extras">
+        <RibbonTab Header="Extras"
+                   ContextualTabGroupHeader="Extras">
 
             <RibbonGroup Header="Insert">
 
@@ -904,11 +1023,12 @@
                               Command="{Binding ReplayCommand}" />
 
             </RibbonGroup>
-            
+
         </RibbonTab>
 
         <!--Debug Tab-->
-        <RibbonTab Header="General Debug" ContextualTabGroupHeader="Debugging">
+        <RibbonTab Header="General Debug"
+                   ContextualTabGroupHeader="Debugging">
 
             <RibbonGroup Header="Interpret">
 
@@ -924,7 +1044,7 @@
                                     Command="{Binding UpdateObjectPropertiesCommand}" />
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Notebook">
 
                 <RibbonButton Label="Convert to XPS"
@@ -955,18 +1075,16 @@
         </RibbonTab>
 
         <Ribbon.HelpPaneContent>
-            <ToggleButton Content="^" 
-                          VerticalContentAlignment="Center" 
-                          Height="22" Width="40" 
-                          Background="CornflowerBlue" 
-                          IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" 
-                          Checked="MinimizeButton_Checked" 
-                          Unchecked="MinimizeButton_Unchecked"/>
+            <ToggleButton Content="^"
+                          VerticalContentAlignment="Center"
+                          Height="22"
+                          Width="40"
+                          Background="CornflowerBlue"
+                          IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}"
+                          Checked="MinimizeButton_Checked"
+                          Unchecked="MinimizeButton_Unchecked" />
         </Ribbon.HelpPaneContent>
 
-       
-
     </Ribbon>
-    
 
 </catel:UserControl>

@@ -10,23 +10,6 @@
         <Views:CLPPageView />
     </DataTemplate>
 
-    <!--Visual Datatemplates-->
-
-    <Style TargetType="{x:Type ListBox}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListBox">
-                    <ScrollViewer CanContentScroll="False">
-                        <ScrollViewer.Resources>
-                            <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                        </ScrollViewer.Resources>
-                        <ItemsPresenter/>
-                    </ScrollViewer>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="StatusBarText" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Segoe" />
@@ -35,16 +18,4 @@
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     </Style>
     
-    <!--Standar Colors-->
-
-    <!--<Color x:Key="GrayBackgroundColor">#F3F3F3</Color>
-    <Color x:Key="GrayEdgeColor">#D4D4D4</Color>
-    <Color x:Key="GrayBorderColor">#9FA6AD</Color>
-    <Color x:Key="MainColor">#2F64B9</Color>-->
-
-    <SolidColorBrush x:Key="MainColor" Color="#2F64B9" />
-    <SolidColorBrush x:Key="GrayBackgroundColor" Color="#F3F3F3" />
-    <SolidColorBrush x:Key="GrayEdgeColor" Color="#D4D4D4" />
-    <SolidColorBrush x:Key="GrayBorderColor" Color="#9FA6AD" />
-
 </ResourceDictionary>

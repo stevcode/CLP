@@ -153,7 +153,6 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (App.CurrentUserMode)
             {
                 case App.UserMode.Server:
-                    SelectedWorkspace = new ServerWorkspaceViewModel();
                     break;
                 case App.UserMode.Instructor:
                     SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
