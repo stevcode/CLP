@@ -85,6 +85,15 @@ namespace Classroom_Learning_Partner.ViewModels
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
 
         [ViewModelToModel("Page")]
+        public double SliderProgressCurrent
+        {
+            get { return GetValue<double>(SliderProgressCurrentProperty); }
+            set { SetValue(SliderProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData SliderProgressCurrentProperty = RegisterProperty("SliderProgressCurrent", typeof(double));
+
+        [ViewModelToModel("Page")]
         public PageTypeEnum PageType
         {
             get { return GetValue<PageTypeEnum>(PageTypeProperty); }

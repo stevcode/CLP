@@ -170,7 +170,14 @@ namespace CLP.Models
 
         public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double),0);
         
-        ////////////////////////////////
+        public double SliderProgressCurrent
+        {
+            get { return GetValue<double>(SliderProgressCurrentProperty); }
+            set { SetValue(SliderProgressCurrentProperty, value); }
+        }
+
+        public static volatile PropertyData SliderProgressCurrentProperty = RegisterProperty("SliderProgressCurrent", typeof(double),0);
+
         public string ProofProgressVisible
         {
             get { return GetValue<string>(ProofProgressVisibleProperty); }
@@ -186,8 +193,6 @@ namespace CLP.Models
         }
 
         public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string), "Hidden");
-
-        /////////////////////////////////
 
         /// <summary>
         /// Aspect Ratio of page = PageWidth / PageHeight.
@@ -728,6 +733,7 @@ namespace CLP.Models
                     
                     ProofPresent = "Hidden";
                     ProofProgressCurrent = 0;
+                    SliderProgressCurrent = 0;
                     return;
                 }
                 else
@@ -737,7 +743,8 @@ namespace CLP.Models
 
                         (pastItemsNumber * PageWidth * 0.7175) /
                         totalItemsNumber;
-
+                    SliderProgressCurrent = (pastItemsNumber * 100) /
+                        totalItemsNumber;
                     
                 }
 
