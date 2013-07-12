@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -11,6 +12,7 @@ using Catel.IoC;
 using Catel.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner
 {
@@ -48,6 +50,12 @@ namespace Classroom_Learning_Partner
             var views = viewManager.GetViewsOfViewModel(viewModel);
 
             return views[0];
+        }
+
+        public IViewModel[] GetViewModelsFromModel(IModel model)
+        {
+            var viewModelManger = ServiceLocator.Default.ResolveType<IViewModelManager>();
+            return viewModelManger.GetViewModelsOfModel(model);
         }
 
         #region Notebook
