@@ -12,9 +12,12 @@ namespace CLP.Models
     [Serializable]
     class DomainInterpretationTagType : ModelBase, TagType
     {
+
+        public static DomainInterpretationTagType Instance = new DomainInterpretationTagType();
+
         #region Constructors
 
-        public DomainInterpretationTagType()
+        private DomainInterpretationTagType()
         {
             Name = "DomainInterpretation";
             InElevatedMenu = false;

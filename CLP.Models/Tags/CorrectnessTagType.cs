@@ -8,9 +8,12 @@ namespace CLP.Models
     [Serializable]
     public class CorrectnessTagType : ModelBase, TagType
     {
+
+        public static CorrectnessTagType Instance = new CorrectnessTagType();
+
         #region Constructors
 
-        public CorrectnessTagType()
+        private CorrectnessTagType()
         {
             Name = "Correctness";
             InElevatedMenu = true;

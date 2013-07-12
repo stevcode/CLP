@@ -10,7 +10,9 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public ArrayHorizontalDivisionsTagType()
+        public static ArrayHorizontalDivisionsTagType Instance = new ArrayHorizontalDivisionsTagType();
+
+        private ArrayHorizontalDivisionsTagType()
         {
             Name = "Array Horizontal Divisions";
             InElevatedMenu = false;

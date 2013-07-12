@@ -98,7 +98,7 @@ namespace Classroom_Learning_Partner.Resources
             {
                 foreach(Tag t in page.PageTags)
                 {
-                    if(t.TagType.Name =="Correctness")
+                    if(t.TagType.Name == CorrectnessTagType.Instance.Name)
                     {
                         if(t.Value.Count > 0)
                         {
@@ -127,7 +127,7 @@ namespace Classroom_Learning_Partner.Resources
             {
                 foreach(Tag t in page.PageTags)
                 {
-                    if(t.TagType.Name =="Starred")
+                    if(t.TagType.Name == StarredTagType.Instance.Name)
                     {
                         if(t.Value.Count > 0)
                         {

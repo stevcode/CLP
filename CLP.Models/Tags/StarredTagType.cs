@@ -12,9 +12,12 @@ namespace CLP.Models
     [Serializable]
     public class StarredTagType : ModelBase, TagType
     {
+
+        public static StarredTagType Instance = new StarredTagType();
+
         #region Constructors
 
-        public StarredTagType()
+        private StarredTagType()
         {
             Name = "Starred";
             InElevatedMenu = true;

@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach(Tag tag in Page.PageTags)
                 {
 
-                    if(tag.TagType.Name == "Correctness")
+                    if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                     {
 
                         if(tag.Value.Count > 0)
@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                         }
                     }
-                    if(tag.TagType.Name == "Starred")
+                    if(tag.TagType.Name == StarredTagType.Instance.Name)
                     {
                         if(tag.Value.Count > 0)
                         {
@@ -310,7 +310,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType.Name == "Correctness")
+                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                         {
                      
                             tag.Value.Clear();
@@ -349,7 +349,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     System.Console.WriteLine("[age tags:" + Page.PageTags.Count);
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType.Name == "Correctness")
+                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                         {
                             tag.Value.Clear();
                             tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
@@ -382,7 +382,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     System.Console.WriteLine("in unknown:" + Page.PageTags.Count);
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType.Name == "Correctness")
+                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                         {
                             tag.Value.Clear();
                             tag.Value.Add(new TagOptionValue("Unknown", ""));
@@ -408,7 +408,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Tag tag in Page.PageTags)
                     {
-                        if(tag.TagType.Name =="Starred")
+                        if(tag.TagType.Name == StarredTagType.Instance.Name)
                         {
                             System.Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value); 
 

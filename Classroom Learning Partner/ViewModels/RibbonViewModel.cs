@@ -2197,7 +2197,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ProductRelation oldRelation = null;
             foreach(Tag tag in tags)
             {
-                if(tag.TagType.Name == "Page Definition")
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
                 {
                     oldTag = tag;
                     oldRelation = (ProductRelation) oldTag.Value[0].Value;
@@ -2225,7 +2225,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     tags.Remove(oldTag);
                 }
 
-                Tag newTag = new Tag("author", new PageDefinitionTagType());
+                Tag newTag = new Tag("author", PageDefinitionTagType.Instance);
                 newTag.Value.Add(new TagOptionValue(viewModel.Model));
 
                 tags.Add(newTag);
@@ -2234,7 +2234,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // Logs the currently tagged relation. TODO: Remove after testing
             foreach(Tag tag in tags)
             {
-                if(tag.TagType.Name == "Page Definition")
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
                 {
                     Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
                 }
@@ -2260,7 +2260,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ProductRelation relation = null;
             foreach(Tag tag in tags)
             {
-                if(tag.TagType.Name == "Page Definition")
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
                 {
                     relation = (ProductRelation)tag.Value[0].Value;
                     break;
@@ -2311,15 +2311,18 @@ namespace Classroom_Learning_Partner.ViewModels
             // First, clear out any old ArrayOrientationTagTypes
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == "Array Orientation" || tag.TagType.Name == "Array Strategy" || tag.TagType.Name == "Array Division Correctness"
-                    || tag.TagType.Name == "Array Vertical Divisions" || tag.TagType.Name == "Array Horizontal Divisions")
+                if(tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayDivisionCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayVerticalDivisionsTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayHorizontalDivisionsTagType.Instance.Name)
                 {
                     tags.Remove(tag);
                 }
             }
 
             // Apply an orientation tag
-            Tag orientationTag = new Tag("generated", new ArrayOrientationTagType());
+            Tag orientationTag = new Tag("generated", ArrayOrientationTagType.Instance);
             if(arrayWidth == factor1 && arrayHeight == factor2)
             {
                 orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
@@ -2336,7 +2339,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
 
             // Apply a strategy tag
-            Tag strategyTag = new Tag("generated", new ArrayStrategyTagType());
+            Tag strategyTag = new Tag("generated", ArrayStrategyTagType.Instance);
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -2417,11 +2420,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
 
             // Add tags for the number of horizontal and vertical divisions
-            Tag horizDivsTag = new Tag("generated", new ArrayHorizontalDivisionsTagType());
+            Tag horizDivsTag = new Tag("generated", ArrayHorizontalDivisionsTagType.Instance);
             horizDivsTag.Value.Add(new TagOptionValue(array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count));
             tags.Add(horizDivsTag);
 
-            Tag vertDivsTag = new Tag("generated", new ArrayVerticalDivisionsTagType());
+            Tag vertDivsTag = new Tag("generated", ArrayVerticalDivisionsTagType.Instance);
             vertDivsTag.Value.Add(new TagOptionValue(array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count));
             tags.Add(vertDivsTag);
 
@@ -2489,7 +2492,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Tag CheckArrayDivisionCorrectness(CLPArray array)
         {
-            Tag tag = new Tag("generated", new ArrayDivisionCorrectnessTagType());
+            Tag tag = new Tag("generated", ArrayDivisionCorrectnessTagType.Instance);
 
             bool horizUnfinished = false;
             bool vertUnfinished = false;

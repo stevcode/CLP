@@ -12,9 +12,12 @@ namespace CLP.Models
     [Serializable]
     public class PageDefinitionTagType : ModelBase, TagType
     {
+
+        public static PageDefinitionTagType Instance = new PageDefinitionTagType();
+
         #region Constructors
 
-        public PageDefinitionTagType()
+        private PageDefinitionTagType()
         {
             Name = "Page Definition";
             InElevatedMenu = false;

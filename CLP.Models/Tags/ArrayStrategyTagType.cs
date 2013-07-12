@@ -8,9 +8,12 @@ namespace CLP.Models
     [Serializable]
     public class ArrayStrategyTagType :  ModelBase, TagType
     {
+
+        public static ArrayStrategyTagType Instance = new ArrayStrategyTagType();
+
         #region Constructors
 
-        public ArrayStrategyTagType()
+        private ArrayStrategyTagType()
         {
             Name = "Array Strategy";
             InElevatedMenu = false;

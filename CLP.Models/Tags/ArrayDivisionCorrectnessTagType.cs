@@ -8,9 +8,12 @@ namespace CLP.Models
     [Serializable]
     public class ArrayDivisionCorrectnessTagType :  ModelBase, TagType
     {
+
+        public static ArrayDivisionCorrectnessTagType Instance = new ArrayDivisionCorrectnessTagType();
+
         #region Constructors
 
-        public ArrayDivisionCorrectnessTagType()
+        private ArrayDivisionCorrectnessTagType()
         {
             Name = "Array Division Correctness";
             InElevatedMenu = false;

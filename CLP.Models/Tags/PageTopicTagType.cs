@@ -12,9 +12,12 @@ namespace CLP.Models
     [Serializable]
     class PageTopicTagType : ModelBase, TagType
     {
+
+        public static PageTopicTagType Instance = new PageTopicTagType();
+
         #region Constructors
 
-        public PageTopicTagType()
+        private PageTopicTagType()
         {
             Name = "PageTopic";
             InElevatedMenu = false;

@@ -8,9 +8,12 @@ namespace CLP.Models
     [Serializable]
     public class ArrayOrientationTagType :  ModelBase, TagType
     {
+
+        public static ArrayOrientationTagType Instance = new ArrayOrientationTagType();
+
         #region Constructors
 
-        public ArrayOrientationTagType()
+        private ArrayOrientationTagType()
         {
             Name = "Array Orientation";
             InElevatedMenu = false;

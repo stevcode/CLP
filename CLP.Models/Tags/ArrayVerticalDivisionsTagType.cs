@@ -10,7 +10,9 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public ArrayVerticalDivisionsTagType()
+        public static ArrayVerticalDivisionsTagType Instance = new ArrayVerticalDivisionsTagType();
+
+        private ArrayVerticalDivisionsTagType()
         {
             Name = "Array Vertical Divisions";
             InElevatedMenu = false;
