@@ -8,9 +8,13 @@ namespace CLP.Models
     [Serializable]
     public class Tag : ModelBase
     {
+
+        public enum AccessLevels { Teacher, Student, Researcher };
+        public enum Origins { Author, Teacher, Generated }
+
            #region Constructors
 
-             public Tag(string origin, TagType tagType, ObservableCollection<TagOptionValue> val)
+             public Tag(Origins origin, TagType tagType, ObservableCollection<TagOptionValue> val)
              {
                  Origin = origin;
                  TagType = tagType;
@@ -18,7 +22,7 @@ namespace CLP.Models
 
              }
 
-             public Tag(string origin, TagType tagType)
+             public Tag(Origins origin, TagType tagType)
              {
                  Origin = origin;
                  TagType = tagType;
@@ -41,9 +45,9 @@ namespace CLP.Models
              /// <summary>
              /// The origin of the tag.
              /// </summary>
-             public string Origin
+             public Origins Origin
              {
-                 get { return GetValue<string>(OriginProperty); }
+                 get { return GetValue<Origins>(OriginProperty); }
                  set { SetValue(OriginProperty, value); }
              }
 

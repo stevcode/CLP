@@ -2225,7 +2225,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     tags.Remove(oldTag);
                 }
 
-                Tag newTag = new Tag("author", PageDefinitionTagType.Instance);
+                Tag newTag = new Tag(Tag.Origins.Author, PageDefinitionTagType.Instance);
                 newTag.Value.Add(new TagOptionValue(viewModel.Model));
 
                 tags.Add(newTag);
@@ -2322,7 +2322,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             // Apply an orientation tag
-            Tag orientationTag = new Tag("generated", ArrayOrientationTagType.Instance);
+            Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
             if(arrayWidth == factor1 && arrayHeight == factor2)
             {
                 orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
@@ -2339,7 +2339,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
 
             // Apply a strategy tag
-            Tag strategyTag = new Tag("generated", ArrayStrategyTagType.Instance);
+            Tag strategyTag = new Tag(Tag.Origins.Generated, ArrayStrategyTagType.Instance);
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -2420,11 +2420,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
 
             // Add tags for the number of horizontal and vertical divisions
-            Tag horizDivsTag = new Tag("generated", ArrayHorizontalDivisionsTagType.Instance);
+            Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
             horizDivsTag.Value.Add(new TagOptionValue(array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count));
             tags.Add(horizDivsTag);
 
-            Tag vertDivsTag = new Tag("generated", ArrayVerticalDivisionsTagType.Instance);
+            Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
             vertDivsTag.Value.Add(new TagOptionValue(array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count));
             tags.Add(vertDivsTag);
 
@@ -2492,7 +2492,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Tag CheckArrayDivisionCorrectness(CLPArray array)
         {
-            Tag tag = new Tag("generated", ArrayDivisionCorrectnessTagType.Instance);
+            Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
 
             bool horizUnfinished = false;
             bool vertUnfinished = false;

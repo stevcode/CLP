@@ -21,9 +21,9 @@ namespace CLP.Models
         {
             Name = "DomainInterpretation";
             InElevatedMenu = false;
-            AccessLevels = new ObservableCollection<string>();
-            AccessLevels.Add("Teacher");
-            AccessLevels.Add("Student");
+            AccessLevels = new ObservableCollection<Tag.AccessLevels>();
+            AccessLevels.Add(Tag.AccessLevels.Teacher);
+            AccessLevels.Add(Tag.AccessLevels.Student);
 
             ExclusiveValue = false;
             ValueOptions = new ObservableCollection<TagOptionValue>(); 
@@ -66,13 +66,13 @@ namespace CLP.Models
 
         public static readonly PropertyData InElevatedMenuProperty = RegisterProperty("InElevatedMenu", typeof(bool), false);
 
-        public ObservableCollection<string> AccessLevels
+        public ObservableCollection<Tag.AccessLevels> AccessLevels
         {
-            get { return GetValue<ObservableCollection<string>>(AccessLevelsProperty); }
+            get { return GetValue<ObservableCollection<Tag.AccessLevels>>(AccessLevelsProperty); }
             set { SetValue(AccessLevelsProperty, value); }
         }
 
-        public static readonly PropertyData AccessLevelsProperty = RegisterProperty("AccessLevels", typeof(ObservableCollection<string>), new ObservableCollection<string>());
+        public static readonly PropertyData AccessLevelsProperty = RegisterProperty("AccessLevels", typeof(ObservableCollection<Tag.AccessLevels>), new ObservableCollection<Tag.AccessLevels>());
 
         public ObservableCollection<TagOptionValue> ValueOptions
         {
