@@ -28,5 +28,13 @@ namespace Classroom_Learning_Partner.Views
             
             base.OnViewModelChanged();
         }
+
+        private void Slider_ValueChanged_1(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(ViewModel!=null)
+            {                
+                (ViewModel as CLPProofPageViewModel).Slider_ValueChanged_1b(sender, e);
+            }
+        }
     }
 }

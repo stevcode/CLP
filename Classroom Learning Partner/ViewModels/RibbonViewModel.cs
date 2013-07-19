@@ -1777,6 +1777,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newpage.PageObjects = proofpage.PageObjects;
                 newpage.InkStrokes = proofpage.InkStrokes;
+                foreach(ICLPPageObject po in newpage.PageObjects)
+                {
+                    po.ParentPage = newpage;
+                }
 
                 page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
                 CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
@@ -1797,7 +1801,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newproofpage.PageObjects = page.PageObjects;
                 newproofpage.InkStrokes =  page.InkStrokes;
-
+                foreach(ICLPPageObject po in newproofpage.PageObjects)
+                {
+                    po.ParentPage = newproofpage;
+                }
                 page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
                 CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
                             nb.InsertPageAt(index, newproofpage);
