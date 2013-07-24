@@ -2,24 +2,30 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    Background="CadetBlue">
     <UserControl.Resources>
         <conv:UserNameGroupTrimConverter x:Key="UserNameGroupTrimConverter" />
     </UserControl.Resources>
-    
+
     <Grid x:Name="grid">
-        <ListBox ItemsSource="{Binding Path=UserNames}" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <ListBox ItemsSource="{Binding Path=UserNames}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding DataContext.LogInCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Views:UserLoginWorkspaceView}}}" CommandParameter="{Binding}" 
-                            Margin="10" Height="125" Width="125" Content="{Binding Converter={StaticResource UserNameGroupTrimConverter}}"/>
+                    <Button Command="{Binding DataContext.LogInCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:UserLoginWorkspaceView}}}"
+                            CommandParameter="{Binding}"
+                            Margin="10"
+                            Height="125"
+                            Width="125"
+                            Content="{Binding Converter={StaticResource UserNameGroupTrimConverter}}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel  Margin="20" Width="{Binding ElementName=grid,Path=ActualWidth}" />
+                    <WrapPanel Margin="20"
+                               Width="{Binding ElementName=grid,Path=ActualWidth}" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>

@@ -238,7 +238,6 @@
     <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\ServerWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
@@ -349,21 +348,23 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Workspaces\LeftHandedNotebookWorkspaceView.xaml.cs">
-      <DependentUpon>LeftHandedNotebookWorkspaceView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
       <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Workspaces\ServerWorkspaceView.xaml.cs">
-      <DependentUpon>ServerWorkspaceView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\CLPBrushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\CLPFlatTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CLPProofPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -532,19 +533,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Workspaces\LeftHandedNotebookWorkspaceView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\NotebookWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\ServerWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

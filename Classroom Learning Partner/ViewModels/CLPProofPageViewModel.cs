@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -14,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
    class CLPProofPageViewModel : CLPPageViewModel
    {
        public static volatile object obj = new object();
-
+       
        #region Constructors
 
        public CLPProofPageViewModel(CLPPage page)
@@ -43,9 +44,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ProofProgressVisible = "Hidden";
             ProofPresent = "Hidden";
        }
-
-     
-
        #endregion //Constructors
 
        #region Properties
@@ -80,6 +78,38 @@ namespace Classroom_Learning_Partner.ViewModels
        public Command StopProofCommand { get; private set; }
        public Command ClearProofCommand { get; private set; }
 
+       public void Slider_ValueChanged_1b(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+       {
+               CLPProofHistory proofPageHistory1 = (CLPProofHistory)Page.PageHistory;
+               if(proofPageHistory1.IsPaused == false){
+                   return; 
+               }
+               Stack<CLPHistoryItem> past = proofPageHistory1.MetaPast;
+               Stack<CLPHistoryItem> future = proofPageHistory1.Future;
+               double pastCount = past.Count;
+               double futureCount = future.Count;
+               double oldpos = pastCount;
+               double newpos = Math.Round((e.NewValue * (pastCount + futureCount)) / 100);
+               int diff = Convert.ToInt32(newpos - oldpos);
+               int diffabs = Math.Abs(diff);
+
+               if(diffabs > 0)
+               {
+                   if(diff < 0)
+                   {
+                       PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, diffabs);
+                   }
+                   else if(diff > 0)
+                   {
+                       PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, diffabs);
+                   }
+                   else
+                   {
+                       return;
+                   }
+               }   
+       }
+       
        private void OnClearProofCommandExecute()
        {
            if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",

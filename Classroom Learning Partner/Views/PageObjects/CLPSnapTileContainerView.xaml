@@ -80,11 +80,17 @@
                                Width="40" Height="40"
                                Cursor="ScrollAll">
                         <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="DragStarted">
+                                <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                                      PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
                             <i:EventTrigger EventName="DragDelta">
-                                <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                                <catel:EventToCommand Command="{Binding DragPageObjectCommand}" 
+                                                      PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                             <i:EventTrigger EventName="DragCompleted">
-                                <catel:EventToCommand Command="{Binding SnapCommand}"/>
+                                <catel:EventToCommand Command="{Binding SnapCommand}"
+                                                      PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <Thumb.Template>

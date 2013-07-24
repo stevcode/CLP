@@ -16,7 +16,8 @@ namespace CLP.Models
         MoveObject,
         AddArrayLine,
         RemoveArrayLine,
-        Aggregation
+        Aggregation,
+        TileHeightChanged
     }
 
     /// <summary>

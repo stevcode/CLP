@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command CopyStampCommand { get; private set; }
 
         private void OnCopyStampCommandExecute()
-        {
+        { 
             StampHandleColor = new SolidColorBrush(Colors.Green);
             if (HasParts())
             {
@@ -164,7 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
                    MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
                    return null;
                }, null);
-            }
+            }  
         }
 
         double _originalX;
@@ -172,6 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CopyStamp(int stampIndex)
         {
+            PageObject.ParentPage.PageHistory.Freeze();
             IsAdornerVisible = false;
             IsMouseOverShowEnabled = false;            
 
@@ -231,6 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
+            PageObject.ParentPage.PageHistory.Unfreeze();
         }
 
         /// <summary>
@@ -288,13 +290,17 @@ namespace Classroom_Learning_Partner.ViewModels
                         foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                         {
                             PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(po));
+                            PageObject.ParentPage.PageHistory.Freeze();
                             CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
+                            PageObject.ParentPage.PageHistory.Unfreeze();
                         }
                     }
                 }
 
                 PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject));
+                PageObject.ParentPage.PageHistory.Freeze();
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                PageObject.ParentPage.PageHistory.Unfreeze();
             }
         }
 
