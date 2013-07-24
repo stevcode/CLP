@@ -34,7 +34,7 @@ namespace CLP.Models
         }
 
         // TODO: Steve - is volatile necessary?
-        public static volatile PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory), () => new CLPProofHistory());
+        public static volatile PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory), new CLPProofHistory());
         
         #endregion
 

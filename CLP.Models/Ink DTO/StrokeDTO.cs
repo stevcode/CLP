@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -115,6 +117,28 @@ namespace CLP.Models
 
                 return null;
             }
+        }
+
+        public static ObservableCollection<StrokeDTO> SaveInkStrokes(StrokeCollection strokes)
+        {
+            var serializedStrokes = new ObservableCollection<StrokeDTO>();
+            foreach(var stroke in strokes)
+            {
+                serializedStrokes.Add(new StrokeDTO(stroke));
+            }
+
+            return serializedStrokes;
+        }
+
+        public static StrokeCollection LoadInkStrokes(ObservableCollection<StrokeDTO> serializedStrokes)
+        {
+            var strokes = new StrokeCollection();
+            foreach(var strokeDTO in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any()))
+            {
+                strokes.Add(strokeDTO.ToStroke());
+            }
+
+            return strokes;
         }
 
         #endregion //Methods

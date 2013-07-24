@@ -37,7 +37,7 @@ namespace CLP.Models
         protected Person(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        #endregion
+        #endregion //Constructors
 
         #region Properties
 

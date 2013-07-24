@@ -65,6 +65,7 @@ namespace CLP.Models
         public static readonly PropertyData GroupMembersProperty = RegisterProperty("GroupMembers", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         #endregion //Properties
+
         #region Methods
         public int CompareTo(object obj)
         {
@@ -80,7 +81,7 @@ namespace CLP.Models
             return g1.GroupName.CompareTo(g2.GroupName);
         }
 
-#endregion
+        #endregion
     }
 
 }

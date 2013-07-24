@@ -19,13 +19,6 @@ namespace CLP.Models
         Custom
     }
 
-    public enum GroupSubmitType
-    {
-        Deny,
-        Allow,
-        Force
-    }
-
     public enum PageTypeEnum
     {
         CLPPage,
@@ -75,7 +68,7 @@ namespace CLP.Models
 
         #endregion
 
-        #region Constructor & destructor
+        #region Constructor
 
         /// <summary>
         /// Initializes a new object from scratch.
@@ -107,7 +100,7 @@ namespace CLP.Models
         {
         }
 
-        #endregion
+        #endregion //Constructor
 
         #region Properties
 
@@ -304,7 +297,7 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory), () => new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory), new CLPHistory());
 
         /// <summary>
         /// Whether or not the page is a submissions from a student.

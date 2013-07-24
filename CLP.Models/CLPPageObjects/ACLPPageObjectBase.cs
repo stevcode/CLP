@@ -11,12 +11,12 @@ namespace CLP.Models
     [Serializable]
     abstract public class CLPPageObjectBase : ModelBase, ICLPPageObject
     {
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPPageObjectBase(CLPPage page)
+        protected CLPPageObjectBase(CLPPage page)
         {
             ParentPage = page;
             ParentPageID = page.UniqueID;
@@ -33,7 +33,7 @@ namespace CLP.Models
         protected CLPPageObjectBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        #endregion
+        #endregion //Constructors
 
         #region Properties
 
