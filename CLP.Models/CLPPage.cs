@@ -81,8 +81,8 @@ namespace CLP.Models
             PageAspectRatio = PageWidth / PageHeight;
 
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
-            Tag correctnessTag  = new Tag("Teacher", new CorrectnessTagType());
-            Tag starredTag  = new Tag("Teacher", new StarredTagType());
+            Tag correctnessTag  = new Tag(Tag.Origins.Teacher, CorrectnessTagType.Instance);
+            Tag starredTag  = new Tag(Tag.Origins.Teacher, StarredTagType.Instance);
             correctnessTag.AddTagOptionValue(new TagOptionValue("Unknown",""));
             starredTag.AddTagOptionValue(new TagOptionValue("Unstarred","..\\Images\\Unstarred.png"));
             PageTags.Add(correctnessTag);

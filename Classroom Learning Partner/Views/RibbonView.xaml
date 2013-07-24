@@ -544,15 +544,7 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TRUE" />
-
-                <RibbonButton Label="Page Definition"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding EditPageDefinitionCommand}" />
-
-                <RibbonButton Label="Analyze Array"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding AnalyzeArrayCommand}" />
-
+                
             </RibbonGroup>
 
             <RibbonGroup Header="Shapes">
@@ -641,6 +633,18 @@
                     </views:XComboBox>
 
                 </RibbonControlGroup>
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Page Analysis">
+
+                <RibbonButton Label="Page Definition"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding EditPageDefinitionCommand}" />
+
+                <RibbonButton Label="Analyze Array"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding AnalyzeArrayCommand}" />
 
             </RibbonGroup>
 

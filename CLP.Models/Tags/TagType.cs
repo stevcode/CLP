@@ -13,7 +13,7 @@ namespace CLP.Models
     {
         String Name { get; set; }
         bool InElevatedMenu { get; set; }
-        ObservableCollection<string> AccessLevels { get; set; }
+        ObservableCollection<Tag.AccessLevels> AccessLevels { get; set; }
         bool ExclusiveValue { get; set; }
         ObservableCollection<TagOptionValue> ValueOptions { get; set; }
     }
