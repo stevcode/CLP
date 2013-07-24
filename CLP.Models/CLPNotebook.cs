@@ -14,7 +14,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPNotebook : SavableModelBase<CLPNotebook>
     {
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new object from scratch.
@@ -36,11 +36,9 @@ namespace CLP.Models
         {
         }
 
-        #endregion
+        #endregion //Constructors
 
         #region Properties
-
-        
 
         public String UserName
         {
@@ -53,24 +51,24 @@ namespace CLP.Models
         /// <summary>
         /// Gets the list of CLPPages in the notebook.
         /// </summary>
-        public ObservableCollection<CLPPage> Pages
+        public ObservableCollection<ICLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
-            private set { SetValue(PagesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
 
         /// <summary>
         /// Gets a dictionary that maps the UniqueID of a page to a list of the submissions for that page.
         /// </summary>
-        public Dictionary<string, ObservableCollection<CLPPage>> Submissions
+        public Dictionary<string, ObservableCollection<ICLPPage>> Submissions
         {
-            get { return GetValue<Dictionary<string, ObservableCollection<CLPPage>>>(SubmissionsProperty); }
-            private set { SetValue(SubmissionsProperty, value); }
+            get { return GetValue<Dictionary<string, ObservableCollection<ICLPPage>>>(SubmissionsProperty); }
+            set { SetValue(SubmissionsProperty, value); }
         }
 
-        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<CLPPage>>), () => new Dictionary<string, ObservableCollection<CLPPage>>());
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<ICLPPage>>), () => new Dictionary<string, ObservableCollection<ICLPPage>>());
 
         /// <summary>
         /// Name of notebook.
@@ -109,51 +107,29 @@ namespace CLP.Models
 
         #region Methods
 
-        public void GeneratePageIndexes()
-        {
-            int pageIndex = 1;
-            foreach(var page in Pages)
-            {
-                page.PageIndex = pageIndex;
-                pageIndex++;
-            }
-        }
-
         public void AddPage(CLPPage page)
         {
             page.ParentNotebookID = UniqueID;
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
-            GeneratePageIndexes();
-            
         }
 
         public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
             GenerateSubmissionViews(page.UniqueID);
-            GeneratePageIndexes();
-            
-
         }
 
         private void GenerateSubmissionViews(string pageUniqueID)
         {
             if(!Submissions.ContainsKey(pageUniqueID))
             {
-                Submissions.Add(pageUniqueID, new ObservableCollection<CLPPage>());
+                Submissions.Add(pageUniqueID, new ObservableCollection<ICLPPage>());
             }
         }
 
         public void RemovePageAt(int index)
         {
-            CLPPage sPage = null;
-            try{
-                sPage = Pages[index]; 
-            }catch(Exception e){
-                Console.WriteLine(e.StackTrace);
-            }
-
             if(Pages.Count > index && index >= 0)
             {
                 Submissions.Remove(Pages[index].UniqueID);
@@ -163,11 +139,9 @@ namespace CLP.Models
             {
                 AddPage(new CLPPage());
             }
-            GeneratePageIndexes();
-           
         }
 
-        public CLPPage GetPageAt(int pageIndex, int submissionIndex)
+        public ICLPPage GetPageAt(int pageIndex, int submissionIndex)
         {
             if(submissionIndex < -1) return null;
             if(submissionIndex == -1)
