@@ -44,9 +44,9 @@ namespace Classroom_Learning_Partner.Resources
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if(value is CLPProofPage)
+            if(value is CLPAnimationPage)
             {
-                return "CLPProofPage";
+                return "CLPAnimationPage";
             }
             else
             {

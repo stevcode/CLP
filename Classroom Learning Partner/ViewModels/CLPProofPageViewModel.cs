@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
        
        #region Constructors
 
-       public CLPProofPageViewModel(CLPPage page)
+       public CLPProofPageViewModel(CLPAnimationPage page)
            : base(page)
        {
             PlayProofCommand = new Command(OnPlayProofCommandExecute);
@@ -655,7 +655,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Console.WriteLine("play proof");
                 try
                 {
-                    CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                    CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                     proofPageHistory1.isPaused = false; 
                     proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play; 
@@ -725,7 +725,7 @@ namespace Classroom_Learning_Partner.ViewModels
                Console.WriteLine("rewind proof");
                try
                {
-                   CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                    CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                    proofPageHistory1.isPaused = false;
                    proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Rewind;
@@ -795,7 +795,7 @@ namespace Classroom_Learning_Partner.ViewModels
                Console.WriteLine("Forward proof");
                try
                {
-                   CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                    CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                    proofPageHistory1.isPaused = false;
                    proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Forward; 
@@ -864,7 +864,7 @@ namespace Classroom_Learning_Partner.ViewModels
                Console.WriteLine("Replay");
                try
                {
-                   CLPProofPage page = (CLPProofPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                    CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
                    proofPageHistory1.isPaused = false;
                    proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play;

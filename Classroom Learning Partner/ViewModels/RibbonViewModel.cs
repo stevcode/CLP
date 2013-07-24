@@ -1679,7 +1679,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Steve - clpserviceagent
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             index++;
-            CLPPage page = new CLPProofPage();
+            CLPPage page = new CLPAnimationPage();
             if(pageOrientation == "Portrait")
             {
                 page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
@@ -1754,7 +1754,7 @@ namespace Classroom_Learning_Partner.ViewModels
             double pageaspectratio = page.PageAspectRatio;
 
             if(page.PageType == PageTypeEnum.CLPProofPage) {
-                CLPProofPage proofpage = (CLPProofPage)page;
+                CLPAnimationPage proofpage = (CLPAnimationPage)page;
                 CLPProofHistory proofhistory = (CLPProofHistory)page.PageHistory;
                 if(proofhistory.Future.Count > 0 || proofhistory.MetaPast.Count > 0)
                 {
@@ -1792,7 +1792,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }else{
                 CLPHistory pagehistory = (CLPHistory)page.PageHistory;
 
-                CLPProofPage newproofpage = new CLPProofPage();
+                CLPAnimationPage newproofpage = new CLPAnimationPage();
                 CLPProofHistory newproofpagehistory = (CLPProofHistory)newproofpage.PageHistory;
 
                 newproofpage.PageHeight = pageheight;

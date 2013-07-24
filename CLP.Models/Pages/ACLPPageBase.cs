@@ -55,10 +55,23 @@ namespace CLP.Models
         /// Initializes a new object from scratch.
         /// </summary>
         protected ACLPPageBase()
+            : this(LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH) {}
+
+        protected ACLPPageBase(double pageHeight, double pageWidth)
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
+            PageHeight = pageHeight;
+            PageWidth = pageWidth;
             InitialPageAspectRatio = PageWidth / PageHeight;
+
+            //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
+            Tag correctnessTag = new Tag(Tag.Origins.Teacher, CorrectnessTagType.Instance);
+            Tag starredTag = new Tag(Tag.Origins.Teacher, StarredTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Unknown", ""));
+            starredTag.AddTagOptionValue(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
+            PageTags.Add(correctnessTag);
+            PageTags.Add(starredTag);
         }
 
         /// <summary>
@@ -316,6 +329,15 @@ namespace CLP.Models
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
             }
+        }
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            //if(!SerializedStrokes.Any() && ByteStrokes.Any())
+            //{
+            //    InkStrokes = BytesToStrokes(ByteStrokes);
+            //}
         }
 
         #endregion //Methods

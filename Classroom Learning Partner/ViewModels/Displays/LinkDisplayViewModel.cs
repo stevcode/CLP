@@ -250,7 +250,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //From Interface IDisplayViewModel
         public void AddPageToDisplay(CLPPage page)
         {
-            if(DisplayedPage is CLPProofPage && page.UniqueID != DisplayedPage.UniqueID)
+            if(DisplayedPage is CLPAnimationPage && page.UniqueID != DisplayedPage.UniqueID)
             {
                 var clpProofHistory = DisplayedPage.PageHistory as CLPProofHistory;
                 if(clpProofHistory != null)
@@ -266,9 +266,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             DisplayedPage = page;
-            if(page is CLPProofPage)
+            if(page is CLPAnimationPage)
             {
-                (page as CLPProofPage).updateProgress();
+                (page as CLPAnimationPage).updateProgress();
             }
             if(IsOnProjector)
             {

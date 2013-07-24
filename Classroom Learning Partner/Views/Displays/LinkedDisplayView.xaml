@@ -52,7 +52,7 @@
                                 </DataTrigger>
 
                                 <!-- CLPProofPage trigger -->
-                                <DataTrigger Binding="{Binding DisplayedPage, Converter={StaticResource PageTypeConverter}}" Value="CLPProofPage">
+                                <DataTrigger Binding="{Binding DisplayedPage, Converter={StaticResource PageTypeConverter}}" Value="CLPAnimationPage">
                                     <Setter Property="Template" Value="{StaticResource CLPProofPageTemplate}" />
                                 </DataTrigger>
 

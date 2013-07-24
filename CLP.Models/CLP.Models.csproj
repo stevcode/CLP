@@ -102,7 +102,7 @@
   <ItemGroup>
     <Compile Include="CLPHistoryItems\CLPTileHeightChanged.cs" />
     <Compile Include="CLPProofHistory.cs" />
-    <Compile Include="CLPProofPage.cs" />
+    <Compile Include="Pages\CLPAnimationPage.cs" />
     <Compile Include="CLPHistory.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryAddArrayLine.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryAddObject.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="CLPHistoryItems\CLPHistoryRemoveStroke.cs" />
     <Compile Include="CLPHistoryItems\CLPHistoryResizeObject.cs" />
     <Compile Include="CLPNotebook.cs" />
-    <Compile Include="CLPPage.cs" />
+    <Compile Include="Pages\CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
     <Compile Include="CLPPageObjects\CLPArray.cs" />
     <Compile Include="CLPPageObjects\CLPImage.cs" />
