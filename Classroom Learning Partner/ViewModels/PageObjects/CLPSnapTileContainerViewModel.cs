@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
             PageObject.ParentPage.updateProgress();
 
             foreach (var pageObject in currentPage.PageObjects)

@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryAddStroke : CLPHistoryItem
+    public class CLPHistoryAddStroke : ACLPHistoryItemBase
     {
 
-        #region Constructor
+        #region Constructors
 
-        public CLPHistoryAddStroke(String strokeId) : base(HistoryItemType.AddStroke)
+        public CLPHistoryAddStroke(ICLPPage parentPage, string strokeId) 
+            : base(parentPage)
         {
-            StrokeId = strokeId;
+            StrokeID = strokeId;
         }
 
         /// <summary>
@@ -35,27 +33,16 @@ namespace CLP.Models
         /// <summary>
         /// Unique ID of the stroke added
         /// </summary>
-        public String StrokeId
+        public string StrokeID
         {
-            get { return GetValue<String>(StrokeIdProperty); }
-            set { SetValue(StrokeIdProperty, value); }
+            get { return GetValue<string>(StrokeIDProperty); }
+            set { SetValue(StrokeIDProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIdProperty = RegisterProperty("StrokeId", typeof(String), null);
+        public static readonly PropertyData StrokeIDProperty = RegisterProperty("StrokeID", typeof(string));
 
         /// <summary>
-        /// Bytestroke corresponding to the stroke added (null unless this event is in the Future)
-        /// </summary>
-        public List<byte> Bytestroke
-        {
-            get { return GetValue<List<byte>>(BytestrokeProperty); }
-            set { SetValue(BytestrokeProperty, value); }
-        }
-
-        public static readonly PropertyData BytestrokeProperty = RegisterProperty("Bytestroke", typeof(List<byte>), null);
-
-        /// <summary>
-        /// Ink Stroke serialized via Data Transfer Object, StrokeDTO.
+        /// Ink Stroke serialized via Data Transfer Object, StrokeDTO. Null unless removed from page via Undo.
         /// </summary>
         public StrokeDTO SerializedStroke
         {
@@ -65,81 +52,41 @@ namespace CLP.Models
 
         public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(StrokeDTO));
 
-
         #endregion //Properties
 
         #region Methods
 
-        public override CLPHistoryItem GetUndoFingerprint(CLPPage page)
+        /// <summary>
+        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
+        /// </summary>
+        protected override void UndoAction(bool isAnimationUndo)
         {
-            return new CLPHistoryRemoveStroke(GetSerializedStrokeByUniqueID(page, StrokeId));
-        }
-
-        public override CLPHistoryItem GetRedoFingerprint(CLPPage page)
-        {
-            return new CLPHistoryAddStroke(StrokeId);
-        }
-
-        override public void Undo(CLPPage page)
-        {
-            SerializedStroke = GetSerializedStrokeByUniqueID(page, StrokeId); // remember in case we put it back
-            if(SerializedStroke == null)
+            var stroke = ParentPage.GetStrokeByStrokeID(StrokeID);
+            SerializedStroke = new StrokeDTO(stroke);
+            try
             {
-                Console.WriteLine("AddStroke undo failure: No stroke to remove");
-                return;
+                ParentPage.InkStrokes.Remove(stroke);
             }
-            int indexToRemove = -1;
-            foreach(Stroke otherstroke in page.InkStrokes)
+            catch(Exception ex)
             {
-                if(otherstroke.GetStrokeUniqueID() == StrokeId)
-                {
-                    indexToRemove = page.InkStrokes.IndexOf(otherstroke);
-                    SerializedStroke = new StrokeDTO(otherstroke);
-                    break;
-                }
-            }
-            if(indexToRemove != -1)
-            {
-                page.InkStrokes.RemoveAt(indexToRemove);
+                Logger.Instance.WriteErrorToLog("Undo AddStroke Error.", ex);
             }
         }
 
-        override public void Redo(CLPPage page)
+        /// <summary>
+        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
+        /// </summary>
+        protected override void RedoAction(bool isAnimationRedo)
         {
-            if(SerializedStroke == null)
+            if(SerializedStroke != null)
             {
-                Console.WriteLine("AddStroke redo failure: No stroke to add");
-                return;
+                ParentPage.InkStrokes.Add(SerializedStroke.ToStroke());
+                SerializedStroke = null; //on Page again, don't want to reserialize.
             }
-            Stroke s = SerializedStroke.ToStroke();
-            bool shouldAdd = true;
-            foreach(Stroke otherstroke in page.InkStrokes)
+            else
             {
-                if(otherstroke.GetStrokeUniqueID() == StrokeId)
-                {
-                    shouldAdd = false;
-                    break;
-                }
+                Logger.Instance.WriteToLog("AddStroke Redo Failure: No stroke to add.");
             }
-            if(shouldAdd)
-            {
-                page.InkStrokes.Add(s);
-            }
-            SerializedStroke = null; //don't need to remember anymore
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(!(obj is CLPHistoryAddStroke))
-            {
-                return false;
-            }
-
-            if (StrokeId != (obj as CLPHistoryAddStroke).StrokeId) 
-            {
-                return false;
-            }
-            return base.Equals(obj);
         }
 
         #endregion //Methods

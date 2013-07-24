@@ -288,7 +288,7 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
 
         #endregion //ICLPPage Properties
 
@@ -296,7 +296,17 @@ namespace CLP.Models
 
         public abstract ICLPPage DuplicatePage();
 
-        public void TrimPage()
+        public virtual ICLPPageObject GetPageObjectByUniqueID(string uniqueID)
+        {
+            return PageObjects.FirstOrDefault(pageObject => pageObject.UniqueID.Equals(uniqueID));
+        }
+
+        public virtual Stroke GetStrokeByStrokeID(string strokeID)
+        {
+            return InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeUniqueID() == strokeID);
+        }
+
+        public virtual void TrimPage()
         {
             double lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] { 0 }).Max();
             foreach(Rect bounds in InkStrokes.Select(s => s.GetBounds()))

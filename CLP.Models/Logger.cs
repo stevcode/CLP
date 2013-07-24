@@ -43,5 +43,17 @@ namespace CLP.Models
             File.AppendAllText(filePath, Environment.NewLine + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
             Console.WriteLine(DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
         }
+
+        public void WriteErrorToLog(string s, Exception ex)
+        {
+            Instance.WriteToLog(s);
+            Instance.WriteToLog("Exception: " + ex.Message);
+            Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
+                                       (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+            Instance.WriteToLog("[HResult]: " + ex.HResult);
+            Instance.WriteToLog("[Source]: " + ex.Source);
+            Instance.WriteToLog("[Method]: " + ex.TargetSite);
+            Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+        }
     }
 }

@@ -327,7 +327,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             Point pt = new Point(x, y);
 
-            if (PageObject.CanAcceptStrokes)
+            if (PageObject.CanAcceptStrokes) //TODO: Steve - Move to ChangePOPos method in ServiceAgent.
             {
                 double xDelta = x - PageObject.XPosition;
                 double yDelta = y - PageObject.YPosition;
@@ -365,10 +365,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
             foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
             {
-                po.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
+                po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
             }
             PageObject.ParentPage.updateProgress();
         }
@@ -380,10 +380,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
+            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
             foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
             {
-                po.ParentPage.PageHistory.Push(new CLPHistoryMoveObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
+                po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
             }
             PageObject.ParentPage.updateProgress();
 

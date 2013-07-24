@@ -5,13 +5,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPTileHeightChanged : CLPHistoryItem
+    public class CLPTileHeightChanged : ACLPHistoryItemBase
     {
 
-        #region Constructor
+        #region Constructors
 
-        public CLPTileHeightChanged(string tileUniqueID, int newHeight, int oldHeight)
-            : base(HistoryItemType.TileHeightChanged)
+        public CLPTileHeightChanged(ICLPPage parentPage, string tileUniqueID, int newHeight, int oldHeight)
+            : base(parentPage)
         {
             TileUniqueID = tileUniqueID;
             NewHeight = newHeight;
@@ -28,7 +28,7 @@ namespace CLP.Models
         {
         }
 
-        #endregion //Constructor
+        #endregion //Constructors
 
         #region Properties
 
@@ -69,44 +69,36 @@ namespace CLP.Models
 
         #region Methods
 
-        public override void Undo(CLPPage page)
+        /// <summary>
+        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
+        /// </summary>
+        protected override void UndoAction(bool isAnimationUndo)
         {
-            var tile = (GetPageObjectByUniqueID(page, TileUniqueID) as CLPSnapTileContainer);
+            var tile = ParentPage.GetPageObjectByUniqueID(TileUniqueID) as CLPSnapTileContainer;
             if(tile != null)
             {
                 tile.NumberOfTiles = OldHeight;
             }
+            else
+            {
+                Logger.Instance.WriteToLog("Tile not found on page for UndoAction");
+            }
         }
 
-        override public void Redo(CLPPage page)
+        /// <summary>
+        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
+        /// </summary>
+        protected override void RedoAction(bool isAnimationRedo)
         {
-            var tile = (GetPageObjectByUniqueID(page, TileUniqueID) as CLPSnapTileContainer);
+            var tile = ParentPage.GetPageObjectByUniqueID(TileUniqueID) as CLPSnapTileContainer;
             if(tile != null)
             {
                 tile.NumberOfTiles = NewHeight;
             }
-        }
-
-        override public CLPHistoryItem GetUndoFingerprint(CLPPage page)
-        {
-            return null;
-        }
-
-        override public CLPHistoryItem GetRedoFingerprint(CLPPage page)
-        {
-            return null;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(!(obj is CLPTileHeightChanged) ||
-                (obj as CLPTileHeightChanged).TileUniqueID != TileUniqueID ||
-                (obj as CLPTileHeightChanged).NewHeight != NewHeight ||
-                (obj as CLPTileHeightChanged).OldHeight != OldHeight)
+            else
             {
-                return false;
+                Logger.Instance.WriteToLog("Tile not found on page for RedoAction");
             }
-            return base.Equals(obj);
         }
 
         #endregion //Methods

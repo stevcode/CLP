@@ -314,19 +314,20 @@ namespace Classroom_Learning_Partner
 
         public void AddPageObjectToPage(ICLPPageObject pageObject)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
             {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(pageObject.ParentPageID);
             AddPageObjectToPage(parentPage, pageObject);
         }
 
-        public void AddPageObjectToPage(CLPPage page, ICLPPageObject pageObject)
+        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject)
         {
             if(page == null)
             {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
             pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
@@ -335,12 +336,12 @@ namespace Classroom_Learning_Partner
 
         public void RemovePageObjectFromPage(ICLPPageObject pageObject)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
             {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
-            var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(pageObject.ParentPageID);
             RemovePageObjectFromPage(parentPage, pageObject);
         }
 
@@ -348,17 +349,16 @@ namespace Classroom_Learning_Partner
         {
             if(page == null)
             {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
             pageObject.OnRemoved();
             page.PageObjects.Remove(pageObject);
         }
 
-
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
         { 
-        ChangePageObjectPosition( pageObject,  pt, 0, 0, false);
-        
+            ChangePageObjectPosition(pageObject, pt, 0, 0, false);
         }
 
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, double x, double y, bool usexy)
@@ -387,7 +387,7 @@ namespace Classroom_Learning_Partner
             double diff = xDiff + yDiff;
             if(diff > CLPHistory.SAMPLE_RATE)
             {
-                page.PageHistory.Push(new CLPHistoryMoveObject(pageObject.UniqueID, oldXPos, oldYPos, pt.X, pt.Y));
+                page.PageHistory.Push(new CLPHistoryMovePageObject(pageObject.UniqueID, oldXPos, oldYPos, pt.X, pt.Y));
                 page.updateProgress();
             }
 

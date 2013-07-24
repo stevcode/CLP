@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistory : ModelBase, ICLPHistory
+    public class CLPHistory : ModelBase
     {
+        private readonly object _historyLock = new object();
         public const double SAMPLE_RATE = 9;
-        protected bool _frozen;
-        protected bool _ingroup;
-        protected Stack<CLPHistoryItem> groupEvents;
 
-        #region Constructor
+        private bool _isUndoingOperation;
+
+        #region Constructors
 
         public CLPHistory()
         {
@@ -29,47 +31,31 @@ namespace CLP.Models
         {
         }
 
-        #endregion //Constructor
+        #endregion //Constructors
 
         #region Properties
 
         /// <summary>
-        /// The actions that have happened in the past.  "Undo" reverses the top action on the stack and pushes
-        /// it to Future.
+        /// All events available for Undo.
         /// </summary>
-        public Stack<CLPHistoryItem> Past
+        public ObservableCollection<IHistoryBatch> UndoBatches
         {
-            get { return GetValue<Stack<CLPHistoryItem>>(PastProperty); }
-            set { SetValue(PastProperty, value); }
+            get { return GetValue<ObservableCollection<IHistoryBatch>>(UndoBatchesProperty); }
+            set { SetValue(UndoBatchesProperty, value); }
         }
 
-        public volatile static  PropertyData PastProperty = RegisterProperty("Past", 
-            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
+        public static readonly PropertyData UndoBatchesProperty = RegisterProperty("UndoBatches", typeof(ObservableCollection<IHistoryBatch>), () => new ObservableCollection<IHistoryBatch>());
 
         /// <summary>
-        /// The actions queued to happen in the future.  "Redo" performs the top action on the stack and pushes
-        /// it to Past.  Taking an action other than Undo or Redo clears the Future.
+        /// All events available for Redo.
         /// </summary>
-        public Stack<CLPHistoryItem> Future
+        public ObservableCollection<IHistoryBatch> RedoBatches
         {
-            get { return GetValue<Stack<CLPHistoryItem>>(FutureProperty); }
-            set { SetValue(FutureProperty, value); }
+            get { return GetValue<ObservableCollection<IHistoryBatch>>(RedoBatchesProperty); }
+            set { SetValue(RedoBatchesProperty, value); }
         }
 
-        public volatile static  PropertyData FutureProperty = RegisterProperty("Future", 
-            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
-
-        /// <summary>
-        /// The actions that have happened in the past, *including* undos and redos.
-        /// </summary>
-        public Stack<CLPHistoryItem> MetaPast
-        {
-            get { return GetValue<Stack<CLPHistoryItem>>(MetaPastProperty); }
-            set { SetValue(MetaPastProperty, value); }
-        }
-
-        public volatile static  PropertyData MetaPastProperty = RegisterProperty("MetaPast",
-            typeof(Stack<CLPHistoryItem>), () => new Stack<CLPHistoryItem>());
+        public static readonly PropertyData RedoBatchesProperty = RegisterProperty("RedoBatches", typeof(ObservableCollection<IHistoryBatch>), () => new ObservableCollection<IHistoryBatch>());
 
 
         public bool UseHistory 
@@ -78,30 +64,29 @@ namespace CLP.Models
             set { SetValue(UseHistoryProperty, value); }
         }
 
-        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory",
-            typeof(bool), true);
+        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
 
-        public bool SingleCutting {
-            get { return GetValue<bool>(SingleCuttingProperty); }
-            set { SetValue(SingleCuttingProperty, value); }
-        
-        }
-
-        public static readonly PropertyData SingleCuttingProperty = RegisterProperty("SingleCutting",
-           typeof(bool), false);
-        
-        /// <summary>
-        /// The events that we have triggered and should therefore ignore when we're told they've
-        /// happened.
-        /// </summary>
-        public List<CLPHistoryItem> ExpectedEvents
+        public bool CanUndo
         {
-            get { return GetValue<List<CLPHistoryItem>>(ExpectedEventsProperty); }
-            set { SetValue(ExpectedEventsProperty, value); }
+            get
+            {
+                lock(_historyLock)
+                {
+                    return !_isUndoingOperation && UndoBatches.Any() && UseHistory;
+                }
+            }
         }
 
-        public static readonly PropertyData ExpectedEventsProperty = RegisterProperty("ExpectedEvents",
-            typeof(List<CLPHistoryItem>), () => new List<CLPHistoryItem>());
+        public bool CanRedo
+        {
+            get
+            {
+                lock(_historyLock)
+                {
+                    return !_isUndoingOperation && RedoBatches.Any() && UseHistory;
+                }
+            }
+        }
 
         #endregion //Properties
 
@@ -116,16 +101,6 @@ namespace CLP.Models
             {
                 groupEvents.Clear();
             }
-        }
-
-        public void Freeze()
-        {
-            _frozen = true;
-        }
-
-        public void Unfreeze()
-        {
-            _frozen = false;
         }
 
         public virtual void Push(CLPHistoryItem item)
@@ -210,10 +185,10 @@ namespace CLP.Models
             lastAction.Undo(page);
             MetaPast.Push(expected);
             Future.Push(lastAction);
-            if(lastAction is CLPHistoryMoveObject && Past.Count > 0)
+            if(lastAction is CLPHistoryMovePageObject && Past.Count > 0)
             {
                 CLPHistoryItem penultimateAction = Past.Peek();
-                if((lastAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
+                if((lastAction as CLPHistoryMovePageObject).CombinesWith(penultimateAction))
                 {
                     Undo(page);
                 }
@@ -235,10 +210,10 @@ namespace CLP.Models
             nextAction.Redo(page);
             MetaPast.Push(expected);
             Past.Push(nextAction);
-            if(nextAction is CLPHistoryMoveObject && Future.Count > 0)
+            if(nextAction is CLPHistoryMovePageObject && Future.Count > 0)
             {
                 CLPHistoryItem penultimateAction = Future.Peek();
-                if((nextAction as CLPHistoryMoveObject).CombinesWith(penultimateAction))
+                if((nextAction as CLPHistoryMovePageObject).CombinesWith(penultimateAction))
                 {
                     Redo(page);
                 }
@@ -263,6 +238,16 @@ namespace CLP.Models
             
             ExpectedEvents.Remove(match);
             return true;
+        }
+
+
+
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            
+            //foreach IHistoryItem, ParentHistory = this;
         }
     }
 }

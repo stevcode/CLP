@@ -338,14 +338,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(pageObject.UniqueID, 
+                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(pageObject.UniqueID, 
                     pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
                 CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             var pt = new Point(x, y);
 
-            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMoveObject(PageObject.UniqueID,
+            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(PageObject.UniqueID,
                 PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
             CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }

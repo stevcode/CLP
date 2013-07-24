@@ -464,7 +464,7 @@ namespace Classroom_Learning_Partner.ViewModels
                            {
                                if(item.ItemType == HistoryItemType.MoveObject)
                                {
-                                   ICLPPageObject mi = item.GetPageObjectByUniqueID(Page, ((CLPHistoryMoveObject)item).ObjectId);
+                                   ICLPPageObject mi = item.GetPageObjectByUniqueID(Page, ((CLPHistoryMovePageObject)item).ObjectId);
                                    var pid = mi.ParentID;
                                    if(pid == null) { pid = ""; }
                                    pid = pid.Trim();

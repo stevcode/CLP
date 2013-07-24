@@ -48,6 +48,8 @@ namespace CLP.Models
         //PageIndex, NumberOfSubmissions, NumberOfGroupSubmissions?, PageTopics
 
         ICLPPage DuplicatePage();
+        ICLPPageObject GetPageObjectByUniqueID(string uniqueID);
+        Stroke GetStrokeByStrokeID(string strokeID);
         void TrimPage();
     }
 }

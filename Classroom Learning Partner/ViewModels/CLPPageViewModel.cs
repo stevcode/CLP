@@ -558,7 +558,7 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #endregion //Commands
 
-        #region Methods     
+        #region Methods
 
         public static void ClearAdorners(CLPPage page)
         {
@@ -671,7 +671,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
-            //TODO: Steve - Catel? causing this to be called twice
+            //TODO: Steve - Move to CLPServiceAgent
             //Task.Factory.StartNew( () =>
             //    {
             try
@@ -715,69 +715,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //});
             Page.updateProgress();
         }
-        ///////////////////////////////////////
-        /*
-        private bool integrityCheck()
-        {
-            var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-            if(proofPageHistory1 == null)
-            {
-                return false;
-            }
-            Stack<CLPHistoryItem> future = new Stack<CLPHistoryItem>(
-                                           new Stack<CLPHistoryItem>(proofPageHistory1.Future));
-            Stack<CLPHistoryItem> past = new Stack<CLPHistoryItem>(
-                                           new Stack<CLPHistoryItem>(proofPageHistory1.MetaPast));
-            while(past.Count > 0)
-            {
-                CLPHistoryItem item = past.Pop();
-                future.Push(item);
-            }
-            int j = 0;
-            while(future.Count > 0)
-            {
-                CLPHistoryItem item = future.Pop();
-                past.Push(item);
-                if(item.singleCut == true)
-                {
-                    Console.WriteLine(item.ItemType);
-                    j++;
-                    j = j % 3;
-                    if(j == 1)
-                    {
-                        if(item.ItemType != HistoryItemType.RemoveObject)
-                        {
-                            return false;
-                        }
-                    }
-                    else if(j == 2 || j == 0)
-                    {
-                        if(item.ItemType != HistoryItemType.AddObject)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("***********************");
-                    if(j != 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-            if(j != 0)
-            {
-                return false;
-            }
-            return true;
-        }
-        ///////////////////////////////////////////
-         */
-
-
-
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
