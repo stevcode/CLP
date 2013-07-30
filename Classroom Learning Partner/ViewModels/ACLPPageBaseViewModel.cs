@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using CLP.Models;
 using Catel.Data;
@@ -31,14 +30,14 @@ namespace Classroom_Learning_Partner.ViewModels
     }
 
     [InterestedIn(typeof(RibbonViewModel))]
-    public class CLPPageViewModel : ViewModelBase
+    abstract public class ACLPPageBaseViewModel : ViewModelBase
     {
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
         /// </summary>
-        public CLPPageViewModel(CLPPage page)
+        protected ACLPPageBaseViewModel(ICLPPage page)
         {
             PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
@@ -47,12 +46,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Page = page;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-            Page.PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
             
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
-            
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -65,75 +63,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [Model(SupportIEditableObject = false)]
-        public CLPPage Page
+        public ICLPPage Page
         {
-            get { return GetValue<CLPPage>(PageProperty); }
+            get { return GetValue<ICLPPage>(PageProperty); }
             private set { SetValue(PageProperty, value); }
         }
 
-        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
-
-        [ViewModelToModel("Page")]
-        public double ProofProgressCurrent
-        {
-            get { return GetValue<double>(ProofProgressCurrentProperty); }
-            set { SetValue(ProofProgressCurrentProperty, value); }
-        }
-
-        public static volatile PropertyData ProofProgressCurrentProperty = RegisterProperty("ProofProgressCurrent", typeof(double));
-
-        [ViewModelToModel("Page")]
-        public double SliderProgressCurrent
-        {
-            get { return GetValue<double>(SliderProgressCurrentProperty); }
-            set { SetValue(SliderProgressCurrentProperty, value); }
-        }
-
-        public static volatile PropertyData SliderProgressCurrentProperty = RegisterProperty("SliderProgressCurrent", typeof(double));
-
-        [ViewModelToModel("Page")]
-        public PageTypeEnum PageType
-        {
-            get { return GetValue<PageTypeEnum>(PageTypeProperty); }
-            set { SetValue(PageTypeProperty, value); }
-        }
-
-        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypeEnum));
-
-        ////////////////////////////////
-        [ViewModelToModel("Page")]
-        public string ProofProgressVisible
-        {
-            get { return GetValue<string>(ProofProgressVisibleProperty); }
-            set { SetValue(ProofProgressVisibleProperty, value); }
-        }
-
-        
-        public static volatile PropertyData ProofProgressVisibleProperty = RegisterProperty("ProofProgressVisible", typeof(string));
-
-        [ViewModelToModel("Page")]
-        public string ProofPresent
-        {
-            get { return GetValue<string>(ProofPresentProperty); }
-            set { SetValue(ProofPresentProperty, value); }
-        }
-
-        public static volatile PropertyData ProofPresentProperty = RegisterProperty("ProofPresent", typeof(string));
-
-        /////////////////////////////////
-
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public ObservableCollection<List<byte>> ByteStrokes
-        {
-            get { return GetValue<ObservableCollection<List<byte>>>(ByteStrokesProperty); }
-            set { SetValue(ByteStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData ByteStrokesProperty = RegisterProperty("ByteStrokes", typeof(ObservableCollection<List<byte>>));
+        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(ICLPPage));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -151,13 +87,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public virtual ICLPHistory PageHistory
+        public CLPHistory PageHistory
         {
-            get { return GetValue<ICLPHistory>(PageHistoryProperty); }
+            get { return GetValue<CLPHistory>(PageHistoryProperty); }
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(ICLPHistory));
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -187,38 +123,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public double PageAspectRatio
+        public double InitialPageAspectRatio
         {
-            get { return GetValue<double>(PageAspectRatioProperty); }
-            set { SetValue(PageAspectRatioProperty, value); }
+            get { return GetValue<double>(InitialPageAspectRatioProperty); }
+            set { SetValue(InitialPageAspectRatioProperty, value); }
         }
 
-        public static readonly PropertyData PageAspectRatioProperty = RegisterProperty("PageAspectRatio", typeof(double));
-
-        //Steve - Replace with User's UniqueID to match against Person Model
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public string SubmitterName
-        {
-            get { return GetValue<string>(SubmitterNameProperty); }
-            set { SetValue(SubmitterNameProperty, value); }
-        }
-
-        public static readonly PropertyData SubmitterNameProperty = RegisterProperty("SubmitterName", typeof(string));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public bool IsSubmission
-        {
-            get { return GetValue<bool>(IsSubmissionProperty); }
-            set { SetValue(IsSubmissionProperty, value); }
-        }
-
-        public static readonly PropertyData IsSubmissionProperty = RegisterProperty("IsSubmission", typeof(bool));
+        public static readonly PropertyData InitialPageAspectRatioProperty = RegisterProperty("InitialPageAspectRatio", typeof(double));
 
         /// <summary>
         /// Sets the PageInteractionMode.
@@ -323,30 +234,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Page")]
-        public int NumberOfSubmissions
-        {
-            get { return GetValue<int>(NumberOfSubmissionsProperty); }
-            set { SetValue(NumberOfSubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public int NumberOfGroupSubmissions
-        {
-            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
-            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public InkCanvasEditingMode EditingMode
         {
             get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }
@@ -403,9 +290,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool _isMouseDown;
         public Canvas TopCanvas = null;
 
+        //TODO: steve - move to serviceagent
         public T GetVisualParent<T>(Visual child) where T : Visual
         {
             var p = (Visual)VisualTreeHelper.GetParent(child);
@@ -414,28 +301,29 @@ namespace Classroom_Learning_Partner.ViewModels
             return parent;
         }
 
-        public T FindNamedChild<T>(FrameworkElement obj, string name)
+        //TODO: steve - move to serviceagent
+        public static T FindNamedChild<T>(FrameworkElement obj, string name)
         {
             var dep = obj as DependencyObject;
-            T ret = default(T);
+            var ret = default(T);
 
             if(dep != null)
             {
-                int childcount = VisualTreeHelper.GetChildrenCount(dep);
+                var childcount = VisualTreeHelper.GetChildrenCount(dep);
                 for(int i = 0; i < childcount; i++)
                 {
                     var childDep = VisualTreeHelper.GetChild(dep, i);
                     var child = childDep as FrameworkElement;
 
-                    if(child != null && (child.GetType() == typeof(T) && child.Name == name))
+                    if(child != null &&
+                       (child.GetType() == typeof(T) && child.Name == name))
                     {
                         ret = (T)Convert.ChangeType(child, typeof(T));
                         break;
                     }
 
                     ret = FindNamedChild<T>(child, name);
-                    if(ret != null)
-                        break;
+                    if(ret != null) break;
                 }
             }
             return ret;
@@ -452,15 +340,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-
-            //var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-
-            //VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, HitResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-
-            //if((_isMouseDown && EditingMode == InkCanvasEditingMode.EraseByStroke) || (_isMouseDown && e.StylusDevice != null && e.StylusDevice.Inverted))
-            //{
-            //    VisualTreeHelper.HitTest(pageObjectCanvas, HitFilter, EraseResult, new PointHitTestParameters(e.GetPosition(pageObjectCanvas)));
-            //}
         }
 
         /// <summary>
@@ -564,7 +443,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<CLPPageViewModel>())
+            foreach(var clpPageViewModel in ViewModelManager.GetViewModelsOfModel(page).OfType<ACLPPageBaseViewModel>())
             {
                 clpPageViewModel.ClearAdorners();
             }
