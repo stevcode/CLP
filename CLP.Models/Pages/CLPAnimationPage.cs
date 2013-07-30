@@ -26,7 +26,7 @@ namespace CLP.Models
 
         public override ICLPPage DuplicatePage()
         {
-            var newPage = new CLPPage
+            var newPage = new CLPAnimationPage
             {
                 ParentNotebookID = ParentNotebookID,
                 PageTags = PageTags,
@@ -34,7 +34,8 @@ namespace CLP.Models
                 PageHeight = PageHeight,
                 PageWidth = PageWidth,
                 InitialPageAspectRatio = InitialPageAspectRatio,
-                ImagePool = ImagePool
+                ImagePool = ImagePool,
+                PageHistory = PageHistory
             };
 
             foreach(var s in InkStrokes.Select(stroke => stroke.Clone()))

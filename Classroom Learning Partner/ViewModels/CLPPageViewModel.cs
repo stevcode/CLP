@@ -30,8 +30,6 @@ namespace Classroom_Learning_Partner.ViewModels
         EditObjectProperties
     }
 
-   
-
     [InterestedIn(typeof(RibbonViewModel))]
     public class CLPPageViewModel : ViewModelBase
     {
@@ -583,66 +581,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        Type _lastType;
-
-        private HitTestFilterBehavior HitFilter(DependencyObject o)
-        {
-            if(_lastType == typeof(Canvas) && o is Canvas)
-            {
-                IsInkCanvasHitTestVisible = true;
-            }
-            else
-            {
-                if(o is Shape)
-                {
-                    if((o as Shape).Name.Contains("HitBox"))
-                    {
-                        _lastType = o.GetType();
-                        return HitTestFilterBehavior.Continue;
-                    }
-                }
-            }
-
-            _lastType = o.GetType();
-            return HitTestFilterBehavior.ContinueSkipSelf;
-        }
-
-        private HitTestResultBehavior HitResult(HitTestResult result)
-        {
-            var pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
-            var pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
-
-            //TODO: Steve - First Parameter, Tag, not needed
-            if(pageObjectViewModel == null || pageObjectViewModel.IsInternalPageObject)
-            {
-                return HitTestResultBehavior.Continue;
-            }
-
-            var shape = result.VisualHit as Shape;
-            if(shape != null)
-            {
-                IsInkCanvasHitTestVisible = pageObjectViewModel.SetInkCanvasHitTestVisibility(shape.Tag as string, shape.Name, IsInkCanvasHitTestVisible, _isMouseDown, false, false);
-            }
-            return HitTestResultBehavior.Stop;
-        }
-
-        private HitTestResultBehavior EraseResult(HitTestResult result)
-        {
-            var pageObjectView = GetVisualParent<Catel.Windows.Controls.UserControl>(result.VisualHit as Shape);
-            var pageObjectViewModel = pageObjectView.ViewModel as ACLPPageObjectBaseViewModel;
-
-            if(pageObjectViewModel == null || pageObjectViewModel.IsInternalPageObject)
-            {
-                return HitTestResultBehavior.Continue;
-            }
-            var shape = result.VisualHit as Shape;
-            if(shape != null)
-            {
-                pageObjectViewModel.EraserHitTest(shape.Name, shape.Tag);
-            }
-            return HitTestResultBehavior.Stop;
-        }
-
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsPagePreview) return;
@@ -718,7 +656,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            if(Page.IsInkAutoAdding || IsPagePreview)
+            if(IsPagePreview)
             {
                 return;
             }
@@ -727,8 +665,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(PageInteractionMode == PageInteractionMode.Scissors)
                 {
-
-                    //integrityCheck();
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
                     Page.PageHistory.SingleCutting = true;
@@ -792,7 +728,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     Page.PageHistory.SingleCutting = false;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                    //integrityCheck();
                     return;
                 }
             }
@@ -802,8 +737,8 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
             //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
-        //    Task.Factory.StartNew(() =>
-          //      {
+            //Task.Factory.StartNew(() =>
+            //    {
                     try
                     {
                         var removedStrokeIDs = new List<string>();
@@ -874,10 +809,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             return;
                         }
-                        var add = new List<StrokeDTO>(CLPPage.SaveInkStrokes(e.Added));
-                        var remove = new List<StrokeDTO>(CLPPage.SaveInkStrokes(e.Removed));
+                        var add = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Added));
+                        var remove = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Removed));
 
-                        var pageID = Page.IsSubmission ? Page.SubmissionID : Page.UniqueID;
+                        var pageID = Page.SubmissionType != SubmissionType.None ? Page.SubmissionID : Page.UniqueID;
 
                         if(App.Network.ProjectorProxy != null)
                         {
@@ -891,7 +826,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         //TODO: Steve - Add pages to a queue and send when a projector is found in Else statement
 
-                        if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.IsSubmission || !App.Network.ClassList.Any())
+                        if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
                         {
                             return;
                         }
@@ -918,7 +853,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
                         Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
                     }
-             //  });
+               //});
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -959,21 +894,22 @@ namespace Classroom_Learning_Partner.ViewModels
         private void RefreshInkStrokes()
         {
             var pageObjects = Page.PageObjects;
-            foreach(ICLPPageObject po in pageObjects)
+            foreach(var pageObject in pageObjects)
             {
-                po.RefreshStrokeParentIDs();
+                pageObject.RefreshStrokeParentIDs();
             }
         }
-        
-        private void RefreshPageObjects(ObservableCollection<ICLPPageObject> AllShapesPageObjects) {
-                try
+
+        private void RefreshPageObjects(ObservableCollection<ICLPPageObject> AllShapesPageObjects)
+        {
+            try
+            {
+                foreach(ICLPPageObject pageObject in PageObjects)
                 {
-                    foreach(ICLPPageObject pageObject in PageObjects)
+                    if(pageObject.CanAcceptPageObjects)
                     {
-                        if(pageObject.CanAcceptPageObjects)
-                        {
-                            var removedPageObjects = new ObservableCollection<ICLPPageObject>();
-                            /*if(e.OldItems != null)
+                        var removedPageObjects = new ObservableCollection<ICLPPageObject>();
+                        /*if(e.OldItems != null)
                             {
                                 foreach(ICLPPageObject removedPageObject in e.OldItems)
                                 {
@@ -981,32 +917,31 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }
                             }*/
 
-                            var addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                            if(AllShapesPageObjects.Count!=0)
+                        var addedPageObjects = new ObservableCollection<ICLPPageObject>();
+                        if(AllShapesPageObjects.Any())
+                        {
+                            foreach(ICLPPageObject addedPageObject in AllShapesPageObjects)
                             {
-                                foreach(ICLPPageObject addedPageObject in AllShapesPageObjects)
+                                if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID) &&
+                                   !pageObject.UniqueID.Equals(addedPageObject.ParentID) &&
+                                   !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID) &&
+                                   pageObject.PageObjectIsOver(addedPageObject, .50))
                                 {
-                                    if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID)
-                                        && !pageObject.UniqueID.Equals(addedPageObject.ParentID)
-                                        && !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID)
-                                        && pageObject.PageObjectIsOver(addedPageObject, .50))
-                                    {
-                                        addedPageObjects.Add(addedPageObject);
-                                    }
+                                    addedPageObjects.Add(addedPageObject);
                                 }
                             }
-
-                            pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
                         }
+
+                        pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
                     }
                 }
-                catch(Exception ex)
-                {
-                    Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
-                }
-                /////////////////////////////
-            
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+            }
         }
+
         #endregion //Methods        
     }
 }
