@@ -116,6 +116,7 @@ namespace CLP.Models
             }
 
             var batch = CurrentHistoryBatch;
+            batch.CurrentBatchTickIndex = batch.NumberOfBatchTicks;
 
             AddHistoryItem(batch);
 

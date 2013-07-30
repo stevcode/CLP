@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
-        public MainWindowViewModel MainWindow
+        private MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
         }
@@ -1418,77 +1418,76 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            Thread t = new Thread(() =>
-            {
-                Console.WriteLine("Replay");
-                try
-                {
-                    CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    ICLPHistory pageHistory = page.PageHistory;
+            //Thread t = new Thread(() =>
+            //{
+            //    try
+            //    {
+            //        CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            //        ICLPHistory pageHistory = page.PageHistory;
 
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        pageHistory.Freeze();
-                        return null;
-                    }, null);
+            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //        (DispatcherOperationCallback)delegate(object arg)
+            //        {
+            //            pageHistory.Freeze();
+            //            return null;
+            //        }, null);
 
-                    Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
-                    Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
+            //        Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
+            //        Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
 
-                    while(metaPast.Count > 0)
-                    {
-                        CLPHistoryItem item = metaPast.Pop();
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (DispatcherOperationCallback)delegate(object arg)
-                        {
-                            if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
-                            {
-                                item.Undo(page);
-                            }
-                            return null;
-                        }, null);
-                        metaFuture.Push(item);
-                    }
+            //        while(metaPast.Count > 0)
+            //        {
+            //            CLPHistoryItem item = metaPast.Pop();
+            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //            (DispatcherOperationCallback)delegate(object arg)
+            //            {
+            //                if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
+            //                {
+            //                    item.Undo(page);
+            //                }
+            //                return null;
+            //            }, null);
+            //            metaFuture.Push(item);
+            //        }
 
-                    Console.WriteLine("done undoing");
-                    Thread.Sleep(400);
-                    while(metaFuture.Count > 0)
-                    {
-                        CLPHistoryItem item = metaFuture.Pop();
-                        if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                        {
-                            Thread.Sleep(50); // make intervals between move-steps less painfully slow
-                        }
-                        else
-                        {
-                            Thread.Sleep(400);
-                        }
-                        Console.WriteLine("This is the action being REDONE: " + item.ItemType);
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (DispatcherOperationCallback)delegate(object arg)
-                        {
-                            if(item != null)
-                            {
-                                item.Redo(page);
-                            }
-                            return null;
-                        }, null);
-                    }
-                    Thread.Sleep(400);
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        pageHistory.Unfreeze();
-                        return null;
-                    }, null);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
-            t.Start();
+                
+            //        Thread.Sleep(400);
+            //        while(metaFuture.Count > 0)
+            //        {
+            //            CLPHistoryItem item = metaFuture.Pop();
+            //            if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
+            //            {
+            //                Thread.Sleep(50); // make intervals between move-steps less painfully slow
+            //            }
+            //            else
+            //            {
+            //                Thread.Sleep(400);
+            //            }
+            //            Console.WriteLine("This is the action being REDONE: " + item.ItemType);
+            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //            (DispatcherOperationCallback)delegate(object arg)
+            //            {
+            //                if(item != null)
+            //                {
+            //                    item.Redo(page);
+            //                }
+            //                return null;
+            //            }, null);
+            //        }
+            //        Thread.Sleep(400);
+            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //        (DispatcherOperationCallback)delegate(object arg)
+            //        {
+            //            pageHistory.Unfreeze();
+            //            return null;
+            //        }, null);
+            //    }
+            //    catch(Exception e)
+            //    {
+            //        Console.WriteLine(e.Message);
+            //    }
+            //});
+            //t.Start();
         }
 
         /// <summary>
@@ -1498,24 +1497,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnUndoCommandExecute()
         {
-            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            Thread tx = new Thread(() =>
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
             {
-                try
-                {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        page.PageHistory.Undo(page);
-                        return null;
-                    }, null);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
-            tx.Start();
+                return;
+            }
+            var page = notebookWorkspaceViewModel.CurrentPage;
+            page.PageHistory.Undo();
         }
 
         /// <summary>
@@ -1525,24 +1513,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRedoCommandExecute()
         {
-            CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            Thread ty = new Thread(() =>
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
             {
-                try
-                {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        page.PageHistory.Redo(page);
-                        return null;
-                    }, null);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
-            ty.Start();
+                return;
+            }
+            var page = notebookWorkspaceViewModel.CurrentPage;
+            page.PageHistory.Redo();
         }
 
         #endregion //History Commands

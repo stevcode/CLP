@@ -416,12 +416,7 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="History">
-                
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}"
-                              Visibility="{Binding InstructorVisibility}" />
+            <RibbonGroup Header="History">
                 
                 <RibbonButton Label="Undo"
                               LargeImageSource="..\Images\Undo.png"
@@ -431,7 +426,7 @@
                               LargeImageSource="..\Images\Redo.png"
                               Command="{Binding RedoCommand}" />
                 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
         </RibbonTab>
 
