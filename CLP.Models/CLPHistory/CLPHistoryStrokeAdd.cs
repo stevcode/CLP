@@ -5,12 +5,12 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryAddStroke : ACLPHistoryItemBase
+    public class CLPHistoryStrokeAdd : ACLPHistoryItemBase
     {
 
         #region Constructors
 
-        public CLPHistoryAddStroke(ICLPPage parentPage, string strokeId) 
+        public CLPHistoryStrokeAdd(ICLPPage parentPage, string strokeId) 
             : base(parentPage)
         {
             StrokeID = strokeId;
@@ -21,7 +21,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistoryAddStroke(SerializationInfo info, StreamingContext context)
+        protected CLPHistoryStrokeAdd(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

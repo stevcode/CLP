@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 
 namespace CLP.Models
 {
+    [Serializable]
     public class CLPHistoryMovePageObjectBatch : ACLPHistoryBatchBase
     {
         #region Constructors

@@ -1,15 +1,10 @@
-﻿using System.Collections.ObjectModel;
-
-namespace CLP.Models
+﻿namespace CLP.Models
 {
-    public interface IHistoryBatch
+    public interface IHistoryBatch : ICLPHistoryItem
     {
-        ICLPPage ParentPage { get; set; }
-        ObservableCollection<ICLPHistoryItem> HistoryItems { get; }
-        bool IsEmptyBatch { get; }
-        bool IsSingleBatch { get; }
-        void Undo();
-        void Redo();
-        void AddToBatch(object target, object tag);
+        int BatchDelay { get; }
+        int NumberOfBatchTicks { get; }
+        int CurrentBatchTickIndex { get; set; }
+        void ClearBatchAfterCurrentIndex();
     }
 }

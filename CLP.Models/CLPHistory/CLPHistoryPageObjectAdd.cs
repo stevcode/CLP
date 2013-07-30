@@ -5,14 +5,15 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryAddPageObject : ACLPHistoryItemBase
+    public class CLPHistoryPageObjectAdd : ACLPHistoryItemBase
     {
         #region Constructors
 
-        public CLPHistoryAddPageObject(ICLPPage parentPage, string pageObjectUniqueID)
+        public CLPHistoryPageObjectAdd(ICLPPage parentPage, string pageObjectUniqueID, int index)
             : base(parentPage)
         {
             PageObjectUniqueID = pageObjectUniqueID;
+            Index = index;
         }
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistoryAddPageObject(SerializationInfo info, StreamingContext context)
+        protected CLPHistoryPageObjectAdd(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -51,6 +52,17 @@ namespace CLP.Models
 
         public static readonly PropertyData PageObjectProperty = RegisterProperty("PageObject", typeof(ICLPPageObject));
 
+        /// <summary>
+        /// Index of the pageObject when removed from the page.
+        /// </summary>
+        public int Index
+        {
+            get { return GetValue<int>(IndexProperty); }
+            set { SetValue(IndexProperty, value); }
+        }
+
+        public static readonly PropertyData IndexProperty = RegisterProperty("Index", typeof(int));
+
         #endregion //Properties
 
         #region Methods
@@ -61,6 +73,7 @@ namespace CLP.Models
         protected override void UndoAction(bool isAnimationUndo)
         {
             PageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            Index = ParentPage.PageObjects.IndexOf(PageObject);
             try
             {
                 ParentPage.PageObjects.Remove(PageObject);
@@ -76,15 +89,22 @@ namespace CLP.Models
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if(PageObject != null)
+            if(PageObject == null)
+            {
+                Logger.Instance.WriteToLog("AddPageObject Redo Failure: No object to add.");
+                return;
+            }
+
+            //restore proper z-order if possible
+            if(Index >= ParentPage.PageObjects.Count)
             {
                 ParentPage.PageObjects.Add(PageObject);
-                PageObject = null; //on Page again, don't want to reserialize.
             }
             else
             {
-                Logger.Instance.WriteToLog("AddPageObject Redo Failure: No object to add.");
+                ParentPage.PageObjects.Insert(Index, PageObject);
             }
+            PageObject = null; //no sense storing the actual pageObject for serialization if it's on the page.
         }
 
         #endregion //Methods

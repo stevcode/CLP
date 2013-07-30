@@ -4,6 +4,14 @@ using Catel.Data;
 
 namespace CLP.Models
 {
+    public enum CollectionChangeType
+    {
+        Add,
+        Remove,
+        Replace,
+        Move
+    }
+
     [Serializable]
     [AllowNonSerializableMembers]
     abstract public class ACLPHistoryItemBase : ModelBase, ICLPHistoryItem

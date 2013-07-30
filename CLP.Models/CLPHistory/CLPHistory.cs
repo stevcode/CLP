@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using Catel.Collections;
 using Catel.Data;
 
 namespace CLP.Models
@@ -12,8 +12,9 @@ namespace CLP.Models
     {
         private readonly object _historyLock = new object();
         public const double SAMPLE_RATE = 9;
+        public IHistoryBatch CurrentHistoryBatch;
 
-        private bool _isUndoingOperation;
+        private bool _isUndoingOperation; //don't serialize?
 
         #region Constructors
 
@@ -38,25 +39,24 @@ namespace CLP.Models
         /// <summary>
         /// All events available for Undo.
         /// </summary>
-        public ObservableCollection<IHistoryBatch> UndoBatches
+        public ObservableCollection<ICLPHistoryItem> UndoItems
         {
-            get { return GetValue<ObservableCollection<IHistoryBatch>>(UndoBatchesProperty); }
-            set { SetValue(UndoBatchesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPHistoryItem>>(UndoItemsProperty); }
+            set { SetValue(UndoItemsProperty, value); }
         }
 
-        public static readonly PropertyData UndoBatchesProperty = RegisterProperty("UndoBatches", typeof(ObservableCollection<IHistoryBatch>), () => new ObservableCollection<IHistoryBatch>());
+        public static readonly PropertyData UndoItemsProperty = RegisterProperty("UndoItems", typeof(ObservableCollection<ICLPHistoryItem>), () => new ObservableCollection<ICLPHistoryItem>());
 
         /// <summary>
         /// All events available for Redo.
         /// </summary>
-        public ObservableCollection<IHistoryBatch> RedoBatches
+        public ObservableCollection<ICLPHistoryItem> RedoItems
         {
-            get { return GetValue<ObservableCollection<IHistoryBatch>>(RedoBatchesProperty); }
-            set { SetValue(RedoBatchesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPHistoryItem>>(RedoItemsProperty); }
+            set { SetValue(RedoItemsProperty, value); }
         }
 
-        public static readonly PropertyData RedoBatchesProperty = RegisterProperty("RedoBatches", typeof(ObservableCollection<IHistoryBatch>), () => new ObservableCollection<IHistoryBatch>());
-
+        public static readonly PropertyData RedoItemsProperty = RegisterProperty("RedoItems", typeof(ObservableCollection<ICLPHistoryItem>), () => new ObservableCollection<ICLPHistoryItem>());
 
         public bool UseHistory 
         {
@@ -72,7 +72,7 @@ namespace CLP.Models
             {
                 lock(_historyLock)
                 {
-                    return !_isUndoingOperation && UndoBatches.Any() && UseHistory;
+                    return !_isUndoingOperation && UndoItems.Any() && UseHistory;
                 }
             }
         }
@@ -83,165 +83,168 @@ namespace CLP.Models
             {
                 lock(_historyLock)
                 {
-                    return !_isUndoingOperation && RedoBatches.Any() && UseHistory;
+                    return !_isUndoingOperation && RedoItems.Any() && UseHistory;
                 }
             }
         }
 
         #endregion //Properties
 
-        //Forget everything that happened; lock the current state as the starting state.
+        //Completely clear history.
         public void ClearHistory()
         {
-            Past.Clear();
-            MetaPast.Clear();
-            Future.Clear();
-            ExpectedEvents.Clear();
-            if(groupEvents != null)
+            lock(_historyLock)
             {
-                groupEvents.Clear();
-            }
+                UndoItems.Clear();
+                RedoItems.Clear();
+                _isUndoingOperation = false;
+            }  
         }
 
-        public virtual void Push(CLPHistoryItem item)
+        public void BeginBatch(IHistoryBatch batch)
         {
-            if(!UseHistory || _frozen || IsExpected(item))
-            {
-                return;
-            }
-            if(_ingroup)
-            {
-                //Console.WriteLine("pushing a " + item.ItemType + " to group");
-                groupEvents.Push(item);
-            }
-            else
-            {
-                //Console.WriteLine("pushing a " + item.ItemType);
-                //if(item is CLPHistoryAddStroke)
-                //{
-                //    Console.WriteLine((item as CLPHistoryAddStroke).StrokeId);
-                //}
-                //if(item is CLPHistoryRemoveStroke)
-                //{
-                //    Console.WriteLine((item as CLPHistoryRemoveStroke).StrokeId);
-                //}
-                Past.Push(item);
-                MetaPast.Push(item);
-                Future.Clear();
-            }
+            EndBatch();
+
+            CurrentHistoryBatch = batch;
         }
 
-        public void BeginEventGroup()
+        public IHistoryBatch EndBatch()
         {
-            _ingroup = true;
-            groupEvents = new Stack<CLPHistoryItem>();
+            if(CurrentHistoryBatch == null)
+            {
+                return null;
+            }
+
+            var batch = CurrentHistoryBatch;
+
+            AddHistoryItem(batch);
+
+            CurrentHistoryBatch = null;
+
+            return batch;
         }
 
-        public virtual void EndEventGroup()
+        public bool AddHistoryItem(ICLPHistoryItem historyItem)
         {
-            _ingroup = false;
-            if(groupEvents.Count > 0)
-            {
-                CLPHistoryItem group = AggregateItems(groupEvents);
-                Past.Push(group);
-                MetaPast.Push(group);
-                Future.Clear();
-            }
-        }
-
-        public CLPHistoryItem AggregateItems(Stack<CLPHistoryItem> itemStack)
-        {
-            List<CLPHistoryItem> itemList = new List<CLPHistoryItem>();
-            while(itemStack.Count > 0)
-            {
-                itemList.Add(itemStack.Pop());
-            }
-            return new CLPHistoryAggregation(itemList);
-        }
-
-        public virtual void Undo(CLPPage page)
-        {
-            if(!UseHistory || Past.Count==0)
-            {
-                return;
-            }
-
-            CLPHistoryItem lastAction = Past.Pop();
-            CLPHistoryItem expected = lastAction.GetUndoFingerprint(page);
-            if(expected != null)
-            {
-                if(expected is CLPHistoryAggregation)
-                {
-                    foreach(CLPHistoryItem item in (expected as CLPHistoryAggregation).Events)
-                    {
-                        ExpectedEvents.Add(item);
-                    }
-                }
-                else
-                {
-                    ExpectedEvents.Add(expected);
-                }
-            }
-            lastAction.Undo(page);
-            MetaPast.Push(expected);
-            Future.Push(lastAction);
-            if(lastAction is CLPHistoryMovePageObject && Past.Count > 0)
-            {
-                CLPHistoryItem penultimateAction = Past.Peek();
-                if((lastAction as CLPHistoryMovePageObject).CombinesWith(penultimateAction))
-                {
-                    Undo(page);
-                }
-            }
-        }
-
-        public virtual void Redo(CLPPage page)
-        {
-            if(!UseHistory || Future.Count == 0)
-            {
-               return;
-            }
-            var nextAction = Future.Pop();
-            var expected = nextAction.GetRedoFingerprint(page);
-            if(expected != null)
-            {
-                ExpectedEvents.Add(expected);
-            }
-            nextAction.Redo(page);
-            MetaPast.Push(expected);
-            Past.Push(nextAction);
-            if(nextAction is CLPHistoryMovePageObject && Future.Count > 0)
-            {
-                CLPHistoryItem penultimateAction = Future.Peek();
-                if((nextAction as CLPHistoryMovePageObject).CombinesWith(penultimateAction))
-                {
-                    Redo(page);
-                }
-            }
-        }
-
-        protected bool IsExpected(CLPHistoryItem item)
-        {
-            CLPHistoryItem match = null;
-            foreach (CLPHistoryItem expected in ExpectedEvents) 
-            {
-                if(item.ItemType == expected.ItemType && expected.Equals(item))
-                {
-                    match = expected;
-                    break;
-                }
-            }
-            if(match == null)
+            if(_isUndoingOperation || !UseHistory)
             {
                 return false;
             }
-            
-            ExpectedEvents.Remove(match);
+
+            lock(_historyLock)
+            {
+                UndoItems.Insert(0, historyItem);
+                RedoItems.Clear();
+            }
+
             return true;
         }
 
+        public bool Undo(bool isAnimationUndo = false)
+        {
+            if(!CanUndo)
+            {
+                return false;
+            }
 
+            ICLPHistoryItem undo = null;
 
+            lock(_historyLock)
+            {
+                if(UndoItems.Count > 0)
+                {
+                    _isUndoingOperation = true;
+
+                    undo = UndoItems.First();
+                }
+            }
+
+            if(undo == null)
+            {
+                lock(_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+                return false;
+            }
+
+            try
+            {
+                undo.Undo(isAnimationUndo);
+
+                var undoBatch = undo as IHistoryBatch;
+                if((undoBatch != null && undoBatch.CurrentBatchTickIndex <= 0) || undoBatch == null)
+                {
+                    lock(_historyLock)
+                    {
+                        UndoItems.RemoveFirst();
+                        RedoItems.Insert(0, undo);
+                    }
+                }
+
+                return true;
+            }
+            finally
+            {
+                lock(_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+            }
+        }
+
+        public bool Redo(bool isAnimationRedo = false)
+        {
+            if(!CanRedo)
+            {
+                return false;
+            }
+
+            ICLPHistoryItem redo = null;
+
+            lock(_historyLock)
+            {
+                if(RedoItems.Count > 0)
+                {
+                    _isUndoingOperation = true;
+
+                    redo = RedoItems.First();
+                }
+            }
+
+            if(redo == null)
+            {
+                lock(_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+                return false;
+            }
+
+            try
+            {
+                redo.Redo(isAnimationRedo);
+
+                var redoBatch = redo as IHistoryBatch;
+                if((redoBatch != null && redoBatch.CurrentBatchTickIndex > redoBatch.NumberOfBatchTicks) || redoBatch == null)
+                {
+                    lock(_historyLock)
+                    {
+                        RedoItems.RemoveFirst();
+                        UndoItems.Insert(0, redo);
+                    }
+                }
+
+                return true;
+            }
+            finally
+            {
+                lock(_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+            }
+        }
 
         protected override void OnDeserialized()
         {

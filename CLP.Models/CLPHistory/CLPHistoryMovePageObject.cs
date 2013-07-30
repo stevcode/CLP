@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Windows;
-using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 
@@ -12,6 +12,8 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistoryMovePageObject : ACLPHistoryItemBase
     {
+        private const int MOVE_PAGE_OBJECT_DELAY = 100;
+
         #region Constructors
 
         public CLPHistoryMovePageObject(ICLPPage parentPage, string uniqueID, Point currentPosition)
@@ -61,80 +63,43 @@ namespace CLP.Models
 
         #region Methods
 
-        override public void Undo(CLPPage page)
-        {
-            ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
-            if(obj==null){
-                return;
-            }
-            double currentX = obj.XPosition;
-            double currentY = obj.YPosition;
-            obj.XPosition = OldX;
-            obj.YPosition = OldY;
-            if(obj.CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
-                {
-                    pageObject.XPosition = (OldX - currentX + pageObject.XPosition);
-                    pageObject.YPosition = (OldY - currentY + pageObject.YPosition);
-                }
-            }
-            if(obj.CanAcceptStrokes)
-            {
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(OldX - currentX, OldY - currentY);
-
-                StrokeCollection strokesToMove = obj.GetStrokesOverPageObject();
-                foreach(Stroke stroke in strokesToMove)
-                {
-                    stroke.Transform(moveStroke, true);
-                }
-            }
-        }
-
-        override public void Redo(CLPPage page)
-        {
-            ICLPPageObject obj = GetPageObjectByUniqueID(page, ObjectId);
-            if(obj==null){
-                return;
-            }
-            double currentX = obj.XPosition;
-            double currentY = obj.YPosition;
-            obj.XPosition = NewX;
-            obj.YPosition = NewY;
-            if(obj.CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject pageObject in obj.GetPageObjectsOverPageObject())
-                {
-                    pageObject.XPosition = (NewX - currentX + pageObject.XPosition);
-                    pageObject.YPosition = (NewY - currentY + pageObject.YPosition);
-                }
-            }
-            if(obj.CanAcceptStrokes)
-            {
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(NewX - currentX, NewY - currentY);
-
-                StrokeCollection strokesToMove = obj.GetStrokesOverPageObject();
-                foreach(Stroke stroke in strokesToMove)
-                {
-                    stroke.Transform(moveStroke, true);
-                }
-            }
-        }
-
         /// <summary>
         /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
-            foreach(var travelledPosition in TravelledPositions.Reverse())
+
+            if(isAnimationUndo)
             {
+                foreach(var travelledPosition in TravelledPositions.Reverse())
+                {
+                    if(pageObject.CanAcceptStrokes)
+                    {
+                        var xDiff = travelledPosition.X - pageObject.XPosition;
+                        var yDiff = travelledPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
+
+                        var strokesToMove = pageObject.GetStrokesOverPageObject();
+                        foreach(var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
+                    pageObject.XPosition = travelledPosition.X;
+                    pageObject.YPosition = travelledPosition.Y;
+                    Thread.Sleep(MOVE_PAGE_OBJECT_DELAY);
+                }
+            }
+            else if(TravelledPositions.Any())
+            {
+                var originalPosition = TravelledPositions.FirstOrDefault();
+
                 if(pageObject.CanAcceptStrokes)
                 {
-                    var xDiff = travelledPosition.X - pageObject.XPosition;
-                    var yDiff = travelledPosition.Y - pageObject.YPosition;
+                    var xDiff = originalPosition.X - pageObject.XPosition;
+                    var yDiff = originalPosition.Y - pageObject.YPosition;
                     var moveStroke = new Matrix();
                     moveStroke.Translate(xDiff, yDiff);
 
@@ -144,8 +109,8 @@ namespace CLP.Models
                         stroke.Transform(moveStroke, true);
                     }
                 }
-                pageObject.XPosition = travelledPosition.X;
-                pageObject.YPosition = travelledPosition.Y;
+                pageObject.XPosition = originalPosition.X;
+                pageObject.YPosition = originalPosition.Y;
             }
         }
 
@@ -155,12 +120,37 @@ namespace CLP.Models
         protected override void RedoAction(bool isAnimationRedo)
         {
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
-            foreach(var travelledPosition in TravelledPositions)
+
+            if(isAnimationRedo)
             {
+                foreach(var travelledPosition in TravelledPositions)
+                {
+                    if(pageObject.CanAcceptStrokes)
+                    {
+                        var xDiff = travelledPosition.X - pageObject.XPosition;
+                        var yDiff = travelledPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
+
+                        var strokesToMove = pageObject.GetStrokesOverPageObject();
+                        foreach(var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
+                    pageObject.XPosition = travelledPosition.X;
+                    pageObject.YPosition = travelledPosition.Y;
+                    Thread.Sleep(MOVE_PAGE_OBJECT_DELAY);
+                }
+            }
+            else if(TravelledPositions.Any())
+            {
+                var lastPosition = TravelledPositions.Reverse().FirstOrDefault();
+
                 if(pageObject.CanAcceptStrokes)
                 {
-                    var xDiff = travelledPosition.X - pageObject.XPosition;
-                    var yDiff = travelledPosition.Y - pageObject.YPosition;
+                    var xDiff = lastPosition.X - pageObject.XPosition;
+                    var yDiff = lastPosition.Y - pageObject.YPosition;
                     var moveStroke = new Matrix();
                     moveStroke.Translate(xDiff, yDiff);
 
@@ -170,8 +160,8 @@ namespace CLP.Models
                         stroke.Transform(moveStroke, true);
                     }
                 }
-                pageObject.XPosition = travelledPosition.X;
-                pageObject.YPosition = travelledPosition.Y;
+                pageObject.XPosition = lastPosition.X;
+                pageObject.YPosition = lastPosition.Y;
             }
         }
 

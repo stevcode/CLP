@@ -100,20 +100,22 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLPHistoryItems\CLPTileHeightChanged.cs" />
+    <Compile Include="CLPHistory\ACLPHistoryItemBase.cs" />
+    <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
+    <Compile Include="CLPHistory\CLPHistoryMovePageObjectBatch.cs" />
+    <Compile Include="CLPHistory\CLPHistoryPageObjectRemove.cs" />
+    <Compile Include="CLPHistory\CLPHistoryPageObjectResizeBatch.cs" />
+    <Compile Include="CLPHistory\CLPTileHeightChanged.cs" />
+    <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
+    <Compile Include="CLPHistory\IHistoryBatch.cs" />
     <Compile Include="CLPProofHistory.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />
-    <Compile Include="CLPHistory.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryAddArrayLine.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryAddObject.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryAddStroke.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryAggregation.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryItem.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryMoveObject.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryRemoveArrayLine.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryRemoveObject.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryRemoveStroke.cs" />
-    <Compile Include="CLPHistoryItems\CLPHistoryResizeObject.cs" />
+    <Compile Include="CLPHistory\CLPHistory.cs" />
+    <Compile Include="CLPHistory\CLPHistoryAddArrayLine.cs" />
+    <Compile Include="CLPHistory\CLPHistoryStrokeAdd.cs" />
+    <Compile Include="CLPHistory\CLPHistoryMovePageObject.cs" />
+    <Compile Include="CLPHistory\CLPHistoryRemoveArrayLine.cs" />
+    <Compile Include="CLPHistory\CLPHistoryStrokeRemove.cs" />
     <Compile Include="CLPNotebook.cs" />
     <Compile Include="Pages\CLPPage.cs" />
     <Compile Include="CLPPageObjects\CLPAggregationDataTable.cs" />
@@ -145,7 +147,6 @@
     <Compile Include="Displays\CLPMirrorDisplay.cs" />
     <Compile Include="Extension Methods\StokeExtension.cs" />
     <Compile Include="Group.cs" />
-    <Compile Include="ICLPHistory.cs" />
     <Compile Include="Ink DTO\DrawingAttributesDTO.cs" />
     <Compile Include="Ink DTO\StrokeDTO.cs" />
     <Compile Include="Ink DTO\StylusPointDTO.cs" />
