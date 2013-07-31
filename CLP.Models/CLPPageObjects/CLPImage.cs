@@ -18,7 +18,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPImage(string imageID, CLPPage page)
+        public CLPImage(string imageID, ICLPPage page)
             : base(page)
         {
             ImageID = imageID;

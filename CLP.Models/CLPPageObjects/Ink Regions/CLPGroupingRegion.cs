@@ -15,7 +15,7 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPGroupingRegion(CLPPage page)
+        public CLPGroupingRegion(ICLPPage page)
             : base(page)
         {
             InkShapeRegion = new CLPInkShapeRegion(ParentPage);

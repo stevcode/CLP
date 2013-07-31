@@ -15,7 +15,8 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPShadingRegion(int rows, int cols, CLPPage page) : base(page)
+        public CLPShadingRegion(int rows, int cols, ICLPPage page)
+            : base(page)
         {
             Rows = rows;
             Cols = cols;

@@ -13,7 +13,6 @@ using System.Windows.Threading;
 using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -396,29 +395,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (IsPagePreview) return;
-            String action = e.Action.ToString().Trim();
-            if(action == "Add"){
-                foreach(ICLPPageObject item in e.NewItems)
-                {
-                    if(item != null)
-                    {
-                        Page.PageHistory.Push(new CLPHistoryAddObject(item.UniqueID));
-                        Page.updateProgress();
-                    }
-                }
-            }
-            else if(action == "Remove")
+            if(IsPagePreview)
             {
-                foreach(ICLPPageObject item in e.OldItems)
-                {
-                    if(item != null)
-                    {
-                        Page.PageHistory.Push(new CLPHistoryRemoveObject(item));
-                        Page.updateProgress();
-                    }
-                }
+                return;
             }
+
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
@@ -464,7 +445,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
             //});
-            Page.updateProgress();
         }
 
         void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -474,75 +454,68 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             
-            foreach(Stroke stroke in e.Added)
+            foreach(var stroke in e.Added.Where(stroke => PageInteractionMode == PageInteractionMode.Scissors)) 
             {
-                if(PageInteractionMode == PageInteractionMode.Scissors)
+                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+                Page.InkStrokes.Remove(stroke);
+
+                List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
+                ObservableCollection<ICLPPageObject> c1 = lr[0];
+                List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
+                ObservableCollection<ICLPPageObject> c2 = lr[1];
+                var AllShapesInkStrokes = new ObservableCollection<Stroke>();
+                var AllShapesPageObjects = new ObservableCollection<ICLPPageObject>();
+
+                int i = 0;
+                foreach(ICLPPageObject no in c2)
                 {
-                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-                    Page.PageHistory.SingleCutting = true;
-                    double topY = stroke.GetBounds().Top;
-                    double leftX = stroke.GetBounds().Left;
-                    double rightX = stroke.GetBounds().Right;
-                    double botY = stroke.GetBounds().Bottom;
-                    Page.InkStrokes.Remove(stroke);
-                    List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
-                    ObservableCollection<ICLPPageObject> c1 = lr[0];
-                    List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
-                    ObservableCollection<ICLPPageObject> c2 = lr[1];
-                    var AllShapesInkStrokes = new ObservableCollection<Stroke>();
-                    var AllShapesPageObjects = new ObservableCollection<ICLPPageObject>();
-
-                    int i = 0;
-                    foreach(ICLPPageObject no in c2)
+                    StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
+                    foreach(Stroke inkStroke in shapeInkStrokes)
                     {
-                        StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
-                        foreach(Stroke inkStroke in shapeInkStrokes)
-                        {
-                            AllShapesInkStrokes.Add(inkStroke);
-                        }
-
-                        var shapePageObjects = no.GetPageObjectsOverPageObject();
-                        foreach(ICLPPageObject po in shapePageObjects) {
-                            AllShapesPageObjects.Add(po);
-                        }
-
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
-                        Page.PageHistory.Push(new CLPHistoryRemoveObject(no));
-
-                        ICLPPageObject noc1 = c1List[i];
-                        CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
-                        Page.PageHistory.Push(new CLPHistoryAddObject(noc1.UniqueID));
-
-                        ICLPPageObject noc2 = c1List[i + 1];
-                        CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
-                        Page.PageHistory.Push(new CLPHistoryAddObject(noc2.UniqueID));
-                        i = i + 2;
+                        AllShapesInkStrokes.Add(inkStroke);
                     }
 
-                    /*foreach(ICLPPageObject no in c1)
+                    var shapePageObjects = no.GetPageObjectsOverPageObject();
+                    foreach(ICLPPageObject po in shapePageObjects) {
+                        AllShapesPageObjects.Add(po);
+                    }
+
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
+                    Page.PageHistory.Push(new CLPHistoryRemoveObject(no));
+
+                    ICLPPageObject noc1 = c1List[i];
+                    CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
+                    Page.PageHistory.Push(new CLPHistoryAddObject(noc1.UniqueID));
+
+                    ICLPPageObject noc2 = c1List[i + 1];
+                    CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
+                    Page.PageHistory.Push(new CLPHistoryAddObject(noc2.UniqueID));
+                    i = i + 2;
+                }
+
+                /*foreach(ICLPPageObject no in c1)
                     {
                         CLPServiceAgent.Instance.AddPageObjectToPage(no);
                     }*/
                     
-                    foreach(Stroke inkStroke in AllShapesInkStrokes)
-                    {
-                        Page.InkStrokes.Add(inkStroke);
-                    }
-
-                    //Page.PageHistory.Freeze();
-                    foreach(ICLPPageObject po in AllShapesPageObjects) {
-                        CLPServiceAgent.Instance.AddPageObjectToPage(po);
-                    }
-                    //Page.PageHistory.Unfreeze();
-                    
-                    RefreshInkStrokes();
-                    RefreshPageObjects(AllShapesPageObjects);
-                    Page.PageHistory.SingleCutting = false;
-                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                    return;
+                foreach(Stroke inkStroke in AllShapesInkStrokes)
+                {
+                    Page.InkStrokes.Add(inkStroke);
                 }
+
+                //Page.PageHistory.Freeze();
+                foreach(ICLPPageObject po in AllShapesPageObjects) {
+                    CLPServiceAgent.Instance.AddPageObjectToPage(po);
+                }
+                //Page.PageHistory.Unfreeze();
+                    
+                RefreshInkStrokes();
+                RefreshPageObjects(AllShapesPageObjects);
+
+                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+                return;
             }
 
             

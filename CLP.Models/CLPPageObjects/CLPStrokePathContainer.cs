@@ -14,7 +14,7 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPStrokePathContainer(ICLPPageObject internalPageObject, CLPPage page)
+        public CLPStrokePathContainer(ICLPPageObject internalPageObject, ICLPPage page)
             : base(page)
         {
             InternalPageObject = internalPageObject;

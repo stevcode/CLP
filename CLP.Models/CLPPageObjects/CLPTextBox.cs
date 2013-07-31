@@ -11,9 +11,9 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPTextBox(CLPPage page) : this("", page) { }
+        public CLPTextBox(ICLPPage page) : this("", page) { }
 
-        public CLPTextBox(string text, CLPPage page)
+        public CLPTextBox(string text, ICLPPage page)
             : base(page)
         {
             Text = text;

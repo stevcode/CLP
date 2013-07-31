@@ -127,6 +127,8 @@ namespace CLP.Models
 
         public bool AddHistoryItem(ICLPHistoryItem historyItem)
         {
+            EndBatch();
+
             if(_isUndoingOperation || !UseHistory)
             {
                 return false;

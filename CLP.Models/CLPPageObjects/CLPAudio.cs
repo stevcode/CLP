@@ -17,7 +17,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPAudio(CLPPage page)
+        public CLPAudio(ICLPPage page)
             : base(page)
         {
             ByteSource = new Byte[0];

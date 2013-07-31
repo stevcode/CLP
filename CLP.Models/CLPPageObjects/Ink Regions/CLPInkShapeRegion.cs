@@ -15,7 +15,8 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPInkShapeRegion(CLPPage page) : base(page)
+        public CLPInkShapeRegion(ICLPPage page)
+            : base(page)
         {
         }
 

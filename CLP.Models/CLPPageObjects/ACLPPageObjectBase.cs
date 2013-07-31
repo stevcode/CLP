@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -16,7 +18,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        protected CLPPageObjectBase(CLPPage page)
+        protected CLPPageObjectBase(ICLPPage page)
         {
             ParentPage = page;
             ParentPageID = page.UniqueID;
@@ -40,9 +42,9 @@ namespace CLP.Models
         /// <summary>
         /// The page the pageObject is on.
         /// </summary>
-        public CLPPage ParentPage
+        public ICLPPage ParentPage
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
+            get { return GetValue<ICLPPage>(ParentPageProperty); }
             set 
             { 
                 SetValue(ParentPageProperty, value); 
@@ -51,7 +53,7 @@ namespace CLP.Models
         }
 
         [NonSerialized]
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null, includeInSerialization:false);
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(ICLPPage), null, includeInSerialization: false);
 
         /// <summary>
         /// The UniqueID of the ParentPage
@@ -266,18 +268,20 @@ namespace CLP.Models
 
         public virtual void RefreshStrokeParentIDs()
         {
-            if(CanAcceptStrokes)
+            if(!CanAcceptStrokes)
             {
-                PageObjectStrokeParentIDs.Clear();
-
-                Rect rect = new Rect(XPosition, YPosition, Width, Height);
-                var strokesOverObject =
-                    from stroke in ParentPage.InkStrokes
-                    where stroke.HitTest(rect, 3)
-                    select stroke;
-
-                AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+                return;
             }
+
+            PageObjectStrokeParentIDs.Clear();
+
+            var rect = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject =
+                from stroke in ParentPage.InkStrokes
+                where stroke.HitTest(rect, 30)
+                select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
         public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
@@ -314,6 +318,11 @@ namespace CLP.Models
 
             StrokeCollection inkStrokes = new StrokeCollection(strokes.Distinct());
             return inkStrokes;
+        }
+
+        public virtual List<ICLPPageObject> Cut(Stroke cuttingStroke)
+        {
+            return new List<ICLPPageObject>();
         }
 
         public virtual bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
@@ -379,17 +388,6 @@ namespace CLP.Models
             }
         }
 
-        public virtual ObservableCollection<ICLPPageObject> SplitAtX(double ave)
-        {
-            ObservableCollection<ICLPPageObject> c = new ObservableCollection<ICLPPageObject>();
-            return c;
-        }
-
-        public virtual ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
-        {
-            ObservableCollection<ICLPPageObject> c = new ObservableCollection<ICLPPageObject>();
-            return c;
-        }
         #endregion
 
         #region Utility Methods

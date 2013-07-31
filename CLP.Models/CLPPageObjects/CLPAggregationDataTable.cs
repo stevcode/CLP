@@ -205,7 +205,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPAggregationDataTable(CLPPage page)
+        public CLPAggregationDataTable(ICLPPage page)
             : base(page)
         {
             XPosition = 50;

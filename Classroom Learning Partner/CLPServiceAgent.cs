@@ -13,6 +13,7 @@ using Catel.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
+using System.Windows.Ink;
 
 namespace Classroom_Learning_Partner
 {
@@ -312,7 +313,7 @@ namespace Classroom_Learning_Partner
 
         #region Page
 
-        public void AddPageObjectToPage(ICLPPageObject pageObject)
+        public void AddPageObjectToPage(ICLPPageObject pageObject, bool addToHistory = true)
         {
             var parentPage = pageObject.ParentPage;
             if(parentPage == null)
@@ -320,10 +321,10 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            AddPageObjectToPage(parentPage, pageObject);
+            AddPageObjectToPage(parentPage, pageObject, addToHistory);
         }
 
-        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject)
+        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)
         {
             if(page == null)
             {
@@ -332,9 +333,14 @@ namespace Classroom_Learning_Partner
             }
             pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
             page.PageObjects.Add(pageObject);
+            if(addToHistory)
+            {
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID,
+                                                                            page.PageObjects.Count - 1));
+            }
         }
 
-        public void RemovePageObjectFromPage(ICLPPageObject pageObject)
+        public void RemovePageObjectFromPage(ICLPPageObject pageObject, bool addToHistory = true)
         {
             var parentPage = pageObject.ParentPage;
             if(parentPage == null)
@@ -345,7 +351,7 @@ namespace Classroom_Learning_Partner
             RemovePageObjectFromPage(parentPage, pageObject);
         }
 
-        public void RemovePageObjectFromPage(CLPPage page, ICLPPageObject pageObject)
+        public void RemovePageObjectFromPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)
         {
             if(page == null)
             {
@@ -354,6 +360,11 @@ namespace Classroom_Learning_Partner
             }
             pageObject.OnRemoved();
             page.PageObjects.Remove(pageObject);
+            if(addToHistory)
+            {
+                var currentIndex = page.PageObjects.IndexOf(pageObject);
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
+            }
         }
 
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
@@ -422,6 +433,41 @@ namespace Classroom_Learning_Partner
             }
             Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
             Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
+        }
+
+        public void CutPageObjects(ICLPPage page, Stroke cuttingStroke)
+        {
+            var cutPageObjects = new List<ICLPPageObject>();
+            var allHalvedPageObjects = new List<ICLPPageObject>();
+            foreach(var pageObject in page.PageObjects)
+            {
+                var halvedPageObjects = pageObject.Cut(cuttingStroke);
+                if(halvedPageObjects.Any())
+                {
+                    cutPageObjects.Add(pageObject);
+                    allHalvedPageObjects.AddRange(halvedPageObjects);
+                }
+            }
+
+            page.PageHistory.BeginBatch(new CLPHistoryCutBatch(page, cuttingStroke, cutPageObjects));
+            foreach(var pageObject in cutPageObjects)
+            {
+                RemovePageObjectFromPage(page, pageObject, false);
+            }
+
+            var halvedPageObjectIDs = new List<string>();
+            foreach(var pageObject in allHalvedPageObjects)
+            {
+                AddPageObjectToPage(page, pageObject, false);
+                halvedPageObjectIDs.Add(pageObject.UniqueID);
+            }
+
+            var clpHistoryCutBatch = page.PageHistory.CurrentHistoryBatch as CLPHistoryCutBatch;
+            if(clpHistoryCutBatch != null)
+            {
+                clpHistoryCutBatch.AddHalvedPageObjectIDsToBatch(halvedPageObjectIDs);
+            }
+            page.PageHistory.EndBatch();
         }
 
         #endregion //Page

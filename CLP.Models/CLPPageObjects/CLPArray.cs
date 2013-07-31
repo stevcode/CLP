@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -109,7 +110,7 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPArray(int rows, int columns, CLPPage page)
+        public CLPArray(int rows, int columns, ICLPPage page)
             : base(page)
         {
             IsGridOn = true;
@@ -272,12 +273,51 @@ namespace CLP.Models
 
         #region Methods
 
-        public override ObservableCollection<ICLPPageObject> SplitAtX(double average)
+        public override List<ICLPPageObject> Cut(Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition + LargeLabelLength;
+            var cuttableBottom = cuttableTop + ArrayHeight;
+            var cuttableLeft = XPosition + LargeLabelLength;
+            var cuttableRight = cuttableLeft + ArrayWidth;
+
+            var havledPageObjects = new List<ICLPPageObject>();
+
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom))
+            {
+                var average = (strokeRight + strokeLeft)/2;
+
+                if((cuttableLeft <= strokeLeft && cuttableRight >= strokeRight) &&
+                   (strokeTop - cuttableTop < 15 && cuttableBottom - strokeBottom < 15))
+                {
+                    ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
+                    if(c.Count == 2)
+                    {
+                        foreach(ICLPPageObject no in c)
+                        {
+                            c1.Add(no);
+                        }
+                        c2.Add(pageObject);
+                    }
+                }
+            }
+            else
+            {
+                
+            }
+
+            return havledPageObjects;
+        }
+
+        public ObservableCollection<ICLPPageObject> SplitAtX(double average)
         {
             var c = new ObservableCollection<ICLPPageObject>();
             if(Columns == 1)
             {
-                c.Add(this);
                 return c;
             }
 

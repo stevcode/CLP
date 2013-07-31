@@ -24,7 +24,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPSnapTileContainer(Point pt, CLPPage page)
+        public CLPSnapTileContainer(Point pt, ICLPPage page)
             : base(page)
         {
             XPosition = pt.X;

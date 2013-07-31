@@ -17,7 +17,7 @@ namespace CLP.Models
 
         #region Constructors
 
-        public ACLPInkRegion(CLPPage page)
+        public ACLPInkRegion(ICLPPage page)
             : base(page)
         {
             CanAcceptStrokes = true;

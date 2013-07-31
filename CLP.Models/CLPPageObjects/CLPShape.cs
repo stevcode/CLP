@@ -22,7 +22,7 @@ namespace CLP.Models
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPShape(CLPShapeType shapeType, CLPPage page)
+        public CLPShape(CLPShapeType shapeType, ICLPPage page)
             : base(page)
         {
             ShapeType = shapeType;
@@ -30,17 +30,17 @@ namespace CLP.Models
             YPosition = 10;
             Height = 200;
             Width = 200;
-            if(shapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
+            if(shapeType == CLPShapeType.VerticalLine)
             {
                 Width = 20;
             }
-            if(shapeType == CLP.Models.CLPShape.CLPShapeType.HorizontalLine)
+            if(shapeType == CLPShapeType.HorizontalLine)
             {
                 Height = 20;
             }
             Parts = 1;
 
-            CLPPageObjectBase.ApplyDistinctPosition(this);
+            ApplyDistinctPosition(this);
         }
 
         /// <summary>

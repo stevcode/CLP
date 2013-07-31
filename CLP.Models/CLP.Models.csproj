@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLPHistory\ACLPHistoryItemBase.cs" />
+    <Compile Include="CLPHistory\CLPHistoryCutBatch.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryMovePageObjectBatch.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectRemove.cs" />

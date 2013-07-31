@@ -40,7 +40,7 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPStamp(ICLPPageObject internalPageObject, CLPPage page)
+        public CLPStamp(ICLPPageObject internalPageObject, ICLPPage page)
         { 
             StrokePathContainer = new CLPStrokePathContainer(internalPageObject, page) {IsInternalPageObject = true};
             HandwritingRegionParts = new CLPHandwritingRegion(CLPHandwritingAnalysisType.NUMBER, page)
@@ -138,9 +138,9 @@ namespace CLP.Models
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPage ParentPage
+        public ICLPPage ParentPage
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
+            get { return GetValue<ICLPPage>(ParentPageProperty); }
             set 
             { 
                 SetValue(ParentPageProperty, value);
@@ -152,7 +152,7 @@ namespace CLP.Models
         }
 
         [NonSerialized]
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage), null, includeInSerialization:false);
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(ICLPPage), null, includeInSerialization: false);
 
         /// <summary>
         /// Gets or sets the property value.
