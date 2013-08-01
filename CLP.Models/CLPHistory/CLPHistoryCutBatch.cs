@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryCutBatch : ACLPHistoryItemBase, IHistoryBatch
+    public class CLPHistoryCutBatch : ACLPHistoryItemBase
     {
+        private readonly int STROKE_CUT_DELAY = 100;
+
         #region Constructors
 
-        public CLPHistoryCutBatch(ICLPPage parentPage, Stroke cuttingStroke, List<ICLPPageObject> cutPageObjects)
+        public CLPHistoryCutBatch(ICLPPage parentPage, Stroke cuttingStroke, List<ICLPPageObject> cutPageObjects, List<string> halvedPageObjectIDs)
             : base(parentPage)
         {
+            SerializedCuttingStroke = new StrokeDTO(cuttingStroke);
             CutPageObjects = cutPageObjects;
             foreach(var cutPageObject in cutPageObjects)
             {
                 CutPageObjectIDs.Add(cutPageObject.UniqueID);
             }
-            SerializedCuttingStroke = new StrokeDTO(cuttingStroke);
+            HalvedPageObjectIDs = halvedPageObjectIDs;
         }
 
         /// <summary>
@@ -92,36 +96,6 @@ namespace CLP.Models
 
         public static readonly PropertyData HalvedPageObjectsProperty = RegisterProperty("HalvedPageObjects", typeof(List<ICLPPageObject>), () => new List<ICLPPageObject>());
 
-        public int BatchDelay
-        {
-            get
-            {
-                return 100;
-            }
-        }
-
-        public int NumberOfBatchTicks
-        {
-            get
-            {
-                //0 = Draw Cutting Stroke
-                //1 = Delete CutPageObjects and Add HalvedPageObjects. Does this need to be 2 actions?
-                //2 = Remove Cutting Stroke
-                return 2;
-            }
-        }
-
-        /// <summary>
-        /// Location within the Batch.
-        /// </summary>
-        public int CurrentBatchTickIndex
-        {
-            get { return GetValue<int>(CurrentBatchTickIndexProperty); }
-            set { SetValue(CurrentBatchTickIndexProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
-
         #endregion //Properties
 
         #region Methods
@@ -136,37 +110,34 @@ namespace CLP.Models
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            if(CurrentBatchTickIndex <= 0)
+            if(!HalvedPageObjectIDs.Any())
             {
-                CurrentBatchTickIndex = 0;
                 return;
             }
 
+            var cuttingStroke = SerializedCuttingStroke.ToStroke();
             if(isAnimationUndo)
             {
-                var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex - 1];
-                pageObject.Width = stretchedDimension.X;
-                pageObject.Height = stretchedDimension.Y;
-                CurrentBatchTickIndex--;
+                ParentPage.InkStrokes.Add(cuttingStroke);
+                Thread.Sleep(STROKE_CUT_DELAY); //needs speed multiplier
             }
-            else if(HalvedPageObjectIDs.Any())
+            var halvedPageObjects = new List<ICLPPageObject>();
+            foreach(var pageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID))) 
             {
-                var halvedPageObjects = new List<ICLPPageObject>();
-                foreach(var pageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID))) 
-                {
-                    halvedPageObjects.Add(pageObject);
-                    ParentPage.PageObjects.Remove(pageObject);
-                }
-                HalvedPageObjects = halvedPageObjects;
+                halvedPageObjects.Add(pageObject);
+                ParentPage.PageObjects.Remove(pageObject);
+            }
+            HalvedPageObjects = halvedPageObjects;
 
-                foreach(var cutPageObject in CutPageObjects)
-                {
-                    ParentPage.PageObjects.Add(cutPageObject);
-                    cutPageObject.RefreshStrokeParentIDs();
-                }
-                CutPageObjects = null;
-
-                CurrentBatchTickIndex = 0;
+            foreach(var cutPageObject in CutPageObjects)
+            {
+                ParentPage.PageObjects.Add(cutPageObject);
+                cutPageObject.RefreshStrokeParentIDs();
+            }
+            CutPageObjects = null;
+            if(isAnimationUndo)
+            {
+                ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
 
@@ -175,43 +146,35 @@ namespace CLP.Models
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+            if(!CutPageObjectIDs.Any())
             {
                 return;
             }
 
+            var cuttingStroke = SerializedCuttingStroke.ToStroke();
             if(isAnimationRedo)
             {
-                var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex];
-                pageObject.Width = stretchedDimension.X;
-                pageObject.Height = stretchedDimension.Y;
-                CurrentBatchTickIndex++;
+                ParentPage.InkStrokes.Add(cuttingStroke);
+                Thread.Sleep(STROKE_CUT_DELAY); //needs speed multiplier
             }
-            else if(CutPageObjectIDs.Any())
+            var cutPageObjects = new List<ICLPPageObject>();
+            foreach(var pageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByUniqueID(cutPageObjectID)))
             {
-                var cutPageObjects = new List<ICLPPageObject>();
-                foreach(var pageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByUniqueID(cutPageObjectID)))
-                {
-                    cutPageObjects.Add(pageObject);
-                    ParentPage.PageObjects.Remove(pageObject);
-                }
-                CutPageObjects = cutPageObjects;
-
-                foreach(var halvedPageObject in HalvedPageObjects)
-                {
-                    ParentPage.PageObjects.Add(halvedPageObject);
-                    halvedPageObject.RefreshStrokeParentIDs();
-                }
-                HalvedPageObjects = null;
-
-                CurrentBatchTickIndex = NumberOfBatchTicks;
+                cutPageObjects.Add(pageObject);
+                ParentPage.PageObjects.Remove(pageObject);
             }
-        }
+            CutPageObjects = cutPageObjects;
 
-        public void ClearBatchAfterCurrentIndex()
-        {
-            CurrentBatchTickIndex = 0;
-            //clear both lists
+            foreach(var halvedPageObject in HalvedPageObjects)
+            {
+                ParentPage.PageObjects.Add(halvedPageObject);
+                halvedPageObject.RefreshStrokeParentIDs();
+            }
+            HalvedPageObjects = null;
+            if(isAnimationRedo)
+            {
+                ParentPage.InkStrokes.Remove(cuttingStroke);
+            }
         }
 
         #endregion //Methods
