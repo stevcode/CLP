@@ -9,13 +9,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryCutBatch : ACLPHistoryItemBase
+    public class CLPHistoryPageObjectCut : ACLPHistoryItemBase
     {
         private readonly int STROKE_CUT_DELAY = 100;
 
         #region Constructors
 
-        public CLPHistoryCutBatch(ICLPPage parentPage, Stroke cuttingStroke, List<ICLPPageObject> cutPageObjects, List<string> halvedPageObjectIDs)
+        public CLPHistoryPageObjectCut(ICLPPage parentPage, Stroke cuttingStroke, List<ICLPPageObject> cutPageObjects, List<string> halvedPageObjectIDs)
             : base(parentPage)
         {
             SerializedCuttingStroke = new StrokeDTO(cuttingStroke);
@@ -32,7 +32,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistoryCutBatch(SerializationInfo info, StreamingContext context)
+        protected CLPHistoryPageObjectCut(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -119,7 +119,7 @@ namespace CLP.Models
             if(isAnimationUndo)
             {
                 ParentPage.InkStrokes.Add(cuttingStroke);
-                Thread.Sleep(STROKE_CUT_DELAY); //needs speed multiplier
+                Thread.Sleep(STROKE_CUT_DELAY); //TODO: needs speed multiplier
             }
             var halvedPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID))) 
@@ -132,7 +132,7 @@ namespace CLP.Models
             foreach(var cutPageObject in CutPageObjects)
             {
                 ParentPage.PageObjects.Add(cutPageObject);
-                cutPageObject.RefreshStrokeParentIDs();
+                cutPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
             }
             CutPageObjects = null;
             if(isAnimationUndo)
@@ -155,7 +155,7 @@ namespace CLP.Models
             if(isAnimationRedo)
             {
                 ParentPage.InkStrokes.Add(cuttingStroke);
-                Thread.Sleep(STROKE_CUT_DELAY); //needs speed multiplier
+                Thread.Sleep(STROKE_CUT_DELAY); //TODO: needs speed multiplier
             }
             var cutPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByUniqueID(cutPageObjectID)))
@@ -168,7 +168,7 @@ namespace CLP.Models
             foreach(var halvedPageObject in HalvedPageObjects)
             {
                 ParentPage.PageObjects.Add(halvedPageObject);
-                halvedPageObject.RefreshStrokeParentIDs();
+                halvedPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
             }
             HalvedPageObjects = null;
             if(isAnimationRedo)

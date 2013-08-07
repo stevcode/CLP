@@ -5,7 +5,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryAddArrayLine : CLPHistoryItem
+    public class CLPHistoryArrayAddLine : CLPHistoryItem
     {
 
         #region Constructor

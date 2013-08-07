@@ -5,12 +5,12 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPTileHeightChanged : ACLPHistoryItemBase
+    public class CLPHistoryTileHeightChanged : ACLPHistoryItemBase
     {
 
         #region Constructors
 
-        public CLPTileHeightChanged(ICLPPage parentPage, string tileUniqueID, int newHeight, int oldHeight)
+        public CLPHistoryTileHeightChanged(ICLPPage parentPage, string tileUniqueID, int newHeight, int oldHeight)
             : base(parentPage)
         {
             TileUniqueID = tileUniqueID;
@@ -23,7 +23,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPTileHeightChanged(SerializationInfo info, StreamingContext context)
+        protected CLPHistoryTileHeightChanged(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
