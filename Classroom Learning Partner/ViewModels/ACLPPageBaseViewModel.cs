@@ -460,64 +460,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
                 Page.InkStrokes.Remove(stroke);
 
-                List<ObservableCollection<ICLPPageObject>> lr = Page.CutObjects(leftX, rightX, topY, botY);
-                ObservableCollection<ICLPPageObject> c1 = lr[0];
-                List<ICLPPageObject> c1List = new List<ICLPPageObject>(c1);
-                ObservableCollection<ICLPPageObject> c2 = lr[1];
-                var AllShapesInkStrokes = new ObservableCollection<Stroke>();
-                var AllShapesPageObjects = new ObservableCollection<ICLPPageObject>();
-
-                int i = 0;
-                foreach(ICLPPageObject no in c2)
+                var allCutPageObjects = new List<ICLPPageObject>();
+                var allHalvedPageObjects = new List<ICLPPageObject>();
+                foreach(var pageObject in PageObjects)
                 {
-                    StrokeCollection shapeInkStrokes = no.GetStrokesOverPageObject();
-                    foreach(Stroke inkStroke in shapeInkStrokes)
+                    var halvedPageObjects = pageObject.Cut(stroke);
+                    if(!halvedPageObjects.Any())
                     {
-                        AllShapesInkStrokes.Add(inkStroke);
+                        continue;
                     }
-
-                    var shapePageObjects = no.GetPageObjectsOverPageObject();
-                    foreach(ICLPPageObject po in shapePageObjects) {
-                        AllShapesPageObjects.Add(po);
-                    }
-
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(no);
-                    Page.PageHistory.Push(new CLPHistoryRemoveObject(no));
-
-                    ICLPPageObject noc1 = c1List[i];
-                    CLPServiceAgent.Instance.AddPageObjectToPage(noc1);
-                    Page.PageHistory.Push(new CLPHistoryAddObject(noc1.UniqueID));
-
-                    ICLPPageObject noc2 = c1List[i + 1];
-                    CLPServiceAgent.Instance.AddPageObjectToPage(noc2);
-                    Page.PageHistory.Push(new CLPHistoryAddObject(noc2.UniqueID));
-                    i = i + 2;
+                    allCutPageObjects.Add(pageObject);
+                    allHalvedPageObjects.AddRange(halvedPageObjects);
                 }
 
-                /*foreach(ICLPPageObject no in c1)
-                    {
-                        CLPServiceAgent.Instance.AddPageObjectToPage(no);
-                    }*/
-                    
-                foreach(Stroke inkStroke in AllShapesInkStrokes)
+                foreach(var pageObject in allCutPageObjects)
                 {
-                    Page.InkStrokes.Add(inkStroke);
+                    PageObjects.Remove(pageObject);
                 }
 
-                //Page.PageHistory.Freeze();
-                foreach(ICLPPageObject po in AllShapesPageObjects) {
-                    CLPServiceAgent.Instance.AddPageObjectToPage(po);
+                var allHalvedPageObjectIDs = new List<string>();
+                foreach(var pageObject in allHalvedPageObjects)
+                {
+                    allHalvedPageObjectIDs.Add(pageObject.UniqueID);
+                    CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false);
                 }
-                //Page.PageHistory.Unfreeze();
+
+                Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
                     
                 RefreshInkStrokes();
-                RefreshPageObjects(AllShapesPageObjects);
+                RefreshPageObjects(allHalvedPageObjects);
 
                 InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                 PageObjects.CollectionChanged += PageObjects_CollectionChanged;
                 return;
             }
-
             
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
@@ -686,22 +662,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RefreshPageObjects(ObservableCollection<ICLPPageObject> AllShapesPageObjects)
+        private void RefreshPageObjects(List<ICLPPageObject> AllShapesPageObjects)
         {
             try
             {
-                foreach(ICLPPageObject pageObject in PageObjects)
+                foreach(var pageObject in PageObjects)
                 {
                     if(pageObject.CanAcceptPageObjects)
                     {
                         var removedPageObjects = new ObservableCollection<ICLPPageObject>();
-                        /*if(e.OldItems != null)
-                            {
-                                foreach(ICLPPageObject removedPageObject in e.OldItems)
-                                {
-                                    removedPageObjects.Add(removedPageObject);
-                                }
-                            }*/
 
                         var addedPageObjects = new ObservableCollection<ICLPPageObject>();
                         if(AllShapesPageObjects.Any())

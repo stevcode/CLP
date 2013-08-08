@@ -348,7 +348,7 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
-            RemovePageObjectFromPage(parentPage, pageObject);
+            RemovePageObjectFromPage(parentPage, pageObject, addToHistory);
         }
 
         public void RemovePageObjectFromPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)

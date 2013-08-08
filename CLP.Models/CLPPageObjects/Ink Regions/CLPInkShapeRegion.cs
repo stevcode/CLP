@@ -84,7 +84,7 @@ namespace CLP.Models
                     else if (shape.GetShapeName().Equals("Straight")) {
                         shapeName = "Vertical";
                     }
-                    InkShapes.Add(new CLPNamedInkSet(shapeName, CLPPage.StrokesToBytes(shape.Strokes)));
+                    //InkShapes.Add(new CLPNamedInkSet(shapeName, CLPPage.StrokesToBytes(shape.Strokes))); //commented out because StrokesToBytes no longer exists
                     text.AppendLine(shapeName);
                 }
                 StoredAnswer = text.ToString();

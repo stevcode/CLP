@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Catel.Data;
@@ -164,17 +165,9 @@ namespace CLP.Models
             }
         }
 
-        public CLPPage GetNotebookPageByID(string pageUniqueID)
+        public ICLPPage GetNotebookPageByID(string pageUniqueID)
         {
-            foreach(var page in Pages)
-            {
-                if(page.UniqueID == pageUniqueID)
-                {
-                    return page;
-                }
-            }
-
-            return null;
+            return Pages.FirstOrDefault(page => page.UniqueID == pageUniqueID);
         }
 
         public int GetNotebookPageIndex(CLPPage page)
@@ -189,18 +182,15 @@ namespace CLP.Models
             }
         }
 
-        public CLPPage GetSubmissionByID(string pageID)
+        public ICLPPage GetSubmissionByID(string pageID)
         {
-            CLPPage returnPage = null;
+            ICLPPage returnPage = null;
             foreach(var pageKey in Submissions.Keys)
             {
-                foreach(var page in Submissions[pageKey])
+                foreach(var page in Submissions[pageKey].Where(page => page.SubmissionID == pageID)) 
                 {
-                    if(page.SubmissionID == pageID)
-                    {
-                        returnPage = page;
-                        break;
-                    }
+                    returnPage = page;
+                    break;
                 }
                 if(returnPage != null)
                 {
@@ -238,7 +228,7 @@ namespace CLP.Models
 
         public void AddStudentSubmission(string pageID, CLPPage submission)
         {
-            CLPPage notebookPage = GetNotebookPageByID(pageID);
+            ICLPPage notebookPage = GetNotebookPageByID(pageID);
             if(Submissions.ContainsKey(pageID))
             {
                 int groupCount = 0;
