@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -362,19 +363,10 @@ namespace CLP.Models
         #endregion //Properties
 
         #region Methods
-        public virtual ObservableCollection<ICLPPageObject> SplitAtX(double ave)
+
+        public List<ICLPPageObject> Cut(Stroke cuttingStroke)
         {
-
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
-
-            return c;
-        }
-        public virtual ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
-        {
-
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
-
-            return c;
+            return new List<ICLPPageObject>();
         }
 
         public ICLPPageObject Duplicate()

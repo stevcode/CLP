@@ -109,7 +109,6 @@
     <Compile Include="CLPHistory\CLPHistoryTileHeightChanged.cs" />
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
-    <Compile Include="CLPProofHistory.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />
     <Compile Include="CLPHistory\CLPHistory.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayDivisionsChanged.cs" />
