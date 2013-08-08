@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -285,8 +286,11 @@ namespace CLP.Models
             var cuttableLeft = XPosition + LargeLabelLength;
             var cuttableRight = cuttableLeft + ArrayWidth;
 
-            var havledPageObjects = new List<ICLPPageObject>();
+            var halvedPageObjects = new List<ICLPPageObject>();
 
+            //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
+            // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
+            // cut instead of the vertical cut that was intended. See Also Shape.Cut().
             if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom))
             {
                 var average = (strokeRight + strokeLeft)/2;
@@ -294,141 +298,127 @@ namespace CLP.Models
                 if((cuttableLeft <= strokeLeft && cuttableRight >= strokeRight) &&
                    (strokeTop - cuttableTop < 15 && cuttableBottom - strokeBottom < 15))
                 {
-                    ObservableCollection<ICLPPageObject> c = pageObject.SplitAtX(Ave);
-                    if(c.Count == 2)
+                    if(Columns == 1)
                     {
-                        foreach(ICLPPageObject no in c)
-                        {
-                            c1.Add(no);
-                        }
-                        c2.Add(pageObject);
+                        return halvedPageObjects;
                     }
+
+                    var relativeAverage = average - LargeLabelLength - XPosition;
+
+                    var minDistance = ArrayWidth;
+                    var closestLinePosition = 0.0;
+                    var closestLineIndex = 0;
+                    foreach(var line in VerticalGridLines)
+                    {
+                        var distance = Math.Abs(relativeAverage - line);
+                        if(distance >= minDistance)
+                        {
+                            continue;
+                        }
+                        minDistance = distance;
+                        closestLinePosition = line;
+                        closestLineIndex = VerticalGridLines.IndexOf(line);
+                    }
+
+                    var leftArray = new CLPArray(Rows, closestLineIndex + 1, ParentPage)
+                    {
+                        IsGridOn = IsGridOn,
+                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                        XPosition = XPosition,
+                        YPosition = YPosition,
+                        ArrayHeight = ArrayHeight
+                    };
+                    leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
+                    leftArray.CalculateGridLines();
+                    halvedPageObjects.Add(leftArray);
+
+                    var rightArray = new CLPArray(Rows, Columns - closestLineIndex - 1, ParentPage)
+                    {
+                        IsGridOn = IsGridOn,
+                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                        XPosition = XPosition + closestLinePosition,
+                        YPosition = YPosition,
+                        ArrayHeight = ArrayHeight
+                    };
+                    rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
+                    rightArray.CalculateGridLines();
+                    halvedPageObjects.Add(rightArray);
                 }
             }
             else
             {
-                
+                var average = (strokeTop + strokeBottom) / 2;
+
+                if((cuttableTop <= strokeTop && cuttableBottom >= strokeBottom) &&
+                   (strokeLeft - cuttableLeft < 15 && cuttableRight - strokeRight < 15))
+                {
+                    if(Rows == 1)
+                    {
+                        return halvedPageObjects;
+                    }
+
+                    var relativeAverage = average - LargeLabelLength - YPosition;
+
+                    var minDistance = ArrayHeight;
+                    var closestLinePosition = 0.0;
+                    var closestLineIndex = 0;
+                    foreach(var line in HorizontalGridLines)
+                    {
+                        var distance = Math.Abs(relativeAverage - line);
+                        if(distance >= minDistance)
+                        {
+                            continue;
+                        }
+                        minDistance = distance;
+                        closestLinePosition = line;
+                        closestLineIndex = HorizontalGridLines.IndexOf(line);
+                    }
+
+                    var topArray = new CLPArray(closestLineIndex + 1, Columns, ParentPage)
+                    {
+                        IsGridOn = IsGridOn,
+                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                        XPosition = XPosition,
+                        YPosition = YPosition,
+                        ArrayWidth = ArrayWidth
+                    };
+                    topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
+                    topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
+                    topArray.CalculateGridLines();
+                    halvedPageObjects.Add(topArray);
+
+                    var bottomArray = new CLPArray(Rows - closestLineIndex - 1, Columns, ParentPage)
+                    {
+                        IsGridOn = IsGridOn,
+                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                        XPosition = XPosition,
+                        YPosition = YPosition + closestLinePosition,
+                        ArrayWidth = ArrayWidth
+                    };
+                    bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
+                    bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
+                    bottomArray.CalculateGridLines();
+                    halvedPageObjects.Add(bottomArray);
+                }
             }
 
-            return havledPageObjects;
+            return halvedPageObjects;
         }
-
-        public ObservableCollection<ICLPPageObject> SplitAtX(double average)
-        {
-            var c = new ObservableCollection<ICLPPageObject>();
-            if(Columns == 1)
-            {
-                return c;
-            }
-
-            double relativeAverage = average - LargeLabelLength - XPosition;
-
-            double minDistance = ArrayWidth;
-            double closestLinePosition = 0;
-            int closestLineIndex = 0;
-            foreach(var line in VerticalGridLines)
-            {
-                var distance = Math.Abs(relativeAverage - line);
-                if(distance < minDistance)
-                {
-                    minDistance = distance;
-                    closestLinePosition = line;
-                    closestLineIndex = VerticalGridLines.IndexOf(line);
-                }
-            }
-
-            var leftArray = new CLPArray(Rows, closestLineIndex + 1, ParentPage)
-                            {
-                                IsGridOn = IsGridOn,
-                                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                                XPosition = XPosition,
-                                YPosition = YPosition,
-                                ArrayHeight = ArrayHeight
-                            };
-            leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
-            leftArray.CalculateGridLines();
-            c.Add(leftArray);
-
-            var rightArray = new CLPArray(Rows, Columns - closestLineIndex - 1, ParentPage)
-            {
-                IsGridOn = IsGridOn,
-                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                XPosition = XPosition + closestLinePosition,
-                YPosition = YPosition,
-                ArrayHeight = ArrayHeight
-            };
-            rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
-            rightArray.CalculateGridLines();
-            c.Add(rightArray);
-
-            return c;
-        }  
-
-        //*******************************
-        public override ObservableCollection<ICLPPageObject> SplitAtY(double average)
-        {
-            var c = new ObservableCollection<ICLPPageObject>();
-            if(Rows == 1)
-            {
-                c.Add(this);
-                return c;
-            }
-
-            double relativeAverage = average - LargeLabelLength - YPosition;
-
-            double minDistance = ArrayHeight;
-            double closestLinePosition = 0;
-            int closestLineIndex = 0;
-            foreach(var line in HorizontalGridLines)
-            {
-                var distance = Math.Abs(relativeAverage - line);
-                if(distance < minDistance)
-                {
-                    minDistance = distance;
-                    closestLinePosition = line;
-                    closestLineIndex = HorizontalGridLines.IndexOf(line);
-                }
-            }
-
-            var topArray = new CLPArray(closestLineIndex + 1, Columns, ParentPage)
-            {
-                IsGridOn = IsGridOn,
-                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                XPosition = XPosition,
-                YPosition = YPosition,
-                ArrayWidth = ArrayWidth
-            };
-            topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
-            topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
-            topArray.CalculateGridLines();
-            c.Add(topArray);
-
-            var bottomArray = new CLPArray(Rows - closestLineIndex - 1, Columns, ParentPage)
-            {
-                IsGridOn = IsGridOn,
-                IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                XPosition = XPosition,
-                YPosition = YPosition + closestLinePosition,
-                ArrayWidth = ArrayWidth
-            };
-            bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
-            bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
-            bottomArray.CalculateGridLines();
-            c.Add(bottomArray);
-            return c;
-        }  
-        //*******************************
 
         public override ICLPPageObject Duplicate()
         {
             var newArray = Clone() as CLPArray;
-            newArray.UniqueID = Guid.NewGuid().ToString();
-            newArray.ParentPage = ParentPage;
-            return newArray;
+            if(newArray != null) {
+                newArray.UniqueID = Guid.NewGuid().ToString();
+                newArray.ParentPage = ParentPage;
+                return newArray;
+            }
+            return null;
         }
 
         //aspectRatio is Width/Height
-        public override void EnforceAspectRatio(double aspectRatio)
+        //sealed because called in Constructor.
+        public override sealed void EnforceAspectRatio(double aspectRatio)
         {
             ArrayWidth = ArrayHeight * aspectRatio;
             if(ArrayWidth < 10)
@@ -471,15 +461,15 @@ namespace CLP.Models
 
         public override bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
-            double areaObject = pageObject.Height * pageObject.Width;
-            double area = ArrayHeight * ArrayWidth;
-            double top = Math.Max(YPosition - LargeLabelLength, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + LargeLabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
-            double left = Math.Max(XPosition + LargeLabelLength, pageObject.XPosition);
-            double right = Math.Min(XPosition + LargeLabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
-            double deltaY = bottom - top;
-            double deltaX = right - left;
-            double intersectionArea = deltaY * deltaX;
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = ArrayHeight * ArrayWidth;
+            var top = Math.Max(YPosition - LargeLabelLength, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + LargeLabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition + LargeLabelLength, pageObject.XPosition);
+            var right = Math.Min(XPosition + LargeLabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
@@ -545,7 +535,7 @@ namespace CLP.Models
         {
             HorizontalGridLines.Clear();
             VerticalGridLines.Clear();
-            double squareSize = ArrayWidth / Columns;
+            var squareSize = ArrayWidth / Columns;
             for(int i = 1; i < Rows; i++)
             {
                 HorizontalGridLines.Add(i * squareSize);
@@ -558,23 +548,15 @@ namespace CLP.Models
 
         public void ResizeDivisions()
         {
-            double oldHeight = 0;
-            foreach(CLPArrayDivision division in HorizontalDivisions)
-            {
-                oldHeight = oldHeight + division.Length;
-            }
-            foreach(CLPArrayDivision division in HorizontalDivisions)
+            var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            foreach(var division in HorizontalDivisions)
             {
                 division.Position = division.Position * ArrayHeight / oldHeight;
                 division.Length = division.Length * ArrayHeight / oldHeight;
             }
 
-            double oldWidth = 0;
-            foreach(CLPArrayDivision division in VerticalDivisions)
-            {
-                oldWidth = oldWidth + division.Length;
-            }
-            foreach(CLPArrayDivision division in VerticalDivisions)
+            var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            foreach(var division in VerticalDivisions)
             {
                 division.Position = division.Position * ArrayWidth / oldWidth;
                 division.Length = division.Length * ArrayWidth / oldWidth;

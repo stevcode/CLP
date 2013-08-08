@@ -87,7 +87,7 @@ namespace CLP.Models
             var cuttableLeft = XPosition;
             var cuttableRight = XPosition + Width;
 
-            var havledPageObjects = new List<ICLPPageObject>();
+            var halvedPageObjects = new List<ICLPPageObject>();
 
             //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
             // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
@@ -117,8 +117,8 @@ namespace CLP.Models
                                                   Width = XPosition + Width - average,
                                                   Height = Height
                                               };
-                            havledPageObjects.Add(leftSquare);
-                            havledPageObjects.Add(rightSquare);
+                            halvedPageObjects.Add(leftSquare);
+                            halvedPageObjects.Add(rightSquare);
                             break;
                         case CLPShapeType.Ellipse:
                             break;
@@ -158,8 +158,8 @@ namespace CLP.Models
                                                   Width = Width,
                                                   Height = YPosition + Height - average
                                               };
-                            havledPageObjects.Add(leftSquare);
-                            havledPageObjects.Add(rightSquare);
+                            halvedPageObjects.Add(leftSquare);
+                            halvedPageObjects.Add(rightSquare);
                             break;
                         case CLPShapeType.Ellipse:
                             break;
@@ -175,7 +175,7 @@ namespace CLP.Models
                 }
             }
 
-            return havledPageObjects;
+            return halvedPageObjects;
         }
     }
 }
