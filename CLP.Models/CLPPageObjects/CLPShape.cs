@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Models
@@ -17,8 +19,6 @@ namespace CLP.Models
             Protractor
         }
 
-        public static string Type = "CLPShape";
-
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
@@ -28,16 +28,8 @@ namespace CLP.Models
             ShapeType = shapeType;
             XPosition = 10;
             YPosition = 10;
-            Height = 200;
-            Width = 200;
-            if(shapeType == CLPShapeType.VerticalLine)
-            {
-                Width = 20;
-            }
-            if(shapeType == CLPShapeType.HorizontalLine)
-            {
-                Height = 20;
-            }
+            Height = shapeType == CLPShapeType.HorizontalLine? 20 : 200;
+            Width = shapeType == CLPShapeType.VerticalLine ? 20 : 200;
             Parts = 1;
 
             ApplyDistinctPosition(this);
@@ -63,82 +55,127 @@ namespace CLP.Models
         /// <summary>
         /// Register the ShapeType property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(CLPShapeType), null);
+        public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(CLPShapeType));
 
         public override string PageObjectType
         {
-            get { return Type; }
+            get { return "CLPShape"; }
         }
 
         public override ICLPPageObject Duplicate()
         {
-            CLPShape newShape = this.Clone() as CLPShape;
+            var newShape = Clone() as CLPShape;
+            if(newShape == null)
+            {
+                return null;
+            }
             newShape.UniqueID = Guid.NewGuid().ToString();
             newShape.ParentPage = ParentPage;
 
             return newShape;
         }
-        
-        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtX(double ave)
-        {
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
-            if(CLPShapeType.Rectangle.CompareTo(this.ShapeType) == 0)
-            {
-                Console.Write("Shape identified correctly");
-                double shape1X = this.XPosition;
-                double shape1Y = this.YPosition;
-                double shape2Y = this.YPosition;
-                double shape2X = ave;
-                double shapeHeight = this.Height;
-                double shape1Width = ave - shape1X;
-                double shape2Width = this.XPosition + this.Width - ave;
-                CLPShape square1 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
-                square1.XPosition = shape1X;
-                square1.YPosition = shape1Y;
-                square1.Width = shape1Width;
-                square1.Height = shapeHeight;
-                CLPShape square2 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
-                square2.XPosition = shape2X;
-                square2.YPosition = shape2Y;
-                square2.Width = shape2Width;
-                square2.Height = shapeHeight;
-                c.Add(square1);
-                c.Add(square2);
 
+        public override List<ICLPPageObject> Cut(Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition;
+            var cuttableBottom = YPosition + Height;
+            var cuttableLeft = XPosition;
+            var cuttableRight = XPosition + Width;
+
+            var havledPageObjects = new List<ICLPPageObject>();
+
+            //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
+            // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
+            // cut instead of the vertical cut that was intended. See also Array.Cut().
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom))
+            {
+                var average = (strokeRight + strokeLeft)/2;
+
+                if((cuttableLeft <= strokeLeft && cuttableRight >= strokeRight) &&
+                   (strokeTop - cuttableTop < 15 && cuttableBottom - strokeBottom < 15))
+                {
+                    switch(ShapeType)
+                    {
+                            //TODO: Implement Cut functions for all instances of SHAPE
+                        case CLPShapeType.Rectangle:
+                            var leftSquare = new CLPShape(CLPShapeType.Rectangle, ParentPage)
+                                             {
+                                                 XPosition = XPosition,
+                                                 YPosition = YPosition,
+                                                 Width = average - XPosition,
+                                                 Height = Height
+                                             };
+                            var rightSquare = new CLPShape(CLPShapeType.Rectangle, ParentPage)
+                                              {
+                                                  XPosition = average,
+                                                  YPosition = YPosition,
+                                                  Width = XPosition + Width - average,
+                                                  Height = Height
+                                              };
+                            havledPageObjects.Add(leftSquare);
+                            havledPageObjects.Add(rightSquare);
+                            break;
+                        case CLPShapeType.Ellipse:
+                            break;
+                        case CLPShapeType.Triangle:
+                            break;
+                        case CLPShapeType.HorizontalLine:
+                            break;
+                        case CLPShapeType.VerticalLine:
+                            break;
+                        case CLPShapeType.Protractor:
+                            break;
+                    }
+                }
             }
-            return c;
-            //throw new NotImplementedException();
+            else
+            {
+                var average = (strokeTop + strokeBottom) / 2;
+
+                if((cuttableTop <= strokeTop && cuttableBottom >= strokeBottom) &&
+                   (strokeLeft - cuttableLeft < 15 && cuttableRight - strokeRight < 15))
+                {
+                    switch(ShapeType)
+                    {
+                        //TODO: Implement Cut functions for all instances of SHAPE
+                        case CLPShapeType.Rectangle:
+                            var leftSquare = new CLPShape(CLPShapeType.Rectangle, ParentPage)
+                                             {
+                                                 XPosition = XPosition,
+                                                 YPosition = YPosition,
+                                                 Width = Width,
+                                                 Height = average - YPosition
+                                             };
+                            var rightSquare = new CLPShape(CLPShapeType.Rectangle, ParentPage)
+                                              {
+                                                  XPosition = XPosition,
+                                                  YPosition = average,
+                                                  Width = Width,
+                                                  Height = YPosition + Height - average
+                                              };
+                            havledPageObjects.Add(leftSquare);
+                            havledPageObjects.Add(rightSquare);
+                            break;
+                        case CLPShapeType.Ellipse:
+                            break;
+                        case CLPShapeType.Triangle:
+                            break;
+                        case CLPShapeType.HorizontalLine:
+                            break;
+                        case CLPShapeType.VerticalLine:
+                            break;
+                        case CLPShapeType.Protractor:
+                            break;
+                    }
+                }
+            }
+
+            return havledPageObjects;
         }
-
-        public override System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> SplitAtY(double Ave)
-        {
-            System.Collections.ObjectModel.ObservableCollection<ICLPPageObject> c = new System.Collections.ObjectModel.ObservableCollection<ICLPPageObject>();
-            if(CLPShapeType.Rectangle.CompareTo(this.ShapeType) == 0)
-            {
-                Console.Write("Shape identified correctly");
-                double shapeX = this.XPosition;
-                double shape1Y = this.YPosition;
-                double shape2Y = Ave;
-                double shape1Height = Ave - shape1Y;
-                double shape2Height = this.Height - shape1Height;
-                double shapeWidth = this.Width;
-                
-                CLPShape square1 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
-                square1.XPosition = shapeX;
-                square1.YPosition = shape1Y;
-                square1.Width = shapeWidth;
-                square1.Height = shape1Height;
-                
-                CLPShape square2 = new CLPShape(CLPShapeType.Rectangle, this.ParentPage);
-                square2.XPosition = shapeX;
-                square2.YPosition = shape2Y;
-                square2.Width = shapeWidth;
-                square2.Height = shape2Height;
-                c.Add(square1);
-                c.Add(square2);
-            }
-            return c;
-        }  
-
     }
 }
