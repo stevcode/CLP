@@ -61,7 +61,7 @@ namespace Classroom_Learning_Partner
 
         #region Notebook
 
-        public void SubmitPage(CLPPage page, string notebookID, bool isGroupSubmission)
+        public void SubmitPage(ICLPPage page, string notebookID, bool isGroupSubmission)
         {
             if(App.Network.InstructorProxy != null)
             {

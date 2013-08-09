@@ -365,11 +365,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
-            foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
-            {
-                po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
-            }
+            PageObject.ParentPage.PageHistory.BeginBatch(new CLPHistoryPageObjectMoveBatch(PageObject.ParentPage,
+                                                                                           PageObject.UniqueID,
+                                                                                           new Point(PageObject.XPosition,
+                                                                                                     PageObject.YPosition)));
         }
 
         /// <summary>
@@ -379,12 +378,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
-            foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
+            var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
+            if(batch is CLPHistoryPageObjectMoveBatch)
             {
-                po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
+                (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(PageObject.UniqueID,
+                                                                                 new Point(PageObject.XPosition,
+                                                                                           PageObject.YPosition));
             }
-
+            PageObject.ParentPage.PageHistory.EndBatch();
             AddRemovePageObjectFromOtherObjects();
         }
 

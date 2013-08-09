@@ -828,7 +828,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             FontStyle = FontStyles.Oblique,
                             HorizontalAlignment = HorizontalAlignment.Right,
                             VerticalAlignment = VerticalAlignment.Top,
-                            Content = page.SubmitterName,
+                            Content = page.Submitter.FullName,
                             Margin = new Thickness(0, transformAmount + 5, 5, 0)
                         };
                         grid.Children.Add(label);
@@ -921,7 +921,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             FontStyle = FontStyles.Oblique,
                             HorizontalAlignment = HorizontalAlignment.Right,
                             VerticalAlignment = VerticalAlignment.Top,
-                            Content = page.SubmitterName,
+                            Content = page.Submitter.FullName,
                             Margin = new Thickness(0, transformAmount + 5, 5, 0)
                         };
                         grid.Children.Add(label);
@@ -1193,7 +1193,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(notebook != null && submission != null)
                 {
-                    submission.IsSubmission = true;
+                    submission.SubmissionType = SubmissionType.Single;
                     foreach (var pageObject in submission.PageObjects)
                     {
                         pageObject.ParentPage = submission;
