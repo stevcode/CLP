@@ -1188,7 +1188,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
 
-                CLPPage submission = page.Clone() as CLPPage;
+                ICLPPage submission = null;
+                if(page is CLPPage)
+                {
+                    submission = (page as CLPPage).Clone() as CLPPage;
+                }
+                if(page is CLPAnimationPage)
+                {
+                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+                }
                 submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
                 if(notebook != null && submission != null)
@@ -1329,7 +1337,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     var page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     string pageID;
-                    if(page.IsSubmission)
+                    if(page.SubmissionType != SubmissionType.None)
                     {
                         pageID = page.SubmissionID;
                     }
@@ -1351,7 +1359,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(var page in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
                     {
-                        if(page.IsSubmission)
+                        if(page.SubmissionType != SubmissionType.None)
                         {
                             pageIDs.Add(page.SubmissionID);
                         }
@@ -1730,66 +1738,67 @@ namespace Classroom_Learning_Partner.ViewModels
             double pagewidth = page.PageWidth;
             double pageaspectratio = page.InitialPageAspectRatio;
 
-            if(page.PageType == PageTypeEnum.CLPProofPage) {
-                CLPAnimationPage proofpage = (CLPAnimationPage)page;
-                CLPProofHistory proofhistory = (CLPProofHistory)page.PageHistory;
-                if(proofhistory.Future.Count > 0 || proofhistory.MetaPast.Count > 0)
-                {
-                    if(MessageBox.Show("Are you sure you want to switch to a different page type? Your animation will be lost!",
-                                   "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-                }
-                CLPPage newpage = new CLPPage();
-                CLPHistory newpagehistory = (CLPHistory)newpage.PageHistory;
+            //TODO: reimplement
+            //if(page.PageType == PageTypeEnum.CLPProofPage) {
+            //    CLPAnimationPage proofpage = (CLPAnimationPage)page;
+            //    CLPProofHistory proofhistory = (CLPProofHistory)page.PageHistory;
+            //    if(proofhistory.Future.Count > 0 || proofhistory.MetaPast.Count > 0)
+            //    {
+            //        if(MessageBox.Show("Are you sure you want to switch to a different page type? Your animation will be lost!",
+            //                       "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            //        {
+            //            return;
+            //        }
+            //    }
+            //    CLPPage newpage = new CLPPage();
+            //    CLPHistory newpagehistory = (CLPHistory)newpage.PageHistory;
 
-                newpage.PageHeight = pageheight;
-                newpage.PageWidth = pagewidth;
-                newpage.InitialPageAspectRatio = pageaspectratio;
+            //    newpage.PageHeight = pageheight;
+            //    newpage.PageWidth = pagewidth;
+            //    newpage.InitialPageAspectRatio = pageaspectratio;
 
-                newpagehistory.Past = proofhistory.Past;
-                newpagehistory.MetaPast = proofhistory.MetaPast;
-                newpagehistory.Future = proofhistory.Future;
+            //    newpagehistory.Past = proofhistory.Past;
+            //    newpagehistory.MetaPast = proofhistory.MetaPast;
+            //    newpagehistory.Future = proofhistory.Future;
 
-                newpage.PageObjects = proofpage.PageObjects;
-                newpage.InkStrokes = proofpage.InkStrokes;
-                foreach(ICLPPageObject po in newpage.PageObjects)
-                {
-                    po.ParentPage = newpage;
-                }
+            //    newpage.PageObjects = proofpage.PageObjects;
+            //    newpage.InkStrokes = proofpage.InkStrokes;
+            //    foreach(ICLPPageObject po in newpage.PageObjects)
+            //    {
+            //        po.ParentPage = newpage;
+            //    }
 
-                page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
-                CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                            nb.InsertPageAt(index, newpage);
-                            nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
-                            nb.Pages.RemoveAt(index - 1);
-                            nb.GeneratePageIndexes();
-                            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newpage;      
-            }else{
-                CLPHistory pagehistory = (CLPHistory)page.PageHistory;
+            //    page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+            //    CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            //                nb.InsertPageAt(index, newpage);
+            //                nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
+            //                nb.Pages.RemoveAt(index - 1);
+            //                nb.GeneratePageIndexes();
+            //                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newpage;      
+            //}else{
+            //    CLPHistory pagehistory = (CLPHistory)page.PageHistory;
 
-                CLPAnimationPage newproofpage = new CLPAnimationPage();
-                CLPProofHistory newproofpagehistory = (CLPProofHistory)newproofpage.PageHistory;
+            //    CLPAnimationPage newproofpage = new CLPAnimationPage();
+            //    CLPProofHistory newproofpagehistory = (CLPProofHistory)newproofpage.PageHistory;
 
-                newproofpage.PageHeight = pageheight;
-                newproofpage.PageWidth = pagewidth;
-                newproofpage.InitialPageAspectRatio = pageaspectratio;
+            //    newproofpage.PageHeight = pageheight;
+            //    newproofpage.PageWidth = pagewidth;
+            //    newproofpage.InitialPageAspectRatio = pageaspectratio;
 
-                newproofpage.PageObjects = page.PageObjects;
-                newproofpage.InkStrokes =  page.InkStrokes;
-                foreach(ICLPPageObject po in newproofpage.PageObjects)
-                {
-                    po.ParentPage = newproofpage;
-                }
-                page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
-                CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                            nb.InsertPageAt(index, newproofpage);
-                            nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
-                            nb.Pages.RemoveAt(index - 1);
-                            nb.GeneratePageIndexes();
-                            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newproofpage; 
-            }
+            //    newproofpage.PageObjects = page.PageObjects;
+            //    newproofpage.InkStrokes =  page.InkStrokes;
+            //    foreach(ICLPPageObject po in newproofpage.PageObjects)
+            //    {
+            //        po.ParentPage = newproofpage;
+            //    }
+            //    page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
+            //    CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            //                nb.InsertPageAt(index, newproofpage);
+            //                nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
+            //                nb.Pages.RemoveAt(index - 1);
+            //                nb.GeneratePageIndexes();
+            //                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newproofpage; 
+            //}
         }
 
         /// <summary>

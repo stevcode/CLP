@@ -472,7 +472,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return "";
             }
             foreach(CLPPage p in SubmissionPages) {
-                UserNames.Remove(p.SubmitterName);
+                UserNames.Remove(p.Submitter.FullName);
 
             }
             string names = "";
@@ -500,7 +500,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage page = e.Item as CLPPage;
             if(page != null)
             {
-                if(page.IsGroupSubmission == true)
+                if(page.SubmissionType == SubmissionType.Group)
                 {
                     e.Accepted = true;
                 }
@@ -515,7 +515,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage page = e.Item as CLPPage;
             if(page != null)
             {
-                if(page.IsGroupSubmission == true)
+                if(page.SubmissionType == SubmissionType.Group)
                 {
                     e.Accepted = false;
                 }
