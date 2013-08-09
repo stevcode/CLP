@@ -8,6 +8,6 @@ namespace Classroom_Learning_Partner.ViewModels
         string DisplayID { get; }               //Unique ID of Display.
         bool IsOnProjector { get; set; }        //If Display is currently being projected.
 
-        void AddPageToDisplay(CLPPage page);    //Method to add a new page to this display.
+        void AddPageToDisplay(ICLPPage page);    //Method to add a new page to this display.
     }
 }

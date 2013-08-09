@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Methods
 
         //From Interface IDisplayViewModel
-        public void AddPageToDisplay(CLPPage page)
+        public void AddPageToDisplay(ICLPPage page)
         {
             DisplayedPages.Add(page);
         }

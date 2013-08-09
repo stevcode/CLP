@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.ServiceModel;
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
@@ -14,8 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the LinkedDisplayViewModel class.
         /// </summary>
-        public LinkedDisplayViewModel(CLPPage page)
-            : base()
+        public LinkedDisplayViewModel(ICLPPage page)
         {
             DisplayedPage = page;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
@@ -59,9 +56,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPage DisplayedPage
+        public ICLPPage DisplayedPage
         {
-            get { return GetValue<CLPPage>(DisplayedPageProperty); }
+            get { return GetValue<ICLPPage>(DisplayedPageProperty); }
             set 
             { 
                 SetValue(DisplayedPageProperty, value);
@@ -70,7 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(CLPPage));
+        public static readonly PropertyData DisplayedPageProperty = RegisterProperty("DisplayedPage", typeof(ICLPPage));
 
         /// <summary>
         /// Specifies Border Color of main Page
@@ -248,7 +245,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         //From Interface IDisplayViewModel
-        public void AddPageToDisplay(CLPPage page)
+        public void AddPageToDisplay(ICLPPage page)
         {
             if(DisplayedPage is CLPAnimationPage && page.UniqueID != DisplayedPage.UniqueID)
             {

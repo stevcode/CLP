@@ -59,9 +59,9 @@ namespace Classroom_Learning_Partner.Views
                 SubmissionColumn.MinWidth = submissionColumnMinWidth;
                 SubmissionColumn.Width = new GridLength(submissionColumnWidth);
                 SubmissionSplitterColumn.Width = new GridLength(5);
-                CLPPage page = ((((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as Border).Child as ContentPresenter).Content as CLPPage;
+                var page = ((((((sender as ToggleButton).Parent as Grid).Parent as Grid).Children[1] as Border).Child as Border).Child as ContentPresenter).Content as ICLPPage;
                 string pageID = page.UniqueID;
-                var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
+                var viewModel = ViewModel as NotebookWorkspaceViewModel;
 
                 
 

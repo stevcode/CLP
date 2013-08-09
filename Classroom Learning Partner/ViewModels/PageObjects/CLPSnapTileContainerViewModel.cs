@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
@@ -82,10 +83,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSnapCommandExecute(DragCompletedEventArgs e)
         {
-            CLPPage currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var currentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-            PageObject.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(PageObject.UniqueID, PageObject.XPosition, PageObject.YPosition, PageObject.XPosition, PageObject.YPosition));
-            PageObject.ParentPage.updateProgress();
+            var movementBatch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch as CLPHistoryPageObjectMoveBatch;
+            if(movementBatch != null)
+            {
+                movementBatch.AddPositionPointToBatch(PageObject.UniqueID,
+                                                      new Point(PageObject.XPosition, PageObject.YPosition));
+            }
+            PageObject.ParentPage.PageHistory.EndBatch();
 
             foreach (var pageObject in currentPage.PageObjects)
             {
@@ -110,8 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     int oldCount = otherTile.NumberOfTiles;
                     otherTile.NumberOfTiles += NumberOfTiles;
-                    PageObject.ParentPage.PageHistory.Push(new CLPTileHeightChanged(otherTile.UniqueID, otherTile.NumberOfTiles,
-                                                                                    oldCount));
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryTileHeightChanged(PageObject.ParentPage, otherTile.UniqueID, otherTile.NumberOfTiles, oldCount));
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                     break;
@@ -121,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     int oldCount = NumberOfTiles;
                     NumberOfTiles += otherTile.NumberOfTiles;
-                    PageObject.ParentPage.PageHistory.Push(new CLPTileHeightChanged(PageObject.UniqueID, NumberOfTiles,
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryTileHeightChanged(PageObject.ParentPage, PageObject.UniqueID, NumberOfTiles,
                                                                                     oldCount));
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(otherTile);
@@ -141,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(Tiles.Count > 1)
             {
-                PageObject.ParentPage.PageHistory.Push(new CLPTileHeightChanged(PageObject.UniqueID, NumberOfTiles - 1,
+                PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryTileHeightChanged(PageObject.ParentPage, PageObject.UniqueID, NumberOfTiles - 1,
                                                                                 NumberOfTiles));
                 NumberOfTiles--;
             }

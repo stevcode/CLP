@@ -370,7 +370,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
             }
-            PageObject.ParentPage.updateProgress();
         }
 
         /// <summary>
@@ -385,7 +384,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 po.ParentPage.PageHistory.Push(new CLPHistoryMovePageObject(po.UniqueID, po.XPosition, po.YPosition, po.XPosition, po.YPosition));
             }
-            PageObject.ParentPage.updateProgress();
 
             AddRemovePageObjectFromOtherObjects();
         }

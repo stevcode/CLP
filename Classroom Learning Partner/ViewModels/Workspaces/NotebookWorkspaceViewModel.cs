@@ -33,7 +33,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
         public NotebookWorkspaceViewModel(CLPNotebook notebook)
-            : base()
         {
             SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
@@ -43,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             LeftPanel = NotebookPagesPanel;
-            SubmissionPages = new ObservableCollection<CLPPage>();
+            SubmissionPages = new ObservableCollection<ICLPPage>();
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
@@ -67,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 SelectedDisplay.IsOnProjector = false;
             }
 
-            Notebook.GeneratePageIndexes();
+            //Notebook.GeneratePageIndexes(); //TODO: re-add GeneratePageIndexes for PageIndex return
 
             FilteredSubmissions = new CollectionViewSource();
             FilterTypes = new ObservableCollection<string>();
@@ -116,13 +115,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Notebook Model Property
         /// </summary>
         [ViewModelToModel("Notebook","Pages")]
-        public ObservableCollection<CLPPage> NotebookPages
+        public ObservableCollection<ICLPPage> NotebookPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(NotebookPagesProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(NotebookPagesProperty); }
             set { SetValue(NotebookPagesProperty, value); }
         }
 
-        public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<ICLPPage>));
 
         #endregion //Model
 
@@ -221,9 +220,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// All the submissions for the desired page.
         /// </summary>
-        public ObservableCollection<CLPPage> SubmissionPages
+        public ObservableCollection<ICLPPage> SubmissionPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty); }
             set 
             { 
                 SetValue(SubmissionPagesProperty, value);
@@ -232,7 +231,7 @@ namespace Classroom_Learning_Partner.ViewModels
             } 
         }
 
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>));
 
 
         /// <summary>
@@ -291,9 +290,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public CLPPage CurrentPage
+        public ICLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            get { return GetValue<ICLPPage>(CurrentPageProperty); }
 
             set
             {
@@ -302,7 +301,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
         #region Panels
 
@@ -406,7 +405,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
             {
-                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
                 page.PageHeight += 200;
                 ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
 
@@ -527,7 +526,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public ObservableCollection<Tag>  getAllTags(ObservableCollection<CLPPage> pages) 
+        public ObservableCollection<Tag> getAllTags(ObservableCollection<ICLPPage> pages) 
         {
             ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
             foreach (CLPPage page in pages) {
@@ -631,19 +630,19 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetHistoryPages()
         {
             string id = CurrentPage.UniqueID;
-            System.Collections.ObjectModel.ObservableCollection<CLPPage> pages;
+            ObservableCollection<ICLPPage> pages;
             if(Notebook.Submissions.ContainsKey(id))
             {
                 pages = Notebook.Submissions[id];
             }
             else
             {
-                Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                Notebook.Submissions.Add(id, new ObservableCollection<ICLPPage>());
                 pages = Notebook.Submissions[id];
             }
             HistoryPages = pages;
 
-            System.Collections.ObjectModel.ObservableCollection<CLPPage> currentPage = new System.Collections.ObjectModel.ObservableCollection<CLPPage>();
+            var currentPage = new ObservableCollection<CLPPage>();
             foreach(CLPPage page in NotebookPages)
             {
                 if(page.UniqueID == id)

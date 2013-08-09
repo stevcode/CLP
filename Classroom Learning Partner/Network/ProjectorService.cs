@@ -99,7 +99,7 @@ namespace Classroom_Learning_Partner
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
+                            var page = notebook.GetNotebookPageByID(pageID);
 
                             if(page == null)
                             {
@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner
                 if(notebookID == notebook.UniqueID)
                 {
                     currentNotebook = notebook;
-                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    submission = notebook.GetNotebookPageByID(pageID).Clone() as ICLPPage;
                     break;
                 }
             }
@@ -239,7 +239,7 @@ namespace Classroom_Learning_Partner
             {
                 if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
                 {
-                    CLPPage currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                    var currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
                     if(currentPage.UniqueID == pageID)
                     {

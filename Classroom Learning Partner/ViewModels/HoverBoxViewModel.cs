@@ -1,23 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.ServiceModel;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-using Classroom_Learning_Partner.Views;
-
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -37,13 +27,13 @@ namespace Classroom_Learning_Partner.ViewModels
             IsStarred = false;
             Topics = "";
 
-            if(Page.PageTopics != null)
-            {
-                foreach(string topic in Page.PageTopics)
-                {
-                    Topics += "Page Topic: " + topic + "\n";
-                }
-            }
+            //if(Page.PageTopics != null) //TODO: PageTopics gone, need to be Tags
+            //{
+            //    foreach(string topic in Page.PageTopics)
+            //    {
+            //        Topics += "Page Topic: " + topic + "\n";
+            //    }
+            //}
             if(Page.PageTags != null)
             {
                 foreach(Tag tag in Page.PageTags)

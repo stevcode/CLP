@@ -114,7 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeDataTableCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage = PageObject.ParentPage;
+            var parentPage = PageObject.ParentPage;
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;
@@ -149,7 +149,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeColumnHeightCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage = PageObject.ParentPage;
+            var parentPage = PageObject.ParentPage;
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newHeaderHeight = (PageObject as CLPAggregationDataTable).ColumnHeaderHeight + e.VerticalChange;
@@ -168,7 +168,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeRowWidthCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage = PageObject.ParentPage;
+            var parentPage = PageObject.ParentPage;
 
             double newWidth = PageObject.Width + e.HorizontalChange;
             double newHeaderWidth = (PageObject as CLPAggregationDataTable).RowHeaderWidth + e.HorizontalChange;
@@ -224,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         newPage.PageHeight = CLPPage.PORTRAIT_HEIGHT;
                         newPage.PageWidth = CLPPage.PORTRAIT_WIDTH;
-                        newPage.PageAspectRatio = newPage.PageWidth / newPage.PageHeight;
+                        newPage.InitialPageAspectRatio = newPage.PageWidth / newPage.PageHeight;
                     }
                     currentNotebook.InsertPageAt(currentPageIndex, newPage);
 
