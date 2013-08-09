@@ -27,7 +27,6 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <Border BorderThickness="0" Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
-                <!--<Views:CLPPageView DataContext="{Binding DisplayedPage}" />-->
 
                 <Control x:Name="PageView">
                     <Control.Resources>
@@ -36,8 +35,8 @@
                             <Views:CLPPageView DataContext="{Binding DisplayedPage}" />
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="CLPProofPageTemplate">
-                            <Views:CLPProofPageView DataContext="{Binding DisplayedPage}" />
+                        <ControlTemplate x:Key="CLPAnimationPageTemplate">
+                            <Views:CLPAnimationPageView DataContext="{Binding DisplayedPage}" />
                         </ControlTemplate>
 
                     </Control.Resources>
@@ -51,9 +50,9 @@
                                     <Setter Property="Template" Value="{StaticResource CLPPageTemplate}" />
                                 </DataTrigger>
 
-                                <!-- CLPProofPage trigger -->
+                                <!-- CLPAnimationPage trigger -->
                                 <DataTrigger Binding="{Binding DisplayedPage, Converter={StaticResource PageTypeConverter}}" Value="CLPAnimationPage">
-                                    <Setter Property="Template" Value="{StaticResource CLPProofPageTemplate}" />
+                                    <Setter Property="Template" Value="{StaticResource CLPAnimationPageTemplate}" />
                                 </DataTrigger>
 
                             </Style.Triggers>

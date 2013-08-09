@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPProofPageView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPAnimationPageView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
@@ -79,37 +79,29 @@
             
             <Button Width="70" Margin="0,0,10,0"
                     FontSize="12" FontWeight="Bold" Background="White" 
-                    Command="{Binding ClearProofCommand}">Clear</Button>
+                    Command="{Binding ClearPageCommand}">Clear</Button>
+            
             <Slider ValueChanged="Slider_ValueChanged_1" Maximum="100" Minimum="0" 
                     Width="200" Margin="10,0,10,0" Value="{Binding SliderProgressCurrent}" 
                     Visibility ="{Binding ProofProgressVisible}">
             </Slider>
-                <Button Width="70"  
+            
+            <Button Width="70"  
                     FontSize="12" FontWeight="Bold" Background="Red" 
                     Command="{Binding RecordProofCommand}">Record</Button>
-            <!-- <Button x:Name="InsertButton" FontSize="12" FontWeight="Bold"  Command="{Binding InsertProofCommand}">Insert</Button> -->
+    
             <Button Width="70"  
                     FontSize="12" FontWeight="Bold" Background="Purple" 
                     Command="{Binding RewindProofCommand}">Rewind</Button> 
-            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ForwardProofCommand}">Forward</Button> -->
+
             <Button Width="70" 
                     FontSize="12" FontWeight="Bold" Background="Green" 
                     Command="{Binding PlayProofCommand}">Play</Button>
-
-            <Button Width="70" 
-                    FontSize="12" FontWeight="Bold" Background="Gray" 
-                    Command="{Binding UndoProofCommand}">Undo</Button>
-
-            <Button Width="70" 
-                    FontSize="12" FontWeight="Bold" Background="Gray" 
-                    Command="{Binding RedoProofCommand}">Redo</Button>
-            
-            <!-- <Button FontSize="12" FontWeight="Bold"  Command="{Binding Path=ReplayProofCommand}">Replay</Button> -->
-            <!-- <Button x:Name="PauseButton" FontSize="12" FontWeight="Bold"  Command="{Binding PauseProofCommand}" CommandParameter="{Binding ElementName=ButtonsGrid, Path=.}">Pause</Button> -->
+      
             <Button Width="70" 
                     FontSize="12" FontWeight="Bold" Background="Gray" 
                     Command="{Binding StopProofCommand}">Stop</Button>
-            <!-- CommandParameter="{Binding ElementName=PauseButton, Path=.}" -->
+            
         </StackPanel>
  
     </Grid>

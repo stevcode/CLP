@@ -140,6 +140,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(PageInteractionModeProperty, value);
+                //TODO: Implement catel's OnPropertyChanged method for the below code.
                 Logger.Instance.WriteToLog("PageInteractionMode Set to: " + value);
                 switch(value)
                 {

@@ -67,54 +67,6 @@ namespace CLP.Models
         }
 
         #endregion //ICLPPage Methods
-
-        #region Methods
-        public void updateProgress()
-        {
-            try
-            {
-                //CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
-                double FutureItemsNumber = proofPageHistory1.Future.Count;
-                double pastItemsNumber = proofPageHistory1.MetaPast.Count;
-                double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
-
-                if(totalItemsNumber == 0)
-                {
-                    
-                    ProofPresent = "Hidden";
-                    ProofProgressCurrent = 0;
-                    SliderProgressCurrent = 0;
-                    return;
-                }
-                else
-                {
-                    ProofPresent = "Visible";
-                    ProofProgressCurrent =
-
-                        (pastItemsNumber * PageWidth * 0.7175) /
-                        totalItemsNumber;
-                    SliderProgressCurrent = (pastItemsNumber * 100) /
-                        totalItemsNumber;
-                    
-                }
-
-                if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
-                {
-                    ProofProgressVisible = "Hidden";
-                }
-                else {
-                    ProofProgressVisible = "Visible";
-                    
-                }
-
-
-            }catch(Exception e){
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        #endregion
     }
 }
 

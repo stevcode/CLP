@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CLP.Models;
 
 namespace ConsoleScripts
@@ -26,7 +22,7 @@ namespace ConsoleScripts
                     if (studentNotebook != null)
                     {
                         Console.WriteLine("Student Notebook Open: " + studentNotebook.UserName);
-                        CLPPage submission = studentNotebook.Pages[pageIndex];
+                        var submission = studentNotebook.Pages[pageIndex];
 
                         teacherNotebook.AddStudentSubmission(submission.UniqueID, submission);
                     }

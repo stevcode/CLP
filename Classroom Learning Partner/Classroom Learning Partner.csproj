@@ -199,8 +199,8 @@
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
-    <Compile Include="Views\CLPProofPageView.xaml.cs">
-      <DependentUpon>CLPProofPageView.xaml</DependentUpon>
+    <Compile Include="Views\CLPAnimationPageView.xaml.cs">
+      <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
@@ -365,7 +365,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CLPProofPageView.xaml">
+    <Page Include="Views\CLPAnimationPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

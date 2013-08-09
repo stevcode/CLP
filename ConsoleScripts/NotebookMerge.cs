@@ -25,7 +25,7 @@ namespace ConsoleScripts
 
         public static CLPNotebook ReplacePageFromToAtIndex(CLPNotebook from, CLPNotebook to, int index)
         {
-            CLPPage page = from.Pages[index];
+            var page = from.Pages[index];
             to.RemovePageAt(index);
             Console.WriteLine("Removed Page at Index {0}", index);
             to.InsertPageAt(index, page);

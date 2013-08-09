@@ -6,24 +6,24 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for CLPProofPageView.xaml
     /// </summary>
-    public partial class CLPProofPageView
+    public partial class CLPAnimationPageView
     {
-        public CLPProofPageView()
+        public CLPAnimationPageView()
         {
             InitializeComponent();
         }
 
         protected override Type GetViewModelType()
         {
-            return typeof(CLPProofPageViewModel);
+            return typeof(CLPAnimationPageViewModel);
         }
 
         protected override void OnViewModelChanged()
         {
-            if(ViewModel is CLPProofPageViewModel)
+            if(ViewModel is CLPAnimationPageViewModel)
             {
-                (ViewModel as CLPProofPageViewModel).TopCanvas = TopCanvas;
-                (ViewModel as CLPProofPageViewModel).IsPagePreview = false;
+                (ViewModel as CLPAnimationPageViewModel).TopCanvas = TopCanvas;
+                (ViewModel as CLPAnimationPageViewModel).IsPagePreview = false;
             }
             
             base.OnViewModelChanged();
@@ -32,8 +32,8 @@ namespace Classroom_Learning_Partner.Views
         private void Slider_ValueChanged_1(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
         {
             if(ViewModel!=null)
-            {                
-                (ViewModel as CLPProofPageViewModel).Slider_ValueChanged_1b(sender, e);
+            {
+                (ViewModel as CLPAnimationPageViewModel).Slider_ValueChanged_1b(sender, e);
             }
         }
     }

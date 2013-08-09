@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Ink;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -14,23 +9,15 @@ namespace Classroom_Learning_Partner.ViewModels
 {
    class CLPAnimationPageViewModel : ACLPPageBaseViewModel
    {
-       public static volatile object obj = new object();
-       
        #region Constructors
 
        public CLPAnimationPageViewModel(CLPAnimationPage page)
            : base(page)
        {
-            PlayProofCommand = new Command(OnPlayProofCommandExecute);
-            UndoProofCommand = new Command(OnUndoProofCommandExecute);
-            RedoProofCommand = new Command(OnRedoProofCommandExecute);
-            RecordProofCommand = new Command(OnRecordProofCommandExecute);
-            InsertProofCommand = new Command(OnInsertProofCommandExecute);
-            RewindProofCommand = new Command(OnRewindProofCommandExecute);
-            ForwardProofCommand = new Command(OnForwardProofCommandExecute);
-            PauseProofCommand = new Command<StackPanel>(OnPauseProofCommandExecute);
-            StopProofCommand = new Command(OnStopProofCommandExecute);
-            
+           RecordAnimationCommand = new Command(OnRecordAnimationCommandExecute);
+           RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
+           PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
+           StopAnimationCommand = new Command(OnStopAnimationCommandExecute);
 
             ProofProgressCurrent = page.PageWidth *0.7175;
             ProofProgressVisible = "Hidden";
@@ -39,41 +26,83 @@ namespace Classroom_Learning_Partner.ViewModels
        #endregion //Constructors
 
        #region Properties
-       
-       /// <summary>
-       /// Gets or sets the property value.
-       /// </summary>
-       [ViewModelToModel("Page")]
-       public override ICLPHistory PageHistory
-       {
-           get { return GetValue<CLPProofHistory>(ProofPageHistoryProperty); }
-           set { SetValue(ProofPageHistoryProperty, value); }
-       }
-
-       // TODO: Tim - The fact that you have "ProofPageHistory" here and it doesn't match the property name is a problem. But can't change now because it will break serialization. Change after trials.
-       // Change in the model as well.
-       public static volatile  PropertyData ProofPageHistoryProperty = RegisterProperty("ProofPageHistory", typeof(CLPProofHistory));
 
        #endregion //Properties
 
        #region Commands
-       
-       public Command PlayProofCommand  { get; private set; }
-       public Command UndoProofCommand { get; private set; }
-       public Command RedoProofCommand { get; private set; }
-       public Command RecordProofCommand  { get; private set; }
-       public Command InsertProofCommand { get; private set; }
-       public Command RewindProofCommand { get; private set; }
-       public Command ForwardProofCommand { get; private set; }
-       public Command<StackPanel> PauseProofCommand { get; private set; }
-       public Command StopProofCommand { get; private set; }
 
+       private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
+       private bool _isPaused = false;
+
+       /// <summary>
+       /// Begins recording page interations for use in an animation.
+       /// </summary>
+       public Command RecordAnimationCommand { get; private set; }
+
+       private void OnRecordAnimationCommandExecute()
+       {
+           
+       }
+
+       /// <summary>
+       /// Stops Recording, if recording, then rewinds animation to beginning.
+       /// </summary>
+       public Command RewindAnimationCommand { get; private set; }
+
+       private void OnRewindAnimationCommandExecute()
+       {
+           OnStopAnimationCommandExecute();
+           _isPaused = false;
+           _oldPageInteractionMode = PageInteractionMode;
+           PageInteractionMode = PageInteractionMode.None;
+
+           //Does this n eed to be on a background thread?
+           while(Page.PageHistory.UndoItems.Any())
+           {
+               Page.PageHistory.Undo(); //execute on UI thread?
+               //page.UpdateProgress()?
+           }
+
+           PageInteractionMode = _oldPageInteractionMode;
+       }
+
+       /// <summary>
+       /// Plays the animation in the History.
+       /// </summary>
+       public Command PlayAnimationCommand { get; private set; }
+
+       private void OnPlayAnimationCommandExecute()
+       {
+           _isPaused = false;
+           _oldPageInteractionMode = PageInteractionMode;
+           PageInteractionMode = PageInteractionMode.None;
+
+           //Does this n eed to be on a background thread?
+           while(Page.PageHistory.RedoItems.Any() && !_isPaused)
+           {
+               Page.PageHistory.Redo(true); //execute on UI thread?
+               //page.UpdateProgress()?
+               //if in background thread, do threadsleep here based on historyItem delay time?
+               //short delay 200 (was 50), long delay 400
+           }
+
+           PageInteractionMode = _oldPageInteractionMode;
+       }
+
+       /// <summary>
+       /// Stops the animation in the History.
+       /// </summary>
+       public Command StopAnimationCommand { get; private set; }
+
+       private void OnStopAnimationCommandExecute()
+       {
+           _isPaused = true;
+       }
+
+       #region OldStuff
        public void Slider_ValueChanged_1b(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
        {
-               CLPProofHistory proofPageHistory1 = (CLPProofHistory)Page.PageHistory;
-               if(proofPageHistory1.IsPaused == false){
-                   return; 
-               }
+         
                Stack<CLPHistoryItem> past = proofPageHistory1.MetaPast;
                Stack<CLPHistoryItem> future = proofPageHistory1.Future;
                double pastCount = past.Count;
@@ -99,791 +128,61 @@ namespace Classroom_Learning_Partner.ViewModels
                    }
                }   
        }
-       
-       
 
-
-      
-       //enables editing of proof page
-       //enables recording of proof page history
-       private void OnRecordProofCommandExecute()
-       {
-           //////////////////////
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1.Future.Count>0) {
-               if(MessageBox.Show("Are you sure you want to record over your animation?",
-                                   "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-               {
-                   return;
-               }
-           
-           }
-           ////////////////////////
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.PageBorderColor =
-               "Red";
-           lock(obj)
-           {
-               
-               if(proofPageHistory1 == null)
-               {
-                   return;
-               }
-               proofPageHistory1.Future.Clear();
-               proofPageHistory1.IsPaused = false;
-               proofPageHistory1.Unfreeze();
-               EditingMode = InkCanvasEditingMode.Ink;
-               proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Record;
-               Page.updateProgress();
-           }
-           
-       }
-
-       //enables editing of proof page
-       //enables recording of proof page history
-       private void OnInsertProofCommandExecute(){
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           lock(obj)
-           {
-               var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-               if(proofPageHistory1 == null)
-               {
-                   return;
-               }
-               proofPageHistory1.IsPaused = false;
-               proofPageHistory1.Unfreeze();
-               EditingMode = InkCanvasEditingMode.Ink;
-               proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Insert;
-               Page.updateProgress();
-           }
-       }
-
-       //plays the entire proof backwards to the beginning
-       //undoes pause if proof/page was paused
-       //disables editing of proof for duration of method
-       private void OnRewindProofCommandExecute() {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           Thread t = new Thread(() =>
-           {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Rewind, -1, 0, 0, -1);
-           });
-           t.Start();
-       }
-       
-       //plays the entire proof forwards (more quickly than play) to the end
-       //undoes pause if proof/page was paused
-       //disables editing of proof for duration of method
-       private void OnForwardProofCommandExecute() {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           Thread t = new Thread(() =>
-           {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Forward, 1, 25, 200, -1);
-           });
-           t.Start();
-       }
-      
-       //sets isPaused property to its opposite (if true -> false, if false -> true)
-       //Calls command for action being carried out before pause (if page was already paused)
-       private void OnPauseProofCommandExecutePure() {
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1 == null)
-           {
-               return;
-           }
-           if(proofPageHistory1.IsPaused)
-           {
-               // TODO: Tim - Convert to Switch Statement
-               if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play)
-               {
-                   //proofPageHistory1.isPaused = false;
-                   this.OnPlayProofCommandExecute();
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Forward)
-               {
-                   //proofPageHistory1.isPaused = false;
-                   this.OnForwardProofCommandExecute();
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Rewind)
-               {
-                   //proofPageHistory1.isPaused = false;
-                   this.OnRewindProofCommandExecute();
-               }
-               else
-               {
-                   lock(obj)
-                   {
-                       proofPageHistory1.IsPaused = false;
-                       proofPageHistory1.Unfreeze();
-                   }
-               }
-           }
-           else
-           {
-               proofPageHistory1.IsPaused = true;
-               lock(obj)
-               {
-                   proofPageHistory1.Freeze();
-               }
-               //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
-           }
-           lock(obj)
-           {
-               Page.updateProgress();
-           }
-       }
-
-
-       private void setButtonFocus(StackPanel ButtonsGrid, String s) {
-           foreach(UIElement bt in ButtonsGrid.Children)
-           {
-               Console.WriteLine(((Button)bt).Name.Trim());
-               if(((Button)bt).Name.Trim().Equals(s.Trim()))
-               {
-                   bt.Focus();
-               }
-           }
-       
-       }
-       
-       private void OnPauseProofCommandExecute(StackPanel ButtonsGrid)
-       {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1 == null)
-           {
-               return;
-           }
-           if(proofPageHistory1.IsPaused)
-           {
-               // TODO: Tim - Use Switch Statement Here
-               if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Play)
-               {
-                   setButtonFocus(ButtonsGrid, "PlayButton");
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Rewind)
-               {
-                   setButtonFocus(ButtonsGrid, "RewindButton");
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Insert)
-               {
-                   setButtonFocus(ButtonsGrid, "InsertButton");
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Record)
-               {
-                   setButtonFocus(ButtonsGrid, "RecordButton");
-               }
-               else if(proofPageHistory1.ProofPageAction == CLPProofHistory.CLPProofPageAction.Pause)
-               {
-                   //focus is already correct, do nothing
-               }
-               else
-               {
-                   //code should never come here
-               }
-           }
-           else
-           {
-               //focus is already correct, do nothing
-           }
-           OnPauseProofCommandExecutePure();
-       }
-       
-       //disables editing of proof page
-       //disables recording of history 
-       private void OnStopProofCommandExecute() {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1 == null)
-           {
-               return;
-           }
-           proofPageHistory1.IsPaused = true;
-               lock(obj)
-               {
-                   proofPageHistory1.Freeze();
-                   Page.updateProgress();
-               }
-       }
-
-       //plays the entire proof forwards (more slowly than forward) to the end
-       //undoes pause if proof/page was paused
-       //disables editing of proof for duration of method
-       private void OnPlayProofCommandExecute()
-       {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           Thread t = new Thread(() =>
-                { 
-                PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 200, 400, -1); //was 50, 400
-                });
-           t.Start();
-       }
-
-       private void OnUndoProofCommandExecute()
-       {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           Thread t = new Thread(() =>
-           {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, 1); //was 50, 400
-           });
-           t.Start();
-       }
-
-       private void OnRedoProofCommandExecute()
-       {
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           Thread t = new Thread(() =>
-           {
-               PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, 1); //was 50, 400
-           });
-           t.Start();
-       }
-
-      
-       private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
-       private void PlayProof(CLPProofHistory.CLPProofPageAction action, int direction, int smallPause, int largePause, int UnRedo)
-       {
-           _oldPageInteractionMode = PageInteractionMode;
-           lock(obj){
-               
-               var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-               if(proofPageHistory1 == null)
-               {
-                   return;
-               }
-               Stack<CLPHistoryItem> from = null;
-               Stack<CLPHistoryItem> to = null;
-               if(direction >= 0)
-               {
-                   from = proofPageHistory1.Future;
-                   to = proofPageHistory1.MetaPast;
-               }
-               else
-               {
-                   from = proofPageHistory1.MetaPast;
-                   to = proofPageHistory1.Future;
-               }
-              
-               
-               //int count = from.Count + to.Count;
-               //Console.WriteLine("This is the total: " + count); 
-
-
-               
-               ///////////////////////////////
-                
-                                         proofPageHistory1.IsPaused = false;
-                                         proofPageHistory1.ProofPageAction = action;
-                                         proofPageHistory1.Freeze();
-                                         PageInteractionMode = PageInteractionMode.None;
-                                         
-               ////////////////////////////////
-                                         bool integrityCheckBool = integrityCheck();
-
-                //int i = 0;
-               try{
-                   int singleCut = 0;  
-                   while(from.Count > 0 && UnRedo!=0)
-                       {
-                           UnRedo--; 
-                       //count = from.Count + to.Count;
-                        //Console.WriteLine("This is the new total on loop " + i + ": " + count);
-                        //i++;
-                        if(proofPageHistory1.IsPaused)
-                           {
-                               //break;
-                               PageInteractionMode = _oldPageInteractionMode;
-                               return;
-                           }
-
-                           CLPHistoryItem item = from.Pop();
-                           ////////////////////////////////////
-                           bool childObject = false;
-                           try
-                           {
-                               if(item.ItemType == HistoryItemType.MoveObject)
-                               {
-                                   ICLPPageObject mi = item.GetPageObjectByUniqueID(Page, ((CLPHistoryMovePageObject)item).ObjectId);
-                                   var pid = mi.ParentID;
-                                   if(pid == null) { pid = ""; }
-                                   pid = pid.Trim();
-                                   if(!pid.Equals("".Trim()))
-                                   {
-                                       childObject = true;
-                                   }
-                               }
-                           }catch(Exception e){
-                               Console.WriteLine(e.Message);
-                           }
-                           /////////////////////////////////////
-                           to.Push(item);
-                           if(!item.wasPaused && !item.singleCut && (item.ItemType != HistoryItemType.RemoveStroke)
-                               && (item.ItemType != HistoryItemType.AddStroke) && !childObject)
-                           {
-                               
-                               if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                               {
-                                   Thread.Sleep(smallPause); // make intervals between move-steps less painfully slow
-                               }
-                               else
-                               {
-                                   Thread.Sleep(largePause);
-                               }
-                               
-
-                           }
-                           if(item.singleCut)
-                           {
-                               singleCut++;
-                               singleCut = singleCut % 3;
-                               if(singleCut == 1 && smallPause != 0 && integrityCheckBool)
-                               {
-                                   Thread.Sleep(750);
-                               }
-
-                           }
-
-                           if(item != null)
-                           {
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                    (DispatcherOperationCallback)delegate(object arg)
-                                    {
-                                        if(direction >= 0)
-                                        {
-                                            if(singleCut == 1 && integrityCheckBool)
-                                            {
-                                                CLPHistoryItem item2 = from.Pop();
-                                                to.Push(item2);
-                                                CLPHistoryItem item3 = from.Pop();
-                                                to.Push(item3);
-                                                singleCut = (singleCut + 2) % 3;
-                                                proofPageHistory1.Freeze();
-                                                item.Redo(Page);
-                                                item2.Redo(Page);
-                                                item3.Redo(Page);
-                                            }
-                                            else
-                                            {
-                                                proofPageHistory1.Freeze();
-                                                item.Redo(Page);
-                                            }
-                                        }else{
-                                            if(singleCut == 1 && integrityCheckBool)
-                                            {
-                                                CLPHistoryItem item2 = from.Pop();
-                                                to.Push(item2);
-                                                CLPHistoryItem item3 = from.Pop();
-                                                to.Push(item3);
-                                                singleCut = (singleCut + 2) % 3;
-                                                proofPageHistory1.Freeze();
-                                                item.Undo(Page);
-                                                item2.Undo(Page);
-                                                item3.Undo(Page);
-                                            }
-                                            else
-                                            {
-                                                proofPageHistory1.Freeze();
-                                                item.Undo(Page);
-                                            }
-                                        }
-                                        Page.updateProgress();
-                                        return null;
-                                    }, null);
-                           }
-                           //if(UnRedo == 1) {
-                           //    break;
-                           //}
-                       }
-                    ///////////////////
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                     (DispatcherOperationCallback)delegate(object arg)
-                                     {
-                                         proofPageHistory1.IsPaused = true;
-                                         proofPageHistory1.Freeze();
-                                         PageInteractionMode = _oldPageInteractionMode;
-                                         proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
-                                         Page.updateProgress();
-                                         return null;
-                                     }, null);
-                    //////////////////
-                    return;
-                   }
-                   catch(Exception e)
-                   {
-                       ///////////////////
-                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                        (DispatcherOperationCallback)delegate(object arg)
-                                        {
-                                            proofPageHistory1.IsPaused = true;
-                                            proofPageHistory1.Freeze();
-                                            PageInteractionMode = _oldPageInteractionMode;
-                                            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
-                                            Page.updateProgress();
-                                            return null;
-                                        }, null);
-                       //////////////////
-                       return;
-                   }
-           }
-       }
-       private bool integrityCheck()
-       {
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1 == null)
-           {
-               return false;
-           }
-           Stack<CLPHistoryItem> future = new Stack<CLPHistoryItem>(
-                                          new Stack<CLPHistoryItem>(proofPageHistory1.Future));
-           Stack<CLPHistoryItem> past = new Stack<CLPHistoryItem>(
-                                          new Stack<CLPHistoryItem>(proofPageHistory1.MetaPast));
-           while(past.Count > 0)
-           {
-               CLPHistoryItem item = past.Pop();
-               future.Push(item);
-           }
-           int j = 0;
-           while(future.Count > 0)
-           {
-               CLPHistoryItem item = future.Pop();
-               past.Push(item);
-               if(item.singleCut == true)
-               {
-                   //Console.WriteLine(item.ItemType);
-                   j++;
-                   j = j % 3;
-                   if(j == 1)
-                   {
-                       if(item.ItemType != HistoryItemType.RemoveObject)
-                       {
-                           return false;
-                       }
-                   }
-                   else if(j == 2 || j == 0)
-                   {
-                       if(item.ItemType != HistoryItemType.AddObject)
-                       {
-                           return false;
-                       }
-                   }
-               }
-               else
-               {
-                   //Console.WriteLine("***********************");
-                   if(j != 0)
-                   {
-                       return false;
-                   }
-               }
-           }
-           if(j != 0)
-           {
-               return false;
-           }
-           return true;
-       }
-      
-       #endregion //Commands
-
-       #region previousCommands
-       /*private void OnPlayProofCommandExecute()
-        {
-            
-           Thread t = new Thread(() =>
-            {
-                Console.WriteLine("play proof");
-                try
-                {
-                    CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-                    proofPageHistory1.isPaused = false; 
-                    proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play; 
-                    
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        proofPageHistory1.Freeze();
-                        base.EditingMode = InkCanvasEditingMode.None;
-                        return null;
-                    }, null);
-                    Stack<CLPHistoryItem> metaPast = proofPageHistory1.MetaPast;
-                    Stack<CLPHistoryItem> metaFuture = proofPageHistory1.Future;
-                    while(metaFuture.Count > 0)
-                    {
-                        if(proofPageHistory1.isPaused)
-                        {
-                            //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play;
-                            break;
-                        }
-                        
-                        CLPHistoryItem item = metaFuture.Pop();
-                        if(!item.wasPaused && !item.singleCut){
-                            if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                            {
-                                Thread.Sleep(50); // make intervals between move-steps less painfully slow
-                            }
-                            else
-                            {
-                                Thread.Sleep(400);
-                            }
-                        }
-                        Console.WriteLine("This is the action being DONE: " + item.ItemType);
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (DispatcherOperationCallback)delegate(object arg)
-                        {
-                            if(item != null)
-                            {
-                                item.Redo(page);
-                                metaPast.Push(item);
-                            }
-                            return null;
-                        }, null);
-                        
-                    }
-                    Thread.Sleep(400);
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        proofPageHistory1.Unfreeze();
-                        base.EditingMode = InkCanvasEditingMode.Ink;
-                        return null;
-                    }, null);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            });
-            t.Start();
-        }*/
-       /*private void OnRewindProofCommandExecute(){
-           
-            
-          Thread t = new Thread(() =>
-           {
-               Console.WriteLine("rewind proof");
-               try
-               {
-                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                   CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-                   proofPageHistory1.isPaused = false;
-                   proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Rewind;
-
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Freeze();
-                       base.EditingMode = InkCanvasEditingMode.None;
-                       return null;
-                   }, null);
-                   Stack<CLPHistoryItem> metaFuture = proofPageHistory1.Future;
-                   Stack<CLPHistoryItem> metaPast = proofPageHistory1.MetaPast;
-                   while(metaPast.Count > 0) 
-                    {
-                        if(proofPageHistory1.isPaused)
-                        {
-                            //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Rewind;
-                            break;
-                        }
-                         
-                       CLPHistoryItem item = metaPast.Pop();
-                        if(!item.wasPaused && !item.singleCut)
-                        {
-                            if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                            {
-                                Thread.Sleep(25); // make intervals between move-steps less painfully slow
-                            }
-                            else
-                            {
-                                Thread.Sleep(200);
-                            }
-                        }
-                        Console.WriteLine("This is the action being UNDONE: " + item.ItemType);
-
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                        (DispatcherOperationCallback)delegate(object arg)
-                        {
-                            if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
-                            {
-                                item.Undo(page);
-                                metaFuture.Push(item);
-                            }
-                            return null;
-                        }, null);   
-                    }
-                    Console.WriteLine("done undoing");
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Unfreeze();
-                       base.EditingMode = InkCanvasEditingMode.Ink;
-                       return null;
-                   }, null);
-               }
-               catch(Exception e)
-               {
-                   Console.WriteLine(e.Message);
-               }
-           });
-           t.Start();
-      }*/
-       /*private void OnForwardProofCommandExecute(){
-           
-          Thread t = new Thread(() =>
-           {
-               Console.WriteLine("Forward proof");
-               try
-               {
-                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                   CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-                   proofPageHistory1.isPaused = false;
-                   proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Forward; 
-
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Freeze();
-                       base.EditingMode = InkCanvasEditingMode.None;
-                       return null;
-                   }, null);
-                   Stack<CLPHistoryItem> metaPast = proofPageHistory1.MetaPast;
-                   Stack<CLPHistoryItem> metaFuture = proofPageHistory1.Future;
-                   while(metaFuture.Count > 0)
-                   {
-                       if(proofPageHistory1.isPaused)
-                       {
-                           proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Forward;
-                           break;
-                       }
-                        
-                       CLPHistoryItem item = metaFuture.Pop();
-                       if(!item.wasPaused && !item.singleCut){
-                           if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                           {
-                               Thread.Sleep(25); // make intervals between move-steps less painfully slow
-                           }
-                           else
-                           {
-                               Thread.Sleep(200);
-                           }
-                       }
-                       Console.WriteLine("This is the action being DONE: " + item.ItemType);
-                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                       (DispatcherOperationCallback)delegate(object arg)
-                       {
-                           if(item != null)
-                           {
-                               item.Redo(page);
-                               metaPast.Push(item);
-                           }
-                           return null;
-                       }, null);
-                        
-                   }
-                   Thread.Sleep(400);
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Unfreeze();
-                       base.EditingMode = InkCanvasEditingMode.Ink;
-                       return null;
-                   }, null);
-               }
-               catch(Exception e)
-               {
-                   Console.WriteLine(e.Message);
-               }
-           });
-           t.Start();
-      }*/
-       /*private void OnReplayProofCommandExecute() {
-          
-          Thread t = new Thread(() =>
-           {
-               Console.WriteLine("Replay");
-               try
-               {
-                   CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                   CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory;
-                   proofPageHistory1.isPaused = false;
-                   proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play;
-                    
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Freeze();
-                       base.EditingMode = InkCanvasEditingMode.None;
-                       return null;
-                   }, null);
-
-                   Stack<CLPHistoryItem> metaPast = proofPageHistory1.MetaPast;
-                   Stack<CLPHistoryItem> metaFuture = proofPageHistory1.Future;
-                   while(metaPast.Count > 0) 
-                   {
-                       CLPHistoryItem item = metaPast.Pop();
-                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                       (DispatcherOperationCallback)delegate(object arg)
-                       {
-                           if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
-                           {
-                               item.Undo(page);
-                               metaFuture.Push(item);
-                           }
-                           return null;
-                       }, null);     
-                   }
-
-                   Console.WriteLine("done undoing");
-                   Thread.Sleep(400);
-                   while(metaFuture.Count > 0)
-                   {
-                       if(proofPageHistory1.isPaused) {
-                           //proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Play;
-                           break;
-                       }
-                        
-
-                       CLPHistoryItem item = metaFuture.Pop();
-                       if(!item.wasPaused && !item.singleCut)
-                       {
-                           if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-                           {
-                               Thread.Sleep(50); // make intervals between move-steps less painfully slow
-                           }
-                           else
-                           {
-                               Thread.Sleep(400);
-                           }
-                       }
-                       Console.WriteLine("This is the action being REDONE: " + item.ItemType);
-                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                       (DispatcherOperationCallback)delegate(object arg)
-                       {
-                           if(item != null)
-                           {
-                               item.Redo(page);
-                               metaPast.Push(item);
-                           }
-                            
-                           return null;
-                       }, null);
-                       
-                   }
-                   Thread.Sleep(400);
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                   (DispatcherOperationCallback)delegate(object arg)
-                   {
-                       proofPageHistory1.Unfreeze();
-                       base.EditingMode = InkCanvasEditingMode.Ink;
-                       return null;
-                   }, null);
-               }
-               catch(Exception e)
-               {
-                   Console.WriteLine(e.Message);
-               }
-           });
-           t.Start();
-      }*/
        #endregion
 
+       #endregion //Commands
+
+       #region Methods
+
+       public void updateProgress()
+       {
+           try
+           {
+               //CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+               CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
+               double FutureItemsNumber = proofPageHistory1.Future.Count;
+               double pastItemsNumber = proofPageHistory1.MetaPast.Count;
+               double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
+
+               if(totalItemsNumber == 0)
+               {
+
+                   ProofPresent = "Hidden";
+                   ProofProgressCurrent = 0;
+                   SliderProgressCurrent = 0;
+                   return;
+               }
+               else
+               {
+                   ProofPresent = "Visible";
+                   ProofProgressCurrent =
+
+                       (pastItemsNumber * PageWidth * 0.7175) /
+                       totalItemsNumber;
+                   SliderProgressCurrent = (pastItemsNumber * 100) /
+                       totalItemsNumber;
+
+               }
+
+               if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
+               {
+                   ProofProgressVisible = "Hidden";
+               }
+               else
+               {
+                   ProofProgressVisible = "Visible";
+
+               }
+
+
+           }
+           catch(Exception e)
+           {
+               Console.WriteLine(e.Message);
+           }
+       }
+
+       #endregion //Methods
    }
 }
