@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(RibbonViewModel))]
     abstract public class ACLPPageBaseViewModel : ViewModelBase
     {
-        #region Constructors
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the CLPPageViewModel class.
@@ -53,9 +53,9 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearPageCommand = new Command(OnClearPageCommandExecute);
         }
         
-        public override string Title { get { return "PageVM"; } }
+        public override string Title { get { return "APageBaseVM"; } }
 
-        #endregion //Constructors
+        #endregion //Constructor
 
         #region Properties
        
@@ -401,7 +401,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public static void ClearAdorners(CLPPage page)
+        public static void ClearAdorners(ICLPPage page)
         {
             if(page == null)
             {

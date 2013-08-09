@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -9,7 +8,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
    class CLPAnimationPageViewModel : ACLPPageBaseViewModel
    {
-       #region Constructors
+       #region Constructor
 
        public CLPAnimationPageViewModel(CLPAnimationPage page)
            : base(page)
@@ -23,7 +22,10 @@ namespace Classroom_Learning_Partner.ViewModels
             ProofProgressVisible = "Hidden";
             ProofPresent = "Hidden";
        }
-       #endregion //Constructors
+
+       public override string Title { get { return "AnimationPageVM"; } }
+
+       #endregion //Constructor
 
        #region Properties
 

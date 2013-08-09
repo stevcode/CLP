@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                StrokePathContainer.SerializedStrokes = CLPPage.SaveInkStrokes(clonedStrokes);    //.StrokesToBytes(clonedStrokes);
+                StrokePathContainer.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);    //.StrokesToBytes(clonedStrokes);
                 StrokePathContainer.IsStrokePathsVisible = true;
             } else {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -172,7 +172,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CopyStamp(int stampIndex)
         {
-            PageObject.ParentPage.PageHistory.Freeze();
             IsAdornerVisible = false;
             IsMouseOverShowEnabled = false;            
 
@@ -189,7 +188,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
                     if(notebookWorkspaceViewModel != null)
                     {
-                        CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                        var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
                         leftBehindStamp.ParentPage = parentPage;
                         leftBehindStamp.StrokePathContainer.ParentPage = parentPage;
                         if(leftBehindStamp.StrokePathContainer.InternalPageObject != null)
@@ -203,7 +202,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             ICLPPageObject newObject = pageObject.Duplicate();
                             pageObject.Parts = 0;
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(newObject.UniqueID));
+                   //         parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(newObject.UniqueID));
                             parentPage.PageObjects.Add(newObject);
                             pageObject.CanAdornersShow = false;
                             leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
@@ -211,7 +210,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         if(stampIndex > -1)
                         {
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
+           //                 parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
                             parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
                             foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
                             {
@@ -221,7 +220,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         else
                         {
-                            parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
+          //                  parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
                             parentPage.PageObjects.Add(leftBehindStamp);
                         }
                     }
@@ -232,7 +231,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
             }
-            PageObject.ParentPage.PageHistory.Unfreeze();
         }
 
         /// <summary>
@@ -272,7 +270,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
                         if(notebookWorkspaceViewModel != null)
                         {
-                            CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                            var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
                             CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
                         }
                         PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
@@ -289,18 +287,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                         {
-                            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(po));
-                            PageObject.ParentPage.PageHistory.Freeze();
+                  //          PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(po));
+                  //          PageObject.ParentPage.PageHistory.Freeze();
                             CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
-                            PageObject.ParentPage.PageHistory.Unfreeze();
+                 //           PageObject.ParentPage.PageHistory.Unfreeze();
                         }
                     }
                 }
 
-                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject));
-                PageObject.ParentPage.PageHistory.Freeze();
+       //         PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject));
+      //          PageObject.ParentPage.PageHistory.Freeze();
                 CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-                PageObject.ParentPage.PageHistory.Unfreeze();
+       //         PageObject.ParentPage.PageHistory.Unfreeze();
             }
         }
 
@@ -338,15 +336,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(pageObject.UniqueID, 
-                    pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
+                //PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(pageObject.UniqueID, 
+                //    pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
                 CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             var pt = new Point(x, y);
 
-            PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(PageObject.UniqueID,
-                PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
+            //PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(PageObject.UniqueID,
+            //    PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
             CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
         }
 
@@ -433,7 +431,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
                 if(notebookWorkspaceViewModel != null)
                 {
-                    CLPPage parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+                    var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
                     if(parentPage != null)
                     {

@@ -166,7 +166,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.CurrentUserMode == App.UserMode.Instructor)
             {
                 string submissionID = "";
-                if(DisplayedPage.IsSubmission)
+                if(DisplayedPage.SubmissionType != SubmissionType.None)
                 {
                     submissionID = DisplayedPage.SubmissionID;
                 }
@@ -180,7 +180,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         //same vertical offsets.
                         App.Network.ProjectorProxy.ScrollPage(DisplayedPage.UniqueID, submissionID, e.VerticalOffset);
                     }
-                    catch(System.Exception)
+                    catch(Exception)
                     {
 
                     }
@@ -203,7 +203,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var pageViewModel = (viewModel as CLPPageViewModel);
                 if (pageViewModel.Page.UniqueID == DisplayedPage.UniqueID)
                 {
-                    if(pageViewModel.Page.IsSubmission)
+                    if(pageViewModel.Page.SubmissionType != SubmissionType.None)
                     {
                         if(pageViewModel.Page.SubmissionID == DisplayedPage.SubmissionID)
                         {
@@ -220,7 +220,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ResizePage()
         {
-            double pageAspectRatio = DisplayedPage.PageAspectRatio;
+            double pageAspectRatio = DisplayedPage.InitialPageAspectRatio;
             double pageHeight = DisplayedPage.PageHeight;
             double pageWidth = DisplayedPage.PageWidth;
             double scrolledAspectRatio = pageWidth / pageHeight;
@@ -247,30 +247,11 @@ namespace Classroom_Learning_Partner.ViewModels
         //From Interface IDisplayViewModel
         public void AddPageToDisplay(ICLPPage page)
         {
-            if(DisplayedPage is CLPAnimationPage && page.UniqueID != DisplayedPage.UniqueID)
-            {
-                var clpProofHistory = DisplayedPage.PageHistory as CLPProofHistory;
-                if(clpProofHistory != null)
-                {
-                    clpProofHistory.IsPaused = true;
-                    lock(CLPProofPageViewModel.obj)
-                    {
-                        clpProofHistory.Freeze();
-                    }
-                }
-
-                SetPageBorderColor();
-            }
-
             DisplayedPage = page;
-            if(page is CLPAnimationPage)
-            {
-                (page as CLPAnimationPage).updateProgress();
-            }
             if(IsOnProjector)
             {
                 string pageID;
-                if(DisplayedPage.IsSubmission)
+                if(DisplayedPage.SubmissionType != SubmissionType.None)
                 {
                     pageID = DisplayedPage.SubmissionID;
                 }
@@ -305,7 +286,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetPageBorderColor()
         {
-            if(!DisplayedPage.IsSubmission)
+            if(DisplayedPage.SubmissionType == SubmissionType.None)
             {
                 PageBorderColor = "#2F64B9";
             }

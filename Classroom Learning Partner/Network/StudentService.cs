@@ -86,11 +86,11 @@ namespace Classroom_Learning_Partner
                 {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        CLP.Models.CLPPage page = notebook.GetNotebookPageByID(pageID);
+                        var page = notebook.GetNotebookPageByID(pageID);
 
                         if(page != null)
                         {
-                            StrokeCollection strokesToRemove = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+                            StrokeCollection strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
 
                             var strokes =
                                 from externalStroke in strokesToRemove
@@ -102,7 +102,7 @@ namespace Classroom_Learning_Partner
 
                             page.InkStrokes.Remove(actualStrokesToRemove);
 
-                            StrokeCollection strokesToAdd = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
+                            StrokeCollection strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
                             page.InkStrokes.Add(strokesToAdd);
                             break;
                         }

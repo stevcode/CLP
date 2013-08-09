@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -199,7 +200,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
                 string id = viewModel.CurrentPage.UniqueID;
-                System.Collections.ObjectModel.ObservableCollection<CLPPage> currentPage = new System.Collections.ObjectModel.ObservableCollection<CLPPage>();
+                var currentPage = new ObservableCollection<ICLPPage>();
                 foreach (CLPPage page in viewModel.NotebookPages)
                 {
                     if(page.UniqueID == id)
@@ -212,19 +213,19 @@ namespace Classroom_Learning_Partner.Views
 
                 if(viewModel.Notebook.Submissions.ContainsKey(id))
                 {
-                    System.Collections.ObjectModel.ObservableCollection<CLPPage> pages = viewModel.Notebook.Submissions[id];
+                    var pages = viewModel.Notebook.Submissions[id];
                     viewModel.HistoryPages = pages;
                 }
                 else
                 {
-                    viewModel.Notebook.Submissions.Add(id, new System.Collections.ObjectModel.ObservableCollection<CLPPage>());
+                    viewModel.Notebook.Submissions.Add(id, new ObservableCollection<ICLPPage>());
                 }
-                SubmissionHistoryGrid.Visibility = System.Windows.Visibility.Visible;
+                SubmissionHistoryGrid.Visibility = Visibility.Visible;
                 SubmissionHistoryButton.Text = "Close Page History";
             }
             else
             {
-                SubmissionHistoryGrid.Visibility = System.Windows.Visibility.Collapsed;
+                SubmissionHistoryGrid.Visibility = Visibility.Collapsed;
                 SubmissionHistoryButton.Text = "Open Page History";
             }
         }

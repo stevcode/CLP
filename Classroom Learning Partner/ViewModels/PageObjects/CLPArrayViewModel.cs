@@ -237,7 +237,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeArrayCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
             var clpArray = PageObject as CLPArray;
             if(clpArray == null)
             {

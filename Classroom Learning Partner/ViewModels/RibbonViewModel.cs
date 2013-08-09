@@ -728,7 +728,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     page.TrimPage();
-                    double printHeight = page.PageWidth / page.PageAspectRatio;
+                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
                     double transformAmount = 0;
                     do
@@ -811,7 +811,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     page.TrimPage();
-                    double printHeight = page.PageWidth / page.PageAspectRatio;
+                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
                     double transformAmount = 0;
                     do
@@ -904,7 +904,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     page.TrimPage();
-                    double printHeight = page.PageWidth / page.PageAspectRatio;
+                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
                     double transformAmount = 0;
                     do
@@ -1037,7 +1037,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPreviousPageCommandExecute()
         {
-            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            var currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
 
             if(index > 0)
@@ -1053,7 +1053,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNextPageCommandExecute()
         {
-            CLPPage currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            var currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
 
             if(index < (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Count - 1)
@@ -1182,14 +1182,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(CanSendToTeacher)
             {
-                CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                page.SerializedStrokes = CLPPage.SaveInkStrokes(page.InkStrokes);
+                var page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
                 CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
                 CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
 
                 CLPPage submission = page.Clone() as CLPPage;
-                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
                 if(notebook != null && submission != null)
                 {
@@ -1219,7 +1219,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(CanGroupSendToTeacher)
             {
-                CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                var page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                 CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
             }
             CanGroupSendToTeacher = false;
@@ -1327,7 +1327,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 List<string> pageIDs = new List<string>();
                 if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
                 {
-                    CLPPage page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                    var page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
                     string pageID;
                     if(page.IsSubmission)
                     {
@@ -1544,7 +1544,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnBroadcastPageCommandExecute()
         {
             //TODO: Steve - also broadcast to Projector
-            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             string s_page = ObjectSerializer.ToString(page);
             int index = page.PageIndex - 1;
 
@@ -1578,7 +1578,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnReplacePageCommandExecute()
         {
             //TODO: Steve - also broadcast to Projector
-            CLPPage page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             string s_page = ObjectSerializer.ToString(page);
             int index = page.PageIndex - 1;
 
@@ -1612,7 +1612,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRemoveAllSubmissionsCommandExecute()
         {
             CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            foreach(ObservableCollection<CLPPage> pages in notebook.Submissions.Values)
+            foreach(var pages in notebook.Submissions.Values)
             {
                 pages.Clear();
             }
@@ -1642,7 +1642,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
                 page.PageWidth = CLPPage.PORTRAIT_WIDTH;
-                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
@@ -1656,18 +1656,18 @@ namespace Classroom_Learning_Partner.ViewModels
             //Steve - clpserviceagent
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             index++;
-            CLPPage page = new CLPAnimationPage();
+            var page = new CLPAnimationPage();
             if(pageOrientation == "Portrait")
             {
                 page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
                 page.PageWidth = CLPPage.PORTRAIT_WIDTH;
-                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
             }
             else if(pageOrientation == "Landscape") 
             {
                 page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
                 page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
-                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
             }
             page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
@@ -1681,9 +1681,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSwitchPageLayoutCommandExecute()
         {
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
-            if(page.PageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            if(page.InitialPageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
             {
                 foreach(ICLPPageObject pageObject in page.PageObjects)
                 {
@@ -1699,9 +1699,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 page.PageWidth = CLPPage.PORTRAIT_WIDTH;
                 page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
-                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
             }
-            else if(page.PageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            else if(page.InitialPageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
             {
                 foreach(ICLPPageObject pageObject in page.PageObjects)
                 {
@@ -1717,18 +1717,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
                 page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
-                page.PageAspectRatio = page.PageWidth / page.PageHeight;
+                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
             }
         }
 
         public Command SwitchPageTypeCommand { get; private set; }
 
         public void OnSwitchPageTypeCommandExecute(){
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             int index = page.PageIndex;
             double pageheight = page.PageHeight;
             double pagewidth = page.PageWidth;
-            double pageaspectratio = page.PageAspectRatio;
+            double pageaspectratio = page.InitialPageAspectRatio;
 
             if(page.PageType == PageTypeEnum.CLPProofPage) {
                 CLPAnimationPage proofpage = (CLPAnimationPage)page;
@@ -1746,7 +1746,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newpage.PageHeight = pageheight;
                 newpage.PageWidth = pagewidth;
-                newpage.PageAspectRatio = pageaspectratio;
+                newpage.InitialPageAspectRatio = pageaspectratio;
 
                 newpagehistory.Past = proofhistory.Past;
                 newpagehistory.MetaPast = proofhistory.MetaPast;
@@ -1774,7 +1774,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newproofpage.PageHeight = pageheight;
                 newproofpage.PageWidth = pagewidth;
-                newproofpage.PageAspectRatio = pageaspectratio;
+                newproofpage.InitialPageAspectRatio = pageaspectratio;
 
                 newproofpage.PageObjects = page.PageObjects;
                 newproofpage.InkStrokes =  page.InkStrokes;
@@ -1819,7 +1819,7 @@ namespace Classroom_Learning_Partner.ViewModels
             int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage);
             index++;
 
-            CLPPage newPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.DuplicatePage();
+            var newPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage.DuplicatePage();
             (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, newPage);
         }
 
@@ -1830,7 +1830,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPageTopicCommandExecute()
         {
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
             PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
             pageTopicWindow.Owner = Application.Current.MainWindow;
@@ -1855,7 +1855,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
             {
-                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
                 page.PageHeight += 200;
                 ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
             
@@ -1876,7 +1876,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
             {
-                CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
                 page.TrimPage();
             }
         }
@@ -1930,7 +1930,7 @@ namespace Classroom_Learning_Partner.ViewModels
             byte[] hash = md5.ComputeHash(byteSource);
             string imageID = Convert.ToBase64String(hash);
 
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
 
             if(!page.ImagePool.ContainsKey(imageID))
@@ -1995,7 +1995,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     byte[] hash = md5.ComputeHash(byteSource);
                     string imageID = Convert.ToBase64String(hash);
 
-                    CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                    var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
 
                     if(!page.ImagePool.ContainsKey(imageID))
@@ -2077,7 +2077,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     byte[] hash = md5.ComputeHash(byteSource);
                     string imageID = Convert.ToBase64String(hash);
 
-                    CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                    var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
 
                     if(!page.ImagePool.ContainsKey(imageID))
@@ -2173,7 +2173,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             // Get the tags on this page
             Logger.Instance.WriteToLog("Page Definition");
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             ObservableCollection<Tag> tags = page.PageTags;
 
             // If the page already has a Page Definition tag, use that one
@@ -2239,7 +2239,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
 
             // Get the page's math definition, or be sad if it doesn't have one
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             ObservableCollection<Tag> tags = page.PageTags;
             ProductRelation relation = null;
             foreach(Tag tag in tags)
@@ -2736,7 +2736,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInterpretPageCommandExecute()
         {
-            CLPPage currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             foreach (ICLPPageObject pageObject in currentPage.PageObjects)
             {
                 if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))

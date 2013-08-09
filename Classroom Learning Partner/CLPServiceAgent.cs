@@ -75,7 +75,7 @@ namespace Classroom_Learning_Partner
 
                             var sPage = ObjectSerializer.ToString(page);
 
-                            var byteStrokes = CLPPage.SaveInkStrokes(page.InkStrokes);
+                            var byteStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
                             var pageObjects = new ObservableCollection<ICLPPageObject>();
 
                             App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
@@ -94,7 +94,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void AddSubmission(CLPNotebook notebook, CLPPage page)
+        public void AddSubmission(CLPNotebook notebook, ICLPPage page)
         {
             notebook.AddStudentSubmission(page.UniqueID, page);
         }
@@ -142,16 +142,8 @@ namespace Classroom_Learning_Partner
 
                     foreach(CLPPage page in notebook.Pages)
                     {
-                        if(!page.SerializedStrokes.Any() &&
-                           page.ByteStrokes.Any())
-                        {
-                            page.InkStrokes = CLPPage.BytesToStrokes(page.ByteStrokes);
-                        }
-                        else
-                        {
-                            page.InkStrokes = CLPPage.LoadInkStrokes(page.SerializedStrokes); 
-                        }
-                        
+                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes); 
+
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
                             pageObject.ParentPage = page;
@@ -160,15 +152,8 @@ namespace Classroom_Learning_Partner
                         {
                             foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
                             {
-                                if(!submission.SerializedStrokes.Any() &&
-                                   submission.ByteStrokes.Any())
-                                {
-                                    submission.InkStrokes = CLPPage.BytesToStrokes(submission.ByteStrokes);
-                                }
-                                else
-                                {
-                                    submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
-                                }
+                                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
                                     pageObject.ParentPage = submission;
@@ -384,22 +369,30 @@ namespace Classroom_Learning_Partner
                     foreach(ICLPPageObject pageObject1 in pageObject.GetPageObjectsOverPageObject())
                     {
                         Point pageObjectPt = new Point((xDelta + pageObject1.XPosition), (yDelta + pageObject1.YPosition));
-                        CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject1, pageObjectPt);
+                        Instance.ChangePageObjectPosition(pageObject1, pageObjectPt);
                     }
                 }
             }
 
             double oldXPos = pageObject.XPosition;
             double oldYPos = pageObject.YPosition;
-            CLPPage page = pageObject.ParentPage;
+            var page = pageObject.ParentPage;
             
             double xDiff = Math.Abs(oldXPos - pt.X);
             double yDiff = Math.Abs(oldYPos - pt.Y);
             double diff = xDiff + yDiff;
             if(diff > CLPHistory.SAMPLE_RATE)
             {
-                page.PageHistory.Push(new CLPHistoryMovePageObject(pageObject.UniqueID, oldXPos, oldYPos, pt.X, pt.Y));
-                page.updateProgress();
+                var batch = page.PageHistory.CurrentHistoryBatch;
+                if(batch is CLPHistoryPageObjectMoveBatch)
+                {
+                    (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(pageObject.UniqueID, pt);
+                }
+                else
+                {
+                    page.PageHistory.EndBatch();
+                    //TODO: log this error
+                }
             }
 
             pageObject.XPosition = pt.X;
@@ -414,9 +407,19 @@ namespace Classroom_Learning_Partner
             double heightDiff = Math.Abs(oldHeight - height);
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;
-            if(diff > CLPHistory.SAMPLE_RATE){
-                page.PageHistory.Push(new CLPHistoryResizeObject(pageObject.UniqueID, oldHeight, oldWidth, height, width));
-                page.updateProgress();
+            if(diff > CLPHistory.SAMPLE_RATE)
+            {
+                var batch = page.PageHistory.CurrentHistoryBatch;
+                if(batch is CLPHistoryPageObjectResizeBatch)
+                {
+                    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(pageObject.UniqueID,
+                                                                                     new Point(width, height));
+                }
+                else
+                {
+                    page.PageHistory.EndBatch();
+                    //TODO: log this error
+                }
             }
             pageObject.Height = height;
             pageObject.Width = width;
@@ -425,7 +428,7 @@ namespace Classroom_Learning_Partner
         public void InterpretRegion(ACLPInkRegion inkRegion) {
             inkRegion.DoInterpretation();
 
-            Logger.Instance.WriteToLog(inkRegion.ParentPage.SubmitterName);
+            Logger.Instance.WriteToLog(inkRegion.ParentPage.Submitter.FullName);
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
@@ -433,41 +436,6 @@ namespace Classroom_Learning_Partner
             }
             Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
             Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
-        }
-
-        public void CutPageObjects(ICLPPage page, Stroke cuttingStroke)
-        {
-            var cutPageObjects = new List<ICLPPageObject>();
-            var allHalvedPageObjects = new List<ICLPPageObject>();
-            foreach(var pageObject in page.PageObjects)
-            {
-                var halvedPageObjects = pageObject.Cut(cuttingStroke);
-                if(halvedPageObjects.Any())
-                {
-                    cutPageObjects.Add(pageObject);
-                    allHalvedPageObjects.AddRange(halvedPageObjects);
-                }
-            }
-
-            page.PageHistory.BeginBatch(new CLPHistoryCutBatch(page, cuttingStroke, cutPageObjects));
-            foreach(var pageObject in cutPageObjects)
-            {
-                RemovePageObjectFromPage(page, pageObject, false);
-            }
-
-            var halvedPageObjectIDs = new List<string>();
-            foreach(var pageObject in allHalvedPageObjects)
-            {
-                AddPageObjectToPage(page, pageObject, false);
-                halvedPageObjectIDs.Add(pageObject.UniqueID);
-            }
-
-            var clpHistoryCutBatch = page.PageHistory.CurrentHistoryBatch as CLPHistoryCutBatch;
-            if(clpHistoryCutBatch != null)
-            {
-                clpHistoryCutBatch.AddHalvedPageObjectIDsToBatch(halvedPageObjectIDs);
-            }
-            page.PageHistory.EndBatch();
         }
 
         #endregion //Page

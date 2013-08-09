@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
@@ -14,8 +15,8 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
-            ObservableCollection<ICLPPageObject> pageObjects, 
+        void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
+            List<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
             bool isGroupSubmission, double pageHeight);
@@ -36,12 +37,10 @@ namespace Classroom_Learning_Partner
 
     public class InstructorService : IInstructorContract
     {
-        public InstructorService() { }
-
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
-            ObservableCollection<ICLPPageObject> pageObjects, 
+        public void AddStudentSubmission(List<StrokeDTO> serializedStrokes, 
+            List<ICLPPageObject> pageObjects, 
             Person submitter, Group groupSubmitter, 
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
             bool isGroupSubmission, double pageHeight)
@@ -52,7 +51,7 @@ namespace Classroom_Learning_Partner
                 {
                     try
                     {
-                        App.Network.ProjectorProxy.AddStudentSubmission(byteStrokes, pageObjects,
+                        App.Network.ProjectorProxy.AddStudentSubmission(serializedStrokes, pageObjects,
                             submitter, groupSubmitter,
                             notebookID, pageID, submissionID, submissionTime,
                             isGroupSubmission, pageHeight);
@@ -66,29 +65,33 @@ namespace Classroom_Learning_Partner
             }
             //TODO: Steve - add pages to a queue and send when a projector is found
 
-            CLPPage submission = null;
+            ICLPPage submission = null;
             CLPNotebook currentNotebook = null;
 
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks.Where(notebook => notebookID == notebook.UniqueID)) 
             {
-                if(notebookID == notebook.UniqueID)
+                currentNotebook = notebook;
+                var page = notebook.GetNotebookPageByID(pageID);
+                if(page is CLPPage)
                 {
-                    currentNotebook = notebook;
-                    submission = notebook.GetNotebookPageByID(pageID).Clone() as CLPPage;
+                    submission = (page as CLPPage).Clone() as CLPPage;
+                    break;
+                }
+                if(page is CLPAnimationPage)
+                {
+                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
                     break;
                 }
             }
 
             if(submission != null)
             {
-                submission.SerializedStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.LoadInkStrokes(byteStrokes);
+                submission.SerializedStrokes = new ObservableCollection<StrokeDTO>(serializedStrokes);
+                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
-                submission.IsSubmission = true;
-                submission.IsGroupSubmission = isGroupSubmission;
+                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
                 submission.PageHeight = pageHeight;
@@ -158,15 +161,22 @@ namespace Classroom_Learning_Partner
                 Console.WriteLine("Projector NOT Available");
             }
 
-            CLPPage submission = ObjectSerializer.ToObject(sPage) as CLPPage;
-            submission.IsSubmission = true;
-            submission.IsGroupSubmission = isGroupSubmission;
+            var page = ObjectSerializer.ToObject(sPage);
+            ICLPPage submission = null;
+            if(page is CLPPage)
+            {
+                submission = (page as CLPPage).Clone() as CLPPage;
+            }
+            if(page is CLPAnimationPage)
+            {
+                submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+            }
+            submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
             submission.SubmissionID = submissionID;
             submission.SubmissionTime = submissionTime;
-            submission.SubmitterName = submitter.FullName;
             submission.Submitter = submitter;
             submission.GroupSubmitter = groupSubmitter;
-            submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
             foreach(ICLPPageObject pageObject in submission.PageObjects)
             {

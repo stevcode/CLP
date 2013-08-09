@@ -127,18 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var clpStrokePathContainer = PageObject as CLPStrokePathContainer;
             if(clpStrokePathContainer != null)
             {
-                StrokeCollection inkStrokes;
-
-                if(!clpStrokePathContainer.SerializedStrokes.Any() &&
-                           clpStrokePathContainer.ByteStrokes.Any())
-                {
-                    inkStrokes = CLPPage.BytesToStrokes(clpStrokePathContainer.ByteStrokes);
-                }
-                else
-                {
-                    inkStrokes = CLPPage.LoadInkStrokes(clpStrokePathContainer.SerializedStrokes);
-                }
-
+                var inkStrokes = StrokeDTO.LoadInkStrokes(clpStrokePathContainer.SerializedStrokes);
 
                 foreach (Stroke stroke in inkStrokes)
                 {
@@ -155,7 +144,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     geometry.Freeze();
 
-                    StrokePathViewModel strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
+                    var strokePathViewModel = new StrokePathViewModel(geometry, (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), stroke.DrawingAttributes.Width);
                     StrokePathViewModels.Add(strokePathViewModel);
                 }
             }

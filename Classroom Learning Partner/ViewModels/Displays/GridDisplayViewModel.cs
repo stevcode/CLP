@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public GridDisplayViewModel()
             : base()
         {
-            DisplayedPages = new ObservableCollection<CLPPage>();
+            DisplayedPages = new ObservableCollection<ICLPPage>();
             DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
 
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
@@ -69,13 +69,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Currently Displayed pages in the GridDisplay.
         /// </summary>
-        public ObservableCollection<CLPPage> DisplayedPages
+        public ObservableCollection<ICLPPage> DisplayedPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(DisplayedPagesProperty); }
             set { SetValue(DisplayedPagesProperty, value); }
         }
 
-        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<ICLPPage>));
 
         #endregion //Bindings
 

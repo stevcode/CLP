@@ -24,8 +24,8 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
-        void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes,
-            ObservableCollection<ICLPPageObject> pageObjects,
+        void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
+            List<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
             bool isGroupSubmission, double pageHeight);
@@ -117,35 +117,39 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
-        public void AddStudentSubmission(ObservableCollection<StrokeDTO> byteStrokes, 
-            ObservableCollection<ICLPPageObject> pageObjects,
+        public void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
+            List<ICLPPageObject> pageObjects,
             Person submitter, Group groupSubmitter,
             string notebookID, string pageID, string submissionID, DateTime submissionTime,
             bool isGroupSubmission, double pageHeight)
         {
-            CLPPage submission = null;
+            ICLPPage submission = null;
             CLPNotebook currentNotebook = null;
 
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks.Where(notebook => notebookID == notebook.UniqueID))
             {
-                if(notebookID == notebook.UniqueID)
+                currentNotebook = notebook;
+                var page = notebook.GetNotebookPageByID(pageID);
+                if(page is CLPPage)
                 {
-                    currentNotebook = notebook;
-                    submission = notebook.GetNotebookPageByID(pageID).Clone() as ICLPPage;
+                    submission = (page as CLPPage).Clone() as CLPPage;
+                    break;
+                }
+                if(page is CLPAnimationPage)
+                {
+                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
                     break;
                 }
             }
 
             if(submission != null)
             {
-                submission.SerializedStrokes = byteStrokes;
-                submission.InkStrokes = CLPPage.LoadInkStrokes(byteStrokes);
+                submission.SerializedStrokes = new ObservableCollection<StrokeDTO>(serializedStrokes);
+                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
-                submission.IsSubmission = true;
-                submission.IsGroupSubmission = true;
+                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
                 submission.PageHeight = pageHeight;
@@ -199,14 +203,12 @@ namespace Classroom_Learning_Partner
             var submission = ObjectSerializer.ToObject(sPage) as CLPPage;
             if(submission != null)
             {
-                submission.IsSubmission = true;
-                submission.IsGroupSubmission = isGroupSubmission;
+                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
                 submission.SubmissionID = submissionID;
                 submission.SubmissionTime = submissionTime;
-                submission.SubmitterName = submitter.FullName;
                 submission.Submitter = submitter;
                 submission.GroupSubmitter = groupSubmitter;
-                submission.InkStrokes = CLPPage.LoadInkStrokes(submission.SerializedStrokes);
+                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                 {
@@ -269,7 +271,7 @@ namespace Classroom_Learning_Partner
                     {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        CLPPage page = notebook.GetNotebookPageByID(pageID);
+                        var page = notebook.GetNotebookPageByID(pageID);
 
                         if(page == null)
                         {
@@ -278,7 +280,7 @@ namespace Classroom_Learning_Partner
 
                         if(page != null)
                         {
-                            StrokeCollection strokesToRemove = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+                            StrokeCollection strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
 
                             var strokes =
                                 from externalStroke in strokesToRemove
@@ -290,7 +292,7 @@ namespace Classroom_Learning_Partner
 
                             page.InkStrokes.Remove(actualStrokesToRemove);
 
-                            StrokeCollection strokesToAdd = CLPPage.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
+                            StrokeCollection strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
                             page.InkStrokes.Add(strokesToAdd);
                             break;
                         }

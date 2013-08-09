@@ -352,24 +352,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// HistoryPanel.
         /// </summary>
-        public ObservableCollection<CLPPage> HistoryPages
+        public ObservableCollection<ICLPPage> HistoryPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(HistoryPagesProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(HistoryPagesProperty); }
             set { SetValue(HistoryPagesProperty, value); }
         }
 
-        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<ICLPPage>));
         
         /// <summary>
         /// First element in HistoryPanel
         /// </summary>
-        public ObservableCollection<CLPPage> HistoryCurrentPage
+        public ObservableCollection<ICLPPage> HistoryCurrentPage
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(HistoryCurrentPageProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(HistoryCurrentPageProperty); }
             set { SetValue(HistoryCurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<ICLPPage>));
          
         #endregion //Panels
 
@@ -642,8 +642,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             HistoryPages = pages;
 
-            var currentPage = new ObservableCollection<CLPPage>();
-            foreach(CLPPage page in NotebookPages)
+            var currentPage = new ObservableCollection<ICLPPage>();
+            foreach(var page in NotebookPages)
             {
                 if(page.UniqueID == id)
                 {

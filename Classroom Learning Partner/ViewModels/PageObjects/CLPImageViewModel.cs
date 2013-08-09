@@ -87,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnResizeImageCommandExecute(DragDeltaEventArgs e)
         {
-            CLPPage parentPage =
+            var parentPage =
                 (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(
                     PageObject.ParentPageID);
 
