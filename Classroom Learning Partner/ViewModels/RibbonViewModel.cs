@@ -1839,20 +1839,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPageTopicCommandExecute()
         {
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            //TODO: PageTopics gone, convert to Tags
+            //var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
 
-            PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
-            pageTopicWindow.Owner = Application.Current.MainWindow;
+            //PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
+            //pageTopicWindow.Owner = Application.Current.MainWindow;
 
-            string originalPageTopics = String.Join(",", page.PageTopics);
-            pageTopicWindow.PageTopicName.Text = originalPageTopics;
-            pageTopicWindow.ShowDialog();
-            if(pageTopicWindow.DialogResult == true)
-            {
-                string pageTopics = pageTopicWindow.PageTopicName.Text;
-                string[] stringArray = pageTopics.Split(',');
-                page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
-            }
+            //string originalPageTopics = String.Join(",", page.PageTopics);
+            //pageTopicWindow.PageTopicName.Text = originalPageTopics;
+            //pageTopicWindow.ShowDialog();
+            //if(pageTopicWindow.DialogResult == true)
+            //{
+            //    string pageTopics = pageTopicWindow.PageTopicName.Text;
+            //    string[] stringArray = pageTopics.Split(',');
+            //    page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
+            //}
         }
 
         /// <summary>
