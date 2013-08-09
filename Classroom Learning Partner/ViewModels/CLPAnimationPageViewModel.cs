@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
-
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -12,34 +12,26 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-   class CLPProofPageViewModel : CLPPageViewModel
+   class CLPAnimationPageViewModel : ACLPPageBaseViewModel
    {
        public static volatile object obj = new object();
        
        #region Constructors
 
-       public CLPProofPageViewModel(CLPAnimationPage page)
+       public CLPAnimationPageViewModel(CLPAnimationPage page)
            : base(page)
        {
             PlayProofCommand = new Command(OnPlayProofCommandExecute);
             UndoProofCommand = new Command(OnUndoProofCommandExecute);
             RedoProofCommand = new Command(OnRedoProofCommandExecute);
-            ReplayProofCommand = new Command(OnReplayProofCommandExecute);
             RecordProofCommand = new Command(OnRecordProofCommandExecute);
             InsertProofCommand = new Command(OnInsertProofCommandExecute);
             RewindProofCommand = new Command(OnRewindProofCommandExecute);
             ForwardProofCommand = new Command(OnForwardProofCommandExecute);
             PauseProofCommand = new Command<StackPanel>(OnPauseProofCommandExecute);
             StopProofCommand = new Command(OnStopProofCommandExecute);
-            ClearProofCommand = new Command(OnClearProofCommandExecute);
-            //OnPauseProofCommandExecutePure();
-            CLPProofHistory proofPageHistory1 = (CLPProofHistory)page.PageHistory; 
-            proofPageHistory1.ProofPageAction = CLPProofHistory.CLPProofPageAction.Pause;
-            proofPageHistory1.IsPaused = true;
-            lock(obj)
-            {
-                proofPageHistory1.Freeze();
-            }
+            
+
             ProofProgressCurrent = page.PageWidth *0.7175;
             ProofProgressVisible = "Hidden";
             ProofPresent = "Hidden";
@@ -69,14 +61,12 @@ namespace Classroom_Learning_Partner.ViewModels
        public Command PlayProofCommand  { get; private set; }
        public Command UndoProofCommand { get; private set; }
        public Command RedoProofCommand { get; private set; }
-       public Command ReplayProofCommand { get; private set; }
        public Command RecordProofCommand  { get; private set; }
        public Command InsertProofCommand { get; private set; }
        public Command RewindProofCommand { get; private set; }
        public Command ForwardProofCommand { get; private set; }
        public Command<StackPanel> PauseProofCommand { get; private set; }
        public Command StopProofCommand { get; private set; }
-       public Command ClearProofCommand { get; private set; }
 
        public void Slider_ValueChanged_1b(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
        {
@@ -110,62 +100,9 @@ namespace Classroom_Learning_Partner.ViewModels
                }   
        }
        
-       private void OnClearProofCommandExecute()
-       {
-           if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
-                               "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-           {
-               return;
-           }
+       
 
-           (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-           var proofPageHistory1 = Page.PageHistory as CLPProofHistory;
-           if(proofPageHistory1 == null)
-           {
-               return;
-           }
 
-           proofPageHistory1.IsPaused = true;
-           lock(obj)
-           {
-               proofPageHistory1.ClearHistory();
-               proofPageHistory1.Freeze();
-           }
-
-           List<ICLPPageObject> rpo = new List<ICLPPageObject>();
-           foreach(ICLPPageObject po in Page.PageObjects)
-           {
-               if(po.IsBackground != true)
-               {
-                   rpo.Add(po);
-               }
-           }
-
-           for(int i = 0; i < rpo.Count; i++)
-           {
-               ICLPPageObject po = rpo[i];
-               CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
-           }
-
-           List<Stroke> istl = new List<Stroke>();
-           foreach(var ist in Page.InkStrokes)
-           {
-               istl.Add(ist);
-           }
-
-           for(int i = 0; i < istl.Count; i++)
-           {
-               Stroke ist = istl[i];
-               Page.InkStrokes.Remove(ist);
-           }
-       }
-
-       //replays the entire proof from the beginning
-       //disables editing of proof for duration of method
-       private void OnReplayProofCommandExecute() {
-           OnStopProofCommandExecute();
-           OnPlayProofCommandExecute();
-       }
       
        //enables editing of proof page
        //enables recording of proof page history

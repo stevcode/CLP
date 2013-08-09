@@ -191,7 +191,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
-    <Compile Include="ViewModels\CLPProofPageViewModel.cs" />
+    <Compile Include="ViewModels\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />

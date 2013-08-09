@@ -50,6 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
         }
         
         public override string Title { get { return "PageVM"; } }
@@ -236,7 +237,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public InkCanvasEditingMode EditingMode
         {
             get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }
-            set { SetValue(EditingModeProperty, value); }
+            set { SetValue(EditingModeProperty, value); } //TODO: make setter Private to force use of PageInteractionMode
         }
 
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
@@ -364,6 +365,35 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseUpCommandExecute(MouseEventArgs e)
         {
+        }
+
+        /// <summary>
+        /// Clears all non-background pageObjects, all strokes, and deletes History.
+        /// If in AuthoringMode, even background pageObjects will be removed.
+        /// </summary>
+        public Command ClearPageCommand { get; private set; }
+
+        private void OnClearPageCommandExecute()
+        {
+            //TODO: make message a string, make separate string for AuthoringMode to warn that all pageObjects will be deleted.
+            if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
+                                "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
+
+            Page.PageHistory.ClearHistory();
+
+            //TODO: if in AuthoringMode, just PageObjects.Clear();
+            var nonBackgroundPageObjects = Page.PageObjects.Where(pageObject => pageObject.IsBackground != true).ToList();
+            foreach(var pageObject in nonBackgroundPageObjects)
+            {
+                Page.PageObjects.Remove(pageObject);
+            }
+
+            Page.InkStrokes.Clear();
         }
 
         #endregion //Commands
