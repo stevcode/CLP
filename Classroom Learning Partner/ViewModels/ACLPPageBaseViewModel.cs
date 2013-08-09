@@ -535,22 +535,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     try
                     {
                         var removedStrokeIDs = new List<string>();
-                        Page.PageHistory.BeginEventGroup();
                         foreach (var stroke in e.Removed)
                         {
                             removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
-
-                            Page.PageHistory.Push(new CLPHistoryRemoveStroke(new StrokeDTO(stroke)));
-                            Page.updateProgress();
-                  
+                            //TODO: Make batch inking to recognize point erasing.
+                            Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeRemove(Page, stroke));
                         }
-
                         foreach(var stroke in e.Added)
                         {
                             if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
                             {
                                 var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.AddPropertyData(CLPPage.StrokeIDKey, newUniqueID);
+                                stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
                             }
 
                             //Ensures truly uniqueIDs
@@ -561,11 +557,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                     var newUniqueID = Guid.NewGuid().ToString();
                                     stroke.SetStrokeUniqueID(newUniqueID);
                                 }  
-                            }                            
-                            Page.PageHistory.Push(new CLPHistoryAddStroke(stroke.GetStrokeUniqueID()));
-                            Page.updateProgress();
+                            }
+                            Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeAdd(Page, stroke.GetStrokeUniqueID()));
                         }
-                        Page.PageHistory.EndEventGroup();
 
                         foreach(ICLPPageObject pageObject in PageObjects)
                         {
