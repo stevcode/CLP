@@ -12,9 +12,6 @@ namespace CLP.Models
     [Serializable]
     public class StarredTagType : ModelBase, TagType
     {
-
-        public static StarredTagType Instance = new StarredTagType();
-
         #region Constructors
 
         private StarredTagType()
@@ -84,5 +81,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static StarredTagType Instance = new StarredTagType();
     }
 }

@@ -8,9 +8,6 @@ namespace CLP.Models
     [Serializable]
     public class ArrayOrientationTagType :  ModelBase, TagType
     {
-
-        public static ArrayOrientationTagType Instance = new ArrayOrientationTagType();
-
         #region Constructors
 
         private ArrayOrientationTagType()
@@ -82,5 +79,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static ArrayOrientationTagType Instance = new ArrayOrientationTagType();
     }
 }

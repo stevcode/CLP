@@ -12,9 +12,6 @@ namespace CLP.Models
     [Serializable]
     public class PageDefinitionTagType : ModelBase, TagType
     {
-
-        public static PageDefinitionTagType Instance = new PageDefinitionTagType();
-
         #region Constructors
 
         private PageDefinitionTagType()
@@ -86,5 +83,7 @@ namespace CLP.Models
         #region Methods
 
         #endregion
+
+        public static PageDefinitionTagType Instance = new PageDefinitionTagType();
     }
 }

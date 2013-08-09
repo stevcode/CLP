@@ -10,8 +10,6 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public static ArrayHorizontalDivisionsTagType Instance = new ArrayHorizontalDivisionsTagType();
-
         private ArrayHorizontalDivisionsTagType()
         {
             Name = "Array Horizontal Divisions";
@@ -77,5 +75,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static ArrayHorizontalDivisionsTagType Instance = new ArrayHorizontalDivisionsTagType();
     }
 }

@@ -10,11 +10,8 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    class DomainInterpretationTagType : ModelBase, TagType
+    public class DomainInterpretationTagType : ModelBase, TagType
     {
-
-        public static DomainInterpretationTagType Instance = new DomainInterpretationTagType();
-
         #region Constructors
 
         private DomainInterpretationTagType()
@@ -90,5 +87,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static DomainInterpretationTagType Instance = new DomainInterpretationTagType();
     }
 }

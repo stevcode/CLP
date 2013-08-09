@@ -8,9 +8,6 @@ namespace CLP.Models
     [Serializable]
     public class ArrayDivisionCorrectnessTagType :  ModelBase, TagType
     {
-
-        public static ArrayDivisionCorrectnessTagType Instance = new ArrayDivisionCorrectnessTagType();
-
         #region Constructors
 
         private ArrayDivisionCorrectnessTagType()
@@ -82,5 +79,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static ArrayDivisionCorrectnessTagType Instance = new ArrayDivisionCorrectnessTagType();
     }
 }
