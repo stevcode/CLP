@@ -54,7 +54,7 @@ namespace CLP.Models
              /// <summary>
              /// Register the Origin property so it is known in the class.
              /// </summary>
-              public static readonly PropertyData OriginProperty = RegisterProperty("Origin", typeof(string), "");
+              public static readonly PropertyData OriginProperty = RegisterProperty("Origin", typeof(Origins), "");
 
               public string Name
               {
