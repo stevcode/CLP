@@ -108,14 +108,14 @@ namespace CLP.Models
 
         #region Methods
 
-        public void AddPage(CLPPage page)
+        public void AddPage(ICLPPage page)
         {
             page.ParentNotebookID = UniqueID;
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
         }
 
-        public void InsertPageAt(int index, CLPPage page)
+        public void InsertPageAt(int index, ICLPPage page)
         {
             Pages.Insert(index, page);
             GenerateSubmissionViews(page.UniqueID);
@@ -170,16 +170,9 @@ namespace CLP.Models
             return Pages.FirstOrDefault(page => page.UniqueID == pageUniqueID);
         }
 
-        public int GetNotebookPageIndex(CLPPage page)
+        public int GetNotebookPageIndex(ICLPPage page)
         {
-            if(page.IsSubmission)
-            {
-                return -1;
-            }
-            else
-            {
-                return Pages.IndexOf(page);
-            }
+            return page.SubmissionType == SubmissionType.None ? Pages.IndexOf(page) : -1;
         }
 
         public ICLPPage GetSubmissionByID(string pageID)
@@ -201,9 +194,9 @@ namespace CLP.Models
             return returnPage;
         }
 
-        public int GetSubmissionIndex(CLPPage page)
+        public int GetSubmissionIndex(ICLPPage page)
         {
-            if(page.IsSubmission)
+            if(page.SubmissionType != SubmissionType.None)
             {
                 int submissionIndex = -1;
                 foreach(string uniqueID in Submissions.Keys)
@@ -220,21 +213,19 @@ namespace CLP.Models
 
                 return submissionIndex;
             }
-            else
-            {
-                return -1;
-            }
+
+            return -1;
         }
 
-        public void AddStudentSubmission(string pageID, CLPPage submission)
+        public void AddStudentSubmission(string pageID, ICLPPage submission)
         {
-            ICLPPage notebookPage = GetNotebookPageByID(pageID);
+            var notebookPage = GetNotebookPageByID(pageID);
             if(Submissions.ContainsKey(pageID))
             {
                 int groupCount = 0;
                 foreach(var page in Submissions[pageID])
                 {
-                    if(submission.GroupName == page.GroupName)
+                    if(submission.GroupSubmitter.GroupName == page.GroupSubmitter.GroupName)
                     {
                         groupCount++;
                         break;
@@ -244,18 +235,18 @@ namespace CLP.Models
                 int individualCount = 0;
                 foreach(var page in Submissions[pageID])
                 {
-                    if(submission.SubmitterName == page.SubmitterName)
+                    if(submission.Submitter.FullName == page.Submitter.FullName)
                     {
                         individualCount++;
                         break;
                     }
                 }
 
-                if(groupCount == 0 && submission.IsGroupSubmission)
+                if(groupCount == 0 && submission.SubmissionType == SubmissionType.Group)
                 {
                     notebookPage.NumberOfGroupSubmissions++;
                 }
-                if(individualCount == 0 && !submission.IsGroupSubmission)
+                if(individualCount == 0 && submission.SubmissionType == SubmissionType.Single)
                 {
                     notebookPage.NumberOfSubmissions++;
                 }
@@ -263,11 +254,11 @@ namespace CLP.Models
             }
             else
             {
-                ObservableCollection<CLPPage> pages = new ObservableCollection<CLPPage>();
+                var pages = new ObservableCollection<ICLPPage>();
                 pages.Add(submission);
                 Submissions.Add(pageID, pages);
                 notebookPage.NumberOfSubmissions++;
-                if (notebookPage.IsGroupSubmission)
+                if(notebookPage.SubmissionType == SubmissionType.Group)
                 {
                     notebookPage.NumberOfGroupSubmissions++;
                 }

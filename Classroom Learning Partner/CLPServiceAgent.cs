@@ -410,7 +410,7 @@ namespace Classroom_Learning_Partner
         {
             double oldHeight = pageObject.Height;
             double oldWidth = pageObject.Width;
-            CLPPage page = pageObject.ParentPage;
+            var page = pageObject.ParentPage;
             double heightDiff = Math.Abs(oldHeight - height);
             double widthDiff = Math.Abs(oldWidth - width);
             double diff = heightDiff + widthDiff;

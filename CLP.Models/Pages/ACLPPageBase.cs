@@ -64,6 +64,7 @@ namespace CLP.Models
             PageHeight = pageHeight;
             PageWidth = pageWidth;
             InitialPageAspectRatio = PageWidth / PageHeight;
+            AddInkWithoutHistory = false;
 
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
             Tag correctnessTag = new Tag(Tag.Origins.Teacher, CorrectnessTagType.Instance);
@@ -177,6 +178,39 @@ namespace CLP.Models
         public static readonly PropertyData GroupSubmitterProperty = RegisterProperty("GroupSubmitter", typeof(Group));
 
         /// <summary>
+        /// Index of the Page within the Notebook.
+        /// </summary>
+        public int PageIndex
+        {
+            get { return GetValue<int>(PageIndexProperty); }
+            set { SetValue(PageIndexProperty, value); }
+        }
+
+        public static readonly PropertyData PageIndexProperty = RegisterProperty("PageIndex", typeof(int), 0);
+
+        /// <summary>
+        /// Number of unique individual submissions this page has associated with it.
+        /// </summary>
+        public int NumberOfSubmissions
+        {
+            get { return GetValue<int>(NumberOfSubmissionsProperty); }
+            set { SetValue(NumberOfSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int), 0);
+
+        /// <summary>
+        /// Number of group submissions this page has associated with it.
+        /// </summary>
+        public int NumberOfGroupSubmissions
+        {
+            get { return GetValue<int>(NumberOfGroupSubmissionsProperty); }
+            set { SetValue(NumberOfGroupSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfGroupSubmissionsProperty = RegisterProperty("NumberOfGroupSubmissions", typeof(int), 0);
+
+        /// <summary>
         /// Tags associated with the page. Either Author generated,
         /// or automatically generated.
         /// </summary>
@@ -267,6 +301,8 @@ namespace CLP.Models
 
         [NonSerialized]
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection(), includeInSerialization: false);
+
+        public bool AddInkWithoutHistory { get; set; } //TODO: Do Not Serialize
 
         /// <summary>
         /// Gets a list of pageObjects on the page.
