@@ -10,8 +10,6 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public static ArrayVerticalDivisionsTagType Instance = new ArrayVerticalDivisionsTagType();
-
         private ArrayVerticalDivisionsTagType()
         {
             Name = "Array Vertical Divisions";
@@ -77,5 +75,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static ArrayVerticalDivisionsTagType Instance = new ArrayVerticalDivisionsTagType();
     }
 }

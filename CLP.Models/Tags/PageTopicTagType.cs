@@ -10,11 +10,8 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    class PageTopicTagType : ModelBase, TagType
+    public class PageTopicTagType : ModelBase, TagType
     {
-
-        public static PageTopicTagType Instance = new PageTopicTagType();
-
         #region Constructors
 
         private PageTopicTagType()
@@ -83,5 +80,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static PageTopicTagType Instance = new PageTopicTagType();
     }
 }

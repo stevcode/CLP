@@ -8,9 +8,6 @@ namespace CLP.Models
     [Serializable]
     public class ArrayStrategyTagType :  ModelBase, TagType
     {
-
-        public static ArrayStrategyTagType Instance = new ArrayStrategyTagType();
-
         #region Constructors
 
         private ArrayStrategyTagType()
@@ -27,7 +24,7 @@ namespace CLP.Models
             ValueOptions.Add(new TagOptionValue("half")); // e.g., 18 -> 9 | 9
             ValueOptions.Add(new TagOptionValue("10's")); // e.g. 43 -> 10 | 10 | 10 | 10 | 3
             ValueOptions.Add(new TagOptionValue("none")); // No dividing lines were added
-            ValueOptions.Add(new TagOptionValue("other")); // None of the above
+            ValueOptions.Add(new TagOptionValue("other")); // None of the above*
 
         }
 
@@ -50,7 +47,7 @@ namespace CLP.Models
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Array Strategy");
 
         public bool InElevatedMenu
         {
@@ -84,5 +81,7 @@ namespace CLP.Models
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
+
+        public static ArrayStrategyTagType Instance = new ArrayStrategyTagType();
     }
 }
