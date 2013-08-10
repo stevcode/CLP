@@ -720,7 +720,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(CLPPage page in notebook.Pages)
+                foreach(var page in notebook.Pages)
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -803,7 +803,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(CLPPage page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
+                foreach(var page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -896,7 +896,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(CLPPage page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -988,7 +988,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
+                foreach(var page in notebook.Pages)
                 {
                     page.PageHistory.ClearHistory();
                 }
@@ -1005,7 +1005,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
                 CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(CLPPage page in notebook.Pages)
+                foreach(var page in notebook.Pages)
                 {
                     page.PageHistory.UseHistory = false;
                 }
@@ -1624,7 +1624,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pages.Clear();
             }
-            foreach(CLPPage page in notebook.Pages)
+            foreach(var page in notebook.Pages)
             {
                 page.NumberOfSubmissions = 0;
                 page.NumberOfGroupSubmissions = 0;

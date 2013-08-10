@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DisplayedPages = new ObservableCollection<ICLPPage>();
             DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
 
-            RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+            RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
@@ -106,12 +106,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.
         /// </summary>
-        public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
+        public Command<ICLPPage> RemovePageFromGridDisplayCommand { get; private set; }
 
         /// <summary>
         /// Method to invoke when the RemovePageFromGridDisplayCommand command is executed.
         /// </summary>
-        public void OnRemovePageFromGridDisplayCommandExecute(CLPPage page)
+        public void OnRemovePageFromGridDisplayCommandExecute(ICLPPage page)
         {
             DisplayedPages.Remove(page);
         }

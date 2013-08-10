@@ -382,7 +382,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
         {
-            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as CLPPageViewModel).Page;
+            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as ACLPPageBaseViewModel).Page;
             SetHistoryPages();
         }
 
@@ -471,7 +471,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return "";
             }
-            foreach(CLPPage p in SubmissionPages) {
+            foreach(var p in SubmissionPages) {
                 UserNames.Remove(p.Submitter.FullName);
 
             }
@@ -529,7 +529,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<Tag> getAllTags(ObservableCollection<ICLPPage> pages) 
         {
             ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
-            foreach (CLPPage page in pages) {
+            foreach (var page in pages) {
                 foreach(Tag tag in page.PageTags)
                 {
                     if(!tags.Contains(tag))

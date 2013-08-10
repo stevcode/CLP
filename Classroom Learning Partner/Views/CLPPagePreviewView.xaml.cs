@@ -1,5 +1,6 @@
 ﻿using System;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -15,7 +16,17 @@ namespace Classroom_Learning_Partner.Views
 
         protected override Type GetViewModelType()
         {
-            return typeof(CLPPageViewModel);
+            return typeof(ACLPPageBaseViewModel);
+        }
+
+        protected override Type GetViewModelType(object dataContext)
+        {
+            if(dataContext is CLPPage)
+                return typeof(CLPPageViewModel);
+            if(dataContext is CLPAnimationPage)
+                return typeof(CLPAnimationPageViewModel);
+          
+            return null;
         }
     }
 }

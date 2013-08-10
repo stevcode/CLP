@@ -201,7 +201,7 @@ namespace Classroom_Learning_Partner.Views
                 var viewModel = this.ViewModel as NotebookWorkspaceViewModel;
                 string id = viewModel.CurrentPage.UniqueID;
                 var currentPage = new ObservableCollection<ICLPPage>();
-                foreach (CLPPage page in viewModel.NotebookPages)
+                foreach (var page in viewModel.NotebookPages)
                 {
                     if(page.UniqueID == id)
                     {

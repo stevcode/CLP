@@ -12,7 +12,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the <see cref="NotebookPagesPanelViewModel"/> class.
         /// </summary>
         public NotebookPagesPanelViewModel(CLPNotebook notebook)
-            : base()
         {
             Notebook = notebook;
         }
@@ -41,13 +40,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Pages of the Notebook.
         /// </summary>
         [ViewModelToModel("Notebook")]
-        public ObservableCollection<CLPPage> Pages
+        public ObservableCollection<ICLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
 
         #endregion //Model
 

@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner
                 {
                     notebook.NotebookName = notebookName;
 
-                    foreach(CLPPage page in notebook.Pages)
+                    foreach(var page in notebook.Pages)
                     {
                         page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes); 
 
@@ -150,7 +150,7 @@ namespace Classroom_Learning_Partner
                         }
                         if(notebook.Submissions.ContainsKey(page.UniqueID))
                         {
-                            foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
+                            foreach(var submission in notebook.Submissions[page.UniqueID])
                             {
                                 submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 

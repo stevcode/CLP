@@ -54,7 +54,7 @@ namespace ConsoleScripts
 
                 if(notebook != null)
                 {
-                    foreach(CLPPage page in notebook.Pages)
+                    foreach(var page in notebook.Pages)
                     {
                         foreach(ICLPPageObject pageObject in page.PageObjects)
                         {
@@ -62,7 +62,7 @@ namespace ConsoleScripts
                         }
                         if(notebook.Submissions.ContainsKey(page.UniqueID))
                         {
-                            foreach(CLPPage submission in notebook.Submissions[page.UniqueID])
+                            foreach(var submission in notebook.Submissions[page.UniqueID])
                             {
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
