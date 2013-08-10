@@ -28,7 +28,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ItemsControl ItemsSource="{Binding Path=PageObjects}"
+            <ItemsControl ItemsSource="{Binding PageObjects}"
                           ItemContainerStyle="{StaticResource ContainerStyle}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 

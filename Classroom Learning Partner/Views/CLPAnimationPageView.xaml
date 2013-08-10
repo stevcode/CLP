@@ -17,10 +17,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" /> 
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        
+
         <Viewbox Stretch="Uniform" Grid.Row="0">
             <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
                 <i:Interaction.Triggers>
@@ -35,14 +34,14 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <ItemsControl ItemsSource="{Binding Path=PageObjects}" 
-                          ItemContainerStyle="{StaticResource ContainerStyle}"
-                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding PageObjects}" 
+                              ItemContainerStyle="{StaticResource ContainerStyle}"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <Canvas x:Name="PageObjectCanvas" Background="Transparent" Cursor="{Binding PageCursor}"
-                                Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
+                                    Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
@@ -66,44 +65,47 @@
         </Viewbox>
 
         <!--Animation Present Indicator-->
-        <Rectangle x:Name= "ProofPresentRect1" Grid.Row="1" Height="20" Width="20" Fill="White" HorizontalAlignment="Left" />
-        <Rectangle x:Name= "ProofPresentRect2" Grid.Row="1" Height="20" Width="20" Fill="RoyalBlue" HorizontalAlignment="Left" Visibility ="{Binding ProofPresent}" />
+        <Rectangle Grid.Row="1" Height="20" Width="20" Fill="White" HorizontalAlignment="Left" />
+        <Rectangle Grid.Row="1" Height="20" Width="20" Fill="RoyalBlue" HorizontalAlignment="Left" Visibility ="{Binding ProofPresent}" />
 
         <!--Animation Progress Bar-->
-        <Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" 
+        <Slider Grid.Row="1" Maximum="100" Minimum="0" Height="20"
+                    Width="743" Value="{Binding SliderProgressCurrent}" 
+                    Visibility ="{Binding ProofProgressVisible}" Background="Yellow"/>
+        <!--<Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" 
                    Visibility="{Binding ProofProgressVisible}" />
         <Rectangle x:Name= "ProofProgressRect2" Grid.Row="1" Height="20" Width="{Binding ProofProgressCurrent}" Margin="24,0,24,0" Fill="Yellow" HorizontalAlignment="Left" 
-                   Visibility ="{Binding ProofProgressVisible}" />
-        
-        <StackPanel x:Name="ButtonsGrid" Grid.Row="2" Orientation="Horizontal" Height="30">
-            
+                   Visibility ="{Binding ProofProgressVisible}" />-->
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Height="30">
+
             <Button Width="70" Margin="0,0,10,0"
                     FontSize="12" FontWeight="Bold" Background="White" 
                     Command="{Binding ClearPageCommand}">Clear</Button>
-            
-            <Slider ValueChanged="Slider_ValueChanged_1" Maximum="100" Minimum="0" 
+
+            <Slider Maximum="100" Minimum="0" 
                     Width="200" Margin="10,0,10,0" Value="{Binding SliderProgressCurrent}" 
                     Visibility ="{Binding ProofProgressVisible}">
             </Slider>
-            
+
             <Button Width="70"  
                     FontSize="12" FontWeight="Bold" Background="Red" 
-                    Command="{Binding RecordProofCommand}">Record</Button>
-    
+                    Command="{Binding RecordAnimationCommand}">Record</Button>
+
             <Button Width="70"  
                     FontSize="12" FontWeight="Bold" Background="Purple" 
-                    Command="{Binding RewindProofCommand}">Rewind</Button> 
+                    Command="{Binding RewindAnimationCommand}">Rewind</Button>
 
             <Button Width="70" 
                     FontSize="12" FontWeight="Bold" Background="Green" 
-                    Command="{Binding PlayProofCommand}">Play</Button>
-      
+                    Command="{Binding PlayAnimationCommand}">Play</Button>
+
             <Button Width="70" 
                     FontSize="12" FontWeight="Bold" Background="Gray" 
-                    Command="{Binding StopProofCommand}">Stop</Button>
-            
+                    Command="{Binding StopAnimationCommand}">Stop</Button>
+
         </StackPanel>
- 
+
     </Grid>
 
 </catel:UserControl>

@@ -17,10 +17,6 @@ namespace Classroom_Learning_Partner.ViewModels
            RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
            PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
            StopAnimationCommand = new Command(OnStopAnimationCommandExecute);
-
-            ProofProgressCurrent = page.PageWidth *0.7175;
-            ProofProgressVisible = "Hidden";
-            ProofPresent = "Hidden";
        }
 
        public override string Title { get { return "AnimationPageVM"; } }
@@ -105,30 +101,30 @@ namespace Classroom_Learning_Partner.ViewModels
        public void Slider_ValueChanged_1b(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
        {
          
-               Stack<CLPHistoryItem> past = proofPageHistory1.MetaPast;
-               Stack<CLPHistoryItem> future = proofPageHistory1.Future;
-               double pastCount = past.Count;
-               double futureCount = future.Count;
-               double oldpos = pastCount;
-               double newpos = Math.Round((e.NewValue * (pastCount + futureCount)) / 100);
-               int diff = Convert.ToInt32(newpos - oldpos);
-               int diffabs = Math.Abs(diff);
+               //Stack<CLPHistoryItem> past = proofPageHistory1.MetaPast;
+               //Stack<CLPHistoryItem> future = proofPageHistory1.Future;
+               //double pastCount = past.Count;
+               //double futureCount = future.Count;
+               //double oldpos = pastCount;
+               //double newpos = Math.Round((e.NewValue * (pastCount + futureCount)) / 100);
+               //int diff = Convert.ToInt32(newpos - oldpos);
+               //int diffabs = Math.Abs(diff);
 
-               if(diffabs > 0)
-               {
-                   if(diff < 0)
-                   {
-                       PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, diffabs);
-                   }
-                   else if(diff > 0)
-                   {
-                       PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, diffabs);
-                   }
-                   else
-                   {
-                       return;
-                   }
-               }   
+               //if(diffabs > 0)
+               //{
+               //    if(diff < 0)
+               //    {
+               //        PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, diffabs);
+               //    }
+               //    else if(diff > 0)
+               //    {
+               //        PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, diffabs);
+               //    }
+               //    else
+               //    {
+               //        return;
+               //    }
+               //}   
        }
 
        #endregion
@@ -139,50 +135,50 @@ namespace Classroom_Learning_Partner.ViewModels
 
        public void updateProgress()
        {
-           try
-           {
-               //CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-               CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
-               double FutureItemsNumber = proofPageHistory1.Future.Count;
-               double pastItemsNumber = proofPageHistory1.MetaPast.Count;
-               double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
+           //try
+           //{
+           //    //CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+           //    CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
+           //    double FutureItemsNumber = proofPageHistory1.Future.Count;
+           //    double pastItemsNumber = proofPageHistory1.MetaPast.Count;
+           //    double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
 
-               if(totalItemsNumber == 0)
-               {
+           //    if(totalItemsNumber == 0)
+           //    {
 
-                   ProofPresent = "Hidden";
-                   ProofProgressCurrent = 0;
-                   SliderProgressCurrent = 0;
-                   return;
-               }
-               else
-               {
-                   ProofPresent = "Visible";
-                   ProofProgressCurrent =
+           //        ProofPresent = "Hidden";
+           //        ProofProgressCurrent = 0;
+           //        SliderProgressCurrent = 0;
+           //        return;
+           //    }
+           //    else
+           //    {
+           //        ProofPresent = "Visible";
+           //        ProofProgressCurrent =
 
-                       (pastItemsNumber * PageWidth * 0.7175) /
-                       totalItemsNumber;
-                   SliderProgressCurrent = (pastItemsNumber * 100) /
-                       totalItemsNumber;
+           //            (pastItemsNumber * PageWidth * 0.7175) /
+           //            totalItemsNumber;
+           //        SliderProgressCurrent = (pastItemsNumber * 100) /
+           //            totalItemsNumber;
 
-               }
+           //    }
 
-               if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
-               {
-                   ProofProgressVisible = "Hidden";
-               }
-               else
-               {
-                   ProofProgressVisible = "Visible";
+           //    if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
+           //    {
+           //        ProofProgressVisible = "Hidden";
+           //    }
+           //    else
+           //    {
+           //        ProofProgressVisible = "Visible";
 
-               }
+           //    }
 
 
-           }
-           catch(Exception e)
-           {
-               Console.WriteLine(e.Message);
-           }
+           //}
+           //catch(Exception e)
+           //{
+           //    Console.WriteLine(e.Message);
+           //}
        }
 
        #endregion //Methods
