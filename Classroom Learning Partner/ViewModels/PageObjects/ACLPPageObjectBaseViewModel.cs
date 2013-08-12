@@ -452,6 +452,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
+            PageObject.ParentPage.PageHistory.BeginBatch(new CLPHistoryPageObjectResizeBatch(PageObject.ParentPage,
+                                                                                           PageObject.UniqueID,
+                                                                                           new Point(PageObject.Width,
+                                                                                                     PageObject.Height)));
         }
 
         /// <summary>
@@ -461,6 +465,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
+            if(batch is CLPHistoryPageObjectResizeBatch)
+            {
+                (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID,
+                                                                                 new Point(PageObject.Width,
+                                                                                           PageObject.Height));
+            }
+            PageObject.ParentPage.PageHistory.EndBatch();
         }
 
         #endregion //Default Adorners

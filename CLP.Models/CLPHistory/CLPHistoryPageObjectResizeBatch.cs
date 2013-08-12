@@ -103,10 +103,13 @@ namespace CLP.Models
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            if(CurrentBatchTickIndex <= 0)
+            if(CurrentBatchTickIndex < 0)
             {
-                CurrentBatchTickIndex = 0;
                 return;
+            }
+            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+            {
+                CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
@@ -123,7 +126,7 @@ namespace CLP.Models
                 var originalDimension = StretchedDimensions.First();
                 pageObject.Width = originalDimension.X;
                 pageObject.Height = originalDimension.Y;
-                CurrentBatchTickIndex = 0;
+                CurrentBatchTickIndex = -1;
             }
         }
 
@@ -136,6 +139,11 @@ namespace CLP.Models
             {
                 return;
             }
+            if(CurrentBatchTickIndex < 0)
+            {
+                CurrentBatchTickIndex = 0;
+            }
+
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
 
             if(isAnimationRedo)
@@ -150,7 +158,7 @@ namespace CLP.Models
                 var lastDimensions = StretchedDimensions.Last();
                 pageObject.Width = lastDimensions.X;
                 pageObject.Height = lastDimensions.Y;
-                CurrentBatchTickIndex = NumberOfBatchTicks;
+                CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
         }
 

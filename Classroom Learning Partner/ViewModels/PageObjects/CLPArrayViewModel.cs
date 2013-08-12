@@ -245,6 +245,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var oldHeight = Height;
+            var oldWidth = Width;
+
             var tempHeight = PageObject.Height + e.VerticalChange;
             if(clpArray.ArrayHeight > clpArray.ArrayWidth && tempHeight < 200)
             {
@@ -273,9 +276,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 Width = parentPage.PageWidth - PageObject.XPosition;
                 clpArray.EnforceAspectRatio(Columns * 1.0 / Rows);
             }
-
-            //CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
-            //TODO: Steve - Make work with History.
+            
+            var heightDiff = Math.Abs(oldHeight - Height);
+            var widthDiff = Math.Abs(oldWidth - Width);
+            var diff = heightDiff + widthDiff;
+            if(diff > CLPHistory.SAMPLE_RATE)
+            {
+                var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
+                if(batch is CLPHistoryPageObjectResizeBatch)
+                {
+                    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID,
+                                                                                     new Point(Width, Height));
+                }
+                else
+                {
+                    PageObject.ParentPage.PageHistory.EndBatch();
+                    //TODO: log this error
+                }
+            }
 
             clpArray.ResizeDivisions();
             clpArray.CalculateGridLines();

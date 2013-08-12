@@ -183,7 +183,7 @@ namespace CLP.Models
                 undo.Undo(isAnimationUndo);
 
                 var undoBatch = undo as IHistoryBatch;
-                if((undoBatch != null && undoBatch.CurrentBatchTickIndex <= 0) || undoBatch == null)
+                if((undoBatch != null && undoBatch.CurrentBatchTickIndex < 0) || undoBatch == null)
                 {
                     lock(_historyLock)
                     {
@@ -236,7 +236,7 @@ namespace CLP.Models
                 redo.Redo(isAnimationRedo);
 
                 var redoBatch = redo as IHistoryBatch;
-                if((redoBatch != null && redoBatch.CurrentBatchTickIndex == redoBatch.NumberOfBatchTicks) || redoBatch == null)
+                if((redoBatch != null && redoBatch.CurrentBatchTickIndex > redoBatch.NumberOfBatchTicks) || redoBatch == null)
                 {
                     lock(_historyLock)
                     {
@@ -254,13 +254,6 @@ namespace CLP.Models
                     _isUndoingOperation = false;
                 }
             }
-        }
-
-        protected override void OnDeserialized()
-        {
-            base.OnDeserialized();
-            
-            //foreach IHistoryItem, ParentHistory = this;
         }
     }
 }

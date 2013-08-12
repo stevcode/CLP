@@ -35,15 +35,14 @@ namespace CLP.Models
 
         #endregion //Constructors
 
-        public int AnimationDelay
+        public virtual int AnimationDelay
         {
             get
             {
-                return 400;
+                return 50;
             }
         }
 
-        // TODO: Steve - Find out if this gets serialized. It shouldn't be.
         public ICLPPage ParentPage { get; set; }
 
         public void Undo(bool isAnimationUndo = false)

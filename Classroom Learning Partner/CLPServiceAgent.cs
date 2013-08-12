@@ -148,6 +148,14 @@ namespace Classroom_Learning_Partner
                         {
                             pageObject.ParentPage = page;
                         }
+                        foreach(var clpHistoryItem in page.PageHistory.UndoItems)
+                        {
+                            clpHistoryItem.ParentPage = page;
+                        }
+                        foreach(var clpHistoryItem in page.PageHistory.RedoItems)
+                        {
+                            clpHistoryItem.ParentPage = page;
+                        }
                         if(notebook.Submissions.ContainsKey(page.UniqueID))
                         {
                             foreach(var submission in notebook.Submissions[page.UniqueID])
@@ -157,6 +165,14 @@ namespace Classroom_Learning_Partner
                                 foreach(ICLPPageObject pageObject in submission.PageObjects)
                                 {
                                     pageObject.ParentPage = submission;
+                                }
+                                foreach(var clpHistoryItem in page.PageHistory.UndoItems)
+                                {
+                                    clpHistoryItem.ParentPage = page;
+                                }
+                                foreach(var clpHistoryItem in page.PageHistory.RedoItems)
+                                {
+                                    clpHistoryItem.ParentPage = page;
                                 }
                             }
                         }

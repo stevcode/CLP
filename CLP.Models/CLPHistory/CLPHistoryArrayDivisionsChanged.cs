@@ -33,6 +33,14 @@ namespace CLP.Models
 
         #region Properties
 
+        public override int AnimationDelay
+        {
+            get
+            {
+                return 400;
+            }
+        }
+
         /// <summary>
         /// UniqueID of the Array whose divisions have been modified
         /// </summary>

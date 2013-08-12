@@ -84,6 +84,10 @@ namespace CLP.Models
         protected ACLPPageBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
+        #region Overrides of ModelBase
+
+        #endregion
+
         #endregion //Constructors
 
         #region ICLPPage Properties
@@ -376,15 +380,6 @@ namespace CLP.Models
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
             }
-        }
-
-        protected override void OnDeserialized()
-        {
-            base.OnDeserialized();
-            //if(!SerializedStrokes.Any() && ByteStrokes.Any())
-            //{
-            //    InkStrokes = BytesToStrokes(ByteStrokes);
-            //}
         }
 
         #endregion //Methods

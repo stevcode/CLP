@@ -424,7 +424,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if(IsPagePreview)
             {
@@ -478,7 +478,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //});
         }
 
-        void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        protected void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
             if(IsPagePreview)
             {
@@ -489,6 +489,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                 PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+                if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                {
+                    var newUniqueID = Guid.NewGuid().ToString();
+                    stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+                }
                 Page.InkStrokes.Remove(stroke);
 
                 var allCutPageObjects = new List<ICLPPageObject>();

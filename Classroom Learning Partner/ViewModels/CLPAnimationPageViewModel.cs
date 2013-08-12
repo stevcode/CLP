@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
+﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.MVVM;
@@ -78,6 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
        {
            var t = new Thread(() =>
                                   {
+                                      //InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                                       _isPaused = false;
                                       _oldPageInteractionMode = PageInteractionMode;
                                       PageInteractionMode = PageInteractionMode.None;
@@ -85,7 +82,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                       while(Page.PageHistory.RedoItems.Any() && !_isPaused)
                                       {
                                           var historyItemAnimationDelay = Page.PageHistory.CurrentAnimationDelay;
-                                          Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                          Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                                 (DispatcherOperationCallback)delegate
                                                                                                                  {
                                                                                                                      Page.PageHistory.Redo(true);
@@ -97,6 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                       }
 
                                       PageInteractionMode = _oldPageInteractionMode;
+                                    //  InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                                   });
 
            t.Start();
