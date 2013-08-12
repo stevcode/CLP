@@ -32,6 +32,14 @@ namespace CLP.Models
 
         #region Properties
 
+        public override int AnimationDelay
+        {
+            get
+            {
+                return 100;
+            }
+        }
+
         /// <summary>
         /// Unique ID of the stroke added
         /// </summary>

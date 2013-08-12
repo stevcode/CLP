@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -25,6 +27,19 @@ namespace Classroom_Learning_Partner.ViewModels
        #endregion //Constructor
 
        #region Properties
+
+       /// <summary>
+       /// SUMMARY
+       /// </summary>
+       public double CurrentPlaybackSpeed
+       {
+           get { return GetValue<double>(CurrentPlaybackSpeedProperty); }
+           set { SetValue(CurrentPlaybackSpeedProperty, value); }
+       }
+
+       public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof(double), 1.0);
+
+       
 
        #endregion //Properties
 
@@ -81,7 +96,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                       while(Page.PageHistory.RedoItems.Any() && !_isPaused)
                                       {
-                                          var historyItemAnimationDelay = Page.PageHistory.CurrentAnimationDelay;
+                                          var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.PageHistory.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                                 (DispatcherOperationCallback)delegate
                                                                                                                  {

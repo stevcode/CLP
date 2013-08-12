@@ -96,6 +96,14 @@ namespace CLP.Models
             }
         }
 
+        public int TotalHistoryTicks
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
         #endregion //Properties
 
         //Completely clear history.
@@ -106,7 +114,40 @@ namespace CLP.Models
                 UndoItems.Clear();
                 RedoItems.Clear();
                 _isUndoingOperation = false;
-            }  
+            }
+            UpdateTicks();
+        }
+
+        private void UpdateTicks()
+        {
+            lock(_historyLock)
+            {
+                var totalTicks = 0;
+                foreach(var clpHistoryItem in UndoItems)
+                {
+                    if(clpHistoryItem is IHistoryBatch)
+                    {
+                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                    }
+                    else
+                    {
+                        totalTicks++;
+                    }
+                }
+                foreach(var clpHistoryItem in RedoItems)
+                {
+                    if(clpHistoryItem is IHistoryBatch)
+                    {
+                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                    }
+                    else
+                    {
+                        totalTicks++;
+                    }
+                }
+
+               // return totalTicks;
+            }
         }
 
         public void BeginBatch(IHistoryBatch batch)
@@ -147,6 +188,7 @@ namespace CLP.Models
                 RedoItems.Clear();
             }
 
+            UpdateTicks();
             return true;
         }
 

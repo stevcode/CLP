@@ -83,10 +83,13 @@
                     FontSize="12" FontWeight="Bold" Background="White" 
                     Command="{Binding ClearPageCommand}">Clear</Button>
 
-            <Slider Maximum="100" Minimum="0" 
-                    Width="200" Margin="10,0,10,0" Value="{Binding SliderProgressCurrent}" 
-                    Visibility ="{Binding ProofProgressVisible}">
-            </Slider>
+            <Slider Minimum="0.25" Maximum="4"  
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="0.25"
+                    TickPlacement="BottomRight"
+                    Width="200" Margin="10,0,10,0" 
+                    Value="{Binding CurrentPlaybackSpeed}" 
+                     />
 
             <Button Width="70"  
                     FontSize="12" FontWeight="Bold" Background="Red" 
