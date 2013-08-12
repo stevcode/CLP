@@ -138,7 +138,15 @@ namespace CLP.Models
             CutPageObjects = null;
             if(isAnimationUndo)
             {
-                Thread.Sleep(STROKE_CUT_DELAY); //TODO: needs speed multiplier
+                //TODO: refactor this into a method: Wait(int milliseconds);
+                var frame = new DispatcherFrame();
+                new Thread(() =>
+                {
+                    Thread.Sleep(STROKE_CUT_DELAY);
+                    frame.Continue = false;
+                }).Start();
+                Dispatcher.PushFrame(frame);
+
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }

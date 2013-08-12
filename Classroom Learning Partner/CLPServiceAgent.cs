@@ -359,13 +359,14 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
-            pageObject.OnRemoved();
-            page.PageObjects.Remove(pageObject);
+            
             if(addToHistory)
             {
                 var currentIndex = page.PageObjects.IndexOf(pageObject);
                 page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
             }
+            pageObject.OnRemoved();
+            page.PageObjects.Remove(pageObject);
         }
 
         public void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
