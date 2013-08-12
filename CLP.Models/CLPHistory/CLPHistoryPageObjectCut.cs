@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Ink;
+using System.Windows.Threading;
 using Catel.Data;
 
 namespace CLP.Models
@@ -155,9 +156,7 @@ namespace CLP.Models
             var cuttingStroke = SerializedCuttingStroke.ToStroke();
             if(isAnimationRedo)
             {
-                Console.WriteLine("adding stroke");
                 ParentPage.InkStrokes.Add(cuttingStroke);
-                Task.Delay(750);
             }
             var cutPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByUniqueID(cutPageObjectID)))
@@ -175,9 +174,15 @@ namespace CLP.Models
             HalvedPageObjects = null;
             if(isAnimationRedo)
             {
-                Thread.Sleep(STROKE_CUT_DELAY); //TODO: needs speed multiplier
-      
-                Console.WriteLine("removing stroke");
+                //TODO: refactor this into a method: Wait(int milliseconds);
+                var frame = new DispatcherFrame();
+                new Thread(() =>
+                {
+                    Thread.Sleep(STROKE_CUT_DELAY);
+                    frame.Continue = false;
+                }).Start();
+                Dispatcher.PushFrame(frame);
+
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
