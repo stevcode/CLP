@@ -35,6 +35,14 @@ namespace CLP.Models
 
         #endregion //Constructors
 
+        public int AnimationDelay
+        {
+            get
+            {
+                return 400;
+            }
+        }
+
         // TODO: Steve - Find out if this gets serialized. It shouldn't be.
         public ICLPPage ParentPage { get; set; }
 

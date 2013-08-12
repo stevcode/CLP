@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -71,20 +76,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnPlayAnimationCommandExecute()
        {
-           _isPaused = false;
-           _oldPageInteractionMode = PageInteractionMode;
-           PageInteractionMode = PageInteractionMode.None;
+           var t = new Thread(() =>
+                                  {
+                                      _isPaused = false;
+                                      _oldPageInteractionMode = PageInteractionMode;
+                                      PageInteractionMode = PageInteractionMode.None;
 
-           //Does this n eed to be on a background thread?
-           while(Page.PageHistory.RedoItems.Any() && !_isPaused)
-           {
-               Page.PageHistory.Redo(true); //execute on UI thread?
-               //page.UpdateProgress()?
-               //if in background thread, do threadsleep here based on historyItem delay time?
-               //short delay 200 (was 50), long delay 400
-           }
+                                      while(Page.PageHistory.RedoItems.Any() && !_isPaused)
+                                      {
+                                          var historyItemAnimationDelay = Page.PageHistory.CurrentAnimationDelay;
+                                          Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                                                (DispatcherOperationCallback)delegate
+                                                                                                                 {
+                                                                                                                     Page.PageHistory.Redo(true);
+                                                                                                                     return null;
+                                                                                                                 }, null);
+                                          Thread.Sleep(historyItemAnimationDelay);
+                                          //page.UpdateProgress()?
+                                          //short delay 200 (was 50), long delay 400
+                                      }
 
-           PageInteractionMode = _oldPageInteractionMode;
+                                      PageInteractionMode = _oldPageInteractionMode;
+                                  });
+
+           t.Start();
        }
 
        /// <summary>

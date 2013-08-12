@@ -65,6 +65,7 @@ namespace CLP.Models
             PageWidth = pageWidth;
             InitialPageAspectRatio = PageWidth / PageHeight;
             AddInkWithoutHistory = false;
+            PageHistory = new CLPHistory();
 
             //Initialize page tags to contain correctness and starred tags with values of unknown and unstarred
             Tag correctnessTag = new Tag(Tag.Origins.Teacher, CorrectnessTagType.Instance);
@@ -324,7 +325,7 @@ namespace CLP.Models
             set { SetValue(PageHistoryProperty, value); }
         }
 
-        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory), () => new CLPHistory());
+        public static readonly PropertyData PageHistoryProperty = RegisterProperty("PageHistory", typeof(CLPHistory));
 
         #endregion //ICLPPage Properties
 

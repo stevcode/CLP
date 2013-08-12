@@ -36,6 +36,14 @@ namespace CLP.Models
 
         #region Properties
 
+        public int CurrentAnimationDelay
+        {
+            get
+            {
+                return RedoItems.First().AnimationDelay;
+            }
+        }
+
         /// <summary>
         /// All events available for Undo.
         /// </summary>
@@ -228,7 +236,7 @@ namespace CLP.Models
                 redo.Redo(isAnimationRedo);
 
                 var redoBatch = redo as IHistoryBatch;
-                if((redoBatch != null && redoBatch.CurrentBatchTickIndex > redoBatch.NumberOfBatchTicks) || redoBatch == null)
+                if((redoBatch != null && redoBatch.CurrentBatchTickIndex == redoBatch.NumberOfBatchTicks) || redoBatch == null)
                 {
                     lock(_historyLock)
                     {

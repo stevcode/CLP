@@ -56,14 +56,6 @@ namespace CLP.Models
 
         public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof(List<Point>));
 
-        public int BatchDelay
-        {
-            get
-            {
-                return 100;
-            }
-        }
-
         public int NumberOfBatchTicks
         {
             get
