@@ -385,8 +385,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
 
-            Page.PageHistory.ClearHistory();
-
             //TODO: if in AuthoringMode, just PageObjects.Clear();
             var nonBackgroundPageObjects = Page.PageObjects.Where(pageObject => pageObject.IsBackground != true).ToList();
             foreach(var pageObject in nonBackgroundPageObjects)
@@ -395,6 +393,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Page.InkStrokes.Clear();
+            Page.SerializedStrokes.Clear();
+            Page.PageHistory.ClearHistory();
         }
 
         #endregion //Commands
