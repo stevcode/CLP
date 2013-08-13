@@ -28,6 +28,8 @@ namespace CLP.Models
 
         ICLPPageObject Duplicate();
         void OnRemoved();
+        void OnMoved();
+        void OnResized();
 
         void RefreshStrokeParentIDs();
         void AcceptStrokes(StrokeCollection addedStrokeIDs, StrokeCollection removedStrokeIDs);

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -265,6 +264,10 @@ namespace CLP.Models
         public abstract ICLPPageObject Duplicate();
 
         public virtual void OnRemoved() { }
+
+        public virtual void OnMoved() {}
+
+        public virtual void OnResized() {}
 
         public virtual void RefreshStrokeParentIDs()
         {

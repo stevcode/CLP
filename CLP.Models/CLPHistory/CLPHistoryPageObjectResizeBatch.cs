@@ -128,6 +128,7 @@ namespace CLP.Models
                 pageObject.Height = originalDimension.Y;
                 CurrentBatchTickIndex = -1;
             }
+            pageObject.OnResized();
         }
 
         /// <summary>
@@ -160,6 +161,7 @@ namespace CLP.Models
                 pageObject.Height = lastDimensions.Y;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
+            pageObject.OnResized();
         }
 
         public void ClearBatchAfterCurrentIndex()

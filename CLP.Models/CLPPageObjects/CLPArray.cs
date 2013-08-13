@@ -468,6 +468,14 @@ namespace CLP.Models
             }
         }
 
+        public override void OnResized()
+        {
+            RefreshArrayDimensions();
+            CalculateGridLines();
+            ResizeDivisions();
+            base.OnResized();
+        }
+
         public override bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
         {
             var areaObject = pageObject.Height * pageObject.Width;

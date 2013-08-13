@@ -150,6 +150,7 @@ namespace CLP.Models
                 pageObject.YPosition = originalPosition.Y;
                 CurrentBatchTickIndex = -1;
             }
+            pageObject.OnMoved();
         }
 
         /// <summary>
@@ -212,6 +213,7 @@ namespace CLP.Models
                 pageObject.YPosition = lastPosition.Y;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
+            pageObject.OnMoved();
         }
 
         public void ClearBatchAfterCurrentIndex()

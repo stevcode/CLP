@@ -407,6 +407,14 @@ namespace CLP.Models
             }
         }
 
+        public void OnMoved()
+        {
+        }
+
+        public void OnResized()
+        {
+        }
+
         public virtual void RefreshStrokeParentIDs()
         {
             if(!CanAcceptStrokes)
