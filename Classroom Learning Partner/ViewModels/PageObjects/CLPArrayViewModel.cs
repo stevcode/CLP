@@ -295,6 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            //TODO: ICLPPageObject method for OnResize() to use in History
             clpArray.ResizeDivisions();
             clpArray.CalculateGridLines();
         }

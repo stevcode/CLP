@@ -37,7 +37,7 @@ namespace CLP.Models
         {
             get
             {
-                return 400;
+                return 600;
             }
         }
 

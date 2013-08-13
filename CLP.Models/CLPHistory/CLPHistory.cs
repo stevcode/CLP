@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Collections;
 using Catel.Data;
+using Microsoft.Ink;
 
 namespace CLP.Models
 {
@@ -96,13 +97,27 @@ namespace CLP.Models
             }
         }
 
-        public int TotalHistoryTicks
+        /// <summary>
+        /// Total Number of actions in the entire history.
+        /// </summary>
+        public double TotalHistoryTicks
         {
-            get
-            {
-                return 1;
-            }
+            get { return GetValue<double>(TotalHistoryTicksProperty); }
+            set { SetValue(TotalHistoryTicksProperty, value); }
         }
+
+        public static readonly PropertyData TotalHistoryTicksProperty = RegisterProperty("TotalHistoryTicks", typeof(double), 0);
+
+        /// <summary>
+        /// Current position within the History.
+        /// </summary>
+        public double CurrentHistoryTick
+        {
+            get { return GetValue<double>(CurrentHistoryTickProperty); }
+            set { SetValue(CurrentHistoryTickProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0);
 
         #endregion //Properties
 
@@ -118,20 +133,23 @@ namespace CLP.Models
             UpdateTicks();
         }
 
-        private void UpdateTicks()
+        public void UpdateTicks()
         {
             lock(_historyLock)
             {
                 var totalTicks = 0;
+                var currentTick = 0;
                 foreach(var clpHistoryItem in UndoItems)
                 {
                     if(clpHistoryItem is IHistoryBatch)
                     {
                         totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                        currentTick += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
                     }
                     else
                     {
                         totalTicks++;
+                        currentTick++;
                     }
                 }
                 foreach(var clpHistoryItem in RedoItems)
@@ -145,8 +163,13 @@ namespace CLP.Models
                         totalTicks++;
                     }
                 }
-
-               // return totalTicks;
+                if(RedoItems.Any() && RedoItems.First() is IHistoryBatch)
+                {
+                    var clpHistoryItem = (RedoItems.First() as IHistoryBatch);
+                    currentTick += clpHistoryItem.CurrentBatchTickIndex;
+                }
+                CurrentHistoryTick = currentTick;
+                TotalHistoryTicks = totalTicks;
             }
         }
 
@@ -203,6 +226,32 @@ namespace CLP.Models
 
             lock(_historyLock)
             {
+                //This if-statement exists to correctly undo any batch items that are half-way through
+                //playing, in the event an animation was paused in the middle of the batch. The historyItem
+                //is already in the RedoItems list, so we don't need to move from the UndoItems list.
+                //TODO: implement in Redo() if we ever want to "Play" an animation backwards.
+                if(RedoItems.Any() && RedoItems.First() is IHistoryBatch)
+                {
+                    var clpHistoryItem = RedoItems.First() as IHistoryBatch;
+                    if(clpHistoryItem.CurrentBatchTickIndex >= 0)
+                    {
+                        _isUndoingOperation = true;
+                        try
+                        {
+                            clpHistoryItem.Undo(isAnimationUndo);
+                            UpdateTicks();
+                            return true;
+                        }
+                        finally
+                        {
+                            lock(_historyLock)
+                            {
+                                _isUndoingOperation = false;
+                            }
+                        }
+                    }
+                }
+
                 if(UndoItems.Count > 0)
                 {
                     _isUndoingOperation = true;
@@ -233,7 +282,7 @@ namespace CLP.Models
                         RedoItems.Insert(0, undo);
                     }
                 }
-
+                UpdateTicks();
                 return true;
             }
             finally
@@ -286,7 +335,7 @@ namespace CLP.Models
                         UndoItems.Insert(0, redo);
                     }
                 }
-
+                UpdateTicks();
                 return true;
             }
             finally

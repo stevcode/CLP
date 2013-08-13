@@ -70,13 +70,10 @@ namespace Classroom_Learning_Partner.ViewModels
            _oldPageInteractionMode = PageInteractionMode;
            PageInteractionMode = PageInteractionMode.None;
 
-           //Does this n eed to be on a background thread?
            while(Page.PageHistory.UndoItems.Any())
            {
-               Page.PageHistory.Undo(); //execute on UI thread?
-               //page.UpdateProgress()?
+               Page.PageHistory.Undo();
            }
-
            PageInteractionMode = _oldPageInteractionMode;
        }
 
@@ -104,8 +101,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                                      return null;
                                                                                                                  }, null);
                                           Thread.Sleep(historyItemAnimationDelay);
-                                          //page.UpdateProgress()?
-                                          //short delay 200 (was 50), long delay 400
                                       }
 
                                       PageInteractionMode = _oldPageInteractionMode;
