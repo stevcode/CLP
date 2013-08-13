@@ -10,7 +10,6 @@
         <conv:LengthConverter x:Key="LengthConverter" />
         <conv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:IntToQuestionMarkConverter x:Key="IntToQuestionMarkConverter" />
-        <conv:MultiplyLengthConverter x:Key="MultiplyLengthConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -143,20 +142,20 @@
                     </Thumb.Template>
                 </Thumb>
 
-                <!--Right Divisor Button-->
+                <!--Left Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
                         Cursor="SizeWE" 
                         Width="40" Height="40"
-                        Canvas.Right="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}" 
-                        Canvas.Top="{Binding RightArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=30}"
-                        Visibility="{Binding IsRightAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Canvas.Right="{Binding PageObject.ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" 
+                        Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
+                        Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,1 L-.75,.5 L0,0 M-.75,.5 L1,.5" 
+                                <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5" 
                                       Stretch="Fill" Margin="5"
                                       Stroke="Black" StrokeThickness="3" />
                             </Grid>
@@ -164,20 +163,20 @@
                     </Button.Template>
                 </Button>
 
-                <!--Bottom Divisor Button-->
+                <!--Top Divisor Button-->
                 <Button Command="{Binding CreateVerticalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
                         Cursor="SizeNS" 
                         Width="40" Height="40"
-                        Canvas.Bottom="{Binding PageObject.SmallLabelLength, Converter={StaticResource LengthConverter}, ConverterParameter=20}" 
-                        Canvas.Left="{Binding BottomArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=30}"
-                        Visibility="{Binding IsBottomAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Canvas.Bottom="{Binding PageObject.ArrayHeight, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" 
+                        Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
+                        Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M-.5,.5 L0,0 L.5,.5 M0,0 L0,1" 
+                                <Path Data="M-.5,.5 L0,1 L.5,.5 M0,0 L0,1" 
                                       Stretch="Fill" Margin="5"
                                       Stroke="Black" StrokeThickness="3" />
                             </Grid>
@@ -192,24 +191,28 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!--Large Labels-->
-            <Label Grid.Row="0" Grid.ColumnSpan="3" 
+            <Label Grid.Row="0" Grid.Column="1"
                    Content="{Binding Columns}" FontSize="28"
-                   HorizontalAlignment="Center" VerticalContentAlignment="Bottom" 
-                   Height="{Binding PageObject.LargeLabelLength}" />
-            
-            <Label Grid.Column="0" Grid.RowSpan="3" 
+                   HorizontalContentAlignment="Center" VerticalContentAlignment="Top" 
+                   Height="{Binding PageObject.LargeLabelLength}"
+                   Width="{Binding PageObject.ArrayWidth}"
+                   MouseMove="ArrayTopHitBox_MouseMove"
+                   MouseLeave="ArrayDivisionHitBox_MouseLeave" />
+
+            <Label Grid.Column="0" Grid.Row="1"
                    Content="{Binding Rows}" FontSize="28"
-                   VerticalAlignment="Center" HorizontalContentAlignment="Center"  
-                   Width="{Binding PageObject.LargeLabelLength}" />
+                   VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  
+                   Width="{Binding PageObject.LargeLabelLength}"
+                   Height="{Binding PageObject.ArrayHeight}"
+                   MouseMove="ArrayLeftHitBox_MouseMove"
+                   MouseLeave="ArrayDivisionHitBox_MouseLeave" />
             
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
@@ -282,16 +285,16 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
-                            <Grid Canvas.Right="{Binding DataContext.PageObject.SmallLabelLength, 
-                                                         RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                         Converter={StaticResource NegativeLengthSubtractConverter}, 
-                                                         ConverterParameter=40}" 
+                            <Grid Canvas.Left="{Binding DataContext.PageObject.LargeLabelLength, 
+                                                        RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
+                                                        Converter={StaticResource NegativeLengthSubtractConverter},
+                                                        ConverterParameter=0}" 
                                   Height="{Binding Length}" 
                                   Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <Label FontSize="22" Foreground="Blue"
-                                       VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                                <Label FontSize="22" Foreground="Blue" IsHitTestVisible="False"
+                                       VerticalContentAlignment="Center" HorizontalContentAlignment="Right" 
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
-                                <Rectangle Tag="RightLabelHitBox" Fill="Transparent" 
+                                <Rectangle Tag="LeftLabelHitBox" Fill="Transparent" MouseMove="LeftDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -331,16 +334,16 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
-                            <Grid Canvas.Bottom="{Binding DataContext.PageObject.SmallLabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                          Converter={StaticResource NegativeLengthSubtractConverter}, 
-                                                          ConverterParameter=40}" 
+                            <Grid Canvas.Top="{Binding DataContext.PageObject.LargeLabelLength, 
+                                                       RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
+                                                       Converter={StaticResource NegativeLengthSubtractConverter},
+                                                       ConverterParameter=0}" 
                                   Width="{Binding Length}" 
                                   Height="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <Label FontSize="22" Foreground="Red"
-                                       HorizontalContentAlignment="Center" VerticalAlignment="Center" 
+                                <Label FontSize="22" Foreground="Red" IsHitTestVisible="False"
+                                       HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" 
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
-                                <Rectangle Tag="BottomLabelHitBox" Fill="Transparent" 
+                                <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -355,22 +358,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
-            <!--HitBoxes-->
-            
-            <Rectangle Tag="ArrayBottomHitBox" Grid.Row="2" Grid.Column="1"
-                       Fill="Transparent" Stretch="Fill" 
-                       Width="{Binding ArrayWidth}" 
-                       Height="{Binding PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}" 
-                       MouseMove="ArrayBottomHitBox_MouseMove"
-                       MouseLeave="ArrayDivisionHitBox_MouseLeave" />
-
-            <Rectangle Tag="ArrayRightHitBox" Grid.Row="1" Grid.Column="2" 
-                       Fill="Transparent" Stretch="Fill" 
-                       Height="{Binding ArrayHeight}"
-                       Width="{Binding PageObject.SmallLabelLength, Converter={StaticResource MultiplyLengthConverter}, ConverterParameter=1}"  
-                       MouseMove="ArrayRightHitBox_MouseMove"
-                       MouseLeave="ArrayDivisionHitBox_MouseLeave" />
             
         </Grid>
 

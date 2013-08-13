@@ -93,19 +93,19 @@ namespace CLP.Models
     [Serializable]
     public class CLPArray : CLPPageObjectBase
     {
-        public static double LargeLabelLength
+        public double LargeLabelLength
         {
             get
             {
-                return 50;
+                return IsLabelVisible ? 70 : 0;
             }
         }
 
-        public static double SmallLabelLength
+        public double SmallLabelLength
         {
             get
             {
-                return 40;
+                return IsLabelVisible ? 60 : 0;
             }
         }
 
@@ -181,6 +181,17 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
+
+        /// <summary>
+        /// Sets the visibility of array labels
+        /// </summary>
+        public bool IsLabelVisible
+        {
+            get { return GetValue<bool>(IsLabelVisibleProperty); }
+            set { SetValue(IsLabelVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsLabelVisibleProperty = RegisterProperty("IsLabelVisible", typeof(bool), true);
 
         /// <summary>
         /// The Height of the Array.
@@ -421,27 +432,25 @@ namespace CLP.Models
         public override sealed void EnforceAspectRatio(double aspectRatio)
         {
             ArrayWidth = ArrayHeight * aspectRatio;
-            if(ArrayWidth < 10)
+            if(ArrayWidth < 30)
             {
-                ArrayWidth = 10;
+                ArrayWidth = 30;
                 ArrayHeight = ArrayWidth / aspectRatio;
-                Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
-                Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
             }
-            if(ArrayWidth + LargeLabelLength + 2 * SmallLabelLength + XPosition > ParentPage.PageWidth)
+            if(ArrayWidth + LargeLabelLength + XPosition > ParentPage.PageWidth)
             {
-                ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength - 2 * SmallLabelLength;
+                ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
 
-            if (ArrayHeight + LargeLabelLength + 2 * SmallLabelLength + YPosition > ParentPage.PageHeight)
+            if (ArrayHeight + LargeLabelLength + YPosition > ParentPage.PageHeight)
             {
-                ArrayHeight = ParentPage.PageHeight - YPosition - LargeLabelLength - 2 * SmallLabelLength;
+                ArrayHeight = ParentPage.PageHeight - YPosition - LargeLabelLength;
                 ArrayWidth = ArrayHeight * aspectRatio;
             }
 
-            Height = ArrayHeight + LargeLabelLength + 2 * SmallLabelLength;
-            Width = ArrayWidth + LargeLabelLength + 2 * SmallLabelLength;
+            Height = ArrayHeight + LargeLabelLength;
+            Width = ArrayWidth + LargeLabelLength;
         }
 
         public override void OnRemoved()
@@ -527,8 +536,8 @@ namespace CLP.Models
 
         public void RefreshArrayDimensions()
         {
-            ArrayHeight = Height - LargeLabelLength - 2 * SmallLabelLength;
-            ArrayWidth = Width - LargeLabelLength - 2 * SmallLabelLength;
+            ArrayHeight = Height - LargeLabelLength;
+            ArrayWidth = Width - LargeLabelLength;
         }
 
         public void CalculateGridLines()

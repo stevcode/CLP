@@ -175,24 +175,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the BottomArrowPosition value.
         /// </summary>
-        public double BottomArrowPosition
+        public double TopArrowPosition
         {
-            get { return GetValue<double>(BottomArrowPositionProperty); }
-            set { SetValue(BottomArrowPositionProperty, value); }
+            get { return GetValue<double>(TopArrowPositionProperty); }
+            set { SetValue(TopArrowPositionProperty, value); }
         }
 
-        public static readonly PropertyData BottomArrowPositionProperty = RegisterProperty("BottomArrowPosition", typeof(double), 0.0);
+        public static readonly PropertyData TopArrowPositionProperty = RegisterProperty("TopArrowPosition", typeof(double), 0.0);
 
         /// <summary>
         /// Gets or sets the RightArrowPosition value.
         /// </summary>
-        public double RightArrowPosition
+        public double LeftArrowPosition
         {
-            get { return GetValue<double>(RightArrowPositionProperty); }
-            set { SetValue(RightArrowPositionProperty, value); }
+            get { return GetValue<double>(LeftArrowPositionProperty); }
+            set { SetValue(LeftArrowPositionProperty, value); }
         }
 
-        public static readonly PropertyData RightArrowPositionProperty = RegisterProperty("RightArrowPosition", typeof(double), 0.0);
+        public static readonly PropertyData LeftArrowPositionProperty = RegisterProperty("LeftArrowPosition", typeof(double), 0.0);
 
         /// <summary>
         /// Whether or not default adorners are on.
@@ -208,24 +208,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Whether or not adorner to create a division on right side of array is on.
         /// </summary>
-        public bool IsRightAdornerVisible
+        public bool IsLeftAdornerVisible
         {
-            get { return GetValue<bool>(IsRightAdornerVisibleProperty); }
-            set { SetValue(IsRightAdornerVisibleProperty, value); }
+            get { return GetValue<bool>(IsLeftAdornerVisibleProperty); }
+            set { SetValue(IsLeftAdornerVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsRightAdornerVisibleProperty = RegisterProperty("IsRightAdornerVisible", typeof(bool), false);
+        public static readonly PropertyData IsLeftAdornerVisibleProperty = RegisterProperty("IsLeftAdornerVisible", typeof(bool), false);
 
         /// <summary>
         /// Whether or not adorner to create a division on bottom side of array is on.
         /// </summary>
-        public bool IsBottomAdornerVisible
+        public bool IsTopAdornerVisible
         {
-            get { return GetValue<bool>(IsBottomAdornerVisibleProperty); }
-            set { SetValue(IsBottomAdornerVisibleProperty, value); }
+            get { return GetValue<bool>(IsTopAdornerVisibleProperty); }
+            set { SetValue(IsTopAdornerVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsBottomAdornerVisibleProperty = RegisterProperty("IsBottomAdornerVisible", typeof(bool), false);
+        public static readonly PropertyData IsTopAdornerVisibleProperty = RegisterProperty("IsTopAdornerVisible", typeof(bool), false);
 
         #endregion //Bindings
 
@@ -306,7 +306,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            var position = RightArrowPosition - 5;
+            var position = LeftArrowPosition - 5;
 
             var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
             var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
@@ -354,7 +354,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateVerticalDivisionCommandExecute()
         {
-            double position = BottomArrowPosition - 5;
+            double position = TopArrowPosition - 5;
 
             CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
             CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
@@ -500,8 +500,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
                 IsAdornerVisible = !tempAdornerState;
                 IsDefaultAdornerVisible = !tempAdornerState;
-                IsBottomAdornerVisible = tempAdornerState;
-                IsRightAdornerVisible = tempAdornerState;
+                IsTopAdornerVisible = tempAdornerState;
+                IsLeftAdornerVisible = tempAdornerState;
             }
         }
 
@@ -511,92 +511,92 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
         {
-            
-            if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
-            {
-                if (isMouseDown)
-                {
-                    hoverTimer.Stop();
-                    timerRunning = false;
-                    hoverTimeElapsed = false;
-                    return true;
-                }
-                if (IsRightAdornerVisible || IsBottomAdornerVisible)
-                {
-                    IsAdornerVisible = false;
-                }
+            return false;
+            //if(hitBoxName == "ArrayBodyHitBox" || !IsDivisionBehaviorOn)
+            //{
+            //    if (isMouseDown)
+            //    {
+            //        hoverTimer.Stop();
+            //        timerRunning = false;
+            //        hoverTimeElapsed = false;
+            //        return true;
+            //    }
+            //    if (IsRightAdornerVisible || IsBottomAdornerVisible)
+            //    {
+            //        IsAdornerVisible = false;
+            //    }
 
-                OpenAdornerTimeOut = 0.0;
-                IsDefaultAdornerVisible = true;
-                IsRightAdornerVisible = false;
-                IsBottomAdornerVisible = false;
-                if(IsBackground)
-                {
-                    if(App.MainWindowViewModel.IsAuthoring)
-                    {
-                        IsMouseOverShowEnabled = true;
-                        if(!timerRunning)
-                        {
-                            timerRunning = true;
-                            hoverTimer.Start();
-                        }
-                    }
-                    else
-                    {
-                        IsMouseOverShowEnabled = false;
-                        hoverTimer.Stop();
-                        timerRunning = false;
-                        hoverTimeElapsed = false;
-                    }
-                }
-                else
-                {
-                    IsMouseOverShowEnabled = true;
-                    if(!timerRunning)
-                    {
-                        timerRunning = true;
-                        hoverTimer.Start();
-                    }
-                }
-            }
-            if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn && !isMouseDown)
-            {
-                hoverTimer.Stop();
-                timerRunning = false;
-                hoverTimeElapsed = false;
-                OpenAdornerTimeOut = 0.0;
-                IsDefaultAdornerVisible = false;
-                IsRightAdornerVisible = false;
-                IsBottomAdornerVisible = true;
-                IsMouseOverShowEnabled = true;
-                IsAdornerVisible = true;
-                return false;
-            }
-            if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn && !isMouseDown)
-            {
-                hoverTimer.Stop();
-                timerRunning = false;
-                hoverTimeElapsed = false;
-                OpenAdornerTimeOut = 0.0;
-                IsDefaultAdornerVisible = false;
-                IsRightAdornerVisible = true;
-                IsBottomAdornerVisible = false;
-                IsMouseOverShowEnabled = true;
-                IsAdornerVisible = true;
-                return false;
-            }
-            if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
-            {
-                IsMouseOverShowEnabled = false;
-                return false;
-            }
-            if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
-            {
-                IsMouseOverShowEnabled = false;
-                return false;
-            }
+            //    OpenAdornerTimeOut = 0.0;
+            //    IsDefaultAdornerVisible = true;
+            //    IsRightAdornerVisible = false;
+            //    IsBottomAdornerVisible = false;
+            //    if(IsBackground)
+            //    {
+            //        if(App.MainWindowViewModel.IsAuthoring)
+            //        {
+            //            IsMouseOverShowEnabled = true;
+            //            if(!timerRunning)
+            //            {
+            //                timerRunning = true;
+            //                hoverTimer.Start();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            IsMouseOverShowEnabled = false;
+            //            hoverTimer.Stop();
+            //            timerRunning = false;
+            //            hoverTimeElapsed = false;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        IsMouseOverShowEnabled = true;
+            //        if(!timerRunning)
+            //        {
+            //            timerRunning = true;
+            //            hoverTimer.Start();
+            //        }
+            //    }
+            //}
+            //if(hitBoxName == "ArrayBottomHitBox" && IsDivisionBehaviorOn && !isMouseDown)
+            //{
+            //    hoverTimer.Stop();
+            //    timerRunning = false;
+            //    hoverTimeElapsed = false;
+            //    OpenAdornerTimeOut = 0.0;
+            //    IsDefaultAdornerVisible = false;
+            //    IsRightAdornerVisible = false;
+            //    IsBottomAdornerVisible = true;
+            //    IsMouseOverShowEnabled = true;
+            //    IsAdornerVisible = true;
+            //    return false;
+            //}
+            //if(hitBoxName == "ArrayRightHitBox" && IsDivisionBehaviorOn && !isMouseDown)
+            //{
+            //    hoverTimer.Stop();
+            //    timerRunning = false;
+            //    hoverTimeElapsed = false;
+            //    OpenAdornerTimeOut = 0.0;
+            //    IsDefaultAdornerVisible = false;
+            //    IsRightAdornerVisible = true;
+            //    IsBottomAdornerVisible = false;
+            //    IsMouseOverShowEnabled = true;
+            //    IsAdornerVisible = true;
+            //    return false;
+            //}
+            //if(hitBoxName == "RightLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
+            //{
+            //    IsMouseOverShowEnabled = false;
+            //    return false;
+            //}
+            //if(hitBoxName == "BottomLabelHitBox" && IsDivisionBehaviorOn && !isMouseDown)
+            //{
+            //    IsMouseOverShowEnabled = false;
+            //    return false;
+            //}
 
-            return !hoverTimeElapsed;       
+            //return !hoverTimeElapsed;       
         }
 
         public override void EraserHitTest(string hitBoxName, object tag)
