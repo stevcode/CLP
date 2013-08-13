@@ -201,6 +201,27 @@
                     </Button.Template>
                 </Button>
 
+                <!--Right Divisor Button-->
+                <Button Command="{Binding CreateHorizontalDivisionCommand}"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
+                        Cursor="SizeWE" 
+                        Width="40" Height="40"
+                        Canvas.Right="-10" 
+                        Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
+                        Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M0,1 L-1,.5 L0,0 M-1,.5 L1,.5" 
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="Black" StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
                 <!--Top Divisor Button-->
                 <Button Command="{Binding CreateVerticalDivisionCommand}"
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
@@ -215,6 +236,27 @@
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                 <Path Data="M-.5,.5 L0,1 L.5,.5 M0,0 L0,1" 
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="Black" StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!--Bottom Divisor Button-->
+                <Button Command="{Binding CreateVerticalDivisionCommand}"
+                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
+                        Cursor="SizeNS" 
+                        Width="40" Height="40"
+                        Canvas.Bottom="-10" 
+                        Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
+                        Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M-.5,.5 L0,0 L.5,.5 M0,0 L0,1" 
                                       Stretch="Fill" Margin="5"
                                       Stroke="Black" StrokeThickness="3" />
                             </Grid>
@@ -298,6 +340,24 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
+
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Tag="DivisionHitBox"
+                       MouseMove="ArrayLeftHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
+                       Width="20" 
+                       Height="{Binding ArrayHeight, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" />
+
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Tag="DivisionHitBox"
+                       MouseMove="ArrayTopHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
+                       Height="20" 
+                       Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" />
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 

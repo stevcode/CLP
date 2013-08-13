@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPArrayView
     {
-        private const double MINIMUM_DIVISION_ADORNER_GAP = 10.0;
+        private const double MINIMUM_DIVISION_ADORNER_GAP = 30.0;
         private readonly Timer _divisorHideTimer = new Timer();
 
         /// <summary>
