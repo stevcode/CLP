@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 
@@ -32,6 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             ToggleGridCommand = new Command(OnToggleGridCommandExecute);
+            RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
@@ -309,6 +311,40 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleGridCommandExecute()
         {
             (PageObject as CLPArray).IsGridOn = !(PageObject as CLPArray).IsGridOn;
+        }
+
+        /// <summary>
+        /// Rotates the array 90 degrees
+        /// </summary>
+        public Command RotateArrayCommand { get; private set; }
+
+        private void OnRotateArrayCommandExecute()
+        {
+            var array = PageObject as CLPArray;
+            var tempCols = array.Columns;
+            array.Columns = array.Rows;
+            array.Rows = tempCols;
+            var tempArrayHeight = ArrayHeight;
+            ArrayHeight = ArrayWidth;
+            ArrayWidth = tempArrayHeight;
+            Height = ArrayHeight + array.LargeLabelLength;
+            Width = ArrayWidth + array.LargeLabelLength;
+            array.CalculateGridLines();
+            var tempHorizontalDivisions = HorizontalDivisions;
+            HorizontalDivisions = VerticalDivisions;
+            VerticalDivisions = tempHorizontalDivisions;
+            array.ResizeDivisions();
+
+            if(XPosition + Width > PageObject.ParentPage.PageWidth)
+            {
+                XPosition = PageObject.ParentPage.PageWidth - Width;
+            }
+            if(YPosition + Height > PageObject.ParentPage.PageHeight)
+            {
+                YPosition = PageObject.ParentPage.PageHeight - Height;
+            }
+
+            array.RefreshStrokeParentIDs();
         }
 
         /// <summary>

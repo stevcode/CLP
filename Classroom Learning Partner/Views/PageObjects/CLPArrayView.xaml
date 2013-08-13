@@ -161,6 +161,25 @@
                     </Button.Template>
                 </Button>
 
+                <!--Rotate Array Button-->
+                <Button Command="{Binding RotateArrayCommand}"
+                        Width="40" Height="40"
+                        Canvas.Right="-50" 
+                        Canvas.Top="20"
+                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M0,0 L-.5,.5 L0,1 M-.5,.5 L0,1 L.5,.5" 
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="MediumVioletRed" StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
                 <!--Left Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
