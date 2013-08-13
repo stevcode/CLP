@@ -71,7 +71,7 @@
         <!--Animation Progress Bar-->
         <Slider Grid.Row="1" Maximum="{Binding PageHistory.TotalHistoryTicks}" Minimum="0" Height="20"
                     Width="743" Value="{Binding PageHistory.CurrentHistoryTick}" 
-                IsSnapToTickEnabled="True"
+                IsSnapToTickEnabled="True" IsMoveToPointEnabled="False" 
                     TickFrequency="1.0"
                      Background="Yellow"/>
         <!--<Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" 

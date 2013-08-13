@@ -141,6 +141,25 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
+                
+                <!--Toggle Grid Button-->
+                <Button Command="{Binding ToggleGridCommand}"
+                        Width="40" Height="40"
+                        Canvas.Left="-40" 
+                        Canvas.Bottom="-40"
+                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M.35,.25 L.35,.75 M.65,.25 L.65,.75 M.25,.35 L.75,.35 M.25,.65 L.75,.65" 
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="PowderBlue" StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
                 <!--Left Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"

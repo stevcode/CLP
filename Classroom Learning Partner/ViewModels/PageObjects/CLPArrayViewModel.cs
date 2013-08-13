@@ -31,6 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
+            ToggleGridCommand = new Command(OnToggleGridCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
@@ -298,6 +299,16 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: ICLPPageObject method for OnResize() to use in History
             clpArray.ResizeDivisions();
             clpArray.CalculateGridLines();
+        }
+
+        /// <summary>
+        /// Toggle the visibility of GridLines on the array.
+        /// </summary>
+        public Command ToggleGridCommand { get; private set; }
+
+        private void OnToggleGridCommandExecute()
+        {
+            (PageObject as CLPArray).IsGridOn = !(PageObject as CLPArray).IsGridOn;
         }
 
         /// <summary>
