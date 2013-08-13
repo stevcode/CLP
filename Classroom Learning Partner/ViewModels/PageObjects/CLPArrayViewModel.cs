@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -355,6 +356,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateHorizontalDivisionCommandExecute()
         {
             var position = LeftArrowPosition - 5;
+            if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0)) 
+            {
+                return;
+            }
 
             var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
             var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
@@ -402,7 +407,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateVerticalDivisionCommandExecute()
         {
-            double position = TopArrowPosition - 5;
+            var position = TopArrowPosition - 5;
+            if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+            {
+                return;
+            }
 
             CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
             CLPArrayDivision divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
