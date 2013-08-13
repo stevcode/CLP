@@ -376,7 +376,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPageCommandExecute()
         {
-            //TODO: make message a string, make separate string for AuthoringMode to warn that all pageObjects will be deleted.
             if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
                                 "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
             {
@@ -385,7 +384,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
 
-            //TODO: if in AuthoringMode, just PageObjects.Clear();
             var nonBackgroundPageObjects = Page.PageObjects.Where(pageObject => pageObject.IsBackground != true).ToList();
             foreach(var pageObject in nonBackgroundPageObjects)
             {

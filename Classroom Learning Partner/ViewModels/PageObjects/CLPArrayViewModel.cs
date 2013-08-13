@@ -360,6 +360,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+            if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
+            {
+                return;
+            }
 
             var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
             var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
@@ -409,6 +413,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var position = TopArrowPosition - 5;
             if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+            {
+                return;
+            }
+            if(VerticalDivisions.Count >= (PageObject as CLPArray).Columns)
             {
                 return;
             }
