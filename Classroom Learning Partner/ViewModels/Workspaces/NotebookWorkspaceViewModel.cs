@@ -85,8 +85,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     FilterTypes.Add(t.TagType.Name);
                 }
-            }   
-            
+            }
+
+            // Just hardcode in some tag types for now
+            FilterTypes.Add(ArrayStrategyTagType.Instance.Name);
+            FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
+            FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
+            FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
+            FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
+
         }
 
 
@@ -625,6 +632,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 FilteredSubmissions.SortDescriptions.Clear();
                 FilteredSubmissions.GroupDescriptions.Add(starredDescription);
                 FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            }
+            else
+            {
+                FilteredSubmissions.GroupDescriptions.Clear();
+                FilteredSubmissions.SortDescriptions.Clear();
+
+                PropertyGroupDescription pgd = new PropertyGroupDescription(null, new PageToTagConverter(Sort));
+                FilteredSubmissions.GroupDescriptions.Add(pgd);
+                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
             }
         }
 

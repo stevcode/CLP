@@ -146,6 +146,42 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class PageToTagConverter : IValueConverter
+    {
+        private string TagName;
+
+        public PageToTagConverter(string tagName)
+        {
+            TagName = tagName;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            CLPPage page = value as CLPPage;
+            string val = "No tag";
+            if(page.PageTags != null)
+            {
+                foreach(Tag t in page.PageTags)
+                {
+                    if(t.TagType.Name == TagName)
+                    {
+                        if(t.Value.Count > 0)
+                        {
+                            val = t.Value.ElementAt(0).Value.ToString();
+                        }
+
+                    }
+                }
+
+            }
+            return val;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException("not implemented");
+        }
+    }
+
     [ValueConversion(typeof(string), typeof(bool))]
     public class GrouptoBooleanConverter : IValueConverter
     {
