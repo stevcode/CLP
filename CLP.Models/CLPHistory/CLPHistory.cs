@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Documents;
 using Catel.Collections;
 using Catel.Data;
 using Microsoft.Ink;
@@ -119,6 +121,17 @@ namespace CLP.Models
 
         public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0);
 
+        public bool IsAnimation
+        {
+            get
+            {
+                return UndoItems.Any(clpHistoryItem =>
+                                  clpHistoryItem is CLPAnimationIndicator &&
+                                  (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType ==
+                                  AnimationIndicatorType.Record);
+            }
+        }
+
         #endregion //Properties
 
         //Completely clear history.
@@ -139,28 +152,52 @@ namespace CLP.Models
             {
                 var totalTicks = 0;
                 var currentTick = 0;
-                foreach(var clpHistoryItem in UndoItems)
+
+                var combinedHistory = UndoItems.Reverse().Concat(RedoItems).ToList();
+                var startAnimationIndicator = combinedHistory.FirstOrDefault(clpHistoryItem => clpHistoryItem is CLPAnimationIndicator && (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
+                var stopAnimationIndicator = combinedHistory.FirstOrDefault(clpHistoryItem => clpHistoryItem is CLPAnimationIndicator && (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                var startIndex = combinedHistory.IndexOf(startAnimationIndicator);
+                var stopIndex = combinedHistory.IndexOf(stopAnimationIndicator);
+
+                List<ICLPHistoryItem> animationHistoryItems;
+                if(startIndex > -1)
+                {
+                    animationHistoryItems = combinedHistory.Skip(startIndex).ToList();
+                }
+                else
+                {
+                    CurrentHistoryTick = 0;
+                    TotalHistoryTicks = 0;
+                    return;
+                }
+
+                if(stopIndex >= -1)
+                {
+                    animationHistoryItems = animationHistoryItems.Take(stopIndex - startIndex + 1).ToList();
+                }
+
+                foreach(var clpHistoryItem in animationHistoryItems)
+                {
+                     if(clpHistoryItem is IHistoryBatch)
+                     {
+                         totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                     }
+                     else
+                     {
+                         totalTicks++;
+                     }
+                }
+
+                var animationUndoItems = UndoItems.Reverse().Skip(startIndex);
+                foreach(var clpHistoryItem in animationUndoItems)
                 {
                     if(clpHistoryItem is IHistoryBatch)
                     {
-                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
                         currentTick += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
                     }
                     else
                     {
-                        totalTicks++;
                         currentTick++;
-                    }
-                }
-                foreach(var clpHistoryItem in RedoItems)
-                {
-                    if(clpHistoryItem is IHistoryBatch)
-                    {
-                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
-                    }
-                    else
-                    {
-                        totalTicks++;
                     }
                 }
                 if(RedoItems.Any() && RedoItems.First() is IHistoryBatch)
@@ -168,6 +205,7 @@ namespace CLP.Models
                     var clpHistoryItem = (RedoItems.First() as IHistoryBatch);
                     currentTick += clpHistoryItem.CurrentBatchTickIndex;
                 }
+                
                 CurrentHistoryTick = currentTick;
                 TotalHistoryTicks = totalTicks;
             }
@@ -207,6 +245,11 @@ namespace CLP.Models
 
             lock(_historyLock)
             {
+                if(UndoItems.Any() && UndoItems.First() is CLPAnimationIndicator && (UndoItems.First() as CLPAnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop)
+                {
+                    return false;
+                }
+
                 UndoItems.Insert(0, historyItem);
                 RedoItems.Clear();
             }

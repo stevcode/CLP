@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnRecordAnimationCommandExecute()
        {
-           
+           PageHistory.AddHistoryItem(new CLPAnimationIndicator(Page, AnimationIndicatorType.Record));
        }
 
        /// <summary>
@@ -65,14 +65,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnRewindAnimationCommandExecute()
        {
-           OnStopAnimationCommandExecute();
-           _isPaused = false;
+           if(!_isPaused)
+           {
+               OnStopAnimationCommandExecute();
+           }
+
+           if(!PageHistory.IsAnimation) 
+           {
+               return;
+           }
+           
+           _isPaused = true;
            _oldPageInteractionMode = PageInteractionMode;
            PageInteractionMode = PageInteractionMode.None;
 
-           while(Page.PageHistory.UndoItems.Any())
+           while(PageHistory.UndoItems.Any())
            {
-               Page.PageHistory.Undo();
+               var clpAnimationIndicator = PageHistory.UndoItems.First() as CLPAnimationIndicator;
+               PageHistory.Undo();
+               if(clpAnimationIndicator != null && clpAnimationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+               {
+                   break;
+               }
            }
            PageInteractionMode = _oldPageInteractionMode;
        }
@@ -86,25 +100,25 @@ namespace Classroom_Learning_Partner.ViewModels
        {
            var t = new Thread(() =>
                                   {
-                                      //InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                                      InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                                       _isPaused = false;
-                                      _oldPageInteractionMode = PageInteractionMode;
+                                      _oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
                                       PageInteractionMode = PageInteractionMode.None;
 
-                                      while(Page.PageHistory.RedoItems.Any() && !_isPaused)
+                                      while(PageHistory.RedoItems.Any() && !_isPaused)
                                       {
                                           var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.PageHistory.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                                 (DispatcherOperationCallback)delegate
                                                                                                                  {
-                                                                                                                     Page.PageHistory.Redo(true);
+                                                                                                                     PageHistory.Redo(true);
                                                                                                                      return null;
                                                                                                                  }, null);
                                           Thread.Sleep(historyItemAnimationDelay);
                                       }
 
                                       PageInteractionMode = _oldPageInteractionMode;
-                                    //  InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                                      InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                                   });
 
            t.Start();
@@ -117,6 +131,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnStopAnimationCommandExecute()
        {
+           PageInteractionMode = _oldPageInteractionMode;
+           if(!_isPaused)
+           {
+               PageHistory.AddHistoryItem(new CLPAnimationIndicator(Page, AnimationIndicatorType.Stop)); 
+           }
            _isPaused = true;
        }
 
@@ -153,57 +172,5 @@ namespace Classroom_Learning_Partner.ViewModels
        #endregion
 
        #endregion //Commands
-
-       #region Methods
-
-       public void updateProgress()
-       {
-           //try
-           //{
-           //    //CLPAnimationPage page = (CLPAnimationPage)(MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-           //    CLPProofHistory proofPageHistory1 = (CLPProofHistory)PageHistory;
-           //    double FutureItemsNumber = proofPageHistory1.Future.Count;
-           //    double pastItemsNumber = proofPageHistory1.MetaPast.Count;
-           //    double totalItemsNumber = FutureItemsNumber + pastItemsNumber;
-
-           //    if(totalItemsNumber == 0)
-           //    {
-
-           //        ProofPresent = "Hidden";
-           //        ProofProgressCurrent = 0;
-           //        SliderProgressCurrent = 0;
-           //        return;
-           //    }
-           //    else
-           //    {
-           //        ProofPresent = "Visible";
-           //        ProofProgressCurrent =
-
-           //            (pastItemsNumber * PageWidth * 0.7175) /
-           //            totalItemsNumber;
-           //        SliderProgressCurrent = (pastItemsNumber * 100) /
-           //            totalItemsNumber;
-
-           //    }
-
-           //    if(proofPageHistory1.ProofPageAction.Equals(CLPProofHistory.CLPProofPageAction.Record))
-           //    {
-           //        ProofProgressVisible = "Hidden";
-           //    }
-           //    else
-           //    {
-           //        ProofProgressVisible = "Visible";
-
-           //    }
-
-
-           //}
-           //catch(Exception e)
-           //{
-           //    Console.WriteLine(e.Message);
-           //}
-       }
-
-       #endregion //Methods
    }
 }

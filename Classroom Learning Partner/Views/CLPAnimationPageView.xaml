@@ -14,11 +14,6 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
 
         <Viewbox Stretch="Uniform" Grid.Row="0">
             <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
@@ -63,53 +58,59 @@
 
             </Canvas>
         </Viewbox>
+        
+        <Grid VerticalAlignment="Bottom" Background="LightGray">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <!--Animation Present Indicator-->
+            <Ellipse Grid.Row="0" HorizontalAlignment="Left" 
+                     Height="20" Width="20" 
+                     Stroke="Black" Fill="Red" />
 
-        <!--Animation Present Indicator-->
-        <Rectangle Grid.Row="1" Height="20" Width="20" Fill="White" HorizontalAlignment="Left" />
-        <Rectangle Grid.Row="1" Height="20" Width="20" Fill="RoyalBlue" HorizontalAlignment="Left" Visibility ="{Binding ProofPresent}" />
+            <!--Animation Progress Bar-->
+            <Slider Grid.Row="0" HorizontalAlignment="Center"
+                    Height="20" Width="743"
+                    Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
+                    Value="{Binding PageHistory.CurrentHistoryTick}" 
+                    IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="False" 
+                    Background="Yellow" />
 
-        <!--Animation Progress Bar-->
-        <Slider Grid.Row="1" Maximum="{Binding PageHistory.TotalHistoryTicks}" Minimum="0" Height="20"
-                    Width="743" Value="{Binding PageHistory.CurrentHistoryTick}" 
-                IsSnapToTickEnabled="True" IsMoveToPointEnabled="False" 
-                    TickFrequency="1.0"
-                     Background="Yellow"/>
-        <!--<Rectangle x:Name= "ProofProgressRect1" Grid.Row="1" Height="20" Width="{Binding PageWidth}" Margin="24,0,24,0" Fill="White" HorizontalAlignment="Left" 
-                   Visibility="{Binding ProofProgressVisible}" />
-        <Rectangle x:Name= "ProofProgressRect2" Grid.Row="1" Height="20" Width="{Binding ProofProgressCurrent}" Margin="24,0,24,0" Fill="Yellow" HorizontalAlignment="Left" 
-                   Visibility ="{Binding ProofProgressVisible}" />-->
+            <!--Playback Controls-->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Height="30">
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Height="30">
+                <Button Width="70" Margin="0,0,10,0"
+                        FontSize="12" FontWeight="Bold" Background="White" 
+                        Command="{Binding ClearPageCommand}">Clear</Button>
 
-            <Button Width="70" Margin="0,0,10,0"
-                    FontSize="12" FontWeight="Bold" Background="White" 
-                    Command="{Binding ClearPageCommand}">Clear</Button>
+                <Slider Minimum="0.25" Maximum="4"  
+                        IsSnapToTickEnabled="True"
+                        TickFrequency="0.25"
+                        TickPlacement="BottomRight"
+                        Width="200" Margin="10,0,10,0" 
+                        Value="{Binding CurrentPlaybackSpeed}" />
 
-            <Slider Minimum="0.25" Maximum="4"  
-                    IsSnapToTickEnabled="True"
-                    TickFrequency="0.25"
-                    TickPlacement="BottomRight"
-                    Width="200" Margin="10,0,10,0" 
-                    Value="{Binding CurrentPlaybackSpeed}" 
-                     />
+                <Button Width="70"  
+                        FontSize="12" FontWeight="Bold" Background="Red" 
+                        Command="{Binding RecordAnimationCommand}">Record</Button>
 
-            <Button Width="70"  
-                    FontSize="12" FontWeight="Bold" Background="Red" 
-                    Command="{Binding RecordAnimationCommand}">Record</Button>
+                <Button Width="70"  
+                        FontSize="12" FontWeight="Bold" Background="Purple" 
+                        Command="{Binding RewindAnimationCommand}">Rewind</Button>
 
-            <Button Width="70"  
-                    FontSize="12" FontWeight="Bold" Background="Purple" 
-                    Command="{Binding RewindAnimationCommand}">Rewind</Button>
+                <Button Width="70" 
+                        FontSize="12" FontWeight="Bold" Background="Green" 
+                        Command="{Binding PlayAnimationCommand}">Play</Button>
 
-            <Button Width="70" 
-                    FontSize="12" FontWeight="Bold" Background="Green" 
-                    Command="{Binding PlayAnimationCommand}">Play</Button>
+                <Button Width="70" 
+                        FontSize="12" FontWeight="Bold" Background="Gray" 
+                        Command="{Binding StopAnimationCommand}">Stop</Button>
 
-            <Button Width="70" 
-                    FontSize="12" FontWeight="Bold" Background="Gray" 
-                    Command="{Binding StopAnimationCommand}">Stop</Button>
-
-        </StackPanel>
+            </StackPanel>
+            
+        </Grid>
 
     </Grid>
 
