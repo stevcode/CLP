@@ -124,8 +124,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //History
             ReplayCommand = new Command(OnReplayCommandExecute);
-            UndoCommand = new Command(OnUndoCommandExecute);
-            RedoCommand = new Command(OnRedoCommandExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
+            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
@@ -1514,6 +1514,24 @@ namespace Classroom_Learning_Partner.ViewModels
             page.PageHistory.Undo();
         }
 
+        private bool OnUndoCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+            var page = notebookWorkspaceViewModel.CurrentPage;
+
+            var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
+            if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            {
+                return false;
+            }
+
+            return page.PageHistory.CanUndo;
+        }
+
         /// <summary>
         /// Redoes the last undone action.
         /// </summary>
@@ -1528,6 +1546,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var page = notebookWorkspaceViewModel.CurrentPage;
             page.PageHistory.Redo();
+        }
+
+        private bool OnRedoCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+            var page = notebookWorkspaceViewModel.CurrentPage;
+
+            return page.PageHistory.CanRedo;
         }
 
         #endregion //History Commands

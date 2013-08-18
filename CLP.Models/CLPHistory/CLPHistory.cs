@@ -43,7 +43,7 @@ namespace CLP.Models
         {
             get
             {
-                return RedoItems.First().AnimationDelay;
+                return RedoItems.Any() ? RedoItems.First().AnimationDelay : 0;
             }
         }
 
