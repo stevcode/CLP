@@ -961,7 +961,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
                 documentWriter.Write(document);
                 xpsDocument.Close();
-            }, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
+            }, null, "Converting All Submissions to XPS", 0.0 / 0.0);
         }
 
         /// <summary>

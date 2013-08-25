@@ -37,6 +37,29 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
+    public class AnimationPresentConverter : IValueConverter
+    {
+        public object Convert(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            if((bool)value)
+            {
+                return new SolidColorBrush(Colors.Blue);
+            }
+            return new SolidColorBrush(Colors.White);
+        }
+
+        public object ConvertBack(object value,
+            Type targetType,
+            object parameter,
+            System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class PageTypeConverter : IValueConverter
     {
         public object Convert(object value,

@@ -341,6 +341,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
             {
+                MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
                 return;
             }
 
@@ -397,6 +398,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             if(VerticalDivisions.Count >= (PageObject as CLPArray).Columns)
             {
+                MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
                 return;
             }
 

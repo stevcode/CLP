@@ -3,6 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
@@ -10,6 +11,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <conv:AnimationPresentConverter x:Key="AnimationPresentConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -68,7 +72,7 @@
             <!--Animation Present Indicator-->
             <Rectangle Grid.Row="0" HorizontalAlignment="Left" 
                      Height="20" Width="20" 
-                     Stroke="Black" Fill="{Binding AnimationStatusIndicatorColor}" />
+                     Stroke="Black" Fill="{Binding PageHistory.IsAnimation, Converter={StaticResource AnimationPresentConverter}}" />
 
             <!--Animation Progress Bar-->
             <Slider Grid.Row="0" HorizontalAlignment="Center"
@@ -76,7 +80,8 @@
                     Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
                     Value="{Binding PageHistory.CurrentHistoryTick}" 
                     IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True" 
-                    Background="Yellow">
+                    Background="Yellow"
+                    Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ValueChanged">
                         <catel:EventToCommand Command="{Binding SliderChangedCommand}"
@@ -97,7 +102,8 @@
                         TickFrequency="0.25"
                         TickPlacement="BottomRight"
                         Width="200" Margin="10,0,10,0" 
-                        Value="{Binding CurrentPlaybackSpeed}" />
+                        Value="{Binding CurrentPlaybackSpeed}"
+                        Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
                 <Button Width="70"  
                         FontSize="12" FontWeight="Bold" Background="Red" 

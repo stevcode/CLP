@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
        #region Properties
 
        /// <summary>
-       /// SUMMARY
+       /// Multiplier for playback speed of animation.
        /// </summary>
        public double CurrentPlaybackSpeed
        {
@@ -38,9 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
            set { SetValue(CurrentPlaybackSpeedProperty, value); }
        }
 
-       public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof(double), 1.0);
-
-       
+       public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof(double), 1.0);      
 
        #endregion //Properties
 
@@ -118,7 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                                  }, null);
                                           Thread.Sleep(historyItemAnimationDelay);
                                       }
-
+                                      _isPaused = true;
                                       PageInteractionMode = _oldPageInteractionMode;
                                       InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                                   });

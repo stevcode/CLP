@@ -123,7 +123,14 @@ namespace CLP.Models
         {
             get
             {
-                return UndoItems.Any(clpHistoryItem =>
+                return
+                    UndoItems.Any(
+                                  clpHistoryItem =>
+                                  clpHistoryItem is CLPAnimationIndicator &&
+                                  (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType ==
+                                  AnimationIndicatorType.Record) ||
+                    RedoItems.Any(
+                                  clpHistoryItem =>
                                   clpHistoryItem is CLPAnimationIndicator &&
                                   (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType ==
                                   AnimationIndicatorType.Record);
@@ -197,6 +204,7 @@ namespace CLP.Models
                 {
                     CurrentHistoryTick = 0;
                     TotalHistoryTicks = 0;
+                    RaisePropertyChanged("IsAnimation");
                     return;
                 }
 
@@ -237,6 +245,7 @@ namespace CLP.Models
                 
                 CurrentHistoryTick = currentTick;
                 TotalHistoryTicks = totalTicks;
+                RaisePropertyChanged("IsAnimation");
             }
         }
 
