@@ -606,11 +606,12 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.IsAuthoring = true;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
+            if(notebookWorkspaceViewModel == null)
             {
-                var currentPage = notebookWorkspaceViewModel.CurrentPage;
-                CLPPageViewModel.ClearAdorners(currentPage);
+                return;
             }
+            var currentPage = notebookWorkspaceViewModel.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(currentPage);
         }
 
         /// <summary>
@@ -623,10 +624,16 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.IsAuthoring = false;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null) 
+            if(notebookWorkspaceViewModel == null)
             {
-                var currentPage = notebookWorkspaceViewModel.CurrentPage;
-                CLPPageViewModel.ClearAdorners(currentPage);
+                return;
+            }
+            var currentPage = notebookWorkspaceViewModel.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(currentPage);
+
+            foreach(var page in notebookWorkspaceViewModel.NotebookPages)
+            {
+                page.PageHistory.ClearNonAnimationHistory();
             }
         }
 

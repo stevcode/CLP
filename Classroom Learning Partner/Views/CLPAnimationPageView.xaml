@@ -75,8 +75,15 @@
                     Height="20" Width="743"
                     Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
                     Value="{Binding PageHistory.CurrentHistoryTick}" 
-                    IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="False" 
-                    Background="Yellow" />
+                    IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True" 
+                    Background="Yellow">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ValueChanged">
+                        <catel:EventToCommand Command="{Binding SliderChangedCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Slider>
 
             <!--Playback Controls-->
             <StackPanel Grid.Row="1" Orientation="Horizontal" Height="30">

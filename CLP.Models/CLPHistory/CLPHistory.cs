@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows.Documents;
 using Catel.Collections;
 using Catel.Data;
-using Microsoft.Ink;
 
 namespace CLP.Models
 {
@@ -150,7 +148,29 @@ namespace CLP.Models
         {
             lock(_historyLock)
             {
+                var startAnimationIndicator = UndoItems.FirstOrDefault(clpHistoryItem => clpHistoryItem is CLPAnimationIndicator && (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
+                var startIndex = UndoItems.IndexOf(startAnimationIndicator);
+                if(startIndex > -1)
+                {
+                    var animationUndoItems = UndoItems.Take(startIndex + 1);
+                    UndoItems = new ObservableCollection<ICLPHistoryItem>(animationUndoItems);
+                }
+                else
+                {
+                    UndoItems.Clear();
+                }
 
+                var stopAnimationIndicator = RedoItems.FirstOrDefault(clpHistoryItem => clpHistoryItem is CLPAnimationIndicator && (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                var stopIndex = RedoItems.IndexOf(stopAnimationIndicator);
+                if(stopIndex > -1)
+                {
+                    var animationRedoItems = RedoItems.Take(stopIndex + 1);
+                    RedoItems = new ObservableCollection<ICLPHistoryItem>(animationRedoItems);
+                }
+                else
+                {
+                    RedoItems.Clear();
+                }
             }
             UpdateTicks();
         }
@@ -217,6 +237,28 @@ namespace CLP.Models
                 
                 CurrentHistoryTick = currentTick;
                 TotalHistoryTicks = totalTicks;
+            }
+        }
+
+        public void MoveToHistoryPoint(double oldTick, double newTick)
+        {
+            var diff = Convert.ToInt32(newTick - oldTick);
+
+            if(diff > 0)
+            {
+                while(diff > 0)
+                {
+                    diff--;
+                    Redo(true);
+                }
+            }
+            else if(diff < 0)
+            {
+                while(diff < 0)
+                {
+                    diff++;
+                    Undo(true);
+                }
             }
         }
 

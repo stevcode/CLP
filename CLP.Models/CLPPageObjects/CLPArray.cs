@@ -127,6 +127,8 @@ namespace CLP.Models
             CanAcceptStrokes = true;
             CanAcceptPageObjects = true;
 
+            var arrayArea = Columns*Rows;
+
             ArrayHeight = 450;
             ArrayWidth = 450;
 

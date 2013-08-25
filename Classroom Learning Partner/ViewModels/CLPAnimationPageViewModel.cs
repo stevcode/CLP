@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
            RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
            PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
            StopAnimationCommand = new Command(OnStopAnimationCommandExecute);
+           SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
        }
 
        public override string Title { get { return "AnimationPageVM"; } }
@@ -46,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
        #region Commands
 
        private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
-       private bool _isPaused = false;
+       private bool _isPaused = true;
 
        /// <summary>
        /// Begins recording page interations for use in an animation.
@@ -74,11 +75,11 @@ namespace Classroom_Learning_Partner.ViewModels
            {
                return;
            }
-           
-           _isPaused = true;
+
            _oldPageInteractionMode = PageInteractionMode;
            PageInteractionMode = PageInteractionMode.None;
 
+           _isPaused = false;
            while(PageHistory.UndoItems.Any())
            {
                var clpAnimationIndicator = PageHistory.UndoItems.First() as CLPAnimationIndicator;
@@ -88,6 +89,7 @@ namespace Classroom_Learning_Partner.ViewModels
                    break;
                }
            }
+           _isPaused = true;
            PageInteractionMode = _oldPageInteractionMode;
        }
 
@@ -139,37 +141,19 @@ namespace Classroom_Learning_Partner.ViewModels
            _isPaused = true;
        }
 
-       #region OldStuff
-       public void Slider_ValueChanged_1b(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+       /// <summary>
+       /// Plays the animation through to the specified point.
+       /// </summary>
+       public Command<RoutedPropertyChangedEventArgs<double>> SliderChangedCommand { get; private set; }
+
+       private void OnSliderChangedCommandExecute(RoutedPropertyChangedEventArgs<double> e)
        {
-         
-               //Stack<CLPHistoryItem> past = proofPageHistory1.MetaPast;
-               //Stack<CLPHistoryItem> future = proofPageHistory1.Future;
-               //double pastCount = past.Count;
-               //double futureCount = future.Count;
-               //double oldpos = pastCount;
-               //double newpos = Math.Round((e.NewValue * (pastCount + futureCount)) / 100);
-               //int diff = Convert.ToInt32(newpos - oldpos);
-               //int diffabs = Math.Abs(diff);
-
-               //if(diffabs > 0)
-               //{
-               //    if(diff < 0)
-               //    {
-               //        PlayProof(CLPProofHistory.CLPProofPageAction.Play, -1, 0, 0, diffabs);
-               //    }
-               //    else if(diff > 0)
-               //    {
-               //        PlayProof(CLPProofHistory.CLPProofPageAction.Play, 1, 0, 0, diffabs);
-               //    }
-               //    else
-               //    {
-               //        return;
-               //    }
-               //}   
+           if(!_isPaused)
+           {
+               return;
+           }
+           PageHistory.MoveToHistoryPoint(e.OldValue, e.NewValue);
        }
-
-       #endregion
 
        #endregion //Commands
    }
