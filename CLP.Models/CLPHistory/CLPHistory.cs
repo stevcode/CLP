@@ -146,6 +146,15 @@ namespace CLP.Models
             UpdateTicks();
         }
 
+        public void ClearNonAnimationHistory()
+        {
+            lock(_historyLock)
+            {
+
+            }
+            UpdateTicks();
+        }
+
         public void UpdateTicks()
         {
             lock(_historyLock)
