@@ -5,11 +5,11 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPHistoryArrayGridToggle : ACLPHistoryItemBase
+    public class CLPHistoryArrayRotate : ACLPHistoryItemBase
     {
         #region Constructor
 
-        public CLPHistoryArrayGridToggle(ICLPPage parentPage, string arrayUniqueID)
+        public CLPHistoryArrayRotate(ICLPPage parentPage, string arrayUniqueID)
             : base(parentPage)
         {
             ArrayUniqueID = arrayUniqueID;
@@ -20,7 +20,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistoryArrayGridToggle(SerializationInfo info, StreamingContext context)
+        protected CLPHistoryArrayRotate(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -38,7 +38,7 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// UniqueID of the Array whose grid has been toggled.
+        /// UniqueID of the Array that has been rotated.
         /// </summary>
         public string ArrayUniqueID
         {
@@ -57,7 +57,7 @@ namespace CLP.Models
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            ToggleGrid();
+            RotateArray();
         }
 
         /// <summary>
@@ -65,15 +65,15 @@ namespace CLP.Models
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            ToggleGrid();
+            RotateArray();
         }
 
-        private void ToggleGrid()
+        private void RotateArray()
         {
             var array = ParentPage.GetPageObjectByUniqueID(ArrayUniqueID) as CLPArray;
             if(array != null)
             {
-                array.IsGridOn = !array.IsGridOn;
+                array.RotateArray();
             }
             else
             {
@@ -84,4 +84,5 @@ namespace CLP.Models
         #endregion //Methods
     }
 }
+
 

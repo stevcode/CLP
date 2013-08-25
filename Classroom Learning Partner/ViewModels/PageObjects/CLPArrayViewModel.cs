@@ -323,31 +323,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRotateArrayCommandExecute()
         {
-            var array = PageObject as CLPArray;
-            var tempCols = array.Columns;
-            array.Columns = array.Rows;
-            array.Rows = tempCols;
-            var tempArrayHeight = ArrayHeight;
-            ArrayHeight = ArrayWidth;
-            ArrayWidth = tempArrayHeight;
-            Height = ArrayHeight + array.LargeLabelLength;
-            Width = ArrayWidth + array.LargeLabelLength;
-            array.CalculateGridLines();
-            var tempHorizontalDivisions = HorizontalDivisions;
-            HorizontalDivisions = VerticalDivisions;
-            VerticalDivisions = tempHorizontalDivisions;
-            array.ResizeDivisions();
-
-            if(XPosition + Width > PageObject.ParentPage.PageWidth)
-            {
-                XPosition = PageObject.ParentPage.PageWidth - Width;
-            }
-            if(YPosition + Height > PageObject.ParentPage.PageHeight)
-            {
-                YPosition = PageObject.ParentPage.PageHeight - Height;
-            }
-
-            array.RefreshStrokeParentIDs();
+            (PageObject as CLPArray).RotateArray();
+            PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArrayRotate(PageObject.ParentPage,
+                                                                                           PageObject.UniqueID));
         }
 
         /// <summary>

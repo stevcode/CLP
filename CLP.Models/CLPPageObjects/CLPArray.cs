@@ -638,6 +638,34 @@ namespace CLP.Models
             return labels;
         }
 
+        public void RotateArray()
+        {
+            var tempCols = Columns;
+            Columns = Rows;
+            Rows = tempCols;
+            var tempArrayHeight = ArrayHeight;
+            ArrayHeight = ArrayWidth;
+            ArrayWidth = tempArrayHeight;
+            Height = ArrayHeight + LargeLabelLength;
+            Width = ArrayWidth + LargeLabelLength;
+            CalculateGridLines();
+            var tempHorizontalDivisions = HorizontalDivisions;
+            HorizontalDivisions = VerticalDivisions;
+            VerticalDivisions = tempHorizontalDivisions;
+            ResizeDivisions();
+
+            if(XPosition + Width > ParentPage.PageWidth)
+            {
+                XPosition = ParentPage.PageWidth - Width;
+            }
+            if(YPosition + Height > ParentPage.PageHeight)
+            {
+                YPosition = ParentPage.PageHeight - Height;
+            }
+
+            RefreshStrokeParentIDs();
+        }
+
         #endregion //Methods
     }
 }
