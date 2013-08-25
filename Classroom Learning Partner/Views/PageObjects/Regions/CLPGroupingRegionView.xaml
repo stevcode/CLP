@@ -118,10 +118,19 @@
         </ac:AdornedControl.AdornerContent>
 
         <Grid>
-            <Rectangle Name="PageObjectHitBox" Tag="1000" Fill="Transparent" Stretch="Fill"
-                        Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" />
+            <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
+                       Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
 
-            <Grid Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}">
+            <Grid Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.AuthoringTabVisibility}" IsHitTestVisible="False">
                 <Rectangle Height="{Binding Height}" Width="{Binding Width}" Fill="Transparent" Stroke="Gray" StrokeThickness="4" StrokeDashArray="2" />
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
