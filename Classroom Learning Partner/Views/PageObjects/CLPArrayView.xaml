@@ -35,6 +35,9 @@
             <Setter Property="Canvas.Top"
                    Value="0" />
         </Style>
+
+        <SolidColorBrush x:Key="TopLabelColor" Color="Red" />
+        <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -283,6 +286,7 @@
                    HorizontalContentAlignment="Center" VerticalContentAlignment="Top" 
                    Height="{Binding PageObject.LargeLabelLength}"
                    Width="{Binding PageObject.ArrayWidth}"
+                   Foreground="{StaticResource TopLabelColor}"
                    MouseMove="ArrayTopHitBox_MouseMove"
                    MouseLeave="ArrayDivisionHitBox_MouseLeave" />
 
@@ -291,6 +295,7 @@
                    VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  
                    Width="{Binding PageObject.LargeLabelLength}"
                    Height="{Binding PageObject.ArrayHeight}"
+                   Foreground="{StaticResource LeftLabelColor}"
                    MouseMove="ArrayLeftHitBox_MouseMove"
                    MouseLeave="ArrayDivisionHitBox_MouseLeave" />
             
@@ -389,7 +394,7 @@
                                                         ConverterParameter=0}" 
                                   Height="{Binding Length}" 
                                   Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <Label FontSize="22" Foreground="Blue" IsHitTestVisible="False"
+                                <Label FontSize="22" Foreground="{StaticResource LeftLabelColor}" IsHitTestVisible="False"
                                        VerticalContentAlignment="Center" HorizontalContentAlignment="Right" 
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
                                 <Rectangle Tag="LeftLabelHitBox" Fill="Transparent" MouseMove="LeftDivisorButton_Mouse"
@@ -438,7 +443,7 @@
                                                        ConverterParameter=0}" 
                                   Width="{Binding Length}" 
                                   Height="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <Label FontSize="22" Foreground="Red" IsHitTestVisible="False"
+                                <Label FontSize="22" Foreground="{StaticResource TopLabelColor}" IsHitTestVisible="False"
                                        HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" 
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
                                 <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"

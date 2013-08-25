@@ -66,9 +66,9 @@
             </Grid.RowDefinitions>
             
             <!--Animation Present Indicator-->
-            <Ellipse Grid.Row="0" HorizontalAlignment="Left" 
+            <Rectangle Grid.Row="0" HorizontalAlignment="Left" 
                      Height="20" Width="20" 
-                     Stroke="Black" Fill="Red" />
+                     Stroke="Black" Fill="{Binding AnimationStatusIndicatorColor}" />
 
             <!--Animation Progress Bar-->
             <Slider Grid.Row="0" HorizontalAlignment="Center"

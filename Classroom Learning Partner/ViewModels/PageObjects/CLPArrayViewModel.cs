@@ -312,6 +312,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleGridCommandExecute()
         {
             (PageObject as CLPArray).IsGridOn = !(PageObject as CLPArray).IsGridOn;
+            PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArrayGridToggle(PageObject.ParentPage,
+                                                                                           PageObject.UniqueID));
         }
 
         /// <summary>
