@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
+            DragStopAndSnapCommand = new Command<DragCompletedEventArgs>(OnDragStopAndSnapCommandExecute);
             ToggleGridCommand = new Command(OnToggleGridCommandExecute);
             RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
@@ -301,6 +302,209 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: ICLPPageObject method for OnResize() to use in History
             clpArray.ResizeDivisions();
             clpArray.CalculateGridLines();
+        }
+
+        /// <summary>
+        /// Gets the SnapCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
+
+        private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
+        {
+            var movementBatch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch as CLPHistoryPageObjectMoveBatch;
+            if(movementBatch != null)
+            {
+                movementBatch.AddPositionPointToBatch(PageObject.UniqueID,
+                                                      new Point(PageObject.XPosition, PageObject.YPosition));
+            }
+            PageObject.ParentPage.PageHistory.EndBatch();
+
+            var thisArray = PageObject as CLPArray;
+            if(thisArray == null)
+            {
+                return;
+            }
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                var otherArray = pageObject as CLPArray;
+                if(otherArray == null || otherArray.UniqueID == thisArray.UniqueID)
+                {
+                    continue;
+                }
+
+                var deltaX = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.LargeLabelLength));
+                var deltaY = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.LargeLabelLength));
+
+                var bottomDiff = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.Height));
+                if(bottomDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from below
+                {
+                    thisArray.Width = otherArray.Width;
+                    thisArray.Height = thisArray.Width / (thisArray.Columns * 1.0 / thisArray.Rows);
+                    thisArray.OnResized();
+
+                    if(!otherArray.HorizontalDivisions.Any())
+                    {
+                        otherArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
+                                                                                otherArray.ArrayHeight, otherArray.Rows));
+                    }
+
+                    if(!thisArray.HorizontalDivisions.Any())
+                    {
+                        otherArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, otherArray.ArrayHeight,
+                                                                                thisArray.ArrayHeight, thisArray.Rows));
+                    }
+                    else
+                    {
+                        foreach(var horizontalDivision in thisArray.HorizontalDivisions)
+                        {
+                            horizontalDivision.Position += otherArray.ArrayHeight;
+                            otherArray.HorizontalDivisions.Add(horizontalDivision);
+                        }
+                    }
+
+                    otherArray.Rows += thisArray.Rows;
+                    otherArray.ArrayHeight += thisArray.ArrayHeight;
+                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.CalculateGridLines();
+
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    break;
+                }
+
+                var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (otherArray.YPosition + otherArray.LargeLabelLength));
+                if(topDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from above
+                {
+                    thisArray.Width = otherArray.Width;
+                    thisArray.Height = thisArray.Width / (thisArray.Columns * 1.0 / thisArray.Rows);
+                    thisArray.OnResized();
+
+                    ObservableCollection<CLPArrayDivision> tempDivisions;
+                    if(otherArray.HorizontalDivisions.Any())
+                    {
+                        tempDivisions = otherArray.HorizontalDivisions;
+                        otherArray.HorizontalDivisions.Clear();
+                    }
+                    else
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>
+                                        {
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
+                                                                 otherArray.ArrayHeight, otherArray.Rows)
+                                        };
+                    }
+
+                    if(!thisArray.HorizontalDivisions.Any())
+                    {
+                        thisArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
+                                                                               thisArray.ArrayHeight, thisArray.Rows));
+                    }
+
+                    foreach(var horizontalDivision in thisArray.HorizontalDivisions)
+                    {
+                        otherArray.HorizontalDivisions.Add(horizontalDivision);
+                    }
+                    foreach(var horizontalDivision in tempDivisions)
+                    {
+                        horizontalDivision.Position += thisArray.ArrayHeight;
+                        otherArray.HorizontalDivisions.Add(horizontalDivision);
+                    }
+
+                    otherArray.Rows += thisArray.Rows;
+                    otherArray.ArrayHeight += thisArray.ArrayHeight;
+                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.YPosition = thisArray.YPosition;
+                    otherArray.CalculateGridLines();
+
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    break;
+                }
+
+                var leftDiff = Math.Abs(thisArray.XPosition + thisArray.Width - (otherArray.XPosition + otherArray.LargeLabelLength));
+                if(leftDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from left
+                {
+                    thisArray.Height = otherArray.Height;
+                    thisArray.OnResized();
+
+                    ObservableCollection<CLPArrayDivision> tempDivisions;
+                    if(otherArray.VerticalDivisions.Any())
+                    {
+                        tempDivisions = otherArray.VerticalDivisions;
+                        otherArray.VerticalDivisions.Clear();
+                    }
+                    else
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>
+                                        {
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
+                                                                 otherArray.ArrayWidth, otherArray.Columns)
+                                        };
+                    }
+
+                    if(!thisArray.VerticalDivisions.Any())
+                    {
+                        thisArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
+                                                                             thisArray.ArrayWidth, thisArray.Columns));
+                    }
+
+                    foreach(var verticalDivision in thisArray.VerticalDivisions)
+                    {
+                        otherArray.VerticalDivisions.Add(verticalDivision);
+                    }
+                    foreach(var verticalDivision in tempDivisions)
+                    {
+                        verticalDivision.Position += thisArray.ArrayWidth;
+                        otherArray.VerticalDivisions.Add(verticalDivision);
+                    }
+
+                    otherArray.Columns += thisArray.Columns;
+                    otherArray.ArrayWidth += thisArray.ArrayWidth;
+                    otherArray.ArrayHeight = otherArray.ArrayWidth / (otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.XPosition = thisArray.XPosition;
+                    otherArray.CalculateGridLines();
+
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    break;
+                }
+
+                var rightDiff = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.Width));
+                if(rightDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from right
+                {
+                    thisArray.Height = otherArray.Height;
+                    thisArray.OnResized();
+
+                    if(!otherArray.VerticalDivisions.Any())
+                    {
+                        otherArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
+                                                                                otherArray.ArrayWidth, otherArray.Columns));
+                    }
+
+                    if(!thisArray.VerticalDivisions.Any())
+                    {
+                        otherArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, otherArray.ArrayWidth,
+                                                                                thisArray.ArrayWidth, thisArray.Columns));
+                    }
+                    else
+                    {
+                        foreach(var verticalDivision in thisArray.VerticalDivisions)
+                        {
+                            verticalDivision.Position += otherArray.ArrayWidth;
+                            otherArray.VerticalDivisions.Add(verticalDivision);
+                        }
+                    }
+
+                    otherArray.Columns += thisArray.Columns;
+                    otherArray.ArrayWidth += thisArray.ArrayWidth;
+                    otherArray.ArrayHeight = otherArray.ArrayWidth / (otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
+                    otherArray.CalculateGridLines();
+
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    break;
+                }
+            }
+
+            AddRemovePageObjectFromOtherObjects();
         }
 
         /// <summary>

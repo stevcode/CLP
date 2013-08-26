@@ -115,6 +115,44 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Drag and Snap Thumb-->
+                <Thumb Cursor="ScrollAll"
+                       Width="40" Height="40"
+                       Canvas.Left="-40" Canvas.Top="100"
+                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragStarted">
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragCompleted">
+                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 20,5 L 20,35" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
+                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                                      Data="M 5,20 L 35,20" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
                        Width="40" Height="40"
