@@ -177,6 +177,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Analysis
             AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
+            AnalyzeStampsCommand = new Command(OnAnalyzeStampsCommandExecute);
         }
 
         /// <summary>
@@ -2552,6 +2553,55 @@ namespace Classroom_Learning_Partner.ViewModels
                 tag.AddTagOptionValue(new TagOptionValue("Correct"));
                 return tag;
             }
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeStampsCommand command.
+        /// </summary>
+        public Command AnalyzeStampsCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeStampsCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeStampsCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation == null)
+            {
+                // No definition for the page!
+                Logger.Instance.WriteToLog("No page definition found! :(");
+                return;
+            }
+
+
+            // Find an array object on the page (just use the first one we find), or be sad if we don't find one
+            ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            CLPGroupingRegion region = null;
+
+            foreach(ICLPPageObject pageObject in objects)
+            {
+                if(pageObject.GetType() == typeof(CLPGroupingRegion))
+                {
+                    region = (CLPGroupingRegion)pageObject;
+                    break;
+                }
+            }
+
+            region.DoInterpretation();
         }
 
         /// <summary>

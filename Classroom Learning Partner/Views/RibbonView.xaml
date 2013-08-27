@@ -646,6 +646,10 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding AnalyzeArrayCommand}" />
 
+                <RibbonButton Label="Analyze Stamps"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding AnalyzeStampsCommand}" />
+
             </RibbonGroup>
 
         </RibbonTab>
