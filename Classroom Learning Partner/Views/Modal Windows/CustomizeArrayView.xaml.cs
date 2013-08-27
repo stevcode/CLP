@@ -77,14 +77,5 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
                 Columns.Text = Columns.Text.Substring(0, Columns.Text.Length - 1);
             }
         }
-
-        //void OnClosing(System.ComponentModel.CancelEventArgs e)
-        //{
-        //    base.OnClosing(e);
-        //    if(Owner != null)
-        //    {
-        //        Owner.Activate();
-        //    }
-        //}
     }
 }
