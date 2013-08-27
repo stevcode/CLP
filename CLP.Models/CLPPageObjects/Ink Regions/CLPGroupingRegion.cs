@@ -344,8 +344,8 @@ namespace CLP.Models
 
             foreach (ICLPPageObject po in validObjectsForGrouping)
             {
-                ClippedObject clipObj = new ClippedObject(po);
-                Rect objBounds = new Rect(clipObj.XPosition, clipObj.YPosition, clipObj.Width, clipObj.Height);
+                ClippedObject clipObj = new ClippedObject(po); // TODO: This constructor seems to be broken; it yields incorrect bounds
+                Rect objBounds = new Rect(po.XPosition, po.YPosition, po.Width, po.Height);
                 InkGroupingNode containRect = findInkGroupingNodeForObject(root, objBounds);
                 containRect.objects.Add(po);
             }
@@ -1328,6 +1328,11 @@ namespace CLP.Models
                             combineTheseGroups = new List<DistanceGroup>(2);
                             combineTheseGroups.Add(groupA);
                             combineTheseGroups.Add(groupB);
+                        }
+                        else
+                        {
+                            return false; // TODO: Added this line because if we reach this point, then combineTheseGroups is still empty and we'll throw an exception in the next if block
+                                          // Does this DTRT? I have no idea. :(
                         }
                     }
                 }

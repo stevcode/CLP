@@ -2601,7 +2601,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            if(region == null)
+            {
+                // No CLPGroupingRegion on this page!
+                Logger.Instance.WriteToLog("No grouping region found! :(");
+                return;
+            }
+
             region.DoInterpretation();
+            Logger.Instance.WriteToLog("Done with stamps interpretation");
+
+            // Now we have a list of the possible interpretations of the student's stamps
+            ObservableCollection<CLPGrouping> groupings = region.Groupings;
         }
 
         /// <summary>
