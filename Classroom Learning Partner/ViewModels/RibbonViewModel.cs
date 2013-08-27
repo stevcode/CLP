@@ -165,6 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
             TrimPageCommand = new Command(OnTrimPageCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
@@ -1926,6 +1927,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
                 page.TrimPage();
             }
+        }
+
+        /// <summary>
+        /// Completely clears a page of ink strokes and pageObjects.
+        /// </summary>
+        public Command ClearPageCommand { get; private set; }
+
+        private void OnClearPageCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               !(notebookWorkspaceViewModel.SelectedDisplay is LinkedDisplayViewModel))
+            {
+                return;
+            }
+            var page = (notebookWorkspaceViewModel.SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            page.PageHistory.ClearHistory();
+            page.PageObjects.Clear();
+            page.InkStrokes.Clear();
+            page.SerializedStrokes.Clear();
         }
 
         #endregion //Page Commands
