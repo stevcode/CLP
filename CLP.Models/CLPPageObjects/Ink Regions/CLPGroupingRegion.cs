@@ -174,7 +174,7 @@ namespace CLP.Models
                     }
 
                     Rect testRectSize = new Rect(0, 0, po.Width, po.Height);
-                    foreach (Stroke s in CLPPage.BytesToStrokes((po as CLPStrokePathContainer).ByteStrokes))
+                    foreach (Stroke s in CLPPage.LoadInkStrokes((po as CLPStrokePathContainer).SerializedStrokes))
                     {
                         //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
                         if (s.HitTest(testRectSize, 3))
