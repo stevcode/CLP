@@ -2616,6 +2616,57 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
+        /// </summary>
+        public Tag GetStampCorrectnessTag(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
+        {
+            Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
+
+            foreach(CLPGrouping grouping in groupings)
+            {
+                if(HasEqualGroups(grouping)) // If we can assume that this grouping has a homogeneous structure...
+                {
+                    int numGroups = grouping.Groups.Count;
+                    List<ICLPPageObject> objList = grouping.Groups[0].Values.ToList()[0];
+
+                }
+            }
+
+            tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
+            return tag;
+        }
+
+        /// <summary>
+        /// Checks a grouping for overall homogeneity.
+        /// Returns true iff each subgroup in this grouping contains the same number of page objects, each of which has the same number of parts
+        /// </summary>
+        public Boolean HasEqualGroups(CLPGrouping grouping)
+        {
+            int expectedPartsPerObject = -1;
+            int expectedObjectsPerGroup = -1;
+
+            foreach(Dictionary<string,List<ICLPPageObject>> groupEntry in grouping.Groups)
+            {
+                foreach(KeyValuePair<string,List<ICLPPageObject>> kvp in groupEntry)
+                {
+                    List<ICLPPageObject> objList = kvp.Value;
+                    int objectsInGroup = objList.Count;
+                    if(expectedObjectsPerGroup == -1) { expectedObjectsPerGroup = objectsInGroup; }
+                    else if(expectedObjectsPerGroup != objectsInGroup) { return false; }
+
+                    foreach(ICLPPageObject pageObj in objList)
+                    {
+                        int parts = pageObj.Parts;
+                        if(expectedPartsPerObject == -1) { expectedPartsPerObject = parts; }
+                        else if(expectedPartsPerObject != parts) { return false; }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Gets the InsertAudioCommand command.
         /// </summary>
         public Command InsertAudioCommand { get; private set; }
