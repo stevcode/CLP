@@ -344,8 +344,8 @@ namespace CLP.Models
 
             foreach (ICLPPageObject po in validObjectsForGrouping)
             {
-                ClippedObject clipObj = new ClippedObject(po); // TODO: This constructor seems to be broken; it yields incorrect bounds
-                Rect objBounds = new Rect(po.XPosition, po.YPosition, po.Width, po.Height);
+                ClippedObject clipObj = new ClippedObject(po);
+                Rect objBounds = new Rect(clipObj.XPosition, clipObj.YPosition, clipObj.Width, clipObj.Height);
                 InkGroupingNode containRect = findInkGroupingNodeForObject(root, objBounds);
                 containRect.objects.Add(po);
             }
