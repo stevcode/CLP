@@ -1406,7 +1406,15 @@ namespace CLP.Models
 
         private double getDistanceBetweenPageObjects(ClippedObject pageObject1, ClippedObject pageObject2)
         {
-            double x = pageObject2.XPosition - pageObject1.XPosition;
+            double x1 = pageObject1.XPosition + (pageObject1.Width) / 2;
+            double y1 = pageObject1.YPosition + (pageObject1.Height) / 2;
+            double x2 = pageObject2.XPosition + (pageObject2.Width) / 2;
+            double y2 = pageObject2.YPosition + (pageObject2.Height) / 2;
+
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+
+            // Preserving old version of method for historical/hilarity purposes
+            /*double x = pageObject2.XPosition - pageObject1.XPosition;
             if (x > 0)
             {
                 x -= pageObject1.Width;
@@ -1432,7 +1440,7 @@ namespace CLP.Models
                 y = (y < 0) ? 0 : y;
             }
 
-            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));*/
         }
 
         #endregion // Methods
