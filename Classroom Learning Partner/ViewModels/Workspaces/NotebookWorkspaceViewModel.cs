@@ -93,6 +93,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
+            FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
 
         }
 

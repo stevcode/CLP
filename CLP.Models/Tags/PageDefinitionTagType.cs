@@ -19,7 +19,7 @@ namespace CLP.Models
             Name = "Page Definition";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
-            AccessLevels.Add(Tag.AccessLevels.Teacher);
+            AccessLevels.Add(Tag.AccessLevels.Researcher);
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();

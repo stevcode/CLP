@@ -2613,6 +2613,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Now we have a list of the possible interpretations of the student's stamps
             ObservableCollection<CLPGrouping> groupings = region.Groupings;
+
+            // Clear out any old stamp-related Tags
+            foreach(Tag tag in tags.ToList())
+            {
+                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name)
+                {
+                    tags.Remove(tag);
+                }
+            }
+
+            Tag correctnessTag = GetStampCorrectnessTag(groupings, relation);
+
+            tags.Add(correctnessTag);
         }
 
         /// <summary>
@@ -2621,18 +2634,36 @@ namespace Classroom_Learning_Partner.ViewModels
         public Tag GetStampCorrectnessTag(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
         {
             Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
+            tag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
 
             foreach(CLPGrouping grouping in groupings)
             {
-                if(HasEqualGroups(grouping)) // If we can assume that this grouping has a homogeneous structure...
+                if(HasEqualGroups(grouping) && grouping.Groups[0].Values.Count > 0) // If we can assume that this grouping has a homogeneous structure...
                 {
                     int numGroups = grouping.Groups.Count;
                     List<ICLPPageObject> objList = grouping.Groups[0].Values.ToList()[0];
+                    int objectsPerGroup = objList.Count;
+                    int partsPerObject = objList[0].Parts;
+                    int partsPerGroup = objectsPerGroup * partsPerObject;
 
+                    // We're a little stricter about correctness if it's specifically an equal-grouping problem
+                    if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
+                    {
+                        if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
+                        {
+                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                        }
+                    }
+                    else
+                    {
+                        if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
+                            (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
+                        {
+                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                        }
+                    }
                 }
             }
-
-            tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
             return tag;
         }
 
