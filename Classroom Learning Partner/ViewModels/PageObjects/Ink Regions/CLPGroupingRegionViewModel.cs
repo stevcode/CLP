@@ -13,7 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the <see cref="CLPHandwritingRegionViewModel"/> class.
         /// </summary>
         public CLPGroupingRegionViewModel(CLPGroupingRegion groupingRegion)
-            : base()
         {
             PageObject = groupingRegion;
         }

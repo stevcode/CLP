@@ -2613,7 +2613,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
 
             // Get the page's math definition, or be sad if it doesn't have one
-            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
             ObservableCollection<Tag> tags = page.PageTags;
             ProductRelation relation = null;
             foreach(Tag tag in tags)

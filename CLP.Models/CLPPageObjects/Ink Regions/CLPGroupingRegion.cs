@@ -52,7 +52,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the InkShapeRegion property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("InkShapeRegion", typeof(CLPInkShapeRegion), null);
+        public static readonly PropertyData inkShapeRegionProperty = RegisterProperty("InkShapeRegion", typeof(CLPInkShapeRegion));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -75,21 +75,14 @@ namespace CLP.Models
         public override void DoInterpretation()
         {
             Groupings.Clear();
-            List<ICLPPageObject> validGroupingObjects = new List<ICLPPageObject>();
-            foreach (ICLPPageObject po in ParentPage.PageObjects)
-            {
-                if (ValidObjectForGrouping(po))
-                {
-                    validGroupingObjects.Add(po);
-                }
-            }
+            var validGroupingObjects = ParentPage.PageObjects.Where(ValidObjectForGrouping).ToList();
 
             AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
             AddGrouping(DistanceClustering(validGroupingObjects, true), true, Groupings);
             AddContainerGrouping(DistanceClustering(validGroupingObjects, false), Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);
-            StringBuilder interpretation = new StringBuilder();
-            StringBuilder nonFormattedIterpretation = new StringBuilder();
+            var interpretation = new StringBuilder();
+            var nonFormattedIterpretation = new StringBuilder();
             foreach (CLPGrouping grouping in Groupings)
             {
                 interpretation.AppendLine(grouping.toFormattedString());
@@ -174,7 +167,7 @@ namespace CLP.Models
                     }
 
                     Rect testRectSize = new Rect(0, 0, po.Width, po.Height);
-                    foreach (Stroke s in CLPPage.LoadInkStrokes((po as CLPStrokePathContainer).SerializedStrokes))
+                    foreach (var s in StrokeDTO.LoadInkStrokes((po as CLPStrokePathContainer).SerializedStrokes))
                     {
                         //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
                         if (s.HitTest(testRectSize, 3))
@@ -1028,7 +1021,7 @@ namespace CLP.Models
         private Tuple<double, double, double, double> getShapeAttributes(CLPNamedInkSet shape)
         {
             double lineThreshold = 1.25;
-            Rect shapeBounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+            Rect shapeBounds = StrokeDTO.LoadInkStrokes(shape.InkShapeStrokes).GetBounds();
             if (shape.InkShapeType.Equals("Vertical"))
             {
                 double x = (shapeBounds.Right + shapeBounds.Left) / 2;
@@ -1069,8 +1062,8 @@ namespace CLP.Models
             else if (adjacent1 != null && adjacent2 != null)
             {
                 Console.WriteLine("Both adjacents present");
-                Rect adj1Bounds = CLPPage.BytesToStrokes(adjacent1.InkShapeStrokes).GetBounds();
-                Rect adj2Bounds = CLPPage.BytesToStrokes(adjacent2.InkShapeStrokes).GetBounds();
+                Rect adj1Bounds = StrokeDTO.LoadInkStrokes(adjacent1.InkShapeStrokes).GetBounds();
+                Rect adj2Bounds = StrokeDTO.LoadInkStrokes(adjacent2.InkShapeStrokes).GetBounds();
                 if (changingSide == Side.Left || changingSide == Side.Top)
                 {
                     bounds = Math.Max(GetBoundOfRectangleWithSide(adj1Bounds, changingSide),
@@ -1091,7 +1084,7 @@ namespace CLP.Models
             {
                 Console.WriteLine("Only 1 adjacent");
                 CLPNamedInkSet shape = (adjacent1 != null) ? adjacent1 : adjacent2;
-                bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+                bounds = StrokeDTO.LoadInkStrokes(shape.InkShapeStrokes).GetBounds();
             }
 
             if (changingSide == Side.Left || changingSide == Side.Top)
@@ -1214,7 +1207,7 @@ namespace CLP.Models
             if (sides[checkSide] != null)
             {
                 // Check side one
-                Rect adj1 = CLPPage.BytesToStrokes(sides[checkSide].shape.InkShapeStrokes).GetBounds();
+                Rect adj1 = StrokeDTO.LoadInkStrokes(sides[checkSide].shape.InkShapeStrokes).GetBounds();
                 double adjSide1a = GetBoundOfRectangleWithSide(adj1, controlSide);
                 double adjSide1b = GetBoundOfRectangleWithSide(adj1, GetOppositeSide(controlSide));
                 double maxSide1 = Math.Max(adjSide1a, adjSide1b);

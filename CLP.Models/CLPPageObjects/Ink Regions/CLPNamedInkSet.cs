@@ -9,7 +9,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPNamedInkSet : ModelBase
     {
-        public CLPNamedInkSet(string shapeName, ObservableCollection<List<byte>> strokes)
+        public CLPNamedInkSet(string shapeName, ObservableCollection<StrokeDTO> strokes)
         {
             InkShapeType = shapeName;
             InkShapeStrokes = strokes;
@@ -18,7 +18,7 @@ namespace CLP.Models
         public CLPNamedInkSet()
         {
             InkShapeType = "";
-            InkShapeStrokes = new ObservableCollection<List<byte>>();
+            InkShapeStrokes = new ObservableCollection<StrokeDTO>();
         }
 
         protected CLPNamedInkSet(SerializationInfo info, StreamingContext context)
@@ -30,16 +30,16 @@ namespace CLP.Models
         /// <summary>
         /// Strokes that make up the shape
         /// </summary>
-        public ObservableCollection<List<byte>> InkShapeStrokes
+        public ObservableCollection<StrokeDTO> InkShapeStrokes
         {
-            get { return GetValue<ObservableCollection<List<byte>>>(InkShapeStrokesProperty); }
+            get { return GetValue<ObservableCollection<StrokeDTO>>(InkShapeStrokesProperty); }
             set { SetValue(InkShapeStrokesProperty, value); }
         }
 
         /// <summary>
         /// Register the InkShapeStrokes property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData InkShapeStrokesProperty = RegisterProperty("InkShapesStrokes", typeof(ObservableCollection<List<byte>>), () => new ObservableCollection<List<byte>>());
+        public static readonly PropertyData InkShapeStrokesProperty = RegisterProperty("InkShapesStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
 
         /// <summary>
         /// The type of the shape
