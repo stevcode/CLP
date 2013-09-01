@@ -6,12 +6,11 @@ namespace CLP.Models
     [Serializable]
     public class CLPMirrorDisplay : ACLPDisplayBase
     {
-        #region Constructor & destructor
+        #region Constructors
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
         public CLPMirrorDisplay()
-            : base()
         {
         }
 
@@ -25,6 +24,5 @@ namespace CLP.Models
 
         #endregion
 
-        public DisplayTypes DisplayType { get { return DisplayTypes.Mirror; } }
     }
 }

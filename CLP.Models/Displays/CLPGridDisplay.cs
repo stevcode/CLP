@@ -6,12 +6,12 @@ namespace CLP.Models
     [Serializable]
     public class CLPGridDisplay : ACLPDisplayBase
     {
-        #region Constructor & destructor
+        #region Constructors
+
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
         public CLPGridDisplay()
-            : base()
         {
         }
 
@@ -24,7 +24,5 @@ namespace CLP.Models
             : base(info, context) { }
 
         #endregion
-
-        public DisplayTypes DisplayType { get { return DisplayTypes.Grid; } }
     }
 }

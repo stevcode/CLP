@@ -1,47 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Models
 {
-    public enum DisplayTypes
-    {
-        Mirror,
-        Grid,
-        Column,
-        Canvas
-    }
-
-    public interface ICLPDisplay
-    {
-        string UniqueID { get; set; }
-        string ParentNotebookUniqueID { get; set; }
-        DateTime CreationDate { get; set; }
-        DateTime LastProjectionTime { get; set; }
-        ObservableCollection<DateTime> ProjectionTimesHistory { get; set; }
-
-        ObservableCollection<Tuple<bool, string>> DisplayPages { get; set; }
-        ObservableCollection<CLPPage> ForeignPages { get; set; }
-
-        DisplayTypes DisplayType { get; }
-    }
-
     [Serializable]
-    abstract public class ACLPDisplayBase : ModelBase
+    abstract public class ACLPDisplayBase : ModelBase, ICLPDisplay
     {
+        #region Constructors
 
-        #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public ACLPDisplayBase()
+        protected ACLPDisplayBase()
         {
             UniqueID = Guid.NewGuid().ToString();
             CreationDate = DateTime.Now;
-            ProjectionTimesHistory = new ObservableCollection<DateTime>();
-            DisplayPages = new ObservableCollection<Tuple<bool, string>>();
-            ForeignPages = new ObservableCollection<CLPPage>();
         }
 
         /// <summary>
@@ -51,12 +27,13 @@ namespace CLP.Models
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected ACLPDisplayBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The Display's UniqueID
         /// </summary>
         public string UniqueID
         {
@@ -64,13 +41,10 @@ namespace CLP.Models
             set { SetValue(UniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the UniqueID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// UniqueID of the notebook the Display belongs to.
         /// </summary>
         public string ParentNotebookUniqueID
         {
@@ -78,13 +52,10 @@ namespace CLP.Models
             set { SetValue(ParentNotebookUniqueIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentNotebookUniqueID property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ParentNotebookUniqueIDProperty = RegisterProperty("ParentNotebookUniqueID", typeof(string), null);
+        public static readonly PropertyData ParentNotebookUniqueIDProperty = RegisterProperty("ParentNotebookUniqueID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// Time the display was created.
         /// </summary>
         public DateTime CreationDate
         {
@@ -92,66 +63,40 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        /// <summary>
-        /// Register the CreationDate property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public DateTime LastProjectionTime
-        {
-            get { return GetValue<DateTime>(LastProjectionTimeProperty); }
-            set { SetValue(LastProjectionTimeProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the LastProjectionTime property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData LastProjectionTimeProperty = RegisterProperty("LastProjectionTime", typeof(DateTime), null);
-
-        /// <summary>
-        /// Gets or sets the property value.
+        /// Times the Display was projected.
         /// </summary>
         public ObservableCollection<DateTime> ProjectionTimesHistory
         {
             get { return GetValue<ObservableCollection<DateTime>>(ProjectionTimesHistoryProperty); }
-            private set { SetValue(ProjectionTimesHistoryProperty, value); }
+            set { SetValue(ProjectionTimesHistoryProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ProjectionTimesHistory property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ProjectionTimesHistoryProperty = RegisterProperty("ProjectionTimesHistory", typeof(ObservableCollection<DateTime>), () => new ObservableCollection<DateTime>());
 
         /// <summary>
-        /// Gets or sets the property value. The Tuble is <bool isPageInCurrentNotebook, string pageID>.
+        /// The UniqueID's of the pages displayed by the Display.
         /// </summary>
-        public ObservableCollection<Tuple<bool, string>> DisplayPages
+        public ObservableCollection<string> DisplayPageIDs
         {
-            get { return GetValue<ObservableCollection<Tuple<bool, string>>>(DisplayPagesProperty); }
-            set { SetValue(DisplayPagesProperty, value); }
+            get { return GetValue<ObservableCollection<string>>(DisplayPageIDsProperty); }
+            set { SetValue(DisplayPageIDsProperty, value); }
         }
 
-        /// <summary>
-        /// Register the DisplayPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DisplayPagesProperty = RegisterProperty("DisplayPages", typeof(ObservableCollection<Tuple<bool, string>>), () => new ObservableCollection<Tuple<bool, string>>());
+        public static readonly PropertyData DisplayPageIDsProperty = RegisterProperty("DisplayPageIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// All pages in a Display that are not part of the Display's parent notebook.
         /// </summary>
-        public ObservableCollection<CLPPage> ForeignPages
+        public List<ICLPPage> ForeignPages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(ForeignPagesProperty); }
+            get { return GetValue<List<ICLPPage>>(ForeignPagesProperty); }
             set { SetValue(ForeignPagesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ForeignPages property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ForeignPagesProperty = RegisterProperty("ForeignPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData ForeignPagesProperty = RegisterProperty("ForeignPages", typeof(List<ICLPPage>), () => new List<ICLPPage>());
 
         #endregion //Properties
     }
