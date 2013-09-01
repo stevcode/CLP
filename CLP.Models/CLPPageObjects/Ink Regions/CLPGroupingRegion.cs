@@ -174,15 +174,15 @@ namespace CLP.Models
                     }
 
                     Rect testRectSize = new Rect(0, 0, po.Width, po.Height);
-                    //foreach (Stroke s in CLPPage.BytesToStrokes((po as CLPStrokePathContainer).ByteStrokes)) //commented out because ByteStrokes removed
-                    //{
-                    //    //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
-                    //    if (s.HitTest(testRectSize, 3))
-                    //    {
-                    //        strokeBounds.Union(s.GetBounds());
-                    //        //        Console.WriteLine("X: " + strokeBounds.X + " Y: " + strokeBounds.Y + " Height: " + strokeBounds.Height + " Width: " + strokeBounds.Width);
-                    //    }
-                    //}
+                    foreach (Stroke s in CLPPage.LoadInkStrokes((po as CLPStrokePathContainer).SerializedStrokes))
+                    {
+                        //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
+                        if (s.HitTest(testRectSize, 3))
+                        {
+                            strokeBounds.Union(s.GetBounds());
+                            //        Console.WriteLine("X: " + strokeBounds.X + " Y: " + strokeBounds.Y + " Height: " + strokeBounds.Height + " Width: " + strokeBounds.Width);
+                        }
+                    }
                     if (!strokeBounds.Equals(Rect.Empty))
                     {
                         strokeBounds.X = strokeBounds.X + po.XPosition;
@@ -1028,95 +1028,91 @@ namespace CLP.Models
         private Tuple<double, double, double, double> getShapeAttributes(CLPNamedInkSet shape)
         {
             double lineThreshold = 1.25;
-            return new Tuple<double, double, double, double>(1, 1, 1, 1);
-            //Rect shapeBounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds(); //commented out because BytesToStrokes removed, fake return in line above
-            //if (shape.InkShapeType.Equals("Vertical"))
-            //{
-            //    double x = (shapeBounds.Right + shapeBounds.Left) / 2;
-            //    double y = Math.Max(YPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
-            //    double height = shapeBounds.Height * lineThreshold;
-            //    return new Tuple<double, double, double, double>(x, y, -1, height);
-            //}
-            //else if (shape.InkShapeType.Equals("Horizontal"))
-            //{
-            //    double y = (shapeBounds.Bottom + shapeBounds.Top) / 2;
-            //    double x = Math.Max(XPosition, shapeBounds.Left - shapeBounds.Width * ((lineThreshold - 1) / 2));
-            //    double width = shapeBounds.Width * lineThreshold;
-            //    return new Tuple<double, double, double, double>(x, y, width, -1);
-            //}
-            //else
-            //{
-            //    return new Tuple<double, double, double, double>(shapeBounds.Left, shapeBounds.Top,
-            //        shapeBounds.Width, shapeBounds.Height);
-            //}
+            Rect shapeBounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+            if (shape.InkShapeType.Equals("Vertical"))
+            {
+                double x = (shapeBounds.Right + shapeBounds.Left) / 2;
+                double y = Math.Max(YPosition, shapeBounds.Top - shapeBounds.Height * ((lineThreshold - 1) / 2));
+                double height = shapeBounds.Height * lineThreshold;
+                return new Tuple<double, double, double, double>(x, y, -1, height);
+            }
+            else if (shape.InkShapeType.Equals("Horizontal"))
+            {
+                double y = (shapeBounds.Bottom + shapeBounds.Top) / 2;
+                double x = Math.Max(XPosition, shapeBounds.Left - shapeBounds.Width * ((lineThreshold - 1) / 2));
+                double width = shapeBounds.Width * lineThreshold;
+                return new Tuple<double, double, double, double>(x, y, width, -1);
+            }
+            else
+            {
+                return new Tuple<double, double, double, double>(shapeBounds.Left, shapeBounds.Top,
+                    shapeBounds.Width, shapeBounds.Height);
+            }
         }
 
         private bool AdjacentSidesAllowBound(InkGroupingNode node, Side changingSide, double proposedBound)
         {
-            return true;
+            Console.WriteLine("Changing side: " + changingSide);
+            // percentage of line that must still be present in shape to allow purely trimming
+            double threshold = .80;
+            CLPNamedInkSet adjacent1 = (node.sides[GetAdjacentSide(changingSide)] == null) ?
+                null : node.sides[GetAdjacentSide(changingSide)].shape;
+            CLPNamedInkSet adjacent2 = (node.sides[GetOppositeSide(GetAdjacentSide(changingSide))] == null) ?
+                null : node.sides[GetOppositeSide(GetAdjacentSide(changingSide))].shape;
+            Rect bounds;
 
-            //commented out because BytesToStrokes removed, generic return true in line above for compile.
-            //            Console.WriteLine("Changing side: " + changingSide);
-            //            // percentage of line that must still be present in shape to allow purely trimming
-            //            double threshold = .80;
-            //            CLPNamedInkSet adjacent1 = (node.sides[GetAdjacentSide(changingSide)] == null) ?
-            //                null : node.sides[GetAdjacentSide(changingSide)].shape;
-            //            CLPNamedInkSet adjacent2 = (node.sides[GetOppositeSide(GetAdjacentSide(changingSide))] == null) ?
-            //                null : node.sides[GetOppositeSide(GetAdjacentSide(changingSide))].shape;
-            //            Rect bounds;
+            if (adjacent1 == null && adjacent2 == null)
+            {
+                return true;
+            }
+            //Both adjacents present
+            else if (adjacent1 != null && adjacent2 != null)
+            {
+                Console.WriteLine("Both adjacents present");
+                Rect adj1Bounds = CLPPage.BytesToStrokes(adjacent1.InkShapeStrokes).GetBounds();
+                Rect adj2Bounds = CLPPage.BytesToStrokes(adjacent2.InkShapeStrokes).GetBounds();
+                if (changingSide == Side.Left || changingSide == Side.Top)
+                {
+                    bounds = Math.Max(GetBoundOfRectangleWithSide(adj1Bounds, changingSide),
+                        GetBoundOfRectangleWithSide(adj2Bounds, changingSide)) ==
+                        GetBoundOfRectangleWithSide(adj1Bounds, changingSide)
+                        ? adj1Bounds : adj2Bounds;
+                }
+                else
+                {
+                    bounds = Math.Min(GetBoundOfRectangleWithSide(adj1Bounds, changingSide),
+                        GetBoundOfRectangleWithSide(adj2Bounds, changingSide)) ==
+                        GetBoundOfRectangleWithSide(adj1Bounds, changingSide)
+                        ? adj1Bounds : adj2Bounds;
+                }
+            }
+            // Only one defined
+            else
+            {
+                Console.WriteLine("Only 1 adjacent");
+                CLPNamedInkSet shape = (adjacent1 != null) ? adjacent1 : adjacent2;
+                bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds();
+            }
 
-            //            if (adjacent1 == null && adjacent2 == null)
-            //            {
-            //                return true;
-            //            }
-            //            //Both adjacents present
-            //            else if (adjacent1 != null && adjacent2 != null)
-            //            {
-            //                Console.WriteLine("Both adjacents present");
-            //                Rect adj1Bounds = CLPPage.BytesToStrokes(adjacent1.InkShapeStrokes).GetBounds(); 
-            //                Rect adj2Bounds = CLPPage.BytesToStrokes(adjacent2.InkShapeStrokes).GetBounds();
-            //                if(changingSide == Side.Left || changingSide == Side.Top)
-            //                {
-            //                    bounds = Math.Max(GetBoundOfRectangleWithSide(adj1Bounds, changingSide),
-            //                        GetBoundOfRectangleWithSide(adj2Bounds, changingSide)) ==
-            //                        GetBoundOfRectangleWithSide(adj1Bounds, changingSide)
-            //                        ? adj1Bounds : adj2Bounds;
-            //                }
-            //                else
-            //                {
-            //                    bounds = Math.Min(GetBoundOfRectangleWithSide(adj1Bounds, changingSide),
-            //                        GetBoundOfRectangleWithSide(adj2Bounds, changingSide)) ==
-            //                        GetBoundOfRectangleWithSide(adj1Bounds, changingSide)
-            //                        ? adj1Bounds : adj2Bounds;
-            //                }
-            //            }
-            //            // Only one defined
-            //            else
-            //            {
-            //                Console.WriteLine("Only 1 adjacent");
-            //                CLPNamedInkSet shape = (adjacent1 != null) ? adjacent1 : adjacent2;
-            //                // bounds = CLPPage.BytesToStrokes(shape.InkShapeStrokes).GetBounds(); //commented out because BytesToStrokes removed
-            //            }
-
-            //            if (changingSide == Side.Left || changingSide == Side.Top)
-            //            {
-            //                double oldBound = GetBoundOfRectangleWithSide(bounds, changingSide);
-            //                double otherSide = GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide));
-            //                Console.WriteLine("Proposed bound: " + proposedBound +
-            //                    " Old bound: " + oldBound +
-            //                    " Other Side: " + otherSide +
-            //                    " New Length: " + (otherSide - proposedBound) +
-            //                    " Old length: " + (otherSide - oldBound) + 
-            //                    " Percentage of original: " + (otherSide - proposedBound) / (otherSide - oldBound));
-            //                // checking if the new proposed bound is in the extra space we gave the line - then don't worry, then checking if its actually splitting that line
-            //                return (otherSide - proposedBound) / (otherSide - oldBound) > threshold;
-            //            }
-            //            else {
-            //                Console.WriteLine("Proposed bound: " + proposedBound + " Opposite bound: " + GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide)) +
-            //" Difference: " + (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) +
-            //    " Percentage of original: " + (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) / bounds.Width);
-            //                return proposedBound < GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide)) || (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) / bounds.Width > threshold;
-            //            }
+            if (changingSide == Side.Left || changingSide == Side.Top)
+            {
+                double oldBound = GetBoundOfRectangleWithSide(bounds, changingSide);
+                double otherSide = GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide));
+                Console.WriteLine("Proposed bound: " + proposedBound +
+                    " Old bound: " + oldBound +
+                    " Other Side: " + otherSide +
+                    " New Length: " + (otherSide - proposedBound) +
+                    " Old length: " + (otherSide - oldBound) + 
+                    " Percentage of original: " + (otherSide - proposedBound) / (otherSide - oldBound));
+                // checking if the new proposed bound is in the extra space we gave the line - then don't worry, then checking if its actually splitting that line
+                return (otherSide - proposedBound) / (otherSide - oldBound) > threshold;
+            }
+            else {
+                Console.WriteLine("Proposed bound: " + proposedBound + " Opposite bound: " + GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide)) +
+" Difference: " + (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) +
+    " Percentage of original: " + (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) / bounds.Width);
+                return proposedBound < GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide)) || (proposedBound - GetBoundOfRectangleWithSide(bounds, GetOppositeSide(changingSide))) / bounds.Width > threshold;
+            }
         }
 
         private double GetBoundOfRectangleWithSide(Rect r, Side s) {
@@ -1218,7 +1214,7 @@ namespace CLP.Models
             if (sides[checkSide] != null)
             {
                 // Check side one
-                Rect adj1 = new Rect(); //CLPPage.BytesToStrokes(sides[checkSide].shape.InkShapeStrokes).GetBounds(); //commented out because BytesToStrokes removed
+                Rect adj1 = CLPPage.BytesToStrokes(sides[checkSide].shape.InkShapeStrokes).GetBounds();
                 double adjSide1a = GetBoundOfRectangleWithSide(adj1, controlSide);
                 double adjSide1b = GetBoundOfRectangleWithSide(adj1, GetOppositeSide(controlSide));
                 double maxSide1 = Math.Max(adjSide1a, adjSide1b);
@@ -1333,6 +1329,11 @@ namespace CLP.Models
                             combineTheseGroups.Add(groupA);
                             combineTheseGroups.Add(groupB);
                         }
+                        else
+                        {
+                            return false; // TODO: Added this line because if we reach this point, then combineTheseGroups is still empty and we'll throw an exception in the next if block
+                                          // Does this DTRT? I have no idea. :(
+                        }
                     }
                 }
             }
@@ -1405,7 +1406,15 @@ namespace CLP.Models
 
         private double getDistanceBetweenPageObjects(ClippedObject pageObject1, ClippedObject pageObject2)
         {
-            double x = pageObject2.XPosition - pageObject1.XPosition;
+            double x1 = pageObject1.XPosition + (pageObject1.Width) / 2;
+            double y1 = pageObject1.YPosition + (pageObject1.Height) / 2;
+            double x2 = pageObject2.XPosition + (pageObject2.Width) / 2;
+            double y2 = pageObject2.YPosition + (pageObject2.Height) / 2;
+
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+
+            // Preserving old version of method for historical/hilarity purposes
+            /*double x = pageObject2.XPosition - pageObject1.XPosition;
             if (x > 0)
             {
                 x -= pageObject1.Width;
@@ -1431,7 +1440,7 @@ namespace CLP.Models
                 y = (y < 0) ? 0 : y;
             }
 
-            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));*/
         }
 
         #endregion // Methods

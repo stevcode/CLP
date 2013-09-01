@@ -178,6 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Analysis
             AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
+            AnalyzeStampsCommand = new Command(OnAnalyzeStampsCommandExecute);
         }
 
         /// <summary>
@@ -2597,6 +2598,148 @@ namespace Classroom_Learning_Partner.ViewModels
                 tag.AddTagOptionValue(new TagOptionValue("Correct"));
                 return tag;
             }
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeStampsCommand command.
+        /// </summary>
+        public Command AnalyzeStampsCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeStampsCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeStampsCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            CLPPage page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            ObservableCollection<Tag> tags = page.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation == null)
+            {
+                // No definition for the page!
+                Logger.Instance.WriteToLog("No page definition found! :(");
+                return;
+            }
+
+
+            // Find an array object on the page (just use the first one we find), or be sad if we don't find one
+            ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            CLPGroupingRegion region = null;
+
+            foreach(ICLPPageObject pageObject in objects)
+            {
+                if(pageObject.GetType() == typeof(CLPGroupingRegion))
+                {
+                    region = (CLPGroupingRegion)pageObject;
+                    break;
+                }
+            }
+
+            if(region == null)
+            {
+                // No CLPGroupingRegion on this page!
+                Logger.Instance.WriteToLog("No grouping region found! :(");
+                return;
+            }
+
+            region.DoInterpretation();
+            Logger.Instance.WriteToLog("Done with stamps interpretation");
+
+            // Now we have a list of the possible interpretations of the student's stamps
+            ObservableCollection<CLPGrouping> groupings = region.Groupings;
+
+            // Clear out any old stamp-related Tags
+            foreach(Tag tag in tags.ToList())
+            {
+                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name)
+                {
+                    tags.Remove(tag);
+                }
+            }
+
+            Tag correctnessTag = GetStampCorrectnessTag(groupings, relation);
+
+            tags.Add(correctnessTag);
+        }
+
+        /// <summary>
+        /// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
+        /// </summary>
+        public Tag GetStampCorrectnessTag(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
+        {
+            Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
+            tag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
+
+            foreach(CLPGrouping grouping in groupings)
+            {
+                if(HasEqualGroups(grouping) && grouping.Groups[0].Values.Count > 0) // If we can assume that this grouping has a homogeneous structure...
+                {
+                    int numGroups = grouping.Groups.Count;
+                    List<ICLPPageObject> objList = grouping.Groups[0].Values.ToList()[0];
+                    int objectsPerGroup = objList.Count;
+                    int partsPerObject = objList[0].Parts;
+                    int partsPerGroup = objectsPerGroup * partsPerObject;
+
+                    // We're a little stricter about correctness if it's specifically an equal-grouping problem
+                    if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
+                    {
+                        if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
+                        {
+                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                        }
+                    }
+                    else
+                    {
+                        if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
+                            (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
+                        {
+                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                        }
+                    }
+                }
+            }
+            return tag;
+        }
+
+        /// <summary>
+        /// Checks a grouping for overall homogeneity.
+        /// Returns true iff each subgroup in this grouping contains the same number of page objects, each of which has the same number of parts
+        /// </summary>
+        public Boolean HasEqualGroups(CLPGrouping grouping)
+        {
+            int expectedPartsPerObject = -1;
+            int expectedObjectsPerGroup = -1;
+
+            foreach(Dictionary<string,List<ICLPPageObject>> groupEntry in grouping.Groups)
+            {
+                foreach(KeyValuePair<string,List<ICLPPageObject>> kvp in groupEntry)
+                {
+                    List<ICLPPageObject> objList = kvp.Value;
+                    int objectsInGroup = objList.Count;
+                    if(expectedObjectsPerGroup == -1) { expectedObjectsPerGroup = objectsInGroup; }
+                    else if(expectedObjectsPerGroup != objectsInGroup) { return false; }
+
+                    foreach(ICLPPageObject pageObj in objList)
+                    {
+                        int parts = pageObj.Parts;
+                        if(expectedPartsPerObject == -1) { expectedPartsPerObject = parts; }
+                        else if(expectedPartsPerObject != parts) { return false; }
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

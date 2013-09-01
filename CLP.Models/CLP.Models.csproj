@@ -169,6 +169,7 @@
     <Compile Include="Tags\DomainInterpretationTagType.cs" />
     <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
+    <Compile Include="Tags\StampCorrectnessTagType.cs" />
     <Compile Include="Tags\StarredTagType.cs" />
     <Compile Include="Tags\Tag.cs" />
     <Compile Include="Tags\TagOptionValue.cs" />

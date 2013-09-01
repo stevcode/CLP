@@ -16,8 +16,12 @@ namespace CLP.Models
 #if !SILVERLIGHT
     [Serializable]
 #endif
+
     public class ProductRelation : MathRelation
     {
+
+        public enum ProductRelationTypes { GenericProduct, EqualGroups, Area };
+
         #region Fields
         #endregion
 
@@ -39,6 +43,48 @@ namespace CLP.Models
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public ProductRelationTypes RelationType
+        {
+            get { return GetValue<ProductRelationTypes>(RelationTypeProperty); }
+            set
+            {
+                SetValue(RelationTypeProperty, value);
+                // Changing this value also changes the various labels
+                switch(value)
+                {
+                    case ProductRelationTypes.GenericProduct:
+                        TypeLabel = "Generic Product";
+                        Factor1Label = "First Factor";
+                        Factor2Label = "Second Factor";
+                        ProductLabel = "Product";
+                        break;
+                    case ProductRelationTypes.EqualGroups:
+                        TypeLabel = "Equal Groups";
+                        Factor1Label = "Number of Groups";
+                        Factor2Label = "Items Per Group";
+                        ProductLabel = "Total Items";
+                        break;
+                    case ProductRelationTypes.Area:
+                        TypeLabel = "Array";
+                        Factor1Label = "Width";
+                        Factor2Label = "Height";
+                        ProductLabel = "Area";
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Register the RelationType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(ProductRelationTypes), ProductRelationTypes.GenericProduct);
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>

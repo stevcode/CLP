@@ -20,6 +20,12 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
+        <ComboBox Grid.Row="0" Grid.Column="0" Name="TypeComboBox" HorizontalAlignment="Center"
+                  SelectionChanged="ComboBox_SelectionChanged" SelectedValuePath="Content" >
+            <ComboBoxItem >Generic Product</ComboBoxItem>
+            <ComboBoxItem >Equal Groups</ComboBoxItem>
+            <ComboBoxItem >Area</ComboBoxItem>
+        </ComboBox>
         <Label Grid.Row="0" Grid.Column="1" Content="Value" HorizontalAlignment="Center" />
         <Label Grid.Row="0" Grid.Column="2" Content="Given?" HorizontalAlignment="Center" />
 

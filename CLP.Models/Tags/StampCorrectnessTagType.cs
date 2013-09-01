@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
 
 namespace CLP.Models
 {
     [Serializable]
-    public class PageDefinitionTagType : ModelBase, TagType
+    public class StampCorrectnessTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private PageDefinitionTagType()
+        private StampCorrectnessTagType()
         {
-            Name = "Page Definition";
+            Name = "Stamp Correctness";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
+            AccessLevels.Add(Tag.AccessLevels.Teacher);
             AccessLevels.Add(Tag.AccessLevels.Researcher);
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();
+            ValueOptions.Add(new TagOptionValue("Correct"));
+            ValueOptions.Add(new TagOptionValue("Incorrect"));
 
         }
 
@@ -31,18 +30,19 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected PageDefinitionTagType(SerializationInfo info, StreamingContext context)
+        protected StampCorrectnessTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-        #endregion
+
+        #endregion //Constructors
 
         #region Properties
+
 
         public string Name
         {
             get { return GetValue<string>(NameProperty); }
             set { SetValue(NameProperty, value); }
         }
-
 
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "");
 
@@ -77,13 +77,8 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
-
         #endregion
 
-        #region Methods
-
-        #endregion
-
-        public static PageDefinitionTagType Instance = new PageDefinitionTagType();
+        public static StampCorrectnessTagType Instance = new StampCorrectnessTagType();
     }
 }

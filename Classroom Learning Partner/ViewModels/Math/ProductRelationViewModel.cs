@@ -179,5 +179,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the ProductGiven property so it is known in the class.
         /// </summary>
         public static readonly PropertyData ProductGivenProperty = RegisterProperty("ProductGiven", typeof(Boolean));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Model")]
+        public ProductRelation.ProductRelationTypes RelationType
+        {
+            get { return GetValue<ProductRelation.ProductRelationTypes>(RelationTypeProperty); }
+            set { SetValue(RelationTypeProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the RelationType property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(ProductRelation.ProductRelationTypes));
     }
 }

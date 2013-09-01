@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="TaggingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PageDefinitionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Classroom Learning Partner\Classroom Learning Partner.csproj">
