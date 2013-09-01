@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -24,6 +23,7 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
+            MirrorDisplay = new CLPMirrorDisplay();
             AddPage(new CLPPage());
         }
 
@@ -99,10 +99,32 @@ namespace CLP.Models
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
-            set { SetValue(CreationDateProperty, value); }
+            private set { SetValue(CreationDateProperty, value); }
         }
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
+
+        /// <summary>
+        /// The MirrorDisplay of the notebook.
+        /// </summary>
+        public CLPMirrorDisplay MirrorDisplay
+        {
+            get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }
+            private set { SetValue(MirrorDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+
+        /// <summary>
+        /// A list of all other displays in the notebook.
+        /// </summary>
+        public ObservableCollection<ICLPDisplay> Displays
+        {
+            get { return GetValue<ObservableCollection<ICLPDisplay>>(DisplaysProperty); }
+            set { SetValue(DisplaysProperty, value); }
+        }
+
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<ICLPDisplay>), () => new ObservableCollection<ICLPDisplay>());
 
         #endregion
 
