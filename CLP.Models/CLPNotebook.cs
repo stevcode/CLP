@@ -23,8 +23,8 @@ namespace CLP.Models
         {
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
-            MirrorDisplay = new CLPMirrorDisplay();
             AddPage(new CLPPage());
+            MirrorDisplay = new CLPMirrorDisplay {ParentNotebookID = UniqueID, CurrentPage = Pages.FirstOrDefault()};
         }
 
         /// <summary>
@@ -41,13 +41,38 @@ namespace CLP.Models
 
         #region Properties
 
-        public String UserName
+        /// <summary>
+        /// DateTime the notebook was created.
+        /// </summary>
+        public DateTime CreationDate
         {
-            get { return GetValue<string>(UserNameProperty); }
-            set { SetValue(UserNameProperty, value); }
+            get { return GetValue<DateTime>(CreationDateProperty); }
+            private set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData UserNameProperty = RegisterProperty("UserName", typeof(String), "NoName");
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
+
+        /// <summary>
+        /// UniqueID assigned to the notebook.
+        /// </summary>
+        public string UniqueID
+        {
+            get { return GetValue<string>(UniqueIDProperty); }
+            private set { SetValue(UniqueIDProperty, value); }
+        }
+
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
+
+        /// <summary>
+        /// Name of notebook.
+        /// </summary>
+        public string NotebookName
+        {
+            get { return GetValue<string>(NotebookNameProperty); }
+            set { SetValue(NotebookNameProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
 
         /// <summary>
         /// Gets the list of CLPPages in the notebook.
@@ -70,39 +95,6 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(Dictionary<string, ObservableCollection<ICLPPage>>), () => new Dictionary<string, ObservableCollection<ICLPPage>>());
-
-        /// <summary>
-        /// Name of notebook.
-        /// </summary>
-        public string NotebookName
-        {
-            get { return GetValue<string>(NotebookNameProperty); }
-            set { SetValue(NotebookNameProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
-
-        /// <summary>
-        /// UniqueID assigned to the notebook.
-        /// </summary>
-        public string UniqueID
-        {
-            get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
-        }
-
-        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), Guid.NewGuid().ToString());
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public DateTime CreationDate
-        {
-            get { return GetValue<DateTime>(CreationDateProperty); }
-            private set { SetValue(CreationDateProperty, value); }
-        }
-
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
         /// The MirrorDisplay of the notebook.
@@ -130,6 +122,12 @@ namespace CLP.Models
 
         #region Methods
 
+        public void AddDisplay(ICLPDisplay display)
+        {
+            display.ParentNotebookID = UniqueID;
+            Displays.Add(display);
+        }
+
         public void AddPage(ICLPPage page)
         {
             page.ParentNotebookID = UniqueID;
@@ -139,16 +137,9 @@ namespace CLP.Models
 
         public void InsertPageAt(int index, ICLPPage page)
         {
+            page.ParentNotebookID = UniqueID;
             Pages.Insert(index, page);
             GenerateSubmissionViews(page.UniqueID);
-        }
-
-        private void GenerateSubmissionViews(string pageUniqueID)
-        {
-            if(!Submissions.ContainsKey(pageUniqueID))
-            {
-                Submissions.Add(pageUniqueID, new ObservableCollection<ICLPPage>());
-            }
         }
 
         public void RemovePageAt(int index)
@@ -166,7 +157,8 @@ namespace CLP.Models
 
         public ICLPPage GetPageAt(int pageIndex, int submissionIndex)
         {
-            if(submissionIndex < -1) return null;
+            if(submissionIndex < -1)
+                return null;
             if(submissionIndex == -1)
             {
                 try
@@ -184,6 +176,14 @@ namespace CLP.Models
             catch(Exception)
             {
                 return null;
+            }
+        }
+
+        private void GenerateSubmissionViews(string pageUniqueID)
+        {
+            if(!Submissions.ContainsKey(pageUniqueID))
+            {
+                Submissions.Add(pageUniqueID, new ObservableCollection<ICLPPage>());
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Catel.Data;
 using Catel.MVVM;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -13,8 +14,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DisplayListPanelViewModel"/> class.
         /// </summary>
-        public DisplayListPanelViewModel()
+        public DisplayListPanelViewModel(CLPNotebook notebook)
         {
+            Notebook = notebook;
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
         }
 
@@ -23,6 +25,34 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         /// <value>The title.</value>
         public override string Title { get { return "DisplayListPanelVM"; } }
+
+        #region Model
+
+        /// <summary>
+        /// The Model for this ViewModel.
+        /// </summary>
+        [Model]
+        public CLPNotebook Notebook
+        {
+            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+
+        /// <summary>
+        /// A property mapped to a property on the Model Notebook.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public CLPMirrorDisplay MirrorDisplay
+        {
+            get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }
+            set { SetValue(MirrorDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+
+        #endregion //Model
 
         #region IPanel Members
 
@@ -95,7 +125,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(LinkedPanelProperty, value); }
         }
 
-        public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel), null);
+        public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel));
 
         #endregion
 

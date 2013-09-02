@@ -21,7 +21,7 @@ namespace ConsoleScripts
 
                     if (studentNotebook != null)
                     {
-                        Console.WriteLine("Student Notebook Open: " + studentNotebook.UserName);
+                      //  Console.WriteLine("Student Notebook Open: " + studentNotebook.UserName);
                         var submission = studentNotebook.Pages[pageIndex];
 
                         teacherNotebook.AddStudentSubmission(submission.UniqueID, submission);

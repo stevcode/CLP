@@ -215,7 +215,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
-
         }
 
         public void ResizePage()

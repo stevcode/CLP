@@ -152,6 +152,24 @@
                               LargeImageSource="..\Images\NextPage.png"
                               Command="{Binding NextPageCommand}" />
 
+                <RibbonToggleButton LargeImageSource="..\Images\GridDisplay.png"
+                                    IsChecked="{Binding DisplayPanelVisibility}"
+                                    Visibility="{Binding InstructorVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Displays" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Displays" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
             </RibbonGroup>
 
             <RibbonGroup Header="Tools"
@@ -362,7 +380,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Projected Displays"
+            <!--<RibbonGroup Header="Projected Displays"
                          Visibility="{Binding InstructorVisibility}">
 
                 <RibbonButton Label="Send To Projector"
@@ -414,7 +432,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="History">
                 

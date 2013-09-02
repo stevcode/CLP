@@ -324,12 +324,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool GridDisplaysVisibility
+        public bool DisplayPanelVisibility
         {
-            get { return GetValue<bool>(GridDisplaysVisibilityProperty); }
+            get { return GetValue<bool>(DisplayPanelVisibilityProperty); }
             set
             {
-                SetValue(GridDisplaysVisibilityProperty, value);
+                SetValue(DisplayPanelVisibilityProperty, value);
                 if(App.MainWindowViewModel != null && App.MainWindowViewModel.SelectedWorkspace != null && App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
                 {
                     (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).DisplayListPanel;
@@ -338,7 +338,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData GridDisplaysVisibilityProperty = RegisterProperty("GridDisplaysVisibility", typeof(bool), false);
+        public static readonly PropertyData DisplayPanelVisibilityProperty = RegisterProperty("DisplayPanelVisibility", typeof(bool), false);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1357,7 +1357,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageIDs.Add(pageID);
                     try
                     {
-                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+                       // App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
                     }
                     catch(System.Exception)
                     {
@@ -1379,7 +1379,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     try
                     {
-                        App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+                      //  App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
                     }
                     catch(System.Exception)
                     {

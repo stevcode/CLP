@@ -1,12 +1,12 @@
-﻿namespace Classroom_Learning_Partner.Views
-{
-    using Catel.Windows.Controls;
-    using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
+namespace Classroom_Learning_Partner.Views
+{
     /// <summary>
     /// Interaction logic for DisplayListPanelView.xaml.
     /// </summary>
-    public partial class DisplayListPanelView : UserControl
+    public partial class DisplayListPanelView
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DisplayListPanelView"/> class.
@@ -16,7 +16,7 @@
             InitializeComponent();
         }
 
-        protected override System.Type GetViewModelType()
+        protected override Type GetViewModelType()
         {
             return typeof(DisplayListPanelViewModel);
         }

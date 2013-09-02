@@ -46,13 +46,13 @@ namespace CLP.Models
         /// <summary>
         /// UniqueID of the notebook the Display belongs to.
         /// </summary>
-        public string ParentNotebookUniqueID
+        public string ParentNotebookID
         {
-            get { return GetValue<string>(ParentNotebookUniqueIDProperty); }
-            set { SetValue(ParentNotebookUniqueIDProperty, value); }
+            get { return GetValue<string>(ParentNotebookIDProperty); }
+            set { SetValue(ParentNotebookIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentNotebookUniqueIDProperty = RegisterProperty("ParentNotebookUniqueID", typeof(string), string.Empty);
+        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string), string.Empty);
 
         /// <summary>
         /// Time the display was created.

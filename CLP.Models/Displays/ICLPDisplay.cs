@@ -7,7 +7,7 @@ namespace CLP.Models
     public interface ICLPDisplay
     {
         string UniqueID { get; set; }
-        string ParentNotebookUniqueID { get; set; }
+        string ParentNotebookID { get; set; }
         DateTime CreationDate { get; set; }
         ObservableCollection<DateTime> ProjectionTimesHistory { get; set; }
         ObservableCollection<string> DisplayPageIDs { get; set; }

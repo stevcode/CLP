@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -40,9 +39,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
+
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             LeftPanel = NotebookPagesPanel;
-            SubmissionPages = new ObservableCollection<ICLPPage>();
+            DisplayListPanel = new DisplayListPanelViewModel(notebook);
+            RightPanel = DisplayListPanel;
+
             GridDisplays = new ObservableCollection<GridDisplayViewModel>();
             LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
             SelectedDisplay = LinkedDisplay;
@@ -93,10 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
             FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
-
         }
-
-
 
         public string WorkspaceName
         {
@@ -239,7 +238,7 @@ namespace Classroom_Learning_Partner.ViewModels
             } 
         }
 
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>));
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
 
 
         /// <summary>
@@ -322,7 +321,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RightPanelProperty, value); }
         }
 
-        public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel), null);
+        public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel));
 
         /// <summary>
         /// Left side Panel.
@@ -333,7 +332,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(LeftPanelProperty, value); }
         }
 
-        public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel), null);
+        public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel));
 
         /// <summary>
         /// NotebookPagesPanel.
@@ -344,7 +343,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NotebookPagesPanelProperty, value); }
         }
 
-        public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel), null);
+        public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
         /// <summary>
         /// DisplayPanel.
@@ -355,7 +354,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DisplayListPanelProperty, value); }
         }
 
-        public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel), new DisplayListPanelViewModel());
+        public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel));
 
         /// <summary>
         /// HistoryPanel.
@@ -416,12 +415,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
                 page.PageHeight += 200;
                 ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
-
-                double yDifference = page.PageHeight - CLPPage.LANDSCAPE_HEIGHT;
-
-                double times = yDifference / 200;
-
-                Logger.Instance.WriteToLog("[METRICS]: PageLength Increased " + times + " times on page " + page.PageIndex);
             }
         }
 
