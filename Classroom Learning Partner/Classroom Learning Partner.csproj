@@ -184,6 +184,7 @@
     <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
+    <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -252,6 +253,9 @@
     </Compile>
     <Compile Include="Views\Displays\MirrorDisplayPreviewView.xaml.cs">
       <DependentUpon>MirrorDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\MirrorDisplayView.xaml.cs">
+      <DependentUpon>MirrorDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
@@ -388,6 +392,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\MirrorDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\MirrorDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

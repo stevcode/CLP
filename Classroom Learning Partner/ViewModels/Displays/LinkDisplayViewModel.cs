@@ -24,22 +24,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Interface
 
-        public string DisplayName
-        {
-            get { return "LinkedDisplay"; }
-        }
-
-        /// <summary>
-        /// Unique ID of Display. Not really applicable for MirrorDisplay as a notebook should only need 1 MirrorDisplay.
-        /// </summary>
-        public string DisplayID
-        {
-            get { return GetValue<string>(DisplayIDProperty); }
-            set { SetValue(DisplayIDProperty, value); }
-        }
-
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
-
         /// <summary>
         /// If Display is currently being projected.
         /// </summary>

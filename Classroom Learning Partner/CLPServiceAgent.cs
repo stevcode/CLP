@@ -53,10 +53,11 @@ namespace Classroom_Learning_Partner
             return views[0];
         }
 
-        public IViewModel[] GetViewModelsFromModel(IModel model)
+        public List<IViewModel> GetViewModelsFromModel(IModel model)
         {
             var viewModelManger = ServiceLocator.Default.ResolveType<IViewModelManager>();
-            return viewModelManger.GetViewModelsOfModel(model);
+            var result = viewModelManger.GetViewModelsOfModel(model).ToList();
+            return result;
         }
 
         #region Notebook
