@@ -174,7 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnCurrentDisplayChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
             var displayListPanelViewModel = sender as DisplayListPanelViewModel;
-            if(args.NewValue == null || displayListPanelViewModel == null)
+            if(args.NewValue == null || displayListPanelViewModel == null || App.CurrentUserMode != App.UserMode.Instructor)
             {
                 return;
             }
@@ -184,6 +184,12 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["GrayBorderColor"].ToString();
             displayListPanelViewModel.MirrorDisplaySelectedColor = color;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
+            }
         }
 
         #endregion //Bindings
@@ -214,6 +220,12 @@ namespace Classroom_Learning_Partner.ViewModels
             var color = dict["MainColor"].ToString();
             MirrorDisplaySelectedColor = color;
             CurrentDisplay = null;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay = notebookWorkspaceViewModel.MirrorDisplay;
+            }
         }
 
         /// <summary>

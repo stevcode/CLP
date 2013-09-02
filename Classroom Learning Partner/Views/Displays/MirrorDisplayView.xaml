@@ -17,54 +17,71 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
-            Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
-        <ScrollViewer x:Name="MirrorDisplayScroller" 
-                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
-                      Padding="0,0,8,0" Margin="0,0,-33,0">
-            <ScrollViewer.Resources>
-                <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-            </ScrollViewer.Resources>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ScrollChanged">
-                    <catel:EventToCommand Command="{Binding PageScrollCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Grid Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
+    <StackPanel Orientation="Horizontal">
 
-                <Control>
-                    <Control.Resources>
+        <TextBlock Text="{Binding CurrentPage.Submitter.FullName}" 
+                                  Foreground="{StaticResource MainColor}"
+                                  FontWeight="Bold" VerticalAlignment="Bottom">
+            <TextBlock.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBlock.LayoutTransform>
+        </TextBlock>
+        
+        <Border BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
+                Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
+            <ScrollViewer x:Name="MirrorDisplayScroller" 
+                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
+                          Padding="0,0,8,0" Margin="0,0,-33,0">
+                <ScrollViewer.Resources>
+                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                </ScrollViewer.Resources>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ScrollChanged">
+                        <catel:EventToCommand Command="{Binding PageScrollCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Grid Width="{Binding DimensionWidth}" Height="{Binding DimensionHeight}">
 
-                        <ControlTemplate x:Key="CLPPageTemplate">
-                            <views:CLPPageView DataContext="{Binding CurrentPage}" />
-                        </ControlTemplate>
+                    <Control>
+                        <Control.Resources>
 
-                        <ControlTemplate x:Key="CLPAnimationPageTemplate">
-                            <views:CLPAnimationPageView DataContext="{Binding CurrentPage}" />
-                        </ControlTemplate>
+                            <ControlTemplate x:Key="CLPPageTemplate">
+                                <views:CLPPageView DataContext="{Binding CurrentPage}" />
+                            </ControlTemplate>
 
-                    </Control.Resources>
+                            <ControlTemplate x:Key="CLPAnimationPageTemplate">
+                                <views:CLPAnimationPageView DataContext="{Binding CurrentPage}" />
+                            </ControlTemplate>
 
-                    <Control.Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Style.Triggers>
+                        </Control.Resources>
 
-                                <!-- CLPPage trigger -->
-                                <DataTrigger Binding="{Binding CurrentPage, Converter={StaticResource TypeToStringConverter}}" Value="CLPPage">
-                                    <Setter Property="Template" Value="{StaticResource CLPPageTemplate}" />
-                                </DataTrigger>
+                        <Control.Style>
+                            <Style TargetType="{x:Type Control}">
+                                <Style.Triggers>
 
-                                <!-- CLPAnimationPage trigger -->
-                                <DataTrigger Binding="{Binding CurrentPage, Converter={StaticResource TypeToStringConverter}}" Value="CLPAnimationPage">
-                                    <Setter Property="Template" Value="{StaticResource CLPAnimationPageTemplate}" />
-                                </DataTrigger>
+                                    <!-- CLPPage trigger -->
+                                    <DataTrigger Binding="{Binding CurrentPage, Converter={StaticResource TypeToStringConverter}}" Value="CLPPage">
+                                        <Setter Property="Template" Value="{StaticResource CLPPageTemplate}" />
+                                    </DataTrigger>
 
-                            </Style.Triggers>
-                        </Style>
-                    </Control.Style>
-                </Control>
+                                    <!-- CLPAnimationPage trigger -->
+                                    <DataTrigger Binding="{Binding CurrentPage, Converter={StaticResource TypeToStringConverter}}" Value="CLPAnimationPage">
+                                        <Setter Property="Template" Value="{StaticResource CLPAnimationPageTemplate}" />
+                                    </DataTrigger>
 
-            </Grid>
-        </ScrollViewer>
-    </Border>
+                                </Style.Triggers>
+                            </Style>
+                        </Control.Style>
+                    </Control>
+
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </StackPanel>
+
 </catel:UserControl>

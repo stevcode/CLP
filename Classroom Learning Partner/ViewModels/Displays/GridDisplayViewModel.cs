@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Catel.Data;
 using Catel.MVVM;
@@ -13,14 +14,42 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public GridDisplayViewModel(CLPGridDisplay gridDisplay)
         {
-            DisplayedPages = new ObservableCollection<ICLPPage>();
-            DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
+            GridDisplay = gridDisplay;
+            Pages.CollectionChanged += Pages_CollectionChanged;
 
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
             SendDisplayToProjectorCommand = new Command(OnSendDisplayToProjectorCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
+
+        #region Model
+
+        /// <summary>
+        /// The Model for this ViewModel.
+        /// </summary>
+        [Model(SupportIEditableObject = false)]
+        public CLPGridDisplay GridDisplay
+        {
+            get { return GetValue<CLPGridDisplay>(GridDisplayProperty); }
+            set { SetValue(GridDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(CLPGridDisplay));
+
+        /// <summary>
+        /// A property mapped to a property on the Model GridDisplay.
+        /// </summary>
+        [ViewModelToModel("GridDisplay")]
+        public ObservableCollection<ICLPPage> Pages
+        {
+            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
+        }
+
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
+
+        #endregion //Model
 
         #region Interface
 
@@ -50,17 +79,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
 
-        /// <summary>
-        /// Currently Displayed pages in the GridDisplay.
-        /// </summary>
-        public ObservableCollection<ICLPPage> DisplayedPages
-        {
-            get { return GetValue<ObservableCollection<ICLPPage>>(DisplayedPagesProperty); }
-            set { SetValue(DisplayedPagesProperty, value); }
-        }
-
-        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<ICLPPage>));
-
         #endregion //Bindings
 
         #region Methods
@@ -68,12 +86,12 @@ namespace Classroom_Learning_Partner.ViewModels
         //From Interface IDisplayViewModel
         public void AddPageToDisplay(ICLPPage page)
         {
-            DisplayedPages.Add(page);
+            GridDisplay.AddPageToDisplay(page);
         }
 
-        void DisplayedPages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UGridRows = DisplayedPages.Count < 3 ? 1 : 0;
+            UGridRows = Pages.Count < 3 ? 1 : 0;
         }
 
         #endregion //Methods
@@ -90,7 +108,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public void OnRemovePageFromGridDisplayCommandExecute(ICLPPage page)
         {
-            DisplayedPages.Remove(page);
+            GridDisplay.RemovePageFromDisplay(page);
         }
 
         /// <summary>
