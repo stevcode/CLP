@@ -52,7 +52,7 @@ namespace CLP.Models
             private set { SetValue(UniqueIDProperty, value); }
         }
 
-        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string), null);
+        public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string));
 
         /// <summary>
         /// Full Name of the Person, delimited by spaces.
@@ -100,7 +100,7 @@ namespace CLP.Models
             set { SetValue(GroupNameProperty, value); }
         }
 
-        public static readonly PropertyData GroupNameProperty = RegisterProperty("GroupName", typeof(string), "");
+        public static readonly PropertyData GroupNameProperty = RegisterProperty("GroupName", typeof(string), string.Empty);
 
         /// <summary>
         /// FriendlyName of the Machine the Person is currently using.
@@ -111,7 +111,7 @@ namespace CLP.Models
             set { SetValue(CurrentMachineNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), null);
+        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string));
 
         /// <summary>
         /// Stringified URI address of the endpoint of this student's StudentService.
@@ -122,7 +122,7 @@ namespace CLP.Models
             set { SetValue(CurrentMachineAddressProperty, value); }
         }
 
-        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string), null);
+        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string));
 
         #endregion //Change From Session to Session
 
