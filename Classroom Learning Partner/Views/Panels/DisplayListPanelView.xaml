@@ -24,9 +24,10 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
 
-                            <!--Border that will appear on GridDisplay when Show Grid Display option is selected-->
+                            <!--Border that will appear on GridDisplay when Show Grid Display option is selected
+                            Background="{Binding IsOnProjector, Converter={StaticResource BackgroundConverter}}"-->
                             <Border BorderBrush="White"
-                            Background="{Binding IsOnProjector, Converter={StaticResource BackgroundConverter}}"
+                            Background="Pink"
                             CornerRadius="8"
                             BorderThickness="3"
                             x:Name="IconBorder"
@@ -48,6 +49,13 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
+    <!--<i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
+                                                          PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>-->
+
     <Border Background="{StaticResource GrayBackgroundColor}" 
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="5,0,0,0">
         
@@ -66,7 +74,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Padding="5"
+                <TextBlock Grid.Column="0" Margin="5"
                            Text="Mirror Display" 
                            Foreground="{StaticResource MainColor}"
                            FontWeight="Bold" VerticalAlignment="Bottom">
@@ -80,8 +88,15 @@
                     </TextBlock.LayoutTransform>
                 </TextBlock>
                 
-                <views:CLPPagePreviewView Grid.Column="1" Padding="5"
+                <views:CLPPagePreviewView Grid.Column="1" Margin="5"
                                           DataContext="{Binding MirrorDisplay.CurrentPage}" />
+
+                <Rectangle Grid.Column="1" Margin="5"
+                           Stroke="{StaticResource MainColor}"
+                           StrokeThickness="2"
+                           Fill="Transparent">
+                    
+                </Rectangle>
                 
                 <ToggleButton Grid.Column="2" Padding="5"
                               Width="64" Height="64">
@@ -89,27 +104,39 @@
                 </ToggleButton>
             </Grid>
             
-            <Separator Grid.Row="1" />
+            <Separator Grid.Row="1" Height="5" />
 
             <ListBox Grid.Row="2"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.SelectedWorkspace.GridDisplays, UpdateSourceTrigger=PropertyChanged}"
+                     ItemsSource="{Binding Displays}"
                      ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
                      SelectionMode="Single">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border MinHeight="100">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                          PassEventArgsToCommand="True" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                            <ItemsControl Margin="10" Background="Transparent"
-                                x:Name="itemsControl" Grid.Column="1"
-                                ItemsSource="{Binding DisplayedPages}">
+                            <TextBlock Grid.Column="0" Margin="5"
+                                       Text="Grid Display" 
+                                       Foreground="{StaticResource MainColor}"
+                                       FontWeight="Bold" VerticalAlignment="Bottom">
+                                <TextBlock.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="-90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+
+                            <ItemsControl Grid.Column="1" Margin="5"
+                                          ItemsSource="{Binding Pages}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <UniformGrid />
@@ -122,12 +149,25 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                        </Border>
+                            <Rectangle Grid.Column="1" Margin="5"
+                                       Stroke="{StaticResource MainColor}"
+                                       StrokeThickness="2"
+                                       Fill="Transparent">
+                            </Rectangle>
+
+                            <ToggleButton Grid.Column="2" Padding="5"
+                                          VerticalAlignment="Top"
+                                          Width="32" Height="32">
+                                <Image Source="pack://application:,,,/Images/Projector.png" />
+                            </ToggleButton>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
             
-            <Button Grid.Row="3" VerticalAlignment="Bottom">
+            <Button Grid.Row="3" VerticalAlignment="Bottom"
+                    Height="32"
+                    Command="{Binding AddGridDisplayCommand}">
                 Add Grid Display
             </Button>
             

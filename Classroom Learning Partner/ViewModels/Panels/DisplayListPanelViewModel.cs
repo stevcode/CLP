@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Catel.Data;
 using Catel.MVVM;
@@ -17,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public DisplayListPanelViewModel(CLPNotebook notebook)
         {
             Notebook = notebook;
+            AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
         }
 
@@ -51,6 +53,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+
+        /// <summary>
+        /// A property mapped to a property on the Model Notebook.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public ObservableCollection<ICLPDisplay> Displays
+        {
+            get { return GetValue<ObservableCollection<ICLPDisplay>>(DisplaysProperty); }
+            set { SetValue(DisplaysProperty, value); }
+        }
+
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<ICLPDisplay>));
 
         #endregion //Model
 
@@ -130,6 +144,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion
 
         #region Commands
+
+        /// <summary>
+        /// Adds a GridDisplay to the notebook.
+        /// </summary>
+        public Command AddGridDisplayCommand { get; private set; }
+
+        private void OnAddGridDisplayCommandExecute()
+        {
+            Notebook.AddDisplay(new CLPGridDisplay());
+        }     
 
         /// <summary>
         /// Gets the SetCurrentPageCommand command.

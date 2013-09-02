@@ -34,17 +34,26 @@ namespace CLP.Models
         public ICLPPage CurrentPage
         {
             get { return GetValue<ICLPPage>(CurrentPageProperty); }
-            set
-            {
-                SetValue(CurrentPageProperty, value);
-                DisplayPageIDs.Clear();
-                DisplayPageIDs.Add(value.UniqueID);
-            }
+            private set { SetValue(CurrentPageProperty, value); }
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), includeInSerialization:false);
 
         #endregion //Properties
 
+        #region Methods
+
+        public override void AddPageToDisplay(ICLPPage page)
+        {
+            DisplayPageIDs.Clear();
+            DisplayPageIDs.Add(page.UniqueID);
+            CurrentPage = page;
+        }
+
+        public override void RemovePageFromDisplay(ICLPPage page)
+        {
+        }
+
+        #endregion //Methods
     }
 }

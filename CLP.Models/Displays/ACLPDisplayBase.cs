@@ -99,5 +99,13 @@ namespace CLP.Models
         public static readonly PropertyData ForeignPagesProperty = RegisterProperty("ForeignPages", typeof(List<ICLPPage>), () => new List<ICLPPage>());
 
         #endregion //Properties
+
+        #region Methods
+
+        public abstract void AddPageToDisplay(ICLPPage page);
+
+        public abstract void RemovePageFromDisplay(ICLPPage page);
+
+        #endregion //Methods
     }
 }

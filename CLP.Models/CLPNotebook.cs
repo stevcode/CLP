@@ -24,7 +24,8 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             UniqueID = Guid.NewGuid().ToString();
             AddPage(new CLPPage());
-            MirrorDisplay = new CLPMirrorDisplay {ParentNotebookID = UniqueID, CurrentPage = Pages.FirstOrDefault()};
+            MirrorDisplay = new CLPMirrorDisplay {ParentNotebookID = UniqueID};
+            MirrorDisplay.AddPageToDisplay(Pages.FirstOrDefault());
         }
 
         /// <summary>
