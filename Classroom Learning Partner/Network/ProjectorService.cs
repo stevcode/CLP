@@ -49,16 +49,16 @@ namespace Classroom_Learning_Partner
                 {
                     if(App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        if(displayType == "LinkedDisplay")
+                        if(displayType == "MirrorDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
+                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).MirrorDisplay;
 
                             AddPageToDisplay(displayPages[0]);
                         }
                         else
                         {
                             bool isNewDisplay = true;
-                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Displays)
                             {
                                 //if(gridDisplay.DisplayID == displayType)
                                 //{
@@ -239,21 +239,28 @@ namespace Classroom_Learning_Partner
         {
             if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
             {
-                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
                 {
-                    var currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                    var currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
                     if(currentPage.UniqueID == pageID)
                     {
                         if(submissionID == "" || submissionID == currentPage.SubmissionID)
                         {
-                            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
-                            var views = viewManager.GetViewsOfViewModel((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel);
+                            var mirrorDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay;
+                            var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
+                            var mirrorDisplayView =
+                                CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault());
+
+                            if(mirrorDisplayView == null)
+                            {
+                                return;
+                            }
 
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                             (DispatcherOperationCallback)delegate
                                 {
-                                (views[0] as LinkedDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
+                                    (mirrorDisplayView as MirrorDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
                                 return null;
                             }, null);
                         }

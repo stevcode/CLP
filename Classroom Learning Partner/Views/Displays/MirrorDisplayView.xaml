@@ -5,7 +5,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   Background="DeepPink">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,7 +19,8 @@
 
     <Border BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
             Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="MirrorDisplayScroller" 
+                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
                       Padding="0,0,8,0" Margin="0,0,-33,0">
             <ScrollViewer.Resources>
                 <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>

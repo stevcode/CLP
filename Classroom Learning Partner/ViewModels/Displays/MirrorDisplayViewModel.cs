@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The Model for this ViewModel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public CLPMirrorDisplay MirrorDisplay
         {
             get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }

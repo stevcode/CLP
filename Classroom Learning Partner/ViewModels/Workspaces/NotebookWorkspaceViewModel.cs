@@ -33,42 +33,31 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public NotebookWorkspaceViewModel(CLPNotebook notebook)
         {
-            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
-            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
-
-            WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             Notebook = notebook;
+            SelectedDisplay = MirrorDisplay;
 
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             LeftPanel = NotebookPagesPanel;
             DisplayListPanel = new DisplayListPanelViewModel(notebook);
             RightPanel = DisplayListPanel;
 
-            GridDisplays = new ObservableCollection<GridDisplayViewModel>();
-            LinkedDisplay = new LinkedDisplayViewModel(Notebook.Pages[0]);
-            SelectedDisplay = LinkedDisplay;
+
+
+            WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             CurrentPage = Notebook.Pages[0];
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
             TopThumbnailsVisible = App.MainWindowViewModel.Ribbon.ThumbnailsTop;
             SideThumbnailsVisible = !TopThumbnailsVisible;
 
 
-            if(App.CurrentUserMode == App.UserMode.Instructor)
-            {
-                SelectedDisplay.IsOnProjector = true;
-                WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-            }
-            else if (App.CurrentUserMode == App.UserMode.Projector)
+            if(App.CurrentUserMode == App.UserMode.Projector)
             {
                 IsSideBarVisible = false;
             }
-            else
-            {
-                SelectedDisplay.IsOnProjector = false;
-            }
 
             //Notebook.GeneratePageIndexes(); //TODO: re-add GeneratePageIndexes for PageIndex return
+
+            #region Tag Stuff
 
             FilteredSubmissions = new CollectionViewSource();
             FilterTypes = new ObservableCollection<string>();
@@ -95,6 +84,12 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
             FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
+
+            #endregion //Tag Stuff
+
+            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
+            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
         }
 
         public string WorkspaceName
@@ -130,6 +125,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookPagesProperty = RegisterProperty("NotebookPages", typeof(ObservableCollection<ICLPPage>));
 
+        /// <summary>
+        /// A property mapped to a property on the Model Notebook.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public CLPMirrorDisplay MirrorDisplay
+        {
+            get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }
+            set { SetValue(MirrorDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+
+        /// <summary>
+        /// A property mapped to a property on the Model Notebook.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public ObservableCollection<ICLPDisplay> Displays
+        {
+            get { return GetValue<ObservableCollection<ICLPDisplay>>(DisplaysProperty); }
+            set { SetValue(DisplaysProperty, value); }
+        }
+
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<ICLPDisplay>));
+
         #endregion //Model
 
         #region Bindings
@@ -137,57 +156,18 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Displays
 
         /// <summary>
-        /// Collection of all available GridDisplays.
-        /// </summary>
-        public ObservableCollection<GridDisplayViewModel> GridDisplays
-        {
-            get { return GetValue<ObservableCollection<GridDisplayViewModel>>(GridDisplaysProperty); }
-            set { SetValue(GridDisplaysProperty, value); }
-        }
-
-        public static readonly PropertyData GridDisplaysProperty = RegisterProperty("GridDisplays", typeof(ObservableCollection<GridDisplayViewModel>));
-
-        /// <summary>
-        /// The MirrorDisplay of the Notebook.
-        /// </summary>
-        public LinkedDisplayViewModel LinkedDisplay
-        {
-            get { return GetValue<LinkedDisplayViewModel>(LinkedDisplayProperty); }
-            private set { SetValue(LinkedDisplayProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the LinkedDisplay property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData LinkedDisplayProperty = RegisterProperty("LinkedDisplay", typeof(LinkedDisplayViewModel));
-
-        /// <summary>
         /// The Currently Selected Display.
         /// </summary>
-        public IDisplayViewModel SelectedDisplay
+        public ICLPDisplay SelectedDisplay
         {
-            get { return GetValue<IDisplayViewModel>(SelectedDisplayProperty); }
-            set
-            {
-                SetValue(SelectedDisplayProperty, value);
-                if (SelectedDisplay != null)
-                {
-                    if (SelectedDisplay.IsOnProjector)
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-                    }
-                    else
-                    {
-                        WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-                    }
-                }
-            }
+            get { return GetValue<ICLPDisplay>(SelectedDisplayProperty); }
+            set { SetValue(SelectedDisplayProperty, value); }
         }
 
-        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(IDisplayViewModel));
+        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(ICLPDisplay));
 
         /// <summary>
-        /// Color of Dispaly Background.
+        /// Color of Workspace Background.
         /// </summary>
         public Brush WorkspaceBackgroundColor
         {
@@ -218,7 +198,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SideThumbnailsVisibleProperty = RegisterProperty("SideThumbnailsVisible", typeof(Boolean));
-
 
         #endregion //Displays
 
@@ -400,7 +379,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
         {
-            SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
+         //   SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
         }
 
         /// <summary>
@@ -410,11 +389,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMakePageLongerCommandExecute()
         {
-            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
             {
-                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
                 page.PageHeight += 200;
-                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).ResizePage();
+              //  ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as MirrorDisplayViewModel).ResizePage();
             }
         }
 
@@ -425,10 +404,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (propertyName == "IsAuthoring")
             {                
-                SelectedDisplay = LinkedDisplay;
+                SelectedDisplay = MirrorDisplay;
                 if ((viewModel as MainWindowViewModel).IsAuthoring)
                 {
-                    SelectedDisplay.IsOnProjector = false;
+                   // SelectedDisplay.IsOnProjector = false;
                     WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                 }
@@ -438,6 +417,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                 }
             }
+
             if (propertyName == "SideBarVisibility")
             {
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
@@ -448,9 +428,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;
                 IsSideBarVisible = !TopThumbnailsVisible;
             }
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-            
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName); 
         }
+
         public string getStudentsWithNoSubmissions()
         {
             ObservableCollection<string> UserNames = new ObservableCollection<string>();

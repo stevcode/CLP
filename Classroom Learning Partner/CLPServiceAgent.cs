@@ -179,6 +179,8 @@ namespace Classroom_Learning_Partner
                         }
                     }
 
+                    notebook.InitializeAfterDeserialize();
+
                     int count = 0;
                     foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
                     {

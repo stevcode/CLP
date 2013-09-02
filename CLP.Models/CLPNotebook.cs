@@ -38,6 +38,58 @@ namespace CLP.Models
         {
         }
 
+        public void InitializeAfterDeserialize()
+        {
+            var currentMirrorDisplayPageID = MirrorDisplay.DisplayPageIDs.FirstOrDefault();
+            if(currentMirrorDisplayPageID != null)
+            {
+                var currentMirrorDisplayPage = GetNotebookPageOrSubmissionByID(currentMirrorDisplayPageID);
+                if(currentMirrorDisplayPage == null)
+                {
+                    foreach(var page in MirrorDisplay.ForeignPages)
+                    {
+                        if(page.SubmissionType == SubmissionType.None && page.UniqueID == currentMirrorDisplayPageID)
+                        {
+                            currentMirrorDisplayPage = page;
+                            break;
+                        }
+                        if(page.SubmissionID == currentMirrorDisplayPageID)
+                        {
+                            currentMirrorDisplayPage = page;
+                            break;
+                        }
+                    }
+                }
+                MirrorDisplay.AddPageToDisplay(currentMirrorDisplayPage);
+            }
+
+            foreach(var display in Displays)
+            {
+                var gridDisplay = display as CLPGridDisplay;
+                foreach(var pageID in display.DisplayPageIDs)
+                {
+                    var newDisplayPage = GetNotebookPageOrSubmissionByID(pageID);
+                    if(newDisplayPage == null)
+                    {
+                        foreach(var page in display.ForeignPages)
+                        {
+                            if(page.SubmissionType == SubmissionType.None && page.UniqueID == currentMirrorDisplayPageID)
+                            {
+                                newDisplayPage = page;
+                                break;
+                            }
+                            if(page.SubmissionID == currentMirrorDisplayPageID)
+                            {
+                                newDisplayPage = page;
+                                break;
+                            }
+                        }
+                    }
+                    gridDisplay.Pages.Add(newDisplayPage);
+                }
+            }
+        }
+
         #endregion //Constructors
 
         #region Properties
@@ -238,6 +290,16 @@ namespace CLP.Models
             }
 
             return -1;
+        }
+
+        public ICLPPage GetNotebookPageOrSubmissionByID(string id)
+        {
+            foreach(var page in Pages.Where(page => page.UniqueID == id)) 
+            {
+                return page;
+            }
+
+            return Submissions.Values.SelectMany(submissions => submissions.Where(submission => submission.SubmissionID == id)).FirstOrDefault();
         }
 
         public void AddStudentSubmission(string pageID, ICLPPage submission)

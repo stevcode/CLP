@@ -47,7 +47,8 @@ namespace CLP.Models
 
         public override void AddPageToDisplay(ICLPPage page)
         {
-            DisplayPageIDs.Add(page.UniqueID);
+            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+            DisplayPageIDs.Add(pageID);
             Pages.Add(page);
         }
 

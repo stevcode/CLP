@@ -4,7 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
         <ResourceDictionary>
@@ -14,6 +14,7 @@
 
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
             <catel:IntToStringConverter x:Key="IntToString" />
+            <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
             <!--<conv:LastItemInCollectionConverter x:Key="LastItem" />-->
 
@@ -172,7 +173,7 @@
                                         <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                                <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -184,12 +185,12 @@
          HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="{Binding SideThumbnailsVisible, Converter={StaticResource BoolConverter}}"
          />
 
-            <Views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
+            <views:FilteredPagesSideBar x:Name="FilterSideBar" Grid.Column="2" Visibility="Collapsed" />
 
             <GridSplitter x:Name="SubmissionPagesSplitter" Grid.Column ="3" Background="#D4D4D4" Width="5"
         HorizontalAlignment="Center" VerticalAlignment="Stretch" Visibility="Collapsed"/>
 
-            <!-- Control that dynamically determines what Display to show -->
+            
             <Grid Grid.Column="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -216,7 +217,7 @@
                                             <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                                    <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                    <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                                 </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -229,38 +230,40 @@
                     </ListBox>
                 </Border>
                 <GridSplitter Grid.Row ="1" Background="#D4D4D4" Height="5" HorizontalAlignment="Stretch" Visibility="{Binding TopThumbnailsVisible, Converter={StaticResource BoolConverter}}"/>
-                <ContentControl Grid.Row="2" DataContext="{Binding SelectedDisplay, Mode=OneWay}" x:Name="Display" >
 
-                    <ContentControl.Resources>
+            <!-- Control that dynamically determines what Display to show -->
+            <Control Grid.Row="2">
 
-                        <ControlTemplate x:Key="LinkedDisplayTemplate">
-                            <Views:LinkedDisplayView />
-                        </ControlTemplate>
+                <Control.Resources>
 
-                        <ControlTemplate x:Key="GridDisplayTemplate">
-                            <Views:GridDisplayView />
-                        </ControlTemplate>
+                    <ControlTemplate x:Key="MirrorDisplayTemplate">
+                        <views:MirrorDisplayView DataContext="{Binding SelectedDisplay}"/>
+                    </ControlTemplate>
 
-                    </ContentControl.Resources>
+                    <ControlTemplate x:Key="GridDisplayTemplate">
+                        <views:GridDisplayView DataContext="{Binding SelectedDisplay}"/>
+                    </ControlTemplate>
 
-                    <ContentControl.Style>
-                        <Style TargetType="{x:Type ContentControl}">
-                            <Style.Triggers>
+                </Control.Resources>
 
-                                <!-- LinkedDisplay trigger -->
-                                <DataTrigger Binding="{Binding DisplayName}" Value="LinkedDisplay">
-                                    <Setter Property="Template" Value="{StaticResource LinkedDisplayTemplate}" />
-                                </DataTrigger>
+                <Control.Style>
+                    <Style TargetType="{x:Type Control}">
+                        <Style.Triggers>
 
-                                <!-- GridDisplay trigger -->
-                                <DataTrigger Binding="{Binding DisplayName}" Value="GridDisplay">
-                                    <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
-                                </DataTrigger>
+                            <!-- MirrorDisplay trigger -->
+                            <DataTrigger Binding="{Binding SelectedDisplay, Converter={StaticResource TypeToStringConverter}}" Value="CLPMirrorDisplay">
+                                <Setter Property="Template" Value="{StaticResource MirrorDisplayTemplate}" />
+                            </DataTrigger>
 
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
+                            <!-- GridDisplay trigger -->
+                            <DataTrigger Binding="{Binding SelectedDisplay, Converter={StaticResource TypeToStringConverter}}" Value="CLPGridDisplay">
+                                <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Control.Style>
+            </Control>
 
                 <Border Grid.Row="3" Height="30" Background="#F3F3F3" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.StudentVisibility}">
                     <Button Width="125"  BorderThickness="0" Margin="15,0,0,0" HorizontalAlignment="Left" Click="ToggleSubmissionHistory">
@@ -291,7 +294,7 @@
                                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                        <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -320,7 +323,7 @@
                                                 <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                                        <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -340,11 +343,11 @@
                 <ContentControl.Resources>
 
                     <ControlTemplate x:Key="WebcamPanelTemplate">
-                        <Views:WebcamPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
+                        <views:WebcamPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="DisplayListPanelTemplate">
-                        <Views:DisplayListPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
+                        <views:DisplayListPanelView Visibility="{Binding IsVisible, Converter={StaticResource BoolConverter}}" />
                     </ControlTemplate>
 
                 </ContentControl.Resources>

@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public ProductRelation Model
         {
             get { return GetValue<ProductRelation>(ModelProperty); }

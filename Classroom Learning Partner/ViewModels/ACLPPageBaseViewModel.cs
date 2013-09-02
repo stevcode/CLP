@@ -382,8 +382,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.SetPageBorderColor();
-
             var nonBackgroundPageObjects = Page.PageObjects.Where(pageObject => pageObject.IsBackground != true).ToList();
             foreach(var pageObject in nonBackgroundPageObjects)
             {
