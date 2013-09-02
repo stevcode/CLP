@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -11,36 +11,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the GridDisplayViewModel class.
         /// </summary>
-        public GridDisplayViewModel()
-            : base()
+        public GridDisplayViewModel(CLPGridDisplay gridDisplay)
         {
             DisplayedPages = new ObservableCollection<ICLPPage>();
             DisplayedPages.CollectionChanged += DisplayedPages_CollectionChanged;
 
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+            SendDisplayToProjectorCommand = new Command(OnSendDisplayToProjectorCommandExecute);
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
 
-        #region Bindings
-
         #region Interface
-
-        public string DisplayName
-        {
-            get { return "GridDisplay"; }
-        }
-
-        /// <summary>
-        /// Unique ID of Display.
-        /// </summary>
-        public string DisplayID
-        {
-            get { return GetValue<string>(DisplayIDProperty); }
-            set { SetValue(DisplayIDProperty, value); }
-        }
-
-        public static readonly PropertyData DisplayIDProperty = RegisterProperty("DisplayID", typeof(string), Guid.NewGuid().ToString());
 
         /// <summary>
         /// If Display is currently being projected.
@@ -54,6 +36,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
 
         #endregion //Interface
+
+        #region Bindings
 
         /// <summary>
         /// Number of Rows in the UniformGrid
@@ -87,16 +71,9 @@ namespace Classroom_Learning_Partner.ViewModels
             DisplayedPages.Add(page);
         }
 
-        void DisplayedPages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void DisplayedPages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (DisplayedPages.Count < 3)
-            {
-                UGridRows = 1;
-            }
-            else
-            {
-                UGridRows = 0;
-            }
+            UGridRows = DisplayedPages.Count < 3 ? 1 : 0;
         }
 
         #endregion //Methods
@@ -114,6 +91,76 @@ namespace Classroom_Learning_Partner.ViewModels
         public void OnRemovePageFromGridDisplayCommandExecute(ICLPPage page)
         {
             DisplayedPages.Remove(page);
+        }
+
+        /// <summary>
+        /// Sends the current Display to the projector.
+        /// </summary>
+        public Command SendDisplayToProjectorCommand { get; private set; }
+
+        private void OnSendDisplayToProjectorCommandExecute()
+        {
+            //if(App.Network.ProjectorProxy != null)
+            //{
+            //    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
+            //    foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
+            //    {
+            //        gridDisplay.IsOnProjector = false;
+            //    }
+
+            //    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
+            //    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
+
+            //    List<string> pageIDs = new List<string>();
+            //    if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
+            //    {
+            //        var page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+            //        string pageID;
+            //        if(page.SubmissionType != SubmissionType.None)
+            //        {
+            //            pageID = page.SubmissionID;
+            //        }
+            //        else
+            //        {
+            //            pageID = page.UniqueID;
+            //        }
+            //        pageIDs.Add(pageID);
+            //        try
+            //        {
+            //            // App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
+            //        }
+            //        catch(System.Exception)
+            //        {
+
+            //        }
+            //    }
+            //    else
+            //    {
+            //        foreach(var page in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
+            //        {
+            //            if(page.SubmissionType != SubmissionType.None)
+            //            {
+            //                pageIDs.Add(page.SubmissionID);
+            //            }
+            //            else
+            //            {
+            //                pageIDs.Add(page.UniqueID);
+            //            }
+            //        }
+            //        try
+            //        {
+            //            //  App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
+            //        }
+            //        catch(System.Exception)
+            //        {
+
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Projector NOT Available");
+            //}
         }
 
         #endregion //Commands

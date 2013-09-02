@@ -98,6 +98,17 @@ namespace CLP.Models
 
         public static readonly PropertyData ForeignPagesProperty = RegisterProperty("ForeignPages", typeof(List<ICLPPage>), () => new List<ICLPPage>());
 
+        /// <summary>
+        /// Signifies a Display has been trashed by a teacher and is being hidden unless in Authoring Mode.
+        /// </summary>
+        public bool IsTrashed
+        {
+            get { return GetValue<bool>(IsTrashedProperty); }
+            set { SetValue(IsTrashedProperty, value); }
+        }
+
+        public static readonly PropertyData IsTrashedProperty = RegisterProperty("IsTrashed", typeof(bool), false);
+
         #endregion //Properties
 
         #region Methods

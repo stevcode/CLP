@@ -1,0 +1,35 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.GridDisplayPreviewView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ItemsControl Background="Transparent" ItemsSource="{Binding Pages}">
+
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid Rows="{Binding UGridRows}" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border BorderThickness="1" BorderBrush="{StaticResource GrayBorderColor}" Margin="2">
+                        <views:CLPPagePreviewView DataContext="{Binding}"
+                                                  HorizontalAlignment="Right" VerticalAlignment="Top" />
+                    </Border>
+                </Grid>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+
+    </ItemsControl>
+
+</catel:UserControl>

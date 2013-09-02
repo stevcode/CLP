@@ -1,0 +1,9 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.MirrorDisplayPreviewView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+
+    <views:CLPPagePreviewView DataContext="{Binding CurrentPage}" />
+
+</catel:UserControl>

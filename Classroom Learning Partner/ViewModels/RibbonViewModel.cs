@@ -117,11 +117,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
             GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute);
 
-            //Displays
-            SendDisplayToProjectorcommand = new Command(OnSendDisplayToProjectorcommandExecute);
-            SwitchToLinkedDisplayCommand = new Command(OnSwitchToLinkedDisplayCommandExecute);
-            CreateNewGridDisplayCommand = new Command(OnCreateNewGridDisplayCommandExecute);
-
             //History
             ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
@@ -1320,111 +1315,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsSentInfoVisibilityProperty = RegisterProperty("IsSentInfoVisibility", typeof(Visibility), Visibility.Collapsed);
 
         #endregion //Submission Command
-
-        #region Display Commands
-
-        /// <summary>
-        /// Sends the current Display to the projector.
-        /// </summary>
-        public Command SendDisplayToProjectorcommand { get; private set; }
-
-        private void OnSendDisplayToProjectorcommandExecute()
-        {
-            if(App.Network.ProjectorProxy != null)
-            {
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay.IsOnProjector = false;
-                foreach(var gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
-                {
-                    gridDisplay.IsOnProjector = false;
-                }
-
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector = true;
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-
-                List<string> pageIDs = new List<string>();
-                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is LinkedDisplayViewModel)
-                {
-                    var page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                    string pageID;
-                    if(page.SubmissionType != SubmissionType.None)
-                    {
-                        pageID = page.SubmissionID;
-                    }
-                    else
-                    {
-                        pageID = page.UniqueID;
-                    }
-                    pageIDs.Add(pageID);
-                    try
-                    {
-                       // App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayName, pageIDs);
-                    }
-                    catch(System.Exception)
-                    {
-
-                    }
-                }
-                else
-                {
-                    foreach(var page in ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as GridDisplayViewModel).DisplayedPages)
-                    {
-                        if(page.SubmissionType != SubmissionType.None)
-                        {
-                            pageIDs.Add(page.SubmissionID);
-                        }
-                        else
-                        {
-                            pageIDs.Add(page.UniqueID);
-                        }
-                    }
-                    try
-                    {
-                      //  App.Network.ProjectorProxy.SwitchProjectorDisplay((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.DisplayID, pageIDs);
-                    }
-                    catch(System.Exception)
-                    {
-
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Projector NOT Available");
-            }
-        }
-
-        /// <summary>
-        /// Switches to the Mirror Display.
-        /// </summary>
-        public Command SwitchToLinkedDisplayCommand { get; private set; }
-
-        private void OnSwitchToLinkedDisplayCommandExecute()
-        {
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).LinkedDisplay;
-            if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.IsOnProjector)
-            {
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = new SolidColorBrush(Colors.PaleGreen);
-            }
-            else
-            {
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-            }
-        }
-
-        /// <summary>
-        /// Creates a new Grid Display.
-        /// </summary>
-        public Command CreateNewGridDisplayCommand { get; private set; }
-
-        private void OnCreateNewGridDisplayCommandExecute()
-        {
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(new GridDisplayViewModel());
-            //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = null;
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays[(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Count - 1];
-            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-        }
-
-        #endregion //Display Commands
 
         #region HistoryCommands
 

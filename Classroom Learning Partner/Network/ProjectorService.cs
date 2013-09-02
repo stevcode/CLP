@@ -60,24 +60,24 @@ namespace Classroom_Learning_Partner
                             bool isNewDisplay = true;
                             foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays)
                             {
-                                if(gridDisplay.DisplayID == displayType)
-                                {
-                                    gridDisplay.DisplayedPages.Clear();
-                                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+                                //if(gridDisplay.DisplayID == displayType)
+                                //{
+                                //    gridDisplay.DisplayedPages.Clear();
+                                //    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
 
-                                    isNewDisplay = false;
-                                    break;
-                                }
+                                //    isNewDisplay = false;
+                                //    break;
+                                //}
                             }
 
                             if(isNewDisplay)
                             {
-                                GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
-                                newGridDisplay.DisplayID = displayType;
-                                newGridDisplay.DisplayedPages.Clear();
-                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
+                                //GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
+                                //newGridDisplay.DisplayID = displayType;
+                                //newGridDisplay.DisplayedPages.Clear();
+                                //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
 
-                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
+                                //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
                             }
 
                             foreach(var pageID in displayPages)

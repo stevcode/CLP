@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
@@ -15,7 +15,7 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
             <catel:IntToStringConverter x:Key="IntToString" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
-            <conv:LastItemInCollectionConverter x:Key="LastItem" />
+            <!--<conv:LastItemInCollectionConverter x:Key="LastItem" />-->
 
             <!-- NotebookPage with the Trigger for Selected -->
             <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">

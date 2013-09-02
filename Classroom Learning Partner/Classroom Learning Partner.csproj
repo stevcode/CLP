@@ -182,6 +182,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CLPServiceAgent.cs" />
+    <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
+    <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="ViewModels\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\CLPPageViewModel.cs" />
+    <Compile Include="ViewModels\Displays\MirrorDisplayViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
@@ -243,6 +246,12 @@
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
       <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
+      <DependentUpon>GridDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\MirrorDisplayPreviewView.xaml.cs">
+      <DependentUpon>MirrorDisplayPreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
@@ -371,6 +380,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\GridDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\MirrorDisplayPreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

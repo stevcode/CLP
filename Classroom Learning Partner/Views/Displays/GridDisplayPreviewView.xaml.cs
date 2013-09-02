@@ -6,9 +6,9 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>
     /// Interaction logic for GridDisplayView.xaml
     /// </summary>
-    public partial class GridDisplayView
+    public partial class GridDisplayPreviewView
     {
-        public GridDisplayView()
+        public GridDisplayPreviewView()
         {
             InitializeComponent();
         }

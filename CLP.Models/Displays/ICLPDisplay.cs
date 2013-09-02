@@ -12,6 +12,7 @@ namespace CLP.Models
         ObservableCollection<DateTime> ProjectionTimesHistory { get; set; }
         ObservableCollection<string> DisplayPageIDs { get; set; }
         List<ICLPPage> ForeignPages { get; set; }
+        bool IsTrashed { get; set; }
         void AddPageToDisplay(ICLPPage page);
         void RemovePageFromDisplay(ICLPPage page);
     }

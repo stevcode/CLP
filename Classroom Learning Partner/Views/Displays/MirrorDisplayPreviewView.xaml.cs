@@ -4,18 +4,18 @@ using Classroom_Learning_Partner.ViewModels;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for GridDisplayView.xaml
+    /// Interaction logic for MirrorDisplayPreviewView.xaml
     /// </summary>
-    public partial class GridDisplayView
+    public partial class MirrorDisplayPreviewView
     {
-        public GridDisplayView()
+        public MirrorDisplayPreviewView()
         {
             InitializeComponent();
         }
 
         protected override Type GetViewModelType()
         {
-            return typeof(GridDisplayViewModel);
+            return typeof(MirrorDisplayViewModel);
         }
     }
 }

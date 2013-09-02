@@ -4,7 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    Width="{Binding InitialWidth}">
     
     <UserControl.Resources>
@@ -13,34 +13,18 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BoolConverter"/>
-            <catel:IntToStringConverter x:Key="IntToString" />
-            <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
-            <conv:LastItemInCollectionConverter x:Key="LastItem" />
+            <!-- Converters -->
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
 
-            <!-- GridDisplay with the Trigger for Selected -->
+            <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
+            <conv:PageOrDisplaySelectionColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+
+            <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-
-                            <!--Border that will appear on GridDisplay when Show Grid Display option is selected
-                            Background="{Binding IsOnProjector, Converter={StaticResource BackgroundConverter}}"-->
-                            <Border BorderBrush="White"
-                            Background="Pink"
-                            CornerRadius="8"
-                            BorderThickness="3"
-                            x:Name="IconBorder"
-                            Margin="8,4,8,4">
-                                <ContentPresenter />
-                            </Border>
-
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsSelected" Value="true">
-                                    <Setter TargetName="IconBorder" Property="BorderBrush" Value="Black" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-
+                            <ContentPresenter />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -48,13 +32,6 @@
             
         </ResourceDictionary>
     </UserControl.Resources>
-
-    <!--<i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentGridDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                          PassEventArgsToCommand="True" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>-->
 
     <Border Background="{StaticResource GrayBackgroundColor}" 
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="5,0,0,0">
@@ -66,8 +43,8 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
-            <Grid Grid.Row="0">
+
+            <Grid Grid.Row="0" Background="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -76,7 +53,7 @@
                 
                 <TextBlock Grid.Column="0" Margin="5"
                            Text="Mirror Display" 
-                           Foreground="{StaticResource MainColor}"
+                           Foreground="{Binding MirrorDisplaySelectedColor}"
                            FontWeight="Bold" VerticalAlignment="Bottom">
                     <TextBlock.LayoutTransform>
                         <TransformGroup>
@@ -88,42 +65,57 @@
                     </TextBlock.LayoutTransform>
                 </TextBlock>
                 
-                <views:CLPPagePreviewView Grid.Column="1" Margin="5"
-                                          DataContext="{Binding MirrorDisplay.CurrentPage}" />
+                <views:MirrorDisplayPreviewView x:Name="MirrorDisplayPreviewView" Grid.Column="1" Margin="5"
+                                                DataContext="{Binding MirrorDisplay}" />
 
                 <Rectangle Grid.Column="1" Margin="5"
-                           Stroke="{StaticResource MainColor}"
+                           Stroke="{Binding MirrorDisplaySelectedColor}"
                            StrokeThickness="2"
                            Fill="Transparent">
-                    
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <catel:EventToCommand Command="{Binding SetMirrorDisplayCommand}"
+                                                  PassEventArgsToCommand="False" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </Rectangle>
                 
                 <ToggleButton Grid.Column="2" Padding="5"
-                              Width="64" Height="64">
-                    <Image Source="pack://application:,,,/Images/Projector.png" />
+                              Width="64" Height="64"
+                              IsChecked="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Grid>
+                                <Image Source="pack://application:,,,/Images/Projector.png" />
+                            </Grid>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
                 </ToggleButton>
             </Grid>
             
-            <Separator Grid.Row="1" Height="5" />
+            <Rectangle Grid.Row="1" Height="3"
+                       Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
 
             <ListBox Grid.Row="2"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Displays}"
+                     SelectedValue="{Binding CurrentDisplay}"
                      ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
                      SelectionMode="Single">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Background="{Binding ViewModel.IsOnProjector, ElementName=DisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
+                              Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Margin="5"
+                            <TextBlock x:Name="DisplayLabel" Grid.Column="0" Margin="5"
                                        Text="Grid Display" 
-                                       Foreground="{StaticResource MainColor}"
+                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        FontWeight="Bold" VerticalAlignment="Bottom">
                                 <TextBlock.LayoutTransform>
                                     <TransformGroup>
@@ -135,31 +127,40 @@
                                 </TextBlock.LayoutTransform>
                             </TextBlock>
 
-                            <ItemsControl Grid.Column="1" Margin="5"
-                                          ItemsSource="{Binding Pages}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <views:CLPPagePreviewView Margin="2" Background="White" DataContext="{Binding}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <views:GridDisplayPreviewView x:Name="DisplayPreviewView" Grid.Column="1" Margin="5"
+                                                          DataContext="{Binding}" />
 
                             <Rectangle Grid.Column="1" Margin="5"
-                                       Stroke="{StaticResource MainColor}"
+                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="2"
-                                       Fill="Transparent">
-                            </Rectangle>
+                                       Fill="Transparent" />
 
                             <ToggleButton Grid.Column="2" Padding="5"
                                           VerticalAlignment="Top"
-                                          Width="32" Height="32">
-                                <Image Source="pack://application:,,,/Images/Projector.png" />
+                                          Width="32" Height="32"
+                                          IsChecked="{Binding ViewModel.IsOnProjector, ElementName=DisplayPreviewView}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Grid>
+                                            <Image Source="pack://application:,,,/Images/Projector.png" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
                             </ToggleButton>
+
+                            <Button Grid.Column="2" Padding="5"
+                                    VerticalAlignment="Bottom"
+                                    Width="32" Height="32"
+                                    Command="{Binding DataContext.RemoveDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                    CommandParameter="{Binding}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Grid>
+                                            <Image Source="pack://application:,,,/Images/Trash.png" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
