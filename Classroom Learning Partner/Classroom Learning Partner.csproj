@@ -262,9 +262,6 @@
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeArrayView.xaml.cs">
-      <DependentUpon>CustomizeArrayView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Modal Windows\PageDefinitionView.xaml.cs">
       <DependentUpon>PageDefinitionView.xaml</DependentUpon>
     </Compile>
@@ -433,10 +430,6 @@
     <Page Include="Views\Modal Windows\PageTopicWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\CustomizeArrayView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>

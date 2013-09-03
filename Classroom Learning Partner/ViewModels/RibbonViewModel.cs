@@ -2071,49 +2071,52 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<string> InsertArrayCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertArrayCommand command is executed.
-        /// </summary>
         private void OnInsertArrayCommandExecute(string useDivisions)
         {
-            var arrayCreationView = new ArrayCreationView();
+            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
             arrayCreationView.ShowDialog();
 
-            ////pop up number pads to get dimensions
-            //CustomizeArrayView dimensionChooser = new CustomizeArrayView();
-            ////CustomizeDataTableView dimensionChooser = new CustomizeDataTableView();
-            //dimensionChooser.Owner = Application.Current.MainWindow;
-            //dimensionChooser.ShowDialog();
-            //if(dimensionChooser.DialogResult == true)
-            //{
-            //    //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+            if(arrayCreationView.DialogResult == true)
+            {
+                int rows;
+                try
+                {
+                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+                }
+                catch(FormatException)
+                {
+                    rows = 1;
+                }
 
-            //    int rows = 1;
-            //    try { rows = Convert.ToInt32(dimensionChooser.Rows.Text); }
-            //    catch(FormatException) { rows = 1; }
+                int columns;
+                try
+                {
+                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+                }
+                catch(FormatException)
+                {
+                    columns = 1;
+                }
 
-            //    int cols = 1;
-            //    try { cols = Convert.ToInt32(dimensionChooser.Columns.Text); }
-            //    catch(FormatException) { cols = 1; }
+                var array = new CLPArray(rows, columns, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
 
-            //    CLPArray array = new CLPArray(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+                switch(useDivisions)
+                {
+                    case "TRUE":
+                        array.IsDivisionBehaviorOn = true;
+                        break;
+                    case "FALSE":
+                        array.IsDivisionBehaviorOn = false;
+                        break;
+                }
 
-            //    if (useDivisions == "TRUE")
-            //    {
-            //        array.IsDivisionBehaviorOn = true;
-            //    }
-            //    else if (useDivisions == "FALSE")
-            //    {
-            //        array.IsDivisionBehaviorOn = false;
-            //    }
+                CLPServiceAgent.Instance.AddPageObjectToPage(array);
+            }
 
-            //    CLPServiceAgent.Instance.AddPageObjectToPage(array);
-            //}
-
-            //if(EditingMode != InkCanvasEditingMode.Ink)
-            //{
-            //    SetPenCommand.Execute();
-            //}
+            if(EditingMode != InkCanvasEditingMode.Ink)
+            {
+                SetPenCommand.Execute();
+            }
         }
 
         /// <summary>
