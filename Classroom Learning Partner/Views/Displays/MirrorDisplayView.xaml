@@ -17,11 +17,16 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <TextBlock Text="{Binding CurrentPage.Submitter.FullName}" 
-                                  Foreground="{StaticResource MainColor}"
-                                  FontWeight="Bold" VerticalAlignment="Bottom">
+        <TextBlock Grid.Column="0" 
+                   Text="{Binding CurrentPage.Submitter.FullName}"              
+                   Foreground="{StaticResource MainColor}"   
+                   FontWeight="Bold" VerticalAlignment="Bottom">
             <TextBlock.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -32,7 +37,8 @@
             </TextBlock.LayoutTransform>
         </TextBlock>
         
-        <Border BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
+        <Border Grid.Column="1" 
+                BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
                 Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
             <ScrollViewer x:Name="MirrorDisplayScroller" 
                           HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
@@ -82,6 +88,7 @@
                 </Grid>
             </ScrollViewer>
         </Border>
-    </StackPanel>
+        
+    </Grid>
 
 </catel:UserControl>

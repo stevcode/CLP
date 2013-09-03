@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             GridDisplay = gridDisplay;
             Pages.CollectionChanged += Pages_CollectionChanged;
+            UGridRows = Pages.Count < 3 ? 1 : 0;
 
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
             SendDisplayToProjectorCommand = new Command(OnSendDisplayToProjectorCommandExecute);

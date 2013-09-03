@@ -248,13 +248,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageHeight = CurrentPage.PageHeight;
             var pageWidth = CurrentPage.PageWidth;
             var scrolledAspectRatio = pageWidth / pageHeight;
+            const double PAGE_MARGIN = 10.0;
 
-            var borderWidth = DisplayWidthHeight.Item1 - 20;
+            var borderWidth = DisplayWidthHeight.Item1 - PAGE_MARGIN;
             var borderHeight = borderWidth / pageAspectRatio;
 
-            if(borderHeight > DisplayWidthHeight.Item2 - 20)
+            if(borderHeight > DisplayWidthHeight.Item2 - PAGE_MARGIN)
             {
-                borderHeight = DisplayWidthHeight.Item2 - 20;
+                borderHeight = DisplayWidthHeight.Item2 - PAGE_MARGIN;
                 borderWidth = borderHeight * pageAspectRatio;
             }
 
