@@ -1,0 +1,181 @@
+﻿<Window x:Class="Classroom_Learning_Partner.Views.ArrayCreationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create Array" Height="300" Width="600"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Background="{StaticResource GrayBackgroundColor}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <!-- Array Dimensions -->
+        <Grid Grid.Column="0" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Margin="10"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontWeight="Bold" FontSize="20"
+                       Text="What size is the array?" />
+            
+            <Grid Grid.Row="1"  Margin="10,0,10,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="5"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               FontWeight="Bold" Foreground="Red"
+                               Text="Columns:" />
+
+                    <TextBox x:Name="Columns" 
+                             Grid.Column="1" Margin="5"
+                             Width="{Binding ElementName=NumberOfArrays, Path=ActualWidth}"
+                             Height="{Binding ElementName=NumberOfArrays, Path=ActualHeight}"
+                             Foreground="Red" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
+                             Text="" FontSize="24" TextAlignment="Right" />
+
+                </Grid>
+
+                <Grid Grid.Column="0" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="5"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold" Foreground="Blue"
+                               Text="Rows:" />
+
+                    <TextBox x:Name="Rows" 
+                             Grid.Column="1" Margin="5"
+                             Width="{Binding ElementName=NumberOfArrays, Path=ActualWidth}"
+                             Height="{Binding ElementName=NumberOfArrays, Path=ActualHeight}"
+                             Foreground="Blue" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
+                             Text="" FontSize="24" TextAlignment="Right" />
+
+                </Grid>
+
+                <Rectangle Grid.Column="1" Grid.Row="1" Margin="5"
+                           Stroke="Black" StrokeThickness="2" Fill="White" />
+
+            </Grid>
+
+        </Grid>
+        
+        <Rectangle Grid.Column="0" Grid.Row="1" Margin="10,0"
+                   Stroke="{StaticResource GrayEdgeColor}" StrokeThickness="3" Fill="{StaticResource GrayEdgeColor}" />
+
+        <!-- Parameterization -->
+        <Grid Grid.Column="0" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" Grid.Row="0" Margin="10"
+                       VerticalAlignment="Center"
+                       Text="How many arrays to you want?" />
+
+            <TextBox x:Name="NumberOfArrays" 
+                     Grid.Column="1" Grid.Row="0" Margin="5"
+                     BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
+                     Text="" FontSize="24" TextAlignment="Right" />
+
+            <TextBlock Grid.Column="0" Grid.Row="1" Margin="10"
+                       VerticalAlignment="Center"
+                       Text="How do you want the arrays arranged?" />
+
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <ToggleButton Grid.Column="0" Margin="5"
+                              Height="32" Width="32">
+                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                </ToggleButton>
+
+                <ToggleButton Grid.Column="1" Margin="5"
+                              Height="32" Width="32">
+                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                </ToggleButton>
+
+            </Grid>
+
+        </Grid>
+
+        <!-- Keypad -->
+        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="KeyPadGrid" Grid.Row="0" Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Click="ValueButton_Click" Content="1" />
+                <Button Grid.Column="1" Grid.Row="0" Click="ValueButton_Click" Content="2" />
+                <Button Grid.Column="2" Grid.Row="0" Click="ValueButton_Click" Content="3" />
+                <Button Grid.Column="0" Grid.Row="1" Click="ValueButton_Click" Content="4" />
+                <Button Grid.Column="1" Grid.Row="1" Click="ValueButton_Click" Content="5" />
+                <Button Grid.Column="2" Grid.Row="1" Click="ValueButton_Click" Content="6" />
+                <Button Grid.Column="0" Grid.Row="2" Click="ValueButton_Click" Content="7" />
+                <Button Grid.Column="1" Grid.Row="2" Click="ValueButton_Click" Content="8" />
+                <Button Grid.Column="2" Grid.Row="2" Click="ValueButton_Click" Content="9" />
+                <Button Grid.Column="0" Grid.Row="3" Click="ValueButton_Click" Content="0" />
+                <Button Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Click="BackspaceButton_Click" Content="Backspace" />
+            </Grid>
+
+            <Button Grid.Row="1" Height="30" Width="100"
+                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Content="Enter" Margin="10"
+                    Click="EnterButton_Click" />
+
+        </Grid>
+
+    </Grid>
+</Window>

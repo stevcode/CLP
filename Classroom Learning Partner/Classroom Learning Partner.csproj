@@ -259,6 +259,9 @@
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
+      <DependentUpon>ArrayCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\CustomizeArrayView.xaml.cs">
       <DependentUpon>CustomizeArrayView.xaml</DependentUpon>
     </Compile>
@@ -416,6 +419,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
