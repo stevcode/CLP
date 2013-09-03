@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPAudio : CLPPageObjectBase
+    public class CLPAudio : ACLPPageObjectBase
     {
         #region Constructor
 

@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPSnapTileContainer : CLPPageObjectBase
+    public class CLPSnapTileContainer : ACLPPageObjectBase
     {
         #region Variables
 

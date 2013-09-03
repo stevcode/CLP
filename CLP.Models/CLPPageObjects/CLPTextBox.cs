@@ -5,7 +5,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPTextBox : CLPPageObjectBase
+    public class CLPTextBox : ACLPPageObjectBase
     {
         #region Constructor & destructor
         /// <summary>

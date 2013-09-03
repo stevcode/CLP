@@ -61,7 +61,7 @@ namespace CLP.Models
             ParentID = "";
             CanAcceptStrokes = true;
             CanAcceptPageObjects = true;
-            CLPPageObjectBase.ApplyDistinctPosition(this);
+            ACLPPageObjectBase.ApplyDistinctPosition(this);
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPStrokePathContainer : CLPPageObjectBase
+    public class CLPStrokePathContainer : ACLPPageObjectBase
     {
 
         public static string Type = "CLPStrokePathContainer";

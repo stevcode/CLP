@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPShape : CLPPageObjectBase
+    public class CLPShape : ACLPPageObjectBase
     {
         public enum CLPShapeType
         {

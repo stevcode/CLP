@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public abstract class ACLPInkRegion : CLPPageObjectBase
+    public abstract class ACLPInkRegion : ACLPPageObjectBase
     {
         #region Variables
 

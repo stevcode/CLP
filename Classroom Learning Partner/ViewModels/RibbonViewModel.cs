@@ -2098,19 +2098,32 @@ namespace Classroom_Learning_Partner.ViewModels
                     columns = 1;
                 }
 
-                var array = new CLPArray(rows, columns, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-
-                switch(useDivisions)
+                int numberOfArrays;
+                try
                 {
-                    case "TRUE":
-                        array.IsDivisionBehaviorOn = true;
-                        break;
-                    case "FALSE":
-                        array.IsDivisionBehaviorOn = false;
-                        break;
+                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                }
+                catch(FormatException)
+                {
+                    numberOfArrays = 1;
                 }
 
-                CLPServiceAgent.Instance.AddPageObjectToPage(array);
+                foreach(var index in Enumerable.Range(1, numberOfArrays))
+                {
+                    var array = new CLPArray(rows, columns, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+
+                    switch(useDivisions)
+                    {
+                        case "TRUE":
+                            array.IsDivisionBehaviorOn = true;
+                            break;
+                        case "FALSE":
+                            array.IsDivisionBehaviorOn = false;
+                            break;
+                    }
+
+                    CLPServiceAgent.Instance.AddPageObjectToPage(array);
+                }
             }
 
             if(EditingMode != InkCanvasEditingMode.Ink)

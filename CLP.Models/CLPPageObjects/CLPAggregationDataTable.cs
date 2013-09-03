@@ -191,7 +191,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    public class CLPAggregationDataTable : CLPPageObjectBase, ISubmittable
+    public class CLPAggregationDataTable : ACLPPageObjectBase, ISubmittable
     {
         #region Variables
 

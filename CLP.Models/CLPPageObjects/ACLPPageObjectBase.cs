@@ -10,14 +10,14 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    abstract public class CLPPageObjectBase : ModelBase, ICLPPageObject
+    abstract public class ACLPPageObjectBase : ModelBase, ICLPPageObject
     {
         #region Constructors
 
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        protected CLPPageObjectBase(ICLPPage page)
+        protected ACLPPageObjectBase(ICLPPage page)
         {
             ParentPage = page;
             ParentPageID = page.UniqueID;
@@ -31,7 +31,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPPageObjectBase(SerializationInfo info, StreamingContext context)
+        protected ACLPPageObjectBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors

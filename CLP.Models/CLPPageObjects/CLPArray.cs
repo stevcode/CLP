@@ -91,7 +91,7 @@ namespace CLP.Models
     }
 
     [Serializable]
-    public class CLPArray : CLPPageObjectBase
+    public class CLPArray : ACLPPageObjectBase
     {
         public double LargeLabelLength
         {

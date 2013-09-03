@@ -9,7 +9,7 @@ namespace CLP.Models
     /// </summary>
     [Serializable]
     [AllowNonSerializableMembers]
-    public class CLPImage : CLPPageObjectBase
+    public class CLPImage : ACLPPageObjectBase
     {
         #region Variables
         #endregion
