@@ -2617,24 +2617,34 @@ namespace Classroom_Learning_Partner.ViewModels
             // Clear out any old stamp-related Tags
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name)
+                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == StampSwappedFactorsTagType.Instance.Name)
                 {
                     tags.Remove(tag);
                 }
             }
 
-            Tag correctnessTag = GetStampCorrectnessTag(groupings, relation);
+            ObservableCollection<Tag> newTags = GetStampTags(groupings, relation);
 
-            tags.Add(correctnessTag);
+            foreach(Tag tag in newTags)
+            {
+                tags.Add(tag);
+            }
         }
 
         /// <summary>
         /// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
         /// </summary>
-        public Tag GetStampCorrectnessTag(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
+        public ObservableCollection<Tag> GetStampTags(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
         {
-            Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
-            tag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
+            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, StampCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
+
+            Tag swappedFactorsTag = new Tag(Tag.Origins.Generated, StampSwappedFactorsTagType.Instance);
+            Tag partsPerStampTag = new Tag(Tag.Origins.Generated, StampPartsPerStampTagType.Instance);
+            Tag groupingTypeTag = new Tag(Tag.Origins.Generated, StampGroupingTypeTagType.Instance);
+            Tag wrongOperatorTag = new Tag(Tag.Origins.Generated, StampWrongOperatorTagType.Instance);
 
             foreach(CLPGrouping grouping in groupings)
             {
@@ -2646,12 +2656,29 @@ namespace Classroom_Learning_Partner.ViewModels
                     int partsPerObject = objList[0].Parts;
                     int partsPerGroup = objectsPerGroup * partsPerObject;
 
+                    partsPerStampTag.Value.Add(new TagOptionValue(partsPerObject.ToString() + (partsPerObject == 1 ? " part" : " parts")));
+                    groupingTypeTag.AddTagOptionValue(new TagOptionValue(grouping.GroupingType));
+
                     // We're a little stricter about correctness if it's specifically an equal-grouping problem
                     if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
                     {
                         if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
                         {
-                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            tags.Add(partsPerStampTag);
+                            tags.Add(groupingTypeTag);
+                            break;
+                        }
+                        else
+                        {
+                            if(relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString()))
+                            {
+                                swappedFactorsTag.AddTagOptionValue(new TagOptionValue("Swapped"));
+                                tags.Add(swappedFactorsTag);
+                                tags.Add(partsPerStampTag);
+                                tags.Add(groupingTypeTag);
+                                break;
+                            }
                         }
                     }
                     else
@@ -2659,12 +2686,36 @@ namespace Classroom_Learning_Partner.ViewModels
                         if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
                             (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
                         {
-                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            tags.Add(partsPerStampTag);
+                            tags.Add(groupingTypeTag);
+                            break;
                         }
+                    }
+
+                    // If we haven't hit a break yet, then this isn't looking good. Check for a student using the wrong operator
+                    ObservableCollection<int> givens = new ObservableCollection<int>();
+                    if(relation.Factor1Given) { givens.Add(Convert.ToInt32(relation.Factor1)); }
+                    if(relation.Factor2Given) { givens.Add(Convert.ToInt32(relation.Factor2)); }
+                    if(relation.ProductGiven) { givens.Add(Convert.ToInt32(relation.Product)); }
+
+                    ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                    numbersUsed.Add(numGroups);
+                    numbersUsed.Add(partsPerGroup);
+                    numbersUsed.Add(numGroups * partsPerGroup);
+
+                    if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                    {
+                        wrongOperatorTag.AddTagOptionValue(new TagOptionValue("Wrong"));
+                        tags.Add(wrongOperatorTag);
+                        tags.Add(partsPerStampTag);
+                        tags.Add(groupingTypeTag);
+                        break;
                     }
                 }
             }
-            return tag;
+            tags.Add(correctnessTag); // A correctness tag always gets added
+            return tags;
         }
 
         /// <summary>

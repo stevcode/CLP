@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class StampCorrectnessTagType : ModelBase, TagType
+    public class StampWrongOperatorTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private StampCorrectnessTagType()
+        private StampWrongOperatorTagType()
         {
-            Name = "Stamps: Correctness";
+            Name = "Stamps: Wrong Operator";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -20,8 +20,7 @@ namespace CLP.Models
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("Correct"));
-            ValueOptions.Add(new TagOptionValue("Incorrect"));
+            ValueOptions.Add(new TagOptionValue("Wrong"));
 
         }
 
@@ -30,7 +29,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected StampCorrectnessTagType(SerializationInfo info, StreamingContext context)
+        protected StampWrongOperatorTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -79,6 +78,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static StampCorrectnessTagType Instance = new StampCorrectnessTagType();
+        public static StampWrongOperatorTagType Instance = new StampWrongOperatorTagType();
     }
 }

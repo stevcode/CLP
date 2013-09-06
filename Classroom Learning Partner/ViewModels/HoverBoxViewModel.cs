@@ -48,7 +48,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(Tag tag in Page.PageTags)
                 {
-
                     if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                     {
 

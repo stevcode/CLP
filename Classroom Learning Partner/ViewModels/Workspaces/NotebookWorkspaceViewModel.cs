@@ -94,6 +94,10 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
             FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
+            FilterTypes.Add(StampSwappedFactorsTagType.Instance.Name);
+            FilterTypes.Add(StampWrongOperatorTagType.Instance.Name);
+            FilterTypes.Add(StampPartsPerStampTagType.Instance.Name);
+            FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
 
         }
 
