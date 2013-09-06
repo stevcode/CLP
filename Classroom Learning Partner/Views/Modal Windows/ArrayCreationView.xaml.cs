@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Views
         public ArrayCreationView()
         {
             InitializeComponent();
-            _focusedTextBox = Columns;
+            _focusedTextBox = Rows;
             _focusedTextBox.Focus();
             _focusedTextBox.CaretIndex = _focusedTextBox.Text.Length;
             _focusedTextBox.Background = new SolidColorBrush(Colors.LightGray);
@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.Views
 
             if(_focusedTextBox == null)
             {
-                _focusedTextBox = Columns;
+                _focusedTextBox = Rows;
                 _focusedTextBox.Focus();
                 _focusedTextBox.CaretIndex = _focusedTextBox.Text.Length;
                 _focusedTextBox.Background = new SolidColorBrush(Colors.LightGray);
@@ -48,7 +48,7 @@ namespace Classroom_Learning_Partner.Views
         {
             if(_focusedTextBox == null)
             {
-                _focusedTextBox = Columns;
+                _focusedTextBox = Rows;
                 _focusedTextBox.Focus();
                 _focusedTextBox.CaretIndex = _focusedTextBox.Text.Length;
                 _focusedTextBox.Background = new SolidColorBrush(Colors.LightGray);

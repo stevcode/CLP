@@ -105,7 +105,7 @@ namespace CLP.Models
         {
             get
             {
-                return IsLabelVisible ? 60 : 0;
+                return IsLabelVisible ? 50 : 0;
             }
         }
 

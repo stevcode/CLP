@@ -319,23 +319,19 @@
             </Grid.ColumnDefinitions>
 
             <!--Large Labels-->
-            <Label Grid.Row="0" Grid.Column="1"
+            <Label Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
                    Content="{Binding Columns}" FontSize="28"
                    HorizontalContentAlignment="Center" VerticalContentAlignment="Top" 
                    Height="{Binding PageObject.LargeLabelLength}"
                    Width="{Binding PageObject.ArrayWidth}"
-                   Foreground="{StaticResource TopLabelColor}"
-                   MouseMove="ArrayTopHitBox_MouseMove"
-                   MouseLeave="ArrayDivisionHitBox_MouseLeave" />
+                   Foreground="{StaticResource TopLabelColor}" />
 
-            <Label Grid.Column="0" Grid.Row="1"
+            <Label Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                    Content="{Binding Rows}" FontSize="28"
                    VerticalContentAlignment="Center" HorizontalContentAlignment="Left"  
                    Width="{Binding PageObject.LargeLabelLength}"
                    Height="{Binding PageObject.ArrayHeight}"
-                   Foreground="{StaticResource LeftLabelColor}"
-                   MouseMove="ArrayLeftHitBox_MouseMove"
-                   MouseLeave="ArrayDivisionHitBox_MouseLeave" />
+                   Foreground="{StaticResource LeftLabelColor}" />
             
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
@@ -383,6 +379,15 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
+            
+            <!--Divisor Hitboxes-->
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Tag="DivisionHitBox"
+                       MouseMove="ArrayLeftHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
+                       Width="20" Height="{Binding ArrayHeight}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
                        HorizontalAlignment="Right"
@@ -390,8 +395,15 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="20" 
-                       Height="{Binding ArrayHeight, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" />
+                       Width="20" Height="{Binding ArrayHeight}" />
+
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Tag="DivisionHitBox"
+                       MouseMove="ArrayTopHitBox_MouseMove"
+                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
+                       Height="20" Width="{Binding ArrayWidth}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
                        HorizontalAlignment="Left"
@@ -399,8 +411,7 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="20" 
-                       Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" />
+                       Height="20" Width="{Binding ArrayWidth}" />
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 
@@ -426,14 +437,14 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
-                            <Grid Canvas.Left="{Binding DataContext.PageObject.LargeLabelLength, 
+                            <Grid Canvas.Left="{Binding DataContext.PageObject.SmallLabelLength, 
                                                         RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                         Converter={StaticResource NegativeLengthSubtractConverter},
                                                         ConverterParameter=0}" 
                                   Height="{Binding Length}" 
                                   Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <Label FontSize="22" Foreground="{StaticResource LeftLabelColor}" IsHitTestVisible="False"
-                                       VerticalContentAlignment="Center" HorizontalContentAlignment="Right" 
+                                       VerticalContentAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right"
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
                                 <Rectangle Tag="LeftLabelHitBox" Fill="Transparent" MouseMove="LeftDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
@@ -475,14 +486,14 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
-                            <Grid Canvas.Top="{Binding DataContext.PageObject.LargeLabelLength, 
+                            <Grid Canvas.Top="{Binding DataContext.PageObject.SmallLabelLength, 
                                                        RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                        Converter={StaticResource NegativeLengthSubtractConverter},
                                                        ConverterParameter=0}" 
-                                  Width="{Binding Length}" 
+                                  Width="{Binding Length}"
                                   Height="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <Label FontSize="22" Foreground="{StaticResource TopLabelColor}" IsHitTestVisible="False"
-                                       HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" 
+                                       HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" VerticalAlignment="Bottom"
                                        Content="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" />
                                 <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.SmallLabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"

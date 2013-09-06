@@ -5,8 +5,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   Background="DeepPink">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
