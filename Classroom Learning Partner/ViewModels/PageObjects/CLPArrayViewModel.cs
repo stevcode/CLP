@@ -347,9 +347,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var bottomDiff = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.Height));
                 if(bottomDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from below
                 {
-                    thisArray.Width = otherArray.Width;
-                    thisArray.Height = thisArray.Width / (thisArray.Columns * 1.0 / thisArray.Rows);
-                    thisArray.OnResized();
+                    var squareSize = otherArray.ArrayWidth/otherArray.Columns;
+                    thisArray.SizeArrayToGridLevel(squareSize);
 
                     if(!otherArray.HorizontalDivisions.Any())
                     {
@@ -372,9 +371,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Rows += thisArray.Rows;
-                    otherArray.ArrayHeight += thisArray.ArrayHeight;
-                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
-                    otherArray.CalculateGridLines();
+                    otherArray.SizeArrayToGridLevel(squareSize, false);
+                    otherArray.IsDivisionBehaviorOn = true;
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                     break;
@@ -383,9 +381,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (otherArray.YPosition + otherArray.LargeLabelLength));
                 if(topDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from above
                 {
-                    thisArray.Width = otherArray.Width;
-                    thisArray.Height = thisArray.Width / (thisArray.Columns * 1.0 / thisArray.Rows);
-                    thisArray.OnResized();
+                    var squareSize = otherArray.ArrayWidth / otherArray.Columns;
+                    thisArray.SizeArrayToGridLevel(squareSize);
 
                     ObservableCollection<CLPArrayDivision> tempDivisions;
                     if(otherArray.HorizontalDivisions.Any())
@@ -419,10 +416,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Rows += thisArray.Rows;
-                    otherArray.ArrayHeight += thisArray.ArrayHeight;
-                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
                     otherArray.YPosition = thisArray.YPosition;
-                    otherArray.CalculateGridLines();
+                    otherArray.SizeArrayToGridLevel(squareSize, false);
+                    otherArray.IsDivisionBehaviorOn = true;
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                     break;
@@ -431,8 +427,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var leftDiff = Math.Abs(thisArray.XPosition + thisArray.Width - (otherArray.XPosition + otherArray.LargeLabelLength));
                 if(leftDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from left
                 {
-                    thisArray.Height = otherArray.Height;
-                    thisArray.OnResized();
+                    var squareSize = otherArray.ArrayWidth / otherArray.Columns;
+                    thisArray.SizeArrayToGridLevel(squareSize);
 
                     ObservableCollection<CLPArrayDivision> tempDivisions;
                     if(otherArray.VerticalDivisions.Any())
@@ -466,11 +462,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Columns += thisArray.Columns;
-                    otherArray.ArrayWidth += thisArray.ArrayWidth;
-                    otherArray.ArrayHeight = otherArray.ArrayWidth / (otherArray.Columns * 1.0 / otherArray.Rows);
-                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
                     otherArray.XPosition = thisArray.XPosition;
-                    otherArray.CalculateGridLines();
+                    otherArray.SizeArrayToGridLevel(squareSize, false);
+                    otherArray.IsDivisionBehaviorOn = true;
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                     break;
@@ -479,8 +473,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var rightDiff = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.Width));
                 if(rightDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from right
                 {
-                    thisArray.Height = otherArray.Height;
-                    thisArray.OnResized();
+                    var squareSize = otherArray.ArrayWidth / otherArray.Columns;
+                    thisArray.SizeArrayToGridLevel(squareSize);
 
                     if(!otherArray.VerticalDivisions.Any())
                     {
@@ -503,10 +497,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Columns += thisArray.Columns;
-                    otherArray.ArrayWidth += thisArray.ArrayWidth;
-                    otherArray.ArrayHeight = otherArray.ArrayWidth / (otherArray.Columns * 1.0 / otherArray.Rows);
-                    otherArray.EnforceAspectRatio(otherArray.Columns * 1.0 / otherArray.Rows);
-                    otherArray.CalculateGridLines();
+                    otherArray.SizeArrayToGridLevel(squareSize, false);
+                    otherArray.IsDivisionBehaviorOn = true;
 
                     CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
                     break;

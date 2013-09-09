@@ -387,7 +387,8 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="20" Height="{Binding ArrayHeight}" />
+                       Width="20" Height="{Binding ArrayHeight}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
                        HorizontalAlignment="Right"
@@ -395,7 +396,8 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="20" Height="{Binding ArrayHeight}" />
+                       Width="20" Height="{Binding ArrayHeight}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
                        HorizontalAlignment="Left"
@@ -403,7 +405,8 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="20" Width="{Binding ArrayWidth}" />
+                       Height="20" Width="{Binding ArrayWidth}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
                        HorizontalAlignment="Left"
@@ -411,7 +414,8 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="20" Width="{Binding ArrayWidth}" />
+                       Height="20" Width="{Binding ArrayWidth}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1" 

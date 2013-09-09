@@ -528,7 +528,7 @@ namespace CLP.Models
             }
         }
 
-        public void SizeArrayToGridLevel(double toSquareSize = -1)
+        public void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
@@ -549,7 +549,10 @@ namespace CLP.Models
             Height = ArrayHeight + LargeLabelLength;
             Width = ArrayWidth + LargeLabelLength;
             CalculateGridLines();
-            ResizeDivisions();
+            if(recalculateDivisions)
+            {
+                ResizeDivisions();
+            }  
         }
 
         public void RefreshArrayDimensions()
