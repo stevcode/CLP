@@ -416,7 +416,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Rows += thisArray.Rows;
-                    otherArray.YPosition = thisArray.YPosition;
+                    otherArray.YPosition -= thisArray.ArrayHeight;
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
@@ -462,7 +462,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     otherArray.Columns += thisArray.Columns;
-                    otherArray.XPosition = thisArray.XPosition;
+                    otherArray.XPosition -= thisArray.ArrayWidth;
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
