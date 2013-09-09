@@ -114,35 +114,19 @@ namespace CLP.Models
         public CLPArray(int rows, int columns, ICLPPage page)
             : base(page)
         {
-            IsGridOn = true;
-
-            Rows = rows;
-            Columns = columns;
-
-            YPosition = 150;
-
-            ParentPage = page;
-            CreationDate = DateTime.Now;
-            UniqueID = Guid.NewGuid().ToString();
             CanAcceptStrokes = true;
             CanAcceptPageObjects = true;
 
-            var arrayArea = Columns*Rows;
+            IsGridOn = rows < 45 && columns < 45;
+            Rows = rows;
+            Columns = columns;
 
-            ArrayHeight = 450;
-            ArrayWidth = 450;
+            XPosition = 0;
+            YPosition = 150;
 
-            EnforceAspectRatio(columns * 1.0 / rows);
-
-            if (Width > page.PageWidth / 2)
-            {
-                ArrayHeight = 200;
-                EnforceAspectRatio(columns * 1.0 / rows);
-            }
+            SizeArrayToGridLevel();
 
             ApplyDistinctPosition(this);
-
-            CalculateGridLines();
         }
 
         /// <summary>
@@ -542,6 +526,30 @@ namespace CLP.Models
                     }
                 }
             }
+        }
+
+        public void SizeArrayToGridLevel(double toSquareSize = -1)
+        {
+            var initialSquareSize = 45.0;
+            if(toSquareSize <= 0)
+            {
+                while(XPosition + LargeLabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + LargeLabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
+                {
+                    initialSquareSize = initialSquareSize / 2;
+                }
+            }
+            else
+            {
+                initialSquareSize = toSquareSize;
+            }
+
+            ArrayHeight = initialSquareSize * Rows;
+            ArrayWidth = initialSquareSize * Columns;
+
+            Height = ArrayHeight + LargeLabelLength;
+            Width = ArrayWidth + LargeLabelLength;
+            CalculateGridLines();
+            ResizeDivisions();
         }
 
         public void RefreshArrayDimensions()

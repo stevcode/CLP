@@ -242,66 +242,75 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeArrayCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
             var clpArray = PageObject as CLPArray;
             if(clpArray == null)
             {
                 return;
             }
-
             var oldHeight = Height;
             var oldWidth = Width;
 
-            var tempHeight = PageObject.Height + e.VerticalChange;
-            if(clpArray.ArrayHeight > clpArray.ArrayWidth && tempHeight < 200)
+            double newArrayHeight;
+            var isVerticalChange = e.VerticalChange > e.HorizontalChange;
+            if(isVerticalChange)
             {
-                Height = 200;
-            }
-            else if(clpArray.ArrayHeight < clpArray.ArrayWidth && tempHeight < 145)
-            {
-                Height = 145;
+                newArrayHeight = ArrayHeight + e.VerticalChange;
             }
             else
             {
-                Height = tempHeight;
+                newArrayHeight = (ArrayWidth + e.HorizontalChange)/Columns*Rows;
             }
 
-            clpArray.RefreshArrayDimensions();
-            clpArray.EnforceAspectRatio(Columns * 1.0 / Rows);
-
-            if(Height + PageObject.YPosition > parentPage.PageHeight)
+            //Control Min Dimensions of Array.
+            if(newArrayHeight < 45.0)
             {
-                Height = parentPage.PageHeight - PageObject.YPosition;
-
-                clpArray.EnforceAspectRatio(Columns*1.0/Rows);
+                newArrayHeight = 45.0;
             }
-            if(Width + PageObject.XPosition > parentPage.PageWidth)
+            var newSquareSize = newArrayHeight / Rows;
+            var newArrayWidth = newSquareSize * Columns;
+            if(newArrayWidth < 45.0)
             {
-                Width = parentPage.PageWidth - PageObject.XPosition;
-                clpArray.EnforceAspectRatio(Columns * 1.0 / Rows);
+                newArrayWidth = 45.0;
+                newSquareSize = newArrayWidth/Columns;
+                newArrayHeight = newSquareSize*Rows;
             }
-            
+
+            //Control Max Dimensions of Array.
+            if(newArrayHeight + clpArray.LargeLabelLength + YPosition > clpArray.ParentPage.PageHeight)
+            {
+                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - clpArray.LargeLabelLength;
+                newSquareSize = newArrayHeight / Rows;
+                newArrayWidth = newSquareSize * Columns;
+            }
+            if(newArrayWidth + clpArray.LargeLabelLength + XPosition > clpArray.ParentPage.PageWidth)
+            {
+                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LargeLabelLength;
+                newSquareSize = newArrayWidth / Columns;
+                //newArrayHeight = newSquareSize * Rows;
+            }
+
+            clpArray.SizeArrayToGridLevel(newSquareSize);
+
+            //Resize History
             var heightDiff = Math.Abs(oldHeight - Height);
             var widthDiff = Math.Abs(oldWidth - Width);
             var diff = heightDiff + widthDiff;
-            if(diff > CLPHistory.SAMPLE_RATE)
+            if(!(diff > CLPHistory.SAMPLE_RATE))
             {
-                var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
-                if(batch is CLPHistoryPageObjectResizeBatch)
-                {
-                    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID,
-                                                                                     new Point(Width, Height));
-                }
-                else
-                {
-                    PageObject.ParentPage.PageHistory.EndBatch();
-                    //TODO: log this error
-                }
+                return;
             }
 
-            //TODO: ICLPPageObject method for OnResize() to use in History
-            clpArray.ResizeDivisions();
-            clpArray.CalculateGridLines();
+            var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
+            if(batch is CLPHistoryPageObjectResizeBatch)
+            {
+                (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID,
+                                                                                 new Point(Width, Height));
+            }
+            else
+            {
+                PageObject.ParentPage.PageHistory.EndBatch();
+                //TODO: log this error
+            }
         }
 
         /// <summary>
