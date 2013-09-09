@@ -345,7 +345,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Rectangle Height="4" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
+                        <Rectangle Height="1" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
                                    Stroke="PowderBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -362,7 +362,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Rectangle Width="4" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
+                        <Rectangle Width="1" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" 
                                    Stroke="PowderBlue" StrokeThickness="3" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
