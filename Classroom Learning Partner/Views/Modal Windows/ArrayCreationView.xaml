@@ -107,7 +107,7 @@
             
             <TextBlock Grid.Column="0" Grid.Row="0" Margin="10"
                        VerticalAlignment="Center"
-                       Text="How many arrays to you want?" />
+                       Text="How many arrays do you want?" />
 
             <TextBox x:Name="NumberOfArrays" 
                      Grid.Column="1" Grid.Row="0" Margin="5"
