@@ -48,6 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(Tag tag in Page.PageTags)
                 {
+                    if(tag.TagType == null) { continue; } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
                     if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
                     {
 

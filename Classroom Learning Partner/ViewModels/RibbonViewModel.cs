@@ -2617,7 +2617,8 @@ namespace Classroom_Learning_Partner.ViewModels
             // Clear out any old stamp-related Tags
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name ||
+                if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
+                    tag.TagType.Name == StampCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == StampSwappedFactorsTagType.Instance.Name)
                 {
                     tags.Remove(tag);

@@ -163,6 +163,7 @@ namespace Classroom_Learning_Partner.Resources
             {
                 foreach(Tag t in page.PageTags)
                 {
+                    if(t.TagType == null) { continue; } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
                     if(t.TagType.Name == TagName)
                     {
                         if(t.Value.Count > 0)
