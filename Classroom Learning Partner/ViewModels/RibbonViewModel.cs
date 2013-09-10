@@ -2421,7 +2421,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value + ", " + strategyTag.Value[1].Value);
 
-            // Add an array division correctness tag
+            // Add an array divider correctness tag
             Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
             tags.Add(divisionCorrectnessTag);
 
@@ -2619,7 +2619,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
                     tag.TagType.Name == StampCorrectnessTagType.Instance.Name ||
-                    tag.TagType.Name == StampSwappedFactorsTagType.Instance.Name)
+                    tag.TagType.Name == StampSwappedFactorsTagType.Instance.Name ||
+                    tag.TagType.Name == StampPartsPerStampTagType.Instance.Name ||
+                    tag.TagType.Name == StampGroupingTypeTagType.Instance.Name)
                 {
                     tags.Remove(tag);
                 }

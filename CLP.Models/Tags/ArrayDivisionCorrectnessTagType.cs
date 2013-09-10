@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayDivisionCorrectnessTagType()
         {
-            Name = "Array Division Correctness";
+            Name = "Array Divider Correctness";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
