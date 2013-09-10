@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   Background="{StaticResource GrayBackgroundColor}">
+                   Background="{StaticResource GrayBackgroundColor}"
+                   x:Name="NotebookChooserControl">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -39,7 +40,7 @@
         <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
                 <WrapPanel  Margin="20"
-                            Width="{Binding ElementName=TopGrid,Path=ActualWidth}" />
+                            Width="{Binding ElementName=NotebookChooserControl,Path=ActualWidth}" />
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
     </ListBox>
