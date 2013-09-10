@@ -123,16 +123,21 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <ToggleButton Grid.Column="0" Margin="5"
-                              Height="32" Width="32">
-                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
-                </ToggleButton>
 
-                <ToggleButton Grid.Column="1" Margin="5"
-                              Height="32" Width="32">
+                <RadioButton x:Name="HorizontalToggle" GroupName="ArrayAlignment"
+                             Style="{StaticResource {x:Type ToggleButton}}"
+                             Grid.Column="0" Margin="5"
+                             Height="32" Width="32"
+                             IsChecked="True">
                     <Image Source="pack://application:,,,/Images/LargeIcon.png" />
-                </ToggleButton>
+                </RadioButton>
+
+                <RadioButton x:Name="VerticalToggle" GroupName="ArrayAlignment"
+                             Style="{StaticResource {x:Type ToggleButton}}"
+                             Grid.Column="1" Margin="5"
+                             Height="32" Width="32">
+                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                </RadioButton>
 
             </Grid>
 

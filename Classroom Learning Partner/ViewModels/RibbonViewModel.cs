@@ -2078,6 +2078,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(arrayCreationView.DialogResult == true)
             {
+                var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+                if(notebookWorkspaceViewModel == null)
+                {
+                    return;
+                }
+                var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+                if(clpMirrorDisplay == null)
+                {
+                    return;
+                }
+                var currentPage = clpMirrorDisplay.CurrentPage;
+
                 int rows;
                 try
                 {
@@ -2108,9 +2120,36 @@ namespace Classroom_Learning_Partner.ViewModels
                     numberOfArrays = 1;
                 }
 
+                var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
+                                            (bool)arrayCreationView.HorizontalToggle.IsChecked;
+                var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
+                                          (bool)arrayCreationView.VerticalToggle.IsChecked;
+                var initializedSquareSize = 45.0;
+                var xPosition = 0.0;
+                var yPosition = 150.0;
+                if(numberOfArrays > 1)
+                {
+                    const double LARGE_LABEL_LENGTH = 70.0;
+                    if(isHorizontallyAligned)
+                    {
+                        while(xPosition + LARGE_LABEL_LENGTH + (columns * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageWidth)
+                        {
+                            initializedSquareSize = initializedSquareSize / 2;
+                        }
+                    }
+                    else if(isVerticallyAligned)
+                    {
+                        yPosition = 80;
+                        while(yPosition + LARGE_LABEL_LENGTH + (rows * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageHeight)
+                        {
+                            initializedSquareSize = initializedSquareSize / 2;
+                        }
+                    }
+                }
+
                 foreach(var index in Enumerable.Range(1, numberOfArrays))
                 {
-                    var array = new CLPArray(rows, columns, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+                    var array = new CLPArray(rows, columns, currentPage);
 
                     switch(useDivisions)
                     {
@@ -2120,6 +2159,21 @@ namespace Classroom_Learning_Partner.ViewModels
                         case "FALSE":
                             array.IsDivisionBehaviorOn = false;
                             break;
+                    }
+
+                    if(isHorizontallyAligned)
+                    {
+                        array.XPosition = xPosition;
+                        array.YPosition = yPosition;
+                        xPosition += ((columns + 1) * initializedSquareSize);
+                        array.SizeArrayToGridLevel(initializedSquareSize);
+                    }
+                    else if(isVerticallyAligned)
+                    {
+                        array.XPosition = xPosition;
+                        array.YPosition = yPosition;
+                        yPosition += ((rows + 1) * initializedSquareSize);
+                        array.SizeArrayToGridLevel(initializedSquareSize);
                     }
 
                     CLPServiceAgent.Instance.AddPageObjectToPage(array);
