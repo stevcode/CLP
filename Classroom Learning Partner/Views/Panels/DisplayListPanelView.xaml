@@ -18,6 +18,7 @@
 
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:PageOrDisplaySelectionColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:HeightToWidthAspectRatioConverter x:Key="HeightToWidthAspectRatioConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -44,7 +45,8 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
+            <Grid Grid.Row="0" Background="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
+                  Height="150">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -64,14 +66,24 @@
                         </TransformGroup>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                
-                <views:MirrorDisplayPreviewView x:Name="MirrorDisplayPreviewView" Grid.Column="1" Margin="5"
-                                                DataContext="{Binding MirrorDisplay}" />
+
+                <views:CLPPagePreviewView x:Name="MirrorDisplayPreview" Grid.Column="1" Margin="5"
+                                          DataContext="{Binding MirrorDisplay.CurrentPage}">
+                    <views:CLPPagePreviewView.Width>
+                        <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioConverter}">
+                            <Binding ElementName="MirrorDisplayPreview" Path="ActualHeight" />
+                            <Binding Path="InitialPageAspectRatio" />
+                        </MultiBinding>
+                    </views:CLPPagePreviewView.Width>
+                </views:CLPPagePreviewView>
+                                          
 
                 <Rectangle Grid.Column="1" Margin="5"
                            Stroke="{Binding MirrorDisplaySelectedColor}"
                            StrokeThickness="2"
-                           Fill="Transparent">
+                           Fill="Transparent"
+                           Width="{Binding ElementName=MirrorDisplayPreview, Path=ActualWidth}"
+                           Height="{Binding ElementName=MirrorDisplayPreview, Path=ActualHeight}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <catel:EventToCommand Command="{Binding SetMirrorDisplayCommand}"
@@ -82,7 +94,7 @@
                 
                 <ToggleButton Grid.Column="2" Padding="5"
                               Width="32" Height="32"
-                              IsChecked="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView}">
+                              IsChecked="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreview}">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                             <Grid>

@@ -182,7 +182,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CLPServiceAgent.cs" />
-    <Compile Include="Converters\AspectRatioConverter.cs" />
+    <Compile Include="Converters\HeightToWidthAspectRatioConverter.cs" />
     <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
