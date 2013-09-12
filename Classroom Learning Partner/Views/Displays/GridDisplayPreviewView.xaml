@@ -11,8 +11,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ItemsControl Background="{StaticResource GrayBackgroundColor}" ItemsSource="{Binding Pages}"
-                  Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}">
+    <ItemsControl Background="{StaticResource GrayBackgroundColor}" ItemsSource="{Binding Pages}">
 
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

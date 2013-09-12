@@ -186,6 +186,7 @@
     <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
+    <Compile Include="Converters\WidthToHeightAspectRatioConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
