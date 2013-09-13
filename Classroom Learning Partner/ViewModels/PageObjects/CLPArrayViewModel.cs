@@ -554,19 +554,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateHorizontalDivisionCommandExecute()
         {
             var position = LeftArrowPosition - 5;
+            if (IsGridOn && !IsAdornerSnappingToGrid)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Horizontal, position);
+            }
+
             if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0)) 
             {
+                Console.WriteLine("here");
                 return;
             }
             if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
             {
                 MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
                 return;
-            }
-
-            if(IsGridOn && !IsAdornerSnappingToGrid)
-            {
-                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Horizontal, position);
             }
 
             var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
@@ -616,6 +617,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateVerticalDivisionCommandExecute()
         {
             var position = TopArrowPosition - 5;
+            if (IsGridOn && !IsAdornerSnappingToGrid)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Vertical, position);
+            }
+
             if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
             {
                 return;
@@ -624,11 +630,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
                 return;
-            }
-
-            if (IsGridOn && !IsAdornerSnappingToGrid)
-            {
-                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Vertical, position);
             }
 
             CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
