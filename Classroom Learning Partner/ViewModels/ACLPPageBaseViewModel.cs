@@ -548,7 +548,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(var pageObject in allHalvedPageObjects)
                     {
                         allHalvedPageObjectIDs.Add(pageObject.UniqueID);
-                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false, false);
                     }
 
                     Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));

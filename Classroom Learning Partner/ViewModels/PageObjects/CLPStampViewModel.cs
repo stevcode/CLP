@@ -271,7 +271,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(notebookWorkspaceViewModel != null)
                         {
                             var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                            CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer);
+                            CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer, forceSelectMode:false);
                         }
                         PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
