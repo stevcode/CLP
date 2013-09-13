@@ -37,10 +37,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         protected ACLPPageBaseViewModel(ICLPPage page)
         {
-            PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
-            DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             Page = page;
+
+            PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
+            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
+            DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
@@ -159,7 +160,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void PageInteractionModeChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
             var pageViewModel = args.LatestSender as ACLPPageBaseViewModel;
-            if(pageViewModel == null || !args.IsNewValueMeaningful)
+            if(pageViewModel == null)
             {
                 return;
             }
@@ -181,11 +182,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = false;
+
+                    pageViewModel.DefaultDA.IsHighlighter = false;
+                    pageViewModel.DefaultDA.Height = 4.0;
+                    pageViewModel.DefaultDA.Width = 4.0;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     break;
                 case PageInteractionMode.Highlighter:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = false;
+
+                    pageViewModel.DefaultDA.IsHighlighter = true;
+                    pageViewModel.DefaultDA.Height = 12;
+                    pageViewModel.DefaultDA.Width = 12;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
                     break;
                 case PageInteractionMode.PenAndSelect:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -206,6 +217,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         pageViewModel.PageCursor = new Cursor(scissorsStream.Stream);
                     }
+
+                    pageViewModel.DefaultDA.IsHighlighter = false;
+                    pageViewModel.DefaultDA.Height = 2.0;
+                    pageViewModel.DefaultDA.Width = 2.0;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     break;
                 case PageInteractionMode.EditObjectProperties:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
@@ -251,7 +267,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DefaultDAProperty, value); }
         }
 
-        public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes));
+        public static readonly PropertyData DefaultDAProperty = RegisterProperty("DefaultDA", typeof(DrawingAttributes), () => new DrawingAttributes());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -495,52 +511,57 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            
-            foreach(var stroke in e.Added.Where(stroke => PageInteractionMode == PageInteractionMode.Scissors)) 
+
+            Console.WriteLine(UniqueIdentifier);
+            if(PageInteractionMode == PageInteractionMode.Scissors)
             {
-                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-                if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                foreach(var stroke in e.Added)
                 {
-                    var newUniqueID = Guid.NewGuid().ToString();
-                    stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
-                }
-                Page.InkStrokes.Remove(stroke);
-
-                var allCutPageObjects = new List<ICLPPageObject>();
-                var allHalvedPageObjects = new List<ICLPPageObject>();
-                foreach(var pageObject in PageObjects)
-                {
-                    var halvedPageObjects = pageObject.Cut(stroke);
-                    if(!halvedPageObjects.Any())
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+                    if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
                     {
-                        continue;
+                        var newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
                     }
-                    allCutPageObjects.Add(pageObject);
-                    allHalvedPageObjects.AddRange(halvedPageObjects);
+                    Page.InkStrokes.Remove(stroke);
+
+                    var allCutPageObjects = new List<ICLPPageObject>();
+                    var allHalvedPageObjects = new List<ICLPPageObject>();
+                    foreach(var pageObject in PageObjects)
+                    {
+                        var halvedPageObjects = pageObject.Cut(stroke);
+                        if(!halvedPageObjects.Any())
+                        {
+                            continue;
+                        }
+                        allCutPageObjects.Add(pageObject);
+                        allHalvedPageObjects.AddRange(halvedPageObjects);
+                    }
+
+                    foreach(var pageObject in allCutPageObjects)
+                    {
+                        PageObjects.Remove(pageObject);
+                    }
+
+                    var allHalvedPageObjectIDs = new List<string>();
+                    foreach(var pageObject in allHalvedPageObjects)
+                    {
+                        allHalvedPageObjectIDs.Add(pageObject.UniqueID);
+                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false);
+                    }
+
+                    Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+
+                    RefreshInkStrokes();
+                    RefreshPageObjects(allHalvedPageObjects);
+
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+                    return;
                 }
-
-                foreach(var pageObject in allCutPageObjects)
-                {
-                    PageObjects.Remove(pageObject);
-                }
-
-                var allHalvedPageObjectIDs = new List<string>();
-                foreach(var pageObject in allHalvedPageObjects)
-                {
-                    allHalvedPageObjectIDs.Add(pageObject.UniqueID);
-                    CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false);
-                }
-
-                Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
-                    
-                RefreshInkStrokes();
-                RefreshPageObjects(allHalvedPageObjects);
-
-                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                return;
             }
+            
             
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
@@ -666,10 +687,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
-            {
-                EraserMode = (viewModel as RibbonViewModel).EraserMode;
-            }
+            //if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
+            //{
+            //    EraserMode = (viewModel as RibbonViewModel).EraserMode;
+            //}
 
             if(propertyName == "PenSize" && viewModel is RibbonViewModel)
             {

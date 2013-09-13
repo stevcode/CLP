@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.Views
                 {
                     toggleButton.IsChecked = false;
                 }
-                PenButton.IsChecked = true;
+              //  PenButton.IsChecked = true;
             }
         }
 
