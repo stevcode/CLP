@@ -387,7 +387,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     ObservableCollection<CLPArrayDivision> tempDivisions;
                     if(otherArray.HorizontalDivisions.Any())
                     {
-                        tempDivisions = otherArray.HorizontalDivisions;
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(otherArray.HorizontalDivisions);
                         otherArray.HorizontalDivisions.Clear();
                     }
                     else
@@ -433,7 +433,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     ObservableCollection<CLPArrayDivision> tempDivisions;
                     if(otherArray.VerticalDivisions.Any())
                     {
-                        tempDivisions = otherArray.VerticalDivisions;
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(otherArray.VerticalDivisions);
                         otherArray.VerticalDivisions.Clear();
                     }
                     else
