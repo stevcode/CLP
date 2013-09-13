@@ -39,7 +39,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
-            EditingMode = App.MainWindowViewModel.Ribbon.EditingMode;
             EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             Page = page;
 
@@ -56,8 +55,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
-        #region Properties
-       
+        #region Model
+
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -69,6 +68,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(ICLPPage));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -129,6 +140,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData InitialPageAspectRatioProperty = RegisterProperty("InitialPageAspectRatio", typeof(double));
+
+        #endregion //Model
+
+        #region Properties
 
         /// <summary>
         /// Sets the PageInteractionMode.
@@ -201,28 +216,6 @@ namespace Classroom_Learning_Partner.ViewModels
             pageViewModel.ClearAdorners();
         }
 
-        /// <summary>
-        /// Sets the page's visible cursor.
-        /// </summary>
-        public Cursor PageCursor
-        {
-            get { return GetValue<Cursor>(PageCursorProperty); }
-            set { SetValue(PageCursorProperty, value); }
-        }
-
-        public static readonly PropertyData PageCursorProperty = RegisterProperty("PageCursor", typeof(Cursor), Cursors.Pen);
-
-        /// <summary>
-        /// Forces the InkCanvas to use custom, imported cursors instead of the default ones.
-        /// </summary>
-        public bool IsUsingCustomCursors
-        {
-            get { return GetValue<bool>(IsUsingCustomCursorsProperty); }
-            set { SetValue(IsUsingCustomCursorsProperty, value); }
-        }
-
-        public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
-
         #endregion //Properties
 
         #region Bindings
@@ -241,25 +234,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Page")]
-        public StrokeCollection InkStrokes
-        {
-            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public InkCanvasEditingMode EditingMode
         {
             get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }
-            set { SetValue(EditingModeProperty, value); } //TODO: make setter Private to force use of PageInteractionMode
+            protected set { SetValue(EditingModeProperty, value); }
         }
 
-        public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
+        public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.Ink);
         
         /// <summary>
         /// Gets or sets the property value.
@@ -304,6 +285,28 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsInkCanvasHitTestVisibleProperty = RegisterProperty("IsInkCanvasHitTestVisible", typeof(bool), true);
+
+        /// <summary>
+        /// Sets the page's visible cursor.
+        /// </summary>
+        public Cursor PageCursor
+        {
+            get { return GetValue<Cursor>(PageCursorProperty); }
+            set { SetValue(PageCursorProperty, value); }
+        }
+
+        public static readonly PropertyData PageCursorProperty = RegisterProperty("PageCursor", typeof(Cursor), Cursors.Pen);
+
+        /// <summary>
+        /// Forces the InkCanvas to use custom, imported cursors instead of the default ones.
+        /// </summary>
+        public bool IsUsingCustomCursors
+        {
+            get { return GetValue<bool>(IsUsingCustomCursorsProperty); }
+            set { SetValue(IsUsingCustomCursorsProperty, value); }
+        }
+
+        public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
         
         #endregion //Bindings
 
@@ -663,11 +666,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(propertyName == "EditingMode" && viewModel is RibbonViewModel)
-            {
-                EditingMode = (viewModel as RibbonViewModel).EditingMode;
-            }
-
             if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
             {
                 EraserMode = (viewModel as RibbonViewModel).EraserMode;
@@ -684,7 +682,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)
             {
-                Logger.Instance.WriteToLog("PageViewModel Received PageInteractionMode Command: " + PageInteractionMode);
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
             }
 

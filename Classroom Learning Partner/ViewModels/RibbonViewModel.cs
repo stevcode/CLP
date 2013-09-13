@@ -64,14 +64,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                     Color = Colors.Black,
                                     FitToCurve = true
                                 };
-            EditingMode = InkCanvasEditingMode.Ink;
-            CurrentColorButton = new RibbonButton();
-            CurrentColorButton.Background = new SolidColorBrush(Colors.Black);
+            CurrentColorButton = new RibbonButton {Background = new SolidColorBrush(Colors.Black)};
 
             foreach(var color in _colors)
             {
                 _fontColors.Add(new SolidColorBrush(color));
-
             }
 
             CurrentFontSize = 34;
@@ -109,7 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetPenCommand = new Command(OnSetPenCommandExecute);
             SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
-            EnableCutCommand = new Command(OnEnableCutCommandExecute);
+            SetCutCommand = new Command(OnSetCutCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //Submission
@@ -1084,7 +1081,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetPenCommandExecute()
         {
-            EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Pen;
             DrawingAttributes.IsHighlighter = false;
             DrawingAttributes.Height = PenSize;
@@ -1099,7 +1095,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetHighlighterCommandExecute()
         {
-            EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Highlighter;
             DrawingAttributes.IsHighlighter = true;
             DrawingAttributes.Height = 12;
@@ -1114,25 +1109,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetEraserCommandExecute(string eraserStyle)
         {
-            if(eraserStyle == "EraseByPoint")
-            {
-                EditingMode = InkCanvasEditingMode.EraseByPoint;
-            }
-            else if(eraserStyle == "EraseByStroke")
-            {
-                EditingMode = InkCanvasEditingMode.EraseByStroke;
-            }
+            //if(eraserStyle == "EraseByPoint")
+            //{
+            //    EditingMode = InkCanvasEditingMode.EraseByPoint;
+            //}
+            //else if(eraserStyle == "EraseByStroke")
+            //{
+            //    EditingMode = InkCanvasEditingMode.EraseByStroke;
+            //}
         }
 
         /// <summary>
         /// Sets Cut Mode.
         /// </summary>
-        public Command EnableCutCommand { get; private set; }
+        public Command SetCutCommand { get; private set; }
 
-        private void OnEnableCutCommandExecute()
+        private void OnSetCutCommandExecute()
         {
-            EditingMode = InkCanvasEditingMode.Ink;
             PageInteractionMode = PageInteractionMode.Scissors;
+            DrawingAttributes.IsHighlighter = false;
+            DrawingAttributes.Height = 2.0;
+            DrawingAttributes.Width = 2.0;
+            DrawingAttributes.StylusTip = StylusTip.Ellipse;
         }
 
         /// <summary>
@@ -1145,7 +1143,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentColorButton = button as RibbonButton;
             DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
 
-            EditingMode = InkCanvasEditingMode.Ink;
             if(!(PageInteractionMode == PageInteractionMode.Pen || PageInteractionMode == PageInteractionMode.Highlighter))
             {
                 PageInteractionMode = PageInteractionMode.Pen;
@@ -2048,10 +2045,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
             CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
-            if(EditingMode != InkCanvasEditingMode.Ink)
-            {
-                SetPenCommand.Execute();
-            }
         }
 
         /// <summary>
@@ -2166,11 +2159,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     CLPServiceAgent.Instance.AddPageObjectToPage(array);
                 }
-            }
-
-            if(EditingMode != InkCanvasEditingMode.Ink)
-            {
-                SetPenCommand.Execute();
             }
         }
 

@@ -264,7 +264,7 @@
                 <RibbonToggleButton Label="Cut"
                                     LargeImageSource="..\Images\Scissors.png"
                                     Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding EnableCutCommand}" />
+                                    Command="{Binding SetCutCommand}" />
 
             </RibbonGroup>
 
