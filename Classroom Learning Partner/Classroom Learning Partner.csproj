@@ -211,6 +211,7 @@
     </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
+    <Compile Include="Views\Extenders\ListBoxExtenders.cs" />
     <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />

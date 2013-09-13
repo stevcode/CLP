@@ -6,6 +6,7 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    Width="{Binding InitialWidth}">
     
     <UserControl.Resources>
@@ -116,7 +117,8 @@
                      ItemsSource="{Binding Displays}"
                      SelectedValue="{Binding CurrentDisplay}"
                      ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
-                     SelectionMode="Single">
+                     SelectionMode="Single"
+                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True" >
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
