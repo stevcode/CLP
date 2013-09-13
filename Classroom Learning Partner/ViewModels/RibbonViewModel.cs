@@ -2378,11 +2378,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
             if(arrayWidth == factor1 && arrayHeight == factor2)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
+                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is width"));
             }
             else if(arrayWidth == factor2 && arrayHeight == factor1)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("y*x"));
+                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is height"));
             }
             else
             {
