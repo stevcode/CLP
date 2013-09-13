@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class StampWrongOperatorTagType : ModelBase, TagType
+    public class RepresentationCorrectnessTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private StampWrongOperatorTagType()
+        private RepresentationCorrectnessTagType()
         {
-            Name = "Stamps: Wrong Operator";
+            Name = "General: Representation Correctness";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -20,7 +20,10 @@ namespace CLP.Models
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("Wrong"));
+            ValueOptions.Add(new TagOptionValue("Correct"));
+            ValueOptions.Add(new TagOptionValue("Error: Swapped Factors"));
+            ValueOptions.Add(new TagOptionValue("Error: Misused Givens"));
+            ValueOptions.Add(new TagOptionValue("Error: Other"));
 
         }
 
@@ -29,7 +32,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected StampWrongOperatorTagType(SerializationInfo info, StreamingContext context)
+        protected RepresentationCorrectnessTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -78,6 +81,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static StampWrongOperatorTagType Instance = new StampWrongOperatorTagType();
+        public static RepresentationCorrectnessTagType Instance = new RepresentationCorrectnessTagType();
     }
 }

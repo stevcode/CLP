@@ -164,11 +164,9 @@
     <Compile Include="Tags\DomainInterpretationTagType.cs" />
     <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
-    <Compile Include="Tags\StampCorrectnessTagType.cs" />
+    <Compile Include="Tags\RepresentationCorrectnessTagType.cs" />
     <Compile Include="Tags\StampGroupingTypeTagType.cs" />
     <Compile Include="Tags\StampPartsPerStampTagType.cs" />
-    <Compile Include="Tags\StampSwappedFactorsTagType.cs" />
-    <Compile Include="Tags\StampWrongOperatorTagType.cs" />
     <Compile Include="Tags\StarredTagType.cs" />
     <Compile Include="Tags\Tag.cs" />
     <Compile Include="Tags\TagOptionValue.cs" />

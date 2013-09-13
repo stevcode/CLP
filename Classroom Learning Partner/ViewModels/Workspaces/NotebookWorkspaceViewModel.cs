@@ -88,14 +88,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             // Just hardcode in some tag types for now
+            FilterTypes.Add(RepresentationCorrectnessTagType.Instance.Name);
             FilterTypes.Add(ArrayStrategyTagType.Instance.Name);
             FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
             FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
-            FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
-            FilterTypes.Add(StampSwappedFactorsTagType.Instance.Name);
-            FilterTypes.Add(StampWrongOperatorTagType.Instance.Name);
             FilterTypes.Add(StampPartsPerStampTagType.Instance.Name);
             FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
 

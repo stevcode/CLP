@@ -2319,7 +2319,8 @@ namespace Classroom_Learning_Partner.ViewModels
             // First, clear out any old ArrayOrientationTagTypes
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
+                if(tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
                     tag.TagType.Name == ArrayStrategyTagType.Instance.Name ||
                     tag.TagType.Name == ArrayDivisionCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == ArrayVerticalDivisionsTagType.Instance.Name ||
@@ -2328,6 +2329,50 @@ namespace Classroom_Learning_Partner.ViewModels
                     tags.Remove(tag);
                 }
             }
+
+            // Apply a representation correctness tag
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other"));
+
+            if(factor1 == arrayWidth && factor2 == arrayHeight)
+            {
+                correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+            }
+            else
+            {
+                if(factor2 == arrayWidth && factor1 == arrayHeight)
+                {
+                    // Are the factors swapped? Depends on whether we care about width vs. height
+                    if(relation.RelationType == ProductRelation.ProductRelationTypes.Area)
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
+                    }
+                    else
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                    }
+                }
+                else
+                {
+                    // One more possibility: The representation uses the givens in the problem, but in the wrong way
+                    ObservableCollection<int> givens = new ObservableCollection<int>();
+                    if(relation.Factor1Given) { givens.Add(factor1); }
+                    if(relation.Factor2Given) { givens.Add(factor2); }
+                    if(relation.ProductGiven) { givens.Add(product); }
+
+                    ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                    numbersUsed.Add(arrayWidth);
+                    numbersUsed.Add(arrayHeight);
+                    numbersUsed.Add(arrayWidth * arrayHeight);
+
+                    if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+                    }
+                }
+            }
+
+            tags.Add(correctnessTag);
 
             // Apply an orientation tag
             Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
@@ -2429,11 +2474,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Add tags for the number of horizontal and vertical divisions
             Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
-            horizDivsTag.Value.Add(new TagOptionValue(array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count));
+            int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
+            horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
             tags.Add(horizDivsTag);
 
             Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
-            vertDivsTag.Value.Add(new TagOptionValue(array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count));
+            int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
+            vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
             tags.Add(vertDivsTag);
 
             Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
@@ -2618,8 +2665,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(Tag tag in tags.ToList())
             {
                 if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
-                    tag.TagType.Name == StampCorrectnessTagType.Instance.Name ||
-                    tag.TagType.Name == StampSwappedFactorsTagType.Instance.Name ||
+                    tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == StampPartsPerStampTagType.Instance.Name ||
                     tag.TagType.Name == StampGroupingTypeTagType.Instance.Name)
                 {
@@ -2641,13 +2687,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<Tag> GetStampTags(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
         {
             ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
-            Tag correctnessTag = new Tag(Tag.Origins.Generated, StampCorrectnessTagType.Instance);
-            correctnessTag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other")); // The student's work is assumed incorrect until proven correct
 
-            Tag swappedFactorsTag = new Tag(Tag.Origins.Generated, StampSwappedFactorsTagType.Instance);
             Tag partsPerStampTag = new Tag(Tag.Origins.Generated, StampPartsPerStampTagType.Instance);
             Tag groupingTypeTag = new Tag(Tag.Origins.Generated, StampGroupingTypeTagType.Instance);
-            Tag wrongOperatorTag = new Tag(Tag.Origins.Generated, StampWrongOperatorTagType.Instance);
 
             foreach(CLPGrouping grouping in groupings)
             {
@@ -2676,8 +2720,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString()))
                             {
-                                swappedFactorsTag.AddTagOptionValue(new TagOptionValue("Swapped"));
-                                tags.Add(swappedFactorsTag);
+                                correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
                                 tags.Add(partsPerStampTag);
                                 tags.Add(groupingTypeTag);
                                 break;
@@ -2709,8 +2752,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
                     {
-                        wrongOperatorTag.AddTagOptionValue(new TagOptionValue("Wrong"));
-                        tags.Add(wrongOperatorTag);
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
                         tags.Add(partsPerStampTag);
                         tags.Add(groupingTypeTag);
                         break;

@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayVerticalDivisionsTagType()
         {
-            Name = "Array Vertical Divisions";
+            Name = "Array: Regions Formed by Vertical Dividers";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
