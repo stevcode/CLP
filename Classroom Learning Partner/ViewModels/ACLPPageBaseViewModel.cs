@@ -136,57 +136,70 @@ namespace Classroom_Learning_Partner.ViewModels
         public PageInteractionMode PageInteractionMode
         {
             get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
-            set
-            {
-                SetValue(PageInteractionModeProperty, value);
-                //TODO: Implement catel's OnPropertyChanged method for the below code.
-                Logger.Instance.WriteToLog("PageInteractionMode Set to: " + value);
-                switch(value)
-                {
-                    case PageInteractionMode.None:
-                        IsInkCanvasHitTestVisible = true;
-                        EditingMode = InkCanvasEditingMode.None;
-                        PageCursor = Cursors.No;
-                        break;
-                    case PageInteractionMode.Select:
-                        IsInkCanvasHitTestVisible = false;
-                        PageCursor = Cursors.Hand;
-                        break;
-                    case PageInteractionMode.Pen:
-                        IsInkCanvasHitTestVisible = true;
-                        EditingMode = InkCanvasEditingMode.Ink;
-                        var penStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
-                        PageCursor = new Cursor(penStream.Stream); 
-                        break;
-                    case PageInteractionMode.Highlighter:
-                        IsInkCanvasHitTestVisible = true;
-                        EditingMode = InkCanvasEditingMode.Ink;
-                        var hightlighterStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/HighlighterCursor.cur", UriKind.Relative));
-                        PageCursor = new Cursor(hightlighterStream.Stream);
-                        break;
-                    case PageInteractionMode.PenAndSelect:
-                        IsInkCanvasHitTestVisible = true;
-                        EditingMode = InkCanvasEditingMode.Ink;
-                        var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
-                        PageCursor = new Cursor(penAndSelectStream.Stream); 
-                        break;
-                    case PageInteractionMode.Scissors:
-                        IsInkCanvasHitTestVisible = true;
-                        EditingMode = InkCanvasEditingMode.Ink;
-                        var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
-                        PageCursor = new Cursor(scissorsStream.Stream); 
-                        break;
-                    case PageInteractionMode.EditObjectProperties:
-                        IsInkCanvasHitTestVisible = false;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                ClearAdorners();
-            }
+            set { SetValue(PageInteractionModeProperty, value); }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode), PageInteractionMode.Pen);
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode), PageInteractionMode.Pen, PageInteractionModeChanged);
+
+        private static void PageInteractionModeChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var pageViewModel = args.LatestSender as ACLPPageBaseViewModel;
+            if(pageViewModel == null || !args.IsNewValueMeaningful)
+            {
+                return;
+            }
+
+            switch(pageViewModel.PageInteractionMode)
+            {
+                case PageInteractionMode.None:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.None;
+                    pageViewModel.IsUsingCustomCursors = true;
+                    pageViewModel.PageCursor = Cursors.No;
+                    break;
+                case PageInteractionMode.Select:
+                    pageViewModel.IsInkCanvasHitTestVisible = false;
+                    pageViewModel.IsUsingCustomCursors = true;
+                    pageViewModel.PageCursor = Cursors.Hand;
+                    break;
+                case PageInteractionMode.Pen:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.IsUsingCustomCursors = false;
+                    break;
+                case PageInteractionMode.Highlighter:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.IsUsingCustomCursors = false;
+                    break;
+                case PageInteractionMode.PenAndSelect:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.IsUsingCustomCursors = true;
+                    var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
+                    if(penAndSelectStream != null)
+                    {
+                        pageViewModel.PageCursor = new Cursor(penAndSelectStream.Stream);
+                    }
+                    break;
+                case PageInteractionMode.Scissors:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.IsUsingCustomCursors = true;
+                    var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
+                    if(scissorsStream != null)
+                    {
+                        pageViewModel.PageCursor = new Cursor(scissorsStream.Stream);
+                    }
+                    break;
+                case PageInteractionMode.EditObjectProperties:
+                    pageViewModel.IsInkCanvasHitTestVisible = false;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            pageViewModel.ClearAdorners();
+        }
 
         /// <summary>
         /// Sets the page's visible cursor.
@@ -198,6 +211,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageCursorProperty = RegisterProperty("PageCursor", typeof(Cursor), Cursors.Pen);
+
+        /// <summary>
+        /// Forces the InkCanvas to use custom, imported cursors instead of the default ones.
+        /// </summary>
+        public bool IsUsingCustomCursors
+        {
+            get { return GetValue<bool>(IsUsingCustomCursorsProperty); }
+            set { SetValue(IsUsingCustomCursorsProperty, value); }
+        }
+
+        public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
         #endregion //Properties
 
