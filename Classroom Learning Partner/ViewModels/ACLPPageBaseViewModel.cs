@@ -23,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
         Pen,
         Highlighter,
         PenAndSelect,
+        Eraser,
+        Lasso,
         Scissors,
         EditObjectProperties
     }
@@ -147,6 +149,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Properties
 
         /// <summary>
+        /// The radius of the Pen tip.
+        /// </summary>
+        public double PenSize
+        {
+            get { return GetValue<double>(PenSizeProperty); }
+            set { SetValue(PenSizeProperty, value); }
+        }
+
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3);
+
+        /// <summary>
         /// Sets the PageInteractionMode.
         /// </summary>
         public PageInteractionMode PageInteractionMode
@@ -184,8 +197,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.IsUsingCustomCursors = false;
 
                     pageViewModel.DefaultDA.IsHighlighter = false;
-                    pageViewModel.DefaultDA.Height = 4.0;
-                    pageViewModel.DefaultDA.Width = 4.0;
+                    pageViewModel.DefaultDA.Height = pageViewModel.PenSize;
+                    pageViewModel.DefaultDA.Width = pageViewModel.PenSize;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     break;
                 case PageInteractionMode.Highlighter:
@@ -202,17 +215,42 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = true;
-                    var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/PenCursor.cur", UriKind.Relative));
+                    var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Resources/Cursors/PenCursor.cur", UriKind.Relative));
                     if(penAndSelectStream != null)
                     {
                         pageViewModel.PageCursor = new Cursor(penAndSelectStream.Stream);
                     }
                     break;
+                case PageInteractionMode.Eraser:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = pageViewModel.EraserMode;
+                    pageViewModel.IsUsingCustomCursors = false;
+
+                    pageViewModel.DefaultDA.IsHighlighter = false;
+                    pageViewModel.DefaultDA.Height = pageViewModel.PenSize;
+                    pageViewModel.DefaultDA.Width = pageViewModel.PenSize;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
+                    break;
+                case PageInteractionMode.Lasso:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.IsUsingCustomCursors = true;
+                    var lassoStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Resources/Cursors/LassoCursor.cur", UriKind.Relative));
+                    if(lassoStream != null)
+                    {
+                        pageViewModel.PageCursor = new Cursor(lassoStream.Stream);
+                    }
+
+                    pageViewModel.DefaultDA.IsHighlighter = false;
+                    pageViewModel.DefaultDA.Height = 2.0;
+                    pageViewModel.DefaultDA.Width = 2.0;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                    break;
                 case PageInteractionMode.Scissors:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = true;
-                    var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/ScissorsCursor.cur", UriKind.Relative));
+                    var scissorsStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Resources/Cursors/ScissorsCursor.cur", UriKind.Relative));
                     if(scissorsStream != null)
                     {
                         pageViewModel.PageCursor = new Cursor(scissorsStream.Stream);
@@ -687,18 +725,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            //if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
-            //{
-            //    EraserMode = (viewModel as RibbonViewModel).EraserMode;
-            //}
+            if(propertyName == "EraserMode" && viewModel is RibbonViewModel)
+            {
+                EraserMode = (viewModel as RibbonViewModel).EraserMode;
+                if(PageInteractionMode == PageInteractionMode.Eraser)
+                {
+                    EditingMode = EraserMode;
+                }
+            }
 
             if(propertyName == "PenSize" && viewModel is RibbonViewModel)
             {
-                double x = (viewModel as RibbonViewModel).PenSize;
+                var x = (viewModel as RibbonViewModel).PenSize;
                 EraserShape = new RectangleStylusShape(x, x);
                 DefaultDA.Height = x;
                 DefaultDA.Width = x;
-                PageInteractionMode = PageInteractionMode.Pen;
+                PenSize = x;
+
+                if(PageInteractionMode == PageInteractionMode.Eraser || PageInteractionMode == PageInteractionMode.Pen || PageInteractionMode == PageInteractionMode.Highlighter)
+                {
+                    return;
+                }
+
+                (viewModel as RibbonViewModel).PageInteractionMode = PageInteractionMode.Pen;
             }
 
             if(propertyName == "PageInteractionMode" && viewModel is RibbonViewModel)

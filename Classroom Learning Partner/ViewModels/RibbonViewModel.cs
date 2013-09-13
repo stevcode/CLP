@@ -102,11 +102,6 @@ namespace Classroom_Learning_Partner.ViewModels
             NextPageCommand = new Command(OnNextPageCommandExecute);
 
             //Tools
-            SetSelectCommand = new Command(OnSetSelectCommandExecute);
-            SetPenCommand = new Command(OnSetPenCommandExecute);
-            SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
-            SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
-            SetCutCommand = new Command(OnSetCutCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //Submission
@@ -1065,83 +1060,18 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Tool Commands
 
         /// <summary>
-        /// Set Select Mode.
-        /// </summary>
-        public Command SetSelectCommand { get; private set; }
-
-        private void OnSetSelectCommandExecute()
-        {
-            PageInteractionMode = PageInteractionMode.Select;
-        }
-
-        /// <summary>
-        /// Set Pen/Inking mode.
-        /// </summary>
-        public Command SetPenCommand { get; private set; }
-
-        private void OnSetPenCommandExecute()
-        {
-            PageInteractionMode = PageInteractionMode.Pen;
-            DrawingAttributes.IsHighlighter = false;
-            DrawingAttributes.Height = PenSize;
-            DrawingAttributes.Width = PenSize;
-            DrawingAttributes.StylusTip = StylusTip.Ellipse;
-        }
-
-        /// <summary>
-        /// Sets Highlighter Mode.
-        /// </summary>
-        public Command SetHighlighterCommand { get; private set; }
-
-        private void OnSetHighlighterCommandExecute()
-        {
-            PageInteractionMode = PageInteractionMode.Highlighter;
-            DrawingAttributes.IsHighlighter = true;
-            DrawingAttributes.Height = 12;
-            DrawingAttributes.Width = 12;
-            DrawingAttributes.StylusTip = StylusTip.Rectangle;
-        }
-
-        /// <summary>
-        /// Sets the Eraser mode for the back of the Pen.
-        /// </summary>
-        public Command<string> SetEraserCommand { get; private set; }
-
-        private void OnSetEraserCommandExecute(string eraserStyle)
-        {
-            //if(eraserStyle == "EraseByPoint")
-            //{
-            //    EditingMode = InkCanvasEditingMode.EraseByPoint;
-            //}
-            //else if(eraserStyle == "EraseByStroke")
-            //{
-            //    EditingMode = InkCanvasEditingMode.EraseByStroke;
-            //}
-        }
-
-        /// <summary>
-        /// Sets Cut Mode.
-        /// </summary>
-        public Command SetCutCommand { get; private set; }
-
-        private void OnSetCutCommandExecute()
-        {
-            PageInteractionMode = PageInteractionMode.Scissors;
-            DrawingAttributes.IsHighlighter = false;
-            DrawingAttributes.Height = 2.0;
-            DrawingAttributes.Width = 2.0;
-            DrawingAttributes.StylusTip = StylusTip.Ellipse;
-        }
-
-        /// <summary>
         /// Sets the Pen Color.
         /// </summary>
         public Command<RibbonButton> SetPenColorCommand { get; private set; }
 
         private void OnSetPenColorCommandExecute(RibbonButton button)
         {
-            CurrentColorButton = button as RibbonButton;
-            DrawingAttributes.Color = (CurrentColorButton.Background as SolidColorBrush).Color;
+            CurrentColorButton = button;
+            var solidColorBrush = CurrentColorButton.Background as SolidColorBrush;
+            if(solidColorBrush != null)
+            {
+                DrawingAttributes.Color = solidColorBrush.Color;
+            }
 
             if(!(PageInteractionMode == PageInteractionMode.Pen || PageInteractionMode == PageInteractionMode.Highlighter))
             {

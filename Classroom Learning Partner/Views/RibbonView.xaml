@@ -180,14 +180,17 @@
 
                 <RibbonToggleButton Label="Select"
                                     LargeImageSource="pack://application:,,,/Images/HandIcon.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
 
                 <RibbonToggleButton Label="Highlighter"
                                     LargeImageSource="pack://application:,,,/Images/Marker.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Highlighter}}" />
 
                 <RibbonMenuButton Label="Brush Size"
@@ -261,7 +264,14 @@
 
                 <RibbonToggleButton Label="Cut"
                                     LargeImageSource="pack://application:,,,/Images/Scissors.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Scissors}}" />
+
+                <RibbonToggleButton Label="Lasso"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Lasso32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Lasso16.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Lasso}}" />
 
             </RibbonGroup>
 
@@ -297,8 +307,6 @@
                                 <Binding Path="SetPenColorCommand" />
                             </Setter.Value>
                         </Setter>
-                        <EventSetter Event="Click"
-                                     Handler="ToolGroupToggle_Clicked" />
                         <Setter Property="CommandParameter">
                             <Setter.Value>
                                 <Binding RelativeSource="{RelativeSource Self}" />
@@ -371,60 +379,6 @@
                               Visibility="{Binding SendButtonVisibility}" />-->
 
             </RibbonGroup>
-
-            <!--<RibbonGroup Header="Projected Displays"
-                         Visibility="{Binding InstructorVisibility}">
-
-                <RibbonButton Label="Send To Projector"
-                              LargeImageSource="..\Images\Projector.png"
-                              Command="{Binding SendDisplayToProjectorcommand}" />
-
-                <RibbonButton Label="Linked Display"
-                              LargeImageSource="..\Images\SingleDisplay.png"
-                              Command="{Binding SwitchToLinkedDisplayCommand}" />
-
-                <RibbonButton Label="New Grid Display"
-                              LargeImageSource="..\Images\GridDisplay.png"
-                              Command="{Binding CreateNewGridDisplayCommand}" />
-
-                <RibbonToggleButton IsChecked="{Binding GridDisplaysVisibility}"
-                                    LargeImageSource="..\Images\OpenNotebook.png">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Grid Displays" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide Grid Displays" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
-                <RibbonToggleButton IsChecked="{Binding BroadcastInkToStudents}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Send Ink to Students Off" />
-                            <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/InkToStudentsOff.png" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Send Ink to Students On" />
-                                    <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/InkToStudentsOn.png" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
-            </RibbonGroup>-->
 
             <RibbonGroup Header="History">
                 
@@ -501,15 +455,19 @@
             <RibbonGroup Header="Tools">
 
                 <RibbonToggleButton Label="Select"
-                                    LargeImageSource="..\Images\HandIcon.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetSelectCommand}" />
+                                    LargeImageSource="pack://application:,,,/Images/HandIcon.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
-                                    IsChecked="True"
-                                    LargeImageSource="..\Images\Pen.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetPenCommand}" />
+                                    LargeImageSource="pack://application:,,,/Images/Pen.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+
+                <RibbonToggleButton Label="Eraser"
+                                    LargeImageSource="pack://application:,,,/Images/Eraser.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Eraser}}" />
 
             </RibbonGroup>
 
@@ -801,15 +759,14 @@
             <RibbonGroup Header="Tools">
 
                 <RibbonToggleButton Label="Select"
-                                    LargeImageSource="..\Images\HandIcon.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetSelectCommand}" />
+                                    LargeImageSource="pack://application:,,,/Images/HandIcon.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
-                                    IsChecked="True"
-                                    LargeImageSource="..\Images\Pen.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetPenCommand}" />
+                                    LargeImageSource="pack://application:,,,/Images/Pen.png"
+                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
 
             </RibbonGroup>
 
@@ -1057,7 +1014,6 @@
                                     x:Name="EditObjectPropertiesToggleButton"
                                     IsChecked="False"
                                     LargeImageSource="..\Images\LargeIcon.png"
-                                    Click="DebugGroupToggle_Clicked"
                                     Command="{Binding UpdateObjectPropertiesCommand}" />
 
             </RibbonGroup>
@@ -1094,12 +1050,9 @@
         <Ribbon.HelpPaneContent>
             <ToggleButton Content="^"
                           VerticalContentAlignment="Center"
-                          Height="22"
-                          Width="40"
+                          Height="22" Width="40"
                           Background="CornflowerBlue"
-                          IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}"
-                          Checked="MinimizeButton_Checked"
-                          Unchecked="MinimizeButton_Unchecked" />
+                          IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" />
         </Ribbon.HelpPaneContent>
 
     </Ribbon>
