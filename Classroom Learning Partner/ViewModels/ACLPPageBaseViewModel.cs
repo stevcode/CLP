@@ -20,7 +20,6 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         None,
         Select,
-        Tile,
         Pen,
         Highlighter,
         PenAndSelect,
@@ -152,11 +151,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     case PageInteractionMode.Select:
                         IsInkCanvasHitTestVisible = false;
                         PageCursor = Cursors.Hand;
-                        break;
-                    case PageInteractionMode.Tile:
-                        IsInkCanvasHitTestVisible = false;
-                        var tileStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Images/GreenTile.cur", UriKind.Relative));
-                        PageCursor = new Cursor(tileStream.Stream);
                         break;
                     case PageInteractionMode.Pen:
                         IsInkCanvasHitTestVisible = true;
@@ -350,13 +344,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            if(PageInteractionMode == PageInteractionMode.Tile)
-            {
-                var pageObjectCanvas = FindNamedChild<Canvas>(TopCanvas, "PageObjectCanvas");
-                var pt = e.GetPosition(pageObjectCanvas);
-                var tile = new CLPSnapTileContainer(pt, Page);
-                PageObjects.Add(tile);
-            }
+
         }
 
         /// <summary>

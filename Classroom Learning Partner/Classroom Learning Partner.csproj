@@ -233,7 +233,6 @@
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPSnapTileContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStrokePathContainerViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
@@ -339,9 +338,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PageObjects\CLPSnapTileContainerView.xaml.cs">
-      <DependentUpon>CLPSnapTileContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
@@ -523,10 +519,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPImageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\CLPSnapTileContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

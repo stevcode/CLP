@@ -157,8 +157,7 @@ namespace CLP.Models
             answer.Append(objectsOfGroup.Count);
             answer.Append(" ");
             if (key.StartsWith("Tile")) {
-                answer.Append("Tile of ");
-                answer.Append((objectsOfGroup[0] as CLPSnapTileContainer).NumberOfTiles);
+
             }
             else
             {
@@ -206,10 +205,6 @@ namespace CLP.Models
             if (po.GetType().Equals(typeof(CLPStrokePathContainer)))
             {
                 return "CLPStamp-" + (po as CLPStrokePathContainer).ParentID;
-            }
-            else if (po.GetType().Equals(typeof(CLPSnapTileContainer)))
-            {
-                return "Tiles" + (po as CLPSnapTileContainer).NumberOfTiles;
             }
             else if (po.GetType().Equals(typeof(CLPShape)))
             {

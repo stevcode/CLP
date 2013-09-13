@@ -43,10 +43,6 @@
                 <Views:CLPShapeView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPSnapTileContainerTemplate">
-                <Views:CLPSnapTileContainerView DataContext="{Binding}" />
-            </ControlTemplate>
-
             <ControlTemplate x:Key="CLPStampTemplate">
                 <Views:CLPStampView DataContext="{Binding}" />
             </ControlTemplate>
@@ -112,11 +108,6 @@
                     <!-- CLPShape trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPShape">
                         <Setter Property="Template" Value="{StaticResource CLPShapeTemplate}" />
-                    </DataTrigger>
-
-                    <!-- CLPSnapTileContainer trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPSnapTileContainer">
-                        <Setter Property="Template" Value="{StaticResource CLPSnapTileContainerTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPStamp trigger -->

@@ -109,7 +109,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SetPenCommand = new Command(OnSetPenCommandExecute);
             SetHighlighterCommand = new Command(OnSetHighlighterCommandExecute);
             SetEraserCommand = new Command<string>(OnSetEraserCommandExecute);
-            SetSnapTileCommand = new Command<RibbonToggleButton>(OnSetSnapTileCommandExecute);
             EnableCutCommand = new Command(OnEnableCutCommandExecute);
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
@@ -1123,17 +1122,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 EditingMode = InkCanvasEditingMode.EraseByStroke;
             }
-        }
-
-        /// <summary>
-        /// Sets Tile Mode.
-        /// </summary>
-        public Command<RibbonToggleButton> SetSnapTileCommand { get; private set; }
-
-        private void OnSetSnapTileCommandExecute(RibbonToggleButton button)
-        {
-            EditingMode = InkCanvasEditingMode.None;
-            PageInteractionMode = PageInteractionMode.Tile;
         }
 
         /// <summary>

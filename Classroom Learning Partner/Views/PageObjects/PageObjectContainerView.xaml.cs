@@ -28,7 +28,6 @@ namespace Classroom_Learning_Partner.Views
             if (dataContext is CLPInkShapeRegion) return typeof(CLPInkShapeRegionViewModel);
             if (dataContext is CLPShadingRegion) return typeof(CLPShadingRegionViewModel);
             if (dataContext is CLPShape) return typeof(CLPShapeViewModel);
-            if (dataContext is CLPSnapTileContainer) return typeof(CLPSnapTileContainerViewModel);
             if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
             if (dataContext is CLPStrokePathContainer) return typeof(CLPStrokePathContainerViewModel);
             if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);

@@ -261,11 +261,6 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <RibbonToggleButton Label="Tile"
-                                    LargeImageSource="..\Images\SnapTileIcon.png"
-                                    Click="ToolGroupToggle_Clicked"
-                                    Command="{Binding SetSnapTileCommand}" />
-
                 <RibbonToggleButton Label="Cut"
                                     LargeImageSource="..\Images\Scissors.png"
                                     Click="ToolGroupToggle_Clicked"

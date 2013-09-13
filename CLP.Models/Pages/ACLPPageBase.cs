@@ -23,7 +23,6 @@ namespace CLP.Models
     KnownType(typeof(CLPAudio)),
     KnownType(typeof(CLPImage)),
     KnownType(typeof(CLPShape)),
-    KnownType(typeof(CLPSnapTileContainer)),
     KnownType(typeof(CLPStamp)),
     KnownType(typeof(CLPStrokePathContainer)),
     KnownType(typeof(CLPTextBox)),
