@@ -68,7 +68,21 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));   
+
+        /// <summary>
+        /// Whether or not division adorners snap to grid or move continuously.
+        /// </summary>
+        public bool IsAdornerSnappingToGrid
+        {
+	        get { return GetValue<bool>(IsAdornerSnappingToGridProperty); }
+	        set { SetValue(IsAdornerSnappingToGridProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the IsAdornerSnappingToGrid property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsAdornerSnappingToGridProperty = RegisterProperty("IsAdornerSnappingToGrid", typeof(bool)); 
 
         /// <summary>
         /// Gets or sets the Rows value
@@ -550,6 +564,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if(IsGridOn && !IsAdornerSnappingToGrid)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Horizontal, position);
+            }
+
             var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
             var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
 
@@ -605,6 +624,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
                 return;
+            }
+
+            if (IsGridOn && !IsAdornerSnappingToGrid)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Vertical, position);
             }
 
             CLPArrayDivision divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);

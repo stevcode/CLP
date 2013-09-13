@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.Views
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength;
+                clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength; 
             }
             if(clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
@@ -115,13 +115,20 @@ namespace Classroom_Learning_Partner.Views
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.LeftArrowPosition = e.GetPosition(TopGrid).Y - clpArray.LargeLabelLength;
+                if (clpArrayViewModel.IsGridOn && clpArrayViewModel.IsAdornerSnappingToGrid)
+                {
+                    clpArrayViewModel.LeftArrowPosition = clpArray.GetClosestGridLine(ArrayDivisionOrientation.Horizontal, e.GetPosition(TopGrid).Y - clpArray.LargeLabelLength);
+                }
+                else
+                {
+                    clpArrayViewModel.LeftArrowPosition = e.GetPosition(TopGrid).Y - clpArray.LargeLabelLength;
+                }  
             }
-            if(clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            if(!clpArrayViewModel.IsAdornerSnappingToGrid && clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if(clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
+            if (!clpArrayViewModel.IsAdornerSnappingToGrid && clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP;
             }
@@ -139,13 +146,20 @@ namespace Classroom_Learning_Partner.Views
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength;
+                if (clpArrayViewModel.IsGridOn && clpArrayViewModel.IsAdornerSnappingToGrid)
+                {
+                    clpArrayViewModel.TopArrowPosition = clpArray.GetClosestGridLine(ArrayDivisionOrientation.Vertical, e.GetPosition(TopGrid).X - clpArray.LargeLabelLength);
+                }
+                else
+                {
+                    clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength;
+                }  
             }
-            if(clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            if (!clpArrayViewModel.IsAdornerSnappingToGrid && clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if(clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
+            if (!clpArrayViewModel.IsAdornerSnappingToGrid && clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP;
             }
