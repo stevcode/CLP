@@ -2319,9 +2319,11 @@ namespace Classroom_Learning_Partner.ViewModels
             // First, clear out any old ArrayOrientationTagTypes
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+                if(tag.TagType == null ||
+                    tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
-                    tag.TagType.Name == ArrayStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayXAxisStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayYAxisStrategyTagType.Instance.Name ||
                     tag.TagType.Name == ArrayDivisionCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == ArrayVerticalDivisionsTagType.Instance.Name ||
                     tag.TagType.Name == ArrayHorizontalDivisionsTagType.Instance.Name)
@@ -2392,7 +2394,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
 
             // Apply a strategy tag
-            Tag strategyTag = new Tag(Tag.Origins.Generated, ArrayStrategyTagType.Instance);
+            Tag strategyTagX = new Tag(Tag.Origins.Generated, ArrayXAxisStrategyTagType.Instance);
+            Tag strategyTagY = new Tag(Tag.Origins.Generated, ArrayYAxisStrategyTagType.Instance);
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -2413,23 +2416,23 @@ namespace Classroom_Learning_Partner.ViewModels
             // Now check the student's divisions against known strategies
             if(array.HorizontalDivisions.Count == 0)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("none")); 
+                strategyTagX.AddTagOptionValue(new TagOptionValue("none")); 
             }
             else if(horizDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("place value"));
             }
             else if (arrayHeight > 20 && arrayHeight < 100 && horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("10's"));
             }
             else if ((arrayHeight % 2 == 0) && horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("half"));
             }
             else
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("other"));
             }
 
             // Then the vertical divisions
@@ -2443,28 +2446,30 @@ namespace Classroom_Learning_Partner.ViewModels
             // Now check the student's divisions against known strategies
             if(array.VerticalDivisions.Count == 0)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("none"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("none"));
             }
             else if(vertDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("place value"));
             }
             else if(arrayWidth > 20 && arrayWidth < 100 && vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("10's"));
             }
             else if((arrayWidth % 2 == 0) && vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("half"));
             }
             else
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("other"));
             }
 
-            tags.Add(strategyTag);
+            tags.Add(strategyTagX);
+            tags.Add(strategyTagY);
 
-            Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value + ", " + strategyTag.Value[1].Value);
+            Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
+            Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
 
             // Add an array divider correctness tag
             Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);

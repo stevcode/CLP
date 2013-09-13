@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayStrategyTagType :  ModelBase, TagType
+    public class ArrayYAxisStrategyTagType :  ModelBase, TagType
     {
         #region Constructors
 
-        private ArrayStrategyTagType()
+        private ArrayYAxisStrategyTagType()
         {
-            Name = "Array: Strategy";
+            Name = "Array: Y-Axis Strategy";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -33,7 +33,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected ArrayStrategyTagType(SerializationInfo info, StreamingContext context)
+        protected ArrayYAxisStrategyTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -82,6 +82,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static ArrayStrategyTagType Instance = new ArrayStrategyTagType();
+        public static ArrayYAxisStrategyTagType Instance = new ArrayYAxisStrategyTagType();
     }
 }
