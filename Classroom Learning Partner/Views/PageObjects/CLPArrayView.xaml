@@ -226,7 +226,7 @@
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
                         Cursor="SizeWE" 
                         Width="40" Height="40"
-                        Canvas.Right="{Binding PageObject.ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" 
+                        Canvas.Right="{Binding PageObject.ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=-20}" 
                         Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
                         Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
@@ -247,7 +247,7 @@
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
                         Cursor="SizeWE" 
                         Width="40" Height="40"
-                        Canvas.Right="-10" 
+                        Canvas.Right="-20" 
                         Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
                         Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
@@ -268,7 +268,7 @@
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
                         Cursor="SizeNS" 
                         Width="40" Height="40"
-                        Canvas.Bottom="{Binding PageObject.ArrayHeight, Converter={StaticResource LengthConverter}, ConverterParameter=-30}" 
+                        Canvas.Bottom="{Binding PageObject.ArrayHeight, Converter={StaticResource LengthConverter}, ConverterParameter=-20}" 
                         Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
                         Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
@@ -289,7 +289,7 @@
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
                         Cursor="SizeNS" 
                         Width="40" Height="40"
-                        Canvas.Bottom="-10" 
+                        Canvas.Bottom="-20" 
                         Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=50}"
                         Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
@@ -387,7 +387,7 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="20" Height="{Binding ArrayHeight}"
+                       Width="5" Height="{Binding ArrayHeight}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
@@ -396,7 +396,7 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="20" Height="{Binding ArrayHeight}"
+                       Width="5" Height="{Binding ArrayHeight}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
@@ -405,7 +405,7 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="20" Width="{Binding ArrayWidth}"
+                       Height="5" Width="{Binding ArrayWidth}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
@@ -414,7 +414,7 @@
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="20" Width="{Binding ArrayWidth}"
+                       Height="5" Width="{Binding ArrayWidth}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <!--Horizontal Divisions-->
