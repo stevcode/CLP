@@ -696,7 +696,7 @@ namespace CLP.Models
                 }
                 prev = line;
             }
-            return prev;
+            return gridlines[-1];
         }
 
         #endregion //Methods

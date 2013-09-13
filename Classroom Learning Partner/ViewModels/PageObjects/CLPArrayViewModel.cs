@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the IsAdornerSnappingToGrid property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData IsAdornerSnappingToGridProperty = RegisterProperty("IsAdornerSnappingToGrid", typeof(bool)); 
+        public static readonly PropertyData IsAdornerSnappingToGridProperty = RegisterProperty("IsAdornerSnappingToGrid", typeof(bool), false); 
 
         /// <summary>
         /// Gets or sets the Rows value
