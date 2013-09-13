@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayStrategyTagType()
         {
-            Name = "Array Strategy";
+            Name = "Array: Strategy";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);

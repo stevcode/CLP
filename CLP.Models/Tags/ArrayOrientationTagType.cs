@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayOrientationTagType()
         {
-            Name = "Array Orientation";
+            Name = "Array: Orientation";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
