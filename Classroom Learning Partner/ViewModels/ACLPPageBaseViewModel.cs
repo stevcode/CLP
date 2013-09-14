@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
+using System.Windows.Shapes;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -550,7 +551,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            Console.WriteLine(UniqueIdentifier);
             if(PageInteractionMode == PageInteractionMode.Scissors)
             {
                 foreach(var stroke in e.Added)
@@ -599,8 +599,63 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
             }
-            
-            
+
+            if(PageInteractionMode == PageInteractionMode.Lasso)
+            {
+                foreach(var stroke in e.Added)
+                {
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+
+                    var lassoedPageObjects = new List<ICLPPageObject>();
+
+                    var strokeGeometry = new PathGeometry();
+                    var pathFigure = new PathFigure();
+                    pathFigure.StartPoint = stroke.StylusPoints.First().ToPoint();
+                    pathFigure.Segments = new PathSegmentCollection();
+                    var polyLine = new PolyLineSegment
+                                   {
+                                       Points = new PointCollection((Point[])stroke.StylusPoints)
+                                                       {
+                                                           stroke.StylusPoints.First().ToPoint()
+                                                       }
+                                   };
+                    pathFigure.Segments.Add(polyLine);
+
+                    strokeGeometry.Figures.Add(pathFigure);
+    
+
+                    foreach(var pageObject in PageObjects)
+                    {
+                        var pageObjectGeometry =
+                            new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
+                                                           pageObject.Height));
+
+                        if(strokeGeometry.FillContains(pageObjectGeometry))
+                        {
+                            lassoedPageObjects.Add(pageObject);
+                        }
+                    }
+
+                    foreach(var lassoedPageObject in lassoedPageObjects)
+                    {
+                        CLPServiceAgent.Instance.RemovePageObjectFromPage(lassoedPageObject);
+                    }
+
+                    if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                    {
+                        var newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+                    }
+                    Page.InkStrokes.Remove(stroke);
+
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+                    return;
+                }
+            }
+
+
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
 
