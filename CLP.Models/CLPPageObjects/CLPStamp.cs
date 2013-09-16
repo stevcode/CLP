@@ -441,11 +441,6 @@ namespace CLP.Models
                 string strokeID = s.GetStrokeUniqueID();
                 try
                 {
-                    if(!PartsAuthorGenerated)
-                    {
-                        ResetParts();
-                    }
-
                     PageObjectStrokeParentIDs.Remove(strokeID);
                 }
                 catch(Exception)
@@ -459,11 +454,6 @@ namespace CLP.Models
 
             foreach(Stroke stroke in addedStrokes.Where(stroke => stroke.HitTest(containerBoundingBox, 50)))
             {
-                if(!PartsAuthorGenerated)
-                {
-                    ResetParts();
-                }
-
                 if(!PageObjectStrokeParentIDs.Contains(stroke.GetStrokeUniqueID()))
                 {
                     PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
