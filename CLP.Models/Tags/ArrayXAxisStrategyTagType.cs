@@ -6,19 +6,25 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayVerticalDivisionsTagType : ModelBase, TagType
+    public class ArrayXAxisStrategyTagType :  ModelBase, TagType
     {
         #region Constructors
 
-        private ArrayVerticalDivisionsTagType()
+        private ArrayXAxisStrategyTagType()
         {
-            Name = "Array: Regions Formed by Vertical Dividers";
+            Name = "Array: X-Axis Strategy";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
             AccessLevels.Add(Tag.AccessLevels.Researcher);
 
-            ExclusiveValue = true;
+            ExclusiveValue = false;
+            ValueOptions = new ObservableCollection<TagOptionValue>();
+            ValueOptions.Add(new TagOptionValue("place value")); // e.g. 43 -> 40 | 3
+            ValueOptions.Add(new TagOptionValue("half")); // e.g., 18 -> 9 | 9
+            ValueOptions.Add(new TagOptionValue("10's")); // e.g. 43 -> 10 | 10 | 10 | 10 | 3
+            ValueOptions.Add(new TagOptionValue("none")); // No dividing lines were added
+            ValueOptions.Add(new TagOptionValue("other")); // None of the above*
 
         }
 
@@ -27,7 +33,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected ArrayVerticalDivisionsTagType(SerializationInfo info, StreamingContext context)
+        protected ArrayXAxisStrategyTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -41,7 +47,7 @@ namespace CLP.Models
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Array Strategy");
 
         public bool InElevatedMenu
         {
@@ -76,6 +82,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static ArrayVerticalDivisionsTagType Instance = new ArrayVerticalDivisionsTagType();
+        public static ArrayXAxisStrategyTagType Instance = new ArrayXAxisStrategyTagType();
     }
 }

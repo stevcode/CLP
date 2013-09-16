@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayHorizontalDivisionsTagType()
         {
-            Name = "Array Horizontal Divisions";
+            Name = "Array: Regions Formed by Horizontal Dividers";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);

@@ -6,25 +6,19 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class ArrayStrategyTagType :  ModelBase, TagType
+    public class StampPartsPerStampTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private ArrayStrategyTagType()
+        private StampPartsPerStampTagType()
         {
-            Name = "Array Strategy";
+            Name = "Stamps: Parts Per Stamp";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
             AccessLevels.Add(Tag.AccessLevels.Researcher);
 
-            ExclusiveValue = false;
-            ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("place value")); // e.g. 43 -> 40 | 3
-            ValueOptions.Add(new TagOptionValue("half")); // e.g., 18 -> 9 | 9
-            ValueOptions.Add(new TagOptionValue("10's")); // e.g. 43 -> 10 | 10 | 10 | 10 | 3
-            ValueOptions.Add(new TagOptionValue("none")); // No dividing lines were added
-            ValueOptions.Add(new TagOptionValue("other")); // None of the above*
+            ExclusiveValue = true;
 
         }
 
@@ -33,7 +27,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected ArrayStrategyTagType(SerializationInfo info, StreamingContext context)
+        protected StampPartsPerStampTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -47,7 +41,7 @@ namespace CLP.Models
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Array Strategy");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "");
 
         public bool InElevatedMenu
         {
@@ -82,6 +76,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static ArrayStrategyTagType Instance = new ArrayStrategyTagType();
+        public static StampPartsPerStampTagType Instance = new StampPartsPerStampTagType();
     }
 }

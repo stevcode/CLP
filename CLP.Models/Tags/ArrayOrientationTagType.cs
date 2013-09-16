@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private ArrayOrientationTagType()
         {
-            Name = "Array Orientation";
+            Name = "Array: Orientation";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -20,8 +20,8 @@ namespace CLP.Models
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>(); 
-            ValueOptions.Add(new TagOptionValue("x*y"));
-            ValueOptions.Add(new TagOptionValue("y*x"));
+            ValueOptions.Add(new TagOptionValue("First factor is width"));
+            ValueOptions.Add(new TagOptionValue("First factor is height"));
             ValueOptions.Add(new TagOptionValue("unknown"));
 
         }
