@@ -118,7 +118,7 @@
                 <!--Drag and Snap Thumb-->
                 <Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
-                       Canvas.Left="-40" Canvas.Top="100"
+                       Canvas.Left="-50" Canvas.Top="20"
                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
