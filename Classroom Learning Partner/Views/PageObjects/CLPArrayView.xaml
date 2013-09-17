@@ -133,10 +133,11 @@
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Red" StrokeThickness="1" Fill="Red"
+                            <!--<Grid Height="40" Width="40" Background="Black">-->
+                                <!--<Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />-->
+                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" Height="40" Width="40" />
+                                <!--<Path Stroke="Red" StrokeThickness="1" Fill="Red"
                                       Data="M 5,20 L 10,15 L 10,25 L 5,20" />
                                 <Path Stroke="Red" StrokeThickness="1" Fill="Red"
                                       Data="M 35,20 L 30,15 L 30,25 L 35,20" />
@@ -147,8 +148,8 @@
                                 <Path Stroke="Red" StrokeThickness="1" Fill="Red"
                                       Data="M 20,5 L 15,10 L 25,10 L 20,5" />
                                 <Path Stroke="Red" StrokeThickness="1" Fill="Red"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
+                                      Data="M 5,20 L 35,20" />-->
+                            <!--</Grid>-->
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
@@ -210,12 +211,16 @@
                         Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
+                            
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L-.5,.5 L0,1 M-.5,.5 L0,1 L.5,.5" 
+                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png" 
+                                       Height="25" Width="25" Margin="6"
+                                       HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                <!--<Path Data="M0,0 L-.5,.5 L0,1 M-.5,.5 L0,1 L.5,.5" 
                                       Stretch="Fill" Margin="5"
-                                      Stroke="MediumVioletRed" StrokeThickness="3" />
+                                      Stroke="MediumVioletRed" StrokeThickness="3" />-->
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>

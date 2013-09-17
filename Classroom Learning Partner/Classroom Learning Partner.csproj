@@ -660,6 +660,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\AdornerImages\ArrayRotate64.png" />
+    <Resource Include="Resources\Images\AdornerImages\ArraySnap64.png" />
     <Resource Include="Resources\Images\Lasso16.png" />
     <Resource Include="Resources\Images\Lasso32.png" />
     <Resource Include="Resources\Images\Lasso64.png" />
