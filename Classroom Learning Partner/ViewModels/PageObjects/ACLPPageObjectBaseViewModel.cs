@@ -265,6 +265,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //IPageObjectAdorners
 
+        public virtual void ClearAdorners()
+        {
+            IsAdornerVisible = false;
+        }
+
         #region Commands
 
         #region Default Adorners

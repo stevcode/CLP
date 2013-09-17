@@ -158,7 +158,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PenSizeProperty, value); }
         }
 
-        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3);
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3.0);
 
         /// <summary>
         /// Sets the PageInteractionMode.
@@ -485,7 +485,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
                 {
-                    aclpPageObjectBaseViewModel.IsAdornerVisible = false;
+                    aclpPageObjectBaseViewModel.ClearAdorners();
                 }
             }
         }
