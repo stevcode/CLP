@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class StampCorrectnessTagType : ModelBase, TagType
+    public class StampGroupingTypeTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private StampCorrectnessTagType()
+        private StampGroupingTypeTagType()
         {
-            Name = "Stamp Correctness";
+            Name = "Stamps: Grouping Type";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -20,8 +20,11 @@ namespace CLP.Models
 
             ExclusiveValue = true;
             ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("Correct"));
-            ValueOptions.Add(new TagOptionValue("Incorrect"));
+            ValueOptions.Add(new TagOptionValue("Basic Grouping"));
+            ValueOptions.Add(new TagOptionValue("Ink Grouping"));
+            ValueOptions.Add(new TagOptionValue("Distance Grouping"));
+            ValueOptions.Add(new TagOptionValue("Container Grouping"));
+            ValueOptions.Add(new TagOptionValue("Container Distance Grouping"));
 
         }
 
@@ -30,7 +33,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected StampCorrectnessTagType(SerializationInfo info, StreamingContext context)
+        protected StampGroupingTypeTagType(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -79,6 +82,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static StampCorrectnessTagType Instance = new StampCorrectnessTagType();
+        public static StampGroupingTypeTagType Instance = new StampGroupingTypeTagType();
     }
 }

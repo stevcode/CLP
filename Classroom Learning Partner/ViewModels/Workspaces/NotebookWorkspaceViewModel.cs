@@ -78,12 +78,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             // Just hardcode in some tag types for now
-            FilterTypes.Add(ArrayStrategyTagType.Instance.Name);
+            FilterTypes.Add(RepresentationCorrectnessTagType.Instance.Name);
+            FilterTypes.Add(ArrayXAxisStrategyTagType.Instance.Name);
+            FilterTypes.Add(ArrayYAxisStrategyTagType.Instance.Name);
             FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
             FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
-            FilterTypes.Add(StampCorrectnessTagType.Instance.Name);
+            FilterTypes.Add(StampPartsPerStampTagType.Instance.Name);
+            FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
 
             #endregion //Tag Stuff
 
@@ -421,6 +424,12 @@ namespace Classroom_Learning_Partner.ViewModels
             if (propertyName == "SideBarVisibility")
             {
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
+            }
+
+            if(propertyName == "DisplayPanelVisibility")
+            {
+                RightPanel = DisplayListPanel;
+                RightPanel.IsVisible = (viewModel as RibbonViewModel).DisplayPanelVisibility;
             }
 
             if(propertyName == "ThumbnailsTop")

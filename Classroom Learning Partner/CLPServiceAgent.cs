@@ -328,7 +328,7 @@ namespace Classroom_Learning_Partner
             AddPageObjectToPage(parentPage, pageObject, addToHistory);
         }
 
-        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)
+        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true)
         {
             if(page == null)
             {
@@ -341,6 +341,11 @@ namespace Classroom_Learning_Partner
             {
                 page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID,
                                                                             page.PageObjects.Count - 1));
+            }
+
+            if(forceSelectMode)
+            {
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
             }
         }
 

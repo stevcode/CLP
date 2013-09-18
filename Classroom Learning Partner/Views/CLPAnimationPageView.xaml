@@ -58,7 +58,7 @@
                        EditingMode="{Binding EditingMode}"
                        EditingModeInverted="{Binding EraserMode}"
                        DefaultDrawingAttributes="{Binding DefaultDA}"
-                       Cursor="{Binding PageCursor}" ForceCursor="True" />
+                       Cursor="{Binding PageCursor}" ForceCursor="{Binding IsUsingCustomCursors}" />
 
             </Canvas>
         </Viewbox>

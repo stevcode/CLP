@@ -918,6 +918,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public override void ClearAdorners()
+        {
+            IsAdornerVisible = false;
+            IsDefaultAdornerVisible = false;
+            IsTopAdornerVisible = false;
+            IsLeftAdornerVisible = false;
+        }
+
         #endregion //Methods
     }
 }

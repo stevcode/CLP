@@ -1322,11 +1322,13 @@ namespace CLP.Models
                             combineTheseGroups.Add(groupA);
                             combineTheseGroups.Add(groupB);
                         }
-                        else
-                        {
-                            return false; // TODO: Added this line because if we reach this point, then combineTheseGroups is still empty and we'll throw an exception in the next if block
-                                          // Does this DTRT? I have no idea. :(
-                        }
+                        //else //TODO: NOTE FROM STEVE: Matt added this else statement, apparently to prevent an exception, however smallestDistance is almost always going to be greater
+                        //                              than smallestDistanceGroups because it's very first comparison is with the pageObject that it's closest to. This returns false
+                        //                              and no groups are combined at all.
+                        //{
+                        //    return false; // TODO: Added this line because if we reach this point, then combineTheseGroups is still empty and we'll throw an exception in the next if block
+                        //                  // Does this DTRT? I have no idea. :(
+                        //}
                     }
                 }
             }

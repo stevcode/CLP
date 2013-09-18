@@ -182,6 +182,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CLPServiceAgent.cs" />
+    <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
+    <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioConverter.cs" />
     <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
@@ -263,6 +265,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
+      <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageDefinitionView.xaml.cs">
       <DependentUpon>PageDefinitionView.xaml</DependentUpon>
@@ -419,6 +424,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -579,7 +588,6 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
-    <None Include="Images\ScissorsCursor.ani" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -660,11 +668,64 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
-    <Resource Include="Resources\Cursors\HighlighterCursor.cur" />
-    <Resource Include="Images\ScissorsCursor.cur" />
+    <Resource Include="Resources\Images\HorizontalArrayStack32.png" />
+    <Resource Include="Resources\Images\VerticalArrayStack32.png" />
+    <Resource Include="Resources\Images\StrokeEraser64.png" />
+    <Resource Include="Resources\Images\PointEraser64.png" />
+    <Resource Include="Resources\Images\Pen32.png" />
+    <Resource Include="Resources\Images\PointEraser32.png" />
+    <Resource Include="Resources\Images\StrokeEraser32.png" />
+    <Resource Include="Resources\Images\Scissors32.png" />
+    <Resource Include="Resources\Images\Scissors16.png" />
+    <Resource Include="Resources\Images\Highlighter16.png" />
+    <Resource Include="Resources\Images\Highlighter32.png" />
+    <Resource Include="Resources\Images\PenSize16.png" />
+    <Resource Include="Resources\Images\PenSize32.png" />
+    <Resource Include="Resources\Images\Hand32.png" />
+    <Resource Include="Resources\Images\Hand16.png" />
+    <Resource Include="Resources\Images\Pen16.png" />
+    <Resource Include="Resources\Images\OpenNotebook16.png" />
+    <Resource Include="Resources\Images\Displays32.png" />
+    <Resource Include="Resources\Images\NextPage32.png" />
+    <Resource Include="Resources\Images\PreviousPage32.png" />
+    <Resource Include="Resources\Images\NextPage16.png" />
+    <Resource Include="Resources\Images\PreviousPage16.png" />
+    <Resource Include="Resources\Images\BlankStamp16.png" />
+    <Resource Include="Resources\Images\BlankStamp32.png" />
+    <Resource Include="Resources\Images\Array32.png" />
+    <Resource Include="Resources\Images\Array16.png" />
+    <Resource Include="Resources\Images\InkArray16.png" />
+    <Resource Include="Resources\Images\InkArray32.png" />
+    <Resource Include="Resources\Images\Redo32.png" />
+    <Resource Include="Resources\Images\Undo32.png" />
+    <Resource Include="Resources\Images\Undo16.png" />
+    <Resource Include="Resources\Images\Redo16.png" />
+    <Resource Include="Resources\Images\GroupSubmit16.png" />
+    <Resource Include="Resources\Images\GroupSubmit32.png" />
+    <Resource Include="Resources\Images\Happy32.png" />
+    <Resource Include="Resources\Images\Happy16.png" />
+    <Resource Include="Resources\Images\SingleSubmit16.png" />
+    <Resource Include="Resources\Images\SingleSubmit32.png" />
+    <Resource Include="Resources\Images\Exit64.png" />
+    <Resource Include="Resources\Images\ReconnectToNetwork32.png" />
+    <Resource Include="Resources\Images\TempIcon32.png" />
+    <Resource Include="Resources\Images\ConvertToXPS32.png" />
+    <Resource Include="Resources\Images\SaveAllNotebooks32.png" />
+    <Resource Include="Resources\Images\SaveNotebook32.png" />
+    <Resource Include="Resources\Images\EditNotebook32.png" />
+    <Resource Include="Resources\Images\DoneEditingNotebook32.png" />
+    <Resource Include="Resources\Images\OpenNotebook32.png" />
+    <Resource Include="Resources\Images\NewNotebook32.png" />
+    <Resource Include="Resources\Images\NewNotebook64.png" />
+    <Resource Include="Resources\Images\AdornerImages\ArrayRotate64.png" />
+    <Resource Include="Resources\Images\AdornerImages\ArraySnap64.png" />
+    <Resource Include="Resources\Images\Lasso16.png" />
+    <Resource Include="Resources\Images\Lasso32.png" />
+    <Resource Include="Resources\Images\Lasso64.png" />
+    <Resource Include="Resources\Cursors\LassoCursor.cur" />
+    <Resource Include="Resources\Cursors\ScissorsCursor.cur" />
     <Resource Include="Images\Scissors.png" />
-    <Resource Include="Images\HighlighterCursor.cur" />
-    <Resource Include="Images\PenCursor.cur" />
+    <Resource Include="Resources\Cursors\PenCursor.cur" />
     <Resource Include="Images\HandIcon.png" />
     <Resource Include="Images\Money\50dollars.png" />
     <Resource Include="Images\Money\10dollars.png" />
@@ -726,7 +787,7 @@
     <Resource Include="Images\mic_stop.png" />
     <Resource Include="Images\mic_start.png" />
     <Resource Include="Images\Inkwell.png" />
-    <Resource Include="Images\File.png" />
+    <Resource Include="Resources\Images\File.png" />
     <Resource Include="Images\play2.png" />
     <Resource Include="Images\pause.png" />
     <Resource Include="Images\DisplaySubmissionsButton.png" />
