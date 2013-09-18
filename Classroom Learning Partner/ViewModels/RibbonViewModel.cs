@@ -2031,11 +2031,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var xPosition = 0.0;
                 var yPosition = 150.0;
                 const double LARGE_LABEL_LENGTH = 70.0;
-                while(xPosition + LARGE_LABEL_LENGTH + columns * initializedSquareSize >= currentPage.PageWidth)
-                {
-                    initializedSquareSize = initializedSquareSize / 2;
-                }
-                while(yPosition + LARGE_LABEL_LENGTH + rows * initializedSquareSize >= currentPage.PageHeight)
+                while(xPosition + LARGE_LABEL_LENGTH + columns * initializedSquareSize >= currentPage.PageWidth || yPosition + LARGE_LABEL_LENGTH + rows * initializedSquareSize >= currentPage.PageHeight)
                 {
                     initializedSquareSize = initializedSquareSize / 2;
                 }
@@ -2087,7 +2083,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.SizeArrayToGridLevel(initializedSquareSize);
                     }
 
-                    Console.WriteLine(initializedSquareSize);
                     CLPServiceAgent.Instance.AddPageObjectToPage(array);
                 }
             }
