@@ -265,6 +265,9 @@
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
+      <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\PageDefinitionView.xaml.cs">
       <DependentUpon>PageDefinitionView.xaml</DependentUpon>
     </Compile>
@@ -420,6 +423,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
