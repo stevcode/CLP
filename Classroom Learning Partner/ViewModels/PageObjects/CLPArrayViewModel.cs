@@ -71,20 +71,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));   
 
         /// <summary>
-        /// Whether or not division adorners snap to grid or move continuously.
-        /// </summary>
-        public bool IsAdornerSnappingToGrid
-        {
-	        get { return GetValue<bool>(IsAdornerSnappingToGridProperty); }
-	        set { SetValue(IsAdornerSnappingToGridProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the IsAdornerSnappingToGrid property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsAdornerSnappingToGridProperty = RegisterProperty("IsAdornerSnappingToGrid", typeof(bool), false); 
-
-        /// <summary>
         /// Gets or sets the Rows value
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -554,7 +540,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateHorizontalDivisionCommandExecute()
         {
             var position = LeftArrowPosition - 5;
-            if (IsGridOn && !IsAdornerSnappingToGrid)
+            if (IsGridOn)
             {
                 position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Horizontal, position);
             }
@@ -617,7 +603,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateVerticalDivisionCommandExecute()
         {
             var position = TopArrowPosition - 5;
-            if (IsGridOn && !IsAdornerSnappingToGrid)
+            if (IsGridOn)
             {
                 position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Vertical, position);
             }
