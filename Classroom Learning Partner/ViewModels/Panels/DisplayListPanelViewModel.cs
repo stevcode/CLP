@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             SetMirrorDisplayCommand = new Command(OnSetMirrorDisplayCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
+            IsVisible = false;
         }
 
         /// <summary>

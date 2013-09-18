@@ -182,6 +182,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CLPServiceAgent.cs" />
+    <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioConverter.cs" />
     <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />

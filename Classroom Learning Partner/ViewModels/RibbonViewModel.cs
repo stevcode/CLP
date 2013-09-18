@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
-        private MainWindowViewModel MainWindow
+        public MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
         }
@@ -311,15 +311,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool DisplayPanelVisibility
         {
             get { return GetValue<bool>(DisplayPanelVisibilityProperty); }
-            set
-            {
-                SetValue(DisplayPanelVisibilityProperty, value);
-                if(App.MainWindowViewModel != null && App.MainWindowViewModel.SelectedWorkspace != null && App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-                {
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).DisplayListPanel;
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel.IsVisible = value;
-                }
-            }
+            set { SetValue(DisplayPanelVisibilityProperty, value); }
         }
 
         public static readonly PropertyData DisplayPanelVisibilityProperty = RegisterProperty("DisplayPanelVisibility", typeof(bool), false);

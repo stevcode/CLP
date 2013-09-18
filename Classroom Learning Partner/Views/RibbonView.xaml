@@ -9,6 +9,7 @@
     <UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
     </UserControl.Resources>
 
     <!--Ribbon-->
@@ -127,7 +128,8 @@
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
-                                    IsChecked="{Binding SideBarVisibility}">
+                                    IsChecked="{Binding SideBarVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -155,6 +157,7 @@
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                     Visibility="{Binding InstructorVisibility}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
