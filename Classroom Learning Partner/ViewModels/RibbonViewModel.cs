@@ -2030,7 +2030,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 var initializedSquareSize = 45.0;
                 var xPosition = 0.0;
                 var yPosition = 150.0;
+                var useTwoColumns = false;
                 const double LARGE_LABEL_LENGTH = 70.0;
+                const double MIN_SIDE_LENGTH = 15.0;
                 while(xPosition + LARGE_LABEL_LENGTH + columns * initializedSquareSize >= currentPage.PageWidth || yPosition + LARGE_LABEL_LENGTH + rows * initializedSquareSize >= currentPage.PageHeight)
                 {
                     initializedSquareSize = initializedSquareSize / 2;
@@ -2041,6 +2043,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         while(xPosition + LARGE_LABEL_LENGTH + (columns * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageWidth)
                         {
+                            if(initializedSquareSize / 2 * columns < MIN_SIDE_LENGTH || initializedSquareSize / 2 * rows < MIN_SIDE_LENGTH)
+                            {
+                                useTwoColumns = true;
+                                break;
+                            }
                             initializedSquareSize = initializedSquareSize / 2;
                         }
                     }
@@ -2049,11 +2056,20 @@ namespace Classroom_Learning_Partner.ViewModels
                         yPosition = 80;
                         while(yPosition + LARGE_LABEL_LENGTH + (rows * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageHeight)
                         {
+                            if(initializedSquareSize / 2 * columns < MIN_SIDE_LENGTH || initializedSquareSize / 2 * rows < MIN_SIDE_LENGTH)
+                            {
+                                useTwoColumns = true;
+                                break;
+                            }
                             initializedSquareSize = initializedSquareSize / 2;
                         }
                     }
                 }
 
+                if(useTwoColumns && isHorizontallyAligned)
+                {
+                    yPosition = 40.0;
+                }
                 foreach(var index in Enumerable.Range(1, numberOfArrays))
                 {
                     var array = new CLPArray(rows, columns, currentPage);
@@ -2070,6 +2086,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     if(isHorizontallyAligned)
                     {
+                        if(useTwoColumns && index == numberOfArrays / 2 + 1)
+                        {
+                            xPosition = 0.0;
+                            yPosition += LARGE_LABEL_LENGTH + rows * initializedSquareSize;
+                        }
                         array.XPosition = xPosition;
                         array.YPosition = yPosition;
                         xPosition += ((columns + 1) * initializedSquareSize);
@@ -2077,6 +2098,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else if(isVerticallyAligned)
                     {
+                        if(useTwoColumns && index == numberOfArrays / 2 + 1)
+                        {
+                            xPosition += LARGE_LABEL_LENGTH + columns * initializedSquareSize;
+                            yPosition = 80.0;
+                        }
                         array.XPosition = xPosition;
                         array.YPosition = yPosition;
                         yPosition += ((rows + 1) * initializedSquareSize);
@@ -2085,6 +2111,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     CLPServiceAgent.Instance.AddPageObjectToPage(array);
                 }
+              
             }
         }
 
