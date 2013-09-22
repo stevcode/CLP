@@ -127,7 +127,9 @@ namespace Classroom_Learning_Partner
 
                 try
                 {
+                    ModelBase.GlobalLeanAndMeanModel = true;
                     notebook = CLPNotebook.Load(filePath);
+                    ModelBase.GlobalLeanAndMeanModel = false;
                 }
                 catch(Exception ex)
                 {
