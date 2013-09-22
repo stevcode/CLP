@@ -119,6 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute);
+            InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
@@ -1915,6 +1917,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageStampCommandExecute()
         {
+            CreateImageStamp(false);
+        }
+
+        /// <summary>
+        /// Gets the InsertImageStampCommand command.
+        /// </summary>
+        public Command InsertImageContainerStampCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnInsertImageContainerStampCommandExecute()
+        {
+            CreateImageStamp(true);
+        }
+
+        private void CreateImageStamp(bool isContainerStamp)
+        {
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
@@ -1944,7 +1965,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         page.ImagePool.Add(imageID, ByteSource);
                     }
                     CLPImage image = new CLPImage(imageID, page);
-                    CLPStamp stamp = new CLPStamp(image, page);
+                    CLPStamp stamp = new CLPStamp(image, page, isContainerStamp);
 
                     CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
                 }
@@ -1966,6 +1987,27 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertBlankStampCommandExecute()
         {
             CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+        }
+
+        /// <summary>
+        /// Gets the InsertBlankContainerStampCommand command.
+        /// </summary>
+        public Command InsertBlankContainerStampCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Method to invoke when the InsertBlankContainerStampCommand command is executed.
+        /// </summary>
+        private void OnInsertBlankContainerStampCommandExecute()
+        {
+            CLPStamp stamp = new CLPStamp(
+                null, 
+                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage,
+                true);
             CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
         }
 
