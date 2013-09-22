@@ -347,6 +347,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 var bottomDiff = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.Height));
                 if(bottomDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from below
                 {
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
+                        PageObject.ParentPage, 
+                        otherArray, 
+                        thisArray, 
+                        true));
+                    
                     var squareSize = otherArray.ArrayWidth/otherArray.Columns;
                     thisArray.SizeArrayToGridLevel(squareSize);
 
@@ -365,8 +371,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         foreach(var horizontalDivision in thisArray.HorizontalDivisions)
                         {
-                            horizontalDivision.Position += otherArray.ArrayHeight;
-                            otherArray.HorizontalDivisions.Add(horizontalDivision);
+                            otherArray.HorizontalDivisions.Add(new CLPArrayDivision(
+                                horizontalDivision.Orientation, 
+                                horizontalDivision.Position + otherArray.ArrayHeight, 
+                                horizontalDivision.Length, 
+                                horizontalDivision.Value));
                         }
                     }
 
@@ -374,13 +383,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
                 var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (otherArray.YPosition + otherArray.LargeLabelLength));
                 if(topDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from above
                 {
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
+                        PageObject.ParentPage,
+                        otherArray,
+                        thisArray,
+                        true));
+
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
                     thisArray.SizeArrayToGridLevel(squareSize);
 
@@ -401,7 +416,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     if(!thisArray.HorizontalDivisions.Any())
                     {
-                        thisArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
+                        otherArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
                                                                                thisArray.ArrayHeight, thisArray.Rows));
                     }
 
@@ -411,8 +426,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     foreach(var horizontalDivision in tempDivisions)
                     {
-                        horizontalDivision.Position += thisArray.ArrayHeight;
-                        otherArray.HorizontalDivisions.Add(horizontalDivision);
+                        otherArray.HorizontalDivisions.Add(new CLPArrayDivision(
+                                horizontalDivision.Orientation,
+                                horizontalDivision.Position + thisArray.ArrayHeight,
+                                horizontalDivision.Length,
+                                horizontalDivision.Value));
                     }
 
                     otherArray.Rows += thisArray.Rows;
@@ -420,13 +438,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
                 var leftDiff = Math.Abs(thisArray.XPosition + thisArray.Width - (otherArray.XPosition + otherArray.LargeLabelLength));
                 if(leftDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from left
                 {
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
+                        PageObject.ParentPage,
+                        otherArray,
+                        thisArray,
+                        false));
+
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
                     thisArray.SizeArrayToGridLevel(squareSize);
 
@@ -447,7 +471,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     if(!thisArray.VerticalDivisions.Any())
                     {
-                        thisArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
+                        otherArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
                                                                              thisArray.ArrayWidth, thisArray.Columns));
                     }
 
@@ -457,8 +481,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     foreach(var verticalDivision in tempDivisions)
                     {
-                        verticalDivision.Position += thisArray.ArrayWidth;
-                        otherArray.VerticalDivisions.Add(verticalDivision);
+                        otherArray.VerticalDivisions.Add(new CLPArrayDivision(
+                                verticalDivision.Orientation,
+                                verticalDivision.Position + thisArray.ArrayWidth,
+                                verticalDivision.Length,
+                                verticalDivision.Value));
                     }
 
                     otherArray.Columns += thisArray.Columns;
@@ -466,13 +493,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
                 var rightDiff = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.Width));
                 if(rightDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from right
                 {
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
+                        PageObject.ParentPage,
+                        otherArray,
+                        thisArray,
+                        false));
+
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
                     thisArray.SizeArrayToGridLevel(squareSize);
 
@@ -491,8 +524,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         foreach(var verticalDivision in thisArray.VerticalDivisions)
                         {
-                            verticalDivision.Position += otherArray.ArrayWidth;
-                            otherArray.VerticalDivisions.Add(verticalDivision);
+                            otherArray.VerticalDivisions.Add(new CLPArrayDivision(
+                                verticalDivision.Orientation,
+                                verticalDivision.Position + otherArray.ArrayWidth,
+                                verticalDivision.Length,
+                                verticalDivision.Value));
                         }
                     }
 
@@ -500,7 +536,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     otherArray.SizeArrayToGridLevel(squareSize, false);
                     otherArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
             }

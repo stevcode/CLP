@@ -104,6 +104,7 @@
     <Compile Include="CLPHistory\CLPAnimationIndicator.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayGridToggle.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayRotate.cs" />
+    <Compile Include="CLPHistory\CLPHistoryArraySnap.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectCut.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectMoveBatch.cs" />
