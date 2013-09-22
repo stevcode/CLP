@@ -33,6 +33,8 @@ namespace Classroom_Learning_Partner.Views
             {
                 return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
@@ -48,7 +50,7 @@ namespace Classroom_Learning_Partner.Views
             }
             clpArrayViewModel.IsTopAdornerVisible = true;
             clpArrayViewModel.IsLeftAdornerVisible = false;
-            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
+            clpArrayViewModel.IsDefaultAdornerVisible = false;
             clpArrayViewModel.IsAdornerVisible = true;
         }
 
@@ -62,6 +64,8 @@ namespace Classroom_Learning_Partner.Views
             {
                 return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
@@ -77,7 +81,7 @@ namespace Classroom_Learning_Partner.Views
             }
             clpArrayViewModel.IsTopAdornerVisible = false;
             clpArrayViewModel.IsLeftAdornerVisible = true;
-            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
+            clpArrayViewModel.IsDefaultAdornerVisible = false;
             clpArrayViewModel.IsAdornerVisible = true;
         }
 

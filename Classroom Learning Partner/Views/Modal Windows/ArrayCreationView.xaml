@@ -129,14 +129,14 @@
                              Grid.Column="0" Margin="5"
                              Height="32" Width="32"
                              IsChecked="True">
-                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/HorizontalArrayStack32.png" />
                 </RadioButton>
 
                 <RadioButton x:Name="VerticalToggle" GroupName="ArrayAlignment"
                              Style="{StaticResource {x:Type ToggleButton}}"
                              Grid.Column="1" Margin="5"
                              Height="32" Width="32">
-                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/VerticalArrayStack32.png" />
                 </RadioButton>
 
             </Grid>

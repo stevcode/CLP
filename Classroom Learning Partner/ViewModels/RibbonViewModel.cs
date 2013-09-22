@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
-        private MainWindowViewModel MainWindow
+        public MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
         }
@@ -311,15 +311,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool DisplayPanelVisibility
         {
             get { return GetValue<bool>(DisplayPanelVisibilityProperty); }
-            set
-            {
-                SetValue(DisplayPanelVisibilityProperty, value);
-                if(App.MainWindowViewModel != null && App.MainWindowViewModel.SelectedWorkspace != null && App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-                {
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).DisplayListPanel;
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel.IsVisible = value;
-                }
-            }
+            set { SetValue(DisplayPanelVisibilityProperty, value); }
         }
 
         public static readonly PropertyData DisplayPanelVisibilityProperty = RegisterProperty("DisplayPanelVisibility", typeof(bool), false);
@@ -2226,8 +2218,11 @@ namespace Classroom_Learning_Partner.ViewModels
             // First, clear out any old ArrayOrientationTagTypes
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
-                    tag.TagType.Name == ArrayStrategyTagType.Instance.Name ||
+                if(tag.TagType == null ||
+                    tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayXAxisStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayYAxisStrategyTagType.Instance.Name ||
                     tag.TagType.Name == ArrayDivisionCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == ArrayVerticalDivisionsTagType.Instance.Name ||
                     tag.TagType.Name == ArrayHorizontalDivisionsTagType.Instance.Name)
@@ -2236,15 +2231,59 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            // Apply a representation correctness tag
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other"));
+
+            if(factor1 == arrayWidth && factor2 == arrayHeight)
+            {
+                correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+            }
+            else
+            {
+                if(factor2 == arrayWidth && factor1 == arrayHeight)
+                {
+                    // Are the factors swapped? Depends on whether we care about width vs. height
+                    if(relation.RelationType == ProductRelation.ProductRelationTypes.Area)
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
+                    }
+                    else
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                    }
+                }
+                else
+                {
+                    // One more possibility: The representation uses the givens in the problem, but in the wrong way
+                    ObservableCollection<int> givens = new ObservableCollection<int>();
+                    if(relation.Factor1Given) { givens.Add(factor1); }
+                    if(relation.Factor2Given) { givens.Add(factor2); }
+                    if(relation.ProductGiven) { givens.Add(product); }
+
+                    ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                    numbersUsed.Add(arrayWidth);
+                    numbersUsed.Add(arrayHeight);
+                    numbersUsed.Add(arrayWidth * arrayHeight);
+
+                    if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+                    }
+                }
+            }
+
+            tags.Add(correctnessTag);
+
             // Apply an orientation tag
             Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
             if(arrayWidth == factor1 && arrayHeight == factor2)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("x*y"));
+                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is width"));
             }
             else if(arrayWidth == factor2 && arrayHeight == factor1)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("y*x"));
+                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is height"));
             }
             else
             {
@@ -2254,7 +2293,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
 
             // Apply a strategy tag
-            Tag strategyTag = new Tag(Tag.Origins.Generated, ArrayStrategyTagType.Instance);
+            Tag strategyTagX = new Tag(Tag.Origins.Generated, ArrayXAxisStrategyTagType.Instance);
+            Tag strategyTagY = new Tag(Tag.Origins.Generated, ArrayYAxisStrategyTagType.Instance);
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -2275,23 +2315,23 @@ namespace Classroom_Learning_Partner.ViewModels
             // Now check the student's divisions against known strategies
             if(array.HorizontalDivisions.Count == 0)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("none")); 
+                strategyTagX.AddTagOptionValue(new TagOptionValue("none")); 
             }
             else if(horizDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("place value"));
             }
             else if (arrayHeight > 20 && arrayHeight < 100 && horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("10's"));
             }
             else if ((arrayHeight % 2 == 0) && horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("half"));
             }
             else
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+                strategyTagX.AddTagOptionValue(new TagOptionValue("other"));
             }
 
             // Then the vertical divisions
@@ -2305,30 +2345,32 @@ namespace Classroom_Learning_Partner.ViewModels
             // Now check the student's divisions against known strategies
             if(array.VerticalDivisions.Count == 0)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("none"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("none"));
             }
             else if(vertDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("place value"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("place value"));
             }
             else if(arrayWidth > 20 && arrayWidth < 100 && vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("10's"));
             }
             else if((arrayWidth % 2 == 0) && vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("half"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("half"));
             }
             else
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+                strategyTagY.AddTagOptionValue(new TagOptionValue("other"));
             }
 
-            tags.Add(strategyTag);
+            tags.Add(strategyTagX);
+            tags.Add(strategyTagY);
 
-            Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value + ", " + strategyTag.Value[1].Value);
+            Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
+            Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
 
-            // Add an array division correctness tag
+            // Add an array divider correctness tag
             Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
             tags.Add(divisionCorrectnessTag);
 
@@ -2336,11 +2378,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Add tags for the number of horizontal and vertical divisions
             Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
-            horizDivsTag.Value.Add(new TagOptionValue(array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count));
+            int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
+            horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
             tags.Add(horizDivsTag);
 
             Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
-            vertDivsTag.Value.Add(new TagOptionValue(array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count));
+            int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
+            vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
             tags.Add(vertDivsTag);
 
             Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
@@ -2524,24 +2568,34 @@ namespace Classroom_Learning_Partner.ViewModels
             // Clear out any old stamp-related Tags
             foreach(Tag tag in tags.ToList())
             {
-                if(tag.TagType.Name == StampCorrectnessTagType.Instance.Name)
+                if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
+                    tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == StampPartsPerStampTagType.Instance.Name ||
+                    tag.TagType.Name == StampGroupingTypeTagType.Instance.Name)
                 {
                     tags.Remove(tag);
                 }
             }
 
-            Tag correctnessTag = GetStampCorrectnessTag(groupings, relation);
+            ObservableCollection<Tag> newTags = GetStampTags(groupings, relation);
 
-            tags.Add(correctnessTag);
+            foreach(Tag tag in newTags)
+            {
+                tags.Add(tag);
+            }
         }
 
         /// <summary>
         /// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
         /// </summary>
-        public Tag GetStampCorrectnessTag(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
+        public ObservableCollection<Tag> GetStampTags(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
         {
-            Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
-            tag.AddTagOptionValue(new TagOptionValue("Incorrect")); // The student's work is assumed incorrect until proven correct
+            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other")); // The student's work is assumed incorrect until proven correct
+
+            Tag partsPerStampTag = new Tag(Tag.Origins.Generated, StampPartsPerStampTagType.Instance);
+            Tag groupingTypeTag = new Tag(Tag.Origins.Generated, StampGroupingTypeTagType.Instance);
 
             foreach(CLPGrouping grouping in groupings)
             {
@@ -2553,12 +2607,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     int partsPerObject = objList[0].Parts;
                     int partsPerGroup = objectsPerGroup * partsPerObject;
 
+                    partsPerStampTag.Value.Add(new TagOptionValue(partsPerObject.ToString() + (partsPerObject == 1 ? " part" : " parts")));
+                    groupingTypeTag.AddTagOptionValue(new TagOptionValue(grouping.GroupingType));
+
                     // We're a little stricter about correctness if it's specifically an equal-grouping problem
                     if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
                     {
                         if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
                         {
-                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            tags.Add(partsPerStampTag);
+                            tags.Add(groupingTypeTag);
+                            break;
+                        }
+                        else
+                        {
+                            if(relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString()))
+                            {
+                                correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
+                                tags.Add(partsPerStampTag);
+                                tags.Add(groupingTypeTag);
+                                break;
+                            }
                         }
                     }
                     else
@@ -2566,12 +2636,35 @@ namespace Classroom_Learning_Partner.ViewModels
                         if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
                             (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
                         {
-                            tag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                            tags.Add(partsPerStampTag);
+                            tags.Add(groupingTypeTag);
+                            break;
                         }
+                    }
+
+                    // If we haven't hit a break yet, then this isn't looking good. Check for a student using the wrong operator
+                    ObservableCollection<int> givens = new ObservableCollection<int>();
+                    if(relation.Factor1Given) { givens.Add(Convert.ToInt32(relation.Factor1)); }
+                    if(relation.Factor2Given) { givens.Add(Convert.ToInt32(relation.Factor2)); }
+                    if(relation.ProductGiven) { givens.Add(Convert.ToInt32(relation.Product)); }
+
+                    ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                    numbersUsed.Add(numGroups);
+                    numbersUsed.Add(partsPerGroup);
+                    numbersUsed.Add(numGroups * partsPerGroup);
+
+                    if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                    {
+                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+                        tags.Add(partsPerStampTag);
+                        tags.Add(groupingTypeTag);
+                        break;
                     }
                 }
             }
-            return tag;
+            tags.Add(correctnessTag); // A correctness tag always gets added
+            return tags;
         }
 
         /// <summary>

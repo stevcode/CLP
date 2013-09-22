@@ -14,6 +14,7 @@ using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -158,7 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PenSizeProperty, value); }
         }
 
-        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3);
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3.0);
 
         /// <summary>
         /// Sets the PageInteractionMode.
@@ -485,7 +486,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
                 {
-                    aclpPageObjectBaseViewModel.IsAdornerVisible = false;
+                    aclpPageObjectBaseViewModel.ClearAdorners();
                 }
             }
         }
@@ -637,9 +638,44 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
 
-                    foreach(var lassoedPageObject in lassoedPageObjects)
+                    var lassoedPageObjectParameterizationView = new LassoedPageObjectParameterizationView() { Owner = Application.Current.MainWindow };
+                    lassoedPageObjectParameterizationView.ShowDialog();
+
+                    if(lassoedPageObjectParameterizationView.DialogResult == true)
                     {
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(lassoedPageObject);
+                        int numberOfCopies;
+                        try
+                        {
+                            numberOfCopies = Convert.ToInt32(lassoedPageObjectParameterizationView.NumberOfCopies.Text);
+                        }
+                        catch(FormatException)
+                        {
+                            numberOfCopies = 1;
+                        }
+
+                        var isHorizontallyAligned = lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked != null &&
+                                                    (bool)lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked;
+                        var isVerticallyAligned = lassoedPageObjectParameterizationView.VerticalToggle.IsChecked != null &&
+                                                  (bool)lassoedPageObjectParameterizationView.VerticalToggle.IsChecked;
+
+                        foreach(var lassoedPageObject in lassoedPageObjects)
+                        {
+                            for(int i = 0; i < numberOfCopies; i++)
+                            {
+                                var duplicatePageObject = lassoedPageObject.Duplicate();
+                                if(isHorizontallyAligned)
+                                {
+                                    duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
+                                }
+                                else if(isVerticallyAligned)
+                                {
+                                    duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
+                                }
+                                ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
+                                CLPServiceAgent.Instance.AddPageObjectToPage(duplicatePageObject, false);
+                                //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
+                            }
+                        }
                     }
 
                     if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
