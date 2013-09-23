@@ -276,15 +276,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Control Max Dimensions of Array.
-            if(newArrayHeight + clpArray.LargeLabelLength + YPosition > clpArray.ParentPage.PageHeight)
+            if(newArrayHeight + clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
             {
-                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - clpArray.LargeLabelLength;
+                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - clpArray.LabelLength;
                 newSquareSize = newArrayHeight / Rows;
                 newArrayWidth = newSquareSize * Columns;
             }
-            if(newArrayWidth + clpArray.LargeLabelLength + XPosition > clpArray.ParentPage.PageWidth)
+            if(newArrayWidth + clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
             {
-                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LargeLabelLength;
+                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LabelLength;
                 newSquareSize = newArrayWidth / Columns;
                 //newArrayHeight = newSquareSize * Rows;
             }
@@ -341,10 +341,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                var deltaX = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.LargeLabelLength));
-                var deltaY = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.LargeLabelLength));
+                var deltaX = Math.Abs(thisArray.XPosition + thisArray.LabelLength - (otherArray.XPosition + otherArray.LabelLength));
+                var deltaY = Math.Abs(thisArray.YPosition + thisArray.LabelLength - (otherArray.YPosition + otherArray.LabelLength));
 
-                var bottomDiff = Math.Abs(thisArray.YPosition + thisArray.LargeLabelLength - (otherArray.YPosition + otherArray.Height));
+                var bottomDiff = Math.Abs(thisArray.YPosition + thisArray.LabelLength - (otherArray.YPosition + otherArray.Height));
                 if(bottomDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from below
                 {
                     var squareSize = otherArray.ArrayWidth/otherArray.Columns;
@@ -378,7 +378,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 }
 
-                var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (otherArray.YPosition + otherArray.LargeLabelLength));
+                var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (otherArray.YPosition + otherArray.LabelLength));
                 if(topDiff < 50 && deltaX < 50 && thisArray.Columns == otherArray.Columns) //Snapping from above
                 {
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
@@ -424,7 +424,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 }
 
-                var leftDiff = Math.Abs(thisArray.XPosition + thisArray.Width - (otherArray.XPosition + otherArray.LargeLabelLength));
+                var leftDiff = Math.Abs(thisArray.XPosition + thisArray.Width - (otherArray.XPosition + otherArray.LabelLength));
                 if(leftDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from left
                 {
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
@@ -470,7 +470,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 }
 
-                var rightDiff = Math.Abs(thisArray.XPosition + thisArray.LargeLabelLength - (otherArray.XPosition + otherArray.Width));
+                var rightDiff = Math.Abs(thisArray.XPosition + thisArray.LabelLength - (otherArray.XPosition + otherArray.Width));
                 if(rightDiff < 50 && deltaY < 50 && thisArray.Rows == otherArray.Rows) //Snapping from right
                 {
                     var squareSize = otherArray.ArrayWidth / otherArray.Columns;
