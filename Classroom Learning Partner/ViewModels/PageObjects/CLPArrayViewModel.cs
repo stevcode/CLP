@@ -541,7 +541,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            AddRemovePageObjectFromOtherObjects();
+            PageObject.OnMoved();
         }
 
         /// <summary>

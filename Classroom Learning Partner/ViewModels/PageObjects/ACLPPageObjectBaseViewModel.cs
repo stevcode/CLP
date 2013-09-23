@@ -391,33 +391,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                            PageObject.YPosition));
             }
             PageObject.ParentPage.PageHistory.EndBatch();
-            AddRemovePageObjectFromOtherObjects();
+            PageObject.OnMoved();
         }
 
-        protected void AddRemovePageObjectFromOtherObjects() {
-            if (!PageObject.CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject container in PageObject.ParentPage.PageObjects)
-                {
-                    if(container.CanAcceptPageObjects && !PageObject.ParentID.Equals(container.UniqueID))
-                    {
-                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
-                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
-                        
-                        if(container.PageObjectIsOver(this.PageObject, .50))
-                        {
-                            addObjects.Add(this.PageObject);
-                        }
-                        else
-                        {
-                            removeObjects.Add(this.PageObject);
-                        }
-
-                        container.AcceptObjects(addObjects, removeObjects);
-                    }
-                }
-            }
-        }
+       
 
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
