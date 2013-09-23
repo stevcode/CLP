@@ -207,6 +207,16 @@
                     </Button.Template>
                 </Button>
 
+                <!--Left Divisor Line-->
+                <Rectangle IsHitTestVisible="False"
+                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
+                           Stroke="{StaticResource LeftLabelColor}" Fill="Transparent"
+                           Height="3"
+                           Width="{Binding ArrayWidth}"
+                           Canvas.Left="22"
+                           Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
+                           Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <!--Left Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"
                         MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
@@ -227,6 +237,16 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+
+                <!--Top Divisor Line-->
+                <Rectangle IsHitTestVisible="False"
+                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
+                           Stroke="{StaticResource TopLabelColor}" Fill="Transparent"
+                           Height="{Binding ArrayHeight}"
+                           Width="3"
+                           Canvas.Top="22"
+                           Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
+                           Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Top Divisor Button-->
                 <Button Command="{Binding CreateVerticalDivisionCommand}"

@@ -671,6 +671,26 @@ namespace CLP.Models
             RefreshStrokeParentIDs();
         }
 
+        public double GetClosestGridLine(ArrayDivisionOrientation orientation, double pos)
+        {
+            ObservableCollection<double> gridlines = this.HorizontalGridLines;
+            if (orientation == ArrayDivisionOrientation.Vertical)
+            {
+                gridlines = this.VerticalGridLines;
+            }
+            double prev = 0.0;
+            foreach(double line in gridlines)
+            {
+                if(line > pos)
+                {
+                    if (prev == 0.0 || line - pos < pos - prev) { return line; }
+                    else { return prev; }
+                }
+                prev = line;
+            }
+            return prev;
+        }
+
         #endregion //Methods
     }
 }
