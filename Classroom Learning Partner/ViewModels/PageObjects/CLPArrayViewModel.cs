@@ -353,6 +353,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         persistingArray, 
                         snappingArray, 
                         true));
+
+                    persistingArray.VerticalDivisions.Clear();
                     
                     var squareSize = persistingArray.ArrayWidth/persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
@@ -396,6 +398,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         persistingArray,
                         snappingArray,
                         true));
+
+                    persistingArray.VerticalDivisions.Clear();
 
                     var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
@@ -452,6 +456,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         snappingArray,
                         false));
 
+                    persistingArray.HorizontalDivisions.Clear();
+
                     var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -506,6 +512,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         persistingArray,
                         snappingArray,
                         false));
+
+                    persistingArray.HorizontalDivisions.Clear();
 
                     var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
@@ -584,7 +592,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0)) 
             {
-                Console.WriteLine("here");
                 return;
             }
             if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
