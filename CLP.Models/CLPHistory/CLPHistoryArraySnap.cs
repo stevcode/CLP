@@ -159,17 +159,16 @@ namespace CLP.Models
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            SnappedArray.SizeArrayToGridLevel(SnappedArraySquareSize);
-            ParentPage.PageObjects.Add(SnappedArray);
-            Logger.Instance.WriteToLog(SnappedArray.ToString());
-            SnappedArray = null;
-            
-            CLPArray persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
+            var persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
             if(persistingArray == null)
             {
                 Logger.Instance.WriteToLog("ArraySnap Undo Failure: Can't find persisting array.");
                 return;
             }
+
+            SnappedArray.SizeArrayToGridLevel(SnappedArraySquareSize);
+            ParentPage.PageObjects.Add(SnappedArray);
+            SnappedArray = null;
 
             double persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
@@ -197,15 +196,15 @@ namespace CLP.Models
                 Logger.Instance.WriteToLog("ArraySnap Redo Failure: Can't find snapped array.");
                 return;
             }
-            ParentPage.PageObjects.Remove(SnappedArray);
 
-            CLPArray persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
+            var persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
             if(persistingArray == null)
             {
                 Logger.Instance.WriteToLog("ArraySnap Redo Failure: Can't find persisting array.");
                 return;
             }
 
+            ParentPage.PageObjects.Remove(SnappedArray);
             var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
             if (Horizontal) 
