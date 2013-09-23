@@ -18,7 +18,8 @@ namespace CLP.Models
             SnappedArraySquareSize = snappedArray.ArrayWidth / snappedArray.Columns;
             PersistingArrayUniqueID = persistingArray.UniqueID;
             PersistingArrayDivisionBehavior = persistingArray.IsDivisionBehaviorOn;
-            PersistingArrayDivisions = new ObservableCollection<CLPArrayDivision>(isHorizontal ? persistingArray.HorizontalDivisions : persistingArray.VerticalDivisions);
+            PersistingArrayHorizontalDivisions = new ObservableCollection<CLPArrayDivision>(persistingArray.HorizontalDivisions);
+            PersistingArrayVerticalDivisions = new ObservableCollection<CLPArrayDivision>(persistingArray.VerticalDivisions);
             PersistingArrayRowsOrColumns = isHorizontal ? persistingArray.Rows : persistingArray.Columns;
             PersistingArrayXOrYPosition = isHorizontal ? persistingArray.YPosition : persistingArray.XPosition;
         }
@@ -95,16 +96,35 @@ namespace CLP.Models
         public static readonly PropertyData PersistingArrayUniqueIDProperty = RegisterProperty("PersistingArrayUniqueID", typeof(string), string.Empty);
 
         /// <summary>
-        ///     Divisions (either horizontal or vertical) that the persisting array should be set to have when this
+        ///     Horizontal divisions that the persisting array should be set to have when this
         ///     history event fires (undoes or redoes, whichever comes next).
         /// </summary>
-        public ObservableCollection<CLPArrayDivision> PersistingArrayDivisions
+        public ObservableCollection<CLPArrayDivision> PersistingArrayHorizontalDivisions
         {
-            get { return GetValue<ObservableCollection<CLPArrayDivision>>(PersistingArrayDivisionsProperty); }
-            set { SetValue(PersistingArrayDivisionsProperty, value); }
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(PersistingArrayHorizontalDivisionsProperty); }
+            set { SetValue(PersistingArrayHorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayDivisionsProperty = RegisterProperty("PersistingArrayDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+
+        /// <summary>
+        ///     Vertical divisions that the persisting array should be set to have when this
+        ///     history event fires (undoes or redoes, whichever comes next).
+        /// </summary>
+        public ObservableCollection<CLPArrayDivision> PersistingArrayVerticalDivisions
+        {
+            get
+            {
+                return GetValue<ObservableCollection<CLPArrayDivision>>(PersistingArrayVerticalDivisionsProperty);
+            }
+            set
+            {
+                SetValue(PersistingArrayVerticalDivisionsProperty, value);
+            }
+        }
+
+        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+
 
         /// <summary>
         ///     Value of IsDivisionBehaviorOn prior to the history event (which sets it true)
@@ -163,14 +183,8 @@ namespace CLP.Models
 
             double persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
-            if(IsHorizontal)
-            {
-                RestoreHorizontalDivisions(persistingArray);
-            }
-            else
-            {
-                RestoreVerticalDivisions(persistingArray);
-            }
+            RestoreDivisions(persistingArray);
+            RestoreDimensionsAndPosition(persistingArray);
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
             persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
@@ -196,49 +210,48 @@ namespace CLP.Models
             }
 
             ParentPage.PageObjects.Remove(SnappedArray);
-            var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
+            double persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
-            if(IsHorizontal)
-            {
-                RestoreHorizontalDivisions(persistingArray);
-            }
-            else
-            {
-                RestoreVerticalDivisions(persistingArray);
-            }
+            RestoreDivisions(persistingArray);
+            RestoreDimensionsAndPosition(persistingArray);
 
             persistingArray.IsDivisionBehaviorOn = true;
             persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
         }
 
-        private void RestoreHorizontalDivisions(CLPArray persistingArray)
+        private void RestoreDivisions(CLPArray persistingArray)
         {
-            var tempDivisions = persistingArray.HorizontalDivisions;
-            persistingArray.HorizontalDivisions = PersistingArrayDivisions;
-            PersistingArrayDivisions = tempDivisions;
+            var tempHorizontalDivisions = persistingArray.HorizontalDivisions;
+            persistingArray.HorizontalDivisions = PersistingArrayHorizontalDivisions;
+            PersistingArrayHorizontalDivisions = tempHorizontalDivisions;
 
-            var tempRows = persistingArray.Rows;
-            persistingArray.Rows = PersistingArrayRowsOrColumns;
-            PersistingArrayRowsOrColumns = tempRows;
-
-            var tempPosition = persistingArray.YPosition;
-            persistingArray.YPosition = PersistingArrayXOrYPosition;
-            PersistingArrayXOrYPosition = tempPosition;
+            var tempVerticalDivisions = persistingArray.VerticalDivisions;
+            persistingArray.VerticalDivisions = PersistingArrayVerticalDivisions;
+            PersistingArrayVerticalDivisions = tempVerticalDivisions;
         }
 
-        private void RestoreVerticalDivisions(CLPArray persistingArray)
+        private void RestoreDimensionsAndPosition(CLPArray persistingArray)
         {
-            var tempDivisions = persistingArray.VerticalDivisions;
-            persistingArray.VerticalDivisions = PersistingArrayDivisions;
-            PersistingArrayDivisions = tempDivisions;
+            if(IsHorizontal)
+            {
+                var tempRows = persistingArray.Rows;
+                persistingArray.Rows = PersistingArrayRowsOrColumns;
+                PersistingArrayRowsOrColumns = tempRows;
 
-            var tempColumns = persistingArray.Columns;
-            persistingArray.Columns = PersistingArrayRowsOrColumns;
-            PersistingArrayRowsOrColumns = tempColumns;
+                var tempPosition = persistingArray.YPosition;
+                persistingArray.YPosition = PersistingArrayXOrYPosition;
+                PersistingArrayXOrYPosition = tempPosition;
+            }
+            else
+            {
+                var tempColumns = persistingArray.Columns;
+                persistingArray.Columns = PersistingArrayRowsOrColumns;
+                PersistingArrayRowsOrColumns = tempColumns;
 
-            var tempPosition = persistingArray.XPosition;
-            persistingArray.XPosition = PersistingArrayXOrYPosition;
-            PersistingArrayXOrYPosition = tempPosition;
+                var tempPosition = persistingArray.XPosition;
+                persistingArray.XPosition = PersistingArrayXOrYPosition;
+                PersistingArrayXOrYPosition = tempPosition;
+            }
         }
 
         #endregion //Methods
