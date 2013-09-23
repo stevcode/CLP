@@ -276,15 +276,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Control Max Dimensions of Array.
-            if(newArrayHeight + clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
+            if(newArrayHeight + 2*clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
             {
-                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - clpArray.LabelLength;
+                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - 2*clpArray.LabelLength;
                 newSquareSize = newArrayHeight / Rows;
                 newArrayWidth = newSquareSize * Columns;
             }
-            if(newArrayWidth + clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
+            if(newArrayWidth + 2*clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
             {
-                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LabelLength;
+                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - 2*clpArray.LabelLength;
                 newSquareSize = newArrayWidth / Columns;
                 //newArrayHeight = newSquareSize * Rows;
             }

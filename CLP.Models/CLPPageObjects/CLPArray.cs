@@ -415,15 +415,15 @@ namespace CLP.Models
                 ArrayWidth = 30;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
-            if(ArrayWidth + LabelLength + XPosition > ParentPage.PageWidth)
+            if(ArrayWidth + 2*LabelLength + XPosition > ParentPage.PageWidth)
             {
-                ArrayWidth = ParentPage.PageWidth - XPosition - LabelLength;
+                ArrayWidth = ParentPage.PageWidth - XPosition - 2*LabelLength;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
 
-            if (ArrayHeight + LabelLength + YPosition > ParentPage.PageHeight)
+            if (ArrayHeight + 2*LabelLength + YPosition > ParentPage.PageHeight)
             {
-                ArrayHeight = ParentPage.PageHeight - YPosition - LabelLength;
+                ArrayHeight = ParentPage.PageHeight - YPosition - 2*LabelLength;
                 ArrayWidth = ArrayHeight * aspectRatio;
             }
 
