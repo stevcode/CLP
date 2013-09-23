@@ -87,8 +87,12 @@ namespace Classroom_Learning_Partner.Views
         {
             int rowNum;
             int colNum;
+            int numberOfArrays;
+            const int MAX_ARRAY_ROWSCOLUMNS = 200;
+            const int MAX_NUMBER_OF_ARRAYS = 20;
             var isRowsNum = Int32.TryParse(Rows.Text, out rowNum);
             var isColsNum = Int32.TryParse(Columns.Text, out colNum);
+            var isValidNumberOfArrays = Int32.TryParse(NumberOfArrays.Text, out numberOfArrays);
 
             if(!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
             {
@@ -97,6 +101,18 @@ namespace Classroom_Learning_Partner.Views
             else if(rowNum < 1 || colNum < 1)
             {
                 MessageBox.Show("Oops, it looks like one of the values you entered is not a positive integer", "Oops");
+            }
+            else if(rowNum > MAX_ARRAY_ROWSCOLUMNS || colNum > MAX_ARRAY_ROWSCOLUMNS)
+            {
+                MessageBox.Show("You put too many rows or columns. Please keep them below " + MAX_ARRAY_ROWSCOLUMNS + ".", "Oops");
+            }
+            else if(!isValidNumberOfArrays)
+            {
+                MessageBox.Show("Oops, it looks like one of the values you entered is not a positive integer", "Oops");
+            }
+            else if(numberOfArrays > MAX_NUMBER_OF_ARRAYS)
+            {
+                MessageBox.Show("You cannot put more than " + MAX_NUMBER_OF_ARRAYS + " on the page at once.", "Oops");
             }
             else
             {

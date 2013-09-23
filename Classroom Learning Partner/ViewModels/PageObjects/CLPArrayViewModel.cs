@@ -204,7 +204,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsDefaultAdornerVisible
         {
             get { return GetValue<bool>(IsDefaultAdornerVisibleProperty); }
-            set { SetValue(IsDefaultAdornerVisibleProperty, value); }
+            set
+            {
+                SetValue(IsDefaultAdornerVisibleProperty, value);
+                RaisePropertyChanged("IsToggleGridAdornerVisible");
+            }
         }
 
         public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof(bool), false);
@@ -230,6 +234,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsTopAdornerVisibleProperty = RegisterProperty("IsTopAdornerVisible", typeof(bool), false);
+
+        /// <summary>
+        /// Whether or not to show the adorner that allows students to toggle the grid lines on and off.
+        /// </summary>
+        public bool IsToggleGridAdornerVisible
+        {
+            get { return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; }
+        }
 
         #endregion //Bindings
 
