@@ -127,7 +127,10 @@ namespace Classroom_Learning_Partner
 
                 try
                 {
+                    
+                    ModelBase.GlobalLeanAndMeanModel = true;
                     notebook = CLPNotebook.Load(filePath);
+                    ModelBase.GlobalLeanAndMeanModel = false;
                 }
                 catch(Exception ex)
                 {
@@ -328,7 +331,7 @@ namespace Classroom_Learning_Partner
             AddPageObjectToPage(parentPage, pageObject, addToHistory);
         }
 
-        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true)
+        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
         {
             if(page == null)
             {
@@ -336,11 +339,21 @@ namespace Classroom_Learning_Partner
                 return;
             }
             pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
-            page.PageObjects.Add(pageObject);
+            if(index == -1)
+            {
+                page.PageObjects.Add(pageObject);
+            }
+            else
+            {
+                page.PageObjects.Insert(index, pageObject);
+            }
+            
             if(addToHistory)
             {
-                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID,
-                                                                            page.PageObjects.Count - 1));
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(
+                    page, 
+                    pageObject.UniqueID,
+                    (index == -1) ? (page.PageObjects.Count - 1) : index));
             }
 
             if(forceSelectMode)

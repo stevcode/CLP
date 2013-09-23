@@ -189,7 +189,7 @@
                                     LargeImageSource="pack://application:,,,/Resources/Images/Pen32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Pen16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
                 <RibbonToggleButton Label="Highlighter"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Highlighter32.png"
@@ -393,17 +393,17 @@
             </RibbonGroup>
 
             <RibbonGroup Header="History">
-                
+
                 <RibbonButton Label="Undo"
                               LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Undo16.png"
                               Command="{Binding UndoCommand}" />
-                
+
                 <RibbonButton Label="Redo"
                               LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
-                
+
             </RibbonGroup>
 
         </RibbonTab>
@@ -476,7 +476,7 @@
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
                 <RibbonToggleButton Label="Eraser"
                                     LargeImageSource="pack://application:,,,/Images/Eraser.png"
@@ -504,9 +504,17 @@
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
+                <RibbonButton Label="Container Stamp"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding InsertBlankContainerStampCommand}" />
+
                 <RibbonButton Label="Image Stamp"
                               LargeImageSource="..\Images\PictureStamp.png"
                               Command="{Binding InsertImageStampCommand}" />
+
+                <RibbonButton Label="Image Container Stamp"
+                              LargeImageSource="..\Images\PictureStamp.png"
+                              Command="{Binding InsertImageContainerStampCommand}" />
 
             </RibbonGroup>
 
@@ -521,7 +529,7 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TRUE" />
-                
+
             </RibbonGroup>
 
             <RibbonGroup Header="Shapes">
@@ -612,7 +620,7 @@
                 </RibbonControlGroup>
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Page Analysis">
 
                 <RibbonButton Label="Page Definition"
@@ -780,7 +788,7 @@
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
             </RibbonGroup>
 

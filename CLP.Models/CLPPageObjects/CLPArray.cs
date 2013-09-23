@@ -93,19 +93,11 @@ namespace CLP.Models
     [Serializable]
     public class CLPArray : ACLPPageObjectBase
     {
-        public double LargeLabelLength
+        public double LabelLength
         {
             get
             {
-                return IsLabelVisible ? 70 : 0;
-            }
-        }
-
-        public double SmallLabelLength
-        {
-            get
-            {
-                return IsLabelVisible ? 50 : 0;
+                return IsLabelVisible ? 22 : 0;
             }
         }
 
@@ -278,9 +270,9 @@ namespace CLP.Models
             var strokeLeft = cuttingStroke.GetBounds().Left;
             var strokeRight = cuttingStroke.GetBounds().Right;
 
-            var cuttableTop = YPosition + LargeLabelLength;
+            var cuttableTop = YPosition + LabelLength;
             var cuttableBottom = cuttableTop + ArrayHeight;
-            var cuttableLeft = XPosition + LargeLabelLength;
+            var cuttableLeft = XPosition + LabelLength;
             var cuttableRight = cuttableLeft + ArrayWidth;
 
             var halvedPageObjects = new List<ICLPPageObject>();
@@ -300,7 +292,7 @@ namespace CLP.Models
                         return halvedPageObjects;
                     }
 
-                    var relativeAverage = average - LargeLabelLength - XPosition;
+                    var relativeAverage = average - LabelLength - XPosition;
 
                     var minDistance = ArrayWidth;
                     var closestLinePosition = 0.0;
@@ -354,7 +346,7 @@ namespace CLP.Models
                         return halvedPageObjects;
                     }
 
-                    var relativeAverage = average - LargeLabelLength - YPosition;
+                    var relativeAverage = average - LabelLength - YPosition;
 
                     var minDistance = ArrayHeight;
                     var closestLinePosition = 0.0;
@@ -423,20 +415,20 @@ namespace CLP.Models
                 ArrayWidth = 30;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
-            if(ArrayWidth + LargeLabelLength + XPosition > ParentPage.PageWidth)
+            if(ArrayWidth + 2*LabelLength + XPosition > ParentPage.PageWidth)
             {
-                ArrayWidth = ParentPage.PageWidth - XPosition - LargeLabelLength;
+                ArrayWidth = ParentPage.PageWidth - XPosition - 2*LabelLength;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
 
-            if (ArrayHeight + LargeLabelLength + YPosition > ParentPage.PageHeight)
+            if (ArrayHeight + 2*LabelLength + YPosition > ParentPage.PageHeight)
             {
-                ArrayHeight = ParentPage.PageHeight - YPosition - LargeLabelLength;
+                ArrayHeight = ParentPage.PageHeight - YPosition - 2*LabelLength;
                 ArrayWidth = ArrayHeight * aspectRatio;
             }
 
-            Height = ArrayHeight + LargeLabelLength;
-            Width = ArrayWidth + LargeLabelLength;
+            Height = ArrayHeight + LabelLength;
+            Width = ArrayWidth + LabelLength;
         }
 
         public override void OnRemoved()
@@ -466,10 +458,10 @@ namespace CLP.Models
         {
             var areaObject = pageObject.Height * pageObject.Width;
             var area = ArrayHeight * ArrayWidth;
-            var top = Math.Max(YPosition - LargeLabelLength, pageObject.YPosition);
-            var bottom = Math.Min(YPosition + LargeLabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
-            var left = Math.Max(XPosition + LargeLabelLength, pageObject.XPosition);
-            var right = Math.Min(XPosition + LargeLabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
+            var top = Math.Max(YPosition - LabelLength, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + LabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition + LabelLength, pageObject.XPosition);
+            var right = Math.Min(XPosition + LabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
             var deltaY = bottom - top;
             var deltaX = right - left;
             var intersectionArea = deltaY * deltaX;
@@ -519,7 +511,7 @@ namespace CLP.Models
 
                 foreach(Stroke s in addedStrokes)
                 {
-                    var rect = new Rect(XPosition + LargeLabelLength, YPosition + LargeLabelLength, ArrayWidth, ArrayHeight);
+                    var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
                     if(s.HitTest(rect,80))
                     {
                         PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
@@ -533,7 +525,7 @@ namespace CLP.Models
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
             {
-                while(XPosition + LargeLabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + LargeLabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
+                while(XPosition + 2*LabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + 2*LabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
                 {
                     initialSquareSize = initialSquareSize / 2;
                 }
@@ -546,8 +538,8 @@ namespace CLP.Models
             ArrayHeight = initialSquareSize * Rows;
             ArrayWidth = initialSquareSize * Columns;
 
-            Height = ArrayHeight + LargeLabelLength;
-            Width = ArrayWidth + LargeLabelLength;
+            Height = ArrayHeight + 2*LabelLength;
+            Width = ArrayWidth + 2*LabelLength;
             CalculateGridLines();
             if(recalculateDivisions)
             {
@@ -557,8 +549,8 @@ namespace CLP.Models
 
         public void RefreshArrayDimensions()
         {
-            ArrayHeight = Height - LargeLabelLength;
-            ArrayWidth = Width - LargeLabelLength;
+            ArrayHeight = Height - LabelLength;
+            ArrayWidth = Width - LabelLength;
         }
 
         public void CalculateGridLines()
@@ -659,8 +651,8 @@ namespace CLP.Models
             var tempArrayHeight = ArrayHeight;
             ArrayHeight = ArrayWidth;
             ArrayWidth = tempArrayHeight;
-            Height = ArrayHeight + LargeLabelLength;
-            Width = ArrayWidth + LargeLabelLength;
+            Height = ArrayHeight + 2*LabelLength;
+            Width = ArrayWidth + 2*LabelLength;
             CalculateGridLines();
             var tempHorizontalDivisions = HorizontalDivisions;
             HorizontalDivisions = VerticalDivisions;

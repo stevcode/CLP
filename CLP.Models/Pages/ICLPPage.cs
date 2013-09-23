@@ -32,7 +32,9 @@ namespace CLP.Models
         Group GroupSubmitter { get; set; }
 
         int PageIndex { get; set; } //TODO: Remove as property in Model. Add as viewModel property and use static method to get index of page in property getter.
-        int NumberOfSubmissions { get; set; } //TODO: rethink these properties. have submissions be attached to page instead of in dictionary on notebook. then use .Count() of submissions list?
+        int NumberOfSubmissions { get; set; }
+
+        //TODO: rethink these properties. have submissions be attached to page instead of in dictionary on notebook. then use .Count() of submissions list?
         int NumberOfGroupSubmissions { get; set; }
         ObservableCollection<Tag> PageTags { get; }
         GroupSubmitType GroupSubmitType { get; set; }
