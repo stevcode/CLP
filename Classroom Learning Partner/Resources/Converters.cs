@@ -291,11 +291,10 @@ namespace Classroom_Learning_Partner.Resources
             if (!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
             {
                 int parts = (int)value[0];
-                bool interpreted = (bool)value[1];
+                bool isContainerStamp = (bool)value[1];
                 if (parts <= 0)
                 {
-                    //return (interpreted) ? "?" : "";
-                    return "?";
+                    return (isContainerStamp) ? "" : "?";
                 }
             }
             return value[0].ToString();
@@ -310,14 +309,20 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
-    public class PartsLineVisibilityConverter : IValueConverter
+    public class PartsLineVisibilityConverter : IMultiValueConverter
     {
-        public object Convert(object value,
+        public object Convert(object[] value,
             Type targetType,
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if((bool)value && !App.MainWindowViewModel.IsAuthoring)
+            if(!(value[0] is bool && value[1] is bool))
+            {
+                return Visibility.Collapsed;
+            }
+ 
+            if((bool)value[1] // container stamps do not have visible line
+               || ((bool)value[0] && !App.MainWindowViewModel.IsAuthoring)) // stamps with parts set by author do not show line to student
             {
                 return Visibility.Collapsed;
             }
@@ -327,10 +332,10 @@ namespace Classroom_Learning_Partner.Resources
             }
         }
 
-        public object ConvertBack(object value,
-            Type targetType,
-            object parameter,
-            System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value,
+           Type[] targetType,
+           object parameter,
+           System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }

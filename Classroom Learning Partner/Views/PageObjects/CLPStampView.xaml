@@ -178,12 +178,18 @@
             
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
 
-                <Border Visibility="{Binding PageObject.PartsAuthorGenerated, Converter={StaticResource PartsLineVisibilityConverter}}"
-                        IsHitTestVisible="False"
+                <Border IsHitTestVisible="False"
                         BorderBrush="Black" BorderThickness="0,0,0,2"
                         Height="{Binding PageObject.PartsHeight}"
                         Width="{Binding Width}"
-                        HorizontalAlignment="Center" Margin="0" />
+                        HorizontalAlignment="Center" Margin="0" >
+                    <Border.Visibility>
+                        <MultiBinding Converter="{StaticResource PartsLineVisibilityConverter}">
+                            <Binding Path="PageObject.PartsAuthorGenerated"/>
+                            <Binding Path="PageObject.CanAcceptPageObjects"/>
+                        </MultiBinding>
+                    </Border.Visibility>
+                </Border>
                 
                 <TextBlock FontFamily="SketchFlow Print" FontSize="72"
                            TextAlignment="Center"
@@ -193,7 +199,7 @@
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
                             <Binding Path="PageObject.Parts" />
-                            <Binding Path="PageObject.PartsInterpreted" />
+                            <Binding Path="PageObject.CanAcceptPageObjects" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
