@@ -265,7 +265,36 @@ namespace CLP.Models
 
         public virtual void OnRemoved() { }
 
-        public virtual void OnMoved() {}
+        public virtual void OnMoved() 
+        {
+            AddRemovePageObjectFromOtherObjects();
+        }
+
+        private void AddRemovePageObjectFromOtherObjects(bool isHistory=true)
+        {
+            if(!CanAcceptPageObjects)
+            {
+                foreach(ICLPPageObject container in ParentPage.PageObjects)
+                {
+                    if(container.CanAcceptPageObjects && !ParentID.Equals(container.UniqueID))
+                    {
+                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
+                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
+
+                        if(container.PageObjectIsOver(this, .50))
+                        {
+                            addObjects.Add(this);
+                        }
+                        else
+                        {
+                            removeObjects.Add(this);
+                        }
+
+                        container.AcceptObjects(addObjects, removeObjects);
+                    }
+                }
+            }
+        }
 
         public virtual void OnResized() {}
 

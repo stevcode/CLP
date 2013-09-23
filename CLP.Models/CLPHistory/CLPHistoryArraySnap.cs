@@ -10,17 +10,17 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public CLPHistoryArraySnap(ICLPPage parentPage, CLPArray persistingArray, CLPArray snappedArray, bool horizontal) : base(parentPage)
+        public CLPHistoryArraySnap(ICLPPage parentPage, CLPArray persistingArray, CLPArray snappedArray, bool isHorizontal) : base(parentPage)
         {
-            Horizontal = horizontal;
+            IsHorizontal = isHorizontal;
             SnappedArray = snappedArray;
             SnappedArrayUniqueID = snappedArray.UniqueID;
             SnappedArraySquareSize = snappedArray.ArrayWidth / snappedArray.Columns;
             PersistingArrayUniqueID = persistingArray.UniqueID;
             PersistingArrayDivisionBehavior = persistingArray.IsDivisionBehaviorOn;
-            PersistingArrayDivisions = new ObservableCollection<CLPArrayDivision>(horizontal ? persistingArray.HorizontalDivisions : persistingArray.VerticalDivisions);
-            PersistingArrayRowsOrColumns = horizontal ? persistingArray.Rows : persistingArray.Columns;
-            PersistingArrayXOrYPosition = horizontal ? persistingArray.YPosition : persistingArray.XPosition;
+            PersistingArrayDivisions = new ObservableCollection<CLPArrayDivision>(isHorizontal ? persistingArray.HorizontalDivisions : persistingArray.VerticalDivisions);
+            PersistingArrayRowsOrColumns = isHorizontal ? persistingArray.Rows : persistingArray.Columns;
+            PersistingArrayXOrYPosition = isHorizontal ? persistingArray.YPosition : persistingArray.XPosition;
         }
 
         /// <summary>
@@ -42,13 +42,13 @@ namespace CLP.Models
         /// <summary>
         ///     True if the arrays snap together along a horizontal edge, false if along a vertical one
         /// </summary>
-        public bool Horizontal
+        public bool IsHorizontal
         {
-            get { return GetValue<bool>(HorizontalProperty); }
-            set { SetValue(HorizontalProperty, value); }
+            get { return GetValue<bool>(IsHorizontalProperty); }
+            set { SetValue(IsHorizontalProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalProperty = RegisterProperty("Horizontal", typeof(bool));
+        public static readonly PropertyData IsHorizontalProperty = RegisterProperty("IsHorizontal", typeof(bool));
 
         /// <summary>
         ///     Array that is snapped onto and then deleted.  Null if it's currently on the page.
@@ -163,13 +163,13 @@ namespace CLP.Models
 
             double persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
-            if(Horizontal)
+            if(IsHorizontal)
             {
-                toggleHorizontal(persistingArray);
+                RestoreHorizontalDivisions(persistingArray);
             }
             else
             {
-                toggleVertical(persistingArray);
+                RestoreVerticalDivisions(persistingArray);
             }
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
@@ -198,20 +198,20 @@ namespace CLP.Models
             ParentPage.PageObjects.Remove(SnappedArray);
             var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
-            if(Horizontal)
+            if(IsHorizontal)
             {
-                toggleHorizontal(persistingArray);
+                RestoreHorizontalDivisions(persistingArray);
             }
             else
             {
-                toggleVertical(persistingArray);
+                RestoreVerticalDivisions(persistingArray);
             }
 
             persistingArray.IsDivisionBehaviorOn = true;
             persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
         }
 
-        private void toggleHorizontal(CLPArray persistingArray)
+        private void RestoreHorizontalDivisions(CLPArray persistingArray)
         {
             var tempDivisions = persistingArray.HorizontalDivisions;
             persistingArray.HorizontalDivisions = PersistingArrayDivisions;
@@ -226,7 +226,7 @@ namespace CLP.Models
             PersistingArrayXOrYPosition = tempPosition;
         }
 
-        private void toggleVertical(CLPArray persistingArray)
+        private void RestoreVerticalDivisions(CLPArray persistingArray)
         {
             var tempDivisions = persistingArray.VerticalDivisions;
             persistingArray.VerticalDivisions = PersistingArrayDivisions;
