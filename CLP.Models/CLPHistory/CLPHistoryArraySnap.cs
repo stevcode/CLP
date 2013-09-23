@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
@@ -11,8 +10,7 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public CLPHistoryArraySnap(ICLPPage parentPage, CLPArray persistingArray, CLPArray snappedArray, bool horizontal)
-            : base(parentPage)
+        public CLPHistoryArraySnap(ICLPPage parentPage, CLPArray persistingArray, CLPArray snappedArray, bool horizontal) : base(parentPage)
         {
             Horizontal = horizontal;
             SnappedArray = snappedArray;
@@ -26,14 +24,11 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        ///     Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPHistoryArraySnap(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
+        protected CLPHistoryArraySnap(SerializationInfo info, StreamingContext context) : base(info, context) {}
 
         #endregion //Constructor
 
@@ -41,14 +36,11 @@ namespace CLP.Models
 
         public override int AnimationDelay
         {
-            get
-            {
-                return 600;
-            }
+            get { return 600; }
         }
 
         /// <summary>
-        /// True if the arrays snap together along a horizontal edge, false if along a vertical one
+        ///     True if the arrays snap together along a horizontal edge, false if along a vertical one
         /// </summary>
         public bool Horizontal
         {
@@ -58,9 +50,8 @@ namespace CLP.Models
 
         public static readonly PropertyData HorizontalProperty = RegisterProperty("Horizontal", typeof(bool));
 
-
         /// <summary>
-        /// Array that is snapped onto and then deleted.  Null if it's currently on the page.
+        ///     Array that is snapped onto and then deleted.  Null if it's currently on the page.
         /// </summary>
         public CLPArray SnappedArray
         {
@@ -71,7 +62,7 @@ namespace CLP.Models
         public static readonly PropertyData SnappedArrayProperty = RegisterProperty("SnappedArray", typeof(CLPArray));
 
         /// <summary>
-        /// UniqueID of the array that is snapped onto and then deleted.
+        ///     UniqueID of the array that is snapped onto and then deleted.
         /// </summary>
         public string SnappedArrayUniqueID
         {
@@ -82,7 +73,7 @@ namespace CLP.Models
         public static readonly PropertyData SnappedArrayUniqueIDProperty = RegisterProperty("SnappedArrayUniqueID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Original square size of the array that is snapped onto and then deleted.
+        ///     Original square size of the array that is snapped onto and then deleted.
         /// </summary>
         public double SnappedArraySquareSize
         {
@@ -93,7 +84,7 @@ namespace CLP.Models
         public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double));
 
         /// <summary>
-        /// UniqueID of the array that snaps on and continues to exist.
+        ///     UniqueID of the array that snaps on and continues to exist.
         /// </summary>
         public string PersistingArrayUniqueID
         {
@@ -104,8 +95,8 @@ namespace CLP.Models
         public static readonly PropertyData PersistingArrayUniqueIDProperty = RegisterProperty("PersistingArrayUniqueID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Divisions (either horizontal or vertical) that the persisting array should be set to have when this
-        /// history event fires (undoes or redoes, whichever comes next).
+        ///     Divisions (either horizontal or vertical) that the persisting array should be set to have when this
+        ///     history event fires (undoes or redoes, whichever comes next).
         /// </summary>
         public ObservableCollection<CLPArrayDivision> PersistingArrayDivisions
         {
@@ -116,7 +107,7 @@ namespace CLP.Models
         public static readonly PropertyData PersistingArrayDivisionsProperty = RegisterProperty("PersistingArrayDivisions", typeof(ObservableCollection<CLPArrayDivision>));
 
         /// <summary>
-        /// Value of IsDivisionBehaviorOn prior to the history event (which sets it true)
+        ///     Value of IsDivisionBehaviorOn prior to the history event (which sets it true)
         /// </summary>
         public bool PersistingArrayDivisionBehavior
         {
@@ -127,8 +118,8 @@ namespace CLP.Models
         public static readonly PropertyData PersistingArrayDivisionBehaviorProperty = RegisterProperty("PersistingArrayDivisionBehavior", typeof(bool));
 
         /// <summary>
-        /// Rows or columns that the persisting array should be set to have when this history event fires (undoes or
-        /// redoes, whichever comes next).
+        ///     Rows or columns that the persisting array should be set to have when this history event fires (undoes or
+        ///     redoes, whichever comes next).
         /// </summary>
         public int PersistingArrayRowsOrColumns
         {
@@ -139,8 +130,8 @@ namespace CLP.Models
         public static readonly PropertyData PersistingArrayRowsOrColumnsProperty = RegisterProperty("PersistingArrayRowsOrColumns", typeof(int));
 
         /// <summary>
-        /// Rows or columns that the persisting array should be set to have when this history event fires (undoes
-        /// or redoes, whichever comes next).
+        ///     Rows or columns that the persisting array should be set to have when this history event fires (undoes
+        ///     or redoes, whichever comes next).
         /// </summary>
         public double PersistingArrayXOrYPosition
         {
@@ -155,7 +146,7 @@ namespace CLP.Models
         #region Methods
 
         /// <summary>
-        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
+        ///     Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
@@ -186,12 +177,12 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
+        ///     Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
             SnappedArray = ParentPage.GetPageObjectByUniqueID(SnappedArrayUniqueID) as CLPArray;
-            if (SnappedArray == null) 
+            if(SnappedArray == null)
             {
                 Logger.Instance.WriteToLog("ArraySnap Redo Failure: Can't find snapped array.");
                 return;
@@ -207,10 +198,11 @@ namespace CLP.Models
             ParentPage.PageObjects.Remove(SnappedArray);
             var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
 
-            if (Horizontal) 
+            if(Horizontal)
             {
                 toggleHorizontal(persistingArray);
-            } else 
+            }
+            else
             {
                 toggleVertical(persistingArray);
             }
