@@ -273,16 +273,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 newArrayHeight = (ArrayWidth + e.HorizontalChange)/Columns*Rows;
             }
 
+            const double MIN_ARRAY_SIZE = 16.875; //11.25;
+
             //Control Min Dimensions of Array.
-            if(newArrayHeight < 45.0)
+            if(newArrayHeight < MIN_ARRAY_SIZE)
             {
-                newArrayHeight = 45.0;
+                newArrayHeight = MIN_ARRAY_SIZE;
             }
             var newSquareSize = newArrayHeight / Rows;
             var newArrayWidth = newSquareSize * Columns;
-            if(newArrayWidth < 45.0)
+            if(newArrayWidth < MIN_ARRAY_SIZE)
             {
-                newArrayWidth = 45.0;
+                newArrayWidth = MIN_ARRAY_SIZE;
                 newSquareSize = newArrayWidth/Columns;
                 newArrayHeight = newSquareSize*Rows;
             }

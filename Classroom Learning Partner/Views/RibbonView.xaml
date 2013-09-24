@@ -284,13 +284,14 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
-                <RibbonButton Label="Array"
+                <!--<RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/InkArray32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/InkArray16.png"
                               Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="FALSE" />
+                              CommandParameter="FALSE" />-->
 
-                <RibbonButton Label="Array + Dividers"
+                <!--Array + Divider-->
+                <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
