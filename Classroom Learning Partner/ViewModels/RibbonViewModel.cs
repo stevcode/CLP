@@ -2072,7 +2072,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var initializedSquareSize = 45.0;
                 var xPosition = 0.0;
                 var yPosition = 150.0;
-                var useTwoColumns = false;
+                var useTwoColumns = false; //..................
                 const double LARGE_LABEL_LENGTH = 70.0;
                 const double MIN_SIDE_LENGTH = 15.0;
                 while(xPosition + LARGE_LABEL_LENGTH + columns * initializedSquareSize >= currentPage.PageWidth || yPosition + LARGE_LABEL_LENGTH + rows * initializedSquareSize >= currentPage.PageHeight)

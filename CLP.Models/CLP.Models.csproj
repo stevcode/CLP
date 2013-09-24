@@ -113,6 +113,7 @@
     <Compile Include="CLPHistory\CLPHistoryStampPlace.cs" />
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
+    <Compile Include="CLPPageObjects\CLPRegion.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />
     <Compile Include="CLPHistory\CLPHistory.cs" />
