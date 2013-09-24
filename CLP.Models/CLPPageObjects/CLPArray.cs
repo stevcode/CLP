@@ -527,7 +527,7 @@ namespace CLP.Models
             {
                 while(XPosition + 2*LabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + 2*LabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
                 {
-                    initialSquareSize = initialSquareSize / 2;
+                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
                 }
             }
             else

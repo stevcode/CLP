@@ -2021,139 +2021,189 @@ namespace Classroom_Learning_Partner.ViewModels
             var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
             arrayCreationView.ShowDialog();
 
-            if(arrayCreationView.DialogResult == true)
+            if(arrayCreationView.DialogResult != true)
             {
-                var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-                if(notebookWorkspaceViewModel == null)
-                {
-                    return;
-                }
-                var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
-                if(clpMirrorDisplay == null)
-                {
-                    return;
-                }
-                var currentPage = clpMirrorDisplay.CurrentPage;
+                return;
+            }
 
-                int rows;
-                try
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+            var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(clpMirrorDisplay == null)
+            {
+                return;
+            }
+            var currentPage = clpMirrorDisplay.CurrentPage;
+
+            int rows;
+            try
+            {
+                rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+            }
+            catch(FormatException)
+            {
+                rows = 1;
+            }
+
+            int columns;
+            try
+            {
+                columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+            }
+            catch(FormatException)
+            {
+                columns = 1;
+            }
+
+            int numberOfArrays;
+            try
+            {
+                numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+            }
+            catch(FormatException)
+            {
+                numberOfArrays = 1;
+            }
+
+            if(numberOfArrays == 1)
+            {
+                var array = new CLPArray(rows, columns, currentPage);
+
+                switch(useDivisions)
                 {
-                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-                }
-                catch(FormatException)
-                {
-                    rows = 1;
+                    case "TRUE":
+                        array.IsDivisionBehaviorOn = true;
+                        break;
+                    case "FALSE":
+                        array.IsDivisionBehaviorOn = false;
+                        break;
                 }
 
-                int columns;
-                try
-                {
-                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-                }
-                catch(FormatException)
-                {
-                    columns = 1;
-                }
+                CLPServiceAgent.Instance.AddPageObjectToPage(array);
+                return;
+            }
 
-                int numberOfArrays;
-                try
-                {
-                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                }
-                catch(FormatException)
-                {
-                    numberOfArrays = 1;
-                }
+            var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
+                                        (bool)arrayCreationView.HorizontalToggle.IsChecked;
+            var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
+                                      (bool)arrayCreationView.VerticalToggle.IsChecked;
+            var initializedSquareSize = 45.0;
+            var xPosition = 0.0;
+            var yPosition = 150.0;
+            var arrayStacks = 1;
+            const double LABEL_LENGTH = 22.0;
 
-                var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
-                                            (bool)arrayCreationView.HorizontalToggle.IsChecked;
-                var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
-                                          (bool)arrayCreationView.VerticalToggle.IsChecked;
-                var initializedSquareSize = 45.0;
-                var xPosition = 0.0;
-                var yPosition = 150.0;
-                var useTwoColumns = false; //..................
-                const double LARGE_LABEL_LENGTH = 70.0;
-                const double MIN_SIDE_LENGTH = 15.0;
-                while(xPosition + LARGE_LABEL_LENGTH + columns * initializedSquareSize >= currentPage.PageWidth || yPosition + LARGE_LABEL_LENGTH + rows * initializedSquareSize >= currentPage.PageHeight)
+            if(isHorizontallyAligned)
+            {
+                while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
                 {
-                    initializedSquareSize = initializedSquareSize / 2;
-                }
-                if(numberOfArrays > 1)
-                {
-                    if(isHorizontallyAligned)
+                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                    if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageWidth)
                     {
-                        while(xPosition + LARGE_LABEL_LENGTH + (columns * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageWidth)
-                        {
-                            if(initializedSquareSize / 2 * columns < MIN_SIDE_LENGTH || initializedSquareSize / 2 * rows < MIN_SIDE_LENGTH)
-                            {
-                                useTwoColumns = true;
-                                break;
-                            }
-                            initializedSquareSize = initializedSquareSize / 2;
-                        }
-                    }
-                    else if(isVerticallyAligned)
-                    {
-                        yPosition = 80;
-                        while(yPosition + LARGE_LABEL_LENGTH + (rows * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageHeight)
-                        {
-                            if(initializedSquareSize / 2 * columns < MIN_SIDE_LENGTH || initializedSquareSize / 2 * rows < MIN_SIDE_LENGTH)
-                            {
-                                useTwoColumns = true;
-                                break;
-                            }
-                            initializedSquareSize = initializedSquareSize / 2;
-                        }
-                    }
-                }
-
-                if(useTwoColumns && isHorizontallyAligned)
-                {
-                    yPosition = 40.0;
-                }
-                foreach(var index in Enumerable.Range(1, numberOfArrays))
-                {
-                    var array = new CLPArray(rows, columns, currentPage);
-
-                    switch(useDivisions)
-                    {
-                        case "TRUE":
-                            array.IsDivisionBehaviorOn = true;
-                            break;
-                        case "FALSE":
-                            array.IsDivisionBehaviorOn = false;
-                            break;
+                        continue;
                     }
 
-                    if(isHorizontallyAligned)
+                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageWidth &&
+                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageHeight)
                     {
-                        if(useTwoColumns && index == numberOfArrays / 2 + 1)
-                        {
-                            xPosition = 0.0;
-                            yPosition += LARGE_LABEL_LENGTH + rows * initializedSquareSize;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        xPosition += ((columns + 1) * initializedSquareSize);
-                        array.SizeArrayToGridLevel(initializedSquareSize);
-                    }
-                    else if(isVerticallyAligned)
-                    {
-                        if(useTwoColumns && index == numberOfArrays / 2 + 1)
-                        {
-                            xPosition += LARGE_LABEL_LENGTH + columns * initializedSquareSize;
-                            yPosition = 80.0;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        yPosition += ((rows + 1) * initializedSquareSize);
-                        array.SizeArrayToGridLevel(initializedSquareSize);
+                        arrayStacks = 2;
+                        break;
                     }
 
-                    CLPServiceAgent.Instance.AddPageObjectToPage(array);
+                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageWidth &&
+                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        arrayStacks = 3;
+                        break;
+                    }
                 }
-              
+            }
+            else if(isVerticallyAligned)
+            {
+                yPosition = 100;
+                while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
+                {
+                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                    if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        continue;
+                    }
+
+                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageHeight &&
+                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageWidth)
+                    {
+                        arrayStacks = 2;
+                        break;
+                    }
+
+                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageHeight &&
+                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageWidth)
+                    {
+                        arrayStacks = 3;
+                        break;
+                    }
+                }
+            }
+
+            foreach(var index in Enumerable.Range(1, numberOfArrays))
+            {
+                var array = new CLPArray(rows, columns, currentPage);
+
+                switch(useDivisions)
+                {
+                    case "TRUE":
+                        array.IsDivisionBehaviorOn = true;
+                        break;
+                    case "FALSE":
+                        array.IsDivisionBehaviorOn = false;
+                        break;
+                }
+
+                if(isHorizontallyAligned)
+                {
+                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                    {
+                        xPosition = 0.0;
+                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    }
+                    if(arrayStacks == 3 && 
+                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
+                        index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
+                    {
+                        xPosition = 0.0;
+                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    }
+                    array.XPosition = xPosition;
+                    array.YPosition = yPosition;
+                    xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                    array.SizeArrayToGridLevel(initializedSquareSize);
+                }
+                else if(isVerticallyAligned)
+                {
+                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                    {
+                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                        yPosition = 100.0;
+                    }
+                    if(arrayStacks == 3 &&
+                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
+                        index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
+                    {
+                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                        yPosition = 100.0;
+                    }
+                    array.XPosition = xPosition;
+                    array.YPosition = yPosition;
+                    yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    array.SizeArrayToGridLevel(initializedSquareSize);
+                }
+
+                CLPServiceAgent.Instance.AddPageObjectToPage(array);
             }
         }
 
