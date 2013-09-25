@@ -400,7 +400,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
+                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
@@ -457,7 +457,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
+                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
@@ -514,7 +514,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
+                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
 
@@ -559,7 +559,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
+                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
                     break;
                 }
             }

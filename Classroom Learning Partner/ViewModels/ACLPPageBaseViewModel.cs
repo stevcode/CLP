@@ -858,7 +858,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RefreshPageObjects(List<ICLPPageObject> AllShapesPageObjects)
+        private void RefreshPageObjects(List<ICLPPageObject> allShapesPageObjects)
         {
             try
             {
@@ -869,9 +869,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedPageObjects = new ObservableCollection<ICLPPageObject>();
 
                         var addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                        if(AllShapesPageObjects.Any())
+                        if(allShapesPageObjects.Any())
                         {
-                            foreach(ICLPPageObject addedPageObject in AllShapesPageObjects)
+                            foreach(ICLPPageObject addedPageObject in allShapesPageObjects)
                             {
                                 if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID) &&
                                    !pageObject.UniqueID.Equals(addedPageObject.ParentID) &&
@@ -889,7 +889,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch(Exception ex)
             {
-                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                Console.WriteLine(@"PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
@@ -955,6 +955,34 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
             }
+        }
+
+        public static void RemovePageObjectFromPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)
+        {
+            if(page == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                return;
+            }
+            
+            if(addToHistory)
+            {
+                var currentIndex = page.PageObjects.IndexOf(pageObject);
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
+            }
+            pageObject.OnRemoved();
+            page.PageObjects.Remove(pageObject);
+        }
+
+        public static void RemovePageObjectFromPage(ICLPPageObject pageObject, bool addToHistory = true)
+        {
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                return;
+            }
+            RemovePageObjectFromPage(parentPage, pageObject, addToHistory);
         }
 
         #endregion //Static Methods

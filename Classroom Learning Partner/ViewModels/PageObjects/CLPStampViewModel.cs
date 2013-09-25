@@ -291,11 +291,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                         {
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage(po, false);
+                            ACLPPageBaseViewModel.RemovePageObjectFromPage(po, false);
                         }
                     }
                 }
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject, false);
+                ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
             }
         }
 
@@ -333,12 +333,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
+                ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             var pt = new Point(x, y);
 
-            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+            ChangePageObjectPosition(PageObject, pt);
         }
 
         /// <summary>
@@ -432,7 +432,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             pageVM.IsInkCanvasHitTestVisible = true;
                         }
 
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                        ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
                     }
                 }
             }
