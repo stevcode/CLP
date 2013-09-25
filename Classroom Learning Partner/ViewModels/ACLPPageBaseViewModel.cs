@@ -587,7 +587,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(var pageObject in allHalvedPageObjects)
                     {
                         allHalvedPageObjectIDs.Add(pageObject.UniqueID);
-                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false, false);
+                        AddPageObjectToPage(Page, pageObject, false, false);
                     }
 
                     Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
@@ -672,7 +672,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
                                 }
                                 ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
-                                CLPServiceAgent.Instance.AddPageObjectToPage(duplicatePageObject, false);
+                                AddPageObjectToPage(duplicatePageObject, addToHistory: false);
                                 //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
                             }
                         }
@@ -703,13 +703,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedStrokeIDs = new List<string>();
                         foreach (var stroke in e.Removed)
                         {
-                            removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+                            removedStrokeIDs.Add(stroke.GetPropertyData(ACLPPageBase.StrokeIDKey) as string);
                             //TODO: Make batch inking to recognize point erasing.
                             Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeRemove(Page, stroke));
                         }
                         foreach(var stroke in e.Added)
                         {
-                            if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                            if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
                             {
                                 var newUniqueID = Guid.NewGuid().ToString();
                                 stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
@@ -894,5 +894,69 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods        
+
+        #region Static Methods
+
+        public static void AddPageObjectToPage(ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
+        {
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                return;
+            }
+            AddPageObjectToPage(parentPage, pageObject, addToHistory);
+        }
+
+        public static void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
+        {
+            if(page == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                return;
+            }
+            pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            if(index == -1)
+            {
+                page.PageObjects.Add(pageObject);
+            }
+            else
+            {
+                page.PageObjects.Insert(index, pageObject);
+            }
+            
+            if(addToHistory)
+            {
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID, (index == -1) ? (page.PageObjects.Count - 1) : index));
+            }
+
+            if(forceSelectMode)
+            {
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            }
+        }
+
+        public static void AddPageObjectsToPage(ICLPPage page, IEnumerable<ICLPPageObject> pageObjects, bool addToHistory = true, bool forceSelectMode = true)
+        {
+            var pageObjectIDs = new List<string>();
+            foreach(var pageObject in pageObjects)
+            {
+                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                pageObjectIDs.Add(pageObject.UniqueID);
+                page.PageObjects.Add(pageObject);
+            }
+
+            if(addToHistory)
+            {
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectsMassAdd(page, pageObjectIDs));
+            }
+
+            if(forceSelectMode)
+            {
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            }
+        }
+
+        #endregion //Static Methods
     }
 }

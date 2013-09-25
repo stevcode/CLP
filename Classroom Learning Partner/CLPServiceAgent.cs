@@ -320,48 +320,6 @@ namespace Classroom_Learning_Partner
 
         #region Page
 
-        public void AddPageObjectToPage(ICLPPageObject pageObject, bool addToHistory = true)
-        {
-            var parentPage = pageObject.ParentPage;
-            if(parentPage == null)
-            {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
-                return;
-            }
-            AddPageObjectToPage(parentPage, pageObject, addToHistory);
-        }
-
-        public void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
-        {
-            if(page == null)
-            {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
-                return;
-            }
-            pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
-            if(index == -1)
-            {
-                page.PageObjects.Add(pageObject);
-            }
-            else
-            {
-                page.PageObjects.Insert(index, pageObject);
-            }
-            
-            if(addToHistory)
-            {
-                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(
-                    page, 
-                    pageObject.UniqueID,
-                    (index == -1) ? (page.PageObjects.Count - 1) : index));
-            }
-
-            if(forceSelectMode)
-            {
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
-            }
-        }
-
         public void RemovePageObjectFromPage(ICLPPageObject pageObject, bool addToHistory = true)
         {
             var parentPage = pageObject.ParentPage;

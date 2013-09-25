@@ -169,7 +169,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     currentPage.PageObjects.RemoveAt(pageObjectIndex);
                 }
 
-                CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                ACLPPageBaseViewModel.AddPageObjectToPage(image);
                 image.IsBackground = true;
                 image.Height = 450;
                 image.Width = 600;

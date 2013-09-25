@@ -197,14 +197,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                 pageObject.Parts = 0;
                                 pageObject.CanAdornersShow = false;
-                                CLPServiceAgent.Instance.AddPageObjectToPage(newObject, false);
+                                ACLPPageBaseViewModel.AddPageObjectToPage(newObject, addToHistory: false);
                                 leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
                             }
                         }
 
                         if(stampIndex > -1)
                         {
-                            CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, leftBehindStamp, false, true, stampIndex);
+                            ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, leftBehindStamp, false, true, stampIndex);
                             if(leftBehindStamp.CanAcceptPageObjects)
                             {
                                 foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
@@ -222,7 +222,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         else
                         {
-                            CLPServiceAgent.Instance.AddPageObjectToPage(leftBehindStamp, false);
+                            ACLPPageBaseViewModel.AddPageObjectToPage(leftBehindStamp, addToHistory: false);
                         }
                     }
                     leftBehindStamp.Parts = PageObject.Parts;
@@ -271,7 +271,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(notebookWorkspaceViewModel != null)
                         {
                             var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                            CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer, false, false);
+                            ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, droppedContainer, false, false);
                         }
                         PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 

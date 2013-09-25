@@ -232,7 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     linkedTable.ParentPageID = newPage.UniqueID;
                     linkedTable.YPosition = 100;
                     linkedTable.XPosition = (newPage.PageWidth / 2) - (linkedTable.Width / 2);
-                    CLPServiceAgent.Instance.AddPageObjectToPage(newPage, linkedTable, forceSelectMode:false);
+                    ACLPPageBaseViewModel.AddPageObjectToPage(newPage, linkedTable, forceSelectMode:false);
                 }
             }
             else
