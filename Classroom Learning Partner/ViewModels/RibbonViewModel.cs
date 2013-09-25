@@ -1699,12 +1699,18 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnMakePageLongerCommandExecute()
         {
-            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay))
             {
-                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-                page.PageHeight += 200;
-     //PageHeight change should force ResizePage() call           ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).ResizePage();
-            
+                return;
+            }
+            var page = (notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            var initialHeight = page.PageWidth / page.InitialPageAspectRatio;
+            const int MAX_INCREASE_TIMES = 2;
+            const double PAGE_INCREASE_AMOUNT = 200.0;
+            if(page.PageHeight < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+            {
+                page.PageHeight += PAGE_INCREASE_AMOUNT;
             }
         }
 
