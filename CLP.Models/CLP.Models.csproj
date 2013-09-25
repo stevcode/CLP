@@ -112,6 +112,7 @@
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
+    <Compile Include="Math\PageAnalysis.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />
     <Compile Include="CLPHistory\CLPHistory.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayDivisionsChanged.cs" />

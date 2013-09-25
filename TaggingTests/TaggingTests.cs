@@ -21,7 +21,6 @@ namespace TaggingTests
             TagType div = ArrayDivisionCorrectnessTagType.Instance;
             TagType horiz = ArrayHorizontalDivisionsTagType.Instance;
             TagType orient = ArrayOrientationTagType.Instance;
-            TagType strat = ArrayStrategyTagType.Instance;
             TagType vert = ArrayVerticalDivisionsTagType.Instance;
             TagType correct = CorrectnessTagType.Instance;
             TagType domain = DomainInterpretationTagType.Instance;

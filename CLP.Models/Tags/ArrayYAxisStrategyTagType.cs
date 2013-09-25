@@ -23,7 +23,7 @@ namespace CLP.Models
             ValueOptions.Add(new TagOptionValue("place value")); // e.g. 43 -> 40 | 3
             ValueOptions.Add(new TagOptionValue("half")); // e.g., 18 -> 9 | 9
             ValueOptions.Add(new TagOptionValue("10's")); // e.g. 43 -> 10 | 10 | 10 | 10 | 3
-            ValueOptions.Add(new TagOptionValue("none")); // No dividing lines were added
+            ValueOptions.Add(new TagOptionValue("no dividers")); // No dividing lines were added
             ValueOptions.Add(new TagOptionValue("other")); // None of the above*
 
         }
