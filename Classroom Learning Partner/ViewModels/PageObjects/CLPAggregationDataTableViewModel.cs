@@ -137,7 +137,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newWidth = PageObject.Width;
             }
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            ChangePageObjectDimensions(PageObject, newHeight, newWidth);
 
             ResizeGridPartsEvenly();
         }
@@ -156,7 +156,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(newHeight + PageObject.YPosition < parentPage.PageHeight && newHeaderHeight > 20)
             {
                 (PageObject as CLPAggregationDataTable).ColumnHeaderHeight = newHeaderHeight;
-                CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, PageObject.Width);
+                ChangePageObjectDimensions(PageObject, newHeight, PageObject.Width);
                 ResizeGridPartsEvenly();
             }
         }
@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(newWidth + PageObject.XPosition < parentPage.PageWidth && newHeaderWidth > 20)
             {
                 (PageObject as CLPAggregationDataTable).RowHeaderWidth = newHeaderWidth;
-                CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, PageObject.Height, newWidth);
+                ChangePageObjectDimensions(PageObject, PageObject.Height, newWidth);
                 ResizeGridPartsEvenly();
             }
         }
@@ -232,7 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     linkedTable.ParentPageID = newPage.UniqueID;
                     linkedTable.YPosition = 100;
                     linkedTable.XPosition = (newPage.PageWidth / 2) - (linkedTable.Width / 2);
-                    CLPServiceAgent.Instance.AddPageObjectToPage(newPage, linkedTable, forceSelectMode:false);
+                    ACLPPageBaseViewModel.AddPageObjectToPage(newPage, linkedTable, forceSelectMode:false);
                 }
             }
             else

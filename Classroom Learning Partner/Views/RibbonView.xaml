@@ -9,6 +9,7 @@
     <UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
     </UserControl.Resources>
 
     <!--Ribbon-->
@@ -30,80 +31,76 @@
 
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
-            <RibbonApplicationMenu SmallImageSource="..\Images\File.png"
+            <RibbonApplicationMenu SmallImageSource="pack://application:,,,/Resources/Images/File.png"
                                    Background="Purple">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"
-                                           ImageSource="..\Images\NewNotebook.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
                                            Command="{Binding NewNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Open Notebook"
                                            KeyTip="O"
-                                           ImageSource="..\Images\OpenNotebook.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
 
                 <RibbonApplicationMenuItem Header="Edit Notebook"
                                            KeyTip="E"
-                                           ImageSource="..\Images\EditNotebook.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/EditNotebook32.png"
                                            Command="{Binding EditNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <!--TODO: Steve - Make this a toggle with Edit Notebook above-->
                 <RibbonApplicationMenuItem Header="Done Editing Notebook"
                                            KeyTip="D"
-                                           ImageSource="..\Images\DoneEditingNotebook.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/DoneEditingNotebook32.png"
                                            Command="{Binding DoneEditingNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"
-                                           ImageSource="..\Images\SaveNotebook.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding SaveNotebookCommand}" />
 
                 <RibbonApplicationMenuItem Header="Save All Notebooks"
                                            KeyTip="A"
-                                           ImageSource="..\Images\SaveAllNotebooks.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/SaveAllNotebooks32.png"
                                            Command="{Binding SaveAllNotebooksCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Submit Whole Notebook"
-                                           ImageSource="..\Images\LargeIcon.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
                                            Command="{Binding SubmitNotebookToTeacherCommand}"
                                            Visibility="{Binding StudentVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Convert To XPS"
-                                           ImageSource="..\Images\ConvertToXPS.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
-                                           ImageSource="..\Images\ConvertToXPS.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
-                                           ImageSource="..\Images\ConvertToXPS.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
 
                 <RibbonSeparator />
 
                 <!--TODO: Steve - Bind header for toggle text: disconnect/reconnect to network-->
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
-                                           ImageSource="..\Images\ReconnectToNetwork.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ReconnectToNetwork32.png"
                                            Command="{Binding RefreshNetworkCommand}" />
 
-                <RibbonApplicationMenuItem Header="Toggle Thumbnail Location"
-                                           ImageSource="..\Images\NewNotebook.png"
-                                           Command="{Binding ToggleThumbnailsCommand}" />
-
                 <RibbonApplicationMenuItem Header="Clear History"
-                                           ImageSource="..\Images\LargeIcon.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
                                            Command="{Binding ClearHistoryCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="DisableHistory"
-                                           ImageSource="..\Images\LargeIcon.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
                                            Command="{Binding DisableHistoryCommand}" />
 
                 <RibbonApplicationMenu.FooterPaneContent>
@@ -115,10 +112,9 @@
                                       DockPanel.Dock="Right"
                                       Margin="2"
                                       BorderBrush="#B8114EAF"
-                                      LargeImageSource="..\Images\Exit.png"
-                                      SmallImageSource="..\Images\Exit.png"
-                                      Height="60"
-                                      Width="75" />
+                                      LargeImageSource="pack://application:,,,/Resources/Images/Exit64.png"
+                                      Height="64"
+                                      Width="64" />
                     </DockPanel>
                 </RibbonApplicationMenu.FooterPaneContent>
 
@@ -130,8 +126,10 @@
 
             <RibbonGroup Header="Notebook">
 
-                <RibbonToggleButton LargeImageSource="..\Images\OpenNotebook.png"
-                                    IsChecked="{Binding SideBarVisibility}">
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
+                                    IsChecked="{Binding SideBarVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -148,15 +146,18 @@
                 </RibbonToggleButton>
 
                 <RibbonButton Label="Previous Page"
-                              LargeImageSource="..\Images\PreviousPage.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
                               Command="{Binding PreviousPageCommand}" />
 
                 <RibbonButton Label="Next Page"
-                              LargeImageSource="..\Images\NextPage.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}" />
 
-                <RibbonToggleButton LargeImageSource="..\Images\GridDisplay.png"
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                     Visibility="{Binding InstructorVisibility}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -179,22 +180,26 @@
                          x:Name="ToolsRibbonGroup">
 
                 <RibbonToggleButton Label="Select"
-                                    LargeImageSource="pack://application:,,,/Images/HandIcon.png"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Hand32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Hand16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
-                                    LargeImageSource="pack://application:,,,/Images/Pen.png"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Pen32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Pen16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
                 <RibbonToggleButton Label="Highlighter"
-                                    LargeImageSource="pack://application:,,,/Images/Marker.png"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Highlighter32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Highlighter16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Highlighter}}" />
 
                 <RibbonMenuButton Label="Brush Size"
-                                  LargeImageSource="..\Images\PenSize-icon32.png"
+                                  LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
+                                  SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png"
                                   Visibility="{Binding InstructorVisibility}">
                     <RibbonGallery SelectedValuePath="Content.Height"
                                    SelectedValue="{Binding PenSize, Mode=TwoWay}"
@@ -236,7 +241,7 @@
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource"
-                                    Value="..\Images\StrokeEraser.png" />
+                                    Value="pack://application:,,,/Resources/Images/StrokeEraser32.png" />
                         </Style>
                     </RibbonMenuButton.Style>
 
@@ -247,14 +252,14 @@
                             <RibbonGalleryItem Height="64">
                                 <StackPanel Tag="Stroke Eraser"
                                             Orientation="Horizontal">
-                                    <Image Source="..\Images\StrokeEraser.png" />
+                                    <Image Source="pack://application:,,,/Resources/Images/StrokeEraser64.png" />
                                     <Label>Stroke Eraser</Label>
                                 </StackPanel>
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="64">
                                 <StackPanel Tag="Point Eraser"
                                             Orientation="Horizontal">
-                                    <Image Source="..\Images\Eraser.png" />
+                                    <Image Source="pack://application:,,,/Resources/Images/PointEraser64.png" />
                                     <Label>Point Eraser</Label>
                                 </StackPanel>
                             </RibbonGalleryItem>
@@ -263,7 +268,8 @@
                 </RibbonMenuButton>
 
                 <RibbonToggleButton Label="Cut"
-                                    LargeImageSource="pack://application:,,,/Images/Scissors.png"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Scissors32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Scissors16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Scissors}}" />
 
@@ -278,18 +284,22 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
-                <RibbonButton Label="Array"
-                              LargeImageSource="..\Images\InkArray.png"
+                <!--<RibbonButton Label="Array"
+                              LargeImageSource="pack://application:,,,/Resources/Images/InkArray32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/InkArray16.png"
                               Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="FALSE" />
+                              CommandParameter="FALSE" />-->
 
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
+                <!--Array + Divider-->
+                <RibbonButton Label="Array"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TRUE" />
 
                 <RibbonButton Label="Stamp"
-                              LargeImageSource="..\Images\AddPathStamp.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/BlankStamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/BlankStamp16.png"
                               Command="{Binding Path=InsertBlankStampCommand}" />
 
             </RibbonGroup>
@@ -352,44 +362,50 @@
                 </Border>
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="Page Size">
+            <RibbonGroup Header="Page Size">
 
                 <RibbonButton Label="Make Page Longer"
-                              LargeImageSource="..\Images\MakePageLonger.png"
-                              Command="{Binding MakePageLongerCommand}"/>
+                              LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
+                              Command="{Binding MakePageLongerCommand}" />
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Share"
                          Visibility="{Binding StudentVisibility}">
 
                 <RibbonButton Label="Send To Teacher"
-                              LargeImageSource="..\Images\Send.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/SingleSubmit16.png"
                               Command="{Binding SubmitPageCommand}"
                               Visibility="{Binding SendButtonVisibility}" />
 
                 <RibbonButton Label="Thank you!"
                               IsEnabled="False"
-                              LargeImageSource="..\Images\Happy.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Happy32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Happy16.png"
                               Visibility="{Binding IsSentInfoVisibility}" />
 
                 <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
-                              LargeImageSource="..\Images\GroupSubmit-icon32.png" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
                               Command="{Binding GroupSubmitPageCommand}"
                               Visibility="{Binding SendButtonVisibility}" />-->
 
             </RibbonGroup>
 
             <RibbonGroup Header="History">
-                
+
                 <RibbonButton Label="Undo"
-                              LargeImageSource="..\Images\Undo.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Undo16.png"
                               Command="{Binding UndoCommand}" />
-                
+
                 <RibbonButton Label="Redo"
-                              LargeImageSource="..\Images\Redo.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
-                
+
             </RibbonGroup>
 
         </RibbonTab>
@@ -462,7 +478,7 @@
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
                 <RibbonToggleButton Label="Eraser"
                                     LargeImageSource="pack://application:,,,/Images/Eraser.png"
@@ -490,9 +506,17 @@
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
+                <RibbonButton Label="Container Stamp"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding InsertBlankContainerStampCommand}" />
+
                 <RibbonButton Label="Image Stamp"
                               LargeImageSource="..\Images\PictureStamp.png"
                               Command="{Binding InsertImageStampCommand}" />
+
+                <RibbonButton Label="Image Container Stamp"
+                              LargeImageSource="..\Images\PictureStamp.png"
+                              Command="{Binding InsertImageContainerStampCommand}" />
 
             </RibbonGroup>
 
@@ -507,7 +531,7 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TRUE" />
-                
+
             </RibbonGroup>
 
             <RibbonGroup Header="Shapes">
@@ -598,7 +622,7 @@
                 </RibbonControlGroup>
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Page Analysis">
 
                 <RibbonButton Label="Page Definition"
@@ -766,7 +790,7 @@
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}"/>
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
 
             </RibbonGroup>
 

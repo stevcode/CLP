@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             PageObject.EnforceAspectRatio(aspectRatio);
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
+            ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }
     }
 }

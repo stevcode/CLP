@@ -52,14 +52,14 @@
 
                     <TextBlock Grid.Column="0" Margin="5"
                                VerticalAlignment="Center" HorizontalAlignment="Right"
-                               FontWeight="Bold" Foreground="Red"
+                               FontWeight="Bold" Foreground="DarkOrange"
                                Text="Columns:" />
 
                     <TextBox x:Name="Columns" 
                              Grid.Column="1" Margin="5"
                              Width="{Binding ElementName=NumberOfArrays, Path=ActualWidth}"
                              Height="{Binding ElementName=NumberOfArrays, Path=ActualHeight}"
-                             Foreground="Red" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
+                             Foreground="DarkOrange" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
                              Text="" FontSize="24" TextAlignment="Right" />
 
                 </Grid>
@@ -112,7 +112,7 @@
             <TextBox x:Name="NumberOfArrays" 
                      Grid.Column="1" Grid.Row="0" Margin="5"
                      BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
-                     Text="1" FontSize="24" TextAlignment="Right" />
+                     Text="" FontSize="24" TextAlignment="Right" />
 
             <TextBlock Grid.Column="0" Grid.Row="1" Margin="10"
                        VerticalAlignment="Center"
@@ -129,14 +129,14 @@
                              Grid.Column="0" Margin="5"
                              Height="32" Width="32"
                              IsChecked="True">
-                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/HorizontalArrayStack32.png" />
                 </RadioButton>
 
                 <RadioButton x:Name="VerticalToggle" GroupName="ArrayAlignment"
                              Style="{StaticResource {x:Type ToggleButton}}"
                              Grid.Column="1" Margin="5"
                              Height="32" Width="32">
-                    <Image Source="pack://application:,,,/Images/LargeIcon.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/VerticalArrayStack32.png" />
                 </RadioButton>
 
             </Grid>

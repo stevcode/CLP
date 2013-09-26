@@ -14,6 +14,7 @@ using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
 using System.Windows.Shapes;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -158,7 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PenSizeProperty, value); }
         }
 
-        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3);
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3.0);
 
         /// <summary>
         /// Sets the PageInteractionMode.
@@ -485,7 +486,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
                 {
-                    aclpPageObjectBaseViewModel.IsAdornerVisible = false;
+                    aclpPageObjectBaseViewModel.ClearAdorners();
                 }
             }
         }
@@ -586,7 +587,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(var pageObject in allHalvedPageObjects)
                     {
                         allHalvedPageObjectIDs.Add(pageObject.UniqueID);
-                        CLPServiceAgent.Instance.AddPageObjectToPage(Page, pageObject, false, false);
+                        AddPageObjectToPage(Page, pageObject, false, false);
                     }
 
                     Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
@@ -637,9 +638,44 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
 
-                    foreach(var lassoedPageObject in lassoedPageObjects)
+                    var lassoedPageObjectParameterizationView = new LassoedPageObjectParameterizationView() { Owner = Application.Current.MainWindow };
+                    lassoedPageObjectParameterizationView.ShowDialog();
+
+                    if(lassoedPageObjectParameterizationView.DialogResult == true)
                     {
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(lassoedPageObject);
+                        int numberOfCopies;
+                        try
+                        {
+                            numberOfCopies = Convert.ToInt32(lassoedPageObjectParameterizationView.NumberOfCopies.Text);
+                        }
+                        catch(FormatException)
+                        {
+                            numberOfCopies = 1;
+                        }
+
+                        var isHorizontallyAligned = lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked != null &&
+                                                    (bool)lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked;
+                        var isVerticallyAligned = lassoedPageObjectParameterizationView.VerticalToggle.IsChecked != null &&
+                                                  (bool)lassoedPageObjectParameterizationView.VerticalToggle.IsChecked;
+
+                        foreach(var lassoedPageObject in lassoedPageObjects)
+                        {
+                            for(int i = 0; i < numberOfCopies; i++)
+                            {
+                                var duplicatePageObject = lassoedPageObject.Duplicate();
+                                if(isHorizontallyAligned)
+                                {
+                                    duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
+                                }
+                                else if(isVerticallyAligned)
+                                {
+                                    duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
+                                }
+                                ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
+                                AddPageObjectToPage(duplicatePageObject, addToHistory: false);
+                                //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
+                            }
+                        }
                     }
 
                     if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
@@ -667,13 +703,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedStrokeIDs = new List<string>();
                         foreach (var stroke in e.Removed)
                         {
-                            removedStrokeIDs.Add(stroke.GetPropertyData(CLPPage.StrokeIDKey) as string);
+                            removedStrokeIDs.Add(stroke.GetPropertyData(ACLPPageBase.StrokeIDKey) as string);
                             //TODO: Make batch inking to recognize point erasing.
                             Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeRemove(Page, stroke));
                         }
                         foreach(var stroke in e.Added)
                         {
-                            if(!stroke.ContainsPropertyData(CLPPage.StrokeIDKey))
+                            if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
                             {
                                 var newUniqueID = Guid.NewGuid().ToString();
                                 stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
@@ -822,7 +858,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RefreshPageObjects(List<ICLPPageObject> AllShapesPageObjects)
+        private void RefreshPageObjects(List<ICLPPageObject> allShapesPageObjects)
         {
             try
             {
@@ -833,9 +869,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         var removedPageObjects = new ObservableCollection<ICLPPageObject>();
 
                         var addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                        if(AllShapesPageObjects.Any())
+                        if(allShapesPageObjects.Any())
                         {
-                            foreach(ICLPPageObject addedPageObject in AllShapesPageObjects)
+                            foreach(ICLPPageObject addedPageObject in allShapesPageObjects)
                             {
                                 if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID) &&
                                    !pageObject.UniqueID.Equals(addedPageObject.ParentID) &&
@@ -853,10 +889,102 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch(Exception ex)
             {
-                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                Console.WriteLine(@"PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
         #endregion //Methods        
+
+        #region Static Methods
+
+        public static void AddPageObjectToPage(ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
+        {
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                return;
+            }
+            AddPageObjectToPage(parentPage, pageObject, addToHistory);
+        }
+
+        public static void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
+        {
+            if(page == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                return;
+            }
+            pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            if(index == -1)
+            {
+                page.PageObjects.Add(pageObject);
+            }
+            else
+            {
+                page.PageObjects.Insert(index, pageObject);
+            }
+            
+            if(addToHistory)
+            {
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID, (index == -1) ? (page.PageObjects.Count - 1) : index));
+            }
+
+            if(forceSelectMode)
+            {
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            }
+        }
+
+        public static void AddPageObjectsToPage(ICLPPage page, IEnumerable<ICLPPageObject> pageObjects, bool addToHistory = true, bool forceSelectMode = true)
+        {
+            var pageObjectIDs = new List<string>();
+            foreach(var pageObject in pageObjects)
+            {
+                pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                pageObjectIDs.Add(pageObject.UniqueID);
+                page.PageObjects.Add(pageObject);
+            }
+
+            if(addToHistory)
+            {
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectsMassAdd(page, pageObjectIDs));
+            }
+
+            if(forceSelectMode)
+            {
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            }
+        }
+
+        public static void RemovePageObjectFromPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true)
+        {
+            if(page == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                return;
+            }
+            
+            if(addToHistory)
+            {
+                var currentIndex = page.PageObjects.IndexOf(pageObject);
+                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
+            }
+            pageObject.OnRemoved();
+            page.PageObjects.Remove(pageObject);
+        }
+
+        public static void RemovePageObjectFromPage(ICLPPageObject pageObject, bool addToHistory = true)
+        {
+            var parentPage = pageObject.ParentPage;
+            if(parentPage == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                return;
+            }
+            RemovePageObjectFromPage(parentPage, pageObject, addToHistory);
+        }
+
+        #endregion //Static Methods
     }
 }

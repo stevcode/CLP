@@ -104,13 +104,17 @@
     <Compile Include="CLPHistory\CLPAnimationIndicator.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayGridToggle.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayRotate.cs" />
+    <Compile Include="CLPHistory\CLPHistoryArraySnap.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectCut.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectMoveBatch.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectRemove.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectResizeBatch.cs" />
+    <Compile Include="CLPHistory\CLPHistoryPageObjectsMassAdd.cs" />
+    <Compile Include="CLPHistory\CLPHistoryStampPlace.cs" />
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
+    <Compile Include="CLPPageObjects\CLPRegion.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
     <Compile Include="Math\PageAnalysis.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />

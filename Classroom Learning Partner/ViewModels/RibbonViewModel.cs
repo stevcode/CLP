@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
-        private MainWindowViewModel MainWindow
+        public MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
         }
@@ -119,6 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute);
             InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
+            InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute);
+            InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
@@ -311,15 +313,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool DisplayPanelVisibility
         {
             get { return GetValue<bool>(DisplayPanelVisibilityProperty); }
-            set
-            {
-                SetValue(DisplayPanelVisibilityProperty, value);
-                if(App.MainWindowViewModel != null && App.MainWindowViewModel.SelectedWorkspace != null && App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-                {
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).DisplayListPanel;
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel.IsVisible = value;
-                }
-            }
+            set { SetValue(DisplayPanelVisibilityProperty, value); }
         }
 
         public static readonly PropertyData DisplayPanelVisibilityProperty = RegisterProperty("DisplayPanelVisibility", typeof(bool), false);
@@ -1709,12 +1703,18 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnMakePageLongerCommandExecute()
         {
-            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay))
             {
-                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-                page.PageHeight += 200;
-     //PageHeight change should force ResizePage() call           ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).ResizePage();
-            
+                return;
+            }
+            var page = (notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            var initialHeight = page.PageWidth / page.InitialPageAspectRatio;
+            const int MAX_INCREASE_TIMES = 2;
+            const double PAGE_INCREASE_AMOUNT = 200.0;
+            if(page.PageHeight < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+            {
+                page.PageHeight += PAGE_INCREASE_AMOUNT;
             }
         }
 
@@ -1767,7 +1767,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertTextBoxCommandExecute()
         {
             CLPTextBox textBox = new CLPTextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(textBox);
+            ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
         }
 
         /// <summary>
@@ -1778,7 +1778,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAggregationDataTableCommandExecute()
         {
             CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(dataTable);
+            ACLPPageBaseViewModel.AddPageObjectToPage(dataTable);
         }
 
         /// <summary>
@@ -1835,7 +1835,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
 
-            CLPServiceAgent.Instance.AddPageObjectToPage(image);
+            ACLPPageBaseViewModel.AddPageObjectToPage(image);
         }
 
         /// <summary>
@@ -1875,7 +1875,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     CLPImage image = new CLPImage(imageID, page);
 
-                    CLPServiceAgent.Instance.AddPageObjectToPage(image);
+                    ACLPPageBaseViewModel.AddPageObjectToPage(image);
                 }
                 else
                 {
@@ -1927,6 +1927,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageStampCommandExecute()
         {
+            CreateImageStamp(false);
+        }
+
+        /// <summary>
+        /// Gets the InsertImageStampCommand command.
+        /// </summary>
+        public Command InsertImageContainerStampCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnInsertImageContainerStampCommandExecute()
+        {
+            CreateImageStamp(true);
+        }
+
+        private void CreateImageStamp(bool isContainerStamp)
+        {
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
@@ -1955,10 +1974,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         page.ImagePool.Add(imageID, ByteSource);
                     }
-                    CLPImage image = new CLPImage(imageID, page);
-                    CLPStamp stamp = new CLPStamp(image, page);
+                    var image = new CLPImage(imageID, page);
+                    var stamp = new CLPStamp(image, page, isContainerStamp);
 
-                    CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+                    ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
                 }
                 else
                 {
@@ -1978,7 +1997,28 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertBlankStampCommandExecute()
         {
             CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(stamp);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        /// <summary>
+        /// Gets the InsertBlankContainerStampCommand command.
+        /// </summary>
+        public Command InsertBlankContainerStampCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Method to invoke when the InsertBlankContainerStampCommand command is executed.
+        /// </summary>
+        private void OnInsertBlankContainerStampCommandExecute()
+        {
+            CLPStamp stamp = new CLPStamp(
+                null, 
+                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage,
+                true);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         /// <summary>
@@ -1991,108 +2031,199 @@ namespace Classroom_Learning_Partner.ViewModels
             var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
             arrayCreationView.ShowDialog();
 
-            if(arrayCreationView.DialogResult == true)
+            if(arrayCreationView.DialogResult != true)
             {
-                var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-                if(notebookWorkspaceViewModel == null)
-                {
-                    return;
-                }
-                var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
-                if(clpMirrorDisplay == null)
-                {
-                    return;
-                }
-                var currentPage = clpMirrorDisplay.CurrentPage;
+                return;
+            }
 
-                int rows;
-                try
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+            var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(clpMirrorDisplay == null)
+            {
+                return;
+            }
+            var currentPage = clpMirrorDisplay.CurrentPage;
+
+            int rows;
+            try
+            {
+                rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+            }
+            catch(FormatException)
+            {
+                rows = 1;
+            }
+
+            int columns;
+            try
+            {
+                columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+            }
+            catch(FormatException)
+            {
+                columns = 1;
+            }
+
+            int numberOfArrays;
+            try
+            {
+                numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+            }
+            catch(FormatException)
+            {
+                numberOfArrays = 1;
+            }
+
+            if(numberOfArrays == 1)
+            {
+                var array = new CLPArray(rows, columns, currentPage);
+
+                switch(useDivisions)
                 {
-                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-                }
-                catch(FormatException)
-                {
-                    rows = 1;
+                    case "TRUE":
+                        array.IsDivisionBehaviorOn = true;
+                        break;
+                    case "FALSE":
+                        array.IsDivisionBehaviorOn = false;
+                        break;
                 }
 
-                int columns;
-                try
-                {
-                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-                }
-                catch(FormatException)
-                {
-                    columns = 1;
-                }
+                ACLPPageBaseViewModel.AddPageObjectToPage(array);
+                return;
+            }
 
-                int numberOfArrays;
-                try
-                {
-                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                }
-                catch(FormatException)
-                {
-                    numberOfArrays = 1;
-                }
+            var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
+                                        (bool)arrayCreationView.HorizontalToggle.IsChecked;
+            var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
+                                      (bool)arrayCreationView.VerticalToggle.IsChecked;
+            var initializedSquareSize = 45.0;
+            var xPosition = 0.0;
+            var yPosition = 150.0;
+            var arrayStacks = 1;
+            const double LABEL_LENGTH = 22.0;
 
-                var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
-                                            (bool)arrayCreationView.HorizontalToggle.IsChecked;
-                var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
-                                          (bool)arrayCreationView.VerticalToggle.IsChecked;
-                var initializedSquareSize = 45.0;
-                var xPosition = 0.0;
-                var yPosition = 150.0;
-                if(numberOfArrays > 1)
+            if(isHorizontallyAligned)
+            {
+                while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
                 {
-                    const double LARGE_LABEL_LENGTH = 70.0;
-                    if(isHorizontallyAligned)
+                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                    if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageWidth)
                     {
-                        while(xPosition + LARGE_LABEL_LENGTH + (columns * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageWidth)
-                        {
-                            initializedSquareSize = initializedSquareSize / 2;
-                        }
-                    }
-                    else if(isVerticallyAligned)
-                    {
-                        yPosition = 80;
-                        while(yPosition + LARGE_LABEL_LENGTH + (rows * numberOfArrays + numberOfArrays - 1) * initializedSquareSize >= currentPage.PageHeight)
-                        {
-                            initializedSquareSize = initializedSquareSize / 2;
-                        }
-                    }
-                }
-
-                foreach(var index in Enumerable.Range(1, numberOfArrays))
-                {
-                    var array = new CLPArray(rows, columns, currentPage);
-
-                    switch(useDivisions)
-                    {
-                        case "TRUE":
-                            array.IsDivisionBehaviorOn = true;
-                            break;
-                        case "FALSE":
-                            array.IsDivisionBehaviorOn = false;
-                            break;
-                    }
-
-                    if(isHorizontallyAligned)
-                    {
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        xPosition += ((columns + 1) * initializedSquareSize);
-                        array.SizeArrayToGridLevel(initializedSquareSize);
-                    }
-                    else if(isVerticallyAligned)
-                    {
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        yPosition += ((rows + 1) * initializedSquareSize);
-                        array.SizeArrayToGridLevel(initializedSquareSize);
+                        continue;
                     }
 
-                    CLPServiceAgent.Instance.AddPageObjectToPage(array);
+                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageWidth &&
+                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        arrayStacks = 2;
+                        break;
+                    }
+
+                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageWidth &&
+                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        arrayStacks = 3;
+                        break;
+                    }
                 }
+            }
+            else if(isVerticallyAligned)
+            {
+                yPosition = 100;
+                while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
+                {
+                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                    if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        continue;
+                    }
+
+                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageHeight &&
+                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageWidth)
+                    {
+                        arrayStacks = 2;
+                        break;
+                    }
+
+                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageHeight &&
+                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageWidth)
+                    {
+                        arrayStacks = 3;
+                        break;
+                    }
+                }
+            }
+
+            var arraysToAdd = new List<CLPArray>();
+            foreach(var index in Enumerable.Range(1, numberOfArrays))
+            {
+                var array = new CLPArray(rows, columns, currentPage);
+
+                switch(useDivisions)
+                {
+                    case "TRUE":
+                        array.IsDivisionBehaviorOn = true;
+                        break;
+                    case "FALSE":
+                        array.IsDivisionBehaviorOn = false;
+                        break;
+                }
+
+                if(isHorizontallyAligned)
+                {
+                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                    {
+                        xPosition = 0.0;
+                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    }
+                    if(arrayStacks == 3 && 
+                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
+                        index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
+                    {
+                        xPosition = 0.0;
+                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    }
+                    array.XPosition = xPosition;
+                    array.YPosition = yPosition;
+                    xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                    array.SizeArrayToGridLevel(initializedSquareSize);
+                }
+                else if(isVerticallyAligned)
+                {
+                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                    {
+                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                        yPosition = 100.0;
+                    }
+                    if(arrayStacks == 3 &&
+                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
+                        index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
+                    {
+                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+                        yPosition = 100.0;
+                    }
+                    array.XPosition = xPosition;
+                    array.YPosition = yPosition;
+                    yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+                    array.SizeArrayToGridLevel(initializedSquareSize);
+                }
+
+                arraysToAdd.Add(array);
+            }
+
+            if(arraysToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+            }
+            else
+            {
+                ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
             }
         }
 
@@ -2207,7 +2338,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAudioCommandExecute()
         {
             CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(audio);
+            ACLPPageBaseViewModel.AddPageObjectToPage(audio);
         }
 
         /// <summary>
@@ -2221,7 +2352,7 @@ namespace Classroom_Learning_Partner.ViewModels
             square.Height = 200;
             square.Width = 2.0*square.Height;
             
-            CLPServiceAgent.Instance.AddPageObjectToPage(square);
+            ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -2235,7 +2366,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertSquareShapeCommandExecute()
         {
             CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(square);
+            ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -2249,7 +2380,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertCircleShapeCommandExecute()
         {
             CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(circle);
+            ACLPPageBaseViewModel.AddPageObjectToPage(circle);
         }
 
         /// <summary>
@@ -2263,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -2277,7 +2408,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertVerticalLineShapeCommandExecute()
         {
             CLPShape line = new CLPShape(CLPShape.CLPShapeType.VerticalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(line);
+            ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -2297,7 +2428,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
                 CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-                CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                ACLPPageBaseViewModel.AddPageObjectToPage(region);
             }
         }
 
@@ -2312,7 +2443,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertInkShapeRegionCommandExecute()
         {
             CLPInkShapeRegion region = new CLPInkShapeRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            ACLPPageBaseViewModel.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -2326,7 +2457,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertGroupingRegionCommandExecute()
         {
             CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            CLPServiceAgent.Instance.AddPageObjectToPage(region);
+            ACLPPageBaseViewModel.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -2356,7 +2487,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
                
-                CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                ACLPPageBaseViewModel.AddPageObjectToPage(region);
             }
         }
 
@@ -2386,7 +2517,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch(FormatException) { cols = 0; }
 
                 CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-                CLPServiceAgent.Instance.AddPageObjectToPage(region);
+                ACLPPageBaseViewModel.AddPageObjectToPage(region);
             }
         }
 

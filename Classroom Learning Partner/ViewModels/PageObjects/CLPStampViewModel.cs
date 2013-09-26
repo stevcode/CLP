@@ -54,21 +54,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public CLPHandwritingRegion HandwritingRegionParts
-        {
-            get { return GetValue<CLPHandwritingRegion>(HandwritingRegionPartsProperty); }
-            set { SetValue(HandwritingRegionPartsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the HandwritingRegionParts property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData HandwritingRegionPartsProperty = RegisterProperty("HandwritingRegionParts", typeof(CLPHandwritingRegion));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
         public bool PartsInterpreted
         {
             get { return GetValue<bool>(PartsInterpretedProperty); }
@@ -141,18 +126,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 StrokeCollection originalStrokes = PageObject.GetStrokesOverPageObject();
                 var clonedStrokes = new StrokeCollection();
 
-                StrokeCollection handwritingStrokes = HandwritingRegionParts.GetStrokesOverPageObject();
-
                 foreach (Stroke stroke in originalStrokes)
                 {
-                    if (!handwritingStrokes.Contains(stroke))
-                    {
-                        Stroke newStroke = (new StrokeDTO(stroke)).ToStroke();
-                        var transform = new Matrix();
-                        transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
-                        newStroke.Transform(transform, true);
-                        clonedStrokes.Add(newStroke);
-                    }
+                    Stroke newStroke = (new StrokeDTO(stroke)).ToStroke();
+                    var transform = new Matrix();
+                    transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
+                    newStroke.Transform(transform, true);
+                    clonedStrokes.Add(newStroke);
                 }
 
                 StrokePathContainer.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);    //.StrokesToBytes(clonedStrokes);
@@ -173,7 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void CopyStamp(int stampIndex)
         {
             IsAdornerVisible = false;
-            IsMouseOverShowEnabled = false;            
+            IsMouseOverShowEnabled = false;
 
             try
             {
@@ -198,34 +178,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         PageObject.CanAcceptPageObjects = false;
                         leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
-                        foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-                        {
-                            ICLPPageObject newObject = pageObject.Duplicate();
-                            pageObject.Parts = 0;
-                   //         parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(newObject.UniqueID));
-                            parentPage.PageObjects.Add(newObject);
-                            pageObject.CanAdornersShow = false;
-                            leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
+
+                        if(leftBehindStamp.CanAcceptPageObjects)
+                        {    
+                            foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
+                            {
+                                ICLPPageObject newObject = pageObject.Duplicate();
+
+                                // New object stays put, old object leaves, but we shuffle around IDs for
+                                // ID continuity.
+                                PageObject.PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                                
+                                var tempID = pageObject.UniqueID;
+                                pageObject.UniqueID = newObject.UniqueID;
+                                newObject.UniqueID = tempID;
+
+                                PageObject.PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+
+                                pageObject.Parts = 0;
+                                pageObject.CanAdornersShow = false;
+                                ACLPPageBaseViewModel.AddPageObjectToPage(newObject, addToHistory: false);
+                                leftBehindStamp.PageObjectObjectParentIDs.Add(newObject.UniqueID);
+                            }
                         }
 
                         if(stampIndex > -1)
                         {
-           //                 parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
-                            parentPage.PageObjects.Insert(stampIndex, leftBehindStamp);
-                            foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
+                            ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, leftBehindStamp, false, true, stampIndex);
+                            if(leftBehindStamp.CanAcceptPageObjects)
                             {
-                                int pageObjectIndex = PageObject.ParentPage.PageObjects.IndexOf(pageObject);
-                                PageObject.ParentPage.PageObjects.Move(pageObjectIndex, stampIndex + 1);
+                                foreach(ICLPPageObject pageObject in leftBehindStamp.GetPageObjectsOverPageObject())
+                                {
+                                    int pageObjectIndex = parentPage.PageObjects.IndexOf(pageObject);
+                                    parentPage.PageObjects.Move(pageObjectIndex, stampIndex + 1);
+
+                                    // Move is removing them for some reason, so add them back.
+                                    if(!leftBehindStamp.PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
+                                    {
+                                        leftBehindStamp.PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+                                    }
+                                }
                             }
                         }
                         else
                         {
-          //                  parentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryAddObject(leftBehindStamp.UniqueID));
-                            parentPage.PageObjects.Add(leftBehindStamp);
+                            ACLPPageBaseViewModel.AddPageObjectToPage(leftBehindStamp, addToHistory: false);
                         }
                     }
                     leftBehindStamp.Parts = PageObject.Parts;
-                } 
+                }
             }
             catch(Exception ex)
             {
@@ -249,7 +250,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     droppedContainer.XPosition = PageObject.XPosition;
                     droppedContainer.YPosition = PageObject.YPosition + CLPStamp.HandleHeight;
                     droppedContainer.ParentID = PageObject.UniqueID;
-                    //droppedContainer.IsStamped = true;
                     droppedContainer.Parts = PageObject.Parts;
                     droppedContainer.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
                     if(droppedContainer.InternalPageObject != null)
@@ -271,7 +271,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(notebookWorkspaceViewModel != null)
                         {
                             var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                            CLPServiceAgent.Instance.AddPageObjectToPage(parentPage, droppedContainer, forceSelectMode:false);
+                            ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, droppedContainer, false, false);
                         }
                         PageObject.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
@@ -281,24 +281,21 @@ namespace Classroom_Learning_Partner.ViewModels
                             int pageObjectIndex = PageObject.ParentPage.PageObjects.IndexOf(pageObject);
                             PageObject.ParentPage.PageObjects.Move(pageObjectIndex, PageObject.ParentPage.PageObjects.Count - 1);
                         }
+
+                        PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(
+                            PageObject.ParentPage,
+                            droppedContainer.UniqueID));
                     }
                     // Stamp not placed
                     else
                     {
                         foreach(ICLPPageObject po in PageObject.GetPageObjectsOverPageObject())
                         {
-                  //          PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(po));
-                  //          PageObject.ParentPage.PageHistory.Freeze();
-                            CLPServiceAgent.Instance.RemovePageObjectFromPage(po);
-                 //           PageObject.ParentPage.PageHistory.Unfreeze();
+                            ACLPPageBaseViewModel.RemovePageObjectFromPage(po, false);
                         }
                     }
                 }
-
-       //         PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryRemoveObject(PageObject));
-      //          PageObject.ParentPage.PageHistory.Freeze();
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
-       //         PageObject.ParentPage.PageHistory.Unfreeze();
+                ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
             }
         }
 
@@ -336,16 +333,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject()) {
                 var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                //PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(pageObject.UniqueID, 
-                //    pageObject.XPosition, pageObject.YPosition, pageObjectPt.X, pageObjectPt.Y));
-                CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
+                ChangePageObjectPosition(pageObject, pageObjectPt);
             }
 
             var pt = new Point(x, y);
 
-            //PageObject.ParentPage.PageHistory.ExpectedEvents.Add(new CLPHistoryMovePageObject(PageObject.UniqueID,
-            //    PageObject.XPosition, PageObject.YPosition, pt.X, pt.Y));
-            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt);
+            ChangePageObjectPosition(PageObject, pt);
         }
 
         /// <summary>
@@ -371,7 +364,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     PageObject.Parts = Int32.Parse(keyPad.NumbersEntered.Text);
                     (PageObject as CLPStamp).PartsAutoGenerated = true;
                     (PageObject as CLPStamp).PartsInterpreted = false;
-                    (PageObject as CLPStamp).ClearHandWritingPartsStrokes();
                     if(App.MainWindowViewModel.IsAuthoring)
                     {
                         (PageObject as CLPStamp).PartsAuthorGenerated = true;
@@ -440,7 +432,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             pageVM.IsInkCanvasHitTestVisible = true;
                         }
 
-                        CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                        ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
                     }
                 }
             }

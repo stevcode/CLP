@@ -5,8 +5,7 @@ namespace Classroom_Learning_Partner.Converters
 {
     public class WidthToHeightAspectRatioConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType,
-                              object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             try
             {
@@ -21,8 +20,7 @@ namespace Classroom_Learning_Partner.Converters
             }
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes,
-                                    object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }

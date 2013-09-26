@@ -426,6 +426,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
+            if(propertyName == "DisplayPanelVisibility")
+            {
+                RightPanel = DisplayListPanel;
+                RightPanel.IsVisible = (viewModel as RibbonViewModel).DisplayPanelVisibility;
+            }
+
             if(propertyName == "ThumbnailsTop")
             {
                 TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;

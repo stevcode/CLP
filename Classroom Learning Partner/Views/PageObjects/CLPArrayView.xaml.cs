@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPArrayView
     {
-        private const double MINIMUM_DIVISION_ADORNER_GAP = 20.0;
+        private const double MINIMUM_DIVISION_ADORNER_GAP = 15.0;
         private readonly Timer _divisorHideTimer = new Timer();
 
         /// <summary>
@@ -33,10 +33,12 @@ namespace Classroom_Learning_Partner.Views
             {
                 return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength;
+                clpArrayViewModel.TopArrowPosition = e.GetPosition(Array).X;
             }
             if(clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
@@ -48,7 +50,7 @@ namespace Classroom_Learning_Partner.Views
             }
             clpArrayViewModel.IsTopAdornerVisible = true;
             clpArrayViewModel.IsLeftAdornerVisible = false;
-            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
+            clpArrayViewModel.IsDefaultAdornerVisible = false;
             clpArrayViewModel.IsAdornerVisible = true;
         }
 
@@ -62,10 +64,12 @@ namespace Classroom_Learning_Partner.Views
             {
                 return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.LeftArrowPosition = e.GetPosition(TopGrid).Y - clpArray.LargeLabelLength;
+                clpArrayViewModel.LeftArrowPosition = e.GetPosition(Array).Y;
             }
             if(clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
@@ -77,7 +81,7 @@ namespace Classroom_Learning_Partner.Views
             }
             clpArrayViewModel.IsTopAdornerVisible = false;
             clpArrayViewModel.IsLeftAdornerVisible = true;
-            ACLPPageBaseViewModel.ClearAdorners(clpArrayViewModel.PageObject.ParentPage);
+            clpArrayViewModel.IsDefaultAdornerVisible = false;
             clpArrayViewModel.IsAdornerVisible = true;
         }
 
@@ -115,13 +119,13 @@ namespace Classroom_Learning_Partner.Views
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
             if(clpArray != null)
             {
-                clpArrayViewModel.LeftArrowPosition = e.GetPosition(TopGrid).Y - clpArray.LargeLabelLength;
+                clpArrayViewModel.LeftArrowPosition = e.GetPosition(Array).Y;
             }
-            if(clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            if (clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if(clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
+            if (clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP;
             }
@@ -137,15 +141,16 @@ namespace Classroom_Learning_Partner.Views
                 return;
             }
             var clpArray = clpArrayViewModel.PageObject as CLPArray;
-            if(clpArray != null)
+            if(clpArray == null)
             {
-                clpArrayViewModel.TopArrowPosition = e.GetPosition(TopGrid).X - clpArray.LargeLabelLength;
+                return;
             }
-            if(clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            clpArrayViewModel.TopArrowPosition = e.GetPosition(Array).X;
+            if (clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if(clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
+            if (clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP;
             }

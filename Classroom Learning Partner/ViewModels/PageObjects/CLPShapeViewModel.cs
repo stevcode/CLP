@@ -87,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newWidth = 2.0*newHeight;
             }
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
     }

@@ -7,7 +7,8 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof(ACLPPageBaseViewModel))]
+    [InterestedIn(typeof(CLPPageViewModel))]
+    [InterestedIn(typeof(CLPAnimationPageViewModel))]
     public class MirrorDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -55,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            mirrorDisplayViewModel.ResizePage();
+            mirrorDisplayViewModel.OnPageResize();
         }
 
         #endregion //Model
@@ -130,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(value != null)
                 {
-                    ResizePage();
+                    OnPageResize();
                 }
             }
         }
@@ -235,14 +236,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 var pageViewModel = viewModel as ACLPPageBaseViewModel;
                 if(pageViewModel != null && pageViewModel.Page.UniqueID == CurrentPage.UniqueID)
                 {
-                    ResizePage();
+                    OnPageResize();
                 }
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
-        public void ResizePage()
+        private void OnPageResize()
         {
             var pageAspectRatio = CurrentPage.InitialPageAspectRatio;
             var pageHeight = CurrentPage.PageHeight;

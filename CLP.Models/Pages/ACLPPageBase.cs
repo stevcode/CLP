@@ -375,7 +375,7 @@ namespace CLP.Models
         [OnSerializing]
         void OnSerializing(StreamingContext sc)
         {
-            if(InkStrokes != null && InkStrokes.Any())
+            if(InkStrokes != null)
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
             }

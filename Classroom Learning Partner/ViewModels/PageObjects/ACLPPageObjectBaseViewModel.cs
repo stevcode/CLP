@@ -265,6 +265,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //IPageObjectAdorners
 
+        public virtual void ClearAdorners()
+        {
+            IsAdornerVisible = false;
+        }
+
         #region Commands
 
         #region Default Adorners
@@ -276,7 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemovePageObjectCommandExecute()
         {
-            CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
         }
 
         /// <summary>
@@ -294,7 +299,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) || e.MiddleButton == MouseButtonState.Pressed)
             {
-                CLPServiceAgent.Instance.RemovePageObjectFromPage(PageObject);
+                ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
             }
         }
 
@@ -352,7 +357,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
                 }
             }*/
-            CLPServiceAgent.Instance.ChangePageObjectPosition(PageObject, pt, x, y, true);
+            ChangePageObjectPosition(PageObject, pt, x, y, true);
         }
 
         /// <summary>
@@ -386,33 +391,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                            PageObject.YPosition));
             }
             PageObject.ParentPage.PageHistory.EndBatch();
-            AddRemovePageObjectFromOtherObjects();
+            PageObject.OnMoved();
         }
 
-        protected void AddRemovePageObjectFromOtherObjects() {
-            if (!PageObject.CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject container in PageObject.ParentPage.PageObjects)
-                {
-                    if(container.CanAcceptPageObjects && !PageObject.ParentID.Equals(container.UniqueID))
-                    {
-                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
-                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
-                        
-                        if(container.PageObjectIsOver(this.PageObject, .50))
-                        {
-                            addObjects.Add(this.PageObject);
-                        }
-                        else
-                        {
-                            removeObjects.Add(this.PageObject);
-                        }
-
-                        container.AcceptObjects(addObjects, removeObjects);
-                    }
-                }
-            }
-        }
+       
 
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
@@ -442,7 +424,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newWidth = PageObject.Width;
             }
 
-            CLPServiceAgent.Instance.ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
         /// <summary>
@@ -494,7 +476,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
             {
                 var tempAdornerState = IsAdornerVisible;
-                CLPPageViewModel.ClearAdorners(PageObject.ParentPage);
+                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
                 IsAdornerVisible = !tempAdornerState;
             }
         }
@@ -502,5 +484,78 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Control Adorners
 
         #endregion //Commands
+
+        public static void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
+        { 
+            ChangePageObjectPosition(pageObject, pt, 0, 0, false);
+        }
+
+        public static void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, double x, double y, bool usexy)
+        {
+            if(usexy)
+            {
+                if(pageObject.PageObjectObjectParentIDs.Any())
+                {
+                    double xDelta = x - pageObject.XPosition;
+                    double yDelta = y - pageObject.YPosition;
+
+                    foreach(ICLPPageObject pageObject1 in pageObject.GetPageObjectsOverPageObject())
+                    {
+                        Point pageObjectPt = new Point((xDelta + pageObject1.XPosition), (yDelta + pageObject1.YPosition));
+                        ChangePageObjectPosition(pageObject1, pageObjectPt);
+                    }
+                }
+            }
+
+            double oldXPos = pageObject.XPosition;
+            double oldYPos = pageObject.YPosition;
+            var page = pageObject.ParentPage;
+            
+            double xDiff = Math.Abs(oldXPos - pt.X);
+            double yDiff = Math.Abs(oldYPos - pt.Y);
+            double diff = xDiff + yDiff;
+            if(diff > CLPHistory.SAMPLE_RATE)
+            {
+                var batch = page.PageHistory.CurrentHistoryBatch;
+                if(batch is CLPHistoryPageObjectMoveBatch)
+                {
+                    (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(pageObject.UniqueID, pt);
+                }
+                else
+                {
+                    page.PageHistory.EndBatch();
+                    //TODO: log this error
+                }
+            }
+
+            pageObject.XPosition = pt.X;
+            pageObject.YPosition = pt.Y;
+        }
+
+        public static void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
+        {
+            double oldHeight = pageObject.Height;
+            double oldWidth = pageObject.Width;
+            var page = pageObject.ParentPage;
+            double heightDiff = Math.Abs(oldHeight - height);
+            double widthDiff = Math.Abs(oldWidth - width);
+            double diff = heightDiff + widthDiff;
+            if(diff > CLPHistory.SAMPLE_RATE)
+            {
+                var batch = page.PageHistory.CurrentHistoryBatch;
+                if(batch is CLPHistoryPageObjectResizeBatch)
+                {
+                    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(pageObject.UniqueID,
+                                                                                     new Point(width, height));
+                }
+                else
+                {
+                    page.PageHistory.EndBatch();
+                    //TODO: log this error
+                }
+            }
+            pageObject.Height = height;
+            pageObject.Width = width;
+        }
     }
 }
