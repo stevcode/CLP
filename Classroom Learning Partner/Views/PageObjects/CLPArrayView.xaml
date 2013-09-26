@@ -371,7 +371,9 @@
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Height="3" Margin="3 0"
-                                       Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource LengthConverter}, ConverterParameter=-6}"
+                                       Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
+                                                                    Converter={StaticResource LengthConverter}, 
+                                                                    ConverterParameter=-6}"
                                        StrokeThickness="0" Fill="{StaticResource LeftLabelColor}"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>
@@ -439,7 +441,9 @@
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Width="3" Margin="0 3"
-                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource LengthConverter}, ConverterParameter=-6}"
+                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
+                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      ConverterParameter=-6}"
                                        StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>

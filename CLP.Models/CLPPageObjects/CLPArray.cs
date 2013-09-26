@@ -549,8 +549,8 @@ namespace CLP.Models
 
         public void RefreshArrayDimensions()
         {
-            ArrayHeight = Height - LabelLength;
-            ArrayWidth = Width - LabelLength;
+            ArrayHeight = Height - 2*LabelLength;
+            ArrayWidth = Width - 2*LabelLength;
         }
 
         public void CalculateGridLines()
