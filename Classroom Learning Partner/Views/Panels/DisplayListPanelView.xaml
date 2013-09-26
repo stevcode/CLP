@@ -1,7 +1,7 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.DisplayListPanelView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				           xmlns:catel="http://catel.codeplex.com"
+				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
@@ -19,9 +19,9 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
 
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
-            <conv:PageOrDisplaySelectionColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:HeightToWidthAspectRatioConverter x:Key="HeightToWidthAspectRatioConverter" />
-            <conv:WidthToHeightAspectRatioConverter x:Key="WidthToHeightAspectRatioConverter" />
+            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
+            <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -73,7 +73,7 @@
                 <views:CLPPagePreviewView x:Name="MirrorDisplayPreview" Grid.Column="1" Margin="5"
                                           DataContext="{Binding MirrorDisplay.CurrentPage}">
                     <views:CLPPagePreviewView.Width>
-                        <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioConverter}">
+                        <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioMultiConverter}">
                             <Binding ElementName="MirrorDisplayPreview" Path="ActualHeight" />
                             <Binding Path="InitialPageAspectRatio" />
                         </MultiBinding>
@@ -148,7 +148,7 @@
                             <views:GridDisplayPreviewView x:Name="DisplayPreviewView" Grid.Column="1" Margin="5"
                                                           DataContext="{Binding}">
                               <views:GridDisplayPreviewView.Height>
-                                  <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioConverter}">
+                                    <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
                                     <Binding ElementName="DisplayPreviewView" Path="ActualWidth" />
                                     <Binding>
                                         <Binding.Source>

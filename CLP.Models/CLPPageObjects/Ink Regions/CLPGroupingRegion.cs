@@ -155,7 +155,7 @@ namespace CLP.Models
             {
                 Rect bounds = Rect.Empty;
                 Rect strokeBounds = Rect.Empty;
-                if (po.GetType().Equals(typeof(CLPStrokePathContainer)) && (po as CLPStrokePathContainer).InternalPageObject == null)
+                if(po.GetType().Equals(typeof(CLPStampCopy)) && (po as CLPStampCopy).ImageID == string.Empty)
                 {
                     ObservableCollection<ICLPPageObject> pageObjs = po.GetPageObjectsOverPageObject();
                     foreach (ICLPPageObject childObject in po.GetPageObjectsOverPageObject())
@@ -167,7 +167,7 @@ namespace CLP.Models
                     }
 
                     Rect testRectSize = new Rect(0, 0, po.Width, po.Height);
-                    foreach (var s in StrokeDTO.LoadInkStrokes((po as CLPStrokePathContainer).SerializedStrokes))
+                    foreach (var s in StrokeDTO.LoadInkStrokes((po as CLPStampCopy).SerializedStrokes))
                     {
                         //Console.WriteLine("Stroke X: " + s.GetBounds().X + " Y: " + s.GetBounds().Y + " Height: " + s.GetBounds().Height + " Width: " + s.GetBounds().Width);
                         if (s.HitTest(testRectSize, 3))

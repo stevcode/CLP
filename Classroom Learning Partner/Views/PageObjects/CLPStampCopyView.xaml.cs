@@ -4,18 +4,18 @@ using Classroom_Learning_Partner.ViewModels;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for CLPStrokePathContainerView.xaml
+    /// Interaction logic for CLPStampCopyView.xaml
     /// </summary>
-    public partial class CLPStrokePathContainerView
+    public partial class CLPStampCopyView
     {
-        public CLPStrokePathContainerView()
+        public CLPStampCopyView()
         {
             InitializeComponent();
         }
 
         protected override Type GetViewModelType()
         {
-            return typeof(CLPStrokePathContainerViewModel);
+            return typeof(CLPStampCopyViewModel);
         }
     }
 }

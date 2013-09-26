@@ -47,18 +47,6 @@ namespace Classroom_Learning_Partner.Resources
         }
     }
 
-    public class IntToQuestionMarkConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            int val = (int)value;
-            return val == 0 ? "?" : val.ToString();
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException("not implemented");
-        }
-    }
     public class PagetToCorrectnessTagConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -260,52 +248,6 @@ namespace Classroom_Learning_Partner.Resources
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException("not implemented");
-        }
-    }
-
-    //Converts to shorter date time
-  /**  public class DateTimeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if(value is DateTime)
-            {
-                DateTime d = value as DateTime;
-                return (DateTime) value.ToShortTimeString();
-            }
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException("not implemented");
-        }
-    }
-    */
-
-    public class PartsStringConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value,
-            Type targetType,
-            object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            if (!value[0].GetType().Equals((DependencyProperty.UnsetValue).GetType()) && !value[1].GetType().Equals((DependencyProperty.UnsetValue).GetType()))
-            {
-                int parts = (int)value[0];
-                bool isContainerStamp = (bool)value[1];
-                if (parts <= 0)
-                {
-                    return (isContainerStamp) ? "" : "?";
-                }
-            }
-            return value[0].ToString();
-        }
-
-        public object[] ConvertBack(object value,
-            Type[] targetType,
-            object parameter,
-            System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 

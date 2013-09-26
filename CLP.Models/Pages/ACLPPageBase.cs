@@ -24,7 +24,7 @@ namespace CLP.Models
     KnownType(typeof(CLPImage)),
     KnownType(typeof(CLPShape)),
     KnownType(typeof(CLPStamp)),
-    KnownType(typeof(CLPStrokePathContainer)),
+    KnownType(typeof(CLPStampCopy)),
     KnownType(typeof(CLPTextBox)),
     KnownType(typeof(CLPDataTable)),
     KnownType(typeof(CLPGroupingRegion)),

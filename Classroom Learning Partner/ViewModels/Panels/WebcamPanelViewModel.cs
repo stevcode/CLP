@@ -149,7 +149,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 currentPage.ImagePool.Add(imageID, ByteSource);
             }
-            CLPImage image = new CLPImage(imageID, currentPage);
+            CLPImage image = new CLPImage(imageID, currentPage, SelectedImage.Height, SelectedImage.Width);
 
             //TODO: Steve - All this is a hack for science webcam usage. Fix to be generalized.
             int pageObjectIndex = -1;

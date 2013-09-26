@@ -181,15 +181,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
+    <Compile Include="Converters\BoolToDoubleConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
-    <Compile Include="Converters\HeightToWidthAspectRatioConverter.cs" />
-    <Compile Include="Converters\PageOrDisplaySelectionColorConverter.cs" />
+    <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
-    <Compile Include="Converters\WidthToHeightAspectRatioConverter.cs" />
+    <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -237,7 +240,7 @@
     <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPStrokePathContainerViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPStampCopyViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
@@ -336,8 +339,8 @@
     <Compile Include="Views\PageObjects\Regions\CLPGroupingRegionView.xaml.cs">
       <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStrokePathContainerView.xaml.cs">
-      <DependentUpon>CLPStrokePathContainerView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\CLPStampCopyView.xaml.cs">
+      <DependentUpon>CLPStampCopyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -520,7 +523,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPStrokePathContainerView.xaml">
+    <Page Include="Views\PageObjects\CLPStampCopyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -594,7 +597,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Fonts\SketchFlow Print.ttf">
+    <Resource Include="Resources\Fonts\SketchFlowPrint.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

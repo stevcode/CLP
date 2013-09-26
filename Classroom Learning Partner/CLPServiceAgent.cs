@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -14,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Ink;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner
 {
@@ -58,6 +60,41 @@ namespace Classroom_Learning_Partner
             var viewModelManger = ServiceLocator.Default.ResolveType<IViewModelManager>();
             var result = viewModelManger.GetViewModelsOfModel(model).ToList();
             return result;
+        }
+
+        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 30)
+        {
+            var actualHeight = source.RenderSize.Height;
+            var actualWidth = source.RenderSize.Width;
+
+            var renderHeight = actualHeight * scale;
+            var renderWidth = actualWidth * scale;
+
+            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
+            var sourceBrush = new VisualBrush(source);
+
+            var drawingVisual = new DrawingVisual();
+            var drawingContext = drawingVisual.RenderOpen();
+
+            using(drawingContext)
+            {
+                drawingContext.PushTransform(new ScaleTransform(scale, scale));
+                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
+            }
+            renderTarget.Render(drawingVisual);
+
+            var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
+            jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
+
+            byte[] imageArray;
+
+            using(var outputStream = new MemoryStream())
+            {
+                jpgEncoder.Save(outputStream);
+                imageArray = outputStream.ToArray();
+            }
+
+            return imageArray;
         }
 
         #region Notebook

@@ -47,8 +47,8 @@
                 <Views:CLPStampView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPStrokePathContainerTemplate">
-                <Views:CLPStrokePathContainerView DataContext="{Binding}" />
+            <ControlTemplate x:Key="CLPStampCopyTemplate">
+                <Views:CLPStampCopyView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPTextBoxTemplate">
@@ -115,9 +115,9 @@
                         <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
                     </DataTrigger>
 
-                    <!-- CLPStrokePathContainer trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStrokePathContainer">
-                        <Setter Property="Template" Value="{StaticResource CLPStrokePathContainerTemplate}" />
+                    <!-- CLPStampCopy trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPStampCopy">
+                        <Setter Property="Template" Value="{StaticResource CLPStampCopyTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPTextBox trigger -->

@@ -5,12 +5,14 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models"
+                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
     
     <UserControl.Resources>
-        <conv:LengthConverter x:Key="LengthConverter"/>
-        <conv:PartsStringConverter x:Key="PartsStringConverter"/>
-        <conv:PartsLineVisibilityConverter x:Key="PartsLineVisibilityConverter" />
+        <resources:LengthConverter x:Key="LengthConverter"/>
+        <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
+        <conv:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -91,10 +93,11 @@
                        Canvas.Right="-40" Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizePageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStampCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
                             <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <!--TODO: Make ResizeStampCommand for aspect ratio enforcing-->
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
                             <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -113,6 +116,8 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
+                
+                <!--Multiple Stamp Copies Button?-->
 
             </Canvas>
         </ac:AdornedControl.AdornerContent>
@@ -130,7 +135,7 @@
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon Tag="StampHandleHitBox"  
-                                 Height="{Binding PageObject.HandleHeight}" 
+                                 Height="{Binding Source={x:Static model:CLPStamp.HandleHeight}}"
                                  Width="{Binding Width}" MinWidth="50"  
                                  HorizontalAlignment="Center" VerticalAlignment="Bottom" 
                                  Margin="0" Stretch="Fill"
@@ -140,11 +145,11 @@
                     </ControlTemplate>
                 </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding DragStampCommand}" PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
                     <i:EventTrigger EventName="DragStarted">
                         <catel:EventToCommand Command="{Binding CopyStampCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragStampCommand}" PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding PlaceStampCommand}"/>
@@ -156,14 +161,15 @@
             </Thumb>
             
             <Border Grid.Row="1" 
-                    Height="{Binding StrokePathContainer.Height, Mode=TwoWay}" 
-                    Width="{Binding Width, Mode=TwoWay}" 
+                    Height="{Binding StampCopy.Height}" 
+                    Width="{Binding Width}" 
                     BorderBrush="Black" BorderThickness="2"
+                    CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                     VerticalAlignment="Top" Margin="0">
                 <Grid x:Name="StampBodyGrid">
-                    <views:CLPStrokePathContainerView DataContext="{Binding StrokePathContainer}"
-                                                      Height="{Binding Height, Mode=TwoWay}"
-                                                      Width="{Binding Width, Mode=TwoWay}" />
+                    <views:CLPStampCopyView DataContext="{Binding StampCopy}"
+                                            Height="{Binding Height}"
+                                            Width="{Binding Width}" />
                     <Rectangle Tag="StampBodyHitBox" Fill="Transparent"
                                Height="{Binding ElementName=StampBodyGrid, Path=Height}"
                                Width="{Binding ElementName=StampBodyGrid, Path=Width}">
@@ -180,35 +186,29 @@
 
                 <Border IsHitTestVisible="False"
                         BorderBrush="Black" BorderThickness="0,0,0,2"
-                        Height="{Binding PageObject.PartsHeight}"
+                        Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
                         Width="{Binding Width}"
-                        HorizontalAlignment="Center" Margin="0" >
-                    <Border.Visibility>
-                        <MultiBinding Converter="{StaticResource PartsLineVisibilityConverter}">
-                            <Binding Path="PageObject.PartsAuthorGenerated"/>
-                            <Binding Path="PageObject.CanAcceptPageObjects"/>
-                        </MultiBinding>
-                    </Border.Visibility>
-                </Border>
-                
-                <TextBlock FontFamily="SketchFlow Print" FontSize="72"
-                           TextAlignment="Center"
-                           Height="{Binding PageObject.PartsHeight}"
-                           Width="{Binding Width}"
-                           HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        HorizontalAlignment="Center" Margin="0" />
+
+                <TextBlock Text="COLLECTION" FontSize="20"
+                           TextAlignment="Center" VerticalAlignment="Top"
+                           Width="{Binding Width}" />
+
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/SketchFlowPrint.ttf" FontSize="62"
+                           TextAlignment="Center" VerticalAlignment="Bottom"
+                           Width="{Binding Width}">
                     <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource PartsStringConverter}" ConverterParameter="">
-                            <Binding Path="PageObject.Parts" />
-                            <Binding Path="PageObject.CanAcceptPageObjects" />
+                        <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
+                            <Binding Path="Parts" />
+                            <Binding Path="IsCollectionStamp" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
                 
-                <Rectangle Tag="PartsHitBox" Fill="Transparent" 
-                           StrokeThickness="0" Stroke="Black" StrokeDashArray="0.5 1.0 0.3"
-                           Height="{Binding PageObject.PartsHeight}"
-                           Width="{Binding Width}"
-                           HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Rectangle Tag="PartsHitBox"  
+                           StrokeThickness="0" Fill="Transparent"
+                           Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
+                           Width="{Binding Width}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />

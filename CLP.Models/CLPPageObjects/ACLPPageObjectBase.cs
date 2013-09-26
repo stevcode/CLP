@@ -61,7 +61,7 @@ namespace CLP.Models
         {
             get
             {
-                string tempValue = GetValue<string>(ParentPageIDProperty);
+                var tempValue = GetValue<string>(ParentPageIDProperty);
                 if (tempValue != "")
                 {
                     return tempValue;
@@ -95,7 +95,7 @@ namespace CLP.Models
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime), null);
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
         /// UniqueID of pageObject.
@@ -431,7 +431,7 @@ namespace CLP.Models
 
             foreach(ICLPPageObject pageObject in placedPageObject.ParentPage.PageObjects)
             {
-                if (pageObject.GetType() == placedPageObject.GetType() && pageObject.GetType() != null && pageObject.UniqueID != placedPageObject.UniqueID)
+                if (pageObject.GetType() == placedPageObject.GetType() && pageObject.UniqueID != placedPageObject.UniqueID)
                 {
                     double xDelta = Math.Abs(pageObject.XPosition - placedPageObject.XPosition);
                     double yDelta = Math.Abs(pageObject.YPosition - placedPageObject.YPosition);

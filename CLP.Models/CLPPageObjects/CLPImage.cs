@@ -9,16 +9,13 @@ namespace CLP.Models
     /// </summary>
     [Serializable]
     [AllowNonSerializableMembers]
-    public class CLPImage : ACLPPageObjectBase
+    public sealed class CLPImage : ACLPPageObjectBase
     {
-        #region Variables
-        #endregion
-
         #region Constructor & destructor
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
-        public CLPImage(string imageID, ICLPPage page)
+        public CLPImage(string imageID, ICLPPage page, double height, double width)
             : base(page)
         {
             ImageID = imageID;
@@ -28,6 +25,9 @@ namespace CLP.Models
             Width = 300;
             Parts = 1;
 
+            var aspectRatio = width / height;
+            EnforceAspectRatio(aspectRatio);
+
             ApplyDistinctPosition(this);
         }
 
@@ -36,8 +36,10 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected CLPImage(SerializationInfo info, StreamingContext context)
+        private CLPImage(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
+
+        public override string PageObjectType { get { return "CLPImage"; } }
 
         #endregion
 
@@ -52,19 +54,11 @@ namespace CLP.Models
             set { SetValue(ImageIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ImageID property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ImageIDProperty = RegisterProperty("ImageID", typeof(string));
 
         #endregion
 
         #region Methods
-
-        public override string PageObjectType
-        {
-            get { return "CLPImage"; }
-        }
 
         public override ICLPPageObject Duplicate()
         {

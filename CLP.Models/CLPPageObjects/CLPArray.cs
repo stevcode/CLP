@@ -483,7 +483,7 @@ namespace CLP.Models
 
                 foreach(ICLPPageObject pageObject in addedPageObjects)
                 {
-                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject is CLPStrokePathContainer)
+                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject is CLPStampCopy)
                     {
                         Parts += pageObject.Parts;
                         PageObjectObjectParentIDs.Add(pageObject.UniqueID);

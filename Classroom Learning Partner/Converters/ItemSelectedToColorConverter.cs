@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    public class PageOrDisplaySelectionColorConverter : IValueConverter
+    public class ItemSelectedToColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var dict = new ResourceDictionary();
             var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
@@ -19,7 +20,7 @@ namespace Classroom_Learning_Partner.Converters
             return dict["GrayBorderColor"];
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

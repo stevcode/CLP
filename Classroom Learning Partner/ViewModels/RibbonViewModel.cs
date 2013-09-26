@@ -1808,8 +1808,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.ImagePool.Add(imageID, ByteSource);
             }
-            CLPImage image = new CLPImage(imageID, page);
-           // CLPStamp stamp = new CLPStamp(image, page);
+
+            var image = new CLPImage(imageID, page, 10, 10);
 
             switch(fileName)
             {
@@ -1859,21 +1859,22 @@ namespace Classroom_Learning_Partner.ViewModels
                 string filename = dlg.FileName;
                 if(File.Exists(filename))
                 {
-                    byte[] byteSource = File.ReadAllBytes(filename);
-                    List<byte> ByteSource = new List<byte>(byteSource);
+                    var bytes = File.ReadAllBytes(filename);
+                    var byteSource = new List<byte>(bytes);
 
-                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-                    byte[] hash = md5.ComputeHash(byteSource);
-                    string imageID = Convert.ToBase64String(hash);
+                    var md5 = new MD5CryptoServiceProvider();
+                    var hash = md5.ComputeHash(bytes);
+                    var imageID = Convert.ToBase64String(hash);
 
                     var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
 
                     if(!page.ImagePool.ContainsKey(imageID))
                     {
-                        page.ImagePool.Add(imageID, ByteSource);
+                        page.ImagePool.Add(imageID, byteSource);
                     }
-                    CLPImage image = new CLPImage(imageID, page);
+                    var visualImage = System.Drawing.Image.FromFile(filename);
+                    var image = new CLPImage(imageID, page, visualImage.Height, visualImage.Width);
 
                     ACLPPageBaseViewModel.AddPageObjectToPage(image);
                 }
@@ -1933,18 +1934,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets the InsertImageStampCommand command.
         /// </summary>
-        public Command InsertImageContainerStampCommand
-        {
-            get;
-            private set;
-        }
+        public Command InsertImageContainerStampCommand { get; private set; }
 
         private void OnInsertImageContainerStampCommandExecute()
         {
             CreateImageStamp(true);
         }
 
-        private void CreateImageStamp(bool isContainerStamp)
+        private void CreateImageStamp(bool isCollectionStamp)
         {
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -1960,22 +1957,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 string filename = dlg.FileName;
                 if(File.Exists(filename))
                 {
-                    byte[] byteSource = File.ReadAllBytes(filename);
-                    List<byte> ByteSource = new List<byte>(byteSource);
+                    byte[] bytes = File.ReadAllBytes(filename);
+                    var byteSource = new List<byte>(bytes);
 
-                    MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-                    byte[] hash = md5.ComputeHash(byteSource);
-                    string imageID = Convert.ToBase64String(hash);
+                    var md5 = new MD5CryptoServiceProvider();
+                    var hash = md5.ComputeHash(bytes);
+                    var imageID = Convert.ToBase64String(hash);
 
                     var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
-
                     if(!page.ImagePool.ContainsKey(imageID))
                     {
-                        page.ImagePool.Add(imageID, ByteSource);
+                        page.ImagePool.Add(imageID, byteSource);
                     }
-                    var image = new CLPImage(imageID, page);
-                    var stamp = new CLPStamp(image, page, isContainerStamp);
+
+                    var stamp = new CLPStamp(page, imageID, isCollectionStamp);
 
                     ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
                 }
@@ -1996,7 +1992,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertBlankStampCommandExecute()
         {
-            CLPStamp stamp = new CLPStamp(null, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            CLPStamp stamp = new CLPStamp(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage, string.Empty);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -2014,9 +2010,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertBlankContainerStampCommandExecute()
         {
-            CLPStamp stamp = new CLPStamp(
-                null, 
-                ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage,
+            var stamp = new CLPStamp(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage,
+                string.Empty,
                 true);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }

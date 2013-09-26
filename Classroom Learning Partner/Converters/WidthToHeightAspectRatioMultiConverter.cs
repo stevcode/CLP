@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    public class WidthToHeightAspectRatioConverter : IMultiValueConverter
+    public class WidthToHeightAspectRatioMultiConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
@@ -20,7 +21,7 @@ namespace Classroom_Learning_Partner.Converters
             }
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

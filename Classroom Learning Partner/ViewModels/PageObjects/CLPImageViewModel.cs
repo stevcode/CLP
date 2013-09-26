@@ -21,31 +21,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 var byteSource = image.ParentPage.ImagePool[image.ImageID];
                 LoadImageFromByteSource(byteSource.ToArray());
             }
-            catch (System.Exception ex)
+            catch(System.Exception ex)
             {
-                Logger.Instance.WriteToLog(
-                    "ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
+                Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
             }
-
-            double aspectRatio = 1.0;
-            if (SourceImage.Width > 0)
-            {
-                aspectRatio = SourceImage.Width/SourceImage.Height;
-            }
-           // PageObject.EnforceAspectRatio(aspectRatio);
 
             ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
         }
 
-        public override string Title
-        {
-            get { return "ImageVM"; }
-        }
+        public override string Title { get { return "ImageVM"; } }
 
         #region Binding
 
         /// <summary>
-        /// Gets or sets the property value.
+        /// The visible image, loaded from the page's ImagePool.
         /// </summary>
         public ImageSource SourceImage
         {
@@ -53,15 +42,14 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SourceImageProperty, value); }
         }
 
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource),
-            null);
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource));
 
         #endregion //Binding
 
-        public void LoadImageFromByteSource(byte[] byteSource)
+        private void LoadImageFromByteSource(byte[] byteSource)
         {
-            MemoryStream memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
-            BitmapImage genBmpImage = new BitmapImage();
+            var memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
+            var genBmpImage = new BitmapImage();
 
             genBmpImage.BeginInit();
             genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
@@ -71,10 +59,8 @@ namespace Classroom_Learning_Partner.ViewModels
             genBmpImage.Freeze();
 
             memoryStream.Dispose();
-            memoryStream = null;
 
             SourceImage = genBmpImage;
-
         }
 
         /// <summary>
@@ -82,14 +68,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragDeltaEventArgs> ResizeImageCommand { get; set; }
 
-        /// <summary>
-        /// Method to invoke when the ResizeImageCommand command is executed.
-        /// </summary>
         private void OnResizeImageCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage =
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(
-                    PageObject.ParentPageID);
+            var parentPage = PageObject.ParentPage;
 
             PageObject.Height = PageObject.Height + e.VerticalChange;
             PageObject.Width = PageObject.Width + e.HorizontalChange;
@@ -110,7 +91,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObject.Width = PageObject.Width;
             }
 
-            double aspectRatio = 1.0;
+            var aspectRatio = 1.0;
             if(SourceImage.Width > 0)
             {
                 aspectRatio = SourceImage.Width / SourceImage.Height;

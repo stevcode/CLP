@@ -129,7 +129,7 @@
     <Compile Include="CLPPageObjects\CLPImage.cs" />
     <Compile Include="CLPPageObjects\CLPShape.cs" />
     <Compile Include="CLPPageObjects\CLPStamp.cs" />
-    <Compile Include="CLPPageObjects\CLPStrokePathContainer.cs" />
+    <Compile Include="CLPPageObjects\CLPStampCopy.cs" />
     <Compile Include="CLPPageObjects\CLPTextBox.cs" />
     <Compile Include="CLPPageObjects\Ink Regions\ACLPInkRegion.cs" />
     <Compile Include="CLPPageObjects\ACLPPageObjectBase.cs" />

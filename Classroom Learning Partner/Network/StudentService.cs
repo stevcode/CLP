@@ -59,7 +59,7 @@ namespace Classroom_Learning_Partner
             {
                 page.ImagePool.Add(imageID, image);
             }
-            CLPImage imagePO = new CLPImage(imageID, page);
+            CLPImage imagePO = new CLPImage(imageID, page, 10, 10);
             imagePO.IsBackground = true;
             imagePO.Height = 450;
             imagePO.Width = 600;

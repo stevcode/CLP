@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
-        <oldconv:IntToQuestionMarkConverter x:Key="IntToQuestionMarkConverter" />
+        <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
@@ -393,7 +393,7 @@
                                   Height="{Binding Length}"
                                   Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" TextAlignment="Center"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
                                            FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Foreground="{StaticResource LeftLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
@@ -463,7 +463,7 @@
                                   Width="{Binding Length}"
                                   Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource IntToQuestionMarkConverter}}" TextAlignment="Center"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
                                            FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Foreground="{StaticResource TopLabelColor}"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"

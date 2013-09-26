@@ -202,9 +202,9 @@ namespace CLP.Models
          * grouping purposes. */
         private static string GetObjectGroupingType(ICLPPageObject po)
         {
-            if (po.GetType().Equals(typeof(CLPStrokePathContainer)))
+            if (po.GetType().Equals(typeof(CLPStampCopy)))
             {
-                return "CLPStamp-" + (po as CLPStrokePathContainer).ParentID;
+                return "CLPStamp-" + (po as CLPStampCopy).ParentID;
             }
             else if (po.GetType().Equals(typeof(CLPShape)))
             {

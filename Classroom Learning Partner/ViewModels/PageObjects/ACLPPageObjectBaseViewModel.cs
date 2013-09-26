@@ -534,12 +534,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
         {
-            double oldHeight = pageObject.Height;
-            double oldWidth = pageObject.Width;
+            var oldHeight = pageObject.Height;
+            var oldWidth = pageObject.Width;
             var page = pageObject.ParentPage;
-            double heightDiff = Math.Abs(oldHeight - height);
-            double widthDiff = Math.Abs(oldWidth - width);
-            double diff = heightDiff + widthDiff;
+            var heightDiff = Math.Abs(oldHeight - height);
+            var widthDiff = Math.Abs(oldWidth - width);
+            var diff = heightDiff + widthDiff;
             if(diff > CLPHistory.SAMPLE_RATE)
             {
                 var batch = page.PageHistory.CurrentHistoryBatch;

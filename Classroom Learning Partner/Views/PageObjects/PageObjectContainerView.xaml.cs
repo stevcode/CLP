@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.Views
             if (dataContext is CLPShadingRegion) return typeof(CLPShadingRegionViewModel);
             if (dataContext is CLPShape) return typeof(CLPShapeViewModel);
             if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
-            if (dataContext is CLPStrokePathContainer) return typeof(CLPStrokePathContainerViewModel);
+            if (dataContext is CLPStampCopy) return typeof(CLPStampCopyViewModel);
             if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
             if (dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
             if (dataContext is CLPArray) return typeof(CLPArrayViewModel);
