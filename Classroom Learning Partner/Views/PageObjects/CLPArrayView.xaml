@@ -480,7 +480,7 @@
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-            </ItemsControl>  
+            </ItemsControl>
 
             <!--Divisor Hitboxes-->
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
