@@ -30,13 +30,6 @@ namespace CLP.Models
             }
         }
 
-        public static double DetectedPartsSide {
-            get
-            {
-                return 25;
-            }
-        }
-
         #endregion //Constants
 
         #region Constructors

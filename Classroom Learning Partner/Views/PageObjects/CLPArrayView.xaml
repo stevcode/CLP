@@ -4,12 +4,14 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <conv:LengthConverter x:Key="LengthConverter" />
-        <conv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
-        <conv:IntToQuestionMarkConverter x:Key="IntToQuestionMarkConverter" />
+        <oldconv:LengthConverter x:Key="LengthConverter" />
+        <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
+        <oldconv:IntToQuestionMarkConverter x:Key="IntToQuestionMarkConverter" />
+        <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -341,6 +343,18 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <!--This is the actual array-->
+            <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"
+                       Tag="ArrayBodyHitBox"
+                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
+                       Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1"
                           ItemsSource="{Binding HorizontalDivisions}"
@@ -356,9 +370,10 @@
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
-                                       Height="3"
-                                       Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                       Stroke="{StaticResource LeftLabelColor}" StrokeThickness="3" Fill="Transparent">
+                                       Height="3" Margin="3 0"
+                                       Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource LengthConverter}, ConverterParameter=-6}"
+                                       StrokeThickness="0" Fill="{StaticResource LeftLabelColor}"
+                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseEnter">
                                         <catel:EventToCommand
@@ -423,9 +438,10 @@
                                 Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
-                                       Width="3"
-                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                       Stroke="{StaticResource TopLabelColor}" StrokeThickness="3" Fill="Transparent">
+                                       Width="3" Margin="0 3"
+                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource LengthConverter}, ConverterParameter=-6}"
+                                       StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
+                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseEnter">
                                         <catel:EventToCommand
@@ -464,19 +480,7 @@
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!--This is the actual array-->
-            <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"
-                       Tag="ArrayBodyHitBox"
-                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="Transparent" Stroke="Black" StrokeThickness="3">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Rectangle>
+            </ItemsControl>  
 
             <!--Divisor Hitboxes-->
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"

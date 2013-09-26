@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner.Views
             else
             {
                 var ratio = rowNum / (double)colNum;
-                if(ratio > 50 || 1 / ratio > 50)
+                if(ratio > 60 || 1 / ratio > 60)
                 {
                     MessageBox.Show("The ratio between the numbers you entered is too large. Please try again.", "Okay");
                 }

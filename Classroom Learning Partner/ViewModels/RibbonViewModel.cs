@@ -1970,8 +1970,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         page.ImagePool.Add(imageID, ByteSource);
                     }
-                    CLPImage image = new CLPImage(imageID, page);
-                    CLPStamp stamp = new CLPStamp(image, page, isContainerStamp);
+                    var image = new CLPImage(imageID, page);
+                    var stamp = new CLPStamp(image, page, isContainerStamp);
 
                     ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
                 }
