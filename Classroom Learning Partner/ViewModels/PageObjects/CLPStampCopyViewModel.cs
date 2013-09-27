@@ -76,6 +76,19 @@ namespace Classroom_Learning_Partner.ViewModels
             stampCopyViewModel.ScribblesToStrokePaths();
         }
 
+        /// <summary>
+        /// Whether or not the StampCopy is a copy of a Collection Stamp.
+        /// This property is automatically mapped to the corresponding property in PageObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsCollectionCopy
+        {
+            get { return GetValue<bool>(IsCollectionCopyProperty); }
+            set { SetValue(IsCollectionCopyProperty, value); }
+        }
+
+        public static readonly PropertyData IsCollectionCopyProperty = RegisterProperty("IsCollectionCopy", typeof(bool));
+
         #endregion //Model
 
         #region Binding

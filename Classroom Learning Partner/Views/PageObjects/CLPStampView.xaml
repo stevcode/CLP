@@ -190,11 +190,11 @@
                         Width="{Binding Width}"
                         HorizontalAlignment="Center" Margin="0" />
 
-                <TextBlock Text="COLLECTION" FontSize="20"
+                <TextBlock Text="COLLECTION" FontSize="12"
                            TextAlignment="Center" VerticalAlignment="Top"
                            Width="{Binding Width}" />
 
-                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/SketchFlowPrint.ttf" FontSize="62"
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="55"
                            TextAlignment="Center" VerticalAlignment="Bottom"
                            Width="{Binding Width}">
                     <TextBlock.Text>

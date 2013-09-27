@@ -44,6 +44,17 @@ namespace CLP.Models
         public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool), false);
 
         /// <summary>
+        /// Whether or not the StampCopy is a copy of a Collection Stamp.
+        /// </summary>
+        public bool IsCollectionCopy
+        {
+            get { return GetValue<bool>(IsCollectionCopyProperty); }
+            set { SetValue(IsCollectionCopyProperty, value); }
+        }
+
+        public static readonly PropertyData IsCollectionCopyProperty = RegisterProperty("IsCollectionCopy", typeof(bool), false);
+
+        /// <summary>
         /// UniqueID of the image, whose bytes are stored in the page's ImagePool.
         /// </summary>
         public string ImageID

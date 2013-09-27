@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace Classroom_Learning_Partner.Converters
@@ -8,16 +9,14 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if(!(values[0] is int) || !(values[1] is bool))
             {
-                var val = (int)values[0];
-                var showZero = (bool)values[1];
-                return !showZero && val == 0 ? "?" : val.ToString(CultureInfo.InvariantCulture);
+                return DependencyProperty.UnsetValue;
             }
-            catch(Exception)
-            {
-                return "?";
-            }
+
+            var val = (int)values[0];
+            var showZero = (bool)values[1];
+            return !showZero && val == 0 ? "?" : val.ToString(CultureInfo.InvariantCulture);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

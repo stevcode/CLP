@@ -181,13 +181,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BoolZeroToQuestionMarkMultiConverter.cs" />
+    <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Converters\BoolToDoubleConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
@@ -597,9 +598,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Fonts\SketchFlowPrint.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\Fonts\SketchFlow Print.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AddImage.png" />

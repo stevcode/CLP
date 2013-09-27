@@ -22,6 +22,7 @@
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
+            <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -131,10 +132,24 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock x:Name="DisplayLabel" Grid.Column="0" Margin="5"
+                            <TextBlock x:Name="DisplayLabel" Grid.Column="0" Margin="5 5 0 20"
                                        Text="Grid Display" 
                                        Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        FontWeight="Bold" VerticalAlignment="Bottom">
+                                <TextBlock.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="-90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+
+                            <TextBlock x:Name="DisplayNumber" Grid.Column="0" Margin="5 20 0 5"
+                                       Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}" 
+                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       FontWeight="Bold" VerticalAlignment="Top">
                                 <TextBlock.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform/>
