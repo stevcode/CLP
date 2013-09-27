@@ -97,7 +97,7 @@ namespace CLP.Models
         {
             get
             {
-                return IsLabelVisible ? 22 : 0;
+                return 22;
             }
         }
 
@@ -161,15 +161,26 @@ namespace CLP.Models
         public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
 
         /// <summary>
-        /// Sets the visibility of array labels
+        /// Whether the array can be snapped to other arrays or not.
         /// </summary>
-        public bool IsLabelVisible
+        public bool IsSnappable
         {
-            get { return GetValue<bool>(IsLabelVisibleProperty); }
-            set { SetValue(IsLabelVisibleProperty, value); }
+            get { return GetValue<bool>(IsSnappableProperty); }
+            set { SetValue(IsSnappableProperty, value); }
         }
 
-        public static readonly PropertyData IsLabelVisibleProperty = RegisterProperty("IsLabelVisible", typeof(bool), true);
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool), true);
+
+        /// <summary>
+        /// Sets the visibility of array labels
+        /// </summary>
+        public bool IsLabelOn
+        {
+            get { return GetValue<bool>(IsLabelOnProperty); }
+            set { SetValue(IsLabelOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsLabelOnProperty = RegisterProperty("IsLabelOn", typeof(bool), true);
 
         /// <summary>
         /// The Height of the Array.

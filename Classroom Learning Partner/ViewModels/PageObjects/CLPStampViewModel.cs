@@ -4,11 +4,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
-using System.Collections.ObjectModel;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
 
@@ -253,20 +251,56 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
-            var deltaX = Math.Abs(PageObject.XPosition - _originalX);
-            var deltaY = Math.Abs(PageObject.YPosition - _originalY);
-
-            if(deltaX < PageObject.Width + 5 && deltaY < PageObject.Height)
+            if(!HasParts())
             {
                 return;
             }
 
-            StampCopy.XPosition = PageObject.XPosition;
-            StampCopy.YPosition = PageObject.YPosition + CLPStamp.HandleHeight;
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+            var deltaX = Math.Abs(PageObject.XPosition - _originalX);
+            var deltaY = Math.Abs(PageObject.YPosition - _originalY);
+
+            if(deltaX < PageObject.Width + 5 &&
+               deltaY < PageObject.Height)
+            {
+                return;
+            }
+
+
+            var xPosition = PageObject.XPosition;
+            var yPosition = PageObject.YPosition + CLPStamp.HandleHeight;
+            if(!IsCollectionStamp && StampCopy.ImageID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
+            {
+                double x1 = Double.MaxValue, y1 = Double.MaxValue, x2 = 0, y2 = 0;
+                var copyStrokes = StrokeDTO.LoadInkStrokes(StampCopy.SerializedStrokes);
+                foreach(var bounds in copyStrokes.Select(stroke => stroke.GetBounds()))
+                {
+                    x1 = Math.Min(x1, bounds.Left);
+                    y1 = Math.Min(y1, bounds.Top);
+                    x2 = Math.Max(x2, bounds.Right);
+                    y2 = Math.Max(y2, bounds.Bottom);
+                }
+
+                xPosition += x1; //if positive?
+                yPosition += y1; //if positive?
+                StampCopy.Width = Math.Max(x2 - x1, 40);
+                StampCopy.Height = Math.Max(y2 - y1, 40);
+
+                foreach(var stroke in copyStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(-x1, -y1);
+                    stroke.Transform(transform, true);
+                }
+                StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(copyStrokes);
+            }
+
+            StampCopy.XPosition = xPosition;
+            StampCopy.YPosition = yPosition;
             StampCopy.ParentID = PageObject.UniqueID;
             StampCopy.Parts = PageObject.Parts;
             StampCopy.IsInternalPageObject = false;
+            StampCopy.IsCollectionCopy = true;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)

@@ -16,7 +16,7 @@ namespace CLP.Models
 
         public static double HandleHeight { get { return 35; } }    
 
-        public static double PartsHeight { get { return 75; } }
+        public static double PartsHeight { get { return 70; } }
 
         #endregion //Constants
 

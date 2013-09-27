@@ -284,23 +284,28 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
-                <!--<RibbonButton Label="Array"
-                              LargeImageSource="pack://application:,,,/Resources/Images/InkArray32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/InkArray16.png"
-                              Command="{Binding Path=InsertArrayCommand}"
-                              CommandParameter="FALSE" />-->
-
                 <!--Array + Divider-->
                 <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="TRUE" />
+                              CommandParameter="DEFAULT" />
+
+                <RibbonButton Label="Array Card"
+                              LargeImageSource="pack://application:,,,/Resources/Images/InkArray32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/InkArray16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="CARD" />
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankStamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/BlankStamp16.png"
-                              Command="{Binding Path=InsertBlankStampCommand}" />
+                              Command="{Binding InsertBlankStampCommand}" />
+
+                <RibbonButton Label="Collection Stamp"
+                              LargeImageSource="pack://application:,,,/Resources/Images/BlankStamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/BlankStamp16.png"
+                              Command="{Binding InsertBlankContainerStampCommand}" />
 
             </RibbonGroup>
 
@@ -411,7 +416,7 @@
         </RibbonTab>
 
         <!--Insert Tab-->
-        <RibbonTab Header="Insert Money">
+        <!--<RibbonTab Header="Insert Money">
 
             <RibbonGroup Header="Money Images">
 
@@ -462,7 +467,7 @@
 
             </RibbonGroup>
 
-        </RibbonTab>
+        </RibbonTab>-->
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert"

@@ -1,4 +1,4 @@
-using System.Windows;
+using System;
 using System.Windows.Input;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels;
@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
         }
 
-        protected override System.Type GetViewModelType()
+        protected override Type GetViewModelType()
         {
             return typeof(CLPStampViewModel);
         }

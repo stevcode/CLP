@@ -89,6 +89,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsCollectionCopyProperty = RegisterProperty("IsCollectionCopy", typeof(bool));
 
+        /// <summary>
+        /// Number of parts represented by the StampCopy. Only visible for collection copies.
+        /// This property is automatically mapped to the corresponding property in PageObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int));
+
         #endregion //Model
 
         #region Binding

@@ -68,7 +68,33 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));   
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool));
+
+        /// <summary>
+        /// Visibility of the Large Labels
+        /// This property is automatically mapped to the corresponding property in PageObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsLabelOn
+        {
+            get { return GetValue<bool>(IsLabelOnProperty); }
+            set { SetValue(IsLabelOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsLabelOnProperty = RegisterProperty("IsLabelOn", typeof(bool));
+
+        /// <summary>
+        /// Whether or not the array can snap.
+        /// This property is automatically mapped to the corresponding property in PageObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsSnappable
+        {
+            get { return GetValue<bool>(IsSnappableProperty); }
+            set { SetValue(IsSnappableProperty, value); }
+        }
+
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool));
 
         /// <summary>
         /// Gets or sets the Rows value
@@ -351,7 +377,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var pageObject in PageObject.ParentPage.PageObjects)
             {
                 var persistingArray = pageObject as CLPArray;
-                if(persistingArray == null || persistingArray.UniqueID == snappingArray.UniqueID)
+                if(persistingArray == null || persistingArray.UniqueID == snappingArray.UniqueID || !persistingArray.IsSnappable)
                 {
                     continue;
                 }

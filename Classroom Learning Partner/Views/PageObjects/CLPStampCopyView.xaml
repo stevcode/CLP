@@ -4,12 +4,13 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <conv:LengthConverter x:Key="LengthConverter"/>
-            <catel:BooleanToHidingVisibilityConverter x:Key="BoolConverter"/>
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -23,7 +24,7 @@
         <ac:AdornedControl.AdornerContent >
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
                     Width="{Binding Width}" Height="{Binding Height}"
-                    Visibility="{Binding IsStamped, Converter={StaticResource BoolConverter}}">
+                    Visibility="{Binding IsStamped, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
 
                 <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
                            RadiusX="10" RadiusY="10"
@@ -90,8 +91,7 @@
         </ac:AdornedControl.AdornerContent>
 
         <Grid>
-
-            <Image Source="{Binding SourceImage,Mode=OneWay}" 
+            <Image Source="{Binding SourceImage, Mode=OneWay}" 
                    Height="{Binding Height}" Width="{Binding Width}" />
 
             <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
@@ -114,8 +114,19 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <Grid Margin="-10"
+                  Height="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
+                  Width="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
+                  VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                  Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                <Ellipse Stroke="Black" StrokeThickness="1" Fill="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <TextBlock Text="{Binding Parts}"
+                           TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                           FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="25"/>
+            </Grid>
+
             <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
-                       Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}">
+                       Width="{Binding Width}" Height="{Binding Height}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />

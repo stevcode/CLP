@@ -8,6 +8,14 @@ namespace CLP.Models
     [Serializable]
     public class CLPStampCopy : ACLPPageObjectBase
     {
+        public static double PartsHeight
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         #region Constructors
 
         public CLPStampCopy(ICLPPage page, string imageID)

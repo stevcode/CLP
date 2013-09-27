@@ -12,6 +12,7 @@
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
+        <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -120,8 +121,13 @@
                 <!--Drag and Snap Thumb-->
                 <Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
-                       Canvas.Left="-50" Canvas.Top="20"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Canvas.Left="-50" Canvas.Top="20">
+                    <Thumb.Visibility>
+                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                            <Binding Path="IsDefaultAdornerVisible" />
+                            <Binding Path="IsSnappable" />
+                        </MultiBinding>
+                    </Thumb.Visibility>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -197,7 +203,6 @@
                         Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
-
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
@@ -276,11 +281,11 @@
 
         <Grid Width="{Binding Width}" Height="{Binding Height}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="{Binding PageObject.LabelLength}" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -290,14 +295,16 @@
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding PageObject.ArrayWidth}" />
+                       Width="{Binding ArrayWidth}"
+                       Visibility="{Binding IsLabelOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding PageObject.ArrayHeight}">
+                       Width="{Binding ArrayHeight}"
+                       Visibility="{Binding IsLabelOn, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />

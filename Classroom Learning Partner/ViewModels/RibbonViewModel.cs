@@ -2021,7 +2021,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<string> InsertArrayCommand { get; private set; }
 
-        private void OnInsertArrayCommandExecute(string useDivisions)
+        private void OnInsertArrayCommandExecute(string arrayType)
         {
             var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
             arrayCreationView.ShowDialog();
@@ -2077,13 +2077,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var array = new CLPArray(rows, columns, currentPage);
 
-                switch(useDivisions)
+                switch(arrayType)
                 {
-                    case "TRUE":
-                        array.IsDivisionBehaviorOn = true;
+                    case "DEFAULT":
                         break;
-                    case "FALSE":
+                    case "CARD":
                         array.IsDivisionBehaviorOn = false;
+                        array.IsLabelOn = false;
+                        array.IsSnappable = false;
                         break;
                 }
 
@@ -2160,13 +2161,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var array = new CLPArray(rows, columns, currentPage);
 
-                switch(useDivisions)
+                switch(arrayType)
                 {
-                    case "TRUE":
-                        array.IsDivisionBehaviorOn = true;
+                    case "DEFAULT":
                         break;
-                    case "FALSE":
+                    case "CARD":
                         array.IsDivisionBehaviorOn = false;
+                        array.IsLabelOn = false;
+                        array.IsSnappable = false;
                         break;
                 }
 

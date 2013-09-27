@@ -6,10 +6,12 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models"
-                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models">
     
     <UserControl.Resources>
+        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <resources:LengthConverter x:Key="LengthConverter"/>
         <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
         <conv:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
@@ -188,13 +190,15 @@
                         BorderBrush="Black" BorderThickness="0,0,0,2"
                         Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
                         Width="{Binding Width}"
-                        HorizontalAlignment="Center" Margin="0" />
+                        HorizontalAlignment="Center" Margin="0"
+                        Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
 
-                <TextBlock Text="COLLECTION" FontSize="12"
+                <TextBlock Text="COLLECTION" FontSize="8"
                            TextAlignment="Center" VerticalAlignment="Top"
-                           Width="{Binding Width}" />
+                           Width="{Binding Width}"
+                           Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
-                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="55"
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="60"
                            TextAlignment="Center" VerticalAlignment="Bottom"
                            Width="{Binding Width}">
                     <TextBlock.Text>
@@ -205,7 +209,7 @@
                     </TextBlock.Text>
                 </TextBlock>
                 
-                <Rectangle Tag="PartsHitBox"  
+                <Rectangle Tag="PartsHitBox" IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0" Fill="Transparent"
                            Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
                            Width="{Binding Width}">
