@@ -102,6 +102,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int));
 
+        /// <summary>
+        /// A collection of images made from the Views of objects a Collection Stamp collects.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPCollectedPartImage> CollectedPartImages
+        {
+            get { return GetValue<ObservableCollection<CLPCollectedPartImage>>(CollectedPartImagesProperty); }
+            set { SetValue(CollectedPartImagesProperty, value); }
+        }
+
+        public static readonly PropertyData CollectedPartImagesProperty = RegisterProperty("CollectedPartImages", typeof(ObservableCollection<CLPCollectedPartImage>), () => new ObservableCollection<CLPCollectedPartImage>());
+
+
         #endregion //Model
 
         #region Binding

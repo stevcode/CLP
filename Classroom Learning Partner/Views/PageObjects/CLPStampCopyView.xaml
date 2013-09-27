@@ -11,6 +11,13 @@
         <ResourceDictionary>
             <conv:LengthConverter x:Key="LengthConverter"/>
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter"/>
+
+            <Style x:Key="CollectionImageStyle">
+                <Setter Property="Canvas.Left"
+                    Value="{Binding XPosition}" />
+                <Setter Property="Canvas.Top"
+                    Value="{Binding YPosition}" />
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -93,6 +100,26 @@
         <Grid>
             <Image Source="{Binding SourceImage, Mode=OneWay}" 
                    Height="{Binding Height}" Width="{Binding Width}" />
+
+            <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
+                          ItemsSource="{Binding CollectedPartImages}"
+                          ItemContainerStyle="{StaticResource CollectionImageStyle}"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Height="{Binding Height}" 
+                                Width="{Binding Width}" 
+                                Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Stroke="Blue" Fill="Green"
+                               Height="{Binding Height}" Width="{Binding Width}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
                           ItemsSource="{Binding StrokePathViewModels}"

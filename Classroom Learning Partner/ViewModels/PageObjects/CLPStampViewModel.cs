@@ -6,6 +6,7 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows.Controls;
 using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
@@ -196,10 +197,29 @@ namespace Classroom_Learning_Partner.ViewModels
                     newStroke.Transform(transform, true);
                     clonedStrokes.Add(newStroke);
                 }
-                //TODO: do somethign similar for collected pageObjects using jpg converter?
 
                 StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
                 StampCopy.IsStamped = true;
+
+                foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
+                {
+                    var pageObjectViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(pageObject as ModelBase).FirstOrDefault();
+                    if(pageObjectViewModel == null)
+                    {
+                        continue;
+                    }
+                    var pageObjectView = CLPServiceAgent.Instance.GetViewFromViewModel(pageObjectViewModel);
+                    var imageByteSource = CLPServiceAgent.Instance.GetJpgImage(pageObjectView as UIElement);
+
+                    var collectedImage = new CLPCollectedPartImage
+                                         {
+                                             Height = pageObject.Height,
+                                             Width = pageObject.Width,
+                                             XPosition = pageObject.XPosition - XPosition,
+                                             YPosition = pageObject.YPosition - YPosition - CLPStamp.HandleHeight
+                                         };
+                    StampCopy.CollectedPartImages.Add(collectedImage);
+                }
             } 
             else 
             {
@@ -283,8 +303,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 xPosition += x1; //if positive?
                 yPosition += y1; //if positive?
-                StampCopy.Width = Math.Max(x2 - x1, 40);
-                StampCopy.Height = Math.Max(y2 - y1, 40);
+                StampCopy.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
+                StampCopy.Height = Math.Max(y2 - y1, 20);
 
                 foreach(var stroke in copyStrokes)
                 {
@@ -298,9 +318,10 @@ namespace Classroom_Learning_Partner.ViewModels
             StampCopy.XPosition = xPosition;
             StampCopy.YPosition = yPosition;
             StampCopy.ParentID = PageObject.UniqueID;
+            StampCopy.UniqueID = Guid.NewGuid().ToString();
             StampCopy.Parts = PageObject.Parts;
             StampCopy.IsInternalPageObject = false;
-            StampCopy.IsCollectionCopy = true;
+            StampCopy.IsCollectionCopy = IsCollectionStamp;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
@@ -345,11 +366,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var yDelta = y - PageObject.YPosition;
 
             //TODO: Remove this in favor of jpg's of views?
-            foreach (var pageObject in PageObject.GetPageObjectsOverPageObject()) 
-            {
-                var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                ChangePageObjectPosition(pageObject, pageObjectPt);
-            }
+            //foreach (var pageObject in PageObject.GetPageObjectsOverPageObject()) 
+            //{
+            //    var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+            //    ChangePageObjectPosition(pageObject, pageObjectPt);
+            //}
 
             var pt = new Point(x, y);
 

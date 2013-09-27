@@ -369,9 +369,13 @@ namespace CLP.Models
 
         public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            foreach(Stroke s in removedStrokes)
+            if(!CanAcceptStrokes)
             {
-                string strokeID = s.GetStrokeUniqueID();
+                return;
+            }
+
+            foreach(var strokeID in removedStrokes.Select(s => s.GetStrokeUniqueID())) 
+            {
                 try
                 {
                     PageObjectStrokeParentIDs.Remove(strokeID);
@@ -385,12 +389,9 @@ namespace CLP.Models
             var containerBoundingBox = new Rect(XPosition, YPosition + HandleHeight,
                 StampCopy.Width, StampCopy.Height);      
 
-            foreach(Stroke stroke in addedStrokes.Where(stroke => stroke.HitTest(containerBoundingBox, 50)))
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(containerBoundingBox, 50)).Where(stroke => !PageObjectStrokeParentIDs.Contains(stroke.GetStrokeUniqueID()))) 
             {
-                if(!PageObjectStrokeParentIDs.Contains(stroke.GetStrokeUniqueID()))
-                {
-                    PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
-                }
+                PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
             }
         }
 
@@ -421,25 +422,23 @@ namespace CLP.Models
 
         public void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
         {
-            if(CanAcceptPageObjects)
+            if(!CanAcceptPageObjects || !IsCollectionStamp)
             {
-                foreach(ICLPPageObject pageObject in removedPageObjects)
-                {
-                    if(PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
-                    {
-                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
-                    }
-                }
+                return;
+            }
 
-                foreach(ICLPPageObject pageObject in addedPageObjects)
-                {
-                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject.GetType() != typeof(CLPStamp))
-                    {
-                        Parts += pageObject.Parts;
-                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
-                    }
-                }
+            foreach(var pageObject in removedPageObjects.Where(pageObject => PageObjectObjectParentIDs.Contains(pageObject.UniqueID))) 
+            {
+                Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+            }
+
+            foreach(var pageObject in addedPageObjects.Where(pageObject => !PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && 
+                                                                                                               pageObject.GetType() != typeof(CLPStamp) &&
+                                                                                                               pageObject.GetType() != typeof(CLPArray))) 
+            {
+                Parts += pageObject.Parts;
+                PageObjectObjectParentIDs.Add(pageObject.UniqueID);
             }
         }
 

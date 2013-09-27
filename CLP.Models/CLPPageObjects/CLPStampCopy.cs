@@ -6,6 +6,18 @@ using System.Collections.ObjectModel;
 namespace CLP.Models
 {
     [Serializable]
+    public class CLPCollectedPartImage
+    {
+        public CLPCollectedPartImage() { }
+
+        public string ImageID { get; set; }
+        public double XPosition { get; set; }
+        public double YPosition { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
+
+    [Serializable]
     public class CLPStampCopy : ACLPPageObjectBase
     {
         public static double PartsHeight
@@ -83,6 +95,17 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
+
+        /// <summary>
+        /// A collection of images made from the Views of objects a Collection Stamp collects.
+        /// </summary>
+        public ObservableCollection<CLPCollectedPartImage> CollectedPartImages
+        {
+            get { return GetValue<ObservableCollection<CLPCollectedPartImage>>(CollectedPartImagesProperty); }
+            set { SetValue(CollectedPartImagesProperty, value); }
+        }
+
+        public static readonly PropertyData CollectedPartImagesProperty = RegisterProperty("CollectedPartImages", typeof(ObservableCollection<CLPCollectedPartImage>), () => new ObservableCollection<CLPCollectedPartImage>());
 
         #endregion
 
