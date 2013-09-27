@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows.Controls;
@@ -210,6 +212,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     var pageObjectView = CLPServiceAgent.Instance.GetViewFromViewModel(pageObjectViewModel);
                     var imageByteSource = CLPServiceAgent.Instance.GetJpgImage(pageObjectView as UIElement);
+                    var image = CLPImageViewModel.LoadImageFromByteSource(imageByteSource);
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    String photolocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\blah.jpg";  //file name 
+
+                    encoder.Frames.Add(BitmapFrame.Create(image));
+
+                    using(var filestream = new FileStream(photolocation, FileMode.Create))
+                        encoder.Save(filestream);
 
                     var collectedImage = new CLPCollectedPartImage
                                          {

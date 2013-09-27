@@ -19,7 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var byteSource = image.ParentPage.ImagePool[image.ImageID];
-                LoadImageFromByteSource(byteSource.ToArray());
+                SourceImage = LoadImageFromByteSource(byteSource.ToArray());
             }
             catch(System.Exception ex)
             {
@@ -46,7 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Binding
 
-        private void LoadImageFromByteSource(byte[] byteSource)
+        public static BitmapImage LoadImageFromByteSource(byte[] byteSource)
         {
             var memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
             var genBmpImage = new BitmapImage();
@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             memoryStream.Dispose();
 
-            SourceImage = genBmpImage;
+            return genBmpImage;
         }
 
         /// <summary>

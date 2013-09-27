@@ -62,7 +62,7 @@ namespace Classroom_Learning_Partner
             return result;
         }
 
-        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 30)
+        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 100)
         {
             var actualHeight = source.RenderSize.Height;
             var actualWidth = source.RenderSize.Width;
