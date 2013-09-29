@@ -98,15 +98,15 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
-            PreviousPageCommand = new Command(OnPreviousPageCommandExecute);
-            NextPageCommand = new Command(OnNextPageCommandExecute);
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
 
             //Tools
             SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
 
             //Submission
-            SubmitPageCommand = new Command(OnSubmitPageCommandExecute);
-            GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute);
+            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
+            GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //History
             ReplayCommand = new Command(OnReplayCommandExecute);
@@ -115,26 +115,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
-            InsertImageCommand = new Command(OnInsertImageCommandExecute);
-            InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute);
-            InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute);
-            InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute);
-            InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute);
-            InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute);
-            InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute);
-            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute);
-            InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute);
-            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute);
-            InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute);
-            InsertVerticalLineShapeCommand = new Command(OnInsertVerticalLineShapeCommandExecute);
-            InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute);
-            InsertAggregationDataTableCommand = new Command(OnInsertAggregationDataTableCommandExecute);
-            InsertAudioCommand = new Command(OnInsertAudioCommandExecute);
-            InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute);
-            InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute);
-            InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute);
-            InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute);
-            InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute);  
+            InsertImageCommand = new Command(OnInsertImageCommandExecute, OnInsertPageObjectCanExecute);
+            InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute, OnInsertPageObjectCanExecute);
+            InsertBlankStampCommand = new Command(OnInsertBlankStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute, OnInsertPageObjectCanExecute);
+            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
+            InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute, OnInsertPageObjectCanExecute);
+            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute, OnInsertPageObjectCanExecute);
+            InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute, OnInsertPageObjectCanExecute);
+            InsertVerticalLineShapeCommand = new Command(OnInsertVerticalLineShapeCommandExecute, OnInsertPageObjectCanExecute);
+            InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute, OnInsertPageObjectCanExecute);
+            InsertAggregationDataTableCommand = new Command(OnInsertAggregationDataTableCommandExecute, OnInsertPageObjectCanExecute);
+            InsertAudioCommand = new Command(OnInsertAudioCommandExecute, OnInsertPageObjectCanExecute);
+            InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute, OnInsertPageObjectCanExecute);
+            InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute, OnInsertPageObjectCanExecute);
+            InsertDataTableCommand = new Command(OnInsertDataTableCommandExecute, OnInsertPageObjectCanExecute);
+            InsertShadingRegionCommand = new Command(OnInsertShadingRegionCommandExecute, OnInsertPageObjectCanExecute);
+            InsertGroupingRegionCommand = new Command(OnInsertGroupingRegionCommandExecute, OnInsertPageObjectCanExecute);  
             
             //Testing
             TurnOffWebcamSharing = new Command(OnTurnOffWebcamSharingExecute);
@@ -148,12 +148,12 @@ namespace Classroom_Learning_Partner.ViewModels
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
 
-            DeletePageCommand = new Command(OnDeletePageCommandExecute);
-            CopyPageCommand = new Command(OnCopyPageCommandExecute);
-            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute);
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
-            TrimPageCommand = new Command(OnTrimPageCommandExecute);
-            ClearPageCommand = new Command(OnClearPageCommandExecute);
+            DeletePageCommand = new Command(OnDeletePageCommandExecute, OnInsertPageObjectCanExecute);
+            CopyPageCommand = new Command(OnCopyPageCommandExecute, OnInsertPageObjectCanExecute);
+            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute, OnInsertPageObjectCanExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute, OnInsertPageObjectCanExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute, OnInsertPageObjectCanExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
@@ -1033,6 +1033,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private bool OnPreviousPageCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+            var pageIndex = notebookWorkspaceViewModel.Notebook.Pages.IndexOf(notebookWorkspaceViewModel.CurrentPage);
+
+            return pageIndex > 0;
+        }
+
         /// <summary>
         /// Navigates to the next page in the notebook.
         /// </summary>
@@ -1047,6 +1059,18 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index + 1];
             }
+        }
+
+        private bool OnNextPageCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+            var pageIndex = notebookWorkspaceViewModel.Notebook.Pages.IndexOf(notebookWorkspaceViewModel.CurrentPage);
+
+            return pageIndex < notebookWorkspaceViewModel.Notebook.Pages.Count - 1;
         }
 
         #endregion //Notebook Commands
@@ -1755,6 +1779,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Commands
 
         #region Insert Commands
+
+        private bool OnInsertPageObjectCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+
+            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+        }
+
+        private bool OnInsertPageObjectCanExecute(string s)
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+
+            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+        }
 
         /// <summary>
         /// Gets the InsertTextBoxCommand command.
