@@ -2085,6 +2085,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
+                        array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
                 }
 
@@ -2169,6 +2170,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
+                        array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
                 }
 

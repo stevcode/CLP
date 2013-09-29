@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Ink;
+using System.Windows.Media;
 
 namespace CLP.Models
 {
@@ -25,6 +26,7 @@ namespace CLP.Models
         int Parts { get; set; }
         bool CanAdornersShow { get; set; }
         bool IsInternalPageObject { get; set; }
+        string BackgroundColor { get; set; }
 
         ICLPPageObject Duplicate();
         void OnRemoved();

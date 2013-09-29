@@ -315,6 +315,11 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>
 
+            <!--Background Color for Array-->
+            <Rectangle Grid.Row="1" Grid.Column="1"
+                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
+                       Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
+
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1"
                           ItemsSource="{Binding HorizontalGridLines}"

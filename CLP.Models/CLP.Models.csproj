@@ -116,6 +116,7 @@
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
     <Compile Include="CLPPageObjects\CLPRegion.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
+    <Compile Include="Extension Methods\SolidColorBrushExtension.cs" />
     <Compile Include="Math\PageAnalysis.cs" />
     <Compile Include="Pages\CLPAnimationPage.cs" />
     <Compile Include="CLPHistory\CLPHistory.cs" />

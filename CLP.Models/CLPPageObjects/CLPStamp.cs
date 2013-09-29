@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Models
@@ -297,6 +298,17 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool), false);
+
+        /// <summary>
+        /// Background color of a pageObject.
+        /// </summary>
+        public string BackgroundColor
+        {
+            get { return GetValue<string>(BackgroundColorProperty); }
+            set { SetValue(BackgroundColorProperty, value); }
+        }
+
+        public static readonly PropertyData BackgroundColorProperty = RegisterProperty("BackgroundColor", typeof(string), Colors.Transparent.ToString());
 
         #endregion //Properties
 
