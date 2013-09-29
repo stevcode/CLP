@@ -45,7 +45,7 @@
         <views:RibbonView Grid.Row="0"
                           DataContext="{Binding Ribbon}" />
 
-        <!-- Control that dynamically determines what Display to show -->
+        <!-- Control that dynamically determines what Workspace to show -->
         <ContentControl Grid.Row="1"
                         DataContext="{Binding SelectedWorkspace}">
             <ContentControl.Resources>
@@ -130,23 +130,25 @@
 
             <StatusBarItem>
                 <TextBlock>
-                    <Run Text="PAGE " />
-                    <Run Text="{Binding CurrentPage.PageIndex}" />
-                    <Run Text=" OF " />
-                    <Run Text="{Binding NotebookPages.Count, Mode=OneWay}" />
+                    <Run Text="Notebook Name: " />
+                    <Run Text="{Binding CurrentNotebookName}" />
                 </TextBlock>
             </StatusBarItem>
 
             <StatusBarItem>
-                <TextBlock>CONNECTION STATUS:</TextBlock>
+                <TextBlock>
+                    <Run Text="PAGE " />
+                    <Run Text="{Binding CurrentPageIndex}" />
+                    <Run Text=" OF " />
+                    <Run Text="{Binding NotebookPageCount}" />
+                </TextBlock>
             </StatusBarItem>
 
-            <StatusBarItem>
-                <TextBlock Text="{Binding OnlineStatus}" />
-            </StatusBarItem>
-
-            <StatusBarItem>
-
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock>
+                    <Run Text="CONNECTION STATUS: " />
+                    <Run Text="{Binding OnlineStatus}" />
+                </TextBlock>
             </StatusBarItem>
 
         </StatusBar>

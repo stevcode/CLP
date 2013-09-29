@@ -83,6 +83,39 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Status Bar Bindings
 
         /// <summary>
+        /// The name of the current open Notebook.
+        /// </summary>
+        public string CurrentNotebookName
+        {
+            get { return GetValue<string>(CurrentNotebookNameProperty); }
+            set { SetValue(CurrentNotebookNameProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Number of pages in the current notebook.
+        /// </summary>
+        public int NotebookPageCount
+        {
+            get { return GetValue<int>(NotebookPageCountProperty); }
+            set { SetValue(NotebookPageCountProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookPageCountProperty = RegisterProperty("NotebookPageCount", typeof(int));
+
+        /// <summary>
+        /// Index of the currently displayed page.
+        /// </summary>
+        public int CurrentPageIndex
+        {
+            get { return GetValue<int>(CurrentPageIndexProperty); }
+            set { SetValue(CurrentPageIndexProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageIndexProperty = RegisterProperty("CurrentPageIndex", typeof(int));
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public string OnlineStatus
@@ -91,9 +124,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(OnlineStatusProperty, value); }
         }
 
-        /// <summary>
-        /// Register the OnlineStatus property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData OnlineStatusProperty = RegisterProperty("OnlineStatus", typeof(string), "DISCONNECTED");
 
         #endregion //Status Bar Bindings

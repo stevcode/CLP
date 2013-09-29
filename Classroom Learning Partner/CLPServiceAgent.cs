@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -155,39 +156,65 @@ namespace Classroom_Learning_Partner
         public void OpenNotebook(string notebookName)
         {
 
-            string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
-            if(File.Exists(filePath))
+            var filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
+            if(!File.Exists(filePath))
             {
+                return;
+            }
 
-                var start = DateTime.Now;
-                CLPNotebook notebook = null;
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            CLPNotebook notebook = null;
 
-                try
-                {
+            try
+            {
                     
-                    ModelBase.GlobalLeanAndMeanModel = true;
-                    notebook = CLPNotebook.Load(filePath);
-                    ModelBase.GlobalLeanAndMeanModel = false;
-                }
-                catch(Exception ex)
-                {
-                    Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
-                }
+                ModelBase.GlobalLeanAndMeanModel = true;
+                notebook = CLPNotebook.Load(filePath);
+                ModelBase.GlobalLeanAndMeanModel = false;
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
+            }
 
-                var end = DateTime.Now;
-                var span = end.Subtract(start);
-                Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + span.TotalSeconds);
-                if(notebook != null)
-                {
-                    notebook.NotebookName = notebookName;
+            stopWatch.Stop();
+            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds * 1000);
 
-                    foreach(var page in notebook.Pages)
+            if(notebook == null)
+            {
+                MessageBox.Show("Notebook could not be opened. Check error log.");
+                return;
+            }
+
+            notebook.NotebookName = notebookName;
+            App.MainWindowViewModel.CurrentNotebookName = notebookName;
+
+            foreach(var page in notebook.Pages)
+            {
+                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+
+                foreach(ICLPPageObject pageObject in page.PageObjects)
+                {
+                    pageObject.ParentPage = page;
+                }
+                foreach(var clpHistoryItem in page.PageHistory.UndoItems)
+                {
+                    clpHistoryItem.ParentPage = page;
+                }
+                foreach(var clpHistoryItem in page.PageHistory.RedoItems)
+                {
+                    clpHistoryItem.ParentPage = page;
+                }
+                if(notebook.Submissions.ContainsKey(page.UniqueID))
+                {
+                    foreach(var submission in notebook.Submissions[page.UniqueID])
                     {
-                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes); 
+                        submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
-                        foreach(ICLPPageObject pageObject in page.PageObjects)
+                        foreach(ICLPPageObject pageObject in submission.PageObjects)
                         {
-                            pageObject.ParentPage = page;
+                            pageObject.ParentPage = submission;
                         }
                         foreach(var clpHistoryItem in page.PageHistory.UndoItems)
                         {
@@ -197,60 +224,38 @@ namespace Classroom_Learning_Partner
                         {
                             clpHistoryItem.ParentPage = page;
                         }
-                        if(notebook.Submissions.ContainsKey(page.UniqueID))
-                        {
-                            foreach(var submission in notebook.Submissions[page.UniqueID])
-                            {
-                                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                                {
-                                    pageObject.ParentPage = submission;
-                                }
-                                foreach(var clpHistoryItem in page.PageHistory.UndoItems)
-                                {
-                                    clpHistoryItem.ParentPage = page;
-                                }
-                                foreach(var clpHistoryItem in page.PageHistory.RedoItems)
-                                {
-                                    clpHistoryItem.ParentPage = page;
-                                }
-                            }
-                        }
                     }
-
-                    notebook.InitializeAfterDeserialize();
-
-                    int count = 0;
-                    foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
-                    {
-                        if(otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)
-                        {
-                            App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
-                            count++;
-                            break;
-                        }
-                    }
-
-                    if(count == 0)
-                    {
-                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                        if(App.CurrentUserMode == App.UserMode.Instructor || App.CurrentUserMode == App.UserMode.Student || App.CurrentUserMode == App.UserMode.Projector)
-                        {
-                            App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
-                        }
-                    }
-
-                    if(App.CurrentUserMode == App.UserMode.Student)
-                    {
-                       // _autoSaveTimer.Start();
-                    }
-
                 }
-                else
+            }
+
+            notebook.InitializeAfterDeserialize();
+
+            int count = 0;
+            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                if(otherNotebook.UniqueID == notebook.UniqueID &&
+                   otherNotebook.NotebookName == notebook.NotebookName)
                 {
-                    MessageBox.Show("Notebook could not be opened. Check error log.");
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
+                    count++;
+                    break;
                 }
+            }
+
+            if(count == 0)
+            {
+                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                if(App.CurrentUserMode == App.UserMode.Instructor ||
+                   App.CurrentUserMode == App.UserMode.Student ||
+                   App.CurrentUserMode == App.UserMode.Projector)
+                {
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                }
+            }
+
+            if(App.CurrentUserMode == App.UserMode.Student)
+            {
+                // _autoSaveTimer.Start();
             }
         }
 
