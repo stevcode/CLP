@@ -326,7 +326,10 @@ namespace CLP.Models
                         IsDivisionBehaviorOn = IsDivisionBehaviorOn,
                         XPosition = XPosition,
                         YPosition = YPosition,
-                        ArrayHeight = ArrayHeight
+                        ArrayHeight = ArrayHeight,
+                        IsLabelOn = IsLabelOn,
+                        BackgroundColor = BackgroundColor,
+                        IsSnappable = IsSnappable
                     };
                     leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
                     leftArray.CalculateGridLines();
@@ -338,7 +341,10 @@ namespace CLP.Models
                         IsDivisionBehaviorOn = IsDivisionBehaviorOn,
                         XPosition = XPosition + closestLinePosition,
                         YPosition = YPosition,
-                        ArrayHeight = ArrayHeight
+                        ArrayHeight = ArrayHeight,
+                        IsLabelOn = IsLabelOn,
+                        BackgroundColor = BackgroundColor,
+                        IsSnappable = IsSnappable
                     };
                     rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
                     rightArray.CalculateGridLines();
@@ -380,7 +386,10 @@ namespace CLP.Models
                         IsDivisionBehaviorOn = IsDivisionBehaviorOn,
                         XPosition = XPosition,
                         YPosition = YPosition,
-                        ArrayWidth = ArrayWidth
+                        ArrayWidth = ArrayWidth,
+                        IsLabelOn = IsLabelOn,
+                        BackgroundColor = BackgroundColor,
+                        IsSnappable = IsSnappable
                     };
                     topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
                     topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
@@ -393,7 +402,10 @@ namespace CLP.Models
                         IsDivisionBehaviorOn = IsDivisionBehaviorOn,
                         XPosition = XPosition,
                         YPosition = YPosition + closestLinePosition,
-                        ArrayWidth = ArrayWidth
+                        ArrayWidth = ArrayWidth,
+                        IsLabelOn = IsLabelOn,
+                        BackgroundColor = BackgroundColor,
+                        IsSnappable = IsSnappable
                     };
                     bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
                     bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);

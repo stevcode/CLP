@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -235,9 +236,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 leftBehindStamp.UniqueID = PageObject.UniqueID;
+                leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
 
                 _originalX = leftBehindStamp.XPosition;
                 _originalY = leftBehindStamp.YPosition;
+
+                if(PageObject.PageObjectObjectParentIDs.Any())
+                {
+                    foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
+                    {
+                        var clonePageObject = pageObject.Duplicate();
+
+                        // New object stays put, old object leaves, but we shuffle around IDs for ID continuity.
+                        PageObject.PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+                        var tempID = pageObject.UniqueID;
+                        pageObject.UniqueID = clonePageObject.UniqueID;
+                        clonePageObject.UniqueID = tempID;
+                        PageObject.PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+
+                        var index = PageObject.ParentPage.PageObjects.IndexOf(PageObject);
+                        ACLPPageBaseViewModel.AddPageObjectToPage(clonePageObject, false, false, index);
+                        leftBehindStamp.PageObjectObjectParentIDs.Add(clonePageObject.UniqueID);
+                    }
+                }
 
                 if(stampIndex > -1)
                 {
@@ -247,6 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, leftBehindStamp, false);
                 }
+             //   leftBehindStamp.Parts = Parts;
             }
             catch(Exception ex)
             {
