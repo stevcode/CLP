@@ -113,11 +113,8 @@ namespace CLP.Models
 
         private void RefreshParts()
         {
-            Parts = 0;
-            foreach(var pageObject in GetPageObjectsOverPageObject())
-            {
-                Parts += pageObject.Parts;
-            }
+            var count = GetPageObjectsOverPageObject().Sum(pageObject => pageObject.Parts);
+            Parts = count;
         }
 
         #region Overrides of ACLPPageObjectBase

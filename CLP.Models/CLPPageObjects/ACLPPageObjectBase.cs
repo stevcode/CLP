@@ -222,28 +222,14 @@ namespace CLP.Models
 
         /// <summary>
         /// Represents the number of "parts" a pageObject represents.
-        /// -1 for undefined.
         /// </summary>
         public int Parts
         {
-            get {
-                int parts = GetValue<int>(PartsProperty);
-                if (parts < 1 && !ParentID.Equals(""))
-                {
-                    //Should only be one
-                    foreach (ICLPPageObject po in ParentPage.PageObjects)
-                    {
-                        if (po.UniqueID.Equals(ParentID)) {
-                            Parts = po.Parts;
-                        }
-                    }
-                }
-                return GetValue<int>(PartsProperty);
-            }
+            get { return GetValue<int>(PartsProperty); }
             set { SetValue(PartsProperty, value); }
         }
 
-        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), -1);
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), 0);
 
         /// <summary>
         /// Gets or sets the property value.
