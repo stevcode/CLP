@@ -265,7 +265,7 @@ namespace CLP.Models
 
         public virtual void OnMoved() 
         {
-        //    AddRemovePageObjectFromOtherObjects();
+            AddRemovePageObjectFromOtherObjects();
         }
 
         //TODO: make this static in viewModel?

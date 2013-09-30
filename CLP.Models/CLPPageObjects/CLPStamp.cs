@@ -482,7 +482,7 @@ namespace CLP.Models
 
         public void EnforceAspectRatio(double aspectRatio) { }
 
-        private void RefreshParts()
+        public void RefreshParts()
         {
             Parts = 0;
             foreach(var pageObject in GetPageObjectsOverPageObject())

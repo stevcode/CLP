@@ -241,6 +241,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 _originalX = leftBehindStamp.XPosition;
                 _originalY = leftBehindStamp.YPosition;
 
+                PageObject.CanAcceptStrokes = false;
+                PageObject.CanAcceptPageObjects = false;
                 if(PageObject.PageObjectObjectParentIDs.Any())
                 {
                     foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
@@ -335,12 +337,16 @@ namespace Classroom_Learning_Partner.ViewModels
             StampCopy.IsInternalPageObject = false;
             StampCopy.IsCollectionCopy = IsCollectionStamp;
             StampCopy.CanAcceptPageObjects = IsCollectionStamp;
+            StampCopy.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-                ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, StampCopy, false, false);
+                var minIndex = parentPage.PageObjects.Count - 1;
+                minIndex = StampCopy.GetPageObjectsOverPageObject().Select(pageObject => parentPage.PageObjects.IndexOf(pageObject)).Concat(new[] {minIndex}).Min();
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, StampCopy, false, false, minIndex);
             }
 
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
