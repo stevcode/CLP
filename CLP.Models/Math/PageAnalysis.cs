@@ -528,15 +528,21 @@ namespace CLP.Models
                 foreach(KeyValuePair<string, List<ICLPPageObject>> kvp in groupEntry)
                 {
                     List<ICLPPageObject> objList = kvp.Value;
+                    if(((CLPStampCopy)(objList[0])).IsCollectionCopy) { continue; } // Ignore collection stamps
+
                     int objectsInGroup = objList.Count;
                     if(expectedObjectsPerGroup == -1) { expectedObjectsPerGroup = objectsInGroup; }
-                    else if(expectedObjectsPerGroup != objectsInGroup) { return false; }
+                    else if(expectedObjectsPerGroup != objectsInGroup) {
+                        return false;
+                    }
 
                     foreach(ICLPPageObject pageObj in objList)
                     {
                         int parts = pageObj.Parts;
                         if(expectedPartsPerObject == -1) { expectedPartsPerObject = parts; }
-                        else if(expectedPartsPerObject != parts) { return false; }
+                        else if(expectedPartsPerObject != parts) {
+                            return false;
+                        }
                     }
                 }
             }
