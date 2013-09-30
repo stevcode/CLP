@@ -237,7 +237,7 @@ namespace CLP.Models
                 List<CLPGrouping> containerGroups = new List<CLPGrouping>();
                 foreach (String containerKey in possibleContainers)
                 {
-                    CLPGrouping containerGroup = new CLPGrouping("Container " + group.GroupingType, containerKey);
+                    CLPGrouping containerGroup = new CLPGrouping("Collection " + group.GroupingType, containerKey);
                     List<Dictionary<string, List<ICLPPageObject>>> groupsAugmented = new List<Dictionary<string, List<ICLPPageObject>>>();
                     foreach (Dictionary<string, List<ICLPPageObject>> grouping in groups)
                     {

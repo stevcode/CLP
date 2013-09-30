@@ -23,8 +23,8 @@ namespace CLP.Models
             ValueOptions.Add(new TagOptionValue("Basic Grouping"));
             ValueOptions.Add(new TagOptionValue("Ink Grouping"));
             ValueOptions.Add(new TagOptionValue("Distance Grouping"));
-            ValueOptions.Add(new TagOptionValue("Container Grouping"));
-            ValueOptions.Add(new TagOptionValue("Container Distance Grouping"));
+            ValueOptions.Add(new TagOptionValue("Collection Grouping"));
+            ValueOptions.Add(new TagOptionValue("Collection Distance Grouping"));
 
         }
 

@@ -510,7 +510,7 @@
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
-                <RibbonButton Label="Container Stamp"
+                <RibbonButton Label="Collection Stamp"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />
 
@@ -518,7 +518,7 @@
                               LargeImageSource="..\Images\PictureStamp.png"
                               Command="{Binding InsertImageStampCommand}" />
 
-                <RibbonButton Label="Image Container Stamp"
+                <RibbonButton Label="Image Collection Stamp"
                               LargeImageSource="..\Images\PictureStamp.png"
                               Command="{Binding InsertImageContainerStampCommand}" />
 
