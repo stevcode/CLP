@@ -1,22 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 using System.Collections.ObjectModel;
 
 namespace CLP.Models
 {
-    [Serializable]
-    public class CLPCollectedPartImage
-    {
-        public CLPCollectedPartImage() { }
-
-        public string ImageID { get; set; }
-        public double XPosition { get; set; }
-        public double YPosition { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-    }
-
     [Serializable]
     public class CLPStampCopy : ACLPPageObjectBase
     {
@@ -24,7 +15,7 @@ namespace CLP.Models
         {
             get
             {
-                return 30;
+                return 20;
             }
         }
 
@@ -34,8 +25,10 @@ namespace CLP.Models
             : base(page)
         {
             ImageID = imageID;
-            Height = 100;
-            Width = 100;
+            Height = 75;
+            Width = 75;
+            CanAcceptStrokes = false;
+            CanAcceptPageObjects = false;
         }
 
         /// <summary>
@@ -96,17 +89,6 @@ namespace CLP.Models
 
         public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(ObservableCollection<StrokeDTO>), () => new ObservableCollection<StrokeDTO>());
 
-        /// <summary>
-        /// A collection of images made from the Views of objects a Collection Stamp collects.
-        /// </summary>
-        public ObservableCollection<CLPCollectedPartImage> CollectedPartImages
-        {
-            get { return GetValue<ObservableCollection<CLPCollectedPartImage>>(CollectedPartImagesProperty); }
-            set { SetValue(CollectedPartImagesProperty, value); }
-        }
-
-        public static readonly PropertyData CollectedPartImagesProperty = RegisterProperty("CollectedPartImages", typeof(ObservableCollection<CLPCollectedPartImage>), () => new ObservableCollection<CLPCollectedPartImage>());
-
         #endregion
 
         #region Methods
@@ -128,6 +110,41 @@ namespace CLP.Models
                 ParentPage.PageObjects.Remove(po);
             }
         }
+
+        private void RefreshParts()
+        {
+            Parts = 0;
+            foreach(var pageObject in GetPageObjectsOverPageObject())
+            {
+                Parts += pageObject.Parts;
+            }
+        }
+
+        #region Overrides of ACLPPageObjectBase
+
+        public override void AcceptObjects(IEnumerable<ICLPPageObject> addedPageObjects, IEnumerable<ICLPPageObject> removedPageObjects)
+        {
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            foreach(var pageObject in removedPageObjects.Where(pageObject => PageObjectObjectParentIDs.Contains(pageObject.UniqueID)))
+            {
+                PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+            }
+
+            foreach(var pageObject in addedPageObjects.Where(pageObject => !PageObjectObjectParentIDs.Contains(pageObject.UniqueID) &&
+                                                                           pageObject.GetType() == typeof(CLPStampCopy) &&
+                                                                           !(pageObject as CLPStampCopy).IsCollectionCopy))
+            {
+                PageObjectObjectParentIDs.Add(pageObject.UniqueID);
+            }
+
+            RefreshParts();
+        }
+
+        #endregion
 
         #endregion //Methods
     }

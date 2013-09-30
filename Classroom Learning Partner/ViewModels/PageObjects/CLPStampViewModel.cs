@@ -1,14 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
-using Catel.Windows.Controls;
 using CLP.Models;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
@@ -29,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PageObject = stamp;
 
+            ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
             ResizeStampCommand = new Command<DragDeltaEventArgs>(OnResizeStampCommandExecute);
             CopyStampCommand = new Command(OnCopyStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
@@ -113,6 +111,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
+        /// Pops up keypad that allows parameterization of stamp copies.
+        /// </summary>
+        public Command ParameterizeStampCommand { get; private set; }
+
+        private void OnParameterizeStampCommandExecute()
+        {
+            
+        }      
+
+        /// <summary>
         /// Resize a stamp.
         /// </summary>
         public Command<DragDeltaEventArgs> ResizeStampCommand { get; private set; }
@@ -127,7 +135,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var oldHeight = Height;
             var oldWidth = Width;
 
-            const double MIN_WIDTH = 50.0;
+            var minWidth = IsCollectionStamp ? 75.0 : 50.0;
             const double MIN_HEIGHT = 140.0;
             var newHeight = Height + e.VerticalChange;
             var newWidth = Width + e.HorizontalChange;
@@ -135,9 +143,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 newHeight = MIN_HEIGHT;
             }
-            if(newWidth < MIN_WIDTH)
+            if(newWidth < minWidth)
             {
-                newWidth = MIN_WIDTH;
+                newWidth = minWidth;
             }
             if(newHeight + YPosition > PageObject.ParentPage.PageHeight)
             {
@@ -183,7 +191,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyStampCommandExecute()
         { 
             StampHandleColor = new SolidColorBrush(Colors.Green);
-            if (HasParts())
+            if (HasParts() || IsCollectionStamp)
             {
                 PartsRegionVisibility = Visibility.Collapsed;
                 CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
@@ -202,34 +210,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
                 StampCopy.IsStamped = true;
-
-                foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
-                {
-                    var pageObjectViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(pageObject as ModelBase).FirstOrDefault();
-                    if(pageObjectViewModel == null)
-                    {
-                        continue;
-                    }
-                    var pageObjectView = CLPServiceAgent.Instance.GetViewFromViewModel(pageObjectViewModel);
-                    var imageByteSource = CLPServiceAgent.Instance.GetJpgImage(pageObjectView as UIElement);
-                    var image = CLPImageViewModel.LoadImageFromByteSource(imageByteSource);
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                    String photolocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\blah.jpg";  //file name 
-
-                    encoder.Frames.Add(BitmapFrame.Create(image));
-
-                    using(var filestream = new FileStream(photolocation, FileMode.Create))
-                        encoder.Save(filestream);
-
-                    var collectedImage = new CLPCollectedPartImage
-                                         {
-                                             Height = pageObject.Height,
-                                             Width = pageObject.Width,
-                                             XPosition = pageObject.XPosition - XPosition,
-                                             YPosition = pageObject.YPosition - YPosition - CLPStamp.HandleHeight
-                                         };
-                    StampCopy.CollectedPartImages.Add(collectedImage);
-                }
             } 
             else 
             {
@@ -281,7 +261,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
-            if(!HasParts())
+            if(!HasParts() && !IsCollectionStamp)
             {
                 return;
             }
@@ -332,6 +312,7 @@ namespace Classroom_Learning_Partner.ViewModels
             StampCopy.Parts = PageObject.Parts;
             StampCopy.IsInternalPageObject = false;
             StampCopy.IsCollectionCopy = IsCollectionStamp;
+            StampCopy.CanAcceptPageObjects = IsCollectionStamp;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
@@ -375,12 +356,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var xDelta = x - PageObject.XPosition;
             var yDelta = y - PageObject.YPosition;
 
-            //TODO: Remove this in favor of jpg's of views?
-            //foreach (var pageObject in PageObject.GetPageObjectsOverPageObject()) 
-            //{
-            //    var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-            //    ChangePageObjectPosition(pageObject, pageObjectPt);
-            //}
+            foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
+            {
+                var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
+                ChangePageObjectPosition(pageObject, pageObjectPt);
+            }
 
             var pt = new Point(x, y);
 

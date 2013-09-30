@@ -33,14 +33,15 @@ namespace CLP.Models
         void OnMoved();
         void OnResized();
 
-        void RefreshStrokeParentIDs();
         void AcceptStrokes(StrokeCollection addedStrokeIDs, StrokeCollection removedStrokeIDs);
         StrokeCollection GetStrokesOverPageObject();
-        List<ICLPPageObject> Cut(Stroke cuttingStroke);  
-
-        bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
-        void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects);
+        void RefreshStrokeParentIDs();
+        void AcceptObjects(IEnumerable<ICLPPageObject> addedPageObjects, IEnumerable<ICLPPageObject> removedPageObjects);
         ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject();
+        void RefreshPageObjectIDs();
+        bool PageObjectIsOver(ICLPPageObject pageObject, double percentage);
+        
+        List<ICLPPageObject> Cut(Stroke cuttingStroke);
         void EnforceAspectRatio(double aspectRatio);
     }
 }

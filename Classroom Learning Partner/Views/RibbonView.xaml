@@ -176,8 +176,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Tools"
-                         x:Name="ToolsRibbonGroup">
+            <RibbonGroup Header="Tools">
 
                 <RibbonToggleButton Label="Select"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Hand32.png"
@@ -494,10 +493,10 @@
 
             <RibbonGroup Header="Images">
 
-                <RibbonToggleButton Label="Webcam"
+                <!--<RibbonToggleButton Label="Webcam"
                                     LargeImageSource="..\Images\camera.png"
                                     Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
 
                 <RibbonButton Label="Insert Image"
                               LargeImageSource="..\Images\AddImage.png"
@@ -1061,13 +1060,13 @@
 
             <RibbonGroup Header="Page">
 
-                <RibbonButton Label="Page Width"
+                <!--<RibbonButton Label="Page Width"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ZoomToPageWidthCommand}" />
 
                 <RibbonButton Label="Whole Page"
                               LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding ZoomToWholePageCommand}" />
+                              Command="{Binding ZoomToWholePageCommand}" />-->
 
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"

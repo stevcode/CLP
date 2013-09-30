@@ -26,8 +26,6 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            Console.WriteLine(Colors.Transparent.ToString());
-
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();

@@ -28,13 +28,15 @@ namespace CLP.Models
             CreationDate = DateTime.Now;
             StampCopy = new CLPStampCopy(page, imageID)
             {
-                IsInternalPageObject = true
+                IsInternalPageObject = true,
+                Width = isCollectionStamp ? 125 : 75,
+                Height = isCollectionStamp ? 125 : 75
             };
             ParentPage = page;
             ParentPageID = page.UniqueID;
             UniqueID = Guid.NewGuid().ToString();
 
-            CanAcceptStrokes = !isCollectionStamp;
+            CanAcceptStrokes = true;
             CanAcceptPageObjects = isCollectionStamp;
             IsCollectionStamp = isCollectionStamp;
 
@@ -209,7 +211,7 @@ namespace CLP.Models
             set { SetValue(CanAcceptPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
 
         /// <summary>
         /// xPosition of pageObject on page.
@@ -330,21 +332,22 @@ namespace CLP.Models
             return newStamp;
         }
 
-        public virtual void OnRemoved()
+        public void OnRemoved()
         {
             if(StampCopy.IsStamped)
             {
                 return;
             }
 
-            foreach(Stroke stroke in GetStrokesOverPageObject())
+            foreach(var stroke in GetStrokesOverPageObject())
             {
                 ParentPage.InkStrokes.Remove(stroke);
+                //TODO: re-write InkStrokeCollectionChanged to call RemoveStrokes and AddStrokes methods so history can work better
             }
 
             if(CanAcceptPageObjects)
             {
-                foreach(ICLPPageObject po in GetPageObjectsOverPageObject())
+                foreach(var po in GetPageObjectsOverPageObject())
                 {
                     //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
                     po.OnRemoved();
@@ -361,24 +364,6 @@ namespace CLP.Models
         {
         }
 
-        public virtual void RefreshStrokeParentIDs()
-        {
-            if(!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            PageObjectStrokeParentIDs.Clear();
-
-            var rect = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = 
-                from stroke in ParentPage.InkStrokes
-                where stroke.HitTest(rect, 50)
-                select stroke;
-
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
-        }
-
         public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
             if(!CanAcceptStrokes)
@@ -386,7 +371,7 @@ namespace CLP.Models
                 return;
             }
 
-            foreach(var strokeID in removedStrokes.Select(s => s.GetStrokeUniqueID())) 
+            foreach(var strokeID in removedStrokes.Select(stroke => stroke.GetStrokeUniqueID())) 
             {
                 try
                 {
@@ -398,9 +383,7 @@ namespace CLP.Models
                 }
             }
 
-            var containerBoundingBox = new Rect(XPosition, YPosition + HandleHeight,
-                StampCopy.Width, StampCopy.Height);      
-
+            var containerBoundingBox = new Rect(XPosition, YPosition + HandleHeight, StampCopy.Width, StampCopy.Height);      
             foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(containerBoundingBox, 50)).Where(stroke => !PageObjectStrokeParentIDs.Contains(stroke.GetStrokeUniqueID()))) 
             {
                 PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
@@ -409,30 +392,33 @@ namespace CLP.Models
 
         public StrokeCollection GetStrokesOverPageObject()
         {
-            var strokes =
-                from strokeID in PageObjectStrokeParentIDs
-                from stroke in ParentPage.InkStrokes
-                where stroke.GetStrokeUniqueID() == strokeID
-                select stroke;
+            var strokes = from strokeID in PageObjectStrokeParentIDs
+                          from stroke in ParentPage.InkStrokes
+                          where stroke.GetStrokeUniqueID() == strokeID
+                          select stroke;
 
-            var inkStrokes = new StrokeCollection(strokes);
+            var inkStrokes = new StrokeCollection(strokes.Distinct());
             return inkStrokes;
         }
 
-        public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        public void RefreshStrokeParentIDs()
         {
-            double areaObject = pageObject.Height * pageObject.Width;
-            double top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
-            double left = Math.Max(XPosition, pageObject.XPosition);
-            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
-            double deltaY = bottom - top;
-            double deltaX = right - left;
-            double intersectionArea = deltaY * deltaX;
-            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+            if(!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            PageObjectStrokeParentIDs.Clear();
+
+            var rect = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(rect, 50)
+                                    select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
-        public void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
+        public void AcceptObjects(IEnumerable<ICLPPageObject> addedPageObjects, IEnumerable<ICLPPageObject> removedPageObjects)
         {
             if(!CanAcceptPageObjects || !IsCollectionStamp)
             {
@@ -441,33 +427,72 @@ namespace CLP.Models
 
             foreach(var pageObject in removedPageObjects.Where(pageObject => PageObjectObjectParentIDs.Contains(pageObject.UniqueID))) 
             {
-                Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
                 PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
             }
 
             foreach(var pageObject in addedPageObjects.Where(pageObject => !PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && 
-                                                                                                               pageObject.GetType() != typeof(CLPStamp) &&
-                                                                                                               pageObject.GetType() != typeof(CLPArray))) 
+                                                                           pageObject.GetType() == typeof(CLPStampCopy) &&
+                                                                           !(pageObject as CLPStampCopy).IsCollectionCopy)) 
             {
-                Parts += pageObject.Parts;
                 PageObjectObjectParentIDs.Add(pageObject.UniqueID);
             }
+
+            RefreshParts();
         }
 
         public ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject()
         {
-            var pageObjects =
-                from pageObjectID in PageObjectObjectParentIDs
-                from pageObject in ParentPage.PageObjects
-                where pageObject.UniqueID == pageObjectID
-                select pageObject;
+            var pageObjects = from pageObjectID in PageObjectObjectParentIDs
+                              from pageObject in ParentPage.PageObjects
+                              where pageObject.UniqueID == pageObjectID
+                              select pageObject;
 
-            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects);
+            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.Distinct());
             return pageObjectsOver;
+        }
+
+        public void RefreshPageObjectIDs()
+        {
+            if(!CanAcceptPageObjects || !IsCollectionStamp)
+            {
+                return;
+            }
+
+            PageObjectObjectParentIDs.Clear();
+
+            var pageObjectsOverObject = from pageObject in ParentPage.PageObjects
+                                        where PageObjectIsOver(pageObject, 90)
+                                        select pageObject;
+
+            AcceptObjects(pageObjectsOverObject, new List<ICLPPageObject>());
+        }
+
+        public bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition, pageObject.XPosition);
+            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && intersectionArea / areaObject >= percentage;
+        }
+
+        public void EnforceAspectRatio(double aspectRatio) { }
+
+        private void RefreshParts()
+        {
+            Parts = 0;
+            foreach(var pageObject in GetPageObjectsOverPageObject())
+            {
+                Parts += pageObject.Parts;
+            }
         }
 
         #endregion //Methods
 
-        public void EnforceAspectRatio(double aspectRatio) {}
+        
     }
 }

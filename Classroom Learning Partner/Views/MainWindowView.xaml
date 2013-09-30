@@ -27,8 +27,8 @@
                     Gesture="CTRL+SHIFT+S" />
         <KeyBinding Command="{Binding Path=SetProjectorCommand}"
                     Gesture="CTRL+SHIFT+P" />
-        <KeyBinding Command="{Binding Path=SetDebugCommand}"
-                    Gesture="CTRL+SHIFT+D" />
+        <!--<KeyBinding Command="{Binding Path=SetDebugCommand}"
+                    Gesture="CTRL+SHIFT+D" />-->
         <KeyBinding Command="{Binding Path=ToggleDebugCommand}"
                     Gesture="CTRL+SHIFT+K" />
         <KeyBinding Command="{Binding Path=ToggleExtrasCommand}"

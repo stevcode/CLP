@@ -11,13 +11,6 @@
         <ResourceDictionary>
             <conv:LengthConverter x:Key="LengthConverter"/>
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter"/>
-
-            <Style x:Key="CollectionImageStyle">
-                <Setter Property="Canvas.Left"
-                    Value="{Binding XPosition}" />
-                <Setter Property="Canvas.Top"
-                    Value="{Binding YPosition}" />
-            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -102,26 +95,6 @@
                    Height="{Binding Height}" Width="{Binding Width}" />
 
             <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
-                          ItemsSource="{Binding CollectedPartImages}"
-                          ItemContainerStyle="{StaticResource CollectionImageStyle}"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Height="{Binding Height}" 
-                                Width="{Binding Width}" 
-                                Background="Transparent" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Stroke="Blue" Fill="Green"
-                               Height="{Binding Height}" Width="{Binding Width}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
                           ItemsSource="{Binding StrokePathViewModels}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch">
@@ -141,16 +114,14 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Grid Margin="-10"
-                  Height="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
-                  Width="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
-                  VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                  Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
-                <Ellipse Stroke="Black" StrokeThickness="1" Fill="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                <TextBlock Text="{Binding Parts}"
-                           TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
-                           FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="25"/>
-            </Grid>
+            <TextBlock TextAlignment="Center" Margin="0 -18"
+                       Height="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
+                       HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                       FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="18"
+                       Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                <Run Text="collection " />
+                <Run Text="{Binding Parts}" />
+            </TextBlock>
 
             <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
                        Width="{Binding Width}" Height="{Binding Height}">

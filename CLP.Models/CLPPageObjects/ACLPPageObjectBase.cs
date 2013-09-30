@@ -282,6 +282,7 @@ namespace CLP.Models
             AddRemovePageObjectFromOtherObjects();
         }
 
+        //TODO: make this static in viewModel?
         private void AddRemovePageObjectFromOtherObjects(bool isHistory=true)
         {
             if(!CanAcceptPageObjects)
@@ -290,8 +291,8 @@ namespace CLP.Models
                 {
                     if(container.CanAcceptPageObjects && !ParentID.Equals(container.UniqueID))
                     {
-                        ObservableCollection<ICLPPageObject> addObjects = new ObservableCollection<ICLPPageObject>();
-                        ObservableCollection<ICLPPageObject> removeObjects = new ObservableCollection<ICLPPageObject>();
+                        var addObjects = new ObservableCollection<ICLPPageObject>();
+                        var removeObjects = new ObservableCollection<ICLPPageObject>();
 
                         if(container.PageObjectIsOver(this, .50))
                         {
@@ -310,6 +311,42 @@ namespace CLP.Models
 
         public virtual void OnResized() {}
 
+        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            if(!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            foreach(var strokeID in removedStrokes.Select(stroke => stroke.GetStrokeUniqueID())) 
+            {
+                try
+                {
+                    PageObjectStrokeParentIDs.Remove(strokeID);
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                }
+            }
+
+            foreach(var stroke in addedStrokes)
+            {
+                PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
+            }
+        }
+
+        public virtual StrokeCollection GetStrokesOverPageObject()
+        {
+            var strokes = from strokeID in PageObjectStrokeParentIDs
+                          from stroke in ParentPage.InkStrokes
+                          where stroke.GetStrokeUniqueID() == strokeID
+                          select stroke;
+
+            var inkStrokes = new StrokeCollection(strokes.Distinct());
+            return inkStrokes;
+        }
+
         public virtual void RefreshStrokeParentIDs()
         {
             if(!CanAcceptStrokes)
@@ -320,104 +357,78 @@ namespace CLP.Models
             PageObjectStrokeParentIDs.Clear();
 
             var rect = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject =
-                from stroke in ParentPage.InkStrokes
-                where stroke.HitTest(rect, 30)
-                select stroke;
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(rect, 50)
+                                    select stroke;
 
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
-        public virtual void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public virtual void AcceptObjects(IEnumerable<ICLPPageObject> addedPageObjects, IEnumerable<ICLPPageObject> removedPageObjects)
         {
-            if (CanAcceptStrokes)
+            if(!CanAcceptPageObjects)
             {
-                foreach(Stroke s in removedStrokes)
-                {
-                    string strokeID = s.GetStrokeUniqueID();
-                    try
-                    {
-                        PageObjectStrokeParentIDs.Remove(strokeID);
-                    }
-                    catch(Exception)
-                    {
-                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
-                    }
-                }
+                return;
+            }
 
-                foreach(Stroke s in addedStrokes)
-                {
-                    PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
-                }
+            foreach(var pageObject in removedPageObjects.Where(pageObject => PageObjectObjectParentIDs.Contains(pageObject.UniqueID))) 
+            {
+                Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
+                PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
+            }
+
+            foreach(var pageObject in addedPageObjects.Where(pageObject => !PageObjectObjectParentIDs.Contains(pageObject.UniqueID) &&
+                                                                            pageObject.GetType() == typeof(CLPStampCopy))) 
+            {
+                Parts += pageObject.Parts;
+                PageObjectObjectParentIDs.Add(pageObject.UniqueID);
             }
         }
 
-        public virtual StrokeCollection GetStrokesOverPageObject()
+        public virtual ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject()
         {
-            var strokes =
-                from strokeID in PageObjectStrokeParentIDs
-                from stroke in ParentPage.InkStrokes
-                where stroke.GetStrokeUniqueID() == strokeID
-                select stroke;
+            var pageObjects = from pageObjectID in PageObjectObjectParentIDs
+                              from pageObject in ParentPage.PageObjects
+                              where pageObject.UniqueID == pageObjectID
+                              select pageObject;
 
-            StrokeCollection inkStrokes = new StrokeCollection(strokes.Distinct());
-            return inkStrokes;
+            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.Distinct());
+            return pageObjectsOver;
+        }
+
+        public virtual void RefreshPageObjectIDs()
+        {
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            PageObjectObjectParentIDs.Clear();
+
+            var pageObjectsOverObject = from pageObject in ParentPage.PageObjects
+                                        where PageObjectIsOver(pageObject, 90)
+                                        select pageObject;
+
+            AcceptObjects(pageObjectsOverObject, new List<ICLPPageObject>());
+        }
+
+        public virtual bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = Height * Width;
+            var top = Math.Max(YPosition, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition, pageObject.XPosition);
+            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
         public virtual List<ICLPPageObject> Cut(Stroke cuttingStroke)
         {
             return new List<ICLPPageObject>();
-        }
-
-        public virtual bool PageObjectIsOver(ICLPPageObject pageObject, double percentage)
-        {
-            double areaObject = pageObject.Height * pageObject.Width;
-            double area = Height * Width;
-            double top = Math.Max(YPosition, pageObject.YPosition);
-            double bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
-            double left = Math.Max(XPosition, pageObject.XPosition);
-            double right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
-            double deltaY = bottom - top;
-            double deltaX = right - left;
-            double intersectionArea = deltaY * deltaX;
-            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
-        }
-
-        public virtual void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
-        {
-            if (CanAcceptPageObjects)
-            {
-                foreach (ICLPPageObject pageObject in removedPageObjects)
-                {
-                    if (PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
-                    {
-                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
-                    }
-                }
-
-
-                foreach(ICLPPageObject pageObject in addedPageObjects)
-                {
-                    if (!PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
-                    {
-                        Parts += pageObject.Parts;
-                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
-                    }
-                }
-            }
-        }
-        
-        public virtual ObservableCollection<ICLPPageObject> GetPageObjectsOverPageObject()
-        {
-            var pageObjects =
-                from pageObjectID in PageObjectObjectParentIDs
-                from pageObject in ParentPage.PageObjects
-                where pageObject.UniqueID == pageObjectID
-                select pageObject;
-
-            var pageObjectsOver = new ObservableCollection<ICLPPageObject>(pageObjects.Distinct());
-            return pageObjectsOver;
         }
 
         //aspectRatio is Width/Height

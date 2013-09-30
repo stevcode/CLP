@@ -469,7 +469,7 @@ namespace CLP.Models
         {
             var areaObject = pageObject.Height * pageObject.Width;
             var area = ArrayHeight * ArrayWidth;
-            var top = Math.Max(YPosition - LabelLength, pageObject.YPosition);
+            var top = Math.Max(YPosition + LabelLength, pageObject.YPosition);
             var bottom = Math.Min(YPosition + LabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
             var left = Math.Max(XPosition + LabelLength, pageObject.XPosition);
             var right = Math.Min(XPosition + LabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
@@ -479,55 +479,29 @@ namespace CLP.Models
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
-        public override void AcceptObjects(ObservableCollection<ICLPPageObject> addedPageObjects, ObservableCollection<ICLPPageObject> removedPageObjects)
-        {
-            if(CanAcceptPageObjects)
-            {
-                foreach(ICLPPageObject pageObject in removedPageObjects)
-                {
-                    if(PageObjectObjectParentIDs.Contains(pageObject.UniqueID))
-                    {
-                        Parts = (Parts - pageObject.Parts > 0) ? Parts - pageObject.Parts : 0;
-                        PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
-                    }
-                }
-
-                foreach(ICLPPageObject pageObject in addedPageObjects)
-                {
-                    if(!PageObjectObjectParentIDs.Contains(pageObject.UniqueID) && pageObject is CLPStampCopy)
-                    {
-                        Parts += pageObject.Parts;
-                        PageObjectObjectParentIDs.Add(pageObject.UniqueID);
-                    }
-                }
-            }
-        }
-
         public override void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
         {
-            if(CanAcceptStrokes)
+            if(!CanAcceptStrokes)
             {
-                foreach(Stroke s in removedStrokes)
-                {
-                    string strokeID = s.GetStrokeUniqueID();
-                    try
-                    {
-                        PageObjectStrokeParentIDs.Remove(strokeID);
-                    }
-                    catch(Exception)
-                    {
-                        Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
-                    }
-                }
+                return;
+            }
 
-                foreach(Stroke s in addedStrokes)
+            foreach(var strokeID in removedStrokes.Select(stroke => stroke.GetStrokeUniqueID()))
+            {
+                try
                 {
-                    var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
-                    if(s.HitTest(rect,80))
-                    {
-                        PageObjectStrokeParentIDs.Add(s.GetStrokeUniqueID());
-                    }
+                    PageObjectStrokeParentIDs.Remove(strokeID);
                 }
+                catch(Exception)
+                {
+                    Console.WriteLine("StrokeID not found in PageObjectStrokeParentIDs. StrokeID: " + strokeID);
+                }
+            }
+
+            var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 80))) 
+            {
+                PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
             }
         }
 

@@ -392,6 +392,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             PageObject.ParentPage.PageHistory.EndBatch();
             PageObject.OnMoved();
+
+            //TODO: refresh pageObjects here?
         }
 
        
@@ -455,6 +457,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                            PageObject.Height));
             }
             PageObject.ParentPage.PageHistory.EndBatch();
+
+            //TODO: refresh ink and pageObjects here?
         }
 
         #endregion //Default Adorners
