@@ -627,22 +627,6 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Page Analysis">
-
-                <RibbonButton Label="Page Definition"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding EditPageDefinitionCommand}" />
-
-                <RibbonButton Label="Analyze Array"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding AnalyzeArrayCommand}" />
-
-                <RibbonButton Label="Analyze Stamps"
-                              LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding AnalyzeStampsCommand}" />
-
-            </RibbonGroup>
-
         </RibbonTab>
 
         <!--Test Tab-->
@@ -690,6 +674,22 @@
                 <RibbonButton Label="Remove All Submissions"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding RemoveAllSubmissionsCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Page Analysis">
+
+                <RibbonButton Label="Page Definition"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding EditPageDefinitionCommand}" />
+
+                <RibbonButton Label="Analyze Array"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding AnalyzeArrayCommand}" />
+
+                <RibbonButton Label="Analyze Stamps"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding AnalyzeStampsCommand}" />
 
             </RibbonGroup>
 
