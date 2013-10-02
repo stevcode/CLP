@@ -36,32 +36,6 @@
 
     </UserControl.Resources>
 
-    <!-- Notebook Pages-->
-    <!--<Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
-        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                 MinWidth="150" Width="250" 
-                 ItemsSource="{Binding Pages}"
-                 ItemContainerStyle="{StaticResource NotebookPageSidebarContainer}"
-                 SelectionMode="Single">
-
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="0">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="PreviewMouseDown">
-                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                      PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
-                    </Border> 
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-
-        </ListBox>
-    </Border>-->
-
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
 
@@ -83,7 +57,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Margin="5 5 0 0"
+                        <TextBlock Grid.Column="0" Margin="5 15 0 0"
                                    Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                    FontWeight="Bold" VerticalAlignment="Top">
                             <Run Text="Page " />
@@ -106,7 +80,7 @@
                                    StrokeThickness="2"
                                    Fill="Transparent" />
 
-                        <Grid Grid.Column="2" VerticalAlignment="Center"
+                        <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
                               Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
