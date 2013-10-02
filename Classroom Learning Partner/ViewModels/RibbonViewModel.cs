@@ -2198,7 +2198,7 @@ namespace Classroom_Learning_Partner.ViewModels
             const double LABEL_LENGTH = 22.0;
 
             var isHorizontallyAligned = true;
-            if( columns / currentPage.PageWidth > rows / currentPage.PageHeight)
+            if(columns / currentPage.PageWidth > rows / currentPage.PageHeight)
             {
                 isHorizontallyAligned = false;
             }
