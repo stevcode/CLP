@@ -9,10 +9,12 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public CLPHistoryArrayRotate(ICLPPage parentPage, string arrayUniqueID)
+        public CLPHistoryArrayRotate(ICLPPage parentPage, string arrayUniqueID, double initXPos, double initYPos)
             : base(parentPage)
         {
             ArrayUniqueID = arrayUniqueID;
+            ArrayXCoord = initXPos;
+            ArrayYCoord = initYPos;
         }
 
         /// <summary>
@@ -48,6 +50,29 @@ namespace CLP.Models
 
         public static readonly PropertyData ArrayUniqueIDProperty = RegisterProperty("ArrayUniqueID", typeof(string), string.Empty);
 
+        /// <summary>
+        /// X coordinate to restore the array's position to.
+        /// </summary>
+        public double ArrayXCoord
+        {
+            get { return GetValue<double>(ArrayXCoordProperty); }
+            set { SetValue(ArrayXCoordProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof(double));
+
+        /// <summary>
+        /// Y coordinate to restore the array's position to.
+        /// </summary>
+        public double ArrayYCoord
+        {
+            get { return GetValue<double>(ArrayYCoordProperty); }
+            set { SetValue(ArrayYCoordProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double));
+
+
         #endregion //Properties
 
         #region Methods
@@ -73,7 +98,13 @@ namespace CLP.Models
             var array = ParentPage.GetPageObjectByUniqueID(ArrayUniqueID) as CLPArray;
             if(array != null)
             {
+                var tempX = array.XPosition;
+                var tempY = array.YPosition;
                 array.RotateArray();
+                array.XPosition = ArrayXCoord;
+                array.YPosition = ArrayYCoord;
+                ArrayXCoord = tempX;
+                ArrayYCoord = tempY;
             }
             else
             {

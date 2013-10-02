@@ -621,9 +621,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRotateArrayCommandExecute()
         {
+            var initXPos = PageObject.XPosition;
+            var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArrayRotate(PageObject.ParentPage,
-                                                                                           PageObject.UniqueID));
+                                                                                       PageObject.UniqueID, 
+                                                                                       initXPos, 
+                                                                                       initYPos));
         }
 
         /// <summary>
