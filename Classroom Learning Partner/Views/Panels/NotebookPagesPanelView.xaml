@@ -4,7 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    Width="{Binding InitialWidth}">
     
     <UserControl.Resources>
@@ -96,7 +96,7 @@
                                                       PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                        <Views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
+                        <views:CLPPagePreviewView DataContext="{Binding}" x:Name="preview" />
                     </Border> 
                 </DataTemplate>
             </ListBox.ItemTemplate>

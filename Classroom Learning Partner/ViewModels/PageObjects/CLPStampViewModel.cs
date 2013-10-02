@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -118,6 +119,66 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnParameterizeStampCommandExecute()
         {
+            if(HasParts() || IsCollectionStamp)
+            {
+                var keyPad = new KeypadWindowView
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Top = 100,
+                    Left = 100
+                };
+                keyPad.ShowDialog();
+                if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+                {
+                    var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
+                    var originalStrokes = PageObject.GetStrokesOverPageObject();
+                    var clonedStrokes = new StrokeCollection();
+
+                    foreach(var stroke in originalStrokes)
+                    {
+                        var newStroke = (new StrokeDTO(stroke)).ToStroke();
+                        var transform = new Matrix();
+                        transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
+                        newStroke.Transform(transform, true);
+                        clonedStrokes.Add(newStroke);
+                    }
+
+                    StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
+                    
+                    //TODO: clipping
+
+                    var initialXPosition = 25.0;
+                    var initialYPosition = YPosition + Height + 20; 
+                    var stampCopiesToAdd = new List<ICLPPageObject>();
+                    for(var i = 0; i < numberOfCopies; i++)
+                    {
+                        var stampCopyClone = StampCopy.Duplicate() as CLPStampCopy;
+                        if(stampCopyClone == null)
+                        {
+                            continue;
+                        }
+                        stampCopyClone.ParentID = PageObject.UniqueID;
+                        stampCopyClone.IsStamped = true;
+                        stampCopyClone.Parts = PageObject.Parts;
+                        stampCopyClone.IsInternalPageObject = false;
+                        stampCopyClone.IsCollectionCopy = IsCollectionStamp;
+                        stampCopyClone.CanAcceptPageObjects = IsCollectionStamp;
+                        stampCopyClone.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
+                        stampCopyClone.YPosition = initialYPosition;
+                        stampCopyClone.XPosition = initialXPosition;
+                        initialXPosition += Width + 10;
+                        stampCopiesToAdd.Add(stampCopyClone);
+                    }
+
+                    ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, stampCopiesToAdd);
+                }
+            }
+            else
+            {
+                MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
+            }  
+
             
         }      
 
