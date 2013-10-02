@@ -472,7 +472,10 @@ namespace CLP.Models
         public override void OnResized()
         {
             RefreshArrayDimensions();
-            CalculateGridLines();
+            if(IsGridOn)
+            {
+                CalculateGridLines();
+            }
             ResizeDivisions();
             base.OnResized();
         }
@@ -537,7 +540,10 @@ namespace CLP.Models
 
             Height = ArrayHeight + 2*LabelLength;
             Width = ArrayWidth + 2*LabelLength;
-            CalculateGridLines();
+            if(IsGridOn)
+            {
+                CalculateGridLines();
+            }
             if(recalculateDivisions)
             {
                 ResizeDivisions();

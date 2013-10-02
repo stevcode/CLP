@@ -27,22 +27,22 @@
                                        Height="{Binding ElementName=content, Path=ActualHeight}"
                                        Fill="White"
                                        Stroke="#6a6a6a"
-                                       StrokeThickness="1" >
+                                       StrokeThickness="1">
                                 <Rectangle.RenderTransform>
-                                    <RotateTransform Angle="5"  CenterX="{Binding ElementName=content, Path=ActualWidth, Converter={StaticResource halfConverter}}" CenterY="{Binding ElementName=content, Path=ActualHeight, Converter={StaticResource halfConverter}}" />
+                                    <RotateTransform Angle="5" CenterX="{Binding ElementName=content, Path=ActualWidth, Converter={StaticResource halfConverter}}"
+                                                     CenterY="{Binding ElementName=content, Path=ActualHeight, Converter={StaticResource halfConverter}}" />
                                 </Rectangle.RenderTransform>
 
                             </Rectangle>
                             <!--Page (Submission, unless used in ServerView, then possibly normal page)-->
                             <!--SARAH SCODEL Add stack image here-->
                             <Border x:Name="IconBorder"
-                                Margin="8"
-                                BorderBrush="#9FA6AD"
-                                BorderThickness="1"
-                                Width="{Binding ElementName=content, Path=Width}" >
+                                    Margin="8"
+                                    BorderBrush="#9FA6AD"
+                                    BorderThickness="1"
+                                    Width="{Binding ElementName=content, Path=Width}">
 
-                                <ContentPresenter DockPanel.Dock="Bottom" x:Name="content">
-                                </ContentPresenter>
+                                <ContentPresenter DockPanel.Dock="Bottom" x:Name="content" />
 
                             </Border>
 
@@ -69,8 +69,8 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click_student_name">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
-                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Width="50" />
+                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Text="{Binding Path=ItemCount}" />
                     </DockPanel>
                 </ToggleButton>
 
@@ -87,12 +87,12 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click_tag">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
-                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Width="50" />
+                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Text="{Binding Path=ItemCount}" />
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1"  />
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" />
             </Grid>
         </ControlTemplate>
 
@@ -104,10 +104,10 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <ToggleButton Grid.Row="0" x:Name="tag" HorizontalAlignment="Left" HorizontalContentAlignment="Left"  Width="150" Height="40" Click="toggle_Click_tag">
+                <ToggleButton Grid.Row="0" x:Name="tag" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Width="150" Height="40" Click="toggle_Click_tag">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="120"/>
-                        <TextBlock HorizontalAlignment="Right"  FontWeight="Bold" FontSize="14" Text="{Binding Path=ItemCount}"/>
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="120" />
+                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" FontSize="14" Text="{Binding Path=ItemCount}" />
                     </DockPanel>
                 </ToggleButton>
 
@@ -124,7 +124,7 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="ShowAllSiblings">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Width="50" />
                     </DockPanel>
                 </ToggleButton>
 
@@ -141,7 +141,7 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left"  FontWeight="Bold" Text="{Binding Path=Name}" Width="50"/>
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Width="50" />
                     </DockPanel>
                 </ToggleButton>
 
@@ -165,209 +165,90 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="150" Height="55" IsChecked="True" Click="toggle_Click_group_group" BorderBrush="Black" BorderThickness="10">
+                <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="150" Height="55" IsChecked="True"
+                              Click="toggle_Click_group_group" BorderBrush="Black" BorderThickness="10">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="150"/>
-                        <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Group Submissions"/>
+                        <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}"
+                                   Width="150" />
+                        <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Text="Group Submissions" />
                     </DockPanel>
                 </ToggleButton>
 
-                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="GroupItemsLoaded">
-                </ItemsPresenter>
+                <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" Loaded="GroupItemsLoaded" />
             </Grid>
 
         </ControlTemplate>
 
         <ControlTemplate TargetType="{x:Type GroupItem}" x:Key="IndividualSubmissionsByGroupTemplate">
-            <Border BorderBrush="Blue"  BorderThickness="2" Margin="0,30,30,0">
+            <Border BorderBrush="Blue" BorderThickness="2" Margin="0,30,30,0">
                 <Grid Margin="0,-20,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="180" Height="55" IsChecked="True" Click="toggle_Click_Group_Individual" BorderBrush="Black" BorderThickness="10">
+                    <ToggleButton Grid.Row="0" HorizontalAlignment="Left" HorizontalContentAlignment="Left" x:Name="toggle" Width="180" Height="55" IsChecked="True"
+                                  Click="toggle_Click_Group_Individual" BorderBrush="Black" BorderThickness="10">
                         <DockPanel>
-                            <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}" Width="180"/>
-                            <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" Text="Individual Submissions"/>
+                            <TextBlock DockPanel.Dock="Top" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}"
+                                       Width="180" />
+                            <TextBlock DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"
+                                       Text="Individual Submissions" />
                         </DockPanel>
                     </ToggleButton>
 
-                    <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1">
-                    </ItemsPresenter>
+                    <ItemsPresenter x:Name="allItems" Visibility="Visible" Grid.Row="1" />
 
                 </Grid>
             </Border>
 
         </ControlTemplate>
 
+        <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+
+        <!-- Style to override ListBoxItem selection visuals for Pages -->
+        <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
-    <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True" Width="{Binding ElementName=SubmissionSideBar, Path=MaxWidth}">
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
 
-        <Grid DockPanel.Dock="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True">
 
-            <Grid Grid.Row="0" Margin="5,15">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <Grid DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-                <Label Grid.Column="0">Sort By:</Label>
-                <!--Populating ComboBox with Sorting Options-->
-                <ComboBox x:Name="SortComboBox" Grid.Column="1" 
-                            ItemsSource="{Binding FilterTypes}"
-                            SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
-                            SelectedIndex="0"
-                            >
-                </ComboBox>
+                <Grid Grid.Row="0" Margin="5,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
+                    <Label Grid.Column="0">Sort By:</Label>
+                    <!--Populating ComboBox with Sorting Options-->
+                    <ComboBox x:Name="SortComboBox" Grid.Column="1"
+                              ItemsSource="{Binding FilterTypes}"
+                              SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
+                              SelectedIndex="0" />
+
+                </Grid>
+
+                <!--<Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}" />-->
             </Grid>
 
-            <Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}" />
-        </Grid>
-
-        <!--ListBox Width must be bound to Width of SubmissionsSideBar-->
-        <ListBox x:Name="SubmissionListBox" 
-                    MinWidth="150" Width="{Binding ElementName=SubmissionsSideBar, Path=ActualWidth, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    Background="Lavender"
-                    ItemsSource="{Binding Path=FilteredSubmissions.View}"
-                    ItemContainerStyle="{StaticResource SubmissionsSidebarContainer}"
-                    SelectionMode="Single"
-                     DockPanel.Dock="Top"
-                 
-                >
-            <ListBox.Style>
-                <Style TargetType="{x:Type ListBox}">
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Alphabetical">
-                            <Setter Property="MaxHeight" Value="435" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.Style>
-            <ListBox.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="True">
-                                    <Setter Property="Template" Value="{StaticResource TagLabelTemplate}" />
-                                </DataTrigger>
-
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Correctness" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Starred" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
-                                </MultiDataTrigger>
-
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                        <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
-                                </MultiDataTrigger>
-                            </Style.Triggers>
-
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                    <GroupStyle.Panel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Stretch" 
-                                        VerticalAlignment="Stretch" 
-                                        Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}"/>
-                        </ItemsPanelTemplate>
-                    </GroupStyle.Panel>
-                </GroupStyle>
-            </ListBox.GroupStyle>
-
-            <ListBox.ItemTemplate>
-                <DataTemplate x:Name="SortTrigger">
-
-                    <Border Width="{Binding ElementName=Slider,Path=Value,Mode=OneWay}" BorderThickness="0">
-
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <catel:EventToCommand Command="{Binding Path=DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <views:CLPPagePreviewView DataContext="{Binding}"  x:Name="preview1">
-
-                            </views:CLPPagePreviewView>
-                            <views:HoverBoxView Grid.Row="1" Width="150" Margin="0,-20,0,0" DataContext="{Binding}">
-
-                            </views:HoverBoxView>
-
-                        </Grid>
-
-                    </Border>
-
-                </DataTemplate>
-
-            </ListBox.ItemTemplate>
-
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel>
-                    </WrapPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-
-        </ListBox>
-        <Border DockPanel.Dock="Top"  BorderBrush="Black"
-                                BorderThickness="0" MinHeight="100">
+            <!--<Border DockPanel.Dock="Bottom"  
+                BorderBrush="Black" BorderThickness="0" MinHeight="100">
             <Border.Style>
                 <Style x:Name="SubmissionsListBorderStyle" TargetType="{x:Type Border}">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -386,6 +267,120 @@
                 <TextBlock  DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontSize="12" Text="{Binding Path=StudentsWithNoSubmissions}"/>
 
             </DockPanel>
-        </Border>
-    </DockPanel>
+        </Border>-->
+
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Background="Lavender"
+                     ItemsSource="{Binding FilteredSubmissions.View}"
+                     ItemContainerStyle="{StaticResource PageSidebarContainer}"
+                     SelectionMode="Single">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <!--<ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending">
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending">
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="True">
+                                        <Setter Property="Template" Value="{StaticResource TagLabelTemplate}" />
+                                    </DataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Correctness" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Starred" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}" />
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </ListBox.GroupStyle>-->
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:Name="SortTrigger">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5"
+                                                      DataContext="{Binding}" />
+
+                            <Rectangle Grid.Row="0" Margin="5"
+                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       StrokeThickness="2"
+                                       Fill="Transparent" />
+                            
+                            <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding}" />
+
+                        </Grid>     
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+        </DockPanel>
+
+    </Border>
 </catel:UserControl>

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
@@ -91,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentNotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), String.Empty);
 
         /// <summary>
         /// Number of pages in the current notebook.
@@ -280,6 +281,28 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static ICLPPage GetCurrentPage()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return null;
+            }
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            return mirrorDisplay == null ? null : mirrorDisplay.CurrentPage;
+        }
+
+        public static NotebookPagesPanelViewModel GetNotebookPagesPanelViewModel()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel;
+        }
+
+        #endregion //Methods
+
         
     }
 }

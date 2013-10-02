@@ -92,7 +92,8 @@
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
                                         <catel:EventToCommand Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                              PassEventArgsToCommand="True" />
+                                                              PassEventArgsToCommand="False"
+                                                              CommandParameter="{Binding}"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />

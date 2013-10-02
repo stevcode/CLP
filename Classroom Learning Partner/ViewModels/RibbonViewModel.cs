@@ -562,7 +562,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnNewNotebookCommandExecute()
         {
             CLPServiceAgent.Instance.OpenNewNotebook();
-            (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[0];
         }
 
         /// <summary>
@@ -585,13 +584,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             MainWindow.IsAuthoring = true;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            if(currentPage != null)
             {
-                return;
+                ACLPPageBaseViewModel.ClearAdorners(currentPage);
             }
-            var currentPage = notebookWorkspaceViewModel.CurrentPage;
-            ACLPPageBaseViewModel.ClearAdorners(currentPage);
         }
 
         /// <summary>
@@ -608,8 +605,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var currentPage = notebookWorkspaceViewModel.CurrentPage;
-            ACLPPageBaseViewModel.ClearAdorners(currentPage);
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            if(currentPage != null)
+            {
+                ACLPPageBaseViewModel.ClearAdorners(currentPage);
+            }
 
             foreach(var page in notebookWorkspaceViewModel.NotebookPages)
             {
@@ -775,14 +775,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                string fileName = notebook.NotebookName + " - Page " + notebookWorkspaceViewModel.CurrentPage.PageIndex + " Submissions.xps";
+                var currentPage = MainWindowViewModel.GetCurrentPage();
+                if(currentPage == null)
+                {
+                    return;
+                }
+
+                string fileName = notebook.NotebookName + " - Page " + currentPage.PageIndex + " Submissions.xps";
                 string filePath = directoryPath + fileName;
                 if(File.Exists(filePath))
                 {
                     File.Delete(filePath);
                 }
 
-                if(!notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID].Any())
+                if(!notebook.Submissions[currentPage.UniqueID].Any())
                 {
                     return;
                 }
@@ -790,7 +796,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Submissions[notebookWorkspaceViewModel.CurrentPage.UniqueID])
+                foreach(var page in notebook.Submissions[currentPage.UniqueID])
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -1024,25 +1030,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPreviousPageCommandExecute()
         {
-            var currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            var panel = MainWindowViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null || currentPage == null)
+            {
+                return;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
 
             if(index > 0)
             {
-                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index - 1];
+                panel.CurrentPage = panel.Notebook.Pages[index - 1];
             }
         }
 
         private bool OnPreviousPageCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            var panel = MainWindowViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null || currentPage == null)
             {
                 return false;
             }
-            var pageIndex = notebookWorkspaceViewModel.Notebook.Pages.IndexOf(notebookWorkspaceViewModel.CurrentPage);
 
-            return pageIndex > 0;
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index > 0;
         }
 
         /// <summary>
@@ -1052,25 +1065,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNextPageCommandExecute()
         {
-            var currentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(currentPage);
-
-            if(index < (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.Count - 1)
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            var panel = MainWindowViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null || currentPage == null)
             {
-                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages[index + 1];
+                return;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            if(index < panel.Notebook.Pages.Count - 1)
+            {
+                panel.CurrentPage = panel.Notebook.Pages[index + 1];
             }
         }
 
         private bool OnNextPageCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            var currentPage = MainWindowViewModel.GetCurrentPage();
+            var panel = MainWindowViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null || currentPage == null)
             {
                 return false;
             }
-            var pageIndex = notebookWorkspaceViewModel.Notebook.Pages.IndexOf(notebookWorkspaceViewModel.CurrentPage);
 
-            return pageIndex < notebookWorkspaceViewModel.Notebook.Pages.Count - 1;
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index < panel.Notebook.Pages.Count - 1;
         }
 
         #endregion //Notebook Commands
@@ -1117,7 +1136,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(CanSendToTeacher)
             {
-                var page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
+                var page = MainWindowViewModel.GetCurrentPage();
+                if(page == null)
+                {
+                    return;
+                }
                 page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
                 CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
 
@@ -1159,16 +1182,19 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGroupSubmitPageCommandExecute()
         {
             IsSending = true;
-            System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Interval = 1000;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            var timer = new System.Timers.Timer
+                        {
+                            Interval = 1000
+                        };
+            timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
 
-            if(CanGroupSendToTeacher)
+            var page = MainWindowViewModel.GetCurrentPage();
+            if(!CanGroupSendToTeacher || page == null)
             {
-                var page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-                CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+                return;
             }
+            CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
             CanGroupSendToTeacher = false;
         }
 
@@ -1344,8 +1370,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var page = notebookWorkspaceViewModel.CurrentPage;
-            page.PageHistory.Undo();
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(mirrorDisplay == null)
+            {
+                return;
+            }
+            mirrorDisplay.CurrentPage.PageHistory.Undo();
         }
 
         private bool OnUndoCanExecute()
@@ -1355,7 +1385,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return false;
             }
-            var page = notebookWorkspaceViewModel.CurrentPage;
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(mirrorDisplay == null)
+            {
+                return false;
+            }
+            var page = mirrorDisplay.CurrentPage;
 
             var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
             if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
@@ -1378,8 +1413,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var page = notebookWorkspaceViewModel.CurrentPage;
-            page.PageHistory.Redo();
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(mirrorDisplay == null)
+            {
+                return;
+            }
+            mirrorDisplay.CurrentPage.PageHistory.Redo();
         }
 
         private bool OnRedoCanExecute()
@@ -1389,7 +1428,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return false;
             }
-            var page = notebookWorkspaceViewModel.CurrentPage;
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            if(mirrorDisplay == null)
+            {
+                return false;
+            }
+            var page = mirrorDisplay.CurrentPage;
 
             return page.PageHistory.CanRedo;
         }
@@ -1672,14 +1716,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDeletePageCommandExecute()
         {
-            //TODO: Steve - clpserviceagent method for this?
-            int index = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).NotebookPages.IndexOf(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            if(index != -1)
+            //TODO: Move to "X" command on page in notebookpagespanel for each item/page in the listbox.
+            var page = MainWindowViewModel.GetCurrentPage();
+            var panel = MainWindowViewModel.GetNotebookPagesPanelViewModel();
+            if(page == null || panel == null)
             {
-                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
-                int count = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.Count;
-                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages[index == count ? index - 1 : index];
+                return;
             }
+
+            var index = panel.Notebook.Pages.IndexOf(page);
+            if(index == -1)
+            {
+                return;
+            }
+            panel.Notebook.RemovePageAt(index);
+            var count = panel.Notebook.Pages.Count;
+            panel.CurrentPage = panel.Notebook.Pages[index == count ? index - 1 : index];
         }
 
         /// <summary>
@@ -2600,6 +2652,5 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Debug Commands
 
         #endregion //Commands
-
     }
 }

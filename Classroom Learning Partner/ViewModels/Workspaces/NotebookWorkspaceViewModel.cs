@@ -44,7 +44,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-            CurrentPage = Notebook.Pages[0];
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
             //Notebook.GeneratePageIndexes(); //TODO: re-add GeneratePageIndexes for PageIndex return
@@ -242,22 +241,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string), null);
 
         #endregion Submissions SideBar
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ICLPPage CurrentPage
-        {
-            get { return GetValue<ICLPPage>(CurrentPageProperty); }
-
-            set
-            {
-                SetValue(CurrentPageProperty, value);
-                SelectedDisplay.AddPageToDisplay(value);
-            }
-        }
-
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
         #region Panels
 
