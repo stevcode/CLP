@@ -2195,11 +2195,23 @@ namespace Classroom_Learning_Partner.ViewModels
                                         (bool)arrayCreationView.HorizontalToggle.IsChecked;
             var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
                                       (bool)arrayCreationView.VerticalToggle.IsChecked;
+            
             var initializedSquareSize = 45.0;
             var xPosition = 0.0;
             var yPosition = 150.0;
             var arrayStacks = 1;
             const double LABEL_LENGTH = 22.0;
+
+            if((xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH) / currentPage.PageWidth > (yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH) / currentPage.PageHeight)
+            {
+                isHorizontallyAligned = false;
+                isVerticallyAligned = true;
+            }
+            else
+            {
+                isHorizontallyAligned = true;
+                isVerticallyAligned = false;
+            }
 
             if(isHorizontallyAligned)
             {
