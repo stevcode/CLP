@@ -621,6 +621,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRotateArrayCommandExecute()
         {
+            if((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.PageWidth || (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.PageHeight)
+            {
+                return;
+            }
             (PageObject as CLPArray).RotateArray();
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArrayRotate(PageObject.ParentPage,
                                                                                            PageObject.UniqueID));
