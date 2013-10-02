@@ -571,7 +571,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(PageInteractionMode == PageInteractionMode.Scissors)
+            if(App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Scissors)
             {
                 foreach(var stroke in e.Added)
                 {
@@ -620,7 +620,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if(PageInteractionMode == PageInteractionMode.Lasso)
+            if(App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Lasso)
             {
                 foreach(var stroke in e.Added)
                 {
