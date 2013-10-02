@@ -73,7 +73,8 @@
                         </TextBlock>
 
                         <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
-                                                  DataContext="{Binding}" />
+                                                  DataContext="{Binding}"
+                                                  ClipToBounds="True" />
 
                         <Rectangle Grid.Column="1" Margin="5"
                                    Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"

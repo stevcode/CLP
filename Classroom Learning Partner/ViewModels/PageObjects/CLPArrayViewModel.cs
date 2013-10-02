@@ -367,6 +367,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                       new Point(PageObject.XPosition, PageObject.YPosition));
             }
             PageObject.ParentPage.PageHistory.EndBatch();
+            PageObject.OnMoved();
 
             var snappingArray = PageObject as CLPArray;
             if(snappingArray == null)
@@ -426,7 +427,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+                    PageObject.ParentPage.PageObjects.Remove(PageObject);
+                    persistingArray.RefreshStrokeParentIDs();
+                    persistingArray.RefreshPageObjectIDs();
                     break;
                 }
 
@@ -483,7 +486,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+                    PageObject.ParentPage.PageObjects.Remove(PageObject);
+                    persistingArray.RefreshStrokeParentIDs();
+                    persistingArray.RefreshPageObjectIDs();
                     break;
                 }
 
@@ -540,7 +545,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+                    PageObject.ParentPage.PageObjects.Remove(PageObject);
+                    persistingArray.RefreshStrokeParentIDs();
+                    persistingArray.RefreshPageObjectIDs();
                     break;
                 }
 
@@ -585,12 +592,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
-                    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+                    PageObject.ParentPage.PageObjects.Remove(PageObject);
+                    persistingArray.RefreshStrokeParentIDs();
+                    persistingArray.RefreshPageObjectIDs();
                     break;
                 }
             }
-
-            PageObject.OnMoved();
         }
 
         /// <summary>
