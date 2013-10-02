@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -15,6 +17,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             CurrentPage = notebook.Pages[0];
+
+            ShowSubmissionsCommand = new Command<MouseButtonEventArgs>(OnShowSubmissionsCommandExecute);
         }
 
         /// <summary>
@@ -155,5 +159,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Shows the submissions for the selected page.
+        /// </summary>
+        public Command<MouseButtonEventArgs> ShowSubmissionsCommand { get; private set; }
+
+        private void OnShowSubmissionsCommandExecute(MouseButtonEventArgs e)
+        {
+            var clpPagePreviewView = e.Source as CLPPagePreviewView;
+            if(clpPagePreviewView == null)
+            {
+                return;
+            }
+            var aclpPageBaseViewModel = clpPagePreviewView.ViewModel as ACLPPageBaseViewModel;
+            if(aclpPageBaseViewModel == null)
+            {
+                return;
+            }
+
+            var page = aclpPageBaseViewModel.Page;
+        }
+
+        #endregion //Commands
     }
 }

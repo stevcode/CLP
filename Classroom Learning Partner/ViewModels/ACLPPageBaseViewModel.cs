@@ -363,6 +363,25 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
+
+        /// <summary>
+        /// Whether or not the submissions for this page are showing.
+        /// </summary>
+        public bool IsShowingSubmissions
+        {
+            get { return GetValue<bool>(IsShowingSubmissionsProperty); }
+            set { SetValue(IsShowingSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
+
+        /// <summary>
+        /// Number of submissions associated with the page.
+        /// </summary>
+        public int NumberOfSubmissions
+        {
+            get { return 0; }
+        }
         
         #endregion //Bindings
 

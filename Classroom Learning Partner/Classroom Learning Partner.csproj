@@ -213,6 +213,7 @@
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
@@ -358,6 +359,9 @@
     </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\SubmissionsPanelView.xaml.cs">
+      <DependentUpon>SubmissionsPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
@@ -546,6 +550,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\NotebookPagesPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\SubmissionsPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

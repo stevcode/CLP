@@ -48,6 +48,31 @@
             </Control.Style>
         </Control>
 
+        <!--LeftLinked Panel-->
+        <Control DockPanel.Dock="Left"
+                 Visibility="{Binding LeftPanel.LinkedPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+            <Control.Resources>
+
+                <ControlTemplate x:Key="NotebookPagesPanelTemplate">
+                    <views:NotebookPagesPanelView DataContext="{Binding LeftPanel.LinkedPanel}" />
+                </ControlTemplate>
+
+            </Control.Resources>
+
+            <Control.Style>
+                <Style TargetType="{x:Type Control}">
+                    <Style.Triggers>
+
+                        <!--NotebookPagesPanel trigger-->
+                        <DataTrigger Binding="{Binding LeftPanel.LinkedPanel, Converter={StaticResource TypeToStringConverter}}" Value="NotebookPagesPanelViewModel">
+                            <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Control.Style>
+        </Control>
+
         <!--Right Panel-->
         <Control DockPanel.Dock="Right"
                  Visibility="{Binding RightPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
