@@ -1,12 +1,14 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.NotebookPagesPanelView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:system="clr-namespace:System;assembly=mscorlib"
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    Width="{Binding InitialWidth}">
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,27 +16,43 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Converters -->
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
             <catel:IntToStringConverter x:Key="IntToString" />
-            
+            <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
+            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
+
+            <!-- Style to override ListBoxItem selection visuals for Pages -->
+            <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <ContentPresenter />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- NotebookPage with the Trigger for Selected -->
-            <Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+            <!--<Style x:Key="NotebookPageSidebarContainer" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
                             <Grid Margin="0,2,0,2">
 
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <Label x:Name="PageIndex"  Grid.Column="0" 
+                                <Label x:Name="PageIndex" Grid.Column="0"
                                        Content="{Binding PageIndex}"
                                        Margin="8,0,0,0"
                                        Foreground="Black" FontSize="12" />
 
-                                <!--Notebook Page-->
+                                --><!--Notebook Page--><!--
                                 <Border x:Name="SelectedBorder" Grid.Column="1"
                                         BorderThickness="2"
                                         BorderBrush="Transparent"
@@ -46,17 +64,19 @@
                                     </Border>
                                 </Border>
 
-                                <!--Where buttons that reveal submissions are located-->
-                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}" >
+                                --><!--Where buttons that reveal submissions are located--><!--
+                                <Grid Margin="0,0,8,0" Grid.Column="2" VerticalAlignment="Center"
+                                      Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
 
-                                    <!--<ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
+                                    --><!--<ToggleButton x:Name="toggle" Height="50" Width="25" Grid.Row="0" Click="ToggleButton_Click" >
                                         <Image Source="..\..\Images\DisplaySubmissionsButton.png" />
-                                    </ToggleButton>-->
-                                    <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}" HorizontalContentAlignment="Center" Width="25" />
+                                    </ToggleButton>--><!--
+                                    <Label Grid.Row="1" Content="{Binding NumberOfSubmissions, Mode=OneWay, Converter={StaticResource IntToString}}"
+                                           HorizontalContentAlignment="Center" Width="25" />
                                 </Grid>
 
                             </Grid>
@@ -72,14 +92,14 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-            </Style>
-            
+            </Style>-->
+
         </ResourceDictionary>
-    
+
     </UserControl.Resources>
 
     <!-- Notebook Pages-->
-    <Border Background="{StaticResource GrayBackgroundColor}"
+    <!--<Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
         <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                  MinWidth="150" Width="250" 
@@ -102,5 +122,78 @@
             </ListBox.ItemTemplate>
 
         </ListBox>
+    </Border>-->
+
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
+
+        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemsSource="{Binding Pages}"
+                 SelectedValue="{Binding CurrentPage}"
+                 ItemContainerStyle="{StaticResource PageSidebarContainer}"
+                 SelectionMode="Single"
+                 extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!--TODO: Write background converter for pages w/ purple background...or make converter parameter = color
+                    Background="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"-->
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Margin="5 5 0 0"
+                                   Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                   FontWeight="Bold" VerticalAlignment="Top">
+                            <Run Text="Page " />
+                            <Run Text="{Binding Mode=OneWay, RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}" />
+                            <TextBlock.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="-90" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+
+                        <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
+                                                  DataContext="{Binding}" />
+
+                        <Rectangle Grid.Column="1" Margin="5"
+                                   Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                   StrokeThickness="2"
+                                   Fill="Transparent" />
+
+                        <Grid Grid.Column="2" VerticalAlignment="Center"
+                              Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ToggleButton Grid.Row="0" 
+                                          Height="50" Width="25"
+                                          IsChecked="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView}">
+                                <!--<ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Grid>-->
+                                            <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                        <!--</Grid>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>-->
+                            </ToggleButton>
+                            <TextBlock Grid.Row="1" 
+                                       Text="{Binding ViewModel.NumberOfSubmissions, ElementName=PagePreviewView}" 
+                                       TextAlignment="Center" Width="25" />
+                        </Grid>
+                        
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
     </Border>
 </catel:UserControl>

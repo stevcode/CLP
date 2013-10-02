@@ -179,7 +179,7 @@ namespace Classroom_Learning_Partner
             }
 
             stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds * 1000);
+            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000);
 
             if(notebook == null)
             {

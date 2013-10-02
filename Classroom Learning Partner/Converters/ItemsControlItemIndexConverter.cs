@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Catel.Data;
 using Catel.Windows;
 
 namespace Classroom_Learning_Partner.Converters

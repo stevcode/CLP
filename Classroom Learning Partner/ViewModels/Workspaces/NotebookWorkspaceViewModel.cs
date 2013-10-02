@@ -46,14 +46,6 @@ namespace Classroom_Learning_Partner.ViewModels
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
             CurrentPage = Notebook.Pages[0];
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
-            TopThumbnailsVisible = App.MainWindowViewModel.Ribbon.ThumbnailsTop;
-            SideThumbnailsVisible = !TopThumbnailsVisible;
-
-
-            if(App.CurrentUserMode == App.UserMode.Projector)
-            {
-                IsSideBarVisible = false;
-            }
 
             //Notebook.GeneratePageIndexes(); //TODO: re-add GeneratePageIndexes for PageIndex return
 
@@ -90,9 +82,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #endregion //Tag Stuff
 
-            SetCurrentPageCommand = new Command<MouseButtonEventArgs>(OnSetCurrentPageCommandExecute);
-            SetCurrentGridDisplayCommand = new Command<MouseButtonEventArgs>(OnSetCurrentGridDisplayCommandExecute);
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
         }
 
         public string WorkspaceName
@@ -179,28 +168,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
-
-        /// <summary>
-        /// Top Thumbnail Toggle
-        /// </summary>
-        public Boolean TopThumbnailsVisible
-        {
-            get { return GetValue<Boolean>(TopThumbnailsVisibleProperty); }
-            set { SetValue(TopThumbnailsVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData TopThumbnailsVisibleProperty = RegisterProperty("TopThumbnailsVisible", typeof(Boolean));
-
-        /// <summary>
-        /// Side Thumbnail Toggle
-        /// </summary>
-        public Boolean SideThumbnailsVisible
-        {
-            get { return GetValue<Boolean>(SideThumbnailsVisibleProperty); }
-            set { SetValue(SideThumbnailsVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData SideThumbnailsVisibleProperty = RegisterProperty("SideThumbnailsVisible", typeof(Boolean));
 
         #endregion //Displays
 
@@ -337,68 +304,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel));
-
-        /// <summary>
-        /// HistoryPanel.
-        /// </summary>
-        public ObservableCollection<ICLPPage> HistoryPages
-        {
-            get { return GetValue<ObservableCollection<ICLPPage>>(HistoryPagesProperty); }
-            set { SetValue(HistoryPagesProperty, value); }
-        }
-
-        public static readonly PropertyData HistoryPagesProperty = RegisterProperty("HistoryPages", typeof(ObservableCollection<ICLPPage>));
-        
-        /// <summary>
-        /// First element in HistoryPanel
-        /// </summary>
-        public ObservableCollection<ICLPPage> HistoryCurrentPage
-        {
-            get { return GetValue<ObservableCollection<ICLPPage>>(HistoryCurrentPageProperty); }
-            set { SetValue(HistoryCurrentPageProperty, value); }
-        }
-
-        public static readonly PropertyData HistoryCurrentPageProperty = RegisterProperty("HistoryCurrentPage", typeof(ObservableCollection<ICLPPage>));
          
         #endregion //Panels
 
         #endregion //Bindings
-
-        /// <summary>
-        /// Gets the SetCurrentPageCommand command.
-        /// </summary>
-        public Command<MouseButtonEventArgs> SetCurrentPageCommand { get; private set; }
-
-        private void OnSetCurrentPageCommandExecute(MouseButtonEventArgs e)
-        {
-            CurrentPage = ((e.Source as CLPPagePreviewView).ViewModel as ACLPPageBaseViewModel).Page;
-            SetHistoryPages();
-        }
-
-        /// <summary>
-        /// Gets the SetCurrentPageCommand command.
-        /// </summary>
-        public Command<MouseButtonEventArgs> SetCurrentGridDisplayCommand { get; private set; }
-
-        private void OnSetCurrentGridDisplayCommandExecute(MouseButtonEventArgs e)
-        {
-         //   SelectedDisplay = ((e.Source as ItemsControl).DataContext as GridDisplayViewModel);
-        }
-
-        /// <summary>
-        /// Gets the MakePageLongerCommand command.
-        /// </summary>
-        public Command MakePageLongerCommand { get; private set; }
-
-        private void OnMakePageLongerCommandExecute()
-        {
-            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
-            {
-                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-                page.PageHeight += 200;
-              //  ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as MirrorDisplayViewModel).ResizePage();
-            }
-        }
 
         #region Methods
 
@@ -423,19 +332,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (propertyName == "SideBarVisibility")
             {
-                IsSideBarVisible = (viewModel as RibbonViewModel).SideBarVisibility;
+                LeftPanel = NotebookPagesPanel;
+                LeftPanel.IsVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 
             if(propertyName == "DisplayPanelVisibility")
             {
                 RightPanel = DisplayListPanel;
                 RightPanel.IsVisible = (viewModel as RibbonViewModel).DisplayPanelVisibility;
-            }
-
-            if(propertyName == "ThumbnailsTop")
-            {
-                TopThumbnailsVisible = (viewModel as RibbonViewModel).ThumbnailsTop;
-                IsSideBarVisible = !TopThumbnailsVisible;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName); 
@@ -474,17 +378,6 @@ namespace Classroom_Learning_Partner.ViewModels
             names = names.Substring(0, names.Length - 2);
             return names;
         }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsSideBarVisible
-        {
-            get { return GetValue<bool>(IsSideBarVisibleProperty); }
-            set { SetValue(IsSideBarVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsSideBarVisibleProperty = RegisterProperty("IsSideBarVisible", typeof(bool), true);
 
         public void OnlyGroupSubmissionsFilter(object sender, FilterEventArgs e)
         {
@@ -627,35 +520,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             }
         }
-
-        public void SetHistoryPages()
-        {
-            string id = CurrentPage.UniqueID;
-            ObservableCollection<ICLPPage> pages;
-            if(Notebook.Submissions.ContainsKey(id))
-            {
-                pages = Notebook.Submissions[id];
-            }
-            else
-            {
-                Notebook.Submissions.Add(id, new ObservableCollection<ICLPPage>());
-                pages = Notebook.Submissions[id];
-            }
-            HistoryPages = pages;
-
-            var currentPage = new ObservableCollection<ICLPPage>();
-            foreach(var page in NotebookPages)
-            {
-                if(page.UniqueID == id)
-                {
-                    currentPage.Add(page);
-                    break;
-                }
-            }
-            HistoryCurrentPage = currentPage;
-
-        }
-        
         
         #endregion //Methods
 
