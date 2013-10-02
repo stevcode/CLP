@@ -10,7 +10,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <conv:LengthConverter x:Key="LengthConverter"/>
-            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter"/>
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -96,6 +97,7 @@
 
             <ItemsControl ClipToBounds="True" IsHitTestVisible="False"
                           ItemsSource="{Binding StrokePathViewModels}"
+                          Width="{Binding Width}" Height="{Binding Height}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
@@ -118,7 +120,7 @@
                        Height="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="18"
-                       Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                       Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Run Text="collection " />
                 <Run Text="{Binding Parts}" />
             </TextBlock>

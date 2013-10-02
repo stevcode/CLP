@@ -366,7 +366,10 @@ namespace Classroom_Learning_Partner.ViewModels
             var yPosition = PageObject.YPosition + CLPStamp.HandleHeight;
             if(!IsCollectionStamp && StampCopy.ImageID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
-                double x1 = Double.MaxValue, y1 = Double.MaxValue, x2 = 0, y2 = 0;
+                var x1 = Double.MaxValue;
+                var y1 = Double.MaxValue;
+                var x2 = 0.0;
+                var y2 = 0.0;
                 var copyStrokes = StrokeDTO.LoadInkStrokes(StampCopy.SerializedStrokes);
                 foreach(var bounds in copyStrokes.Select(stroke => stroke.GetBounds()))
                 {
@@ -376,8 +379,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     y2 = Math.Max(y2, bounds.Bottom);
                 }
 
-                xPosition += x1; //if positive?
-                yPosition += y1; //if positive?
+                xPosition += x1;
+                yPosition += y1;
                 StampCopy.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
                 StampCopy.Height = Math.Max(y2 - y1, 20);
 
@@ -390,8 +393,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(copyStrokes);
             }
 
-            StampCopy.XPosition = xPosition;
-            StampCopy.YPosition = yPosition;
+            
             StampCopy.ParentID = PageObject.UniqueID;
             StampCopy.UniqueID = Guid.NewGuid().ToString();
             StampCopy.Parts = PageObject.Parts;
@@ -408,6 +410,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 minIndex = StampCopy.GetPageObjectsOverPageObject().Select(pageObject => parentPage.PageObjects.IndexOf(pageObject)).Concat(new[] {minIndex}).Min();
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, StampCopy, false, false, minIndex);
+                StampCopy.XPosition = xPosition;
+                StampCopy.YPosition = yPosition;
             }
 
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
