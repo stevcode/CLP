@@ -621,6 +621,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRotateArrayCommandExecute()
         {
+            if((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.PageWidth || (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.PageHeight)
+            {
+                return;
+            }
+            
             var initXPos = PageObject.XPosition;
             var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
