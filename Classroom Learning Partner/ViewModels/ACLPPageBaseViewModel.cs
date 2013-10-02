@@ -877,33 +877,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RefreshPageObjects(List<ICLPPageObject> allShapesPageObjects)
+        private void RefreshPageObjects(IEnumerable<ICLPPageObject> pageObjects)
         {
             try
             {
-                foreach(var pageObject in PageObjects)
+                foreach(var pageObject in pageObjects)
                 {
-                    if(pageObject.CanAcceptPageObjects)
-                    {
-                        var removedPageObjects = new ObservableCollection<ICLPPageObject>();
-
-                        var addedPageObjects = new ObservableCollection<ICLPPageObject>();
-                        if(allShapesPageObjects.Any())
-                        {
-                            foreach(ICLPPageObject addedPageObject in allShapesPageObjects)
-                            {
-                                if(!pageObject.UniqueID.Equals(addedPageObject.UniqueID) &&
-                                   !pageObject.UniqueID.Equals(addedPageObject.ParentID) &&
-                                   !pageObject.PageObjectObjectParentIDs.Contains(addedPageObject.UniqueID) &&
-                                   pageObject.PageObjectIsOver(addedPageObject, .50))
-                                {
-                                    addedPageObjects.Add(addedPageObject);
-                                }
-                            }
-                        }
-
-                        pageObject.AcceptObjects(addedPageObjects, removedPageObjects);
-                    }
+                    pageObject.RefreshPageObjectIDs();
                 }
             }
             catch(Exception ex)

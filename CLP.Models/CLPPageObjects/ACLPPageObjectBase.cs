@@ -392,7 +392,7 @@ namespace CLP.Models
             PageObjectObjectParentIDs.Clear();
 
             var pageObjectsOverObject = from pageObject in ParentPage.PageObjects
-                                        where PageObjectIsOver(pageObject, 90)
+                                        where PageObjectIsOver(pageObject, .90)
                                         select pageObject;
 
             AcceptObjects(pageObjectsOverObject, new List<ICLPPageObject>());

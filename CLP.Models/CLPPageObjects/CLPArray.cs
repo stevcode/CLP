@@ -514,7 +514,7 @@ namespace CLP.Models
             }
 
             var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
-            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 80))) 
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 50))) 
             {
                 PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
             }
