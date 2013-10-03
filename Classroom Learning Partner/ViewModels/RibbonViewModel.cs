@@ -2190,17 +2190,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddPageObjectToPage(array);
                 return;
             }
-
-            var isHorizontallyAligned = arrayCreationView.HorizontalToggle.IsChecked != null &&
-                                        (bool)arrayCreationView.HorizontalToggle.IsChecked;
-            var isVerticallyAligned = arrayCreationView.VerticalToggle.IsChecked != null &&
-                                      (bool)arrayCreationView.VerticalToggle.IsChecked;
+            
             var initializedSquareSize = 45.0;
             var xPosition = 0.0;
             var yPosition = 150.0;
             var arrayStacks = 1;
             const double LABEL_LENGTH = 22.0;
 
+            var isHorizontallyAligned = true;
+            if(columns / currentPage.PageWidth > rows / currentPage.PageHeight)
+            {
+                isHorizontallyAligned = false;
+            }
+
+            while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
+            {
+                initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            }
             if(isHorizontallyAligned)
             {
                 while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
@@ -2227,7 +2233,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            else if(isVerticallyAligned)
+            else
             {
                 yPosition = 100;
                 while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
@@ -2291,7 +2297,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     xPosition += LABEL_LENGTH + columns * initializedSquareSize;
                     array.SizeArrayToGridLevel(initializedSquareSize);
                 }
-                else if(isVerticallyAligned)
+                else
                 {
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
