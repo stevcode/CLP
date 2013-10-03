@@ -15,6 +15,7 @@
         <res:HalfLengthConverter x:Key="halfConverter" />
         <res:TimeToBooleanConverter x:Key="timeConverter" />
         <res:TagToBooleanConverter x:Key="tagConverter" />
+
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Template">
@@ -221,7 +222,7 @@
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
 
-        <DockPanel x:Name="SubmissionsSideBar" LastChildFill="True">
+        <DockPanel LastChildFill="True">
 
             <Grid DockPanel.Dock="Top">
                 <Grid.RowDefinitions>
@@ -358,7 +359,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate x:Name="SortTrigger">
-                        <Grid >
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
@@ -371,10 +372,10 @@
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="2"
                                        Fill="Transparent" />
-                            
+
                             <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding}" />
 
-                        </Grid>     
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 

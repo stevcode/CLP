@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Views;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -19,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
             LinkedPanel = new SubmissionsPanelViewModel(notebook);
 
             ShowSubmissionsCommand = new Command<ICLPPage>(OnShowSubmissionsCommandExecute);
+            HideSubmissionsCommand = new Command<ICLPPage>(OnHideSubmissionsCommandExecute);
         }
 
         /// <summary>
@@ -165,13 +167,69 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Shows the submissions for the selected page.
         /// </summary>
-        public Command<ICLPPage> ShowSubmissionsCommand { get; private set; }
-
-        private void OnShowSubmissionsCommandExecute(ICLPPage selectedPage)
+        public Command<ICLPPage> ShowSubmissionsCommand
         {
-            
+            get;
+            private set;
+        }
+
+        private void OnShowSubmissionsCommandExecute(ICLPPage page)
+        {
+            var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel == null)
+            {
+                return;
+            }
+
+            submissionsPanel.IsVisible = true;
+            _currentDisplaySubmissionsPageID = page.UniqueID;
+            submissionsPanel.SubmissionPages = Notebook.Submissions[_currentDisplaySubmissionsPageID];
+        }
+
+        private string _currentDisplaySubmissionsPageID;
+
+        /// <summary>
+        /// Hides submissions panel.
+        /// </summary>
+        public Command<ICLPPage> HideSubmissionsCommand { get; private set; }
+
+        private void OnHideSubmissionsCommandExecute(ICLPPage page)
+        {
+            var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel == null || _currentDisplaySubmissionsPageID != page.UniqueID)
+            {
+                return;
+            }
+            submissionsPanel.IsVisible = false;
         }
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static ICLPPage GetCurrentPage()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return null;
+            }
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            return mirrorDisplay == null ? null : mirrorDisplay.CurrentPage;
+        }
+
+        public static NotebookPagesPanelViewModel GetNotebookPagesPanelViewModel()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel;
+        }
+
+        public static SubmissionsPanelViewModel GetSubmissionsPanelViewModel()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel.LinkedPanel as SubmissionsPanelViewModel;
+        }
+
+        #endregion //Methods
     }
 }

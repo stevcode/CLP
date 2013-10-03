@@ -48,6 +48,8 @@ namespace Classroom_Learning_Partner
             Environment.Exit(0);
         }
 
+        #region Utilities
+
         public IView GetViewFromViewModel(IViewModel viewModel)
         {
             var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
@@ -97,6 +99,62 @@ namespace Classroom_Learning_Partner
 
             return imageArray;
         }
+
+        public T GetVisualChild<T>(Visual parent) where T : Visual
+        {
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for(int i = 0; i < numVisuals; i++)
+            {
+                var v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T ?? GetVisualChild<T>(v);
+                if(child != null)
+                {
+                    break;
+                }
+            }
+            return child;
+        }
+
+        public T GetVisualParent<T>(Visual child) where T : Visual
+        {
+            var p = (Visual)VisualTreeHelper.GetParent(child);
+            var parent = p as T ?? GetVisualParent<T>(p);
+
+            return parent;
+        }
+
+        public T FindNamedChild<T>(FrameworkElement obj, string name)
+        {
+            var dep = obj as DependencyObject;
+            T ret = default(T);
+
+            if(dep != null)
+            {
+                int childcount = VisualTreeHelper.GetChildrenCount(dep);
+                for(int i = 0; i < childcount; i++)
+                {
+                    var childDep = VisualTreeHelper.GetChild(dep, i);
+                    var child = childDep as FrameworkElement;
+
+                    if(child != null &&
+                       (child.GetType() == typeof(T) && child.Name == name))
+                    {
+                        ret = (T)Convert.ChangeType(child, typeof(T));
+                        break;
+                    }
+
+                    ret = FindNamedChild<T>(child, name);
+                    if(ret != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return ret;
+        }
+
+        #endregion //Utilies
 
         #region Notebook
 

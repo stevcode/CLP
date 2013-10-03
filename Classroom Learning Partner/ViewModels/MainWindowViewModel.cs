@@ -281,28 +281,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-
-        #region Static Methods
-
-        public static ICLPPage GetCurrentPage()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return null;
-            }
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
-            return mirrorDisplay == null ? null : mirrorDisplay.CurrentPage;
-        }
-
-        public static NotebookPagesPanelViewModel GetNotebookPagesPanelViewModel()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel;
-        }
-
-        #endregion //Methods
-
-        
     }
 }

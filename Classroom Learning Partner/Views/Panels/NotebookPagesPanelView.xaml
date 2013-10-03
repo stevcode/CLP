@@ -6,8 +6,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   Width="{Binding InitialWidth}">
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -17,6 +16,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
@@ -36,78 +36,103 @@
 
     </UserControl.Resources>
 
-    <Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ItemsSource="{Binding Pages}"
-                 SelectedValue="{Binding CurrentPage}"
-                 ItemContainerStyle="{StaticResource PageSidebarContainer}"
-                 SelectionMode="Single"
-                 extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+        <Border Background="{StaticResource GrayBackgroundColor}"
+                BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0"
+                Grid.Column="0"
+                Width="{Binding InitialWidth}">
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <!--TODO: Write background converter for pages w/ purple background...or make converter parameter = color
+            <ListBox x:Name="PagesListBox" 
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding Pages}"
+                     SelectedValue="{Binding CurrentPage}"
+                     ItemContainerStyle="{StaticResource PageSidebarContainer}"
+                     SelectionMode="Single"
+                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <!--TODO: Write background converter for pages w/ purple background...or make converter parameter = color
                     Background="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"-->
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Margin="5 15 0 0"
-                                   Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
-                                   FontWeight="Bold" VerticalAlignment="Top">
-                            <Run Text="Page " />
-                            <Run Text="{Binding Mode=OneWay, RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}" />
-                            <TextBlock.LayoutTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform Angle="-90" />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </TextBlock.LayoutTransform>
-                        </TextBlock>
+                            <TextBlock Grid.Column="0" Margin="5 15 0 0"
+                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       FontWeight="Bold" VerticalAlignment="Top">
+                                <Run Text="Page " />
+                                <Run
+                                    Text="{Binding Mode=OneWay, RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}" />
+                                <TextBlock.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform Angle="-90" />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
 
-                        <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
-                                                  DataContext="{Binding}"
-                                                  ClipToBounds="True" />
+                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
+                                                      DataContext="{Binding}"
+                                                      ClipToBounds="True" />
 
-                        <Rectangle Grid.Column="1" Margin="5"
-                                   Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
-                                   StrokeThickness="2"
-                                   Fill="Transparent" />
+                            <Rectangle Grid.Column="1" Margin="5"
+                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       StrokeThickness="2"
+                                       Fill="Transparent" />
 
-                        <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
-                              Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <ToggleButton Grid.Row="0" 
-                                          Height="50" Width="25"
-                                          IsChecked="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Checked">
-                                        <catel:EventToCommand Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" 
-                                                              PassEventArgsToCommand="False"
-                                                              CommandParameter="{Binding}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
-                            </ToggleButton>
-                            <TextBlock Grid.Row="1" 
-                                       Text="{Binding ViewModel.NumberOfSubmissions, ElementName=PagePreviewView}" 
-                                       TextAlignment="Center" Width="25" />
+                            <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
+                                  Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ToggleButton Grid.Row="0"
+                                              Height="50" Width="25"
+                                              Checked="ToggleButton_OnChecked"
+                                              IsChecked="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Checked">
+                                            <catel:EventToCommand
+                                                Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="Unchecked">
+                                            <catel:EventToCommand
+                                                Command="{Binding DataContext.HideSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                </ToggleButton>
+                                <TextBlock Grid.Row="1"
+                                           Text="{Binding ViewModel.NumberOfSubmissions, ElementName=PagePreviewView}"
+                                           TextAlignment="Center" Width="25" />
+                            </Grid>
+
                         </Grid>
-                        
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-    </Border>
+        </Border>
+
+        <views:SubmissionsPanelView DataContext="{Binding LinkedPanel}"
+                                    Grid.Column="1"
+                                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+
+    </Grid>
+
 </catel:UserControl>
