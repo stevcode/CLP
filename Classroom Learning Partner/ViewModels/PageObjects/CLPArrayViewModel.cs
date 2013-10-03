@@ -427,9 +427,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
+                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject(); 
                     PageObject.ParentPage.PageObjects.Remove(PageObject);
                     persistingArray.RefreshStrokeParentIDs();
                     persistingArray.RefreshPageObjectIDs();
+
+                    var addObjects = new ObservableCollection<ICLPPageObject>();
+                    var removeObjects = new ObservableCollection<ICLPPageObject>();
+                    foreach(var obj in extraPageObjects)
+                    {
+                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
+                        {
+                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
+                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
+                            {
+                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                            }
+                            addObjects.Add(obj);
+                        }
+                    }
+                    persistingArray.AcceptObjects(addObjects, removeObjects);
                     break;
                 }
 
@@ -486,9 +504,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
+                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
                     PageObject.ParentPage.PageObjects.Remove(PageObject);
                     persistingArray.RefreshStrokeParentIDs();
                     persistingArray.RefreshPageObjectIDs();
+
+                    var addObjects = new ObservableCollection<ICLPPageObject>();
+                    var removeObjects = new ObservableCollection<ICLPPageObject>();
+                    foreach(var obj in extraPageObjects)
+                    {
+                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
+                        {
+                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
+                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
+                            {
+                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                            }
+                            addObjects.Add(obj);
+                        }
+                    }
+                    persistingArray.AcceptObjects(addObjects, removeObjects);
                     break;
                 }
 
@@ -545,9 +581,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
+                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
                     PageObject.ParentPage.PageObjects.Remove(PageObject);
                     persistingArray.RefreshStrokeParentIDs();
                     persistingArray.RefreshPageObjectIDs();
+
+                    var addObjects = new ObservableCollection<ICLPPageObject>();
+                    var removeObjects = new ObservableCollection<ICLPPageObject>();
+                    foreach(var obj in extraPageObjects)
+                    {
+                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
+                        {
+                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
+                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
+                            {
+                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                            }
+                            addObjects.Add(obj);
+                        }
+                    }
+                    persistingArray.AcceptObjects(addObjects, removeObjects);
                     break;
                 }
 
@@ -592,9 +646,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     persistingArray.SizeArrayToGridLevel(squareSize, false);
                     persistingArray.IsDivisionBehaviorOn = true;
 
+                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
                     PageObject.ParentPage.PageObjects.Remove(PageObject);
                     persistingArray.RefreshStrokeParentIDs();
                     persistingArray.RefreshPageObjectIDs();
+
+                    var addObjects = new ObservableCollection<ICLPPageObject>();
+                    var removeObjects = new ObservableCollection<ICLPPageObject>();
+                    foreach(var obj in extraPageObjects)
+                    {
+                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
+                        {
+                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
+                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
+                            {
+                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
+                            }
+                            addObjects.Add(obj);
+                        }
+                    }
+                    persistingArray.AcceptObjects(addObjects, removeObjects);
                     break;
                 }
             }
