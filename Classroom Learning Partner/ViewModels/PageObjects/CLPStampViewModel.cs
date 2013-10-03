@@ -167,8 +167,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         stampCopyClone.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
                         stampCopyClone.YPosition = initialYPosition;
                         stampCopyClone.XPosition = initialXPosition;
-                        initialXPosition += Width + 10;
                         stampCopiesToAdd.Add(stampCopyClone);
+                        if(initialXPosition + 2*StampCopy.Width + 5 < PageObject.ParentPage.PageWidth)
+                        {
+                            initialXPosition += StampCopy.Width + 5;
+                        }
+                        else if(initialYPosition + 2*StampCopy.Height + 5 < PageObject.ParentPage.PageHeight)
+                        {
+                            initialXPosition = 25;
+                            initialYPosition += StampCopy.Height + 5;
+                        }
                     }
 
                     ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, stampCopiesToAdd);
