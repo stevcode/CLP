@@ -112,6 +112,7 @@
     <Compile Include="CLPHistory\CLPHistoryPageObjectResizeBatch.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectsMassAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryStampPlace.cs" />
+    <Compile Include="CLPHistory\CLPHistoryStrokesChanged.cs" />
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
     <Compile Include="CLPPageObjects\CLPRegion.cs" />
